@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><title>Thêm - An Gia</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#FAF8F5;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "background": "#f0fcfb", "tertiary-container": "#833b00", "tertiary-fixed-dim": "#ffb68c", "outline": "#707975", "primary": "#004135", "on-secondary-fixed": "#002019", "surface-bright": "#f0fcfb", "on-surface": "#131d1d", "inverse-primary": "#99d2c0", "on-secondary": "#ffffff", "tertiary": "#602900", "surface": "#f0fcfb", "surface-container": "#e4f0f0", "outline-variant": "#bfc9c4", "on-secondary-container": "#2f6f5e", "on-error-container": "#93000a", "on-tertiary-container": "#ffb082", "on-background": "#131d1d", "on-primary-fixed-variant": "#145042", "surface-container-low": "#eaf6f5", "surface-container-highest": "#d9e5e4", "secondary-fixed": "#aef0da", "inverse-on-surface": "#e7f3f3", "on-secondary-fixed-variant": "#055141", "primary-fixed-dim": "#99d2c0", "on-primary": "#ffffff", "inverse-surface": "#273232", "on-error": "#ffffff", "on-tertiary": "#ffffff", "primary-container": "#20594b", "surface-tint": "#306859", "on-primary-container": "#95cebc", "on-surface-variant": "#404945", "secondary": "#286958", "on-tertiary-fixed": "#321200", "surface-variant": "#d9e5e4", "primary-fixed": "#b4eedc", "secondary-fixed-dim": "#93d3bf", "error-container": "#ffdad6", "surface-container-lowest": "#ffffff", "surface-container-high": "#deebea", "tertiary-fixed": "#ffdbc9", "on-primary-fixed": "#002019", "surface-dim": "#d0dcdc", "secondary-container": "#aef0da", "on-tertiary-fixed-variant": "#753400", "error": "#ba1a1a" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-tablet": "2rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "gutter-tablet": "1.5rem", "space-sm": "0.5rem", "gutter": "1rem", "margin": "1rem", "margin-desktop": "3rem", "space-xl": "2rem", "gutter-desktop": "2rem", "space-md": "1rem" }, "fontFamily": { "label-md": ["Be Vietnam Pro"], "headline-md": ["Newsreader"], "body-sm": ["Be Vietnam Pro"], "label-lg": ["Be Vietnam Pro"], "label-sm": ["Be Vietnam Pro"], "headline-lg": ["Newsreader"], "headline-sm": ["Be Vietnam Pro"], "body-lg": ["Be Vietnam Pro"], "body-md": ["Be Vietnam Pro"], "display-sm": ["Newsreader"], "display-lg": ["Newsreader"] }, "fontSize": { "label-md": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.02em", "fontWeight": "600" }], "headline-md": ["1.25rem", { "lineHeight": "1.75rem", "fontWeight": "600" }], "body-sm": ["0.8125rem", { "lineHeight": "1.25rem", "fontWeight": "400" }], "label-lg": ["0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0.01em", "fontWeight": "600" }], "label-sm": ["0.6875rem", { "lineHeight": "0.875rem", "letterSpacing": "0.03em", "fontWeight": "500" }], "headline-lg": ["1.5rem", { "lineHeight": "2rem", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-sm": ["1.125rem", { "lineHeight": "1.5rem", "fontWeight": "600" }], "body-lg": ["1rem", { "lineHeight": "1.625rem", "fontWeight": "400" }], "body-md": ["0.9375rem", { "lineHeight": "1.5rem", "fontWeight": "400" }], "display-sm": ["1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.015em", "fontWeight": "500" }], "display-lg": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.02em", "fontWeight": "500" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen selection:bg-secondary-container selection:text-on-secondary-container"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.03)] pt-safe"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-sm"><button aria-label="Quay lại" class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center text-secondary hover:bg-secondary-container/40 active:scale-95 transition-all" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><img alt="Isolate the 3D squircle app icon of AN GIA on an absolute transparent background (PNG alpha transparency). Remove all outer background surrounding the rounded squircle container completely. The squircle tile itself—its white beveled rim, ivory porcelain surface, and embossed forest green emblem with hands, heart, roof, leaf and 'AN GIA' typography—must be preserved with clean, crisp edges and natural soft drop shadow on transparency, without any white or gray backdrop behind the icon tile." class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XuoLMQBBej4MmQaGsBS9E0rHizKsOHE3ctAUFHDY0YhLw5-hfq56pRs7VOtS1Sra96_3m3xXcU9024Yx6cTQqcxFq0mMO-rxMgcJGMCkX2-5C9b0MopWkl9mEabB2qiRnvbiYN-INWBLrF3JGMxaiRdq3UKNSyx5UdyB2iFBjUkE7Ggo4uJxeaNKfUWW_ZfIKIMz_TaxcS9fpyZWUXCzFXB2lU5l3btErzoWnySIkTZTUv1WbMJEkCyyu4"/><h1 class="font-headline-md text-headline-md text-on-surface tracking-tight leading-tight">Thêm</h1></div><div class="flex items-center gap-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-safe bg-surface"><div class="flex flex-col w-full pb-32">
+<!-- Privacy & Clinical Guidance Banner -->
+<section class="px-margin pt-space-sm">
+<div aria-label="Lưu ý bảo mật thông tin khám bệnh" class="rounded-xl bg-surface-container-low p-space-md shadow-sm flex items-start gap-space-sm" role="note">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">info</span>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-secondary">Lưu ý bảo vệ quyền riêng tư</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Chỉ chụp phần <strong class="text-primary font-medium">thuốc, chỉ số</strong> và <strong class="text-primary font-medium">ngày khám</strong>. Vui lòng không chụp họ tên, số BHYT hay mã bệnh nhân.
+        </p>
+</div>
+</div>
+</section>
+<!-- Member Selector -->
+<section class="mt-space-md px-margin">
+<div class="flex items-center justify-between mb-space-xs">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Lưu giấy tờ cho ai?</h2>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Bắt buộc</span>
+</div>
+<div class="grid grid-cols-4 gap-space-xs" id="member-selector-group">
+<!-- Member 1: Mẹ (Active) -->
+<button class="member-chip flex flex-col items-center gap-1.5 p-space-xs rounded-xl bg-primary text-on-primary shadow-sm transition-all duration-200 active:scale-95" data-member="me" type="button">
+<div class="relative w-12 h-12 rounded-full overflow-hidden shadow-inner">
+<img class="w-full h-full object-cover" data-alt="Chân dung người mẹ Việt Nam trung niên hiền hậu ấm áp, ánh sáng studio mềm mại dịu nhẹ tự nhiên, phong cách ảnh y tế chăm sóc sức khỏe gia đình thanh lịch" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCK_PBERRTBvPM9JToAHiChiC2JhYV1sCqh8_G59SD3OU7M0ScU9_556vBUpVoCHYJX2p1CAF2ZzraCIYPfC5XtlqZxRj40A1cE28_7VYScd7gnbmCVzfvhPIvG0qpT7v6zOGRupm0jmPRzqB2vgKdmry4-ISG8gWIYR7DJ--t0TLv31aFZxAyGyDzMPJLFSwmr9ticve0v6RJIWoN9h7yiq3FpjuhMt27DCpdPwj5Sl_ivXb8GEjVWnw"/>
+<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-secondary-fixed rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-on-secondary-fixed" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<span class="font-label-md text-label-md tracking-tight">Mẹ</span>
+</button>
+<!-- Member 2: Ba -->
+<button class="member-chip flex flex-col items-center gap-1.5 p-space-xs rounded-xl bg-surface-container-lowest text-on-surface-variant shadow-sm transition-all duration-200 active:scale-95" data-member="ba" type="button">
+<div class="relative w-12 h-12 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Chân dung người bố trung niên châu Á nụ cười điềm tĩnh lạc quan, ánh sáng văn phòng tự nhiên ấm áp dịu nhẹ phong cách thiết kế sức khỏe gia đình" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZPJoGMlSlES24F17JI0dktdF8ACgnVgA2CBlXp7C_625H9OkQj21Tpi16zN0F-P94toKuRmMkHWBCLTIED26hyyd2vtIvCGMMJC7BBecjPRPYhujYlFCfmseXZ9K8cwwluK3PnaR9peyStdhLC9GuXV96fh-mp4jYhzLn9UUk3NIYahtLq2jFpvvCzd0mj1Hcn1KWcLf7Yp1qPkeyvEvHYlIXlY0kl9DAA7JVgMWz85Jt76ZUTOSElw"/>
+</div>
+<span class="font-label-md text-label-md tracking-tight">Ba</span>
+</button>
+<!-- Member 3: Bà ngoại -->
+<button class="member-chip flex flex-col items-center gap-1.5 p-space-xs rounded-xl bg-surface-container-lowest text-on-surface-variant shadow-sm transition-all duration-200 active:scale-95" data-member="ba-ngoai" type="button">
+<div class="relative w-12 h-12 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Chân dung cụ bà Việt Nam tóc bạc phúc hậu nhân từ, ánh sáng tự nhiên ban ngày trong nhà phong cách y tế lão khoa chu đáo tin cậy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNzOPcG_boIAgyy50X4kyKudXDAsyvxMNHD4Qrv0c_gL4QGNPl2xYeBOMEQUxWLNkywZD-Qf-_m0O4WfdlF-RhOAds5U23F2gbUvKI_elNeMYgnxJA4RTOj02JUStgaSaZe2A2jn1CLaKO4p2cs4LutBZNdADOj80-jbM9NRSwm7iZgb__OStI8C6tqRRGL37Ryg2enaycGHJlrV3f9GQo_jVCw_eQ3lVQurKdGZLmZhFk6vhEE9jhPg"/>
+</div>
+<span class="font-label-md text-label-md tracking-tight">Bà ngoại</span>
+</button>
+<!-- Member 4: Bé An -->
+<button class="member-chip flex flex-col items-center gap-1.5 p-space-xs rounded-xl bg-surface-container-lowest text-on-surface-variant shadow-sm transition-all duration-200 active:scale-95" data-member="be-an" type="button">
+<div class="relative w-12 h-12 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Chân dung bé gái Việt Nam khoảng 5 tuổi đôi mắt sáng lanh lợi vui vẻ, phong cách nhi khoa ấm áp tươi sáng rạng rỡ" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2BZhJ8451pnrFtOKo0EhuYi6S9VWP2fxm1auCcV8_uW2f29taX_03UH1bLPYl6n53th5reHfs2PIUw81PTid-B1Xabp_0XnnJeE2XjWTbPI91csc_rh7TOrEPRG8ExdzWwEIGw0hycsgaQZdh-l8KIq08iP2lWMbjoE9jXE1S-IuxNOvd-vX71HaKPSHQBnbj4pfq7NaeTpd0aDhKvFMmbptcFKw-PwsYu1n66LN-aDqP3gJEGh_vSA"/>
+</div>
+<span class="font-label-md text-label-md tracking-tight">Bé An</span>
+</button>
+</div>
+</section>
+<!-- Document Type Selector (Optional / AI Auto-classify) -->
+<section class="mt-space-md px-margin">
+<div class="flex items-center justify-between mb-space-xs">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Phân loại giấy tờ</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">auto_awesome</span>
+        AI tự nhận nếu bỏ trống
+      </span>
+</div>
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1" id="category-selector-group">
+<!-- Option 1: Đơn thuốc (Selected) -->
+<button class="cat-chip h-9 px-space-md rounded-full bg-primary text-on-primary flex items-center gap-1.5 shadow-sm shrink-0 transition-all text-label-md font-label-md" data-category="prescription" type="button">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">prescriptions</span>
+<span>Đơn thuốc</span>
+</button>
+<!-- Option 2: Xét nghiệm -->
+<button class="cat-chip h-9 px-space-md rounded-full bg-surface-container-lowest text-on-surface-variant flex items-center gap-1.5 shadow-sm shrink-0 transition-all text-label-md font-label-md" data-category="lab" type="button">
+<span class="material-symbols-outlined text-[16px]">biotech</span>
+<span>Xét nghiệm</span>
+</button>
+<!-- Option 3: Máy đo -->
+<button class="cat-chip h-9 px-space-md rounded-full bg-surface-container-lowest text-on-surface-variant flex items-center gap-1.5 shadow-sm shrink-0 transition-all text-label-md font-label-md" data-category="device" type="button">
+<span class="material-symbols-outlined text-[16px]">monitor_heart</span>
+<span>Máy đo</span>
+</button>
+</div>
+</section>
+<!-- Upload Capture Zone -->
+<section class="mt-space-md px-margin">
+<div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col items-center">
+<!-- Visual Illustration / Framing Canvas -->
+<div class="relative w-full h-32 rounded-lg bg-surface-container-low flex flex-col items-center justify-center overflow-hidden mb-space-md">
+<!-- Ambient animated scan rays -->
+<svg class="absolute inset-0 w-full h-full opacity-40 pointer-events-none" fill="none" preserveaspectratio="none" viewbox="0 0 320 128">
+<defs>
+<lineargradient id="scanGrad" x1="0" x2="0" y1="0" y2="100%">
+<stop offset="0%" stop-color="#286958" stop-opacity="0"></stop>
+<stop offset="50%" stop-color="#286958" stop-opacity="0.25"></stop>
+<stop offset="100%" stop-color="#286958" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<rect fill="url(#scanGrad)" height="16" width="320">
+<animate attributename="y" dur="3.5s" ease="easeInOut" repeatcount="indefinite" values="-16;128;-16"></animate>
+</rect>
+</svg>
+<div class="relative z-10 flex flex-col items-center text-center px-space-md">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center mb-1 text-on-secondary-container shadow-sm">
+<span class="material-symbols-outlined text-[24px]">document_scanner</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Tự động căn chỉnh &amp; làm rõ chữ</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Hỗ trợ nhận diện chữ viết tay của bác sĩ</span>
+</div>
+</div>
+<!-- Action Buttons Envelope -->
+<div class="w-full flex flex-col gap-space-xs">
+<!-- Primary Snap Button (56px) -->
+<button class="w-full h-14 bg-secondary text-on-secondary rounded-xl flex items-center justify-center gap-2 shadow-sm font-label-lg text-label-lg active:bg-primary transition-all duration-150" type="button">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+<span>Chụp ảnh ngay</span>
+</button>
+<!-- Secondary Gallery Picker (52px) -->
+<button class="w-full h-[52px] bg-surface-container-low text-secondary rounded-xl flex items-center justify-center gap-2 shadow-sm font-label-lg text-label-lg hover:bg-surface-container active:scale-[0.99] transition-all duration-150" type="button">
+<span class="material-symbols-outlined text-[22px]">add_photo_alternate</span>
+<span>Chọn ảnh có sẵn từ thư viện</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Upload Progress Ledger: 3 Files -->
+<section class="mt-space-md px-margin">
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-1.5">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Đang tải lên</h2>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container">3 ảnh</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Tự động đồng bộ</span>
+</div>
+<!-- 3-Image Preview Grid -->
+<div class="grid grid-cols-3 gap-space-xs">
+<!-- Item 1: Complete 100% -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl p-space-xs shadow-sm">
+<div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Ảnh chụp cận cảnh đơn thuốc y tế bác sĩ viết tay rõ nét đặt trên nền bàn gỗ sáng màu, ánh sáng lâm sàng chuẩn xác rõ ràng" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALroWwt6wNPCL30VlOimZKPkSCT4P8zqzs3yiB60emgFF4tBZyiLVFGr9EHXPTwyR4lc2mPh0rmqZI0wlkhEctD7CpWVJkHpOg-skl6xwDsA1Mc8IWZJ1iJVpJH7sRv1J5ZzjaOcLAB9uJpAAlvQxrtB_dAaDKjqj9h_K9rinFCobE83z8ijbTvNYqI0hm456jTedUEWY3dW7urnTzoDlgu1oo_FEegXeQJ5hy4gevxfbvFS-Yu76bAg"/>
+<div class="absolute inset-0 bg-primary/20 flex items-center justify-center">
+<div class="w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md animate-scale-in">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+</div>
+<div class="mt-1.5 flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-primary font-semibold">100%</span>
+<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div class="w-full h-1 bg-surface-container rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-primary rounded-full w-full"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface truncate mt-1">Đã nhận diện</span>
+</div>
+</div>
+<!-- Item 2: Uploading 64% -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl p-space-xs shadow-sm">
+<div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Phiếu kết quả xét nghiệm sinh hóa máu với các bảng chỉ số y khoa in rõ ràng, ánh sáng ban ngày tự nhiên chuẩn mực" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhUH2DsvmBYIDLrvq04cqgYsJj164NYW8M_DrZGyyC83FEqraao6NuaFdobdEgNaKczIDpU8bz_9yVD9FOSCyYyILrpZW5izH9RnuDGStTi38KTszFhrggAd5QdDiRVjXV9Gqv9Tx5MwAofGj2eRUICIugOI7NCvcsKjHXQWs1bSRzZsraVL2zz7kCYf5CtEWWPeW8wNdTkr-X1EfWlfOZhBm3_QlFeAQvr5CQT6WOKuxtXbL5nHErNQ"/>
+<div class="absolute inset-0 bg-on-surface/30 backdrop-blur-[1px] flex items-center justify-center">
+<span class="font-label-md text-label-md text-on-primary font-semibold drop-shadow">64%</span>
+</div>
+</div>
+<div class="mt-1.5 flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary font-semibold">64%</span>
+<span class="material-symbols-outlined text-[14px] text-secondary animate-spin">sync</span>
+</div>
+<div class="w-full h-1 bg-surface-container rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-secondary rounded-full w-[64%] transition-all duration-300"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate mt-1">Đang tải...</span>
+</div>
+</div>
+<!-- Item 3: Uploading 20% -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl p-space-xs shadow-sm">
+<div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Ảnh màn hình máy đo huyết áp điện tử hiển thị chỉ số nhịp tim và huyết áp rõ nét đặt trên khăn trải bàn gia đình" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcdOnsliy2KwadySidXKLZ7_ix9VaNlFDG-UViIYF3Vfn-u-nkGnWhOyPTvRB3jxi96Rsf0rAIEODc3-7elpsL-oA65MeG4hi23BY8YhScO56-M7ev5sT1JDAq3rkfwFAYdPkZvUzBeJgk31GFKNFw5RTyNGxGDoI4kgD4FdxpSSfqJdBZKuXNkpgMHwVorQ6bQ56cU1FFQDkB9hvNAQbto8y5iENnOXSP4WqGe0qIn3NviqnlTOkiPQ"/>
+<div class="absolute inset-0 bg-on-surface/40 backdrop-blur-[1px] flex items-center justify-center">
+<span class="font-label-md text-label-md text-on-primary font-semibold drop-shadow">20%</span>
+</div>
+</div>
+<div class="mt-1.5 flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold">20%</span>
+<span class="material-symbols-outlined text-[14px] text-outline animate-spin">progress_activity</span>
+</div>
+<div class="w-full h-1 bg-surface-container rounded-full mt-1 overflow-hidden">
+<div class="h-full bg-secondary rounded-full w-[20%] transition-all duration-300"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate mt-1">Đang mã hóa...</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Intelligent Inline Alert (Error / Discard Warnings) -->
+<section class="mt-space-md px-margin">
+<div class="rounded-xl bg-error-container p-space-sm shadow-sm flex items-start gap-space-sm" role="alert">
+<div class="w-7 h-7 rounded-full bg-error flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-on-error text-[18px]">warning</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-error-container font-semibold">2 tệp không nhận được</span>
+<span class="font-label-sm text-label-sm text-error font-medium">Bỏ qua</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-error-container mt-0.5 leading-snug">
+<strong>giay-hen.pdf:</strong> chỉ nhận ảnh chụp trực tiếp; <strong>IMG_4410.jpg:</strong> dung lượng vượt quá 20MB.
+        </p>
+<div class="mt-1.5 flex items-center gap-1 font-label-sm text-label-sm text-on-secondary-container">
+<span class="material-symbols-outlined text-[14px] text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>3 ảnh còn lại vẫn đang xử lý nền bình thường</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Pinned Bottom Navigation / Thumb Zone Transition Drawer -->
+<div class="fixed bottom-0 inset-x-0 z-40 bg-surface/90 backdrop-blur-xl pb-safe shadow-[0_-4px_16px_rgba(0,0,0,0.06)] px-margin pt-space-sm">
+<div class="max-w-md mx-auto flex flex-col gap-1 pb-space-sm">
+<button class="w-full h-[52px] bg-secondary text-on-secondary rounded-xl font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-md active:bg-primary transition-all duration-150" id="btn-submit" type="button">
+<span>Xong — đến Chờ duyệt</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<div class="flex items-center justify-center gap-1.5 text-center mt-1">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed animate-ping"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Ảnh sẽ tiếp tục đồng bộ an toàn ở chế độ nền</span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Simple micro-interactions for member and category switching
+  document.querySelectorAll('.member-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.member-chip').forEach(c => {
+        c.classList.remove('bg-primary', 'text-on-primary');
+        c.classList.add('bg-surface-container-lowest', 'text-on-surface-variant');
+        const badge = c.querySelector('.bg-secondary-fixed');
+        if (badge) badge.remove();
+      });
+      btn.classList.add('bg-primary', 'text-on-primary');
+      btn.classList.remove('bg-surface-container-lowest', 'text-on-surface-variant');
+      
+      const avatarBox = btn.querySelector('.relative');
+      if (avatarBox && !avatarBox.querySelector('.bg-secondary-fixed')) {
+        const badge = document.createElement('div');
+        badge.className = 'absolute bottom-0 right-0 w-3.5 h-3.5 bg-secondary-fixed rounded-full flex items-center justify-center';
+        badge.innerHTML = '<span class="material-symbols-outlined text-[10px] text-on-secondary-fixed" style="font-variation-settings: \'FILL\' 1;">check</span>';
+        avatarBox.appendChild(badge);
+      }
+    });
+  });
+
+  document.querySelectorAll('.cat-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.cat-chip').forEach(c => {
+        c.classList.remove('bg-primary', 'text-on-primary');
+        c.classList.add('bg-surface-container-lowest', 'text-on-surface-variant');
+      });
+      chip.classList.add('bg-primary', 'text-on-primary');
+      chip.classList.remove('bg-surface-container-lowest', 'text-on-surface-variant');
+    });
+  });
+
+  const btnSubmit = document.getElementById('btn-submit');
+  if (btnSubmit) {
+    btnSubmit.addEventListener('click', () => {
+      btnSubmit.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span><span>Đang chuyển trang...</span>';
+      setTimeout(() => {
+        window.location.hash = '#pending-review';
+      }, 400);
+    });
+  }
+</script></main></body></html>

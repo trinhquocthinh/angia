@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500;1,6..72,600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "surface-container-highest": "#d9e5e4",
+          "primary-container": "#20594b",
+          "primary-fixed-dim": "#99d2c0",
+          "tertiary": "#602900",
+          "on-secondary": "#ffffff",
+          "secondary-fixed": "#aef0da",
+          "surface-variant": "#d9e5e4",
+          "tertiary-fixed-dim": "#ffb68c",
+          "on-surface-variant": "#404945",
+          "secondary-fixed-dim": "#93d3bf",
+          "outline": "#707975",
+          "secondary-container": "#aef0da",
+          "on-tertiary-fixed": "#321200",
+          "inverse-primary": "#99d2c0",
+          "secondary": "#286958",
+          "on-error": "#ffffff",
+          "surface": "#f0fcfb",
+          "surface-container-low": "#eaf6f5",
+          "on-background": "#131d1d",
+          "on-surface": "#131d1d",
+          "surface-container-high": "#deebea",
+          "on-tertiary": "#ffffff",
+          "background": "#f0fcfb",
+          "inverse-on-surface": "#e7f3f3",
+          "on-secondary-fixed": "#002019",
+          "on-tertiary-fixed-variant": "#753400",
+          "on-primary": "#ffffff",
+          "on-primary-fixed": "#002019",
+          "on-secondary-fixed-variant": "#055141",
+          "surface-dim": "#d0dcdc",
+          "surface-container": "#e4f0f0",
+          "tertiary-fixed": "#ffdbc9",
+          "on-secondary-container": "#2f6f5e",
+          "primary-fixed": "#b4eedc",
+          "surface-container-lowest": "#ffffff",
+          "error": "#ba1a1a",
+          "on-error-container": "#93000a",
+          "surface-tint": "#306859",
+          "tertiary-container": "#833b00",
+          "surface-bright": "#f0fcfb",
+          "inverse-surface": "#273232",
+          "outline-variant": "#bfc9c4",
+          "on-primary-container": "#95cebc",
+          "error-container": "#ffdad6",
+          "on-primary-fixed-variant": "#145042",
+          "on-tertiary-container": "#ffb082",
+          "primary": "#004135"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "space-lg": "1.5rem",
+          "margin": "1rem",
+          "gutter": "1rem",
+          "gutter-tablet": "1.5rem",
+          "margin-desktop": "3rem",
+          "margin-tablet": "2rem",
+          "space-md": "1rem",
+          "gutter-desktop": "2rem",
+          "space-xs": "0.25rem",
+          "space-xl": "2rem",
+          "space-sm": "0.5rem"
+        },
+        "fontFamily": {
+          "label-md": ["Be Vietnam Pro"],
+          "headline-md": ["Newsreader"],
+          "headline-sm": ["Be Vietnam Pro"],
+          "body-lg": ["Be Vietnam Pro"],
+          "display-lg": ["Newsreader"],
+          "body-sm": ["Be Vietnam Pro"],
+          "body-md": ["Be Vietnam Pro"],
+          "display-sm": ["Newsreader"],
+          "headline-lg": ["Newsreader"],
+          "label-sm": ["Be Vietnam Pro"],
+          "label-lg": ["Be Vietnam Pro"]
+        },
+        "fontSize": {
+          "label-md": ["0.75rem", {"lineHeight": "1rem", "letterSpacing": "0.02em", "fontWeight": "600"}],
+          "headline-md": ["1.25rem", {"lineHeight": "1.75rem", "fontWeight": "600"}],
+          "headline-sm": ["1.125rem", {"lineHeight": "1.5rem", "fontWeight": "600"}],
+          "body-lg": ["1rem", {"lineHeight": "1.625rem", "fontWeight": "400"}],
+          "display-lg": ["2.25rem", {"lineHeight": "2.75rem", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+          "body-sm": ["0.8125rem", {"lineHeight": "1.25rem", "fontWeight": "400"}],
+          "body-md": ["0.9375rem", {"lineHeight": "1.5rem", "fontWeight": "400"}],
+          "display-sm": ["1.75rem", {"lineHeight": "2.25rem", "letterSpacing": "-0.015em", "fontWeight": "500"}],
+          "headline-lg": ["1.5rem", {"lineHeight": "2rem", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+          "label-sm": ["0.6875rem", {"lineHeight": "0.875rem", "letterSpacing": "0.03em", "fontWeight": "500"}],
+          "label-lg": ["0.875rem", {"lineHeight": "1.25rem", "letterSpacing": "0.01em", "fontWeight": "600"}]
+        }
+      }
+    }
+  };</script></head><body class="bg-surface font-body-md text-on-surface antialiased min-h-screen"><aside class="fixed left-0 top-0 h-full w-[72px] bg-surface-container-lowest z-50 flex flex-col items-center justify-between py-space-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col items-center w-full"><a class="flex flex-col items-center mb-space-lg group" data-path="nha" href="#"><img alt="Isolate the 3D squircle app icon of AN GIA on an absolute transparent background (PNG alpha transparency). Remove all outer background surrounding the rounded squircle container completely. The squircle tile itself—its white beveled rim, ivory porcelain surface, and embossed forest green emblem with hands, heart, roof, leaf and 'AN GIA' typography—must be preserved with clean, crisp edges and natural soft drop shadow on transparency, without any white or gray backdrop behind the icon tile." class="h-8 w-auto object-contain transition-transform group-hover:scale-105" src="https://lh3.googleusercontent.com/aida/AEtjO1XuoLMQBBej4MmQaGsBS9E0rHizKsOHE3ctAUFHDY0YhLw5-hfq56pRs7VOtS1Sra96_3m3xXcU9024Yx6cTQqcxFq0mMO-rxMgcJGMCkX2-5C9b0MopWkl9mEabB2qiRnvbiYN-INWBLrF3JGMxaiRdq3UKNSyx5UdyB2iFBjUkE7Ggo4uJxeaNKfUWW_ZfIKIMz_TaxcS9fpyZWUXCzFXB2lU5l3btErzoWnySIkTZTUv1WbMJEkCyyu4"/><span class="font-label-sm text-label-sm text-primary font-semibold mt-1 tracking-wider">AN GIA</span></a><nav class="flex flex-col items-center gap-space-sm w-full px-space-xs" data-active-classes="bg-primary-container text-on-primary-container rounded-xl font-bold"><a class="flex flex-col items-center justify-center w-14 h-14 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="nha" href="#"><span class="material-symbols-outlined text-[24px]">home</span><span class="font-label-sm text-label-sm mt-1 transition-colors">Nhà</span></a><a class="flex flex-col items-center justify-center w-14 h-14 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="them" href="#"><span class="material-symbols-outlined text-[24px]">add_circle</span><span class="font-label-sm text-label-sm mt-1 transition-colors">Thêm</span></a><a class="relative flex flex-col items-center justify-center w-14 h-14 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group" data-path="cho-duyet" href="#"><span class="material-symbols-outlined text-[24px]">pending_actions</span><span class="font-label-sm text-label-sm mt-1 transition-colors">Chờ duyệt</span><span class="absolute top-1.5 right-1.5 flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-error text-on-error font-label-sm text-[10px] font-bold leading-none ring-2 ring-surface-container-lowest">3</span></a></nav></div><div class="flex flex-col items-center gap-space-md pb-space-xs w-full"><a class="group flex flex-col items-center justify-center" data-path="tai-khoan" href="#"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center transition-transform group-hover:scale-105"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="font-label-sm text-label-sm text-on-surface-variant mt-1 group-hover:text-on-surface">Tôi</span></a></div></aside><div class="pl-[72px] min-h-screen flex flex-col"><header class="fixed top-0 left-[72px] right-0 h-16 bg-surface/80 backdrop-blur-xl z-40 flex items-center justify-between px-space-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-sm"><img alt="Isolate the 3D squircle app icon of AN GIA on an absolute transparent background (PNG alpha transparency). Remove all outer background surrounding the rounded squircle container completely. The squircle tile itself—its white beveled rim, ivory porcelain surface, and embossed forest green emblem with hands, heart, roof, leaf and 'AN GIA' typography—must be preserved with clean, crisp edges and natural soft drop shadow on transparency, without any white or gray backdrop behind the icon tile." class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XuoLMQBBej4MmQaGsBS9E0rHizKsOHE3ctAUFHDY0YhLw5-hfq56pRs7VOtS1Sra96_3m3xXcU9024Yx6cTQqcxFq0mMO-rxMgcJGMCkX2-5C9b0MopWkl9mEabB2qiRnvbiYN-INWBLrF3JGMxaiRdq3UKNSyx5UdyB2iFBjUkE7Ggo4uJxeaNKfUWW_ZfIKIMz_TaxcS9fpyZWUXCzFXB2lU5l3btErzoWnySIkTZTUv1WbMJEkCyyu4"/><span class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">AN GIA</span></div><nav class="hidden sm:flex items-center gap-space-md" data-active-classes="text-primary font-bold"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="nha" href="#">Sổ sức khỏe</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="cho-duyet" href="#">Lịch nhắc</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="tai-khoan" href="#">Hồ sơ gia đình</a></nav><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full flex-1 pt-16 bg-surface"><div class="max-w-[720px] mx-auto px-gutter-tablet py-space-lg w-full"><div class="flex flex-col w-full gap-space-lg pb-16">
+<!-- Profile & Clinical Record Header -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md pb-space-md">
+<div class="flex items-center gap-space-md">
+<div class="relative">
+<div class="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center text-primary font-headline-md text-headline-md">
+<span>B</span>
+</div>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-secondary ring-2 ring-surface-container-lowest"></span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Ba (75 tuổi)</h1>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-medium">Mã BN: AG-7504</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Tiền sử: Tăng huyết áp độ 2 • Rối loạn lipid máu</p>
+</div>
+</div>
+<button class="inline-flex items-center justify-center gap-2 px-space-md py-2.5 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg shadow-sm hover:bg-primary-container transition-all self-start md:self-center">
+<span class="material-symbols-outlined text-[20px]">clinical_notes</span>
+<span>Tóm tắt đi khám</span>
+</button>
+</div>
+<!-- Navigation Tabs -->
+<div class="flex items-center gap-1 overflow-x-auto pt-2">
+<button class="px-4 py-2 rounded-lg bg-surface-container-high text-primary font-label-md text-label-md flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">timeline</span>
+<span>Diễn biến</span>
+</button>
+<button class="px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">prescriptions</span>
+<span>Thuốc</span>
+</button>
+<button class="px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">chips</span>
+<span>Xét nghiệm</span>
+</button>
+<button class="px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">folder_managed</span>
+<span>Giấy tờ</span>
+</button>
+</div>
+</div>
+<!-- Operational Filters Toolbar -->
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-surface-container-low p-2 rounded-xl">
+<!-- Biomarker Segmented Switch -->
+<div class="inline-flex p-1 bg-surface-container-highest rounded-lg gap-1">
+<button class="px-4 py-1.5 rounded-md bg-surface-container-lowest text-primary shadow-sm font-label-md text-label-md flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>Huyết áp</span>
+</button>
+<button class="px-4 py-1.5 rounded-md text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors">
+<span>Đường huyết</span>
+</button>
+</div>
+<!-- Time Range Segmented Control -->
+<div class="inline-flex p-1 bg-surface-container-highest rounded-lg gap-1">
+<button class="px-3 py-1.5 rounded-md text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors">
+        4 tuần
+      </button>
+<button class="px-3 py-1.5 rounded-md bg-surface-container-lowest text-primary shadow-sm font-label-md text-label-md">
+        12 tuần
+      </button>
+<button class="px-3 py-1.5 rounded-md text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors">
+        26 tuần
+      </button>
+</div>
+</div>
+<!-- Summary Metric Grid (3 items) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Card 1: Huyết áp gần nhất -->
+<div class="bg-surface-container-lowest rounded-xl p- space-md p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Huyết áp gần nhất</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">monitor_heart</span>
+</div>
+<div class="my-3">
+<div class="flex items-baseline gap-1.5">
+<span class="font-display-lg text-display-lg text-on-surface tracking-tight font-semibold">152/94</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">mmHg</span>
+</div>
+<div class="mt-1 flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span>Mạch: <strong class="text-on-surface font-medium">78</strong> bpm</span>
+<span>•</span>
+<span class="text-[12px]">04/10/2026</span>
+</div>
+</div>
+<div class="px-2.5 py-1.5 rounded-lg bg-surface-container-high font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Phác đồ tăng liều Amlodipin</span>
+</div>
+</div>
+<!-- Card 2: Tuần có số đo -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Tần suất theo dõi</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">calendar_today</span>
+</div>
+<div class="my-3">
+<div class="flex items-baseline gap-1.5">
+<span class="font-display-lg text-display-lg text-on-surface tracking-tight font-semibold">7 / 8</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">tuần ghi nhận</span>
+</div>
+<p class="mt-1 font-body-sm text-body-sm text-on-surface-variant">Khoảng đo gần: Đều đặn mỗi thứ Hai</p>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 87.5%"></div>
+</div>
+</div>
+<!-- Card 3: Thuốc đang dùng -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Thuốc hiện tại</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">medication</span>
+</div>
+<div class="my-3">
+<div class="flex items-baseline gap-1.5">
+<span class="font-display-lg text-display-lg text-on-surface tracking-tight font-semibold">1</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">thuốc đang chỉ định</span>
+</div>
+<p class="mt-1 font-body-sm text-body-sm text-primary font-medium truncate">Amlodipin 5mg</p>
+</div>
+<div class="px-2.5 py-1.5 rounded-lg bg-surface-container font-label-sm text-label-sm text-on-surface-variant flex items-center justify-between">
+<span>Uống buổi sáng (07:30)</span>
+<span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Wide 12-week Blood Pressure Clinical Chart Card -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary">Biểu Đồ Xu Hướng 12 Tuần</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Theo chuẩn y khoa BR-033: Trung tính, hiển thị giai đoạn điều trị</p>
+</div>
+<!-- Neutral Legend -->
+<div class="flex flex-wrap items-center gap-3 font-label-sm text-label-sm text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="w-3.5 h-1 rounded-full bg-[#2F6F5E]"></span>
+<span>Tâm thu (Sys)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3.5 h-1 border-t-2 border-dashed border-[#6B4FA8]"></span>
+<span>Tâm trương (Dia)</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-2.5 h-2.5 rounded bg-[#E3EFEA]"></span>
+<span>Có dùng thuốc</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-2.5 h-2.5 rounded bg-[#F1ECE4]"></span>
+<span>Tạm ngưng</span>
+</div>
+</div>
+</div>
+<!-- Chart Canvas Area (606px max internal canvas scale) -->
+<div class="w-full overflow-x-auto">
+<div class="min-w-[606px] h-64 relative bg-surface-container-low rounded-lg p-3">
+<!-- SVG Graphic Rendering -->
+<svg class="w-full h-full overflow-visible" viewbox="0 0 606 220">
+<defs>
+<pattern height="8" id="hatchedPattern" patterntransform="rotate(45 0 0)" patternunits="userSpaceOnUse" width="8">
+<line stroke="#d4ccc1" stroke-width="1.2" x1="0" x2="0" y1="0" y2="8"></line>
+</pattern>
+</defs>
+<!-- Stage Background Banners -->
+<!-- Week 1 - 7: Active Medication -->
+<rect fill="#E3EFEA" height="175" rx="4" width="310" x="40" y="10"></rect>
+<text class="font-label-sm" fill="#286958" font-size="10" font-weight="600" x="50" y="24">Giai đoạn: Amlodipin 5mg</text>
+<!-- Week 8 - 9: Paused Treatment (Hatched) -->
+<rect fill="#F1ECE4" height="175" rx="4" width="90" x="350" y="10"></rect>
+<rect fill="url(#hatchedPattern)" height="175" opacity="0.4" rx="4" width="90" x="350" y="10"></rect>
+<text class="font-label-sm" fill="#707975" font-size="10" font-weight="600" x="358" y="24">Tạm ngừng</text>
+<!-- Week 10 - 12: Resumed Medication -->
+<rect fill="#E3EFEA" height="175" rx="4" width="145" x="440" y="10"></rect>
+<text class="font-label-sm" fill="#286958" font-size="10" font-weight="600" x="448" y="24">Dùng lại thuốc</text>
+<!-- Horizontal Grid Lines & Reference Targets -->
+<line stroke="#bfc9c4" stroke-dasharray="3,3" stroke-width="0.8" x1="40" x2="585" y1="45" y2="45"></line>
+<text fill="#707975" font-family="Be Vietnam Pro" font-size="9" x="12" y="48">160</text>
+<line stroke="#bfc9c4" stroke-dasharray="3,3" stroke-width="0.8" x1="40" x2="585" y1="85" y2="85"></line>
+<text fill="#707975" font-family="Be Vietnam Pro" font-size="9" x="12" y="88">140</text>
+<line stroke="#bfc9c4" stroke-dasharray="3,3" stroke-width="0.8" x1="40" x2="585" y1="125" y2="125"></line>
+<text fill="#707975" font-family="Be Vietnam Pro" font-size="9" x="12" y="128">100</text>
+<line stroke="#bfc9c4" stroke-dasharray="3,3" stroke-width="0.8" x1="40" x2="585" y1="160" y2="160"></line>
+<text fill="#707975" font-family="Be Vietnam Pro" font-size="9" x="12" y="163">80</text>
+<!-- Systolic Curve (Solid Green #2F6F5E) -->
+<path d="M 60 75 Q 110 68 150 78 T 240 82 T 330 70 T 395 40 T 470 65 T 565 52" fill="none" stroke="#2F6F5E" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<!-- Systolic Data Points -->
+<circle class="transition-transform hover:scale-125" cx="60" cy="75" fill="#2F6F5E" r="4"></circle>
+<circle cx="150" cy="78" fill="#2F6F5E" r="4"></circle>
+<circle cx="240" cy="82" fill="#2F6F5E" r="4"></circle>
+<circle cx="330" cy="70" fill="#2F6F5E" r="4"></circle>
+<circle cx="395" cy="40" fill="#2F6F5E" r="5"></circle>
+<circle cx="470" cy="65" fill="#2F6F5E" r="4"></circle>
+<circle cx="565" cy="52" fill="#2F6F5E" r="5"></circle>
+<text fill="#2F6F5E" font-size="10" font-weight="700" x="555" y="42">152</text>
+<!-- Diastolic Curve (Dashed Purple #6B4FA8) -->
+<path d="M 60 142 Q 110 138 150 144 T 240 146 T 330 140 T 395 118 T 470 135 T 565 130" fill="none" stroke="#6B4FA8" stroke-dasharray="5,4" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Diastolic Data Points -->
+<circle cx="60" cy="142" fill="#6B4FA8" r="3.5"></circle>
+<circle cx="150" cy="144" fill="#6B4FA8" r="3.5"></circle>
+<circle cx="240" cy="146" fill="#6B4FA8" r="3.5"></circle>
+<circle cx="330" cy="140" fill="#6B4FA8" r="3.5"></circle>
+<circle cx="395" cy="118" fill="#6B4FA8" r="4"></circle>
+<circle cx="470" cy="135" fill="#6B4FA8" r="3.5"></circle>
+<circle cx="565" cy="130" fill="#6B4FA8" r="4"></circle>
+<text fill="#6B4FA8" font-size="10" font-weight="700" x="555" y="122">94</text>
+<!-- X Axis Markers (Weeks) -->
+<text fill="#707975" font-size="10" x="50" y="200">T.1</text>
+<text fill="#707975" font-size="10" x="140" y="200">T.3</text>
+<text fill="#707975" font-size="10" x="230" y="200">T.5</text>
+<text fill="#707975" font-size="10" x="320" y="200">T.7</text>
+<text fill="#707975" font-size="10" x="385" y="200">T.9 (ngừng)</text>
+<text fill="#707975" font-size="10" x="460" y="200">T.11</text>
+<text fill="#707975" font-size="10" x="545" y="200">T.12 (nay)</text>
+</svg>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">info</span>
+        Chỉ số tâm thu dao động tăng khi tạm ngưng thuốc ở tuần thứ 9
+      </span>
+<span class="text-[11px] text-outline">Đơn vị: mmHg</span>
+</div>
+</div>
+<!-- Detailed Measurement Table -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="px-space-md py-3 bg-surface-container flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">table_chart</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Lịch Sử Đo Chi Tiết</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-normal">Hiển thị 5 lần đo gần nhất</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left font-body-sm text-body-sm border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md">
+<th class="py-3 px-4">Ngày</th>
+<th class="py-3 px-4">Tâm thu</th>
+<th class="py-3 px-4">Tâm trương</th>
+<th class="py-3 px-4">Mạch</th>
+<th class="py-3 px-4 text-right">Nguồn dữ liệu</th>
+</tr>
+</thead>
+<tbody class="text-on-surface">
+<!-- Row 1: Gần nhất -->
+<tr class="hover:bg-surface-container-lowest transition-colors bg-surface-container-lowest">
+<td class="py-3.5 px-4 font-medium flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>04/10/2026</span>
+<span class="text-[11px] text-on-surface-variant">07:15</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-bold text-[#2F6F5E]">152</span> <span class="text-outline-variant text-[11px]">mmHg</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-bold text-[#6B4FA8]">94</span> <span class="text-outline-variant text-[11px]">mmHg</span>
+</td>
+<td class="py-3.5 px-4 font-medium">78 <span class="text-outline-variant text-[11px]">bpm</span></td>
+<td class="py-3.5 px-4 text-right">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">photo_camera</span>
+<span>Ảnh (Omron)</span>
+</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-lowest transition-colors bg-surface-container-low/40">
+<td class="py-3.5 px-4 font-medium flex items-center gap-2">
+<span class="w-2 h-2 rounded-full opacity-0"></span>
+<span>27/09/2026</span>
+<span class="text-[11px] text-on-surface-variant">07:20</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-semibold text-on-surface">148</span> <span class="text-outline-variant text-[11px]">mmHg</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-semibold text-on-surface">90</span> <span class="text-outline-variant text-[11px]">mmHg</span>
+</td>
+<td class="py-3.5 px-4">76 <span class="text-outline-variant text-[11px]">bpm</span></td>
+<td class="py-3.5 px-4 text-right">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">edit_note</span>
+<span>Nhập tay</span>
+</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-lowest transition-colors bg-surface-container-lowest">
+<td class="py-3.5 px-4 font-medium flex items-center gap-2">
+<span class="w-2 h-2 rounded-full opacity-0"></span>
+<span>20/09/2026</span>
+<span class="text-[11px] text-on-surface-variant">08:05</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-semibold text-on-surface">142</span> <span class="text-outline-variant text-[11px]">mmHg</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-semibold text-on-surface">88</span> <span class="text-outline-variant text-[11px]">mmHg</span>
+</td>
+<td class="py-3.5 px-4">74 <span class="text-outline-variant text-[11px]">bpm</span></td>
+<td class="py-3.5 px-4 text-right">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">photo_camera</span>
+<span>Ảnh (Omron)</span>
+</span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-lowest transition-colors bg-surface-container-low/40">
+<td class="py-3.5 px-4 font-medium flex items-center gap-2">
+<span class="w-2 h-2 rounded-full opacity-0"></span>
+<span>13/09/2026</span>
+<span class="text-[11px] text-on-surface-variant">07:00</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-semibold text-on-surface">160</span> <span class="text-outline-variant text-[11px]">mmHg</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-semibold text-on-surface">98</span> <span class="text-outline-variant text-[11px]">mmHg</span>
+</td>
+<td class="py-3.5 px-4">82 <span class="text-outline-variant text-[11px]">bpm</span></td>
+<td class="py-3.5 px-4 text-right">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">photo_camera</span>
+<span>Ảnh (Microlife)</span>
+</span>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-lowest transition-colors bg-surface-container-lowest">
+<td class="py-3.5 px-4 font-medium flex items-center gap-2">
+<span class="w-2 h-2 rounded-full opacity-0"></span>
+<span>06/09/2026</span>
+<span class="text-[11px] text-on-surface-variant">07:45</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-semibold text-on-surface">155</span> <span class="text-outline-variant text-[11px]">mmHg</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="font-semibold text-on-surface">92</span> <span class="text-outline-variant text-[11px]">mmHg</span>
+</td>
+<td class="py-3.5 px-4">79 <span class="text-outline-variant text-[11px]">bpm</span></td>
+<td class="py-3.5 px-4 text-right">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">edit_note</span>
+<span>Nhập tay</span>
+</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Action Zone -->
+<div class="p-3 bg-surface-container-lowest flex items-center justify-between">
+<button class="text-secondary font-label-md text-label-md flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+        Xuất file PDF cho bác sĩ
+      </button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high text-primary font-label-md text-label-md hover:bg-surface-container-highest transition-colors">
+        Xem tất cả 24 lần đo
+      </button>
+</div>
+</div>
+</div></div></main></div></body></html>

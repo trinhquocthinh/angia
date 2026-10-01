@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+</helmet>
+<nav aria-label="Điều hướng chính" style="width:72px;height:100%;box-sizing:border-box;background:#FFFFFF;border-right:1px solid #E4E0DA;padding:20px 4px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;font-family:'Be Vietnam Pro',sans-serif;color:#1F2A2A">
+  <span style="padding-bottom:12px;font:600 14px/20px 'Be Vietnam Pro';letter-spacing:.04em;color:#2F6F5E">AN GIA</span>
+  <sc-for list="{{ items }}" as="it" hint-placeholder-count="3">
+    <sc-if value="{{ it.on }}" hint-placeholder-val="{{ false }}">
+      <div aria-current="page" style="width:64px;min-height:64px;padding:4px 0;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer">
+        <span style="position:relative;width:52px;height:32px;border-radius:16px;background:#E3EFEA;color:#2F6F5E;display:flex;align-items:center;justify-content:center">{{ it.icon }}<sc-if value="{{ it.hasBadge }}" hint-placeholder-val="{{ false }}"><span aria-label="{{ it.badgeLabel }}" style="position:absolute;top:-6px;right:0;min-width:22px;height:22px;padding:0 5px;box-sizing:border-box;border-radius:11px;background:#2F6F5E;color:#FFFFFF;border:2px solid #FFFFFF;font:600 14px/18px 'Be Vietnam Pro';text-align:center">{{ it.badge }}</span></sc-if></span>
+        <span style="font:600 14px/18px 'Be Vietnam Pro';text-align:center;color:#1F2A2A">{{ it.label }}</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ it.off }}" hint-placeholder-val="{{ true }}">
+      <div style="width:64px;min-height:64px;padding:4px 0;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer" style-hover="background:#E3EFEA">
+        <span style="position:relative;width:52px;height:32px;border-radius:16px;color:#55615F;display:flex;align-items:center;justify-content:center">{{ it.icon }}<sc-if value="{{ it.hasBadge }}" hint-placeholder-val="{{ false }}"><span aria-label="{{ it.badgeLabel }}" style="position:absolute;top:-6px;right:0;min-width:22px;height:22px;padding:0 5px;box-sizing:border-box;border-radius:11px;background:#2F6F5E;color:#FFFFFF;border:2px solid #FFFFFF;font:600 14px/18px 'Be Vietnam Pro';text-align:center">{{ it.badge }}</span></sc-if></span>
+        <span style="font:500 14px/18px 'Be Vietnam Pro';text-align:center;color:#55615F">{{ it.label }}</span>
+      </div>
+    </sc-if>
+  </sc-for>
+  <div style="margin-top:auto;width:64px;min-height:64px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer" style-hover="background:#E3EFEA">
+    <span aria-hidden="true" style="width:32px;height:32px;border-radius:16px;background:#F1ECE4;display:flex;align-items:center;justify-content:center;font:600 14px/20px 'Be Vietnam Pro'">T</span>
+    <span style="font:500 14px/18px 'Be Vietnam Pro';color:#55615F">Tôi</span>
+  </div>
+</nav>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:72,&quot;height&quot;:1024},&quot;active&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;add&quot;,&quot;review&quot;],&quot;default&quot;:&quot;review&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;badge&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const a = this.props.active ?? 'review';
+    const b = Number(this.props.badge ?? 3);
+    const ic = (d, on) => React.createElement('svg', { width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: on ? 2 : 1.75, strokeLinecap: 'round', strokeLinejoin: 'round', dangerouslySetInnerHTML: { __html: d } });
+    const P = {
+      home: '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+      add: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+      review: '<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>'
+    };
+    const items = [['home','Nhà'],['add','Thêm'],['review','Chờ duyệt']].map(([k,l]) => ({
+      label: l, on: a === k, off: a !== k, icon: ic(P[k], a === k),
+      hasBadge: k === 'review' && b > 0, badge: b, badgeLabel: b + ' giấy tờ chờ duyệt'
+    }));
+    return { items };
+  }
+}
+</script>
+</body>
+</html>

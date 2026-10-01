@@ -1,0 +1,45 @@
+# Hạ tầng phụ trợ cho phát triển cục bộ — KHÔNG dùng cho SIT/Prod (runtime nằm ở repo homelab-deploy).
+# Luôn chạy kèm --project-directory . để Compose đọc .env ở gốc repo:
+#   docker compose -f docker-compose.dev.yml --project-directory . up -d && yarn dev:storage-init
+name: angia-dev
+
+services:
+  postgres:
+    image: postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea
+    environment:
+      POSTGRES_DB: angia_dev
+      POSTGRES_USER: angia_dev
+      POSTGRES_PASSWORD: ${DEV_POSTGRES_OWNER_PASSWORD:?Thiếu DEV_POSTGRES_OWNER_PASSWORD trong .env}
+      DEV_POSTGRES_APP_PASSWORD: ${DEV_POSTGRES_APP_PASSWORD:?Thiếu DEV_POSTGRES_APP_PASSWORD trong .env}
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - '127.0.0.1:${DEV_POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/dev/postgres-initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U angia_dev -d angia_dev']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  garage:
+    image: dxflrs/garage:v2.4.1@sha256:9c96caa2612d3411acc5b0e6701fb238dbfba33e533a6d7d3d811a4b12d0d020
+    environment:
+      GARAGE_RPC_SECRET: ${DEV_GARAGE_RPC_SECRET:?Thiếu DEV_GARAGE_RPC_SECRET trong .env}
+    ports:
+      - '127.0.0.1:${DEV_GARAGE_S3_PORT:-3900}:3900'
+    volumes:
+      - ./docker/dev/garage.toml:/etc/garage.toml:ro
+      - garage-meta:/var/lib/garage/meta
+      - garage-data:/var/lib/garage/data
+    healthcheck:
+      test: ['CMD', '/garage', 'status']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres-data:
+  garage-meta:
+  garage-data:

@@ -1,0 +1,57 @@
+{
+  "name": "angia",
+  "private": true,
+  "type": "module",
+  "packageManager": "yarn@4.18.1",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "yarn build:contracts && concurrently -n contracts,api,worker,web \"yarn workspace @angia/contracts dev\" \"yarn workspace @angia/api dev\" \"yarn workspace @angia/worker dev\" \"yarn workspace @angia/web dev\"",
+    "build": "yarn workspaces foreach -At --exclude angia run build",
+    "build:contracts": "yarn workspace @angia/contracts build",
+    "typecheck": "yarn build:contracts && yarn workspaces foreach -A --exclude angia run typecheck && tsc -p tsconfig.tooling.json",
+    "lint": "eslint --cache --cache-location node_modules/.cache/eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run --project \"unit*\"",
+    "test:int": "vitest run --project int",
+    "test:coverage": "vitest run --project \"unit*\" --coverage",
+    "dup": "jscpd",
+    "knip": "knip && knip --production",
+    "generate:api": "yarn build:contracts && yarn workspace @angia/api generate:openapi && yarn workspace @angia/web generate:api",
+    "check:api": "yarn generate:api && git diff --exit-code -- packages/contracts/openapi.json apps/web/src/shared/api/",
+    "verify:fast": "yarn typecheck && vitest run --project \"unit*\" --changed",
+    "verify": "yarn generate:api && yarn typecheck && yarn lint && yarn format:check && yarn test && yarn dup && yarn knip && yarn build",
+    "dev:infra": "docker compose -f docker-compose.dev.yml --project-directory . up -d --wait && yarn dev:storage-init",
+    "dev:storage-init": "bash scripts/dev/garage-init.sh",
+    "postinstall": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.3",
+    "@commitlint/config-conventional": "21.2.3",
+    "@eslint/js": "9.39.5",
+    "@types/node": "22.20.4",
+    "@vitest/coverage-v8": "5.0.1",
+    "concurrently": "10.0.5",
+    "eslint": "9.39.5",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-import-resolver-typescript": "4.4.5",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.12.0",
+    "husky": "9.1.7",
+    "jscpd": "5.3.2",
+    "knip": "6.38.0",
+    "lint-staged": "17.5.1",
+    "prettier": "3.9.9",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.70.1",
+    "vite": "8.3.0",
+    "vitest": "5.0.1"
+  }
+}
