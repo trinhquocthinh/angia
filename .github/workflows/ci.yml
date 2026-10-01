@@ -74,9 +74,32 @@ jobs:
           docker build -f apps/web/Dockerfile -t angia-web:ci .
           wait "$api_pid"
 
+  # Cổng gom 4 job: validator bên homelab-deploy chỉ chấp nhận job `verify` = success.
+  # `always()` để job thất bại/bị hủy làm `verify` đỏ thay vì skipped (skipped vẫn qua branch protection).
+  verify:
+    name: verify
+    needs: [lint-and-types, unit-and-coverage, rls-integration, build-artifacts]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Mọi job kiểm tra phải thành công
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Kết quả: $RESULTS"
+          for result in $RESULTS; do
+            if [[ "$result" != "success" ]]; then
+              echo "::error::Có job kiểm tra không thành công ($result)"
+              exit 1
+            fi
+          done
+
   dispatch-sit:
     name: Dispatch verified SIT SHA
-    needs: [lint-and-types, unit-and-coverage, rls-integration, build-artifacts]
+    needs: verify
     if: github.event_name == 'push' && github.ref == 'refs/heads/sit'
     runs-on: ubuntu-latest
     timeout-minutes: 5
