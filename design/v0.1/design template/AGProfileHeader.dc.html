@@ -25,13 +25,13 @@
     <h1 style="margin:0;font:600 24px/32px 'Be Vietnam Pro'">{{ name }}</h1>
     <span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">{{ meta }}</span>
   </div>
-  <div role="tablist" style="display:flex;gap:4px;padding:0 8px">
+  <div role="tablist" style="display:flex;flex-wrap:nowrap;overflow-x:auto;gap:4px;padding:0 8px">
     <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
       <sc-if value="{{ t.on }}" hint-placeholder-val="{{ false }}">
-        <div role="tab" aria-selected="true" style="min-height:44px;padding:0 10px;display:flex;align-items:center;font:600 15px/22px 'Be Vietnam Pro';color:#1F2A2A;box-shadow:inset 0 -2px 0 #2F6F5E">{{ t.label }}</div>
+        <div role="tab" aria-selected="true" style="flex:none;white-space:nowrap;min-height:44px;padding:0 10px;display:flex;align-items:center;font:600 15px/22px 'Be Vietnam Pro';color:#1F2A2A;box-shadow:inset 0 -2px 0 #2F6F5E">{{ t.label }}</div>
       </sc-if>
       <sc-if value="{{ t.off }}" hint-placeholder-val="{{ true }}">
-        <div role="tab" style="min-height:44px;padding:0 10px;display:flex;align-items:center;font:500 15px/22px 'Be Vietnam Pro';color:#55615F">{{ t.label }}</div>
+        <div role="tab" style="flex:none;white-space:nowrap;min-height:44px;padding:0 10px;display:flex;align-items:center;font:500 15px/22px 'Be Vietnam Pro';color:#55615F">{{ t.label }}</div>
       </sc-if>
     </sc-for>
   </div>

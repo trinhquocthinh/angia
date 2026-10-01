@@ -1,0 +1,19 @@
+.git
+.github
+.husky
+.yarn/cache
+.yarn/install-state.gz
+**/node_modules
+**/dist
+**/coverage
+design
+docker/dev
+scripts
+tooling
+logo.png
+
+# Bí mật không bao giờ được nướng vào image — biến môi trường do compose runtime cấp.
+.env
+**/.env
+**/.env.*
+!**/.env.example

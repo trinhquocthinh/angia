@@ -253,6 +253,83 @@
       </div>
     </div>
   </section>
+
+  <div style="display:flex;flex-direction:column;gap:8px;padding-top:16px">
+    <span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">Bổ sung cho web · tablet 768 · desktop 1440</span>
+    <h2 style="margin:0;font:600 24px/32px 'Be Vietnam Pro'">Điều hướng, side panel, bảng, vùng kéo-thả</h2>
+    <p style="margin:0;max-width:760px;font:400 17px/26px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Hover (desktop) = nền #E3EFEA + con trỏ tay; không có thông tin chỉ hiện khi hover. Đang chọn = nền #E3EFEA + viền 1px #2F6F5E + chữ 600. Vùng chạm vẫn ≥ 44 px. Dùng ở <a href="An Gia - Web.dc.html">An Gia — Web</a>.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:24px;align-items:start">
+    <section style="background:#FAF8F5;border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:16px">
+      <h2 style="margin:0;font:600 20px/28px 'Be Vietnam Pro'">Sidebar · 240</h2>
+      <div style="height:740px;border:1px solid #E4E0DA;border-radius:12px;overflow:hidden"><dc-import name="AGSidebar" active="ba" badge="{{ 3 }}" hint-size="240px,740px"></dc-import></div>
+      <span style="max-width:240px;font:400 14px/20px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Logo + slogan · Nhà, Thêm, Chờ duyệt (huy hiệu số) · nhóm Hồ sơ · cuối: người dùng, Quản trị, Đăng xuất. Mục 44 px.</span>
+    </section>
+    <section style="background:#FAF8F5;border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:16px">
+      <h2 style="margin:0;font:600 20px/28px 'Be Vietnam Pro'">Rail · 72</h2>
+      <div style="height:480px;border:1px solid #E4E0DA;border-radius:12px;overflow:hidden;align-self:flex-start"><dc-import name="AGRail" active="review" badge="{{ 3 }}" hint-size="72px,480px"></dc-import></div>
+      <span style="max-width:160px;font:400 14px/20px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Icon + nhãn 14 px · mục 64×64 · đang chọn: viên #E3EFEA quanh icon.</span>
+    </section>
+    <section style="background:#FAF8F5;border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:16px">
+      <h2 style="margin:0;font:600 20px/28px 'Be Vietnam Pro'">Side panel · 420 (thay bottom sheet trên desktop)</h2>
+      <div style="height:560px;border:1px solid #E4E0DA;border-radius:12px;overflow:hidden;position:relative;background:#FAF8F5">
+        <div style="position:absolute;inset:0;background:rgba(31,42,42,.24)"></div>
+        <aside role="dialog" aria-label="Dừng thuốc" style="position:absolute;top:0;right:0;bottom:0;width:420px;max-width:100%;background:#FFFFFF;border-left:1px solid #E4E0DA;box-shadow:-4px 0 16px rgba(31,42,42,.10);display:flex;flex-direction:column">
+          <div style="height:72px;flex:none;padding:0 12px 0 24px;border-bottom:1px solid #E4E0DA;display:flex;align-items:center;justify-content:space-between"><span style="font:600 20px/28px 'Be Vietnam Pro'">Dừng Canxi · Mẹ</span><div style="min-height:44px;padding:0 12px;border-radius:8px;display:flex;align-items:center;gap:6px;font:600 15px/22px 'Be Vietnam Pro';color:#2F6F5E;cursor:pointer" style-hover="background:#E3EFEA"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>Đóng</div></div>
+          <div style="flex:1;padding:24px;display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font:500 15px/22px 'Be Vietnam Pro'">Ngừng từ ngày</span><div style="height:48px;border-radius:8px;border:1px solid #E4E0DA;padding:0 12px;display:flex;align-items:center;font:400 17px/26px 'Be Vietnam Pro'">05/10/2026</div></div>
+            <span style="font:400 14px/20px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Giai đoạn ngưng sẽ hiện trên biểu đồ bằng nền gạch chéo.</span>
+            <div style="margin-top:auto;display:flex;gap:8px"><div style="height:52px;padding:0 24px;border-radius:12px;background:#2F6F5E;color:#FFFFFF;display:flex;align-items:center;font:600 17px/26px 'Be Vietnam Pro'">Lưu</div><div style="height:52px;padding:0 20px;border-radius:12px;color:#2F6F5E;display:flex;align-items:center;font:600 17px/26px 'Be Vietnam Pro'">Hủy</div></div>
+          </div>
+        </aside>
+      </div>
+      <span style="font:400 14px/20px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Header 72 có “Đóng” rõ ràng · nút ở cuối panel, không dính đáy màn · nền mờ 24% · không lồng panel trong panel · Esc cũng đóng.</span>
+    </section>
+  </div>
+
+  <section style="background:#FAF8F5;border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font:600 20px/28px 'Be Vietnam Pro'">Bảng dữ liệu</h2>
+    <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);overflow:hidden;max-width:720px">
+      <table style="width:100%;border-collapse:collapse;font:400 15px/22px 'Be Vietnam Pro';font-variant-numeric:tabular-nums">
+        <thead><tr style="text-align:left;color:#55615F"><th style="font:500 14px/20px 'Be Vietnam Pro';padding:10px 8px 10px 16px;border-bottom:1px solid #E4E0DA">Ngày</th><th style="font:500 14px/20px 'Be Vietnam Pro';padding:10px 8px;border-bottom:1px solid #E4E0DA;text-align:right">Tâm thu</th><th style="font:500 14px/20px 'Be Vietnam Pro';padding:10px 8px;border-bottom:1px solid #E4E0DA;text-align:right">Tâm trương</th><th style="font:500 14px/20px 'Be Vietnam Pro';padding:10px 8px;border-bottom:1px solid #E4E0DA;text-align:right">Mạch</th><th style="font:500 14px/20px 'Be Vietnam Pro';padding:10px 16px 10px 16px;border-bottom:1px solid #E4E0DA">Nguồn</th><th style="font:500 14px/20px 'Be Vietnam Pro';padding:10px 16px;border-bottom:1px solid #E4E0DA;font-style:italic">trạng thái (chú thích)</th></tr></thead>
+        <tbody>
+          <tr style="height:44px;cursor:pointer" style-hover="background:#E3EFEA"><td style="padding:0 8px 0 16px;border-bottom:1px solid #F1ECE4">04/10/2026</td><td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right;font-weight:600">152</td><td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right;font-weight:600">94</td><td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right">78</td><td style="padding:0 16px;border-bottom:1px solid #F1ECE4;color:#2F6F5E;font-weight:500">Ảnh</td><td style="padding:0 16px;border-bottom:1px solid #F1ECE4;font:500 14px/20px 'Be Vietnam Pro';color:#55615F">Mặc định</td></tr>
+          <tr style="height:44px;cursor:pointer;background:#E3EFEA"><td style="padding:0 8px 0 16px;border-bottom:1px solid #F1ECE4">02/10/2026</td><td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right;font-weight:600">149</td><td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right;font-weight:600">92</td><td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right">79</td><td style="padding:0 16px;border-bottom:1px solid #F1ECE4;color:#2F6F5E;font-weight:500">Ảnh</td><td style="padding:0 16px;border-bottom:1px solid #F1ECE4;font:500 14px/20px 'Be Vietnam Pro';color:#55615F">Hover</td></tr>
+          <tr aria-selected="true" style="height:44px;cursor:pointer;background:#E3EFEA;box-shadow:inset 0 0 0 1px #2F6F5E"><td style="padding:0 8px 0 16px;border-bottom:1px solid #F1ECE4;font-weight:600">29/09/2026</td><td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right;font-weight:600">146</td><td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right;font-weight:600">90</td><td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right;font-weight:600">78</td><td style="padding:0 16px;border-bottom:1px solid #F1ECE4;color:#55615F;font-weight:500">Nhập tay</td><td style="padding:0 16px;border-bottom:1px solid #F1ECE4;font:500 14px/20px 'Be Vietnam Pro';color:#55615F">Đang chọn</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <span style="font:400 14px/20px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Header 14/500 #55615F, kẻ #E4E0DA · hàng 44 px, kẻ #F1ECE4 · số căn phải tabular · không cột “đánh giá”, không tô màu theo giá trị · nguồn = chữ (Ảnh mở ảnh gốc).</span>
+  </section>
+
+  <section style="background:#FAF8F5;border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font:600 20px/28px 'Be Vietnam Pro'">Vùng kéo-thả</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px">
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:500 15px/22px 'Be Vietnam Pro'">Mặc định</span>
+        <div style="height:176px;border:2px dashed #9AA3A1;border-radius:12px;background:#FFFFFF;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center">
+          <span style="width:48px;height:48px;border-radius:24px;background:#E3EFEA;color:#2F6F5E;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg></span>
+          <span style="font:600 17px/26px 'Be Vietnam Pro'">Kéo ảnh vào đây hoặc <span style="color:#2F6F5E;text-decoration:underline">Chọn ảnh</span></span>
+          <span style="font:400 14px/20px 'Be Vietnam Pro';color:#55615F">JPG, PNG, HEIC · tối đa 20 MB</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:500 15px/22px 'Be Vietnam Pro'">Kéo đang ở trên</span>
+        <div style="height:176px;border:2px solid #2F6F5E;border-radius:12px;background:#E3EFEA;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center">
+          <span style="width:48px;height:48px;border-radius:24px;background:#2F6F5E;color:#FFFFFF;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg></span>
+          <span style="font:600 17px/26px 'Be Vietnam Pro'">Thả để thêm 4 ảnh</span>
+          <span style="font:400 14px/20px 'Be Vietnam Pro';color:#1F2A2A">cho Mẹ · Đơn thuốc</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:500 15px/22px 'Be Vietnam Pro'">Lỗi</span>
+        <div role="alert" style="height:176px;border:2px dashed #B42318;border-radius:12px;background:#FBEDEB;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center">
+          <span style="width:48px;height:48px;border-radius:24px;background:#FFFFFF;color:#B42318;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg></span>
+          <span style="font:600 17px/26px 'Be Vietnam Pro'">Không nhận tệp này</span>
+          <span style="font:400 14px/20px 'Be Vietnam Pro';color:#1F2A2A;text-wrap:pretty">giay-hen-tai-kham.pdf — chỉ nhận ảnh. Hãy chụp lại tờ giấy.</span>
+        </div>
+      </div>
+    </div>
+    <span style="font:400 14px/20px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Viền đứt #9AA3A1 3:1 với nền · kéo vào: viền liền + nền #E3EFEA + đếm số ảnh · lỗi: viền #B42318 + icon + chữ, tệp hợp lệ trong cùng lượt vẫn được nhận · cả vùng là nút “Chọn ảnh” (Enter/Space).</span>
+  </section>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>

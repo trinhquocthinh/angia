@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+<style>body{margin:0;background:#EFECE7;-webkit-font-smoothing:antialiased}a{color:#2F6F5E}a:hover{color:#255A4C}*{box-sizing:border-box}</style>
+</helmet>
+<div style="padding:64px;font-family:'Be Vietnam Pro',sans-serif;color:#1F2A2A;display:flex;flex-direction:column;gap:72px;width:max-content">
+  <header style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;flex-direction:column;gap:8px;max-width:820px">
+      <span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">AN GIA · v0.1 · So sánh breakpoint</span>
+      <h1 style="margin:0;font:600 34px/40px 'Be Vietnam Pro'">360 · 768 · 1440 — cùng component, đổi bố cục</h1>
+      <p style="margin:0;font:400 17px/26px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Mỗi khung dưới đây là cùng một component màn hình với tham số breakpoint. Đủ 7 màn desktop ở <a href="An Gia - Web.dc.html">An Gia — Web</a>.</p>
+    </div>
+    <table style="border-collapse:collapse;font:400 15px/22px 'Be Vietnam Pro';background:#FAF8F5;border-radius:12px;overflow:hidden;width:1200px">
+      <thead><tr style="text-align:left;color:#55615F"><th style="font:500 14px/20px 'Be Vietnam Pro';padding:12px 16px;border-bottom:1px solid #E4E0DA;width:180px"></th><th style="font:500 14px/20px 'Be Vietnam Pro';padding:12px 16px;border-bottom:1px solid #E4E0DA">Mobile 360–767</th><th style="font:500 14px/20px 'Be Vietnam Pro';padding:12px 16px;border-bottom:1px solid #E4E0DA">Tablet 768–1023</th><th style="font:500 14px/20px 'Be Vietnam Pro';padding:12px 16px;border-bottom:1px solid #E4E0DA">Desktop ≥ 1024</th></tr></thead>
+      <tbody>
+        <sc-for list="{{ rules }}" as="r" hint-placeholder-count="5">
+          <tr><td style="padding:10px 16px;border-bottom:1px solid #E4E0DA;font-weight:600">{{ r.k }}</td><td style="padding:10px 16px;border-bottom:1px solid #E4E0DA">{{ r.m }}</td><td style="padding:10px 16px;border-bottom:1px solid #E4E0DA">{{ r.t }}</td><td style="padding:10px 16px;border-bottom:1px solid #E4E0DA">{{ r.d }}</td></tr>
+        </sc-for>
+      </tbody>
+    </table>
+  </header>
+
+  <section id="duyet" style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:16px"><span style="font:600 24px/32px 'Be Vietnam Pro';color:#2F6F5E">A</span><h2 style="margin:0;font:600 24px/32px 'Be Vietnam Pro'">Duyệt đơn thuốc</h2><span style="font:400 15px/22px 'Be Vietnam Pro';color:#55615F">ảnh trên/form dưới → ảnh | form → danh sách | ảnh | form</span></div>
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div id="a360" style="display:flex;flex-direction:column;gap:12px;width:360px">
+        <div style="display:flex;gap:8px;align-items:center"><span style="padding:2px 8px;border-radius:8px;background:#1F2A2A;color:#FFFFFF;font:600 14px/20px 'Be Vietnam Pro'">A·360</span><span style="font:500 15px/22px 'Be Vietnam Pro'">Mobile</span></div>
+        <dc-import name="AGScreenDuyet" bp="mobile" hint-size="360px,800px"></dc-import>
+        <p style="margin:0;font:400 14px/20px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Ảnh nửa trên, form nửa dưới, Lưu ở thanh cố định đáy (vùng ngón cái). Cảnh báo rút gọn một dòng.</p>
+      </div>
+      <div id="a768" style="display:flex;flex-direction:column;gap:12px;width:768px">
+        <div style="display:flex;gap:8px;align-items:center"><span style="padding:2px 8px;border-radius:8px;background:#1F2A2A;color:#FFFFFF;font:600 14px/20px 'Be Vietnam Pro'">A·768</span><span style="font:500 15px/22px 'Be Vietnam Pro'">Tablet</span></div>
+        <dc-import name="AGScreenDuyet" bp="tablet" hint-size="768px,1024px"></dc-import>
+        <p style="margin:0;font:400 14px/20px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Rail 72 thay thanh dưới · ảnh 272 | form · thẻ thuốc 3 tầng (tên–liều / buổi / ngày) · Lưu + Loại bỏ vẫn dính đáy.</p>
+      </div>
+      <div id="a1440" style="display:flex;flex-direction:column;gap:12px;width:1440px">
+        <div style="display:flex;gap:8px;align-items:center"><span style="padding:2px 8px;border-radius:8px;background:#1F2A2A;color:#FFFFFF;font:600 14px/20px 'Be Vietnam Pro'">A·1440</span><span style="font:500 15px/22px 'Be Vietnam Pro'">Desktop · master–detail</span></div>
+        <dc-import name="AGScreenDuyet" bp="desktop" hint-size="1440px,900px"></dc-import>
+        <p style="margin:0;font:400 14px/20px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Sidebar 240 · danh sách 360 luôn hiện · dòng thuốc thành bảng 2 tầng · Lưu/Loại bỏ cuối form, không dính đáy · phím tắt Enter, ←/→ (bấm vào khung để thử).</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="dienbien" style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:baseline;gap:16px"><span style="font:600 24px/32px 'Be Vietnam Pro';color:#2F6F5E">B</span><h2 style="margin:0;font:600 24px/32px 'Be Vietnam Pro'">Diễn biến — Ba</h2><span style="font:400 15px/22px 'Be Vietnam Pro';color:#55615F">một thẻ số → ba thẻ số + bảng → biểu đồ | bảng</span></div>
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div id="b360" style="display:flex;flex-direction:column;gap:12px;width:360px">
+        <div style="display:flex;gap:8px;align-items:center"><span style="padding:2px 8px;border-radius:8px;background:#1F2A2A;color:#FFFFFF;font:600 14px/20px 'Be Vietnam Pro'">B·360</span><span style="font:500 15px/22px 'Be Vietnam Pro'">Mobile · 4 tuần</span></div>
+        <dc-import name="AGScreenDienBien" bp="mobile" hint-size="360px,800px"></dc-import>
+        <p style="margin:0;font:400 14px/20px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Mặc định 4 tuần cho vừa bề ngang · chú thích giai đoạn dưới biểu đồ vì nhãn không đủ chỗ.</p>
+      </div>
+      <div id="b768" style="display:flex;flex-direction:column;gap:12px;width:768px">
+        <div style="display:flex;gap:8px;align-items:center"><span style="padding:2px 8px;border-radius:8px;background:#1F2A2A;color:#FFFFFF;font:600 14px/20px 'Be Vietnam Pro'">B·768</span><span style="font:500 15px/22px 'Be Vietnam Pro'">Tablet · 12 tuần</span></div>
+        <dc-import name="AGScreenDienBien" bp="tablet" hint-size="768px,1024px"></dc-import>
+        <p style="margin:0;font:400 14px/20px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Header hồ sơ có số đo gần nhất · 3 thẻ số · biểu đồ rộng nhãn giai đoạn trực tiếp · bảng số đo bên dưới.</p>
+      </div>
+      <div id="b1440" style="display:flex;flex-direction:column;gap:12px;width:1440px">
+        <div style="display:flex;gap:8px;align-items:center"><span style="padding:2px 8px;border-radius:8px;background:#1F2A2A;color:#FFFFFF;font:600 14px/20px 'Be Vietnam Pro'">B·1440</span><span style="font:500 15px/22px 'Be Vietnam Pro'">Desktop · 12 tuần</span></div>
+        <dc-import name="AGScreenDienBien" bp="desktop" hint-size="1440px,900px"></dc-import>
+        <p style="margin:0;font:400 14px/20px 'Be Vietnam Pro';color:#55615F;text-wrap:pretty">Biểu đồ 640 | bảng số đo bên phải (cuộn trong thẻ) · “Ghi giai đoạn dùng thuốc” lên hàng bộ lọc · Ba sáng trong nhóm Hồ sơ của sidebar.</p>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      rules: [
+        { k: 'Điều hướng', m: 'Thanh dưới 3 mục', t: 'Rail trái 72 px', d: 'Sidebar 240 px + nhóm Hồ sơ' },
+        { k: 'Vùng nội dung', m: 'Toàn chiều rộng, lề 16', t: '1 cột ≤ 720 căn giữa', d: '≤ 1200; mỗi cột ≤ 720' },
+        { k: 'Sheet', m: 'Bottom sheet', t: 'Bottom sheet', d: 'Side panel phải 420 px' },
+        { k: 'Nút chính', m: 'Thanh cố định đáy', t: 'Thanh cố định đáy', d: 'Cuối form / góc phải header' },
+        { k: 'Tab hồ sơ', m: 'Tab trên, cuộn ngang', t: 'Tab trên + header hồ sơ', d: 'Tab trên + header hồ sơ' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

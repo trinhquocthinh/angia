@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+@import '@fontsource/be-vietnam-pro/400.css';
+@import '@fontsource/be-vietnam-pro/500.css';
+@import '@fontsource/be-vietnam-pro/600.css';
+
+/* Design tokens theo 09-design-criteria §4.1 (chế độ sáng; dark mode là nợ kỹ thuật #8). */
+@theme {
+  --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+  --color-bg: #faf8f5;
+  --color-surface: #ffffff;
+  --color-border: #e4e0da;
+  --color-text-primary: #1f2a2a;
+  --color-text-secondary: #55615f;
+  --color-accent: #2f6f5e;
+  --color-accent-hover: #255a4c;
+  --color-accent-soft: #e3efea;
+  --color-on-accent: #ffffff;
+  --color-danger: #b42318;
+  --color-success: #2e7d4f;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}

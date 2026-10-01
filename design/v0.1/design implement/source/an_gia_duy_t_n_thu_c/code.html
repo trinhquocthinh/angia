@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><title>Chi Tiết Sổ Khám - An Gia</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#FAF8F5;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "background": "#f0fcfb", "tertiary-container": "#833b00", "tertiary-fixed-dim": "#ffb68c", "outline": "#707975", "primary": "#004135", "on-secondary-fixed": "#002019", "surface-bright": "#f0fcfb", "on-surface": "#131d1d", "inverse-primary": "#99d2c0", "on-secondary": "#ffffff", "tertiary": "#602900", "surface": "#f0fcfb", "surface-container": "#e4f0f0", "outline-variant": "#bfc9c4", "on-secondary-container": "#2f6f5e", "on-error-container": "#93000a", "on-tertiary-container": "#ffb082", "on-background": "#131d1d", "on-primary-fixed-variant": "#145042", "surface-container-low": "#eaf6f5", "surface-container-highest": "#d9e5e4", "secondary-fixed": "#aef0da", "inverse-on-surface": "#e7f3f3", "on-secondary-fixed-variant": "#055141", "primary-fixed-dim": "#99d2c0", "on-primary": "#ffffff", "inverse-surface": "#273232", "on-error": "#ffffff", "on-tertiary": "#ffffff", "primary-container": "#20594b", "surface-tint": "#306859", "on-primary-container": "#95cebc", "on-surface-variant": "#404945", "secondary": "#286958", "on-tertiary-fixed": "#321200", "surface-variant": "#d9e5e4", "primary-fixed": "#b4eedc", "secondary-fixed-dim": "#93d3bf", "error-container": "#ffdad6", "surface-container-lowest": "#ffffff", "surface-container-high": "#deebea", "tertiary-fixed": "#ffdbc9", "on-primary-fixed": "#002019", "surface-dim": "#d0dcdc", "secondary-container": "#aef0da", "on-tertiary-fixed-variant": "#753400", "error": "#ba1a1a" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-tablet": "2rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "gutter-tablet": "1.5rem", "space-sm": "0.5rem", "gutter": "1rem", "margin": "1rem", "margin-desktop": "3rem", "space-xl": "2rem", "gutter-desktop": "2rem", "space-md": "1rem" }, "fontFamily": { "label-md": ["Be Vietnam Pro"], "headline-md": ["Newsreader"], "body-sm": ["Be Vietnam Pro"], "label-lg": ["Be Vietnam Pro"], "label-sm": ["Be Vietnam Pro"], "headline-lg": ["Newsreader"], "headline-sm": ["Be Vietnam Pro"], "body-lg": ["Be Vietnam Pro"], "body-md": ["Be Vietnam Pro"], "display-sm": ["Newsreader"], "display-lg": ["Newsreader"] }, "fontSize": { "label-md": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.02em", "fontWeight": "600" }], "headline-md": ["1.25rem", { "lineHeight": "1.75rem", "fontWeight": "600" }], "body-sm": ["0.8125rem", { "lineHeight": "1.25rem", "fontWeight": "400" }], "label-lg": ["0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0.01em", "fontWeight": "600" }], "label-sm": ["0.6875rem", { "lineHeight": "0.875rem", "letterSpacing": "0.03em", "fontWeight": "500" }], "headline-lg": ["1.5rem", { "lineHeight": "2rem", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-sm": ["1.125rem", { "lineHeight": "1.5rem", "fontWeight": "600" }], "body-lg": ["1rem", { "lineHeight": "1.625rem", "fontWeight": "400" }], "body-md": ["0.9375rem", { "lineHeight": "1.5rem", "fontWeight": "400" }], "display-sm": ["1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.015em", "fontWeight": "500" }], "display-lg": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.02em", "fontWeight": "500" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen selection:bg-secondary-container selection:text-on-secondary-container"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.03)] pt-safe"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-sm"><button aria-label="Quay lại" class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center text-secondary hover:bg-secondary-container/40 active:scale-95 transition-all" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><img alt="Isolate the 3D squircle app icon of AN GIA on an absolute transparent background (PNG alpha transparency). Remove all outer background surrounding the rounded squircle container completely. The squircle tile itself—its white beveled rim, ivory porcelain surface, and embossed forest green emblem with hands, heart, roof, leaf and 'AN GIA' typography—must be preserved with clean, crisp edges and natural soft drop shadow on transparency, without any white or gray backdrop behind the icon tile." class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XuoLMQBBej4MmQaGsBS9E0rHizKsOHE3ctAUFHDY0YhLw5-hfq56pRs7VOtS1Sra96_3m3xXcU9024Yx6cTQqcxFq0mMO-rxMgcJGMCkX2-5C9b0MopWkl9mEabB2qiRnvbiYN-INWBLrF3JGMxaiRdq3UKNSyx5UdyB2iFBjUkE7Ggo4uJxeaNKfUWW_ZfIKIMz_TaxcS9fpyZWUXCzFXB2lU5l3btErzoWnySIkTZTUv1WbMJEkCyyu4"/><h1 class="font-headline-md text-headline-md text-on-surface tracking-tight leading-tight">Chi Tiết Sổ Khám</h1></div><div class="flex items-center gap-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-safe bg-surface"><div class="flex flex-col w-full">
+<!-- Status & Meta Bar -->
+<div class="px-gutter pt-space-xs pb-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+        Mẹ
+      </span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">
+        · Tải lên lúc 08:12 hôm nay
+      </span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md shadow-sm">
+<span class="text-primary font-headline-sm">1</span>
+<span class="text-on-surface-variant font-body-sm">/ 3 tờ</span>
+</div>
+</div>
+<div class="px-gutter flex flex-col gap-space-md pb-32">
+<!-- Prescription Document Visual Card -->
+<div class="relative w-full rounded-xl overflow-hidden bg-surface-container shadow-md">
+<!-- Image frame with medical document preview -->
+<div class="relative w-full h-56 bg-surface-container-highest overflow-hidden cursor-zoom-in transition-transform duration-300" id="image-container">
+<img class="w-full h-full object-cover transition-transform duration-300 select-none" data-alt="A warm, high quality close-up photo of an official Vietnamese medical hospital prescription paper titled Đơn Thuốc from Gia Dinh Hospital. Clean crisp clinical printing, doctor signature in blue ink, hospital stamp watermark, slightly angled under soft natural clinic window lighting with ivory tint paper tone." id="prescription-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8KSrsaQdGagxeLyhQebHUeEyA3f5KD0W3Ky0LKdyaOa7KURQSupZ5QomVP-YVk0qNEAMudSxjMWFZkkagTA_ybesn6pTPoj47Qs2qrMJb4g4GbzNDzN3mWyAVGWNwoUCYddcnThYj6owC3FeY1pVxD-AoL-Ho-qAhSUfJKcYH_KgEq4uVDZtaQzRxXbIxiJfPxpxlyD3qtGAYe8jguYM6-q_TBQTfBxDGcVQeXVpoXXFHl2QYitcYxw"/>
+<!-- Floating Glass Action Buttons -->
+<div class="absolute top-2.5 right-2.5 flex items-center gap-2">
+<button aria-label="Xoay ảnh" class="w-11 h-11 rounded-full bg-surface-container-lowest/80 backdrop-blur-md shadow-md text-primary flex items-center justify-center active:scale-90 transition-transform" id="btn-rotate" type="button">
+<span class="material-symbols-outlined text-[20px]">rotate_right</span>
+</button>
+<button class="h-11 px-3.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-md shadow-md text-primary font-label-md text-label-md flex items-center gap-1.5 active:scale-95 transition-transform" id="btn-full" type="button">
+<span class="material-symbols-outlined text-[18px]">fullscreen</span>
+<span>Xem gốc</span>
+</button>
+</div>
+<!-- Hint tag at bottom -->
+<div class="absolute bottom-2.5 inset-x-2.5 flex justify-center pointer-events-none">
+<div class="px-3 py-1 rounded-full bg-inverse-surface/70 backdrop-blur-sm text-inverse-on-surface font-label-sm text-label-sm flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[15px]">touch_app</span>
+<span>Chạm ảnh để phóng to &amp; kiểm tra</span>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Extraction Badge -->
+<div class="flex items-center justify-between px-3 py-2 rounded-xl bg-surface-container-low shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-md text-label-md text-secondary">AI đã trích xuất sẵn thông tin</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Kiểm tra &amp; bấm Lưu (≤15s)</span>
+</div>
+<!-- General Info Fields -->
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm mb-1">
+<span class="material-symbols-outlined text-[16px] text-primary">calendar_today</span>
+<span>Ngày kê đơn</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-on-surface tracking-tight">01/10/2026</div>
+</div>
+<div class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm mb-1">
+<span class="material-symbols-outlined text-[16px] text-primary">local_hospital</span>
+<span>Nơi khám bệnh</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-on-surface truncate">BV Nhân dân Gia Định</div>
+</div>
+</div>
+<!-- Section Heading: Medicines List -->
+<div class="flex items-center justify-between mt-space-xs">
+<div class="flex items-baseline gap-2">
+<h2 class="font-headline-md text-headline-md text-primary">Thuốc điều trị</h2>
+<span class="text-on-surface-variant font-body-sm text-body-sm">(2 loại được phát hiện)</span>
+</div>
+<span class="px-2 py-0.5 rounded-md bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">Độ tin cậy 98%</span>
+</div>
+<!-- Medicine Card 1: Amlodipin (With Duplicate Conflict Alert) -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-3.5 transition-all">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-headline-md text-headline-md text-on-surface">Amlodipin</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-label-sm text-label-sm">5 mg</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Uống 1 viên mỗi lần · Sau bữa ăn</p>
+</div>
+<div class="flex items-center gap-1 text-primary">
+<button aria-label="Sửa thông tin thuốc" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-container active:scale-95" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Xóa dòng thuốc" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-error-container/30 text-error active:scale-95" type="button">
+<span class="material-symbols-outlined text-[18px]">delete_outline</span>
+</button>
+</div>
+</div>
+<!-- Soft Inline Duplicate Alert -->
+<div class="p-3 rounded-lg bg-tertiary-fixed/30 flex flex-col gap-2.5">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-tertiary text-[20px] shrink-0 mt-0.5" style="font-variation-settings: 'FILL' 1;">info</span>
+<div class="font-body-sm text-body-sm text-on-surface">
+<span class="font-label-md text-tertiary">Thuốc trùng đơn trước:</span> Amlodipin đang được dùng (5mg, sáng, từ đơn 12/06/2026). Đơn mới thay đơn cũ hay dùng cả hai?
+          </div>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-0.5" id="conflict-choice-group">
+<button class="conflict-btn active h-10 px-3 rounded-lg bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all" onclick="selectConflict(this, 'replace')" type="button">
+<span class="material-symbols-outlined text-[16px] check-icon">check_circle</span>
+<span>Thay thế đơn cũ</span>
+</button>
+<button class="conflict-btn h-10 px-3 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1.5 hover:bg-surface-container-high active:scale-95 transition-all" onclick="selectConflict(this, 'keep')" type="button">
+<span class="material-symbols-outlined text-[16px] check-icon hidden">check_circle</span>
+<span>Dùng song song</span>
+</button>
+</div>
+</div>
+<!-- Dose Times (Chips) -->
+<div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mb-2">Thời điểm uống thuốc</div>
+<div class="flex items-center gap-2">
+<!-- Sang (Active) -->
+<button class="time-chip active flex-1 h-9 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all" onclick="toggleTimeChip(this)" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Sáng</span>
+</button>
+<!-- Trua (Inactive) -->
+<button class="time-chip flex-1 h-9 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center justify-center gap-1 active:scale-95 transition-all" onclick="toggleTimeChip(this)" type="button">
+<span>Trưa</span>
+</button>
+<!-- Chieu (Inactive) -->
+<button class="time-chip flex-1 h-9 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center justify-center gap-1 active:scale-95 transition-all" onclick="toggleTimeChip(this)" type="button">
+<span>Chiều</span>
+</button>
+<!-- Toi (Inactive) -->
+<button class="time-chip flex-1 h-9 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center justify-center gap-1 active:scale-95 transition-all" onclick="toggleTimeChip(this)" type="button">
+<span>Tối</span>
+</button>
+</div>
+</div>
+<!-- Long-term switch -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Uống dài hạn</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Duy trì huyết áp đều đặn</span>
+</div>
+<button aria-checked="true" class="relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full bg-primary p-0.5 transition-colors duration-200 ease-in-out" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="translate-x-5 pointer-events-none inline-block h-6 w-6 transform rounded-full bg-on-primary shadow-md ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+</div>
+<!-- Medicine Card 2: Metformin -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-3.5 transition-all">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-headline-md text-headline-md text-on-surface">Metformin</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-label-sm text-label-sm">500 mg</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Uống 1 viên mỗi lần · Cùng bữa ăn</p>
+</div>
+<div class="flex items-center gap-1 text-primary">
+<button aria-label="Sửa thông tin thuốc" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-container active:scale-95" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Xóa dòng thuốc" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-error-container/30 text-error active:scale-95" type="button">
+<span class="material-symbols-outlined text-[18px]">delete_outline</span>
+</button>
+</div>
+</div>
+<!-- Dose Times (Chips) - Sang & Toi active -->
+<div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mb-2">Thời điểm uống thuốc</div>
+<div class="flex items-center gap-2">
+<!-- Sang (Active) -->
+<button class="time-chip active flex-1 h-9 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all" onclick="toggleTimeChip(this)" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Sáng</span>
+</button>
+<!-- Trua (Inactive) -->
+<button class="time-chip flex-1 h-9 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center justify-center gap-1 active:scale-95 transition-all" onclick="toggleTimeChip(this)" type="button">
+<span>Trưa</span>
+</button>
+<!-- Chieu (Inactive) -->
+<button class="time-chip flex-1 h-9 rounded-full bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center justify-center gap-1 active:scale-95 transition-all" onclick="toggleTimeChip(this)" type="button">
+<span>Chiều</span>
+</button>
+<!-- Toi (Active) -->
+<button class="time-chip active flex-1 h-9 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all" onclick="toggleTimeChip(this)" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Tối</span>
+</button>
+</div>
+</div>
+<!-- Days Duration & Switch -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md text-on-surface">Liều dùng theo đợt:</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container text-on-surface font-label-md text-label-md">22 ngày</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Dài hạn</span>
+<button aria-checked="false" class="relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full bg-surface-container-highest p-0.5 transition-colors duration-200 ease-in-out" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="translate-x-0 pointer-events-none inline-block h-6 w-6 transform rounded-full bg-on-primary shadow-md ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+</div>
+</div>
+<!-- Add More Medicine Button (Dashed Soft Look) -->
+<button class="w-full h-13 py-3 rounded-xl bg-surface-container-low hover:bg-surface-container text-primary font-label-lg text-label-lg flex items-center justify-center gap-2 active:scale-98 transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">add_circle_outline</span>
+<span>Thêm thuốc ngoài đơn trích xuất</span>
+</button>
+</div>
+<!-- Bottom Thumb-Zone Sticky Action Container -->
+<div class="fixed bottom-0 inset-x-0 z-40 bg-surface/90 backdrop-blur-xl pb-safe shadow-[0_-4px_16px_rgba(0,0,0,0.04)]">
+<div class="max-w-md mx-auto p-gutter flex items-center gap-3">
+<button aria-label="Bỏ qua tờ này" class="h-[52px] px-4 rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-variant font-label-md text-label-md flex items-center justify-center gap-1 active:scale-95 transition-all" onclick="history.back()" type="button">
+<span class="material-symbols-outlined text-[20px]">skip_next</span>
+<span>Bỏ qua</span>
+</button>
+<button class="flex-1 h-[52px] rounded-xl bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-98 transition-all" id="btn-save" onclick="handleSaveAction(this)" type="button">
+<span class="material-symbols-outlined text-[22px]">verified</span>
+<span>Lưu &amp; Chuyển tờ tiếp</span>
+</button>
+</div>
+</div>
+<!-- Modal Lightbox for Prescription Image Inspection -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300 flex flex-col justify-between p-4" id="lightbox-modal">
+<div class="flex items-center justify-between text-on-primary pt-safe">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined">document_scanner</span>
+<span class="font-headline-sm text-headline-sm">Ảnh gốc đơn thuốc</span>
+</div>
+<button class="w-11 h-11 rounded-full bg-inverse-surface/60 text-inverse-on-surface flex items-center justify-center active:scale-90" onclick="closeLightbox()" type="button">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+</div>
+<div class="flex-1 flex items-center justify-center overflow-auto py-4">
+<img class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" data-alt="A clean enlarged high-resolution view of the official Vietnamese hospital prescription sheet with handwriting doses, medicine seal, and clinic signatures in clear focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfaU7BZwAKWKWgDgnzJ-GdOCyZb1EmYiCHLE9-_gkLn0p99kfk82lwTx_6Bw2rjNAc92qFdazn_AUo8jN6HCCpoDiAeYex0day9x9Ml0fbhLDSjCf2NTS-ctc0cI3LaVCoIwRtEyd4FeaBZEV2eWe6m7N8Jfq6dnRKG8WufKyYZyrWZG5fKH5DWMmchOqQfC6MSNUQr73dX6-wX9Fk0godYL-pLBRW2xgIyfTOYv7hVinEFXnqCpQT6A"/>
+</div>
+<div class="pb-safe text-center">
+<button class="h-11 px-6 rounded-full bg-surface text-on-surface font-label-md text-label-md shadow-md active:scale-95" onclick="closeLightbox()" type="button">
+        Quay lại duyệt đơn
+      </button>
+</div>
+</div>
+</div>
+<script>
+  // Image Rotation Interaction
+  let currentRotation = 0;
+  const rotateBtn = document.getElementById('btn-rotate');
+  const prescriptionImg = document.getElementById('prescription-img');
+
+  if (rotateBtn && prescriptionImg) {
+    rotateBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentRotation = (currentRotation + 90) % 360;
+      prescriptionImg.style.transform = `rotate(${currentRotation}deg)`;
+    });
+  }
+
+  // Lightbox handlers
+  const imageContainer = document.getElementById('image-container');
+  const btnFull = document.getElementById('btn-full');
+  const lightbox = document.getElementById('lightbox-modal');
+
+  function openLightbox() {
+    if (!lightbox) return;
+    lightbox.classList.remove('hidden');
+    setTimeout(() => {
+      lightbox.classList.remove('opacity-0');
+    }, 10);
+  }
+
+  function closeLightbox() {
+    if (!lightbox) return;
+    lightbox.classList.add('opacity-0');
+    setTimeout(() => {
+      lightbox.classList.add('hidden');
+    }, 300);
+  }
+
+  if (imageContainer) {
+    imageContainer.addEventListener('click', openLightbox);
+  }
+  if (btnFull) {
+    btnFull.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openLightbox();
+    });
+  }
+
+  // Dose Time Chips Toggle
+  function toggleTimeChip(button) {
+    const isActive = button.classList.contains('active');
+    if (isActive) {
+      button.classList.remove('active', 'bg-primary', 'text-on-primary', 'shadow-sm');
+      button.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+      const checkIcon = button.querySelector('.material-symbols-outlined');
+      if (checkIcon) checkIcon.remove();
+    } else {
+      button.classList.add('active', 'bg-primary', 'text-on-primary', 'shadow-sm');
+      button.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+      const icon = document.createElement('span');
+      icon.className = 'material-symbols-outlined text-[16px]';
+      icon.innerText = 'check';
+      button.insertBefore(icon, button.firstChild);
+    }
+  }
+
+  // Conflict Segment Switch
+  function selectConflict(btn, type) {
+    const container = document.getElementById('conflict-choice-group');
+    if (!container) return;
+    const buttons = container.querySelectorAll('.conflict-btn');
+    buttons.forEach((b) => {
+      b.classList.remove('active', 'bg-primary', 'text-on-primary', 'shadow-sm');
+      b.classList.add('bg-surface-container', 'text-on-surface');
+      const icon = b.querySelector('.check-icon');
+      if (icon) icon.classList.add('hidden');
+    });
+
+    btn.classList.add('active', 'bg-primary', 'text-on-primary', 'shadow-sm');
+    btn.classList.remove('bg-surface-container', 'text-on-surface');
+    const activeIcon = btn.querySelector('.check-icon');
+    if (activeIcon) activeIcon.classList.remove('hidden');
+  }
+
+  // Long term Switch Toggle
+  function toggleSwitch(toggleBtn) {
+    const isChecked = toggleBtn.getAttribute('aria-checked') === 'true';
+    const thumb = toggleBtn.querySelector('span');
+
+    if (isChecked) {
+      toggleBtn.setAttribute('aria-checked', 'false');
+      toggleBtn.classList.remove('bg-primary');
+      toggleBtn.classList.add('bg-surface-container-highest');
+      thumb.classList.remove('translate-x-5');
+      thumb.classList.add('translate-x-0');
+    } else {
+      toggleBtn.setAttribute('aria-checked', 'true');
+      toggleBtn.classList.add('bg-primary');
+      toggleBtn.classList.remove('bg-surface-container-highest');
+      thumb.classList.add('translate-x-5');
+      thumb.classList.remove('translate-x-0');
+    }
+  }
+
+  // Delightful rapid confirmation click on bottom button
+  function handleSaveAction(btn) {
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="material-symbols-outlined text-[22px] animate-spin">refresh</span><span>Đang ghi nhận...</span>';
+    setTimeout(() => {
+      btn.innerHTML = '<span class="material-symbols-outlined text-[22px]">check_circle</span><span>Đã duyệt tờ 1!</span>';
+      btn.classList.remove('bg-primary');
+      btn.classList.add('bg-secondary');
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.add('bg-primary');
+        btn.classList.remove('bg-secondary');
+      }, 1500);
+    }, 450);
+  }
+</script></main></body></html>

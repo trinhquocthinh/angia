@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+</helmet>
+<header style="font-family:'Be Vietnam Pro',sans-serif;color:#1F2A2A;border-bottom:1px solid #E4E0DA;display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+      <div style="display:flex;align-items:baseline;gap:12px"><h1 style="margin:0;font:600 24px/32px 'Be Vietnam Pro'">{{ name }}</h1><span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">{{ meta }}</span></div>
+      <sc-if value="{{ hasLatest }}" hint-placeholder-val="{{ true }}"><span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">Huyết áp gần nhất <b style="font-weight:600;color:#1F2A2A;font-variant-numeric:tabular-nums">{{ latest }}</b> mmHg · đo {{ latestDate }}</span></sc-if>
+      <sc-if value="{{ noLatest }}" hint-placeholder-val="{{ false }}"><span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">Chưa có số đo</span></sc-if>
+    </div>
+    <div style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #E4E0DA;background:#FFFFFF;color:#2F6F5E;display:flex;align-items:center;gap:8px;font:600 15px/22px 'Be Vietnam Pro';cursor:pointer" style-hover="background:#E3EFEA"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"></path><rect x="6" y="14" width="12" height="8" rx="1"></rect></svg>Tóm tắt đi khám</div>
+  </div>
+  <div role="tablist" style="display:flex;gap:4px;margin-left:-10px">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+      <sc-if value="{{ t.on }}" hint-placeholder-val="{{ false }}">
+        <div role="tab" aria-selected="true" style="min-height:44px;padding:0 10px;display:flex;align-items:center;font:600 15px/22px 'Be Vietnam Pro';color:#1F2A2A;box-shadow:inset 0 -2px 0 #2F6F5E;cursor:pointer">{{ t.label }}</div>
+      </sc-if>
+      <sc-if value="{{ t.off }}" hint-placeholder-val="{{ true }}">
+        <div role="tab" style="min-height:44px;padding:0 10px;border-radius:8px 8px 0 0;display:flex;align-items:center;font:500 15px/22px 'Be Vietnam Pro';color:#55615F;cursor:pointer" style-hover="background:#E3EFEA">{{ t.label }}</div>
+      </sc-if>
+    </sc-for>
+  </div>
+</header>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1136,&quot;height&quot;:140},&quot;person&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Ba&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;meta&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;75 tuổi&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;latest&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;152/94&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;latestDate&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;04/10/2026&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;tab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dien-bien&quot;,&quot;thuoc&quot;,&quot;xet-nghiem&quot;,&quot;giay-to&quot;],&quot;default&quot;:&quot;dien-bien&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const tab = this.props.tab ?? 'dien-bien';
+    const tabs = [['dien-bien','Diễn biến'],['thuoc','Thuốc'],['xet-nghiem','Xét nghiệm'],['giay-to','Giấy tờ']]
+      .map(([k,l]) => ({ label: l, on: k === tab, off: k !== tab }));
+    const latest = this.props.latest ?? '152/94';
+    return { name: this.props.person ?? 'Ba', meta: this.props.meta ?? '75 tuổi', latest, latestDate: this.props.latestDate ?? '04/10/2026', hasLatest: !!latest, noLatest: !latest, tabs };
+  }
+}
+</script>
+</body>
+</html>

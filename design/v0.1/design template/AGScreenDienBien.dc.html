@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+</helmet>
+
+<sc-if value="{{ isD }}" hint-placeholder-val="{{ true }}">
+<div aria-label="Diễn biến — desktop" style="width:1440px;height:900px;box-sizing:border-box;background:#FAF8F5;border:1px solid #E4E0DA;border-radius:12px;overflow:hidden;display:grid;grid-template-columns:240px minmax(0,1fr);box-shadow:0 12px 32px rgba(31,42,42,.10);font-family:'Be Vietnam Pro',sans-serif;color:#1F2A2A">
+  <sc-if value="{{ dEmpty }}" hint-placeholder-val="{{ false }}"><dc-import name="AGSidebar" active="be-an" badge="{{ 3 }}" hint-size="240px,900px"></dc-import></sc-if>
+  <sc-if value="{{ notEmpty }}" hint-placeholder-val="{{ true }}"><dc-import name="AGSidebar" active="ba" badge="{{ 3 }}" hint-size="240px,900px"></dc-import></sc-if>
+  <main style="padding:24px 32px 32px;display:flex;flex-direction:column;gap:16px;min-width:0;min-height:0">
+    <sc-if value="{{ dEmpty }}" hint-placeholder-val="{{ false }}">
+      <dc-import name="AGProfileHeaderWide" person="Bé An" meta="5 tuổi" latest="" tab="dien-bien" hint-size="100%,124px"></dc-import>
+      <div style="max-width:720px;display:flex;flex-direction:column;gap:16px;padding-top:8px">
+        <div style="display:flex;padding:3px;border-radius:12px;background:#EFEBE5;width:280px"><div aria-pressed="true" style="flex:1;min-height:40px;border-radius:9px;background:#FFFFFF;box-shadow:0 1px 2px rgba(31,42,42,.10);display:flex;align-items:center;justify-content:center;font:600 15px/22px 'Be Vietnam Pro'">Huyết áp</div><div style="flex:1;min-height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font:500 15px/22px 'Be Vietnam Pro';color:#55615F;cursor:pointer" style-hover="background:#E3EFEA">Đường huyết</div></div>
+        <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);padding:32px;display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+          <p style="margin:0;font:400 17px/26px 'Be Vietnam Pro';text-wrap:pretty">Chưa có số đo. Chụp màn hình máy đo để bắt đầu.</p>
+          <div style="height:52px;padding:0 20px;border-radius:12px;background:#2F6F5E;color:#FFFFFF;display:flex;align-items:center;gap:8px;font:600 17px/26px 'Be Vietnam Pro';cursor:pointer" style-hover="background:#255A4C"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>Thêm ảnh máy đo</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ notEmpty }}" hint-placeholder-val="{{ true }}">
+      <dc-import name="AGProfileHeaderWide" person="Ba" meta="75 tuổi" latest="152/94" latest-date="04/10/2026" tab="dien-bien" hint-size="100%,124px"></dc-import>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div style="display:flex;padding:3px;border-radius:12px;background:#EFEBE5;width:280px"><div aria-pressed="true" style="flex:1;min-height:40px;border-radius:9px;background:#FFFFFF;box-shadow:0 1px 2px rgba(31,42,42,.10);display:flex;align-items:center;justify-content:center;font:600 15px/22px 'Be Vietnam Pro'">Huyết áp</div><div style="flex:1;min-height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font:500 15px/22px 'Be Vietnam Pro';color:#55615F;cursor:pointer" style-hover="background:#E3EFEA">Đường huyết</div></div>
+        <div style="display:flex;padding:3px;border-radius:12px;background:#EFEBE5;width:300px"><div style="flex:1;min-height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font:500 15px/22px 'Be Vietnam Pro';color:#55615F;cursor:pointer" style-hover="background:#E3EFEA">4 tuần</div><div aria-pressed="true" style="flex:1;min-height:40px;border-radius:9px;background:#FFFFFF;box-shadow:0 1px 2px rgba(31,42,42,.10);display:flex;align-items:center;justify-content:center;font:600 15px/22px 'Be Vietnam Pro'">12 tuần</div><div style="flex:1;min-height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font:500 15px/22px 'Be Vietnam Pro';color:#55615F;cursor:pointer" style-hover="background:#E3EFEA">26 tuần</div></div>
+        <span style="flex:1"></span>
+        <div style="min-height:44px;padding:0 16px;border-radius:12px;border:1px solid #E4E0DA;background:#FFFFFF;color:#2F6F5E;display:flex;align-items:center;gap:8px;font:600 15px/22px 'Be Vietnam Pro';cursor:pointer" style-hover="background:#E3EFEA"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>Ghi giai đoạn dùng thuốc</div>
+      </div>
+
+      <sc-if value="{{ dLoad }}" hint-placeholder-val="{{ false }}">
+        <div aria-busy="true" style="display:flex;flex-direction:column;gap:16px;flex:1;min-height:0">
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+            <sc-for list="{{ three }}" as="x" hint-placeholder-count="3"><div style="height:118px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;padding:16px 20px;display:flex;flex-direction:column;gap:10px"><div style="width:50%;height:18px;border-radius:8px;background:#EFEBE5"></div><div style="width:40%;height:36px;border-radius:8px;background:#EFEBE5"></div><div style="width:60%;height:16px;border-radius:8px;background:#EFEBE5"></div></div></sc-for>
+          </div>
+          <div style="flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,640px) minmax(0,1fr);gap:16px">
+            <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px"><div style="width:40%;height:22px;border-radius:8px;background:#EFEBE5"></div><div style="width:55%;height:16px;border-radius:8px;background:#EFEBE5"></div><div style="flex:1;border-radius:8px;background:#EFEBE5"></div></div>
+            <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;padding:20px 16px;display:flex;flex-direction:column;gap:12px"><div style="width:50%;height:22px;border-radius:8px;background:#EFEBE5"></div><sc-for list="{{ eight }}" as="x" hint-placeholder-count="8"><div style="height:32px;border-radius:8px;background:#EFEBE5"></div></sc-for></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ dData }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+          <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);padding:16px 20px;display:flex;flex-direction:column"><span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">Huyết áp gần nhất</span><div style="display:flex;align-items:baseline;gap:6px"><span style="font:600 34px/40px 'Be Vietnam Pro';font-variant-numeric:tabular-nums">152/94</span><span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">mmHg</span></div><span style="font:400 15px/22px 'Be Vietnam Pro';color:#55615F">đo 04/10/2026 · mạch 78</span></div>
+          <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);padding:16px 20px;display:flex;flex-direction:column"><span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">Tuần có số đo</span><div style="display:flex;align-items:baseline;gap:6px"><span style="font:600 34px/40px 'Be Vietnam Pro';font-variant-numeric:tabular-nums">7 / 8</span><span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">tuần</span></div><span style="font:400 15px/22px 'Be Vietnam Pro';color:#55615F">8 tuần gần nhất · chưa đo 14/09 – 20/09</span></div>
+          <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);padding:16px 20px;display:flex;flex-direction:column"><span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">Thuốc đang dùng</span><div style="display:flex;align-items:baseline;gap:6px"><span style="font:600 34px/40px 'Be Vietnam Pro';font-variant-numeric:tabular-nums">1</span><span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">thuốc</span></div><span style="font:400 15px/22px 'Be Vietnam Pro';color:#55615F">Amlodipin 5mg · sáng · từ 25/09/2026</span></div>
+        </div>
+        <div style="flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,640px) minmax(0,1fr);gap:16px">
+          <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);padding:16px 20px 12px;display:flex;flex-direction:column;gap:8px;min-height:0">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><h2 style="margin:0;font:600 20px/28px 'Be Vietnam Pro'">Huyết áp · 12 tuần</h2><span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F;font-variant-numeric:tabular-nums">14/07 – 05/10/2026 · 18 lần đo</span></div>
+            <div style="flex:1;display:flex;align-items:center">{{ chartD }}</div>
+          </div>
+          <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);display:flex;flex-direction:column;min-height:0;overflow:hidden">
+            <div style="padding:16px 16px 8px;display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font:600 20px/28px 'Be Vietnam Pro'">Bảng số đo</h2><span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">mmHg · lần/phút</span></div>
+            <div style="flex:1;overflow:auto;min-height:0">
+              <table style="width:100%;border-collapse:collapse;font:400 15px/22px 'Be Vietnam Pro';font-variant-numeric:tabular-nums">
+                <thead><tr style="text-align:left;color:#55615F"><th style="position:sticky;top:0;background:#FFFFFF;font:500 14px/20px 'Be Vietnam Pro';padding:8px 8px 8px 16px;border-bottom:1px solid #E4E0DA;white-space:nowrap">Ngày</th><th style="position:sticky;top:0;background:#FFFFFF;font:500 14px/20px 'Be Vietnam Pro';padding:8px;border-bottom:1px solid #E4E0DA;text-align:right;white-space:nowrap">Tâm thu</th><th style="position:sticky;top:0;background:#FFFFFF;font:500 14px/20px 'Be Vietnam Pro';padding:8px;border-bottom:1px solid #E4E0DA;text-align:right;white-space:nowrap">Tâm trương</th><th style="position:sticky;top:0;background:#FFFFFF;font:500 14px/20px 'Be Vietnam Pro';padding:8px;border-bottom:1px solid #E4E0DA;text-align:right;white-space:nowrap">Mạch</th><th style="position:sticky;top:0;background:#FFFFFF;font:500 14px/20px 'Be Vietnam Pro';padding:8px 16px 8px 12px;border-bottom:1px solid #E4E0DA;white-space:nowrap">Nguồn</th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ rows }}" as="r" hint-placeholder-count="10">
+                    <tr style="height:44px;cursor:pointer" style-hover="background:#E3EFEA">
+                      <td style="padding:0 8px 0 16px;border-bottom:1px solid #F1ECE4">{{ r.date }}</td>
+                      <td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right;font-weight:600">{{ r.s }}</td>
+                      <td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right;font-weight:600">{{ r.di }}</td>
+                      <td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right">{{ r.p }}</td>
+                      <td style="padding:0 16px 0 12px;border-bottom:1px solid #F1ECE4;white-space:nowrap">
+                        <sc-if value="{{ r.photo }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:6px;font:500 15px/22px 'Be Vietnam Pro';color:#2F6F5E"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>Ảnh</span></sc-if>
+                        <sc-if value="{{ r.manual }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:6px;font:500 15px/22px 'Be Vietnam Pro';color:#55615F"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path></svg>Nhập tay</span></sc-if>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+  </main>
+</div>
+</sc-if>
+
+<sc-if value="{{ isT }}" hint-placeholder-val="{{ false }}">
+<div aria-label="Diễn biến — tablet" style="width:768px;height:1024px;box-sizing:border-box;background:#FAF8F5;border:1px solid #E4E0DA;border-radius:20px;overflow:hidden;display:grid;grid-template-columns:72px minmax(0,1fr);box-shadow:0 12px 32px rgba(31,42,42,.10);font-family:'Be Vietnam Pro',sans-serif;color:#1F2A2A">
+  <dc-import name="AGRail" active="home" badge="{{ 3 }}" hint-size="72px,1024px"></dc-import>
+  <main style="padding:24px;display:flex;flex-direction:column;gap:16px;min-width:0;overflow:hidden">
+    <div style="width:100%;max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+      <dc-import name="AGProfileHeaderWide" person="Ba" meta="75 tuổi" latest="152/94" latest-date="04/10/2026" tab="dien-bien" hint-size="100%,124px"></dc-import>
+      <div style="display:flex;gap:12px">
+        <div style="flex:1;display:flex;padding:3px;border-radius:12px;background:#EFEBE5"><div style="flex:1;min-height:40px;border-radius:9px;background:#FFFFFF;box-shadow:0 1px 2px rgba(31,42,42,.10);display:flex;align-items:center;justify-content:center;font:600 15px/22px 'Be Vietnam Pro'">Huyết áp</div><div style="flex:1;min-height:40px;display:flex;align-items:center;justify-content:center;font:500 15px/22px 'Be Vietnam Pro';color:#55615F">Đường huyết</div></div>
+        <div style="flex:1;display:flex;padding:3px;border-radius:12px;background:#EFEBE5"><div style="flex:1;min-height:40px;display:flex;align-items:center;justify-content:center;font:500 15px/22px 'Be Vietnam Pro';color:#55615F">4 tuần</div><div style="flex:1;min-height:40px;border-radius:9px;background:#FFFFFF;box-shadow:0 1px 2px rgba(31,42,42,.10);display:flex;align-items:center;justify-content:center;font:600 15px/22px 'Be Vietnam Pro'">12 tuần</div><div style="flex:1;min-height:40px;display:flex;align-items:center;justify-content:center;font:500 15px/22px 'Be Vietnam Pro';color:#55615F">26 tuần</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+        <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);padding:12px 16px;display:flex;flex-direction:column"><span style="font:500 14px/20px 'Be Vietnam Pro';color:#55615F">Huyết áp gần nhất</span><span style="font:600 34px/40px 'Be Vietnam Pro';font-variant-numeric:tabular-nums">152/94</span><span style="font:400 14px/20px 'Be Vietnam Pro';color:#55615F">mmHg · 04/10/2026</span></div>
+        <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);padding:12px 16px;display:flex;flex-direction:column"><span style="font:500 14px/20px 'Be Vietnam Pro';color:#55615F">Tuần có số đo</span><span style="font:600 34px/40px 'Be Vietnam Pro';font-variant-numeric:tabular-nums">7 / 8</span><span style="font:400 14px/20px 'Be Vietnam Pro';color:#55615F">8 tuần gần nhất</span></div>
+        <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);padding:12px 16px;display:flex;flex-direction:column"><span style="font:500 14px/20px 'Be Vietnam Pro';color:#55615F">Thuốc đang dùng</span><span style="font:600 34px/40px 'Be Vietnam Pro'">1</span><span style="font:400 14px/20px 'Be Vietnam Pro';color:#55615F">Amlodipin 5mg · sáng</span></div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);padding:16px 20px 12px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap"><h2 style="margin:0;font:600 20px/28px 'Be Vietnam Pro'">Huyết áp · 12 tuần</h2><span style="font:500 14px/20px 'Be Vietnam Pro';color:#55615F">14/07 – 05/10/2026 · 18 lần đo</span></div>
+        {{ chartT }}
+      </div>
+      <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);overflow:hidden">
+        <div style="padding:16px 16px 8px"><h2 style="margin:0;font:600 20px/28px 'Be Vietnam Pro'">Bảng số đo</h2></div>
+        <table style="width:100%;border-collapse:collapse;font:400 15px/22px 'Be Vietnam Pro';font-variant-numeric:tabular-nums">
+          <thead><tr style="text-align:left;color:#55615F"><th style="font:500 14px/20px 'Be Vietnam Pro';padding:8px 8px 8px 16px;border-bottom:1px solid #E4E0DA;white-space:nowrap">Ngày</th><th style="font:500 14px/20px 'Be Vietnam Pro';padding:8px;border-bottom:1px solid #E4E0DA;text-align:right;white-space:nowrap">Tâm thu</th><th style="font:500 14px/20px 'Be Vietnam Pro';padding:8px;border-bottom:1px solid #E4E0DA;text-align:right;white-space:nowrap">Tâm trương</th><th style="font:500 14px/20px 'Be Vietnam Pro';padding:8px;border-bottom:1px solid #E4E0DA;text-align:right;white-space:nowrap">Mạch</th><th style="font:500 14px/20px 'Be Vietnam Pro';padding:8px 16px 8px 12px;border-bottom:1px solid #E4E0DA;white-space:nowrap">Nguồn</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ rowsShort }}" as="r" hint-placeholder-count="4">
+              <tr style="height:48px">
+                <td style="padding:0 8px 0 16px;border-bottom:1px solid #F1ECE4">{{ r.date }}</td>
+                <td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right;font-weight:600">{{ r.s }}</td>
+                <td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right;font-weight:600">{{ r.di }}</td>
+                <td style="padding:0 8px;border-bottom:1px solid #F1ECE4;text-align:right">{{ r.p }}</td>
+                <td style="padding:0 16px 0 12px;border-bottom:1px solid #F1ECE4;color:#55615F">{{ r.srcLabel }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+</sc-if>
+
+<sc-if value="{{ isM }}" hint-placeholder-val="{{ false }}">
+<div aria-label="Diễn biến — mobile" style="width:360px;height:800px;box-sizing:border-box;background:#FAF8F5;border:1px solid #E4E0DA;border-radius:28px;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(31,42,42,.10);font-family:'Be Vietnam Pro',sans-serif;color:#1F2A2A">
+  <div style="height:40px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font:600 15px/20px 'Be Vietnam Pro'"><span>9:41</span><span style="width:24px;height:12px;border-radius:3px;border:1.5px solid #1F2A2A;padding:1px;display:flex"><span style="flex:1;background:#1F2A2A;border-radius:1px"></span></span></div>
+  <dc-import name="AGProfileHeader" person="Ba" meta="75 tuổi" tab="dien-bien" hint-size="360px,158px"></dc-import>
+  <div style="flex:1;overflow:hidden;padding:12px 16px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;padding:3px;border-radius:12px;background:#EFEBE5"><div style="flex:1;min-height:40px;border-radius:9px;background:#FFFFFF;box-shadow:0 1px 2px rgba(31,42,42,.10);display:flex;align-items:center;justify-content:center;font:600 15px/22px 'Be Vietnam Pro'">Huyết áp</div><div style="flex:1;min-height:40px;display:flex;align-items:center;justify-content:center;font:500 15px/22px 'Be Vietnam Pro';color:#55615F">Đường huyết</div></div>
+    <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);padding:12px 16px;display:flex;flex-direction:column"><span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">Gần nhất · đo 04/10/2026</span><div style="display:flex;align-items:baseline;gap:6px"><span style="font:600 34px/40px 'Be Vietnam Pro';font-variant-numeric:tabular-nums">152/94</span><span style="font:500 15px/22px 'Be Vietnam Pro';color:#55615F">mmHg</span></div></div>
+    <div style="background:#FFFFFF;border:1px solid #E4E0DA;border-radius:12px;box-shadow:0 1px 2px rgba(31,42,42,.06);padding:12px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;padding:3px;border-radius:12px;background:#EFEBE5"><div style="flex:1;min-height:40px;border-radius:9px;background:#FFFFFF;box-shadow:0 1px 2px rgba(31,42,42,.10);display:flex;align-items:center;justify-content:center;font:600 15px/22px 'Be Vietnam Pro'">4 tuần</div><div style="flex:1;min-height:40px;display:flex;align-items:center;justify-content:center;font:500 15px/22px 'Be Vietnam Pro';color:#55615F">12 tuần</div><div style="flex:1;min-height:40px;display:flex;align-items:center;justify-content:center;font:500 15px/22px 'Be Vietnam Pro';color:#55615F">26 tuần</div></div>
+      {{ chartM }}
+      <div style="display:flex;flex-direction:column;gap:6px;padding:0 4px">
+        <div style="display:flex;gap:10px;align-items:center;font:400 14px/20px 'Be Vietnam Pro'"><span style="width:24px;height:14px;border-radius:3px;background:#F1ECE4;background-image:repeating-linear-gradient(135deg,rgba(85,97,95,.32) 0 1.5px,transparent 1.5px 6px);flex:none"></span>Ngưng Amlodipin · 10/09 – 24/09</div>
+        <div style="display:flex;gap:10px;align-items:center;font:400 14px/20px 'Be Vietnam Pro'"><span style="width:24px;height:14px;border-radius:3px;background:#E3EFEA;flex:none"></span>Đang dùng Amlodipin 5mg · từ 25/09</div>
+      </div>
+    </div>
+  </div>
+  <dc-import name="AGNav" active="home" badge="{{ 3 }}" hint-size="360px,98px"></dc-import>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;bp&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;mobile&quot;,&quot;tablet&quot;,&quot;desktop&quot;],&quot;default&quot;:&quot;desktop&quot;,&quot;tsType&quot;:&quot;'mobile'|'tablet'|'desktop'&quot;},&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;data&quot;,&quot;empty&quot;,&quot;loading&quot;],&quot;default&quot;:&quot;data&quot;,&quot;tsType&quot;:&quot;'data'|'empty'|'loading'&quot;}}">
+class Component extends DCLogic {
+  uid = Math.random().toString(36).slice(2, 7);
+  renderVals() {
+    const bp = this.props.bp ?? 'desktop';
+    const st = this.props.state ?? 'data';
+    const e = React.createElement;
+    const D = (dd, mm) => (Date.UTC(2026, mm - 1, dd) - Date.UTC(2026, 6, 14)) / 864e5;
+    const END = D(5, 10);
+    const raw = [[16,7,142,86,76,'p'],[20,7,140,85,74,'p'],[27,7,144,88,78,'m'],[31,7,139,84,75,'p'],[6,8,141,86,77,'p'],[13,8,138,84,74,'p'],[19,8,143,87,79,'p'],[26,8,140,85,76,'m'],[1,9,142,86,77,'p'],[5,9,139,85,75,'p'],[8,9,146,84,78,'p'],[11,9,150,86,80,'p'],[13,9,155,88,82,'p'],[23,9,158,96,84,'p'],[26,9,150,92,80,'m'],[29,9,146,90,78,'p'],[2,10,149,92,79,'p'],[4,10,152,94,78,'p']];
+    const R = raw.map(([dd,mm,s,di,p,src]) => ({ t: D(dd,mm), date: String(dd).padStart(2,'0') + '/' + String(mm).padStart(2,'0') + '/2026', s, di, p, photo: src === 'p', manual: src === 'm', srcLabel: src === 'p' ? 'Ảnh' : 'Nhập tay' }));
+    const PH = [{ a: -999, b: D(10,9), on: true, label: 'Đang dùng Amlodipin 5mg' }, { a: D(10,9), b: D(25,9), on: false, label: 'Ngưng' }, { a: D(25,9), b: END, on: true, label: 'Đang dùng' }];
+    const GAP = { a: D(14,9), b: D(21,9) };
+    const uid = this.uid;
+    const chart = (w, h, start, ticks, key) => {
+      const L = 36, Rt = 92, T = 28, B = 28, pw = w - L - Rt, ph = h - T - B;
+      const x = t => L + (t - start) / (END - start) * pw;
+      const y = v => T + (170 - v) / 100 * ph;
+      const pid = 'hatch-' + uid + key;
+      const k = [];
+      k.push(e('defs', { key: 'df' }, e('pattern', { id: pid, width: 7, height: 7, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }, e('rect', { width: 7, height: 7, fill: '#F1ECE4' }), e('line', { x1: 0, y1: 0, x2: 0, y2: 7, stroke: '#55615F', strokeOpacity: 0.28, strokeWidth: 1.5 }))));
+      PH.forEach((p, i) => {
+        const a = Math.max(p.a, start), b = Math.min(p.b, END); if (b <= a) return;
+        const x1 = x(a), x2 = x(b), wd = x2 - x1;
+        k.push(e('rect', { key: 'ph' + i, x: x1, y: T, width: wd, height: ph, fill: p.on ? '#E3EFEA' : 'url(#' + pid + ')' }));
+        const lab = wd > p.label.length * 7.4 + 10 ? p.label : (wd > (p.on ? 76 : 52) ? (p.on ? 'Đang dùng' : 'Ngưng') : null);
+        if (lab) k.push(e('text', { key: 'pl' + i, x: x1 + 4, y: T - 9, fontSize: 14, fontWeight: 500, fill: '#55615F' }, lab));
+        if (i > 0 && a === p.a) k.push(e('line', { key: 'pb' + i, x1: x1, x2: x1, y1: T - 24, y2: T + ph, stroke: '#9AA3A1', strokeWidth: 1 }));
+      });
+      if (GAP.b > start) {
+        const gx = x(Math.max(GAP.a, start)), gw = x(GAP.b) - gx;
+        k.push(e('rect', { key: 'g1', x: gx, y: T, width: gw, height: ph, fill: '#FFFFFF', fillOpacity: 0.62 }));
+        k.push(e('rect', { key: 'g2', x: gx + 0.5, y: T + 0.5, width: gw - 1, height: ph - 1, fill: 'none', stroke: '#9AA3A1', strokeDasharray: '3 3' }));
+        k.push(e('text', { key: 'g3', x: gx + gw / 2, y: T + ph / 2 - 2, textAnchor: 'middle', fontSize: 14, fill: '#55615F' }, 'Chưa'));
+        k.push(e('text', { key: 'g4', x: gx + gw / 2, y: T + ph / 2 + 16, textAnchor: 'middle', fontSize: 14, fill: '#55615F' }, 'đo'));
+      }
+      [80,100,120,140,160].forEach(v => {
+        k.push(e('line', { key: 'gl' + v, x1: L, x2: L + pw, y1: y(v), y2: y(v), stroke: '#E4E0DA' }));
+        k.push(e('text', { key: 'yl' + v, x: L - 8, y: y(v) + 5, textAnchor: 'end', fontSize: 14, fill: '#55615F' }, v));
+      });
+      k.push(e('line', { key: 'ax', x1: L, x2: L + pw, y1: T + ph, y2: T + ph, stroke: '#9AA3A1' }));
+      ticks.forEach(([dd, mm], i) => k.push(e('text', { key: 'xt' + i, x: x(D(dd, mm)), y: T + ph + 20, textAnchor: 'middle', fontSize: 14, fill: '#55615F' }, dd + '/' + mm)));
+      const pts = R.filter(r => r.t >= start);
+      const segs = []; pts.forEach((r, i) => { if (i === 0 || r.t - pts[i - 1].t > 8) segs.push([]); segs[segs.length - 1].push(r); });
+      segs.forEach((sg, i) => {
+        k.push(e('polyline', { key: 'ls' + i, points: sg.map(r => x(r.t) + ',' + y(r.s)).join(' '), fill: 'none', stroke: '#2F6F5E', strokeWidth: 2.5, strokeLinejoin: 'round', strokeLinecap: 'round' }));
+        k.push(e('polyline', { key: 'ld' + i, points: sg.map(r => x(r.t) + ',' + y(r.di)).join(' '), fill: 'none', stroke: '#6B4FA8', strokeWidth: 2.5, strokeDasharray: '6 4', strokeLinecap: 'round' }));
+      });
+      pts.forEach((r, i) => {
+        const last = i === pts.length - 1;
+        k.push(e('circle', { key: 'cs' + i, cx: x(r.t), cy: y(r.s), r: last ? 4.5 : 3.5, fill: '#2F6F5E' }));
+        k.push(e('circle', { key: 'cd' + i, cx: x(r.t), cy: y(r.di), r: last ? 4.5 : 3.5, fill: '#FFFFFF', stroke: '#6B4FA8', strokeWidth: 2 }));
+      });
+      const lr = pts[pts.length - 1];
+      k.push(e('text', { key: 'dl1', x: x(lr.t) + 10, y: y(lr.s) + 5, fontSize: 14, fontWeight: 600, fill: '#2F6F5E' }, 'Tâm thu'));
+      k.push(e('text', { key: 'dl2', x: x(lr.t) + 10, y: y(lr.di) + 5, fontSize: 14, fontWeight: 600, fill: '#6B4FA8' }, 'Tâm trương'));
+      const n = pts.length;
+      return e('svg', { role: 'img', 'aria-label': 'Huyết áp, ' + n + ' lần đo, đến 05/10/2026', width: w, height: h, viewBox: '0 0 ' + w + ' ' + h, style: { display: 'block', fontFamily: "'Be Vietnam Pro', sans-serif", fontVariantNumeric: 'tabular-nums' } }, k);
+    };
+    const t12 = [[14,7],[28,7],[11,8],[25,8],[8,9],[22,9]];
+    const rows = R.slice().reverse();
+    return {
+      isD: bp === 'desktop', isT: bp === 'tablet', isM: bp === 'mobile',
+      dData: st === 'data', dEmpty: st === 'empty', notEmpty: st !== 'empty', dLoad: st === 'loading',
+      chartD: bp === 'desktop' && st === 'data' ? chart(598, 360, 0, t12, 'd') : null,
+      chartT: bp === 'tablet' ? chart(606, 280, 0, t12, 't') : null,
+      chartM: bp === 'mobile' ? chart(310, 210, D(8,9), [[8,9],[15,9],[22,9],[29,9]], 'm') : null,
+      rows, rowsShort: rows.slice(0, 4), three: [1,2,3], eight: [1,2,3,4,5,6,7,8]
+    };
+  }
+}
+</script>
+</body>
+</html>
