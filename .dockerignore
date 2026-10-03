@@ -10,7 +10,6 @@ design
 docker/dev
 scripts
 tooling
-logo.png
 
 # Bí mật không bao giờ được nướng vào image — biến môi trường do compose runtime cấp.
 .env
