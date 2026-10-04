@@ -29,6 +29,7 @@
     "verify": "yarn generate:api && yarn typecheck && yarn lint && yarn format:check && yarn test && yarn dup && yarn knip && yarn build",
     "dev:infra": "docker compose -f docker-compose.dev.yml --project-directory . up -d --wait && yarn dev:storage-init",
     "dev:storage-init": "bash scripts/dev/garage-init.sh",
+    "ai:golden": "tsx --env-file=.env scripts/ai-golden/runGolden.ts",
     "postinstall": "husky"
   },
   "devDependencies": {
@@ -49,9 +50,11 @@
     "knip": "6.38.0",
     "lint-staged": "17.5.1",
     "prettier": "3.9.9",
+    "tsx": "4.23.15",
     "typescript": "5.9.3",
     "typescript-eslint": "8.70.1",
     "vite": "8.3.0",
-    "vitest": "5.0.1"
+    "vitest": "5.0.1",
+    "zod": "4.6.5"
   }
 }

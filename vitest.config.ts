@@ -22,7 +22,12 @@ export default defineConfig({
         resolve: { alias: aliasFor(apiSrc) },
         test: {
           name: 'unit',
-          include: ['apps/api/src/**/*.test.ts', 'packages/*/src/**/*.test.ts', 'tooling/**/*.test.ts'],
+          include: [
+            'apps/api/src/**/*.test.ts',
+            'packages/*/src/**/*.test.ts',
+            'tooling/**/*.test.ts',
+            'scripts/**/*.test.ts',
+          ],
           exclude: ['**/*.int.test.ts', '**/node_modules/**'],
           environment: 'node',
         },
