@@ -1,10 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "ignore": [
-    "**/*.gen.ts",
-    "apps/api/src/shared/db/createDatabase.ts",
-    "apps/api/src/shared/db/withFamilyScope.ts"
-  ],
+  "ignore": ["**/*.gen.ts", "apps/api/src/shared/db/withFamilyScope.ts"],
   "workspaces": {
     ".": {
       "entry": ["tooling/**/*.test.ts", "scripts/**/*.test.ts", "scripts/heic-spike/measureOne.ts"],

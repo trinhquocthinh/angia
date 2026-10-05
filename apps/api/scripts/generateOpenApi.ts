@@ -1,10 +1,11 @@
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createApp } from '../src/createApp.js';
+import { createStubAuthDeps } from '../src/shared/test/createStubAuthDeps.js';
 
-// Sinh OpenAPI từ route Zod; probe giả vì chỉ cần cấu trúc route, không gọi hạ tầng.
+// Sinh OpenAPI từ route Zod; probe/auth giả vì chỉ cần cấu trúc route, không gọi hạ tầng.
 const noopProbe = () => Promise.resolve();
-const app = createApp({ healthProbes: { db: noopProbe, storage: noopProbe } });
+const app = createApp({ healthProbes: { db: noopProbe, storage: noopProbe }, auth: createStubAuthDeps() });
 
 const document = app.getOpenAPI31Document({
   openapi: '3.1.0',

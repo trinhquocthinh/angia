@@ -70,6 +70,32 @@
           }
         }
       }
+    },
+    "/api/auth/login": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Chuyển hướng sang Authentik (OIDC Code + PKCE S256)",
+        "responses": {
+          "302": {
+            "description": "Chuyển hướng"
+          }
+        }
+      }
+    },
+    "/api/auth/callback": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Nhận code từ Authentik, tạo phiên và đặt cookie angia_session",
+        "responses": {
+          "302": {
+            "description": "Chuyển hướng"
+          }
+        }
+      }
     }
   },
   "webhooks": {}
