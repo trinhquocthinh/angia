@@ -3,8 +3,8 @@
   "ignore": ["**/*.gen.ts"],
   "workspaces": {
     ".": {
-      "entry": ["tooling/**/*.test.ts"],
-      "project": ["tooling/**/*.ts"]
+      "entry": ["tooling/**/*.test.ts", "scripts/**/*.test.ts", "scripts/heic-spike/measureOne.ts"],
+      "project": ["tooling/**/*.ts", "scripts/**/*.ts"]
     },
     "apps/api": {
       "entry": ["src/server.ts!"],
