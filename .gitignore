@@ -29,3 +29,7 @@ scripts/sit/
 # Bộ ảnh chuẩn AI (E1-S1-T1) là chứng từ y tế thật — chỉ giữ cục bộ, chỉ commit README
 fixtures/golden/*
 !fixtures/golden/README.md
+
+# Ảnh HEIC thật cho spike E1-S1-T2 (ảnh cá nhân, có thể chứa EXIF/GPS) — chỉ commit README
+fixtures/heic/*
+!fixtures/heic/README.md
