@@ -117,6 +117,103 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/auth/logout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Hủy phiên hiện hành (cần X-CSRF-Token) */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Đã xóa phiên và cookie angia_session */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: thiếu hoặc sai X-CSRF-Token */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Ngữ cảnh tài khoản, nhóm, vai trò và CSRF token của phiên hiện hành */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Phiên còn hạn; family/role null khi tài khoản chờ gán nhóm */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['MeContextResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED: thiếu phiên, phiên hết hạn hoặc cookie không hợp lệ */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -128,6 +225,33 @@ export interface components {
       db: 'ok' | 'down';
       /** @enum {string} */
       storage: 'ok' | 'down';
+    };
+    ErrorResponse: {
+      error: {
+        code: string;
+        message: string;
+        details?: {
+          [key: string]: unknown;
+        };
+      };
+    };
+    MeContextResponse: {
+      account: {
+        /** Format: uuid */
+        id: string;
+        displayName: string;
+        isSystemAdmin: boolean;
+        /** Format: uuid */
+        healthProfileId: string | null;
+      };
+      family: {
+        /** Format: uuid */
+        id: string;
+        name: string;
+      } | null;
+      /** @enum {string|null} */
+      role: 'main' | 'member' | null;
+      csrfToken: string;
     };
   };
   responses: never;

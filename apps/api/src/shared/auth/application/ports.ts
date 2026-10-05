@@ -1,4 +1,5 @@
 import type { IdentityClaims } from '../domain/IdentityClaims.js';
+import type { SessionContext } from '../domain/SessionContext.js';
 
 // Bí mật một lần của luồng Authorization Code + PKCE, giữ ở cookie ký HttpOnly giữa /login và /callback.
 export interface PendingLogin {
@@ -37,6 +38,10 @@ interface NewSession {
 
 export interface SessionRepository {
   create(session: NewSession): Promise<{ id: string }>;
+  // Phiên có expires_at > now kèm tài khoản và nhóm; hết hạn hoặc không tồn tại trả null.
+  findActive(sessionId: string, now: Date): Promise<SessionContext | null>;
+  extend(sessionId: string, expiresAt: Date): Promise<void>;
+  delete(sessionId: string): Promise<void>;
 }
 
 export interface CompleteLoginDeps {
@@ -47,3 +52,5 @@ export interface CompleteLoginDeps {
   generateToken: () => string;
   now: () => Date;
 }
+
+export type ResolveSessionDeps = Pick<CompleteLoginDeps, 'sessions' | 'now'>;

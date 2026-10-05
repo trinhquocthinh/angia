@@ -13,7 +13,12 @@ function setup(claims: IdentityClaims) {
       exchangeCode: vi.fn().mockResolvedValue(claims),
     },
     accounts: { upsertFromIdentity: vi.fn().mockResolvedValue({ id: 'account-1' }) },
-    sessions: { create: vi.fn().mockResolvedValue({ id: 'session-1' }) },
+    sessions: {
+      create: vi.fn().mockResolvedValue({ id: 'session-1' }),
+      findActive: vi.fn(),
+      extend: vi.fn(),
+      delete: vi.fn(),
+    },
     adminGroupName: 'angia-admins',
     generateToken: () => 'csrf-token',
     now: () => NOW,

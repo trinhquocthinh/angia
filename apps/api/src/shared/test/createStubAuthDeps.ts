@@ -9,7 +9,12 @@ export function createStubAuthDeps(): AuthRouteDeps {
     login: {
       oidc: { createAuthorizationRequest: notConfigured, exchangeCode: notConfigured },
       accounts: { upsertFromIdentity: notConfigured },
-      sessions: { create: notConfigured },
+      sessions: {
+        create: notConfigured,
+        findActive: notConfigured,
+        extend: notConfigured,
+        delete: notConfigured,
+      },
       adminGroupName: 'angia-admins',
       generateToken: () => 'stub',
       now: () => new Date(),

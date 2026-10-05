@@ -1,15 +1,18 @@
 import { createRoute, type OpenAPIHono } from '@hono/zod-openapi';
+import { errorResponseSchema } from '@angia/contracts';
 import type { Logger } from 'pino';
+import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { completeLogin } from '../application/completeLogin.js';
 import type { CompleteLoginDeps } from '../application/ports.js';
+import { currentSession } from './currentSession.js';
 import { takePendingLogin, writePendingLogin } from './pendingLoginCookie.js';
-import { writeSessionCookie } from './writeSessionCookie.js';
+import { clearSessionCookie, writeSessionCookie } from './sessionCookie.js';
 
 export interface AuthRouteDeps {
   login: CompleteLoginDeps;
   cookieSecret: string;
   secureCookies: boolean;
-  logger: Pick<Logger, 'warn'>;
+  logger: Pick<Logger, 'warn' | 'error'>;
 }
 
 // Trang /login (E2-S1-T3) hiển thị trạng thái "Lỗi xác thực + Thử lại" khi có tham số này.
@@ -33,7 +36,25 @@ const callbackRoute = createRoute({
   responses: redirectResponse,
 });
 
-export function registerAuthRoutes(app: OpenAPIHono, deps: AuthRouteDeps): void {
+const logoutRoute = createRoute({
+  method: 'post',
+  path: '/api/auth/logout',
+  tags: ['auth'],
+  summary: 'Hủy phiên hiện hành (cần X-CSRF-Token)',
+  responses: {
+    204: { description: 'Đã xóa phiên và cookie angia_session' },
+    401: {
+      description: 'ERR_UNAUTHENTICATED',
+      content: { 'application/json': { schema: errorResponseSchema } },
+    },
+    403: {
+      description: 'ERR_FORBIDDEN: thiếu hoặc sai X-CSRF-Token',
+      content: { 'application/json': { schema: errorResponseSchema } },
+    },
+  },
+});
+
+export function registerAuthRoutes(app: OpenAPIHono<AppEnv>, deps: AuthRouteDeps): void {
   const cookies = { secret: deps.cookieSecret, secure: deps.secureCookies };
 
   app.openapi(loginRoute, async (c) => {
@@ -63,5 +84,13 @@ export function registerAuthRoutes(app: OpenAPIHono, deps: AuthRouteDeps): void 
       );
       return c.redirect(LOGIN_FAILED_LOCATION, 302);
     }
+  });
+
+  // Phiên + CSRF đã qua requireSession (login/callback là route công khai, logout thì không).
+  app.openapi(logoutRoute, async (c) => {
+    await deps.login.sessions.delete(currentSession(c).sessionId);
+    clearSessionCookie(c, cookies);
+    c.header('Cache-Control', 'no-store');
+    return c.body(null, 204);
   });
 }

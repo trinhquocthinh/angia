@@ -36,6 +36,105 @@
           "db",
           "storage"
         ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object",
+                "additionalProperties": {}
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "MeContextResponse": {
+        "type": "object",
+        "properties": {
+          "account": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string"
+              },
+              "isSystemAdmin": {
+                "type": "boolean"
+              },
+              "healthProfileId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "id",
+              "displayName",
+              "isSystemAdmin",
+              "healthProfileId"
+            ]
+          },
+          "family": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ]
+          },
+          "role": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "main",
+              "member",
+              null
+            ]
+          },
+          "csrfToken": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "account",
+          "family",
+          "role",
+          "csrfToken"
+        ]
       }
     },
     "parameters": {}
@@ -93,6 +192,69 @@
         "responses": {
           "302": {
             "description": "Chuyển hướng"
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Hủy phiên hiện hành (cần X-CSRF-Token)",
+        "responses": {
+          "204": {
+            "description": "Đã xóa phiên và cookie angia_session"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: thiếu hoặc sai X-CSRF-Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Ngữ cảnh tài khoản, nhóm, vai trò và CSRF token của phiên hiện hành",
+        "responses": {
+          "200": {
+            "description": "Phiên còn hạn; family/role null khi tài khoản chờ gán nhóm",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeContextResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED: thiếu phiên, phiên hết hạn hoặc cookie không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
