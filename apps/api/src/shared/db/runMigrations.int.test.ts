@@ -57,7 +57,7 @@ describe('runMigrations trên PostgreSQL rỗng', () => {
     );
     expect(policies.rows.map((row) => row.tablename)).toEqual(RLS_TABLES);
     for (const policy of policies.rows) {
-      expect(policy.qual).toContain("current_setting('app.family_id'::text, true)");
+      expect(policy.qual).toContain("NULLIF(current_setting('app.family_id'::text, true), ''::text)");
     }
   });
 
