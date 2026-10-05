@@ -5,3 +5,6 @@ design/
 **/routeTree.gen.ts
 packages/contracts/openapi.json
 yarn.lock
+
+# Snapshot/journal do drizzle-kit sinh — giữ nguyên định dạng gốc
+apps/api/drizzle/meta/

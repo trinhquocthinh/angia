@@ -7,7 +7,7 @@
       "project": ["tooling/**/*.ts", "scripts/**/*.ts"]
     },
     "apps/api": {
-      "entry": ["src/server.ts!"],
+      "entry": ["src/server.ts!", "src/shared/db/migrate.ts!"],
       "project": ["src/**/*.ts!", "!src/shared/test/**!", "scripts/**/*.ts"]
     },
     "apps/worker": {
