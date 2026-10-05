@@ -19,7 +19,9 @@ Bộ chuẩn gồm 10 ảnh phủ cả 3 loại: đơn thuốc in máy, phiếu 
 
 ## Đáp án (`*.expected.json`)
 
-Đúng cấu trúc SDD §2.1; trường không có trên chứng từ ghi `null`, không suy diễn. Ví dụ màn hình máy đo:
+Đúng cấu trúc SDD §2.1; trường không có trên chứng từ ghi `null`, không suy diễn.
+
+Quy ước phiếu xét nghiệm (`lab_result`, cũng nằm trong prompt): `testName` giữ nguyên như in (kể cả phần trong ngoặc); `value` bỏ cờ H/L (`"36.6 L"` → `"36.6"`); `unit` chỉ lấy từ cột đơn vị, phiếu không có cột thì `null`; `referenceRange` bỏ ngoặc bao ngoài, giữ đơn vị in trong khoảng (`"(4 - 10 K/uL)"` → `"4 - 10 K/uL"`). Ví dụ màn hình máy đo:
 
 ```json
 {

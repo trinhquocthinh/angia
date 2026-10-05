@@ -26,7 +26,10 @@ Quy tắc bắt buộc:
 - "durationDays": chỉ khi đơn ghi rõ một số ngày ("x 10 ngày", "trong 5 ngày"); khoảng ("7-10 ngày") hoặc nhiều giai đoạn thì null. Không tự tính từ tổng số lượng.
 - "note": câu cách dùng nguyên văn như in trên đơn; không có thì null.
 - "longTerm": true chỉ khi đơn ghi rõ dùng dài hạn/lâu dài; ngược lại false.
-- "value" của xét nghiệm giữ nguyên dạng chuỗi như in trên phiếu (kể cả dấu < hoặc >).
+- "testName": tên chỉ số xét nghiệm giữ nguyên như in trên phiếu, kể cả phần trong ngoặc (ví dụ "WBC (Bạch cầu)"); dòng tiêu đề nhóm (HUYẾT HỌC, SINH HÓA...) không phải chỉ số.
+- "value" của xét nghiệm giữ nguyên dạng chuỗi như in trên phiếu (kể cả dấu < hoặc >) nhưng bỏ cờ H/L hay ký hiệu tăng/giảm đi kèm (ví dụ "36.6 L" → "36.6").
+- "unit": chỉ lấy từ cột đơn vị của phiếu; phiếu không có cột đơn vị thì null, không tách đơn vị từ khoảng tham chiếu.
+- "referenceRange": khoảng tham chiếu như in trên phiếu, bỏ cặp ngoặc bao ngoài, giữ đơn vị nếu đơn vị in trong khoảng (ví dụ "(4 - 10 K/uL)" → "4 - 10 K/uL").
 - Ngày chuyển về dạng YYYY-MM-DD; giờ về dạng HH:mm (24 giờ).
 - Không trích họ tên, tuổi, địa chỉ hay mã số của người bệnh.
 - Không thêm nhận xét, đánh giá hay lời khuyên nào về kết quả.`;

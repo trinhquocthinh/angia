@@ -17,6 +17,13 @@ describe('EXTRACTION_PROMPT', () => {
     expect(EXTRACTION_PROMPT).toMatch(/không (được )?suy (đoán|diễn)/i);
   });
 
+  it('quy ước phiếu xét nghiệm: bỏ cờ H/L, đơn vị chỉ lấy từ cột đơn vị, khoảng tham chiếu bỏ ngoặc bao ngoài', () => {
+    expect(EXTRACTION_PROMPT).toMatch(/"value".*bỏ cờ/);
+    expect(EXTRACTION_PROMPT).toMatch(/"unit".*cột đơn vị/);
+    expect(EXTRACTION_PROMPT).toMatch(/"referenceRange".*ngoặc bao ngoài/);
+    expect(EXTRACTION_PROMPT).toMatch(/"testName".*giữ nguyên/);
+  });
+
   it('không yêu cầu trích họ tên hay mã bệnh nhân', () => {
     expect(EXTRACTION_PROMPT).not.toMatch(/patientName|họ tên bệnh nhân":/i);
   });
