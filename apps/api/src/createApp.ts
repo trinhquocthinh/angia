@@ -1,5 +1,7 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { except } from 'hono/combine';
+import type { FamilyAdminRepository } from '@src/features/family/application/ports.js';
+import { registerAdminRoutes } from '@src/features/family/presentation/registerAdminRoutes.js';
 import type { HealthProbes } from '@src/features/health/application/ports.js';
 import { registerHealthRoute } from '@src/features/health/presentation/registerHealthRoute.js';
 import { loadSession } from '@src/shared/auth/presentation/loadSession.js';
@@ -12,6 +14,7 @@ import { errorResponse } from '@src/shared/http/errorResponse.js';
 export type AppDependencies = {
   healthProbes: HealthProbes;
   auth: AuthRouteDeps;
+  familyAdmin: FamilyAdminRepository;
 };
 
 // Ngoại lệ duy nhất của "mọi route /api cần phiên" (Tech Spec §4); logout vẫn cần phiên + CSRF.
@@ -19,7 +22,10 @@ const PUBLIC_PATHS = ['/api/health', '/api/auth/login', '/api/auth/callback'];
 
 // Lắp ráp route từ các adapter đã khởi tạo; tách khỏi server.ts để test in-process qua app.request().
 export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
-  const app = new OpenAPIHono<AppEnv>();
+  // Body/params sai Zod schema → 422 ERR_VALIDATION theo cấu trúc lỗi chuẩn (SDD §4.2).
+  const app = new OpenAPIHono<AppEnv>({
+    defaultHook: (result, c) => (result.success ? undefined : errorResponse(c, 'ERR_VALIDATION')),
+  });
   const cookies = { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies };
   app.onError((error, c) => {
     deps.auth.logger.error({ reason: error.message }, 'Lỗi chưa xử lý');
@@ -30,5 +36,6 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth);
   registerMeRoute(app);
+  registerAdminRoutes(app, deps.familyAdmin);
   return app;
 }

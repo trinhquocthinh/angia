@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
 import { createApp } from '@src/createApp.js';
+import { createFamilyAdminRepository } from '@src/features/family/infrastructure/createFamilyAdminRepository.js';
 import { createPostgresProbe } from '@src/features/health/infrastructure/createPostgresProbe.js';
 import { createS3BucketProbe } from '@src/features/health/infrastructure/createS3BucketProbe.js';
 import { createAccountRepository } from '@src/shared/auth/infrastructure/createAccountRepository.js';
@@ -44,6 +45,7 @@ const app = createApp({
     secureCookies: config.STACK !== 'dev',
     logger,
   },
+  familyAdmin: createFamilyAdminRepository(db),
 });
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {

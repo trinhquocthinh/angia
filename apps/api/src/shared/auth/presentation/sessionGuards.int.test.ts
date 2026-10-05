@@ -1,25 +1,23 @@
 import { randomUUID } from 'node:crypto';
-import { serializeSigned } from 'hono/utils/cookie';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '@src/createApp.js';
 import { createDatabase } from '@src/shared/db/createDatabase.js';
 import { runMigrations } from '@src/shared/db/runMigrations.js';
+import { createFakeFamilyAdminRepository } from '@src/shared/test/createFakeFamilyAdminRepository.js';
 import { createStubAuthDeps } from '@src/shared/test/createStubAuthDeps.js';
+import {
+  type SeededSession,
+  seedAccount as seedAccountRow,
+  seedSession as seedSessionRow,
+  TEST_COOKIE_SECRET,
+} from '@src/shared/test/seedAuthFixtures.js';
 import { startTestDatabase, type TestDatabase } from '@src/shared/test/startTestDatabase.js';
 import { createSessionRepository } from '../infrastructure/createSessionRepository.js';
 import { requireAdmin } from './requireAdmin.js';
 import { requireMain } from './requireMain.js';
 
-const SECRET = 'test-secret-test-secret-test-secret';
 const DAY_MS = 24 * 60 * 60 * 1000;
-
-interface SeededSession {
-  id: string;
-  accountId: string;
-  csrf: string;
-  cookie: string;
-}
 
 describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
   let db: TestDatabase;
@@ -28,32 +26,11 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
   let app: ReturnType<typeof createApp>;
   let familyId: string;
 
-  const seedAccount = async (fields: { familyRole?: 'main' | 'member'; admin?: boolean } = {}) => {
-    const id = randomUUID();
-    await owner.query(
-      `INSERT INTO accounts (id, oidc_subject, display_name, family_id, family_role, is_system_admin)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
-      [
-        id,
-        `sub-${id}`,
-        `Người ${fields.familyRole ?? 'chờ'}`,
-        fields.familyRole ? familyId : null,
-        fields.familyRole ?? null,
-        fields.admin ?? false,
-      ],
-    );
-    return id;
-  };
+  const seedAccount = (fields: { familyRole?: 'main' | 'member'; admin?: boolean } = {}) =>
+    seedAccountRow(owner, { ...fields, ...(fields.familyRole ? { familyId } : {}) });
 
-  const seedSession = async (accountId: string, expiresInMs = 30 * DAY_MS): Promise<SeededSession> => {
-    const [id, csrf] = [randomUUID(), `csrf-${randomUUID()}`];
-    await owner.query(
-      `INSERT INTO sessions (id, account_id, csrf_token, expires_at) VALUES ($1, $2, $3, $4)`,
-      [id, accountId, csrf, new Date(Date.now() + expiresInMs)],
-    );
-    const cookie = (await serializeSigned('angia_session', id, SECRET)).split(';')[0] ?? '';
-    return { id, accountId, csrf, cookie };
-  };
+  const seedSession = (accountId: string, expiresInMs?: number) =>
+    seedSessionRow(owner, accountId, expiresInMs);
 
   const sessionExists = async (id: string) =>
     (await owner.query(`SELECT 1 FROM sessions WHERE id = $1`, [id])).rowCount === 1;
@@ -78,8 +55,9 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
       auth: {
         ...stub,
         login: { ...stub.login, sessions: createSessionRepository(createDatabase(pool)) },
-        cookieSecret: SECRET,
+        cookieSecret: TEST_COOKIE_SECRET,
       },
+      familyAdmin: createFakeFamilyAdminRepository().repository,
     });
     app.get('/api/test/main-only', requireMain(), (c) => c.text('ok'));
     app.get('/api/test/admin-only', requireAdmin(), (c) => c.text('ok'));

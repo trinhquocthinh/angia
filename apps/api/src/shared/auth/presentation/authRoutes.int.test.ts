@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '@src/createApp.js';
 import { createDatabase } from '@src/shared/db/createDatabase.js';
 import { runMigrations } from '@src/shared/db/runMigrations.js';
+import { createFakeFamilyAdminRepository } from '@src/shared/test/createFakeFamilyAdminRepository.js';
 import { createSilentLogger } from '@src/shared/test/createSilentLogger.js';
 import { startTestDatabase, type TestDatabase } from '@src/shared/test/startTestDatabase.js';
 import type { OidcClient } from '../application/ports.js';
@@ -68,6 +69,7 @@ describe('GET /api/auth/login + /api/auth/callback', () => {
         secureCookies: true,
         logger: createSilentLogger(),
       },
+      familyAdmin: createFakeFamilyAdminRepository().repository,
     });
   });
 

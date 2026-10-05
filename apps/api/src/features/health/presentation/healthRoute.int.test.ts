@@ -3,6 +3,7 @@ import type { Pool } from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '@src/createApp.js';
 import { createPool } from '@src/shared/db/createPool.js';
+import { createFakeFamilyAdminRepository } from '@src/shared/test/createFakeFamilyAdminRepository.js';
 import { createStubAuthDeps } from '@src/shared/test/createStubAuthDeps.js';
 import { createSilentLogger } from '@src/shared/test/createSilentLogger.js';
 import { findFreePort } from '@src/shared/test/findFreePort.js';
@@ -33,6 +34,7 @@ describe('GET /api/health với PostgreSQL thật', () => {
     app = createApp({
       healthProbes: { db: createPostgresProbe(pool), storage: () => Promise.resolve() },
       auth: createStubAuthDeps(),
+      familyAdmin: createFakeFamilyAdminRepository().repository,
     });
   });
 
