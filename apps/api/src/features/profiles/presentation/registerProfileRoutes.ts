@@ -3,7 +3,6 @@ import { requireMain } from '@src/shared/auth/presentation/requireMain.js';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { errorJson } from '@src/shared/http/errorResponse.js';
 import { createProfile } from '../application/createProfile.js';
-import { confirmConsent } from '../application/confirmConsent.js';
 import { listProfiles } from '../application/listProfiles.js';
 import { listLinkableAccounts } from '../application/listLinkableAccounts.js';
 import type { Clock, ProfileRepository } from '../application/ports.js';
@@ -37,16 +36,6 @@ export function registerProfileRoutes(
     return result.ok ? c.json(toProfileResponse(result.value), 201) : c.json(...errorJson(result.code));
   });
   app.openapi(confirmConsentRoute, async (c) => {
-    const session = c.get('session')!;
-    const result = await confirmConsent(
-      repository,
-      session.family!.id,
-      c.req.valid('param').id,
-      session.account.id,
-      c.req.valid('json').confirmedBy,
-      now,
-    );
-    if (!result.ok) return c.json(...errorJson(result.code));
-    return c.json({ ...result.value, profile: toProfileResponse(result.value.profile) }, 200);
+    return c.json(...errorJson('ERR_CONSENT_INVITATION_REQUIRED'));
   });
 }

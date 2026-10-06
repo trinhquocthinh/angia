@@ -34,13 +34,6 @@ export function useProfilesWorkspace(
     },
     onSuccess: refresh,
   });
-  const consent = useMutation({
-    mutationFn: ({ id, confirmedBy }: { id: string; confirmedBy: 'self' | 'guardian' }) => {
-      if (!enabled) throw new Error('Chỉ người chăm sóc chính có thể xác nhận đồng thuận.');
-      return repository.confirm(id, confirmedBy, session!.csrfToken);
-    },
-    onSuccess: refresh,
-  });
   const logout = useMutation({
     mutationFn: () => repository.logout(session?.csrfToken ?? ''),
     onSuccess: async () => {
@@ -49,5 +42,5 @@ export function useProfilesWorkspace(
       window.location.assign('/login');
     },
   });
-  return { profiles, accounts, create, consent, logout };
+  return { profiles, accounts, create, logout };
 }

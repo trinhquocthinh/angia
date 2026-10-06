@@ -1,3 +1,4 @@
+import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
 import { createStubProfileRepository } from '@src/shared/test/createStubProfileRepository.js';
 import { randomUUID } from 'node:crypto';
 import pg from 'pg';
@@ -52,6 +53,7 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
     pool = new pg.Pool({ connectionString: db.appUrl });
     const stub = createStubAuthDeps();
     app = createApp({
+      consentInvitations: createStubInvitationDeps(),
       healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
       auth: {
         ...stub,

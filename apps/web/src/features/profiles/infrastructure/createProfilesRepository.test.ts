@@ -36,13 +36,18 @@ describe('Hồ sơ qua hợp đồng HTTP và bảo vệ phiên', () => {
     expect(requests[0]?.headers.get('X-CSRF-Token')).toBe('csrf');
     expect(requests[0]?.credentials).toBe('same-origin');
   });
-  it('xác nhận chỉ gửi tư cách, giữ nguyên outcome yêu cầu lặp', async () => {
-    const response = { outcome: 'already_confirmed', confirmedByDisplayName: 'An', profile: { id: 'p' } };
-    const { repository, requests } = harness(200, response);
-    await expect(repository.confirm('p', 'guardian', 'csrf')).resolves.toEqual(response);
-    expect(new URL(requests[0]!.url).pathname).toBe('/api/health-profiles/p/consent');
-    expect(await requests[0]!.json()).toEqual({ confirmedBy: 'guardian' });
-    expect(requests[0]?.headers.get('X-CSRF-Token')).toBe('csrf');
+  it('main tạo và thu hồi link bằng CSRF, không xác nhận thay người nhận', async () => {
+    const { repository, requests } = harness(200, { token: 'opaque', expiresAt: '2026-10-13T00:00:00Z' });
+    await repository.createInvitation('p', 'csrf');
+    await repository.revokeInvitation('p', 'csrf');
+    expect(requests.map((request) => request.method)).toEqual(['POST', 'DELETE']);
+    expect(
+      requests.every(
+        (request) => new URL(request.url).pathname === '/api/health-profiles/p/consent-invitations',
+      ),
+    ).toBe(true);
+    expect(requests.every((request) => request.headers.get('X-CSRF-Token') === 'csrf')).toBe(true);
+    expect(requests[0]?.body).toBeNull();
   });
   it.each([401, 403, 409, 500])('HTTP %s không giả lập lưu thành công', async (status) => {
     const { repository } = harness(status, { error: { code: 'ERR_INTERNAL', message: 'SQL secret' } });

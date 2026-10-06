@@ -12,9 +12,7 @@ export function NewProfilePage() {
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(repository, session.data, true);
   const navigate = useNavigate();
-  useProfileSessionRecovery(
-    workspace.profiles.error ?? workspace.accounts.error ?? workspace.create.error ?? workspace.consent.error,
-  );
+  useProfileSessionRecovery(workspace.profiles.error ?? workspace.accounts.error ?? workspace.create.error);
   if (!session.data) return null;
   return (
     <ProfileFrame

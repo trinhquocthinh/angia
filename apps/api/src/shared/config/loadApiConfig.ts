@@ -19,6 +19,7 @@ const apiEnvSchema = z.object({
   OIDC_REDIRECT_URI: z.string().url(),
   // Khóa ký cookie phiên, tối thiểu 32 byte (`openssl rand -base64 48`).
   SESSION_COOKIE_SECRET: z.string().min(32),
+  APP_BASE_URL: z.string().url(),
   ADMIN_GROUP_NAME: z.string().min(1),
 });
 

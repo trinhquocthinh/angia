@@ -18,6 +18,9 @@ const profile = {
   consentConfirmedAt: null,
   consentConfirmedBy: null,
   consentBasis: null,
+  consentStatus: 'pending' as const,
+  consentSource: null,
+  consentRespondentName: null,
   createdAt: '2026-10-06T00:00:00Z',
 };
 function repository(fail = false): ProfilesRepository {
@@ -28,7 +31,8 @@ function repository(fail = false): ProfilesRepository {
       if (fail) throw new Error('Lỗi mạng');
       return profile;
     }),
-    confirm: vi.fn(async () => ({ profile, outcome: 'confirmed' as const, confirmedByDisplayName: 'An' })),
+    createInvitation: vi.fn(async () => ({ token: 'opaque', expiresAt: '2026-10-13T00:00:00Z' })),
+    revokeInvitation: vi.fn(async () => undefined),
     logout: vi.fn(async () => undefined),
   };
 }
@@ -80,11 +84,7 @@ describe('Cô lập cache hồ sơ và quyền thao tác', () => {
     await expect(workspace.create.mutateAsync({ displayName: 'Ba' })).rejects.toThrow(
       'Chỉ người chăm sóc chính',
     );
-    await expect(workspace.consent.mutateAsync({ id: 'p', confirmedBy: 'self' })).rejects.toThrow(
-      'Chỉ người chăm sóc chính',
-    );
     expect(repo.create).not.toHaveBeenCalled();
-    expect(repo.confirm).not.toHaveBeenCalled();
     client.clear();
   });
   it.each([false, true])('tạo thành công làm mới danh sách và phiên, lỗi=%s', async (fail) => {

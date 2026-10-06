@@ -5,7 +5,6 @@ import type { ProfileStore } from '../application/ports.js';
 
 // Mọi thao tác dùng transaction đã có SET LOCAL app.family_id; bộ lọc bổ sung phòng thủ theo chiều sâu.
 export function createProfileStore(tx: FamilyScopedTx, familyId: string): ProfileStore {
-  const sameProfile = (id: string) => and(eq(healthProfiles.id, id), eq(healthProfiles.familyId, familyId));
   const sameAccount = (id: string) => and(eq(accounts.id, id), eq(accounts.familyId, familyId));
   return {
     listProfiles: () =>
@@ -43,21 +42,5 @@ export function createProfileStore(tx: FamilyScopedTx, familyId: string): Profil
     linkAccount: async (id, profileId) => {
       await tx.update(accounts).set({ healthProfileId: profileId }).where(sameAccount(id));
     },
-    lockProfile: async (id) =>
-      (await tx.select().from(healthProfiles).where(sameProfile(id)).for('update'))[0] ?? null,
-    recordConsent: async (id, accountId, basis, at) => {
-      const [profile] = await tx
-        .update(healthProfiles)
-        .set({ consentConfirmedBy: accountId, consentBasis: basis, consentConfirmedAt: at })
-        .where(sameProfile(id))
-        .returning();
-      if (!profile) throw new Error('Không ghi nhận được đồng thuận');
-      return profile;
-    },
-    confirmerName: async (id) =>
-      id
-        ? ((await tx.select({ name: accounts.displayName }).from(accounts).where(sameAccount(id)))[0]?.name ??
-          null)
-        : null,
   };
 }

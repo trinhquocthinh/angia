@@ -9,16 +9,14 @@ import type { HealthProfile } from '../application/ports';
 import { createProfilesRepository } from '../infrastructure/createProfilesRepository';
 import { ProfileFrame } from './components/ProfileFrame';
 import { ProfilesContent } from './components/ProfilesContent';
-import { ConsentDialog } from './components/ConsentDialog';
+import { InvitationManagerDialog } from './components/InvitationManagerDialog';
 import './profiles.css';
 const repository = createProfilesRepository();
 export function HomePage() {
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(repository, session.data);
   const [selected, setSelected] = useState<HealthProfile | null>(null);
-  useProfileSessionRecovery(
-    workspace.profiles.error ?? workspace.accounts.error ?? workspace.create.error ?? workspace.consent.error,
-  );
+  useProfileSessionRecovery(workspace.profiles.error ?? workspace.accounts.error ?? workspace.create.error);
   if (!session.data) return null;
   const profiles = workspace.profiles.data ?? [];
   const main = session.data.role === 'main';
@@ -59,11 +57,11 @@ export function HomePage() {
         <RecipientNotice />
       )}
       {selected && selected.familyId === session.data.family?.id && main && (
-        <ConsentDialog
-          key={selected.id}
-          profile={selected}
-          pending={workspace.consent.isPending}
-          onConfirm={(confirmedBy) => workspace.consent.mutateAsync({ id: selected.id, confirmedBy })}
+        <InvitationManagerDialog
+          key={`${session.data.account.id}:${session.data.family.id}:${selected.id}`}
+          profile={profiles.find((profile) => profile.id === selected.id) ?? selected}
+          session={session.data}
+          repository={repository}
           onClose={() => setSelected(null)}
         />
       )}

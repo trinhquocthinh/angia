@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { HealthProfile, ConsentConfirmationResponse } from '@angia/contracts';
+import type { HealthProfile } from '@angia/contracts';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 
@@ -30,9 +30,9 @@ describe('Hồ sơ: route thật, transaction và RLS', () => {
       consentConfirmedBy: null,
       consentBasis: null,
     });
-    const read = () => t.call(other, 'POST', consent(profile.id), { confirmedBy: 'guardian' });
+    const read = () => t.call(other, 'POST', `${base}/${profile.id}/consent-invitations`);
     await expectCrossFamilyDenied(read, () =>
-      t.call(other, 'POST', consent(randomUUID()), { confirmedBy: 'guardian' }),
+      t.call(other, 'POST', `${base}/${randomUUID()}/consent-invitations`),
     );
     expect(await (await t.call(main, 'GET', base)).json()).toEqual([profile]);
     expect(await (await t.call(other, 'GET', base)).json()).toEqual([]);
@@ -67,37 +67,14 @@ describe('Hồ sơ: route thật, transaction và RLS', () => {
     ]);
     expect(await (await t.call(main, 'GET', base)).json()).toEqual([]);
   });
-  it('đồng thuận đồng thời trả hai kết quả riêng, giữ metadata người thắng', async () => {
+  it('route đồng thuận cũ trả 409, không thay metadata', async () => {
     const family = await t.family();
-    const [a, b] = await Promise.all([t.session(family, 'main', 'An'), t.session(family, 'main', 'Bình')]);
-    const profile = (await (await t.call(a, 'POST', base, { displayName: 'Mẹ' })).json()) as HealthProfile;
-    const responses = await Promise.all([
-      t.call(a, 'POST', consent(profile.id), { confirmedBy: 'guardian' }),
-      t.call(b, 'POST', consent(profile.id), { confirmedBy: 'self' }),
-    ]);
-    expect(responses.map((r) => r.status)).toEqual([200, 200]);
-    const results = await Promise.all(responses.map((r) => r.json() as Promise<ConsentConfirmationResponse>));
-    expect(results.map((r) => r.outcome).sort()).toEqual(['already_confirmed', 'confirmed']);
-    const first = results.find((r) => r.outcome === 'confirmed')!;
-    const again = results.find((r) => r.outcome === 'already_confirmed')!;
-    expect(again.profile).toEqual(first.profile);
-    expect(again.confirmedByDisplayName).toBe(first.confirmedByDisplayName);
-    const expectedName = first.profile.consentConfirmedBy === a.accountId ? 'An' : 'Bình';
-    expect(first.confirmedByDisplayName).toBe(expectedName);
-    expect(first.profile.consentBasis).toBe(
-      first.profile.consentConfirmedBy === a.accountId ? 'guardian' : 'self',
-    );
-    const third = await (await t.call(b, 'POST', consent(profile.id), { confirmedBy: 'guardian' })).json();
-    expect(third).toEqual({ ...first, outcome: 'already_confirmed' });
-  });
-  it('người xác nhận chuyển gia đình thì không lộ tên người đó trong gia đình cũ', async () => {
-    const [family, next] = await Promise.all([t.family(), t.family()]);
-    const [a, b] = await Promise.all([t.session(family), t.session(family)]);
-    const profile = (await (await t.call(a, 'POST', base, { displayName: 'Mẹ' })).json()) as HealthProfile;
-    expect((await t.call(a, 'POST', consent(profile.id), { confirmedBy: 'guardian' })).status).toBe(200);
-    await t.owner.query('UPDATE accounts SET family_id=$1 WHERE id=$2', [next, a.accountId]);
-    const result = await (await t.call(b, 'POST', consent(profile.id), { confirmedBy: 'self' })).json();
-    expect(result).toMatchObject({ outcome: 'already_confirmed', confirmedByDisplayName: null });
+    const main = await t.session(family);
+    const profile = (await (await t.call(main, 'POST', base, { displayName: 'Mẹ' })).json()) as HealthProfile;
+    const response = await t.call(main, 'POST', consent(profile.id), { confirmedBy: 'guardian' });
+    expect(response.status).toBe(409);
+    expect(await response.json()).toMatchObject({ error: { code: 'ERR_CONSENT_INVITATION_REQUIRED' } });
+    expect(await (await t.call(main, 'GET', base)).json()).toEqual([profile]);
   });
   it('member, admin không phải main và phiên thiếu CSRF bị chặn trước validate', async () => {
     const family = await t.family();

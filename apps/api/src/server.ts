@@ -1,5 +1,7 @@
+import { createInvitationRepository } from '@src/features/consentInvitations/infrastructure/createInvitationRepository.js';
+import { createInvitationTokenCodec } from '@src/features/consentInvitations/infrastructure/createInvitationTokenCodec.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
-import { randomBytes } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
 import { createApp } from '@src/createApp.js';
@@ -48,6 +50,13 @@ const app = createApp({
   },
   familyAdmin: createFamilyAdminRepository(db),
   profiles: createProfileRepository(db),
+  consentInvitations: {
+    repository: createInvitationRepository(db),
+    codec: createInvitationTokenCodec(config.SESSION_COOKIE_SECRET),
+    now: () => new Date(),
+    newId: randomUUID,
+    appBaseUrl: config.APP_BASE_URL,
+  },
 });
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {

@@ -1,3 +1,4 @@
+import { createStubInvitationDeps } from '../src/shared/test/createStubInvitationDeps.js';
 import { createStubProfileRepository } from '../src/shared/test/createStubProfileRepository.js';
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -8,6 +9,7 @@ import { createFakeFamilyAdminRepository } from '../src/shared/test/createFakeFa
 // Sinh OpenAPI từ route Zod; probe/auth/repository giả vì chỉ cần cấu trúc route, không gọi hạ tầng.
 const noopProbe = () => Promise.resolve();
 const app = createApp({
+  consentInvitations: createStubInvitationDeps(),
   healthProbes: { db: noopProbe, storage: noopProbe },
   auth: createStubAuthDeps(),
   profiles: createStubProfileRepository(),

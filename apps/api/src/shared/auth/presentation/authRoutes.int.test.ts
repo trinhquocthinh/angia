@@ -1,3 +1,4 @@
+import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
 import { createStubProfileRepository } from '@src/shared/test/createStubProfileRepository.js';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -56,6 +57,7 @@ describe('GET /api/auth/login + /api/auth/callback', () => {
     pool = new pg.Pool({ connectionString: db.appUrl });
     const database = createDatabase(pool);
     app = createApp({
+      consentInvitations: createStubInvitationDeps(),
       healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
       auth: {
         login: {

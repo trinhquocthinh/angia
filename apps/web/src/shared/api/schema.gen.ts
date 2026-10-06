@@ -717,7 +717,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Ghi nhận hoặc thông báo đồng thuận đã tồn tại */
+    /** Route cũ: yêu cầu tạo link mời, không ghi đồng thuận */
     post: {
       parameters: {
         query?: never;
@@ -733,13 +733,86 @@ export interface paths {
         };
       };
       responses: {
-        /** @description confirmed: vừa ghi; already_confirmed: giữ nguyên lần đầu */
-        200: {
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
           headers: {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['ConsentConfirmationResponse'];
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: cần main cùng gia đình và CSRF cho request ghi */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_INVITATION_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/consent-invitations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Link mới, hết hạn sau 7 ngày */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ConsentInvitationCreated'];
           };
         };
         /** @description ERR_UNAUTHENTICATED */
@@ -751,7 +824,192 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_FORBIDDEN: cần main cùng gia đình và CSRF cho request ghi */
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_ALREADY_CONFIRMED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Đã thu hồi link đang chờ */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ConsentInvitationRevoked'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_ALREADY_CONFIRMED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/consent-invitations/view': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Thông tin tối thiểu, không tiêu thụ token */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ConsentInvitationView'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/consent-invitations/respond': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['ConsentInvitationRespondRequest'];
+        };
+      };
+      responses: {
+        /** @description Giữ quyết định và metadata phản hồi đầu */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ConsentInvitationReceipt'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: Origin */
         403: {
           headers: {
             [name: string]: unknown;
@@ -875,6 +1133,11 @@ export interface components {
       consentConfirmedBy: string | null;
       /** @enum {string|null} */
       consentBasis: 'self' | 'guardian' | null;
+      /** @enum {string} */
+      consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed';
+      /** @enum {string|null} */
+      consentSource: 'legacy_attestation' | 'invitation' | null;
+      consentRespondentName: string | null;
       /** Format: date-time */
       createdAt: string;
     };
@@ -889,15 +1152,44 @@ export interface components {
       /** Format: uuid */
       linkedAccountId?: string;
     };
-    ConsentConfirmationResponse: {
-      /** @enum {string} */
-      outcome: 'confirmed' | 'already_confirmed';
-      profile: components['schemas']['HealthProfile'];
-      confirmedByDisplayName: string | null;
-    };
     ConfirmConsentRequest: {
       /** @enum {string} */
       confirmedBy: 'self' | 'guardian';
+    };
+    ConsentInvitationCreated: {
+      token: string;
+      /** Format: date-time */
+      expiresAt: string;
+    };
+    ConsentInvitationRevoked: {
+      /** @enum {string} */
+      status: 'pending';
+    };
+    ConsentInvitationView: {
+      profileDisplayName: string;
+      inviterDisplayName: string | null;
+      /** Format: date-time */
+      expiresAt: string;
+      /** @enum {string} */
+      status: 'pending' | 'accepted' | 'declined';
+    };
+    ConsentInvitationReceipt: {
+      /** @enum {string} */
+      outcome: 'recorded' | 'already_responded';
+      /** @enum {string} */
+      decision: 'accepted' | 'declined';
+      respondentName: string;
+      /** @enum {string} */
+      basis: 'self' | 'guardian';
+      /** Format: date-time */
+      respondedAt: string;
+    };
+    ConsentInvitationRespondRequest: {
+      respondentName: string;
+      /** @enum {string} */
+      basis: 'self' | 'guardian';
+      /** @enum {string} */
+      decision: 'accepted' | 'declined';
     };
   };
   responses: never;

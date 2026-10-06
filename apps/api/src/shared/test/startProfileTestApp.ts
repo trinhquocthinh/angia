@@ -1,3 +1,5 @@
+import { createInvitationRepository } from '@src/features/consentInvitations/infrastructure/createInvitationRepository.js';
+import { createInvitationTokenCodec } from '@src/features/consentInvitations/infrastructure/createInvitationTokenCodec.js';
 import { randomUUID } from 'node:crypto';
 import pg from 'pg';
 import { createApp } from '@src/createApp.js';
@@ -10,7 +12,7 @@ import { createFakeFamilyAdminRepository } from './createFakeFamilyAdminReposito
 import { seedAccount, seedSession, TEST_COOKIE_SECRET, type SeededSession } from './seedAuthFixtures.js';
 import { startTestDatabase } from './startTestDatabase.js';
 
-export async function startProfileTestApp() {
+export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') {
   const db = await startTestDatabase();
   await runMigrations(db.ownerUrl);
   const owner = new pg.Client({ connectionString: db.ownerUrl });
@@ -27,6 +29,13 @@ export async function startProfileTestApp() {
     },
     familyAdmin: createFakeFamilyAdminRepository().repository,
     profiles: createProfileRepository(database),
+    consentInvitations: {
+      repository: createInvitationRepository(database),
+      codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
+      now: () => new Date(),
+      newId: randomUUID,
+      appBaseUrl,
+    },
   });
   const family = async () => {
     const id = randomUUID();
@@ -50,6 +59,16 @@ export async function startProfileTestApp() {
     await owner.end();
     await db.container.stop();
   };
-  return { app, owner, pool, family, session, call, stop };
+  return {
+    app,
+    owner,
+    pool,
+    family,
+    session,
+    call,
+    stop,
+    database,
+    codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
+  };
 }
 export type ProfileTestApp = Awaited<ReturnType<typeof startProfileTestApp>>;

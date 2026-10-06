@@ -25,7 +25,6 @@ export function ProfileFrame({
       <div className="min-w-0 lg:ml-[240px]">
         <header className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-b border-[#e4f0ef] px-4 py-3 lg:px-8">
           <a href="/" className="flex items-center gap-3 text-sm font-semibold text-[#004135]">
-            <img src="/logo.png" className="h-8 w-8 object-contain" alt="" />
             Hồ Sơ Sức Khỏe Gia Đình
           </a>
           <div className="flex gap-3">

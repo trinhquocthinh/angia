@@ -22,6 +22,11 @@ const ERROR_CATALOG = {
     status: 409,
     message: 'Tài khoản này đã được liên kết với một hồ sơ sức khỏe khác.',
   },
+  ERR_CONSENT_INVITATION_REQUIRED: {
+    status: 409,
+    message: 'Vui lòng tạo link mời để người nhận tự xác nhận đồng thuận.',
+  },
+  ERR_CONSENT_ALREADY_CONFIRMED: { status: 409, message: 'Hồ sơ này đã có đồng thuận từ người nhận.' },
   ERR_CONSENT_REQUIRED: {
     status: 409,
     message: 'Cần hoàn tất xác nhận đồng thuận lưu trữ dữ liệu cho hồ sơ này trước.',

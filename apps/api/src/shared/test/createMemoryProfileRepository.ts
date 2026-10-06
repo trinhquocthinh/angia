@@ -14,7 +14,6 @@ export function createMemoryProfileRepository(accounts: Account[] = []): Profile
   return {
     withFamily: async (familyId, work) => {
       const findAccount = (id: string) => accounts.find((a) => a.id === id && a.familyId === familyId);
-      const findProfile = (id: string) => profiles.find((p) => p.id === id && p.familyId === familyId);
       const store: ProfileStore = {
         listProfiles: async () => profiles.filter((p) => p.familyId === familyId),
         listLinkableAccounts: async () =>
@@ -31,6 +30,9 @@ export function createMemoryProfileRepository(accounts: Account[] = []): Profile
             consentConfirmedAt: null,
             consentConfirmedBy: null,
             consentBasis: null,
+            consentStatus: 'pending',
+            consentSource: null,
+            consentRespondentName: null,
             createdAt: new Date('2026-10-06T00:00:00Z'),
           };
           profiles.push(profile);
@@ -39,17 +41,6 @@ export function createMemoryProfileRepository(accounts: Account[] = []): Profile
         linkAccount: async (id, profileId) => {
           findAccount(id)!.healthProfileId = profileId;
         },
-        lockProfile: async (id) => findProfile(id) ?? null,
-        recordConsent: async (id, accountId, basis, at) => {
-          const profile = findProfile(id)!;
-          Object.assign(profile, {
-            consentConfirmedBy: accountId,
-            consentBasis: basis,
-            consentConfirmedAt: at,
-          });
-          return profile;
-        },
-        confirmerName: async (id) => (id ? (findAccount(id)?.displayName ?? null) : null),
       };
       return work(store);
     },

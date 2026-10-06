@@ -20,3 +20,16 @@ export { consentConfirmationResponseSchema } from './profiles/consentConfirmatio
 export type { ConsentConfirmationResponse } from './profiles/consentConfirmationResponseSchema.js';
 export { linkableAccountSchema } from './profiles/linkableAccountSchema.js';
 export type { LinkableAccount } from './profiles/linkableAccountSchema.js';
+export {
+  consentInvitationCreatedSchema,
+  consentInvitationRevokedSchema,
+  consentInvitationViewSchema,
+  consentInvitationRespondRequestSchema,
+  consentInvitationReceiptSchema,
+} from './profiles/consentInvitationSchemas.js';
+export type {
+  ConsentInvitationCreated,
+  ConsentInvitationView,
+  ConsentInvitationRespondRequest,
+  ConsentInvitationReceipt,
+} from './profiles/consentInvitationSchemas.js';

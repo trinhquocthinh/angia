@@ -1,3 +1,7 @@
+import {
+  registerInvitationRoutes,
+  type InvitationRouteDependencies,
+} from '@src/features/consentInvitations/presentation/registerInvitationRoutes.js';
 import type { ProfileRepository } from '@src/features/profiles/application/ports.js';
 import { registerProfileRoutes } from '@src/features/profiles/presentation/registerProfileRoutes.js';
 import { OpenAPIHono } from '@hono/zod-openapi';
@@ -18,10 +22,17 @@ export type AppDependencies = {
   auth: AuthRouteDeps;
   familyAdmin: FamilyAdminRepository;
   profiles: ProfileRepository;
+  consentInvitations: InvitationRouteDependencies;
 };
 
 // Ngoại lệ duy nhất của "mọi route /api cần phiên" (Tech Spec §4); logout vẫn cần phiên + CSRF.
-const PUBLIC_PATHS = ['/api/health', '/api/auth/login', '/api/auth/callback'];
+const PUBLIC_PATHS = [
+  '/api/health',
+  '/api/auth/login',
+  '/api/auth/callback',
+  '/api/consent-invitations/view',
+  '/api/consent-invitations/respond',
+];
 
 // Lắp ráp route từ các adapter đã khởi tạo; tách khỏi server.ts để test in-process qua app.request().
 export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
@@ -31,15 +42,22 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   });
   const cookies = { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies };
   app.onError((error, c) => {
-    deps.auth.logger.error({ reason: error.message }, 'Lỗi chưa xử lý');
+    deps.auth.logger.error({ reason: error.name }, 'Lỗi chưa xử lý');
     return errorResponse(c, 'ERR_INTERNAL');
   });
-  app.use('/api/*', loadSession(deps.auth.login, cookies));
+  app.use(
+    '/api/*',
+    except(
+      ['/api/consent-invitations/view', '/api/consent-invitations/respond'],
+      loadSession(deps.auth.login, cookies),
+    ),
+  );
   app.use('/api/*', except(PUBLIC_PATHS, requireSession()));
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth);
   registerMeRoute(app);
   registerAdminRoutes(app, deps.familyAdmin);
   registerProfileRoutes(app, deps.profiles, deps.auth.login.now);
+  registerInvitationRoutes(app, deps.consentInvitations);
   return app;
 }

@@ -1,7 +1,6 @@
 import { createRoute, z } from '@hono/zod-openapi';
 import {
   confirmConsentRequestSchema,
-  consentConfirmationResponseSchema,
   createHealthProfileRequestSchema,
   errorResponseSchema,
   healthProfileSchema,
@@ -54,16 +53,13 @@ export const confirmConsentRoute = createRoute({
   method: 'post',
   path: `${base}/{id}/consent`,
   tags: ['profiles'],
-  summary: 'Ghi nhận hoặc thông báo đồng thuận đã tồn tại',
+  summary: 'Route cũ: yêu cầu tạo link mời, không ghi đồng thuận',
   request: {
     params: z.object({ id: z.uuid() }),
     body: { required: true, content: json(confirmConsentRequestSchema) },
   },
   responses: {
-    200: {
-      description: 'confirmed: vừa ghi; already_confirmed: giữ nguyên lần đầu',
-      content: json(consentConfirmationResponseSchema),
-    },
+    409: error('ERR_CONSENT_INVITATION_REQUIRED'),
     ...guards,
     404: error('ERR_NOT_FOUND'),
     422: error('ERR_VALIDATION'),

@@ -1,3 +1,4 @@
+import { ProfileConsentStatus } from './ProfileConsentStatus';
 import type { HealthProfile } from '../../application/ports';
 export function ProfileCard({
   profile,
@@ -6,7 +7,7 @@ export function ProfileCard({
   profile: HealthProfile;
   onConsent: (profile: HealthProfile) => void;
 }) {
-  const confirmed = Boolean(profile.consentConfirmedAt);
+  const confirmed = profile.consentStatus === 'confirmed' && profile.consentSource === 'invitation';
   return (
     <article className="flex min-h-[280px] flex-col rounded-[20px] bg-white p-6 shadow-sm">
       <div className="flex items-center gap-3">
@@ -23,22 +24,13 @@ export function ProfileCard({
           )}
         </div>
       </div>
-      <div className="mt-6 flex-1 rounded-xl bg-[#eaf6f5] p-4">
-        <p className="text-sm font-medium text-[#004135]">
-          {confirmed ? 'Đã xác nhận đồng thuận' : 'Chưa xác nhận đồng thuận'}
-        </p>
-        <p className="mt-2 text-sm leading-6 text-[#55615f]">
-          {confirmed
-            ? 'Thông tin đồng thuận đã được ghi nhận.'
-            : 'Xác nhận việc chia sẻ dữ liệu trước khi quản lý thông tin sức khỏe.'}
-        </p>
-      </div>
+      <ProfileConsentStatus profile={profile} />
       {!confirmed && (
         <button
           className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-[#004135] px-5 py-3 text-center text-sm font-semibold text-white cursor-pointer disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958] mt-5"
           onClick={() => onConsent(profile)}
         >
-          Xác nhận đồng thuận
+          {profile.consentStatus === 'invited' ? 'Quản lý link đồng thuận' : 'Tạo link đồng thuận'}
         </button>
       )}
     </article>

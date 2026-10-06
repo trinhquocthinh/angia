@@ -14,14 +14,21 @@ export function createProfilesRepository(client = apiClient): ProfilesRepository
       readProfileResponse(
         await client.POST('/api/health-profiles', { body, headers: { 'X-CSRF-Token': csrfToken } }),
       ),
-    confirm: async (id, confirmedBy, csrfToken) =>
+    createInvitation: async (id, csrfToken) =>
       readProfileResponse(
-        await client.POST('/api/health-profiles/{id}/consent', {
+        await client.POST('/api/health-profiles/{id}/consent-invitations', {
           params: { path: { id } },
-          body: { confirmedBy },
           headers: { 'X-CSRF-Token': csrfToken },
         }),
       ),
+    revokeInvitation: async (id, csrfToken) => {
+      await readProfileResponse(
+        await client.DELETE('/api/health-profiles/{id}/consent-invitations', {
+          params: { path: { id } },
+          headers: { 'X-CSRF-Token': csrfToken },
+        }),
+      );
+    },
     logout: (csrfToken) => logoutSession(csrfToken, client),
   };
 }

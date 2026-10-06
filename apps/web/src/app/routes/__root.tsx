@@ -1,12 +1,12 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router';
-import { AuthBoundary } from '@src/features/auth/presentation/AuthBoundary';
+import { SessionBoundary } from '@src/features/auth/presentation/SessionBoundary';
 
 export const Route = createRootRoute({
   component: () => (
     <main className="min-h-dvh">
-      <AuthBoundary>
+      <SessionBoundary>
         <Outlet />
-      </AuthBoundary>
+      </SessionBoundary>
     </main>
   ),
 });

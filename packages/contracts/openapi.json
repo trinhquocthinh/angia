@@ -5,6 +5,12 @@
     "version": "0.1.0"
   },
   "components": {
+    "securitySchemes": {
+      "invitationToken": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
     "schemas": {
       "HealthResponse": {
         "type": "object",
@@ -315,6 +321,32 @@
               null
             ]
           },
+          "consentStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "invited",
+              "declined",
+              "confirmed"
+            ]
+          },
+          "consentSource": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "legacy_attestation",
+              "invitation",
+              null
+            ]
+          },
+          "consentRespondentName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -328,6 +360,9 @@
           "consentConfirmedAt",
           "consentConfirmedBy",
           "consentBasis",
+          "consentStatus",
+          "consentSource",
+          "consentRespondentName",
           "createdAt"
         ]
       },
@@ -368,32 +403,6 @@
           "displayName"
         ]
       },
-      "ConsentConfirmationResponse": {
-        "type": "object",
-        "properties": {
-          "outcome": {
-            "type": "string",
-            "enum": [
-              "confirmed",
-              "already_confirmed"
-            ]
-          },
-          "profile": {
-            "$ref": "#/components/schemas/HealthProfile"
-          },
-          "confirmedByDisplayName": {
-            "type": [
-              "string",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "outcome",
-          "profile",
-          "confirmedByDisplayName"
-        ]
-      },
       "ConfirmConsentRequest": {
         "type": "object",
         "properties": {
@@ -408,6 +417,138 @@
         "required": [
           "confirmedBy"
         ]
+      },
+      "ConsentInvitationCreated": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "token",
+          "expiresAt"
+        ]
+      },
+      "ConsentInvitationRevoked": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "ConsentInvitationView": {
+        "type": "object",
+        "properties": {
+          "profileDisplayName": {
+            "type": "string"
+          },
+          "inviterDisplayName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "declined"
+            ]
+          }
+        },
+        "required": [
+          "profileDisplayName",
+          "inviterDisplayName",
+          "expiresAt",
+          "status"
+        ]
+      },
+      "ConsentInvitationReceipt": {
+        "type": "object",
+        "properties": {
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "recorded",
+              "already_responded"
+            ]
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "accepted",
+              "declined"
+            ]
+          },
+          "respondentName": {
+            "type": "string"
+          },
+          "basis": {
+            "type": "string",
+            "enum": [
+              "self",
+              "guardian"
+            ]
+          },
+          "respondedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "outcome",
+          "decision",
+          "respondentName",
+          "basis",
+          "respondedAt"
+        ]
+      },
+      "ConsentInvitationRespondRequest": {
+        "type": "object",
+        "properties": {
+          "respondentName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "basis": {
+            "type": "string",
+            "enum": [
+              "self",
+              "guardian"
+            ]
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "accepted",
+              "declined"
+            ]
+          }
+        },
+        "required": [
+          "respondentName",
+          "basis",
+          "decision"
+        ],
+        "additionalProperties": false
       }
     },
     "parameters": {}
@@ -1025,7 +1166,7 @@
         "tags": [
           "profiles"
         ],
-        "summary": "Ghi nhận hoặc thông báo đồng thuận đã tồn tại",
+        "summary": "Route cũ: yêu cầu tạo link mời, không ghi đồng thuận",
         "parameters": [
           {
             "schema": {
@@ -1048,12 +1189,82 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "confirmed: vừa ghi; already_confirmed: giữ nguyên lần đầu",
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConsentConfirmationResponse"
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần main cùng gia đình và CSRF cho request ghi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_INVITATION_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/consent-invitations": {
+      "post": {
+        "tags": [
+          "consent-invitations"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Link mới, hết hạn sau 7 ngày",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentInvitationCreated"
                 }
               }
             }
@@ -1069,7 +1280,193 @@
             }
           },
           "403": {
-            "description": "ERR_FORBIDDEN: cần main cùng gia đình và CSRF cho request ghi",
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_ALREADY_CONFIRMED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "consent-invitations"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đã thu hồi link đang chờ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentInvitationRevoked"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_ALREADY_CONFIRMED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/consent-invitations/view": {
+      "get": {
+        "tags": [
+          "consent-invitations"
+        ],
+        "security": [
+          {
+            "invitationToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thông tin tối thiểu, không tiêu thụ token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentInvitationView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/consent-invitations/respond": {
+      "post": {
+        "tags": [
+          "consent-invitations"
+        ],
+        "security": [
+          {
+            "invitationToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentInvitationRespondRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Giữ quyết định và metadata phản hồi đầu",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentInvitationReceipt"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: Origin",
             "content": {
               "application/json": {
                 "schema": {

@@ -1,4 +1,4 @@
-export type ConsentBasis = 'self' | 'guardian';
+type ConsentBasis = 'self' | 'guardian';
 
 export interface HealthProfile {
   id: string;
@@ -8,6 +8,9 @@ export interface HealthProfile {
   consentConfirmedAt: Date | null;
   consentConfirmedBy: string | null;
   consentBasis: ConsentBasis | null;
+  consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed';
+  consentSource: 'legacy_attestation' | 'invitation' | null;
+  consentRespondentName: string | null;
   createdAt: Date;
 }
 
@@ -27,8 +30,3 @@ export interface LinkCandidate extends LinkableAccount {
 type ProfileError = 'ERR_NOT_FOUND' | 'ERR_PROFILE_ALREADY_LINKED' | 'ERR_VALIDATION';
 export type ProfileOutcome<T, Code extends ProfileError = ProfileError> =
   { ok: true; value: T } | { ok: false; code: Code };
-export interface ConsentConfirmation {
-  outcome: 'confirmed' | 'already_confirmed';
-  profile: HealthProfile;
-  confirmedByDisplayName: string | null;
-}

@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { createProfile } from './createProfile.js';
-import { confirmConsent } from './confirmConsent.js';
 import { listProfiles } from './listProfiles.js';
 import { listLinkableAccounts } from './listLinkableAccounts.js';
 import { createMemoryProfileRepository } from '@src/shared/test/createMemoryProfileRepository.js';
@@ -64,45 +63,5 @@ describe('Hồ sơ và đồng thuận', () => {
         code: 'ERR_VALIDATION',
       });
     }
-  });
-  it('đồng thuận giữ nguyên người, thời điểm và căn cứ lần đầu, trả kết quả lặp riêng', async () => {
-    const repository = createMemoryProfileRepository([
-      { id: 'main-a', familyId: 'a', displayName: 'An', healthProfileId: null },
-    ]);
-    const created = await createProfile(repository, 'a', { displayName: 'Mẹ' }, now);
-    if (!created.ok) throw new Error('Không tạo được fixture');
-    const first = await confirmConsent(repository, 'a', created.value.id, 'main-a', 'guardian', now);
-    expect(first).toMatchObject({
-      ok: true,
-      value: {
-        outcome: 'confirmed',
-        confirmedByDisplayName: 'An',
-        profile: { consentConfirmedBy: 'main-a', consentBasis: 'guardian', consentConfirmedAt: now() },
-      },
-    });
-    const again = await confirmConsent(
-      repository,
-      'a',
-      created.value.id,
-      'main-b',
-      'self',
-      () => new Date('2030-01-01'),
-    );
-    expect(again).toMatchObject({
-      ok: true,
-      value: {
-        outcome: 'already_confirmed',
-        confirmedByDisplayName: 'An',
-        profile: { consentConfirmedBy: 'main-a', consentBasis: 'guardian', consentConfirmedAt: now() },
-      },
-    });
-    expect(await confirmConsent(repository, 'b', created.value.id, 'other', 'self', now)).toEqual({
-      ok: false,
-      code: 'ERR_NOT_FOUND',
-    });
-    expect(await confirmConsent(repository, 'a', 'missing', 'main-a', 'self', now)).toEqual({
-      ok: false,
-      code: 'ERR_NOT_FOUND',
-    });
   });
 });

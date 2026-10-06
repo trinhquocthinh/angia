@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { NewProfileForm } from './NewProfileForm';
-import { ConsentChoices } from './ConsentChoices';
+import { InvitationResponseForm } from './InvitationResponseForm';
 describe('Form tạo hồ sơ và lựa chọn đồng thuận rõ ràng', () => {
   it('hiển thị tài khoản có thể liên kết, không tự xác nhận', () => {
     const html = renderToStaticMarkup(
@@ -34,12 +34,11 @@ describe('Form tạo hồ sơ và lựa chọn đồng thuận rõ ràng', () =>
   });
   it('không tự chọn tư cách xác nhận', () => {
     const html = renderToStaticMarkup(
-      <ConsentChoices basis={null} pending={false} setBasis={() => undefined} />,
+      <InvitationResponseForm pending={false} onRespond={async () => undefined} />,
     );
-    expect(html).toContain('Căn cứ đồng thuận');
-    expect(html).toContain('Đối tượng của hồ sơ đã đồng thuận');
-    expect(html).toContain('Người giám hộ hợp pháp đã đồng thuận');
-    expect(html).not.toContain('Tôi là');
+    expect(html).toContain('Tư cách của bạn');
+    expect(html).toContain('Tôi là người có hồ sơ');
+    expect(html).toContain('Tôi là người giám hộ hợp pháp');
     expect(html).not.toContain('checked=""');
     expect(html.match(/type="radio"/g)).toHaveLength(2);
   });

@@ -1,3 +1,4 @@
+import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
 import { createStubProfileRepository } from '@src/shared/test/createStubProfileRepository.js';
 import { randomUUID } from 'node:crypto';
 import pg from 'pg';
@@ -26,6 +27,7 @@ export async function startAdminTestApp() {
   const database = createDatabase(pool);
   const stub = createStubAuthDeps();
   const app = createApp({
+    consentInvitations: createStubInvitationDeps(),
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
     auth: {
       ...stub,

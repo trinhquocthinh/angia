@@ -5,6 +5,8 @@ import { runMigrations } from './runMigrations.js';
 
 const SKELETON_TABLES = [
   'accounts',
+  'consent_invitations',
+  'consent_legacy_attestations',
   'extractions',
   'families',
   'health_profiles',
@@ -14,7 +16,15 @@ const SKELETON_TABLES = [
   'upload_batches',
 ];
 // Bảng dữ liệu sức khỏe bắt buộc RLS (Tech Spec §3); families/accounts/sessions phục vụ xác thực.
-const RLS_TABLES = ['extractions', 'health_profiles', 'measurements', 'source_documents', 'upload_batches'];
+const RLS_TABLES = [
+  'consent_invitations',
+  'consent_legacy_attestations',
+  'extractions',
+  'health_profiles',
+  'measurements',
+  'source_documents',
+  'upload_batches',
+];
 
 describe('runMigrations trên PostgreSQL rỗng', () => {
   let db: TestDatabase;
@@ -36,7 +46,7 @@ describe('runMigrations trên PostgreSQL rỗng', () => {
     expect(await runMigrations(db.ownerUrl)).toBe(0);
   });
 
-  it('tạo đủ 8 bảng Walking Skeleton trong schema public', async () => {
+  it('tạo đủ các bảng đã khai báo trong schema public', async () => {
     const { rows } = await owner.query<{ tablename: string }>(
       `SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename`,
     );
