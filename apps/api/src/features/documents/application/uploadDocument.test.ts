@@ -44,13 +44,19 @@ describe('Tải lên 01 ảnh chứng từ (SPEC-008, E2-S5-T1)', () => {
     expect(memory.objects.get(key)?.contentType).toBe('image/jpeg');
   });
 
+  it('SPEC-008 → SPEC-009: chứng từ hợp lệ được đẩy job extract-document kèm nhóm của phiên', async () => {
+    const memory = createMemoryDocumentDeps(profiles);
+    await uploadDocument(memory.deps, request());
+    expect(memory.jobs).toEqual([{ documentId: 'id-2', familyId: 'family-a' }]);
+  });
+
   it('TC-011: hồ sơ chưa đồng thuận bị chặn ERR_CONSENT_REQUIRED, không lưu gì', async () => {
     const memory = createMemoryDocumentDeps(profiles);
     expect(await uploadDocument(memory.deps, request({ profileId: 'cha' }))).toEqual({
       ok: false,
       code: 'ERR_CONSENT_REQUIRED',
     });
-    expect([memory.documents, memory.batches, [...memory.objects]]).toEqual([[], [], []]);
+    expect([memory.documents, memory.batches, [...memory.objects], memory.jobs]).toEqual([[], [], [], []]);
   });
 
   it('SPEC-006: hồ sơ nhóm khác và không tồn tại đều ERR_NOT_FOUND', async () => {

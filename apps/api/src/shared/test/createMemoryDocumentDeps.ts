@@ -6,10 +6,11 @@ type Profile = NonNullable<Awaited<ReturnType<DocumentStore['findProfile']>>> & 
   familyId: string;
 };
 
-// Kho + S3 giả cho unit test: ghi tạm theo transaction, chỉ "commit" khi work thành công.
+// Kho + S3 + hàng đợi giả cho unit test: ghi tạm theo transaction, chỉ "commit" khi work thành công.
 export function createMemoryDocumentDeps(profiles: Profile[], options: { failPutAt?: number } = {}) {
   const documents: SourceDocument[] = [];
   const batches: { id: string; healthProfileId: string; createdBy: string }[] = [];
+  const jobs: { documentId: string; familyId: string }[] = [];
   const objects = new Map<string, { body: Uint8Array; contentType: string }>();
   let puts = 0;
   let ids = 0;
@@ -28,6 +29,7 @@ export function createMemoryDocumentDeps(profiles: Profile[], options: { failPut
       withFamily: async (familyId, work) => {
         const pendingDocuments: SourceDocument[] = [];
         const pendingBatches: typeof batches = [];
+        const pendingJobs: typeof jobs = [];
         const result = await work({
           findProfile: async (id) => profiles.find((p) => p.id === id && p.familyId === familyId) ?? null,
           insertBatch: async (batch) => {
@@ -45,12 +47,16 @@ export function createMemoryDocumentDeps(profiles: Profile[], options: { failPut
             pendingDocuments.push(document);
             return document;
           },
+          enqueueExtraction: async (documentId) => {
+            pendingJobs.push({ documentId, familyId });
+          },
         });
         documents.push(...pendingDocuments);
         batches.push(...pendingBatches);
+        jobs.push(...pendingJobs);
         return result;
       },
     },
   };
-  return { deps, documents, batches, objects };
+  return { deps, documents, batches, objects, jobs };
 }

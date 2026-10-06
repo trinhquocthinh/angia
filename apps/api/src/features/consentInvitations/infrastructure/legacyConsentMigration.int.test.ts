@@ -22,6 +22,7 @@ describe('Migration đồng thuận: giữ audit cũ và đóng gate cũ', () =>
   let owner: pg.Client;
   let pool: pg.Pool;
   let scratch: string;
+  let pendingAfterLegacy: number;
   beforeAll(async () => {
     database = await startTestDatabase();
     owner = new pg.Client({ connectionString: database.ownerUrl });
@@ -30,6 +31,8 @@ describe('Migration đồng thuận: giữ audit cũ và đóng gate cũ', () =>
     scratch = await mkdtemp(join(tmpdir(), 'angia-pre-invitation-'));
     await mkdir(join(scratch, 'meta'));
     const journal = JSON.parse(await readFile(join(migrations, 'meta/_journal.json'), 'utf8'));
+    // Dựng DB ở trạng thái trước 0003_consent_invitations; các migration sau đó áp dụng trong test.
+    pendingAfterLegacy = journal.entries.length - 3;
     journal.entries = journal.entries.slice(0, 3);
     await writeFile(join(scratch, 'meta/_journal.json'), JSON.stringify(journal));
     for (const entry of journal.entries) {
@@ -60,7 +63,7 @@ describe('Migration đồng thuận: giữ audit cũ và đóng gate cũ', () =>
       "INSERT INTO health_profiles(id,family_id,display_name,consent_confirmed_at,consent_confirmed_by,consent_basis) VALUES($1,$2,'Mẹ',$3,$4,'guardian')",
       [profileId, familyId, legacyAt, accountId],
     );
-    expect(await runMigrations(database.ownerUrl)).toBe(1);
+    expect(await runMigrations(database.ownerUrl)).toBe(pendingAfterLegacy);
     const profile = (await owner.query('SELECT * FROM health_profiles WHERE id=$1', [profileId])).rows[0];
     expect(profile).toMatchObject({
       consent_status: 'pending',

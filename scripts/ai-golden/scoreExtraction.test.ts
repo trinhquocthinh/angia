@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { ExtractionPayload } from './extractionPayloadSchema.js';
+import type { ExtractionPayload } from '@angia/contracts';
 import { scoreExtraction } from './scoreExtraction.js';
 
 const item = {

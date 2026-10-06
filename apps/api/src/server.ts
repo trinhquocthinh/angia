@@ -1,9 +1,11 @@
 import { createInvitationRepository } from '@src/features/consentInvitations/infrastructure/createInvitationRepository.js';
 import { createInvitationTokenCodec } from '@src/features/consentInvitations/infrastructure/createInvitationTokenCodec.js';
 import { createDocumentRepository } from '@src/features/documents/infrastructure/createDocumentRepository.js';
+import { createExtractionQueue } from '@src/features/documents/infrastructure/createExtractionQueue.js';
 import { createS3ObjectStorage } from '@src/features/documents/infrastructure/createS3ObjectStorage.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
 import { randomBytes, randomUUID } from 'node:crypto';
+import { EXTRACT_DOCUMENT_QUEUE, EXTRACT_DOCUMENT_QUEUE_OPTIONS } from '@angia/contracts';
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
 import { createApp } from '@src/createApp.js';
@@ -17,6 +19,7 @@ import { loadApiConfig } from '@src/shared/config/loadApiConfig.js';
 import { createDatabase } from '@src/shared/db/createDatabase.js';
 import { createPool } from '@src/shared/db/createPool.js';
 import { newId } from '@src/shared/db/schema/newId.js';
+import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { createS3Client } from '@src/shared/storage/createS3Client.js';
 
 // Composition root: đọc config, khởi tạo adapter hạ tầng và tiêm vào app.
@@ -26,6 +29,10 @@ const logger = pino({ level: config.LOG_LEVEL, base: { service: 'angia-api', sta
 const pool = createPool(config.DATABASE_URL, logger);
 const db = createDatabase(pool);
 const s3 = createS3Client(config);
+const boss = createPgBoss(config.DATABASE_URL, logger);
+await boss.start();
+// Idempotent: worker cũng tạo queue này; bên nào khởi động trước đều gửi được job.
+await boss.createQueue(EXTRACT_DOCUMENT_QUEUE, EXTRACT_DOCUMENT_QUEUE_OPTIONS);
 
 const app = createApp({
   healthProbes: {
@@ -61,7 +68,7 @@ const app = createApp({
     appBaseUrl: config.APP_BASE_URL,
   },
   documents: {
-    repository: createDocumentRepository(db),
+    repository: createDocumentRepository(db, createExtractionQueue(boss)),
     storage: createS3ObjectStorage(s3, config.S3_BUCKET),
     newId,
   },
@@ -74,7 +81,10 @@ const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {
 const shutdown = (signal: string) => {
   logger.info({ signal }, 'Đang dừng API');
   server.close(() => {
-    void pool.end().finally(() => process.exit(0));
+    void boss
+      .stop({ graceful: true })
+      .finally(() => pool.end())
+      .finally(() => process.exit(0));
   });
 };
 process.once('SIGTERM', () => shutdown('SIGTERM'));

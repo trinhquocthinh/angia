@@ -62,6 +62,17 @@ export default defineConfig({
           hookTimeout: 120_000,
         },
       },
+      {
+        extends: false,
+        resolve: { alias: aliasFor(workerSrc) },
+        test: {
+          name: 'int-worker',
+          include: ['apps/worker/src/**/*.int.test.ts'],
+          environment: 'node',
+          testTimeout: 120_000,
+          hookTimeout: 120_000,
+        },
+      },
     ],
   },
 });

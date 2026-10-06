@@ -39,3 +39,11 @@ export {
   uploadBatchResponseSchema,
 } from './documents/uploadBatchSchemas.js';
 export type { SourceDocument, UploadBatchResponse } from './documents/uploadBatchSchemas.js';
+export { extractionPayloadSchema } from './extraction/extractionPayloadSchema.js';
+export type { ExtractionPayload } from './extraction/extractionPayloadSchema.js';
+export {
+  EXTRACT_DOCUMENT_QUEUE,
+  EXTRACT_DOCUMENT_QUEUE_OPTIONS,
+  extractDocumentJobSchema,
+} from './jobs/extractDocumentJob.js';
+export type { ExtractDocumentJob } from './jobs/extractDocumentJob.js';

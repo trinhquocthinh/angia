@@ -1,5 +1,4 @@
-import { extractionPayloadSchema } from './extractionPayloadSchema.js';
-import type { ExtractionPayload } from './extractionPayloadSchema.js';
+import { type ExtractionPayload, extractionPayloadSchema } from '@angia/contracts';
 
 export type ParseResult =
   { ok: true; payload: ExtractionPayload } | { ok: false; reason: 'invalid_json' | 'schema_mismatch' };

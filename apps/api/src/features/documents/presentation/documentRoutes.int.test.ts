@@ -42,7 +42,9 @@ describe('Tải ảnh chứng từ: route thật, transaction và RLS (E2-S5-T1)
   const counts = async () =>
     (
       await t.owner.query(
-        'SELECT (SELECT count(*)::int FROM upload_batches) AS batches, (SELECT count(*)::int FROM source_documents) AS documents',
+        `SELECT (SELECT count(*)::int FROM upload_batches) AS batches,
+                (SELECT count(*)::int FROM source_documents) AS documents,
+                (SELECT count(*)::int FROM pgboss.job WHERE name = 'extract-document') AS jobs`,
       )
     ).rows[0];
   const profileFixture = async (consented = true) => {
@@ -109,6 +111,11 @@ describe('Tải ảnh chứng từ: route thật, transaction và RLS (E2-S5-T1)
     expect(batchRow.created_by).toBe(main.accountId);
     expect(t.objects.get(key)).toMatchObject({ contentType: 'image/jpeg' });
     expect(t.objects.get(key)!.body.length).toBe(3 * MiB);
+    // E2-S5-T2: job OCR ghi cùng transaction, payload chỉ có ID (không tên tệp/hồ sơ).
+    const jobs = await t.owner.query(`SELECT data, state FROM pgboss.job WHERE name = 'extract-document'`);
+    expect(jobs.rows.filter((job) => job.data.documentId === documentId)).toEqual([
+      { data: { documentId, familyId }, state: 'created' },
+    ]);
   });
 
   it('SPEC-006: main nhóm khác nhận lỗi giống hồ sơ không tồn tại, không lưu gì', async () => {

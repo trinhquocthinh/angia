@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-// Bản spike của hợp đồng SDD §2.1; E2-S5-T2 chuyển vào adapter `DocumentExtractor` chính thức.
+// Hợp đồng payload trích xuất SDD §2.1: worker kiểm phản hồi Vision-LLM, form duyệt (SPEC-010) dùng lại.
 // Trường vắng mặt trên chứng từ phải là `null`, không được bỏ khóa (BR-016, BR-025).
 const isoDate = z
   .string()

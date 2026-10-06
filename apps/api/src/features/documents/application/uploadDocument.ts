@@ -20,6 +20,7 @@ interface UploadRequest {
 
 // Thứ tự kiểm tra theo flowchart SPEC-008: hồ sơ → đồng thuận (BR-009) → số tệp → từng tệp.
 // Object S3 ghi trong transaction; mọi lỗi (kể cả commit) xóa object đã ghi để không mồ côi.
+// Job extract-document ghi cùng transaction nên chỉ tồn tại khi chứng từ đã commit.
 export async function uploadDocument(
   deps: DocumentDependencies,
   request: UploadRequest,
@@ -72,6 +73,7 @@ async function storeUpload(
         sizeBytes: file.bytes.length,
       }),
     );
+    await store.enqueueExtraction(id);
   }
   return { ok: true, value: { id: batchId, documents, rejectedFiles } };
 }

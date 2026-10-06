@@ -84,4 +84,19 @@ describe('runMigrations trên PostgreSQL rỗng', () => {
       await app.end();
     }
   });
+
+  it('Nợ #11: schema pgboss do owner tạo; role app chỉ có DML, không được CREATE trong schema', async () => {
+    const app = new pg.Client({ connectionString: db.appUrl });
+    await app.connect();
+    try {
+      const { rows } = await app.query<{ version: number; canCreate: boolean }>(
+        `SELECT (SELECT version FROM pgboss.version) AS version,
+                has_schema_privilege(current_user, 'pgboss', 'CREATE') AS "canCreate"`,
+      );
+      expect(rows[0]).toEqual({ version: 44, canCreate: false });
+      await expect(app.query('SELECT count(*) FROM pgboss.job')).resolves.toBeDefined();
+    } finally {
+      await app.end();
+    }
+  });
 });

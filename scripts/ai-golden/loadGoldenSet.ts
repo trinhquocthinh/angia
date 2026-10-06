@@ -1,8 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readdir, readFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
-import { extractionPayloadSchema } from './extractionPayloadSchema.js';
-import type { ExtractionPayload } from './extractionPayloadSchema.js';
+import { type ExtractionPayload, extractionPayloadSchema } from '@angia/contracts';
 
 export interface GoldenCase {
   caseId: string;
