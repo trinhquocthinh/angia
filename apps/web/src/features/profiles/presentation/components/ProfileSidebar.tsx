@@ -9,6 +9,10 @@ type ProfileSidebarProps = {
   error: boolean;
   onLogout: () => void;
 };
+const navItem =
+  'flex min-h-11 items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-medium disabled:opacity-65 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958] max-md:px-2 max-md:text-xs';
+const active = { className: 'bg-[#004135] text-white' };
+const idle = { className: 'text-[#55615f] hover:bg-[#e4f0f0]' };
 export function ProfileSidebar({ session, profiles, pending, error, onLogout }: ProfileSidebarProps) {
   return (
     <aside className="flex flex-col bg-[#eaf6f5] p-4 lg:fixed lg:inset-y-0 lg:w-[240px] lg:overflow-y-auto">
@@ -24,16 +28,16 @@ export function ProfileSidebar({ session, profiles, pending, error, onLogout }: 
       <nav aria-label="Điều hướng chính" className="mt-5 flex gap-2 lg:flex-col">
         <Link
           to="/"
-          className="flex min-h-11 items-center rounded-xl px-3 py-2 text-left text-sm font-medium disabled:opacity-65 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958] max-md:px-2 max-md:text-xs gap-2 bg-[#004135] text-white"
+          activeOptions={{ exact: true }}
+          className={navItem}
+          activeProps={active}
+          inactiveProps={idle}
         >
           <ProfileIcon name="home" /> Nhà (Gia đình)
         </Link>
-        <button
-          disabled
-          className="flex min-h-11 items-center rounded-xl px-3 py-2 text-left text-sm font-medium disabled:opacity-65 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958] max-md:px-2 max-md:text-xs text-[#55615f]"
-        >
-          Thêm (Tải ảnh)
-        </button>
+        <Link to="/upload" className={navItem} activeProps={active} inactiveProps={idle}>
+          <ProfileIcon name="upload" /> Thêm (Tải ảnh)
+        </Link>
         <button
           disabled
           className="flex min-h-11 items-center rounded-xl px-3 py-2 text-left text-sm font-medium disabled:opacity-65 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958] max-md:px-2 max-md:text-xs text-[#55615f]"
