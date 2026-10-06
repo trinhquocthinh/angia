@@ -31,8 +31,27 @@ describe('Điều hướng theo phiên hiện hành', () => {
     expect(resolveSessionRedirect(assigned, '/')).toBeNull();
     expect(resolveSessionRedirect(assigned, '/profiles/new')).toBeNull();
   });
-  it('quản trị viên chưa có nhóm vẫn theo quy tắc màn chờ của E2-S1-T3', () => {
+  it('admin chưa có nhóm: trang chủ điều hướng tới quản trị', () => {
     const admin = { ...waiting, account: { ...waiting.account, isSystemAdmin: true } };
-    expect(resolveSessionRedirect(admin, '/')).toBe('/waiting');
+    expect(resolveSessionRedirect(admin, '/')).toBe('/admin');
+  });
+});
+
+const admin = { ...waiting, account: { ...waiting.account, isSystemAdmin: true } };
+describe('Điều hướng quản trị hệ thống', () => {
+  it('admin chưa có nhóm được vào /admin', () => {
+    expect(resolveSessionRedirect(admin, '/admin')).toBeNull();
+  });
+  it.each(['/login', '/waiting'])('admin tại %s: vào quản trị', (path) => {
+    expect(resolveSessionRedirect(admin, path)).toBe('/admin');
+  });
+  it('người thường có nhóm không được vào /admin', () => {
+    expect(resolveSessionRedirect(assigned, '/admin')).toBe('/');
+  });
+  it('người thường chưa có nhóm vẫn về màn chờ', () => {
+    expect(resolveSessionRedirect(waiting, '/admin')).toBe('/waiting');
+  });
+  it('khách truy cập /admin phải đăng nhập', () => {
+    expect(resolveSessionRedirect(null, '/admin')).toBe('/login');
   });
 });

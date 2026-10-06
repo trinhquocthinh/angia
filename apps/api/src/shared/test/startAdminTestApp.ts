@@ -1,3 +1,4 @@
+import { createStubProfileRepository } from '@src/shared/test/createStubProfileRepository.js';
 import { randomUUID } from 'node:crypto';
 import pg from 'pg';
 import { createApp } from '@src/createApp.js';
@@ -31,6 +32,7 @@ export async function startAdminTestApp() {
       login: { ...stub.login, sessions: createSessionRepository(database) },
       cookieSecret: TEST_COOKIE_SECRET,
     },
+    profiles: createStubProfileRepository(),
     familyAdmin: createFamilyAdminRepository(database),
   });
 

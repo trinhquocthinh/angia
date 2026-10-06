@@ -2,6 +2,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AuthBoundary } from './AuthBoundary';
+import type { components } from '@src/shared/api/schema.gen';
+
+const waiting: components['schemas']['MeContextResponse'] = {
+  account: { id: 'account', displayName: 'An', isSystemAdmin: false, healthProfileId: null },
+  family: null,
+  role: null,
+  csrfToken: 'csrf',
+};
 
 vi.mock('@tanstack/react-router', () => ({
   useLocation: () => ({ pathname: '/' }),
@@ -34,9 +42,11 @@ describe('Chặn nội dung trước khi kiểm tra phiên', () => {
     expect(renderBoundary(null)).not.toContain('Nội dung gia đình');
   });
   it('chưa có nhóm: che nội dung trong lúc chuyển tới /waiting', () => {
-    expect(renderBoundary({ family: null })).not.toContain('Nội dung gia đình');
+    expect(renderBoundary(waiting)).not.toContain('Nội dung gia đình');
   });
   it('đã có nhóm: hiển thị nội dung tuyến được yêu cầu', () => {
-    expect(renderBoundary({ family: { id: 'family', name: 'Nhà An' } })).toContain('Nội dung gia đình');
+    expect(renderBoundary({ ...waiting, family: { id: 'family', name: 'Nhà An' }, role: 'main' })).toContain(
+      'Nội dung gia đình',
+    );
   });
 });

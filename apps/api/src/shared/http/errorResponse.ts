@@ -18,6 +18,14 @@ const ERROR_CATALOG = {
     status: 409,
     message: 'Nhóm gia đình bắt buộc phải duy trì ít nhất một người chăm sóc chính.',
   },
+  ERR_PROFILE_ALREADY_LINKED: {
+    status: 409,
+    message: 'Tài khoản này đã được liên kết với một hồ sơ sức khỏe khác.',
+  },
+  ERR_CONSENT_REQUIRED: {
+    status: 409,
+    message: 'Cần hoàn tất xác nhận đồng thuận lưu trữ dữ liệu cho hồ sơ này trước.',
+  },
   ERR_VALIDATION: { status: 422, message: 'Dữ liệu gửi lên không đúng định dạng quy định.' },
   ERR_INTERNAL: { status: 500, message: 'Đã xảy ra lỗi nội bộ hệ thống. Vui lòng thử lại sau.' },
 } as const;

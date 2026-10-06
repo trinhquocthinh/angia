@@ -1,3 +1,5 @@
+import type { ProfileRepository } from '@src/features/profiles/application/ports.js';
+import { registerProfileRoutes } from '@src/features/profiles/presentation/registerProfileRoutes.js';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { except } from 'hono/combine';
 import type { FamilyAdminRepository } from '@src/features/family/application/ports.js';
@@ -15,6 +17,7 @@ export type AppDependencies = {
   healthProbes: HealthProbes;
   auth: AuthRouteDeps;
   familyAdmin: FamilyAdminRepository;
+  profiles: ProfileRepository;
 };
 
 // Ngoại lệ duy nhất của "mọi route /api cần phiên" (Tech Spec §4); logout vẫn cần phiên + CSRF.
@@ -37,5 +40,6 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerAuthRoutes(app, deps.auth);
   registerMeRoute(app);
   registerAdminRoutes(app, deps.familyAdmin);
+  registerProfileRoutes(app, deps.profiles, deps.auth.login.now);
   return app;
 }

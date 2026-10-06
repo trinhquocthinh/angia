@@ -1,3 +1,4 @@
+import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
 import { randomBytes } from 'node:crypto';
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
@@ -46,6 +47,7 @@ const app = createApp({
     logger,
   },
   familyAdmin: createFamilyAdminRepository(db),
+  profiles: createProfileRepository(db),
 });
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {

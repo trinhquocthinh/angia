@@ -1,3 +1,4 @@
+import { createStubProfileRepository } from '@src/shared/test/createStubProfileRepository.js';
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import type { Pool } from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -34,6 +35,7 @@ describe('GET /api/health với PostgreSQL thật', () => {
     app = createApp({
       healthProbes: { db: createPostgresProbe(pool), storage: () => Promise.resolve() },
       auth: createStubAuthDeps(),
+      profiles: createStubProfileRepository(),
       familyAdmin: createFakeFamilyAdminRepository().repository,
     });
   });

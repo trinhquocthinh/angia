@@ -12,3 +12,11 @@ export { createFamilyRequestSchema, familySchema } from './family/familySchema.j
 export type { CreateFamilyRequest, Family } from './family/familySchema.js';
 export { healthResponseSchema } from './health/healthResponseSchema.js';
 export type { HealthResponse } from './health/healthResponseSchema.js';
+export { healthProfileSchema } from './profiles/healthProfileSchema.js';
+export type { HealthProfile } from './profiles/healthProfileSchema.js';
+export { createHealthProfileRequestSchema, confirmConsentRequestSchema } from './profiles/profileRequests.js';
+export type { CreateHealthProfileRequest, ConfirmConsentRequest } from './profiles/profileRequests.js';
+export { consentConfirmationResponseSchema } from './profiles/consentConfirmationResponseSchema.js';
+export type { ConsentConfirmationResponse } from './profiles/consentConfirmationResponseSchema.js';
+export { linkableAccountSchema } from './profiles/linkableAccountSchema.js';
+export type { LinkableAccount } from './profiles/linkableAccountSchema.js';

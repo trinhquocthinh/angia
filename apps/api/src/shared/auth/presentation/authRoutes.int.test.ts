@@ -1,3 +1,4 @@
+import { createStubProfileRepository } from '@src/shared/test/createStubProfileRepository.js';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '@src/createApp.js';
@@ -69,6 +70,7 @@ describe('GET /api/auth/login + /api/auth/callback', () => {
         secureCookies: true,
         logger: createSilentLogger(),
       },
+      profiles: createStubProfileRepository(),
       familyAdmin: createFakeFamilyAdminRepository().repository,
     });
   });

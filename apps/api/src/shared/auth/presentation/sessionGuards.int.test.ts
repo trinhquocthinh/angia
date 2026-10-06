@@ -1,3 +1,4 @@
+import { createStubProfileRepository } from '@src/shared/test/createStubProfileRepository.js';
 import { randomUUID } from 'node:crypto';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -57,6 +58,7 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
         login: { ...stub.login, sessions: createSessionRepository(createDatabase(pool)) },
         cookieSecret: TEST_COOKIE_SECRET,
       },
+      profiles: createStubProfileRepository(),
       familyAdmin: createFakeFamilyAdminRepository().repository,
     });
     app.get('/api/test/main-only', requireMain(), (c) => c.text('ok'));
