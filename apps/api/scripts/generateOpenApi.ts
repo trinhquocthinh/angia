@@ -1,3 +1,4 @@
+import { createStubDocumentDeps } from '../src/shared/test/createStubDocumentDeps.js';
 import { createStubInvitationDeps } from '../src/shared/test/createStubInvitationDeps.js';
 import { createStubProfileRepository } from '../src/shared/test/createStubProfileRepository.js';
 import { writeFileSync } from 'node:fs';
@@ -10,6 +11,7 @@ import { createFakeFamilyAdminRepository } from '../src/shared/test/createFakeFa
 const noopProbe = () => Promise.resolve();
 const app = createApp({
   consentInvitations: createStubInvitationDeps(),
+  documents: createStubDocumentDeps(),
   healthProbes: { db: noopProbe, storage: noopProbe },
   auth: createStubAuthDeps(),
   profiles: createStubProfileRepository(),

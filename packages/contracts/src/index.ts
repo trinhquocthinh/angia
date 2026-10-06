@@ -33,3 +33,9 @@ export type {
   ConsentInvitationRespondRequest,
   ConsentInvitationReceipt,
 } from './profiles/consentInvitationSchemas.js';
+export {
+  sourceDocumentSchema,
+  uploadBatchRequestSchema,
+  uploadBatchResponseSchema,
+} from './documents/uploadBatchSchemas.js';
+export type { SourceDocument, UploadBatchResponse } from './documents/uploadBatchSchemas.js';

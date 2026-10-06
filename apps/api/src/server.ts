@@ -1,5 +1,7 @@
 import { createInvitationRepository } from '@src/features/consentInvitations/infrastructure/createInvitationRepository.js';
 import { createInvitationTokenCodec } from '@src/features/consentInvitations/infrastructure/createInvitationTokenCodec.js';
+import { createDocumentRepository } from '@src/features/documents/infrastructure/createDocumentRepository.js';
+import { createS3ObjectStorage } from '@src/features/documents/infrastructure/createS3ObjectStorage.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { serve } from '@hono/node-server';
@@ -14,6 +16,7 @@ import { createSessionRepository } from '@src/shared/auth/infrastructure/createS
 import { loadApiConfig } from '@src/shared/config/loadApiConfig.js';
 import { createDatabase } from '@src/shared/db/createDatabase.js';
 import { createPool } from '@src/shared/db/createPool.js';
+import { newId } from '@src/shared/db/schema/newId.js';
 import { createS3Client } from '@src/shared/storage/createS3Client.js';
 
 // Composition root: đọc config, khởi tạo adapter hạ tầng và tiêm vào app.
@@ -56,6 +59,11 @@ const app = createApp({
     now: () => new Date(),
     newId: randomUUID,
     appBaseUrl: config.APP_BASE_URL,
+  },
+  documents: {
+    repository: createDocumentRepository(db),
+    storage: createS3ObjectStorage(s3, config.S3_BUCKET),
+    newId,
   },
 });
 

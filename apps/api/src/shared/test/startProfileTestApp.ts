@@ -3,24 +3,22 @@ import { createInvitationTokenCodec } from '@src/features/consentInvitations/inf
 import { randomUUID } from 'node:crypto';
 import pg from 'pg';
 import { createApp } from '@src/createApp.js';
+import { createDocumentRepository } from '@src/features/documents/infrastructure/createDocumentRepository.js';
+import { newId } from '@src/shared/db/schema/newId.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
 import { createSessionRepository } from '@src/shared/auth/infrastructure/createSessionRepository.js';
-import { createDatabase } from '@src/shared/db/createDatabase.js';
+import type { ObjectStorage } from '@src/features/documents/application/ports.js';
+import { createDatabase, type Database } from '@src/shared/db/createDatabase.js';
 import { runMigrations } from '@src/shared/db/runMigrations.js';
+import { createMemoryObjectStorage } from './createMemoryObjectStorage.js';
 import { createStubAuthDeps } from './createStubAuthDeps.js';
 import { createFakeFamilyAdminRepository } from './createFakeFamilyAdminRepository.js';
 import { seedAccount, seedSession, TEST_COOKIE_SECRET, type SeededSession } from './seedAuthFixtures.js';
 import { startTestDatabase } from './startTestDatabase.js';
 
-export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') {
-  const db = await startTestDatabase();
-  await runMigrations(db.ownerUrl);
-  const owner = new pg.Client({ connectionString: db.ownerUrl });
-  await owner.connect();
-  const pool = new pg.Pool({ connectionString: db.appUrl });
-  const database = createDatabase(pool);
+function buildApp(database: Database, appBaseUrl: string, storage: ObjectStorage) {
   const stub = createStubAuthDeps();
-  const app = createApp({
+  return createApp({
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
     auth: {
       ...stub,
@@ -36,7 +34,19 @@ export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') 
       newId: randomUUID,
       appBaseUrl,
     },
+    documents: { repository: createDocumentRepository(database), newId, storage },
   });
+}
+
+export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') {
+  const db = await startTestDatabase();
+  await runMigrations(db.ownerUrl);
+  const owner = new pg.Client({ connectionString: db.ownerUrl });
+  await owner.connect();
+  const pool = new pg.Pool({ connectionString: db.appUrl });
+  const database = createDatabase(pool);
+  const { storage, objects } = createMemoryObjectStorage();
+  const app = buildApp(database, appBaseUrl, storage);
   const family = async () => {
     const id = randomUUID();
     await owner.query('INSERT INTO families(id,name) VALUES ($1,$2)', [id, 'Nhà']);
@@ -68,6 +78,7 @@ export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') 
     call,
     stop,
     database,
+    objects,
     codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
   };
 }

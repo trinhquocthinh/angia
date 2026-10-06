@@ -786,6 +786,93 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/health-profiles/{id}/upload-batches': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Tải lên 01 ảnh chứng từ (JPEG/PNG/HEIC/WebP ≤ 10 MiB) cho hồ sơ đã đồng thuận */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'multipart/form-data': components['schemas']['UploadBatchRequest'];
+        };
+      };
+      responses: {
+        /** @description Lô tải lên với chứng từ trạng thái uploaded */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['UploadBatchResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: cần main cùng gia đình và CSRF */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION (không đúng 1 tệp) hoặc ERR_NO_VALID_FILE */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/consent-invitations': {
     parameters: {
       query?: never;
@@ -1155,6 +1242,46 @@ export interface components {
     ConfirmConsentRequest: {
       /** @enum {string} */
       confirmedBy: 'self' | 'guardian';
+    };
+    UploadBatchResponse: {
+      /** Format: uuid */
+      id: string;
+      documents: components['schemas']['SourceDocument'][];
+      rejectedFiles: {
+        fileName: string;
+        /** @enum {string} */
+        code: 'ERR_UNSUPPORTED_FILE' | 'ERR_FILE_TOO_LARGE';
+      }[];
+    };
+    SourceDocument: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      healthProfileId: string;
+      /** Format: uuid */
+      batchId: string;
+      /** @enum {string|null} */
+      type: 'prescription' | 'lab_result' | 'device_reading' | null;
+      /** @enum {string} */
+      status:
+        | 'uploaded'
+        | 'extracting'
+        | 'pending_review'
+        | 'approved'
+        | 'rejected'
+        | 'manual_entry'
+        | 'awaiting_budget';
+      /** Format: date */
+      documentDate: string | null;
+      mimeType: string;
+      sizeBytes: number;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    UploadBatchRequest: {
+      files: string | string[];
+      /** @enum {string} */
+      declaredType?: 'prescription' | 'lab_result' | 'device_reading';
     };
     ConsentInvitationCreated: {
       token: string;

@@ -1,3 +1,4 @@
+import { createStubDocumentDeps } from '@src/shared/test/createStubDocumentDeps.js';
 import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
 import { createStubProfileRepository } from '@src/shared/test/createStubProfileRepository.js';
 import { randomUUID } from 'node:crypto';
@@ -54,6 +55,7 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
     const stub = createStubAuthDeps();
     app = createApp({
       consentInvitations: createStubInvitationDeps(),
+      documents: createStubDocumentDeps(),
       healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
       auth: {
         ...stub,

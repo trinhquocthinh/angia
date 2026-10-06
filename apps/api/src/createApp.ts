@@ -2,6 +2,8 @@ import {
   registerInvitationRoutes,
   type InvitationRouteDependencies,
 } from '@src/features/consentInvitations/presentation/registerInvitationRoutes.js';
+import type { DocumentDependencies } from '@src/features/documents/application/ports.js';
+import { registerDocumentRoutes } from '@src/features/documents/presentation/registerDocumentRoutes.js';
 import type { ProfileRepository } from '@src/features/profiles/application/ports.js';
 import { registerProfileRoutes } from '@src/features/profiles/presentation/registerProfileRoutes.js';
 import { OpenAPIHono } from '@hono/zod-openapi';
@@ -23,6 +25,7 @@ export type AppDependencies = {
   familyAdmin: FamilyAdminRepository;
   profiles: ProfileRepository;
   consentInvitations: InvitationRouteDependencies;
+  documents: DocumentDependencies;
 };
 
 // Ngoại lệ duy nhất của "mọi route /api cần phiên" (Tech Spec §4); logout vẫn cần phiên + CSRF.
@@ -58,6 +61,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerMeRoute(app);
   registerAdminRoutes(app, deps.familyAdmin);
   registerProfileRoutes(app, deps.profiles, deps.auth.login.now);
+  registerDocumentRoutes(app, deps.documents);
   registerInvitationRoutes(app, deps.consentInvitations);
   return app;
 }

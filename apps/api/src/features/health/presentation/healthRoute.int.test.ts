@@ -1,3 +1,4 @@
+import { createStubDocumentDeps } from '@src/shared/test/createStubDocumentDeps.js';
 import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
 import { createStubProfileRepository } from '@src/shared/test/createStubProfileRepository.js';
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
@@ -35,6 +36,7 @@ describe('GET /api/health với PostgreSQL thật', () => {
     pool = createPool(container.getConnectionUri(), createSilentLogger());
     app = createApp({
       consentInvitations: createStubInvitationDeps(),
+      documents: createStubDocumentDeps(),
       healthProbes: { db: createPostgresProbe(pool), storage: () => Promise.resolve() },
       auth: createStubAuthDeps(),
       profiles: createStubProfileRepository(),

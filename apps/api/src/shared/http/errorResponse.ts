@@ -31,6 +31,10 @@ const ERROR_CATALOG = {
     status: 409,
     message: 'Cần hoàn tất xác nhận đồng thuận lưu trữ dữ liệu cho hồ sơ này trước.',
   },
+  ERR_NO_VALID_FILE: {
+    status: 422,
+    message: 'Không tìm thấy bất kỳ tệp hợp lệ nào trong phiên tải lên này.',
+  },
   ERR_VALIDATION: { status: 422, message: 'Dữ liệu gửi lên không đúng định dạng quy định.' },
   ERR_INTERNAL: { status: 500, message: 'Đã xảy ra lỗi nội bộ hệ thống. Vui lòng thử lại sau.' },
 } as const;
