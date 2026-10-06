@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
 import type { DocumentType, DocumentUploader } from '../../application/ports';
 import { MAX_FILES_PER_PICK } from '../../application/uploadQueue';
@@ -22,16 +23,19 @@ type UploadWorkspaceProps = {
 
 export function UploadWorkspace({ uploader, csrfToken, profiles, ...status }: UploadWorkspaceProps) {
   const queue = useUploadQueue(uploader, csrfToken);
+  const navigate = useNavigate();
   const [profileId, setProfileId] = useState<string | null>(null);
   const [declaredType, setDeclaredType] = useState<DocumentType | null>(null);
   const [tooMany, setTooMany] = useState(false);
-  const busy = queue.summary.active > 0;
-  useLeaveWarning(busy);
+  const { summary } = queue;
+  const sending = summary.active > 0;
+  useLeaveWarning(sending || summary.ready > 0);
   const ready = profiles.find((profile) => profile.id === profileId && profile.consentStatus === 'confirmed');
-  const addFiles = (files: File[]) => {
-    if (!ready || files.length === 0) return;
-    setTooMany(!queue.add(files, ready.id, declaredType));
-  };
+  // Gửi hết, không lỗi, không còn ảnh chưa gửi → về Trang chủ kèm số ảnh đã gửi.
+  const finished = summary.done > 0 && summary.total === summary.done;
+  useEffect(() => {
+    if (finished) void navigate({ to: '/', state: { uploadedCount: summary.done } });
+  }, [finished, navigate, summary.done]);
   return (
     <>
       <UploadIntro />
@@ -39,29 +43,34 @@ export function UploadWorkspace({ uploader, csrfToken, profiles, ...status }: Up
         profiles={profiles}
         {...status}
         profileId={ready?.id ?? null}
-        locked={busy}
+        locked={sending}
         onProfile={setProfileId}
         declaredType={declaredType}
         onType={setDeclaredType}
       />
-      <UploadDropZone disabled={!ready} onFiles={addFiles} />
+      <UploadDropZone disabled={sending} onFiles={(files) => files.length && setTooMany(!queue.add(files))} />
       {tooMany && (
         <p role="alert" className="rounded-xl bg-[#ffdad6]/60 p-3 text-sm text-[#93000a]">
-          Mỗi lần chỉ chọn tối đa {MAX_FILES_PER_PICK} ảnh. Không ảnh nào trong lần chọn vừa rồi được gửi.
+          Mỗi lần chỉ chọn tối đa {MAX_FILES_PER_PICK} ảnh. Không ảnh nào trong lần chọn vừa rồi được thêm.
         </p>
       )}
       <UploadGrid
         items={queue.items}
-        summary={queue.summary}
+        summary={summary}
+        locked={sending}
         onRetry={() => queue.dispatch({ type: 'retry' })}
-        onRemove={(id) => queue.dispatch({ type: 'remove', id })}
+        onRemove={queue.remove}
       />
       <RejectedFiles
         items={queue.items}
-        validCount={queue.summary.total}
+        validCount={summary.total}
         onDismiss={() => queue.dispatch({ type: 'dismissRejected' })}
       />
-      <UploadActions uploading={busy} />
+      <UploadActions
+        summary={summary}
+        profileChosen={Boolean(ready)}
+        onSubmit={() => ready && queue.submit(ready.id, declaredType)}
+      />
     </>
   );
 }

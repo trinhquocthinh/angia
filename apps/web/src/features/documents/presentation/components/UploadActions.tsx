@@ -1,8 +1,25 @@
 import { Link } from '@tanstack/react-router';
 import { DocumentIcon } from './DocumentIcon';
 
-// "Xong — đến Chờ duyệt" giữ đúng thiết kế nhưng disabled tới khi có màn /review (E2-S6-T1).
-export function UploadActions({ uploading }: { uploading: boolean }) {
+type UploadActionsProps = {
+  summary: { ready: number; total: number; done: number; active: number };
+  profileChosen: boolean;
+  onSubmit: () => void;
+};
+
+// Ảnh chỉ rời trình duyệt khi bấm "Xong" (tránh rác S3/DB khi người dùng chọn rồi bỏ).
+export function UploadActions({ summary, profileChosen, onSubmit }: UploadActionsProps) {
+  const sending = summary.active > 0;
+  const label = sending
+    ? `Đang gửi ${summary.done}/${summary.total}`
+    : summary.ready > 0
+      ? `Xong — gửi ${summary.ready} ảnh`
+      : 'Xong — gửi ảnh';
+  const hint = sending
+    ? 'Giữ trang này mở cho tới khi gửi xong.'
+    : summary.ready > 0 && !profileChosen
+      ? 'Chọn hồ sơ ở mục “Của ai?” trước khi gửi.'
+      : 'Ảnh chỉ được gửi khi bấm “Xong”; trước đó bạn có thể bỏ bớt ảnh.';
   return (
     <div className="flex flex-col items-center justify-between gap-4 rounded-xl bg-white p-4 shadow-md sm:flex-row">
       <div className="flex w-full min-w-0 items-center gap-3 sm:flex-1">
@@ -11,10 +28,10 @@ export function UploadActions({ uploading }: { uploading: boolean }) {
         </span>
         <div>
           <p className="text-sm font-bold text-[#131d1d]">
-            {uploading ? 'Đang tải ảnh lần lượt' : 'Ảnh được gửi lần lượt từng tấm'}
+            {sending ? 'Đang gửi ảnh lần lượt' : 'Ảnh được gửi lần lượt từng tấm'}
           </p>
-          <p className="text-[11px] font-medium text-[#286958]">
-            Giữ trang này mở cho tới khi tải xong; rời trang thì ảnh còn chờ sẽ không được gửi.
+          <p className="text-[11px] font-medium text-[#286958]" aria-live="polite">
+            {hint}
           </p>
         </div>
       </div>
@@ -27,11 +44,11 @@ export function UploadActions({ uploading }: { uploading: boolean }) {
         </Link>
         <button
           type="button"
-          disabled
-          title="Màn Chờ duyệt sẽ có ở bước tiếp theo"
-          className="flex h-[52px] w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-[#004135] px-8 text-sm font-bold text-white shadow-md disabled:cursor-not-allowed disabled:opacity-55 sm:w-auto"
+          disabled={sending || summary.ready === 0 || !profileChosen}
+          onClick={onSubmit}
+          className="flex h-[52px] w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-[#004135] px-8 text-sm font-bold text-white shadow-md enabled:hover:bg-[#20594b] disabled:cursor-not-allowed disabled:opacity-55 sm:w-auto"
         >
-          Xong — đến Chờ duyệt <DocumentIcon name="arrow" />
+          {label} <DocumentIcon name="arrow" />
         </button>
       </div>
     </div>

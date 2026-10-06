@@ -9,6 +9,7 @@ export async function runUpload(
   csrfToken: string,
   dispatch: (action: UploadAction) => void,
 ): Promise<unknown> {
+  if (!item.profileId) return null;
   dispatch({ type: 'start', id: item.id });
   try {
     await uploader.upload({

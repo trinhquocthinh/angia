@@ -9,6 +9,7 @@ import { UploadIntro } from './UploadIntro';
 
 vi.mock('@tanstack/react-router', () => ({ Link: ({ children }: { children: unknown }) => children }));
 const { ProfilePicker } = await import('./ProfilePicker');
+const { UploadActions } = await import('./UploadActions');
 
 const profile = (id: string, consentStatus: HealthProfile['consentStatus']): HealthProfile => ({
   id,
@@ -57,8 +58,8 @@ describe('Giao diện /upload theo Stitch a48f7111', () => {
     expect(text).toMatch(/disabled=""[^>]*>.*Ba.*chưa đồng thuận/);
     expect(text).toContain('gửi link mời');
   });
-  it('vùng thả ảnh khóa tới khi chọn hồ sơ; giới hạn hiển thị 10 MB', () => {
-    expect(html(<UploadDropZone disabled onFiles={() => undefined} />)).toContain('Chọn hồ sơ đã đồng thuận');
+  it('vùng thả ảnh chỉ khóa khi đang gửi; giới hạn hiển thị 10 MB', () => {
+    expect(html(<UploadDropZone disabled onFiles={() => undefined} />)).toContain('Đang gửi ảnh');
     const open = html(<UploadDropZone disabled={false} onFiles={() => undefined} />);
     expect(open).toContain('Tối đa 10 MB mỗi ảnh');
     expect(open).toContain('multiple=""');
@@ -73,17 +74,54 @@ describe('Giao diện /upload theo Stitch a48f7111', () => {
     const grid = html(
       <UploadGrid
         items={items}
-        summary={{ total: 2, done: 0, active: 1, failed: 1 }}
+        summary={{ ready: 0, total: 2, done: 0, active: 1, failed: 1 }}
+        locked
         onRetry={() => undefined}
         onRemove={() => undefined}
       />,
     );
     expect(grid).toContain('64%');
-    expect(grid).toContain('Thử lại 1 ảnh lỗi');
+    expect(grid).toContain('Gửi lại 1 ảnh lỗi');
     expect(grid).not.toContain('IMG_4410.jpg');
     const rejected = html(<RejectedFiles items={items} validCount={2} onDismiss={() => undefined} />);
     expect(rejected).toContain('2 tệp không nhận được · 2 ảnh còn lại vẫn được tải bình thường');
     expect(rejected).toContain('Dung lượng vượt quá 10 MB (24.2 MB)');
     expect(rejected).toContain('Chỉ nhận ảnh JPG, PNG, HEIC, WebP');
+  });
+  it('2X: chưa bấm Xong thì không gửi; nút Xong cần ảnh chưa gửi và hồ sơ đã chọn', () => {
+    const idle = { ready: 0, total: 0, done: 0, active: 0 };
+    const button = (summary: typeof idle, profileChosen: boolean) =>
+      html(<UploadActions summary={summary} profileChosen={profileChosen} onSubmit={() => undefined} />);
+    expect(button(idle, true)).toMatch(/<button[^>]*disabled=""[^>]*>Xong — gửi ảnh/);
+    expect(button({ ...idle, ready: 3, total: 3 }, false)).toContain(
+      'Chọn hồ sơ ở mục “Của ai?” trước khi gửi.',
+    );
+    expect(button({ ...idle, ready: 3, total: 3 }, false)).toMatch(/<button[^>]*disabled=""/);
+    expect(button({ ...idle, ready: 3, total: 3 }, true)).toMatch(
+      /<button type="button" class="[^"]*">Xong — gửi 3 ảnh/,
+    );
+    expect(button({ ready: 0, total: 3, done: 1, active: 2 }, true)).toMatch(
+      /disabled=""[^>]*>Đang gửi 1\/3/,
+    );
+  });
+  it('ảnh chưa gửi có nút bỏ (ẩn khi đang gửi); HEIC vẫn thử ảnh xem trước', () => {
+    const items = [
+      item('IMG_1917.HEIC', {
+        status: 'ready',
+        previewUrl: 'blob:heic',
+        file: { name: 'IMG_1917.HEIC', type: '', size: 1 } as File,
+      }),
+    ];
+    const props = {
+      items,
+      summary: { ready: 1, total: 1, done: 0, active: 0, failed: 0 },
+      onRetry: () => undefined,
+      onRemove: () => undefined,
+    };
+    const open = html(<UploadGrid {...props} locked={false} />);
+    expect(open).toContain('aria-label="Bỏ ảnh IMG_1917.HEIC"');
+    expect(open).toContain('src="blob:heic"');
+    expect(open).toContain('1 chưa gửi');
+    expect(html(<UploadGrid {...props} locked />)).not.toContain('Bỏ ảnh IMG_1917.HEIC');
   });
 });

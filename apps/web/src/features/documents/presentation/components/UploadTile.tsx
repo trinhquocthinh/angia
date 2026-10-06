@@ -1,8 +1,17 @@
 import { useState } from 'react';
 import type { UploadItem } from '../../application/uploadQueue';
 import { DocumentIcon } from './DocumentIcon';
+import { TileStatus } from './TileStatus';
 
-export function UploadTile({ item, onRemove }: { item: UploadItem; onRemove: () => void }) {
+export function UploadTile({
+  item,
+  locked,
+  onRemove,
+}: {
+  item: UploadItem;
+  locked: boolean;
+  onRemove: () => void;
+}) {
   const preview = item.previewUrl;
   const [broken, setBroken] = useState(false);
   const busy = item.status === 'queued' || item.status === 'uploading';
@@ -20,33 +29,22 @@ export function UploadTile({ item, onRemove }: { item: UploadItem; onRemove: () 
           <DocumentIcon name="image" size={32} />
         </span>
       )}
-      {item.status === 'done' && (
-        <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#286958] text-white shadow-md">
-          <DocumentIcon name="check" size={16} />
-        </span>
+      {item.status === 'ready' && !locked && (
+        <button
+          type="button"
+          onClick={onRemove}
+          aria-label={`Bỏ ảnh ${item.file.name}`}
+          className="absolute right-1 top-1 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#404945] shadow-md hover:text-[#ba1a1a] focus-visible:outline-2 focus-visible:outline-[#286958]"
+        >
+          <DocumentIcon name="close" size={16} />
+        </button>
       )}
-      {busy && (
-        <span className="absolute inset-0 flex flex-col items-center justify-center bg-[#131d1d]/40 p-2 text-white">
-          <span className="text-lg font-bold">{item.status === 'queued' ? 'Chờ' : `${item.progress}%`}</span>
-          <span className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-white/30">
-            <span className="block h-full rounded-full bg-[#aef0da]" style={{ width: `${item.progress}%` }} />
-          </span>
-        </span>
-      )}
-      {item.status === 'failed' && (
-        <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-[#ffdad6]/95 p-2 text-center text-[11px] leading-4 text-[#93000a]">
-          <DocumentIcon name="warning" size={18} />
-          {item.error}
-          <button type="button" onClick={onRemove} className="min-h-8 font-semibold underline">
-            Bỏ ảnh
-          </button>
-        </span>
-      )}
+      <TileStatus item={item} onRemove={onRemove} />
       <span className="absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-[#004135]/80 to-transparent p-1.5 text-center text-[10px] font-medium text-white">
         {item.file.name}
       </span>
       <span className="sr-only" aria-live="polite">
-        {item.status === 'done' ? 'Đã tải xong' : item.status === 'failed' ? 'Tải lỗi' : ''}
+        {item.status === 'done' ? 'Đã gửi xong' : item.status === 'failed' ? 'Gửi lỗi' : ''}
       </span>
     </li>
   );

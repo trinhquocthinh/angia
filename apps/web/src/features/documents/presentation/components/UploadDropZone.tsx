@@ -54,7 +54,7 @@ export function UploadDropZone({
       </span>
       <span className="mt-1 max-w-[480px] text-[13px] leading-5 text-[#404945]">
         {disabled
-          ? 'Chọn hồ sơ đã đồng thuận ở mục “Của ai?” trước.'
+          ? 'Đang gửi ảnh, chờ gửi xong rồi chọn thêm.'
           : 'Hỗ trợ JPG, PNG, HEIC, WebP · Tối đa 10 MB mỗi ảnh · Tối đa 50 ảnh mỗi lần chọn'}
       </span>
       <span className="mt-4 flex min-h-11 items-center gap-2 rounded-xl bg-white px-6 text-sm font-semibold text-[#004135] shadow-sm transition-colors group-hover:bg-[#004135] group-hover:text-white">
