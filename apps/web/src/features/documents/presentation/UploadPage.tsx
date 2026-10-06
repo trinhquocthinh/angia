@@ -19,7 +19,7 @@ export function UploadPage() {
   const profiles = workspace.profiles.data ?? [];
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
-      <div className="mx-auto flex w-full max-w-[820px] flex-col gap-6">
+      <div className="mx-auto flex w-full flex-col gap-6">
         {main ? (
           <UploadWorkspace
             uploader={uploader}
