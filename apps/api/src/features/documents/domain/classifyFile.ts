@@ -35,8 +35,9 @@ function detectFormat(data: Uint8Array): { mimeType: string; extension: string }
 }
 
 // Nhận diện bằng magic bytes, không tin tên tệp hay Content-Type do client khai (SPEC-008).
-export function classifyFile(data: Uint8Array): Classification {
-  if (data.length > MAX_FILE_BYTES) return { ok: false, code: 'ERR_FILE_TOO_LARGE' };
-  const format = detectFormat(data);
+// `head` chỉ cần phần đầu tệp; `sizeBytes` là số byte thực nhận.
+export function classifyFile(head: Uint8Array, sizeBytes = head.length): Classification {
+  if (sizeBytes > MAX_FILE_BYTES) return { ok: false, code: 'ERR_FILE_TOO_LARGE' };
+  const format = detectFormat(head);
   return format ? { ok: true, ...format } : { ok: false, code: 'ERR_UNSUPPORTED_FILE' };
 }

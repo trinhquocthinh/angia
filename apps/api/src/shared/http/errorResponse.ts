@@ -31,6 +31,10 @@ const ERROR_CATALOG = {
     status: 409,
     message: 'Cần hoàn tất xác nhận đồng thuận lưu trữ dữ liệu cho hồ sơ này trước.',
   },
+  ERR_BATCH_TOO_LARGE: {
+    status: 413,
+    message: 'Quy mô lô tải lên vượt quá giới hạn tối đa (20 tệp/lần).',
+  },
   ERR_NO_VALID_FILE: {
     status: 422,
     message: 'Không tìm thấy bất kỳ tệp hợp lệ nào trong phiên tải lên này.',

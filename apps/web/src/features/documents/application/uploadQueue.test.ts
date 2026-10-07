@@ -34,6 +34,7 @@ describe('Hàng đợi tải ảnh: giữ ở trình duyệt, chỉ gửi khi b�
     expect(summarizeQueue(state)).toMatchObject({ ready: 1, total: 1, active: 0, rejected: 2 });
   });
   it(`chọn quá ${MAX_FILES_PER_PICK} tệp một lần bị từ chối toàn bộ (TC-023)`, () => {
+    expect(MAX_FILES_PER_PICK).toBe(20);
     const files = Array.from({ length: MAX_FILES_PER_PICK + 1 }, (_, i) => file(`${i}.jpg`));
     expect(planUpload(files, newId)).toEqual({ ok: false, reason: 'too_many' });
     expect(planUpload(files.slice(1), newId)).toMatchObject({ ok: true });

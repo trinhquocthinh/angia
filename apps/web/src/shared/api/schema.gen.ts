@@ -795,7 +795,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Tải lên 01 ảnh chứng từ (JPEG/PNG/HEIC/WebP ≤ 10 MiB) cho hồ sơ đã đồng thuận */
+    /** Tải lên 1–20 ảnh chứng từ (JPEG/PNG/HEIC/WebP ≤ 10 MiB/ảnh) cho hồ sơ đã đồng thuận */
     post: {
       parameters: {
         query?: never;
@@ -811,7 +811,7 @@ export interface paths {
         };
       };
       responses: {
-        /** @description Lô tải lên với chứng từ trạng thái uploaded */
+        /** @description Lô tải lên: chứng từ hợp lệ trạng thái uploaded, tệp bị loại trong rejectedFiles */
         201: {
           headers: {
             [name: string]: unknown;
@@ -856,7 +856,16 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_VALIDATION (không đúng 1 tệp) hoặc ERR_NO_VALID_FILE */
+        /** @description ERR_BATCH_TOO_LARGE: quá 20 tệp hoặc body vượt trần */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION (không có tệp, sai loại khai báo) hoặc ERR_NO_VALID_FILE */
         422: {
           headers: {
             [name: string]: unknown;
@@ -880,7 +889,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Danh sách chứng từ của gia đình theo bộ lọc, mới nhất trước */
+    /** Danh sách chứng từ của gia đình theo bộ lọc, mới nhất trước; lọc theo lô thì theo ngày chứng từ tăng dần */
     get: {
       parameters: {
         query?: {
@@ -904,6 +913,7 @@ export interface paths {
                 | 'awaiting_budget'
               )[];
           profileId?: string;
+          batchId?: string;
         };
         header?: never;
         path?: never;

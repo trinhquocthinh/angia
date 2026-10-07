@@ -17,7 +17,8 @@ export function createMemoryDocumentDeps(profiles: Profile[], options: { failPut
   const deps: DocumentDependencies = {
     newId: () => `id-${++ids}`,
     storage: {
-      put: async (key, body, contentType) => {
+      put: async (key, stream, contentType) => {
+        const body = new Uint8Array(await new Response(stream).arrayBuffer());
         if (++puts === options.failPutAt) throw new Error('S3 lỗi giả lập');
         objects.set(key, { body, contentType });
       },

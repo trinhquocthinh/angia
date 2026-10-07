@@ -46,6 +46,11 @@ describe('Phân loại tệp tải lên (SPEC-008, BR-011)', () => {
     });
   });
 
+  it('TC-080: chỉ cần phần đầu tệp, dung lượng lấy theo số byte đã nhận (E3-S1-T1)', () => {
+    expect(classifyFile(JPEG, MAX_FILE_BYTES)).toMatchObject({ ok: true, mimeType: 'image/jpeg' });
+    expect(classifyFile(JPEG, MAX_FILE_BYTES + 1)).toEqual({ ok: false, code: 'ERR_FILE_TOO_LARGE' });
+  });
+
   it('khóa ảnh gốc theo tiền tố families/<f>/profiles/<p>/documents/<id>/', () => {
     expect(documentObjectKey({ familyId: 'f', healthProfileId: 'p', documentId: 'd' }, 'heic')).toBe(
       'families/f/profiles/p/documents/d/original.heic',

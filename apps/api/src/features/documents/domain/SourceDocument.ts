@@ -4,8 +4,8 @@ export type DocumentStatus =
 
 // Ngưỡng dung lượng một tệp: 10 MiB, chủ dự án hạ từ 15 MB (2026-10-06).
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;
-// E2-S5-T1 chỉ nhận ảnh đơn; E3-S1-T1 nâng lên lô 50 tệp.
-export const MAX_FILES_PER_UPLOAD = 1;
+// Trần lô tải lên: chủ dự án hạ từ 50 xuống 20 tệp/lần (2026-10-07, E3-S1-T1).
+export const MAX_FILES_PER_UPLOAD = 20;
 
 export interface SourceDocument {
   id: string;
@@ -32,9 +32,13 @@ export interface NewSourceDocument {
   sizeBytes: number;
 }
 
+// Tệp đã nhận xong nhưng không nạp vào bộ nhớ: phần đầu đủ để nhận diện magic bytes,
+// nội dung mở thành luồng khi lưu để lô 20 tệp không chiếm 200 MiB RAM.
 export interface UploadedFile {
   fileName: string;
-  bytes: Uint8Array;
+  sizeBytes: number;
+  head: Uint8Array;
+  open(): ReadableStream<Uint8Array>;
 }
 
 export type FileRejectionCode = 'ERR_UNSUPPORTED_FILE' | 'ERR_FILE_TOO_LARGE';
@@ -45,5 +49,6 @@ export interface UploadBatch {
   rejectedFiles: { fileName: string; code: FileRejectionCode }[];
 }
 
-type DocumentError = 'ERR_NOT_FOUND' | 'ERR_CONSENT_REQUIRED' | 'ERR_NO_VALID_FILE' | 'ERR_VALIDATION';
+type DocumentError =
+  'ERR_NOT_FOUND' | 'ERR_CONSENT_REQUIRED' | 'ERR_BATCH_TOO_LARGE' | 'ERR_NO_VALID_FILE' | 'ERR_VALIDATION';
 export type DocumentOutcome<T> = { ok: true; value: T } | { ok: false; code: DocumentError };
