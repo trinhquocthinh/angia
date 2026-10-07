@@ -54,6 +54,7 @@ describe('Gửi một ảnh và cập nhật trạng thái', () => {
   it.each([
     [new DocumentUploadError(422, 'ERR_NO_VALID_FILE'), /10 MB/, false],
     [new DocumentUploadError(0), /Mất kết nối/, false],
+    [new DocumentUploadError(503, 'ERR_UPLOAD_BUSY'), /nhiều người.*Thử lại/s, false],
     [new DocumentUploadError(403, 'ERR_FORBIDDEN'), /Phiên đăng nhập/, true],
     [new DocumentUploadError(500, 'ERR_INTERNAL'), /thử lại/, false],
     [new Error('lạ'), /thử lại/, false],

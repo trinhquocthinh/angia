@@ -4,6 +4,7 @@ const BY_CODE: Record<string, string> = {
   ERR_NO_VALID_FILE: 'Tệp không phải ảnh JPG, PNG, HEIC, WebP hợp lệ hoặc vượt 10 MB.',
   ERR_CONSENT_REQUIRED: 'Hồ sơ chưa có đồng thuận. Gửi link mời ở Trang chủ trước khi tải ảnh.',
   ERR_NOT_FOUND: 'Không tìm thấy hồ sơ này trong gia đình.',
+  ERR_UPLOAD_BUSY: 'Đang có nhiều người cùng tải ảnh. Chờ ít giây rồi bấm Thử lại.',
 };
 
 export function uploadErrorMessage(error: unknown): string {

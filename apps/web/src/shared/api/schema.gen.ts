@@ -874,6 +874,15 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
+        /** @description ERR_UPLOAD_BUSY: đã có 3 lô đang xử lý; thử lại sau số giây trong Retry-After */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
       };
     };
     delete?: never;

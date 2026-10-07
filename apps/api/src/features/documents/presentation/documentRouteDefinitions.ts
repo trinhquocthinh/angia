@@ -26,5 +26,6 @@ export const uploadBatchRoute = createRoute({
     409: error('ERR_CONSENT_REQUIRED'),
     413: error('ERR_BATCH_TOO_LARGE: quá 10 tệp hoặc body vượt trần'),
     422: error('ERR_VALIDATION (không có tệp, sai loại khai báo) hoặc ERR_NO_VALID_FILE'),
+    503: error('ERR_UPLOAD_BUSY: đã có 3 lô đang xử lý; thử lại sau số giây trong Retry-After'),
   },
 });
