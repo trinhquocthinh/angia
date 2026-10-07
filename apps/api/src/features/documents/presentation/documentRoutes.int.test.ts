@@ -132,8 +132,8 @@ describe('Tải chứng từ đơn lẻ/theo lô: route thật, transaction và 
   });
 
   it.each([
-    ['TC-021: 15 ảnh', 15],
-    ['TC-081: đúng 20 ảnh (biên)', 20],
+    ['TC-021: 5 ảnh', 5],
+    ['TC-081: đúng 10 ảnh (biên)', 10],
   ])('%s → cùng một UploadBatch, mỗi chứng từ một object S3 và một job', async (_name, count) => {
     const { main, profile } = await profileFixture();
     const before = await counts();
@@ -149,21 +149,21 @@ describe('Tải chứng từ đơn lẻ/theo lô: route thật, transaction và 
     });
   });
 
-  it('TC-023: lô 21 tệp → 413 ERR_BATCH_TOO_LARGE, không lưu gì, không để lại tệp tạm', async () => {
+  it('TC-023: lô 11 tệp → 413 ERR_BATCH_TOO_LARGE, không lưu gì, không để lại tệp tạm', async () => {
     const { main, profile } = await profileFixture();
     const [before, dirs] = [await counts(), await spoolDirs()];
-    const response = await upload(main, profile.id, jpegs(21));
+    const response = await upload(main, profile.id, jpegs(11));
     expect(response.status).toBe(413);
     expect(await response.json()).toMatchObject({ error: { code: 'ERR_BATCH_TOO_LARGE' } });
     expect([await counts(), await spoolDirs()]).toEqual([before, dirs]);
   });
 
-  it('TC-024/TC-080: 19 ảnh + PDF, rồi ảnh đúng 10 MiB + ảnh 10 MiB + 1 byte → tệp lỗi vào rejectedFiles', async () => {
+  it('TC-024/TC-080: 9 ảnh + PDF, rồi ảnh đúng 10 MiB + ảnh 10 MiB + 1 byte → tệp lỗi vào rejectedFiles', async () => {
     const { main, profile } = await profileFixture();
-    const mixed = await upload(main, profile.id, [...jpegs(19), pdf]);
+    const mixed = await upload(main, profile.id, [...jpegs(9), pdf]);
     expect(mixed.status).toBe(201);
     const batch = (await mixed.json()) as UploadBatchResponse;
-    expect(batch.documents).toHaveLength(19);
+    expect(batch.documents).toHaveLength(9);
     expect(batch.rejectedFiles).toEqual([{ fileName: 'ket-qua.pdf', code: 'ERR_UNSUPPORTED_FILE' }]);
 
     const boundary = await upload(main, profile.id, [

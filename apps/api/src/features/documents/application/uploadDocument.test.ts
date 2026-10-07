@@ -64,41 +64,41 @@ describe('Tải lên chứng từ đơn lẻ hoặc theo lô (SPEC-008)', () => 
     expect(memory.jobs).toEqual([{ documentId: 'id-2', familyId: 'family-a' }]);
   });
 
-  it('TC-081: lô đúng 20 tệp tạo 20 chứng từ chung một lô, mỗi chứng từ một job', async () => {
-    expect(MAX_FILES_PER_UPLOAD).toBe(20);
+  it('TC-081: lô đúng 10 tệp tạo 10 chứng từ chung một lô, mỗi chứng từ một job', async () => {
+    expect(MAX_FILES_PER_UPLOAD).toBe(10);
     const memory = createMemoryDocumentDeps(profiles);
-    const result = await uploadDocument(memory.deps, request({ files: jpegs(20) }));
+    const result = await uploadDocument(memory.deps, request({ files: jpegs(10) }));
     expect(result).toMatchObject({ ok: true, value: { id: 'id-1', rejectedFiles: [] } });
     expect(memory.batches).toHaveLength(1);
-    expect(memory.documents).toHaveLength(20);
+    expect(memory.documents).toHaveLength(10);
     expect(new Set(memory.documents.map((d) => d.batchId))).toEqual(new Set(['id-1']));
-    expect(memory.jobs).toHaveLength(20);
+    expect(memory.jobs).toHaveLength(10);
   });
 
-  it('TC-023: lô 21 tệp → ERR_BATCH_TOO_LARGE, không lưu tệp nào', async () => {
+  it('TC-023: lô 11 tệp → ERR_BATCH_TOO_LARGE, không lưu tệp nào', async () => {
     const memory = createMemoryDocumentDeps(profiles);
-    expect(await uploadDocument(memory.deps, request({ files: jpegs(21) }))).toEqual({
+    expect(await uploadDocument(memory.deps, request({ files: jpegs(11) }))).toEqual({
       ok: false,
       code: 'ERR_BATCH_TOO_LARGE',
     });
     expect([memory.documents, memory.batches, [...memory.objects], memory.jobs]).toEqual([[], [], [], []]);
   });
 
-  it('TC-024/TC-080: lô 19 ảnh + PDF + ảnh 10 MiB + 1 byte → lưu ảnh hợp lệ, tệp lỗi vào rejectedFiles', async () => {
+  it('TC-024/TC-080: lô 9 ảnh + PDF + ảnh 10 MiB + 1 byte → lưu ảnh hợp lệ, tệp lỗi vào rejectedFiles', async () => {
     reads.length = 0;
     const memory = createMemoryDocumentDeps(profiles);
     const files = [
-      ...jpegs(18),
+      ...jpegs(8),
       file('vua-du.jpg', jpeg(MAX_FILE_BYTES)),
       file('ket-qua.pdf', pdf),
       file('qua-lon.jpg', jpeg(MAX_FILE_BYTES + 1)),
     ];
-    const result = await uploadDocument(memory.deps, request({ files: files.slice(0, 20) }));
+    const result = await uploadDocument(memory.deps, request({ files: files.slice(0, 10) }));
     expect(result).toMatchObject({
       ok: true,
       value: { rejectedFiles: [{ fileName: 'ket-qua.pdf', code: 'ERR_UNSUPPORTED_FILE' }] },
     });
-    expect(memory.documents).toHaveLength(19);
+    expect(memory.documents).toHaveLength(9);
 
     const oversized = await uploadDocument(memory.deps, request({ files: files.slice(1) }));
     expect(oversized).toMatchObject({

@@ -795,7 +795,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Tải lên 1–20 ảnh chứng từ (JPEG/PNG/HEIC/WebP ≤ 10 MiB/ảnh) cho hồ sơ đã đồng thuận */
+    /** Tải lên 1–10 ảnh chứng từ (JPEG/PNG/HEIC/WebP ≤ 10 MiB/ảnh) cho hồ sơ đã đồng thuận */
     post: {
       parameters: {
         query?: never;
@@ -856,7 +856,7 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_BATCH_TOO_LARGE: quá 20 tệp hoặc body vượt trần */
+        /** @description ERR_BATCH_TOO_LARGE: quá 10 tệp hoặc body vượt trần */
         413: {
           headers: {
             [name: string]: unknown;

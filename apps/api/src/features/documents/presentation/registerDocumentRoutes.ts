@@ -11,7 +11,7 @@ import { uploadBatchRoute } from './documentRouteDefinitions.js';
 import { toUploadBatchResponse } from './toUploadBatchResponse.js';
 
 // Tệp quá ngưỡng chỉ ghi tới ngưỡng + 1 byte nhưng phần thừa vẫn đi qua mạng; trần body chặn lạm dụng
-// (vd. 20 tệp × 1 GB) và 1 MiB dư cho phần đầu multipart. Vượt trần → ERR_BATCH_TOO_LARGE.
+// (vd. 10 tệp × 1 GB) và 1 MiB dư cho phần đầu multipart. Vượt trần → ERR_BATCH_TOO_LARGE.
 const UPLOAD_LIMITS = {
   fieldName: 'files',
   maxFiles: MAX_FILES_PER_UPLOAD,

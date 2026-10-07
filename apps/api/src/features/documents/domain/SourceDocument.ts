@@ -4,8 +4,9 @@ export type DocumentStatus =
 
 // Ngưỡng dung lượng một tệp: 10 MiB, chủ dự án hạ từ 15 MB (2026-10-06).
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;
-// Trần lô tải lên: chủ dự án hạ từ 50 xuống 20 tệp/lần (2026-10-07, E3-S1-T1).
-export const MAX_FILES_PER_UPLOAD = 20;
+// Trần lô tải lên: chủ dự án hạ 50 → 20 (2026-10-07, E3-S1-T1) → 10 tệp/lần sau thử tải đồng thời
+// 20 người × 20 tệp có dấu hiệu quá tải và khảo sát không ai tải 20 tệp một lần.
+export const MAX_FILES_PER_UPLOAD = 10;
 
 export interface SourceDocument {
   id: string;

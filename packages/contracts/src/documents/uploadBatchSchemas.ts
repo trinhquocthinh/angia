@@ -39,7 +39,7 @@ export type UploadBatchResponse = z.infer<typeof uploadBatchResponseSchema>;
 
 const binaryFileSchema = z.file().meta({ type: 'string', format: 'binary' });
 
-// Multipart: trường `files` lặp lại (1–20 tệp), `declaredType` tùy chọn.
+// Multipart: trường `files` lặp lại (1–10 tệp), `declaredType` tùy chọn.
 export const uploadBatchRequestSchema = z
   .object({
     files: z.union([binaryFileSchema, z.array(binaryFileSchema)]),

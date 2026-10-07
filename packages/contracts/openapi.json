@@ -1865,7 +1865,7 @@
         "tags": [
           "documents"
         ],
-        "summary": "Tải lên 1–20 ảnh chứng từ (JPEG/PNG/HEIC/WebP ≤ 10 MiB/ảnh) cho hồ sơ đã đồng thuận",
+        "summary": "Tải lên 1–10 ảnh chứng từ (JPEG/PNG/HEIC/WebP ≤ 10 MiB/ảnh) cho hồ sơ đã đồng thuận",
         "parameters": [
           {
             "schema": {
@@ -1939,7 +1939,7 @@
             }
           },
           "413": {
-            "description": "ERR_BATCH_TOO_LARGE: quá 20 tệp hoặc body vượt trần",
+            "description": "ERR_BATCH_TOO_LARGE: quá 10 tệp hoặc body vượt trần",
             "content": {
               "application/json": {
                 "schema": {

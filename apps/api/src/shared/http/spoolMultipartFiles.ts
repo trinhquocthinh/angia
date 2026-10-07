@@ -41,7 +41,7 @@ interface ParseState {
 }
 
 // Nhận multipart theo luồng, ghi từng tệp ra thư mục tạm 0700 thay vì parse cả body vào RAM
-// (lô 20 × 10 MiB vượt mem_limit 256 MB của API). Lô quá số tệp hoặc body quá trần dừng đọc ngay.
+// (lô 10 × 10 MiB = 100 MiB, nhân số người tải đồng thời, dễ vượt mem_limit 256 MB của API). Lô quá số tệp hoặc body quá trần dừng đọc ngay.
 export async function spoolMultipartFiles(request: Request, limits: SpoolLimits): Promise<SpoolOutcome> {
   if (Number(request.headers.get('content-length') ?? 0) > limits.maxBodyBytes) {
     await request.body?.cancel();

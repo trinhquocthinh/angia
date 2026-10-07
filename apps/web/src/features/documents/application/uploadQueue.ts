@@ -1,8 +1,8 @@
 import { checkUploadFile, type FileProblem } from './checkUploadFile';
 import type { DocumentType } from './ports';
 
-// SPEC-008: tối đa 20 tệp mỗi lần chọn (chủ dự án hạ từ 50, 2026-10-07).
-export const MAX_FILES_PER_PICK = 20;
+// SPEC-008: tối đa 10 tệp mỗi lần chọn (chủ dự án hạ 50 → 20 → 10, 2026-10-07).
+export const MAX_FILES_PER_PICK = 10;
 
 // ready: chỉ nằm trên trình duyệt. Chỉ khi bấm "Xong" mới thành queued và được gửi (không sinh rác server).
 type UploadStatus = 'ready' | 'queued' | 'uploading' | 'done' | 'failed' | 'rejected';

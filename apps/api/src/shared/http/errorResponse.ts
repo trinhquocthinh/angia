@@ -33,7 +33,7 @@ const ERROR_CATALOG = {
   },
   ERR_BATCH_TOO_LARGE: {
     status: 413,
-    message: 'Quy mô lô tải lên vượt quá giới hạn tối đa (20 tệp/lần).',
+    message: 'Quy mô lô tải lên vượt quá giới hạn tối đa (10 tệp/lần).',
   },
   ERR_NO_VALID_FILE: {
     status: 422,
