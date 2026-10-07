@@ -2,7 +2,10 @@ import { createInvitationRepository } from '@src/features/consentInvitations/inf
 import { createInvitationTokenCodec } from '@src/features/consentInvitations/infrastructure/createInvitationTokenCodec.js';
 import { createDocumentRepository } from '@src/features/documents/infrastructure/createDocumentRepository.js';
 import { createExtractionQueue } from '@src/features/documents/infrastructure/createExtractionQueue.js';
+import { createReviewRepository } from '@src/features/documents/infrastructure/createReviewRepository.js';
+import { createS3ObjectReader } from '@src/features/documents/infrastructure/createS3ObjectReader.js';
 import { createS3ObjectStorage } from '@src/features/documents/infrastructure/createS3ObjectStorage.js';
+import { createMeasurementRepository } from '@src/features/measurements/infrastructure/createMeasurementRepository.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { EXTRACT_DOCUMENT_QUEUE, EXTRACT_DOCUMENT_QUEUE_OPTIONS } from '@angia/contracts';
@@ -72,6 +75,8 @@ const app = createApp({
     storage: createS3ObjectStorage(s3, config.S3_BUCKET),
     newId,
   },
+  review: { repository: createReviewRepository(db), reader: createS3ObjectReader(s3, config.S3_BUCKET) },
+  measurements: createMeasurementRepository(db),
 });
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {

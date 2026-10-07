@@ -560,6 +560,482 @@
           "files"
         ]
       },
+      "DocumentReview": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "$ref": "#/components/schemas/SourceDocument"
+          },
+          "extraction": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "prescription"
+                    ]
+                  },
+                  "issuedDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "facility": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "strength": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "quantityPerDose": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "exclusiveMinimum": 0
+                        },
+                        "doseUnit": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "slots": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "morning",
+                              "noon",
+                              "afternoon",
+                              "evening"
+                            ]
+                          }
+                        },
+                        "durationDays": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "exclusiveMinimum": 0
+                        },
+                        "longTerm": {
+                          "type": "boolean"
+                        },
+                        "note": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "strength",
+                        "quantityPerDose",
+                        "doseUnit",
+                        "slots",
+                        "durationDays",
+                        "longTerm",
+                        "note"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "type",
+                  "issuedDate",
+                  "facility",
+                  "items"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "lab_result"
+                    ]
+                  },
+                  "resultDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "facility": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "testName": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "unit": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "referenceRange": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "testName",
+                        "value",
+                        "unit",
+                        "referenceRange"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "type",
+                  "resultDate",
+                  "facility",
+                  "items"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "device_reading"
+                    ]
+                  },
+                  "measuredAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "measuredTime": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^\\d{2}:\\d{2}$"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "blood_pressure",
+                      "glucose"
+                    ]
+                  },
+                  "systolic": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "diastolic": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "pulse": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "glucoseValue": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "glucoseUnit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "enum": [
+                      "mmol/L",
+                      "mg/dL",
+                      null
+                    ]
+                  }
+                },
+                "required": [
+                  "type",
+                  "measuredAt",
+                  "measuredTime",
+                  "kind",
+                  "systolic",
+                  "diastolic",
+                  "pulse",
+                  "glucoseValue",
+                  "glucoseUnit"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "document",
+          "extraction"
+        ]
+      },
+      "ApprovedDocumentResponse": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "$ref": "#/components/schemas/SourceDocument"
+          },
+          "measurements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Measurement"
+            }
+          }
+        },
+        "required": [
+          "document",
+          "measurements"
+        ]
+      },
+      "Measurement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "healthProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceDocumentId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "blood_pressure",
+              "glucose"
+            ]
+          },
+          "measuredOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "measuredTime": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "systolic": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "diastolic": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "pulse": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "glucoseValue": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "glucoseUnit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "mmol/L",
+              "mg/dL",
+              null
+            ]
+          },
+          "manualWithoutSource": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "healthProfileId",
+          "sourceDocumentId",
+          "kind",
+          "measuredOn",
+          "measuredTime",
+          "systolic",
+          "diastolic",
+          "pulse",
+          "glucoseValue",
+          "glucoseUnit",
+          "manualWithoutSource",
+          "createdAt"
+        ]
+      },
+      "ApproveDocumentRequest": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "device_reading"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "device_reading"
+                ]
+              },
+              "measuredAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date"
+              },
+              "measuredTime": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "blood_pressure",
+                  "glucose"
+                ]
+              },
+              "systolic": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "exclusiveMinimum": 0,
+                "maximum": 9999
+              },
+              "diastolic": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "exclusiveMinimum": 0,
+                "maximum": 9999
+              },
+              "pulse": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "exclusiveMinimum": 0,
+                "maximum": 9999
+              },
+              "glucoseValue": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "exclusiveMinimum": 0,
+                "maximum": 9999
+              },
+              "glucoseUnit": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "mmol/L",
+                  "mg/dL",
+                  null
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "measuredAt",
+              "measuredTime",
+              "kind",
+              "systolic",
+              "diastolic",
+              "pulse",
+              "glucoseValue",
+              "glucoseUnit"
+            ]
+          },
+          "confirmOutOfRange": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "data"
+        ]
+      },
       "ConsentInvitationCreated": {
         "type": "object",
         "properties": {
@@ -1464,6 +1940,380 @@
           },
           "422": {
             "description": "ERR_VALIDATION (không đúng 1 tệp) hoặc ERR_NO_VALID_FILE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/source-documents": {
+      "get": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Danh sách chứng từ của gia đình theo bộ lọc, mới nhất trước",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "uploaded",
+                "extracting",
+                "pending_review",
+                "approved",
+                "rejected",
+                "manual_entry",
+                "awaiting_budget"
+              ]
+            },
+            "required": false,
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "name": "profileId",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chứng từ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SourceDocument"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần main cùng gia đình (và CSRF với lệnh đột biến)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/source-documents/{id}/review": {
+      "get": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Chứng từ kèm bản trích xuất mới nhất để điền form đối soát",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dữ liệu duyệt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentReview"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần main cùng gia đình (và CSRF với lệnh đột biến)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/source-documents/{id}/image": {
+      "get": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Luồng ảnh chứng từ (preview chưa có thì trả ảnh gốc)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "preview",
+                "original"
+              ],
+              "default": "original"
+            },
+            "required": false,
+            "name": "variant",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ảnh",
+            "content": {
+              "image/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần main cùng gia đình (và CSRF với lệnh đột biến)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/source-documents/{id}/approve": {
+      "post": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Phê duyệt bản trích xuất số đo máy (E2-S6-T1: chỉ device_reading)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveDocumentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Chứng từ approved và số đo đã lưu",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovedDocumentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần main cùng gia đình (và CSRF với lệnh đột biến)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_INVALID_STATE_TRANSITION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/measurements": {
+      "get": {
+        "tags": [
+          "measurements"
+        ],
+        "summary": "Số đo sinh tồn đã duyệt của hồ sơ, mới nhất trước",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "blood_pressure",
+                "glucose"
+              ]
+            },
+            "required": false,
+            "name": "kind",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Số đo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Measurement"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
             "content": {
               "application/json": {
                 "schema": {

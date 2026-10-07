@@ -35,6 +35,27 @@ const ERROR_CATALOG = {
     status: 422,
     message: 'Không tìm thấy bất kỳ tệp hợp lệ nào trong phiên tải lên này.',
   },
+  ERR_DOCUMENT_DATE_REQUIRED: {
+    status: 422,
+    message: 'Vui lòng xác định ngày ghi nhận trên chứng từ trước khi phê duyệt lưu trữ.',
+  },
+  ERR_OUT_OF_RANGE_UNCONFIRMED: {
+    status: 422,
+    message:
+      'Chỉ số đo lường vượt ngoài khoảng giá trị vật lý thông thường. Vui lòng kiểm tra hoặc xác nhận.',
+  },
+  ERR_INVALID_STATE_TRANSITION: {
+    status: 409,
+    message: 'Thao tác không thể thực hiện tại trạng thái vòng đời hiện tại của đối tượng.',
+  },
+  ERR_BP_INVALID: {
+    status: 422,
+    message: 'Chỉ số huyết áp không hợp lệ. Yêu cầu nhập đủ cả hai số và tâm thu phải lớn hơn tâm trương.',
+  },
+  ERR_GLUCOSE_UNIT_REQUIRED: {
+    status: 422,
+    message: 'Vui lòng lựa chọn đơn vị đo lường cho chỉ số đường huyết (mmol/L hoặc mg/dL).',
+  },
   ERR_VALIDATION: { status: 422, message: 'Dữ liệu gửi lên không đúng định dạng quy định.' },
   ERR_INTERNAL: { status: 500, message: 'Đã xảy ra lỗi nội bộ hệ thống. Vui lòng thử lại sau.' },
 } as const;
@@ -42,9 +63,10 @@ const ERROR_CATALOG = {
 type ErrorCode = keyof typeof ERROR_CATALOG;
 
 // Đối số [thân, mã HTTP literal] cho `c.json(...errorJson(code))` trong handler OpenAPI đã khai báo kiểu response.
-export function errorJson<Code extends ErrorCode>(code: Code) {
+// `details` cho lỗi cần chỉ vị trí trường (vd. ERR_OUT_OF_RANGE_UNCONFIRMED → { fields }).
+export function errorJson<Code extends ErrorCode>(code: Code, details?: Record<string, unknown>) {
   const { status, message } = ERROR_CATALOG[code];
-  const body: ErrorResponse = { error: { code, message } };
+  const body: ErrorResponse = { error: { code, message, ...(details ? { details } : {}) } };
   return [body, status as (typeof ERROR_CATALOG)[Code]['status']] as const;
 }
 

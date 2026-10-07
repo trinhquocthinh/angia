@@ -873,6 +873,356 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/source-documents': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Danh sách chứng từ của gia đình theo bộ lọc, mới nhất trước */
+    get: {
+      parameters: {
+        query?: {
+          status?:
+            | 'uploaded'
+            | 'extracting'
+            | 'pending_review'
+            | 'approved'
+            | 'rejected'
+            | 'manual_entry'
+            | 'awaiting_budget';
+          profileId?: string;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Chứng từ */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['SourceDocument'][];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: cần main cùng gia đình (và CSRF với lệnh đột biến) */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/source-documents/{id}/review': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Chứng từ kèm bản trích xuất mới nhất để điền form đối soát */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Dữ liệu duyệt */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['DocumentReview'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: cần main cùng gia đình (và CSRF với lệnh đột biến) */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/source-documents/{id}/image': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Luồng ảnh chứng từ (preview chưa có thì trả ảnh gốc) */
+    get: {
+      parameters: {
+        query?: {
+          variant?: 'preview' | 'original';
+        };
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Ảnh */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'image/*': string;
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: cần main cùng gia đình (và CSRF với lệnh đột biến) */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/source-documents/{id}/approve': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Phê duyệt bản trích xuất số đo máy (E2-S6-T1: chỉ device_reading) */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['ApproveDocumentRequest'];
+        };
+      };
+      responses: {
+        /** @description Chứng từ approved và số đo đã lưu */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ApprovedDocumentResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: cần main cùng gia đình (và CSRF với lệnh đột biến) */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_INVALID_STATE_TRANSITION */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/measurements': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Số đo sinh tồn đã duyệt của hồ sơ, mới nhất trước */
+    get: {
+      parameters: {
+        query?: {
+          kind?: 'blood_pressure' | 'glucose';
+        };
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Số đo */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Measurement'][];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/consent-invitations': {
     parameters: {
       query?: never;
@@ -1282,6 +1632,99 @@ export interface components {
       files: string | string[];
       /** @enum {string} */
       declaredType?: 'prescription' | 'lab_result' | 'device_reading';
+    };
+    DocumentReview: {
+      document: components['schemas']['SourceDocument'];
+      extraction:
+        | {
+            /** @enum {string} */
+            type: 'prescription';
+            issuedDate: string | null;
+            facility: string | null;
+            items: {
+              name: string;
+              strength: string | null;
+              quantityPerDose: number | null;
+              doseUnit: string | null;
+              slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+              durationDays: number | null;
+              longTerm: boolean;
+              note: string | null;
+            }[];
+          }
+        | {
+            /** @enum {string} */
+            type: 'lab_result';
+            resultDate: string | null;
+            facility: string | null;
+            items: {
+              testName: string;
+              value: string | null;
+              unit: string | null;
+              referenceRange: string | null;
+            }[];
+          }
+        | {
+            /** @enum {string} */
+            type: 'device_reading';
+            measuredAt: string | null;
+            measuredTime: string | null;
+            /** @enum {string} */
+            kind: 'blood_pressure' | 'glucose';
+            systolic: number | null;
+            diastolic: number | null;
+            pulse: number | null;
+            glucoseValue: number | null;
+            /** @enum {string|null} */
+            glucoseUnit: 'mmol/L' | 'mg/dL' | null;
+          }
+        | null;
+    };
+    ApprovedDocumentResponse: {
+      document: components['schemas']['SourceDocument'];
+      measurements: components['schemas']['Measurement'][];
+    };
+    Measurement: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      healthProfileId: string;
+      /** Format: uuid */
+      sourceDocumentId: string | null;
+      /** @enum {string} */
+      kind: 'blood_pressure' | 'glucose';
+      /** Format: date */
+      measuredOn: string;
+      measuredTime: string | null;
+      systolic: number | null;
+      diastolic: number | null;
+      pulse: number | null;
+      glucoseValue: number | null;
+      /** @enum {string|null} */
+      glucoseUnit: 'mmol/L' | 'mg/dL' | null;
+      manualWithoutSource: boolean;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    ApproveDocumentRequest: {
+      /** @enum {string} */
+      type: 'device_reading';
+      data: {
+        /** @enum {string} */
+        type: 'device_reading';
+        /** Format: date */
+        measuredAt: string | null;
+        measuredTime: string | null;
+        /** @enum {string} */
+        kind: 'blood_pressure' | 'glucose';
+        systolic: number | null;
+        diastolic: number | null;
+        pulse: number | null;
+        glucoseValue: number | null;
+        /** @enum {string|null} */
+        glucoseUnit: 'mmol/L' | 'mg/dL' | null;
+      };
+      confirmOutOfRange?: boolean;
     };
     ConsentInvitationCreated: {
       token: string;

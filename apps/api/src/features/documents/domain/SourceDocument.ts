@@ -1,5 +1,5 @@
 export type DocumentType = 'prescription' | 'lab_result' | 'device_reading';
-type DocumentStatus =
+export type DocumentStatus =
   'uploaded' | 'extracting' | 'pending_review' | 'approved' | 'rejected' | 'manual_entry' | 'awaiting_budget';
 
 // Ngưỡng dung lượng một tệp: 10 MiB, chủ dự án hạ từ 15 MB (2026-10-06).
