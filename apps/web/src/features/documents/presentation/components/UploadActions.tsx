@@ -13,7 +13,7 @@ export function UploadActions({ summary, profileChosen, onSubmit }: UploadAction
   const label = sending
     ? `Đang gửi ${summary.done}/${summary.total}`
     : summary.ready > 0
-      ? `Xong — gửi ${summary.ready} ảnh`
+      ? `Xong — gửi ${summary.ready} ảnh, đến Chờ duyệt`
       : 'Xong — gửi ảnh';
   const hint = sending
     ? 'Giữ trang này mở cho tới khi gửi xong.'

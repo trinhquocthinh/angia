@@ -1,3 +1,5 @@
+import { useRouterState } from '@tanstack/react-router';
+import { useState } from 'react';
 import { useCurrentSession } from '@src/features/auth/application/useCurrentSession';
 import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
 import { useProfileSessionRecovery } from '@src/features/profiles/application/useProfileSessionRecovery';
@@ -11,6 +13,7 @@ import { createReviewRepository } from '../infrastructure/createReviewRepository
 import { ReviewDetail } from './components/ReviewDetail';
 import { ReviewNotice } from './components/ReviewNotice';
 import { ReviewQueue } from './components/ReviewQueue';
+import { UploadedNotice } from './components/UploadedNotice';
 
 const profilesRepository = createProfilesRepository();
 const reviewRepository = createReviewRepository();
@@ -19,7 +22,9 @@ const reviewRepository = createReviewRepository();
 export function ReviewPage({ documentId = null }: { documentId?: string | null }) {
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(profilesRepository, session.data);
-  const queue = useReviewQueue(reviewRepository, session.data);
+  const uploaded = useRouterState({ select: (state) => state.location.state.uploadedCount });
+  const [pollSince] = useState(() => (uploaded ? Date.now() : null));
+  const queue = useReviewQueue(reviewRepository, session.data, pollSince);
   useProfileSessionRecovery(workspace.profiles.error);
   if (!session.data) return null;
   const main = session.data.role === 'main';
@@ -28,6 +33,7 @@ export function ReviewPage({ documentId = null }: { documentId?: string | null }
   const documents = queue.data ?? [];
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
+      <UploadedNotice />
       {main ? (
         <div className="grid gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
           <div className={documentId ? 'max-lg:hidden' : ''}>

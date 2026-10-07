@@ -31,10 +31,10 @@ export function UploadWorkspace({ uploader, csrfToken, profiles, ...status }: Up
   const sending = summary.active > 0;
   useLeaveWarning(sending || summary.ready > 0);
   const ready = profiles.find((profile) => profile.id === profileId && profile.consentStatus === 'confirmed');
-  // Gửi hết, không lỗi, không còn ảnh chưa gửi → về Trang chủ kèm số ảnh đã gửi.
+  // Gửi hết, không lỗi, không còn ảnh chưa gửi → sang Chờ duyệt kèm số ảnh đã gửi.
   const finished = summary.done > 0 && summary.total === summary.done;
   useEffect(() => {
-    if (finished) void navigate({ to: '/', state: { uploadedCount: summary.done } });
+    if (finished) void navigate({ to: '/review', state: { uploadedCount: summary.done } });
   }, [finished, navigate, summary.done]);
   return (
     <>

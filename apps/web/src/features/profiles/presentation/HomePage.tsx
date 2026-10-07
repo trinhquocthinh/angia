@@ -10,7 +10,6 @@ import { createProfilesRepository } from '../infrastructure/createProfilesReposi
 import { ProfileFrame } from './components/ProfileFrame';
 import { ProfilesContent } from './components/ProfilesContent';
 import { InvitationManagerDialog } from './components/InvitationManagerDialog';
-import { UploadedNotice } from '@src/features/documents/presentation/components/UploadedNotice';
 import './profiles.css';
 const repository = createProfilesRepository();
 export function HomePage() {
@@ -23,7 +22,6 @@ export function HomePage() {
   const main = session.data.role === 'main';
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
-      <UploadedNotice />
       <div className="mb-8 flex flex-wrap items-center justify-between gap-5">
         <div>
           <div className="flex flex-wrap items-center gap-3">

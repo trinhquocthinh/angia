@@ -98,7 +98,7 @@ describe('Giao diện /upload theo Stitch a48f7111', () => {
     );
     expect(button({ ...idle, ready: 3, total: 3 }, false)).toMatch(/<button[^>]*disabled=""/);
     expect(button({ ...idle, ready: 3, total: 3 }, true)).toMatch(
-      /<button type="button" class="[^"]*">Xong — gửi 3 ảnh/,
+      /<button type="button" class="[^"]*">Xong — gửi 3 ảnh, đến Chờ duyệt/,
     );
     expect(button({ ready: 0, total: 3, done: 1, active: 2 }, true)).toMatch(
       /disabled=""[^>]*>Đang gửi 1\/3/,

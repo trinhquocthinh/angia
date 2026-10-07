@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { components } from '@src/shared/api/schema.gen';
+import { reviewQueuePollInterval } from './reviewQueuePolling';
 import type { ApproveDocumentRequest, ReviewRepository } from './reviewPorts';
 
 type Session = components['schemas']['MeContextResponse'];
@@ -8,8 +9,13 @@ const reviewScopeKey = (session: Session | null | undefined) =>
   ['review', session?.account.id ?? null, session?.family?.id ?? null] as const;
 
 // Chỉ main gọi API duyệt (requireMain); khóa query theo tài khoản + gia đình để không lẫn dữ liệu khi đổi phiên.
-export function useReviewQueue(repository: ReviewRepository, session: Session | null | undefined) {
+export function useReviewQueue(
+  repository: ReviewRepository,
+  session: Session | null | undefined,
+  pollSince: number | null = null,
+) {
   return useQuery({
+    refetchInterval: () => reviewQueuePollInterval(pollSince, Date.now()),
     queryKey: [...reviewScopeKey(session), 'queue'],
     enabled: session?.role === 'main' && Boolean(session.family),
     retry: false,
