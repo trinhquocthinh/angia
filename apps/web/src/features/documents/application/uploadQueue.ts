@@ -22,6 +22,8 @@ export interface UploadItem {
   previewUrl: string | null;
   // ID chứng từ server trả về khi gửi xong, để mở thẳng màn duyệt.
   documentId?: string | null;
+  // Lời nhắn khi máy chủ bận và ảnh đang chờ tự gửi lại (vẫn ở trạng thái uploading).
+  notice?: string | null;
 }
 export type UploadAction =
   | { type: 'add'; items: UploadItem[] }
@@ -29,6 +31,7 @@ export type UploadAction =
   | { type: 'start'; id: string }
   | { type: 'progress'; id: string; percent: number }
   | { type: 'done'; id: string; documentId: string | null }
+  | { type: 'wait'; id: string; message: string }
   | { type: 'fail'; id: string; message: string }
   | { type: 'retry' }
   | { type: 'remove'; id: string }
@@ -71,7 +74,9 @@ export function uploadQueueReducer(state: UploadItem[], action: UploadAction): U
       );
     }
     case 'start':
-      return update(state, action.id, { status: 'uploading', progress: 0, error: null });
+      return update(state, action.id, { status: 'uploading', progress: 0, error: null, notice: null });
+    case 'wait':
+      return update(state, action.id, { status: 'uploading', progress: 0, notice: action.message });
     case 'progress':
       return update(state, action.id, { progress: Math.min(100, Math.max(0, Math.round(action.percent))) });
     case 'done':

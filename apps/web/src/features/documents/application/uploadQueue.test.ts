@@ -89,4 +89,19 @@ describe('Hàng đợi tải ảnh: giữ ở trình duyệt, chỉ gửi khi b�
     expect(uploadQueueReducer(state, { type: 'progress', id, percent: 140 })[0]!.progress).toBe(100);
     expect(uploadQueueReducer(state, { type: 'progress', id, percent: -3 })[0]!.progress).toBe(0);
   });
+  it('TC-108: máy chủ bận → ô ảnh vẫn đang gửi (khóa hàng đợi) kèm lời nhắn; gửi lại thì xóa lời nhắn', () => {
+    let state = submit(add([], [file('a.jpg'), file('b.jpg')]));
+    const id = state[0]!.id;
+    state = uploadQueueReducer(state, { type: 'start', id });
+    state = uploadQueueReducer(state, { type: 'progress', id, percent: 40 });
+    state = uploadQueueReducer(state, { type: 'wait', id, message: 'Máy chủ bận · tự thử lại sau 9 giây' });
+    expect(state[0]).toMatchObject({
+      status: 'uploading',
+      progress: 0,
+      notice: 'Máy chủ bận · tự thử lại sau 9 giây',
+    });
+    expect(nextQueued(state)).toBeUndefined();
+    state = uploadQueueReducer(state, { type: 'start', id });
+    expect(state[0]!.notice).toBeNull();
+  });
 });

@@ -81,6 +81,17 @@ describe('Giao diện /upload theo Stitch a48f7111', () => {
       />,
     );
     expect(grid).toContain('64%');
+    const waiting = html(
+      <UploadGrid
+        items={[item('c.jpg', { status: 'uploading', notice: 'Máy chủ bận · tự thử lại sau 9 giây' })]}
+        summary={{ ready: 0, total: 1, done: 0, active: 1, failed: 0 }}
+        locked
+        onRetry={() => undefined}
+        onRemove={() => undefined}
+      />,
+    );
+    expect(waiting).toContain('Máy chủ bận · tự thử lại sau 9 giây');
+    expect(waiting).not.toContain('0%');
     expect(grid).toContain('Gửi lại 1 ảnh lỗi');
     expect(grid).not.toContain('IMG_4410.jpg');
     const rejected = html(<RejectedFiles items={items} validCount={2} onDismiss={() => undefined} />);

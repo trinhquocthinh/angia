@@ -17,11 +17,22 @@ const item: UploadItem = {
   error: null,
   previewUrl: null,
 };
+const sleeps: number[] = [];
+const timing = {
+  sleep: async (ms: number) => {
+    sleeps.push(ms);
+  },
+  random: () => 0.5,
+};
 const run = async (upload: DocumentUploader['upload']) => {
   const actions: UploadAction[] = [];
-  const error = await runUpload(item, { upload }, 'csrf', (a) => actions.push(a));
+  sleeps.length = 0;
+  const error = await runUpload(item, { upload }, 'csrf', (a) => actions.push(a), timing);
   return { actions, error };
 };
+const busy = (retryAfterSeconds?: number) =>
+  new DocumentUploadError(503, 'ERR_UPLOAD_BUSY', retryAfterSeconds);
+const batch = { id: 'b', documents: [{ id: 'doc-1' }], rejectedFiles: [] } as unknown as UploadBatchResponse;
 
 describe('Gửi một ảnh và cập nhật trạng thái', () => {
   it('TC-020: gửi đúng hồ sơ/loại/CSRF, báo tiến trình rồi xong', async () => {
@@ -61,5 +72,52 @@ describe('Gửi một ảnh và cập nhật trạng thái', () => {
   ])('thông điệp lỗi %#', (failure, message, session) => {
     expect(uploadErrorMessage(failure)).toMatch(message);
     expect(isSessionError(failure)).toBe(session);
+  });
+
+  it('TC-108: máy chủ bận → chờ Retry-After + 0–3 s ngẫu nhiên rồi tự gửi lại, báo đang chờ trên ô ảnh', async () => {
+    const upload = vi
+      .fn<DocumentUploader['upload']>()
+      .mockRejectedValueOnce(busy(7))
+      .mockRejectedValueOnce(busy(7))
+      .mockResolvedValueOnce(batch);
+    const { actions, error } = await run(upload);
+    expect(upload).toHaveBeenCalledTimes(3);
+    expect(sleeps).toEqual([8500, 8500]);
+    expect(actions).toEqual([
+      { type: 'start', id: 'i1' },
+      { type: 'wait', id: 'i1', message: 'Máy chủ bận · tự thử lại sau 9 giây' },
+      { type: 'start', id: 'i1' },
+      { type: 'wait', id: 'i1', message: 'Máy chủ bận · tự thử lại sau 9 giây' },
+      { type: 'start', id: 'i1' },
+      { type: 'done', id: 'i1', documentId: 'doc-1' },
+    ]);
+    expect(error).toBeNull();
+  });
+  it.each([
+    ['không có Retry-After → 10 s', undefined, 11500],
+    ['Retry-After quá lớn → tối đa 60 s', 600, 61500],
+    ['Retry-After 0 → tối thiểu 1 s', 0, 2500],
+  ])('%s', async (_name, retryAfter, ms) => {
+    await run(
+      vi
+        .fn<DocumentUploader['upload']>()
+        .mockRejectedValueOnce(busy(retryAfter))
+        .mockResolvedValueOnce(batch),
+    );
+    expect(sleeps).toEqual([ms]);
+  });
+  it('bận quá 5 lần tự thử → báo lỗi để người dùng bấm Thử lại', async () => {
+    const upload = vi.fn<DocumentUploader['upload']>().mockRejectedValue(busy(1));
+    const { actions, error } = await run(upload);
+    expect(upload).toHaveBeenCalledTimes(6);
+    expect(sleeps).toHaveLength(5);
+    expect(actions.at(-1)).toEqual({ type: 'fail', id: 'i1', message: uploadErrorMessage(busy()) });
+    expect(error).toEqual(busy(1));
+  });
+  it('lỗi khác (vd. 500) không tự thử lại', async () => {
+    const upload = vi.fn<DocumentUploader['upload']>().mockRejectedValue(new DocumentUploadError(500));
+    await run(upload);
+    expect(upload).toHaveBeenCalledTimes(1);
+    expect(sleeps).toEqual([]);
   });
 });

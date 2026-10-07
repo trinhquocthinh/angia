@@ -13,6 +13,10 @@ class FakeXhr {
   upload: { onprogress: ((event: ProgressEvent) => void) | null } = { onprogress: null };
   onload: (() => void) | null = null;
   onerror: (() => void) | null = null;
+  responseHeaders: Record<string, string> = {};
+  getResponseHeader(name: string) {
+    return this.responseHeaders[name.toLowerCase()] ?? null;
+  }
   open(method: string, url: string) {
     this.opened = [method, url];
   }
@@ -64,5 +68,20 @@ describe('Adapter XHR tải ảnh chứng từ', () => {
     const network = start();
     network.xhr.onerror!();
     await expect(network.promise).rejects.toMatchObject({ status: 0 });
+  });
+  it.each([
+    ['7', 7],
+    ['không phải số', undefined],
+    [undefined, undefined],
+  ])('503 ERR_UPLOAD_BUSY mang theo Retry-After %s', async (header, seconds) => {
+    const busy = start();
+    Object.assign(busy.xhr, {
+      status: 503,
+      response: { error: { code: 'ERR_UPLOAD_BUSY' } },
+      responseHeaders: header === undefined ? {} : { 'retry-after': header },
+    });
+    busy.xhr.onload!();
+    await expect(busy.promise).rejects.toEqual(new DocumentUploadError(503, 'ERR_UPLOAD_BUSY', seconds));
+    await expect(busy.promise).rejects.toMatchObject({ retryAfterSeconds: seconds });
   });
 });
