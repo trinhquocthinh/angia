@@ -1,4 +1,4 @@
-import { and, desc, eq, type SQL } from 'drizzle-orm';
+import { and, desc, eq, inArray, type SQL } from 'drizzle-orm';
 import {
   toMeasurement,
   toMeasurementRow,
@@ -11,9 +11,9 @@ import type { ReviewStore } from '../application/reviewPorts.js';
 export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewStore {
   const owned = (id: string) => and(eq(sourceDocuments.id, id), eq(sourceDocuments.familyId, familyId));
   return {
-    listDocuments: async ({ status, profileId }) => {
+    listDocuments: async ({ statuses, profileId }) => {
       const conditions: SQL[] = [eq(sourceDocuments.familyId, familyId)];
-      if (status) conditions.push(eq(sourceDocuments.status, status));
+      if (statuses?.length) conditions.push(inArray(sourceDocuments.status, statuses));
       if (profileId) conditions.push(eq(sourceDocuments.healthProfileId, profileId));
       return tx
         .select()

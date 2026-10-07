@@ -16,11 +16,11 @@ export function createMemoryReviewRepository(
       const updates = new Map<string, SourceDocument>();
       const owned = (id: string) => documents.find((d) => d.id === id && d.familyId === familyId) ?? null;
       const result = await work({
-        listDocuments: async ({ status, profileId }) =>
+        listDocuments: async ({ statuses, profileId }) =>
           documents.filter(
             (d) =>
               d.familyId === familyId &&
-              (!status || d.status === status) &&
+              (!statuses?.length || statuses.includes(d.status)) &&
               (!profileId || d.healthProfileId === profileId),
           ),
         findDocument: async (id) => owned(id),

@@ -72,6 +72,15 @@ describe('Duyệt số đo từ ảnh máy đo: route thật, transaction và RL
     const ids = ((await queue.json()) as { id: string }[]).map((d) => d.id);
     expect(ids).toEqual([documentId]);
     expect(ids).not.toContain(other.documentId);
+    await t.owner.query("UPDATE source_documents SET status='extracting' WHERE id=$1", [other.documentId]);
+    const own = await pendingFixture();
+    await t.owner.query("UPDATE source_documents SET status='extracting' WHERE id=$1", [own.documentId]);
+    const many = await t.call(
+      own.main,
+      'GET',
+      '/api/source-documents?status=extracting&status=pending_review',
+    );
+    expect(((await many.json()) as { id: string }[]).map((d) => d.id)).toEqual([own.documentId]);
     const review = (await (
       await t.call(main, 'GET', `/api/source-documents/${documentId}/review`)
     ).json()) as DocumentReview;

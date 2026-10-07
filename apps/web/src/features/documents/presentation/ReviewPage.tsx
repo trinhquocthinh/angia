@@ -1,5 +1,3 @@
-import { useRouterState } from '@tanstack/react-router';
-import { useState } from 'react';
 import { useCurrentSession } from '@src/features/auth/application/useCurrentSession';
 import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
 import { useProfileSessionRecovery } from '@src/features/profiles/application/useProfileSessionRecovery';
@@ -22,9 +20,7 @@ const reviewRepository = createReviewRepository();
 export function ReviewPage({ documentId = null }: { documentId?: string | null }) {
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(profilesRepository, session.data);
-  const uploaded = useRouterState({ select: (state) => state.location.state.uploadedCount });
-  const [pollSince] = useState(() => (uploaded ? Date.now() : null));
-  const queue = useReviewQueue(reviewRepository, session.data, pollSince);
+  const queue = useReviewQueue(reviewRepository, session.data);
   useProfileSessionRecovery(workspace.profiles.error);
   if (!session.data) return null;
   const main = session.data.role === 'main';

@@ -32,7 +32,9 @@ export function registerReviewRoutes(app: OpenAPIHono<AppEnv>, deps: ReviewDepen
     await next();
   });
   app.openapi(listDocumentsRoute, async (c) => {
-    const documents = await listDocuments(deps.repository, familyOf(c), c.req.valid('query'));
+    const { status, profileId } = c.req.valid('query');
+    const statuses = status === undefined ? undefined : [status].flat();
+    const documents = await listDocuments(deps.repository, familyOf(c), { statuses, profileId });
     return c.json(documents.map(toSourceDocumentResponse), 200);
   });
   app.openapi(documentReviewRoute, async (c) => {

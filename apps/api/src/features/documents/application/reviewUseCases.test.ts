@@ -33,8 +33,12 @@ describe('Đọc hàng đợi và chứng từ để duyệt (SPEC-006, SPEC-010
   );
 
   it('lọc theo trạng thái và chỉ trong gia đình của phiên', async () => {
-    const list = await listDocuments(memory.repository, 'family-a', { status: 'pending_review' });
+    const list = await listDocuments(memory.repository, 'family-a', { statuses: ['pending_review'] });
     expect(list.map((d) => d.id)).toEqual(['a']);
+    const all = await listDocuments(memory.repository, 'family-a', {
+      statuses: ['pending_review', 'approved'],
+    });
+    expect(all.map((d) => d.id)).toEqual(['a', 'b']);
   });
 
   it('trả chứng từ kèm payload trích xuất; chứng từ nhóm khác → ERR_NOT_FOUND', async () => {

@@ -24,7 +24,10 @@ export const listDocumentsRoute = createRoute({
   summary: 'Danh sách chứng từ của gia đình theo bộ lọc, mới nhất trước',
   request: {
     query: z.object({
-      status: sourceDocumentSchema.shape.status.optional(),
+      // Lặp tham số để lọc nhiều trạng thái: ?status=uploaded&status=extracting&status=pending_review
+      status: z
+        .union([sourceDocumentSchema.shape.status, z.array(sourceDocumentSchema.shape.status)])
+        .optional(),
       profileId: z.uuid().optional(),
     }),
   },

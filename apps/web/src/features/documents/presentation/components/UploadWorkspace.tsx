@@ -31,11 +31,15 @@ export function UploadWorkspace({ uploader, csrfToken, profiles, ...status }: Up
   const sending = summary.active > 0;
   useLeaveWarning(sending || summary.ready > 0);
   const ready = profiles.find((profile) => profile.id === profileId && profile.consentStatus === 'confirmed');
-  // Gửi hết, không lỗi, không còn ảnh chưa gửi → sang Chờ duyệt kèm số ảnh đã gửi.
+  // Gửi hết, không lỗi → mở thẳng chứng từ đầu tiên vừa gửi (ảnh hiện ngay, form tự hiện khi AI đọc xong).
   const finished = summary.done > 0 && summary.total === summary.done;
   useEffect(() => {
-    if (finished) void navigate({ to: '/review', state: { uploadedCount: summary.done } });
-  }, [finished, navigate, summary.done]);
+    if (!finished) return;
+    const state = { uploadedCount: summary.done };
+    void (summary.firstDocumentId
+      ? navigate({ to: '/review/$documentId', params: { documentId: summary.firstDocumentId }, state })
+      : navigate({ to: '/review', state }));
+  }, [finished, navigate, summary.done, summary.firstDocumentId]);
   return (
     <>
       <UploadIntro />

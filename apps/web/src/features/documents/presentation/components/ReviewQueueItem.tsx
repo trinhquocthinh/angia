@@ -1,5 +1,7 @@
 import { Link } from '@tanstack/react-router';
+import { reviewItemState } from '../../application/reviewQueuePolling';
 import type { SourceDocument } from '../../application/reviewPorts';
+import { ReviewItemChip } from './ReviewItemChip';
 import { DocumentIcon, type DocumentIconName } from './DocumentIcon';
 
 const TYPES: Record<string, { title: string; icon: DocumentIconName }> = {
@@ -16,10 +18,9 @@ const time = (iso: string) =>
 
 type ReviewQueueItemProps = { document: SourceDocument; profileName: string; active: boolean };
 
-// E2-S6-T1 chỉ duyệt số đo máy; đơn thuốc/xét nghiệm vẫn hiện trong hàng đợi để không bị "mất".
+// Hiện ngay khi ảnh vừa lên (AI đang đọc); đơn thuốc/xét nghiệm và nhập tay vẫn hiện để không bị "mất".
 export function ReviewQueueItem({ document, profileName, active }: ReviewQueueItemProps) {
-  const type = TYPES[document.type ?? ''] ?? { title: 'Chứng từ', icon: 'file' as const };
-  const ready = document.type === 'device_reading';
+  const type = TYPES[document.type ?? ''] ?? { title: 'Ảnh chứng từ', icon: 'file' as const };
   return (
     <Link
       to="/review/$documentId"
@@ -38,11 +39,7 @@ export function ReviewQueueItem({ document, profileName, active }: ReviewQueueIt
           <span className="font-semibold text-[#131d1d]">{type.title}</span>
           <span className="truncate text-sm text-[#55615f]">{profileName}</span>
         </span>
-        <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${ready ? 'bg-[#b3eddf] text-[#004135]' : 'bg-[#e4f0ef] text-[#55615f]'}`}
-        >
-          {ready ? 'Đã đọc xong' : 'Duyệt ở bản sau'}
-        </span>
+        <ReviewItemChip state={reviewItemState(document)} />
       </span>
       <span className="flex items-center justify-between pl-12 text-xs text-[#55615f]">
         <span className="flex items-center gap-1">

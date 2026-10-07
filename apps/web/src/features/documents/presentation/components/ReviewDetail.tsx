@@ -4,7 +4,9 @@ import { nextDocumentId } from '../../application/reviewQueue';
 import type { ApproveDocumentRequest, ReviewRepository, SourceDocument } from '../../application/reviewPorts';
 import { ReviewRequestError } from '../../application/ReviewRequestError';
 import { useApproveDocument, useDocumentReview } from '../../application/useReviewWorkspace';
+import { reviewItemState } from '../../application/reviewQueuePolling';
 import { DocumentImagePanel } from './DocumentImagePanel';
+import { ExtractingPlaceholder } from './ExtractingPlaceholder';
 import { ReadingForm } from './ReadingForm';
 import { ReviewNotice } from './ReviewNotice';
 
@@ -53,7 +55,7 @@ export function ReviewDetail({ repository, session, documentId, queue, profileNa
         <Link to="/review" className="min-h-11 content-center text-sm font-medium text-[#286958] lg:hidden">
           ← Chờ duyệt
         </Link>
-        <h2 className="text-xl font-semibold text-[#004135]">Số đo của {profileName}</h2>
+        <h2 className="text-xl font-semibold text-[#004135]">Chứng từ của {profileName}</h2>
       </div>
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <DocumentImagePanel document={document} />
@@ -78,6 +80,15 @@ type DetailBodyProps = {
 };
 
 function DetailBody({ document, extraction, pending, error, onSubmit }: DetailBodyProps) {
+  const state = reviewItemState(document);
+  if (state === 'reading') return <ExtractingPlaceholder />;
+  if (state === 'manual')
+    return (
+      <ReviewNotice
+        title="AI chưa đọc được ảnh này"
+        body="Ảnh vẫn được lưu. Nhập tay theo ảnh sẽ có ở bản cập nhật sau."
+      />
+    );
   if (document.status !== 'pending_review')
     return <ReviewNotice title="Chứng từ không còn chờ duyệt" body="Chứng từ này đã được xử lý trước đó." />;
   if (document.type !== 'device_reading')

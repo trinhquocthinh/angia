@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { DocumentUploadError } from './DocumentUploadError';
-import type { DocumentUploader } from './ports';
+import type { DocumentUploader, UploadBatchResponse } from './ports';
 import { runUpload } from './runUpload';
 import type { UploadAction, UploadItem } from './uploadQueue';
 import { isSessionError, uploadErrorMessage } from './uploadErrorMessage';
@@ -27,7 +27,8 @@ describe('Gửi một ảnh và cập nhật trạng thái', () => {
   it('TC-020: gửi đúng hồ sơ/loại/CSRF, báo tiến trình rồi xong', async () => {
     const upload = vi.fn<DocumentUploader['upload']>(async (request) => {
       request.onProgress(64);
-      return { id: 'b', documents: [], rejectedFiles: [] };
+      const document = { id: 'doc-1' } as UploadBatchResponse['documents'][number];
+      return { id: 'b', documents: [document], rejectedFiles: [] };
     });
     const { actions, error } = await run(upload);
     expect(upload.mock.calls[0]![0]).toMatchObject({
@@ -39,7 +40,7 @@ describe('Gửi một ảnh và cập nhật trạng thái', () => {
     expect(actions).toEqual([
       { type: 'start', id: 'i1' },
       { type: 'progress', id: 'i1', percent: 64 },
-      { type: 'done', id: 'i1' },
+      { type: 'done', id: 'i1', documentId: 'doc-1' },
     ]);
     expect(error).toBeNull();
   });

@@ -2,7 +2,7 @@ import type { Measurement, NewMeasurement } from '@src/features/measurements/dom
 import type { DocumentStatus, SourceDocument } from '../domain/SourceDocument.js';
 
 export interface DocumentFilter {
-  status?: DocumentStatus | undefined;
+  statuses?: DocumentStatus[] | undefined;
   profileId?: string | undefined;
 }
 export interface ReviewStore {

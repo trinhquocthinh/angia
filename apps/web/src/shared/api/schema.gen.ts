@@ -885,13 +885,24 @@ export interface paths {
       parameters: {
         query?: {
           status?:
-            | 'uploaded'
-            | 'extracting'
-            | 'pending_review'
-            | 'approved'
-            | 'rejected'
-            | 'manual_entry'
-            | 'awaiting_budget';
+            | (
+                | 'uploaded'
+                | 'extracting'
+                | 'pending_review'
+                | 'approved'
+                | 'rejected'
+                | 'manual_entry'
+                | 'awaiting_budget'
+              )
+            | (
+                | 'uploaded'
+                | 'extracting'
+                | 'pending_review'
+                | 'approved'
+                | 'rejected'
+                | 'manual_entry'
+                | 'awaiting_budget'
+              )[];
           profileId?: string;
         };
         header?: never;
