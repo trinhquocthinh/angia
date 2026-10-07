@@ -1,4 +1,4 @@
-import type { ExtractionPayload } from './extractionPayloadSchema.js';
+import type { ExtractionPayload } from '@angia/contracts';
 import { flattenFields } from './flattenFields.js';
 import { normalizeValue } from './normalizeValue.js';
 

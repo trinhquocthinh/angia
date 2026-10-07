@@ -33,3 +33,5 @@ fixtures/golden/*
 # Ảnh HEIC thật cho spike E1-S1-T2 (ảnh cá nhân, có thể chứa EXIF/GPS) — chỉ commit README
 fixtures/heic/*
 !fixtures/heic/README.md
+
+.codex

@@ -71,8 +71,11 @@ jobs:
         run: |
           docker build -f apps/api/Dockerfile -t angia-api:ci . &
           api_pid=$!
+          docker build -f apps/worker/Dockerfile -t angia-worker:ci . &
+          worker_pid=$!
           docker build -f apps/web/Dockerfile -t angia-web:ci .
           wait "$api_pid"
+          wait "$worker_pid"
 
   # Cổng gom 4 job: validator bên homelab-deploy chỉ chấp nhận job `verify` = success.
   # `always()` để job thất bại/bị hủy làm `verify` đỏ thay vì skipped (skipped vẫn qua branch protection).

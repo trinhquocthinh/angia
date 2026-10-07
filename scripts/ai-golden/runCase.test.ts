@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { ExtractionPayload } from './extractionPayloadSchema.js';
+import type { ExtractionPayload } from '@angia/contracts';
 import type { CallModel } from './runCase.js';
 import { runCase } from './runCase.js';
 

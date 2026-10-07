@@ -30,8 +30,8 @@ describe('Luật cô lập tầng Clean Architecture', () => {
 
   it('chặn application import infrastructure qua alias @src (web)', async () => {
     const ids = await ruleIdsFor(
-      'apps/web/src/features/welcome/application/fixture.ts',
-      "export { fetchHealth } from '@src/features/welcome/infrastructure/fetchHealth';\n",
+      'apps/web/src/features/profiles/application/fixture.ts',
+      "export { createProfilesRepository } from '@src/features/profiles/infrastructure/createProfilesRepository';\n",
     );
     expect(ids).toContain('import/no-restricted-paths');
   });

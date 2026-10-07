@@ -12,6 +12,10 @@ declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
   }
+  // Số ảnh vừa gửi từ /upload để Trang chủ hiển thị thông báo (không đưa vào URL).
+  interface HistoryState {
+    uploadedCount?: number;
+  }
 }
 
 const rootElement = document.getElementById('root');

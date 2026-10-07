@@ -1,0 +1,83 @@
+import type {
+  ExtractionDependencies,
+  ExtractionStore,
+  ExtractorImage,
+  ExtractorResult,
+} from '@src/features/extraction/application/ports.js';
+import type { DocumentToExtract, DocumentType } from '@src/features/extraction/domain/ExtractionDocument.js';
+
+type FakeResult =
+  | Omit<Extract<ExtractorResult, { ok: true }>, 'provider' | 'model' | 'costUsd'>
+  | {
+      ok: false;
+      reason: 'invalid_json' | 'schema_mismatch';
+    };
+interface Options {
+  status?: DocumentToExtract['status'];
+  declaredType?: DocumentType;
+  mimeType?: string;
+  result: FakeResult | Error;
+  documentId?: string;
+  familyId?: string;
+}
+
+type SavedExtraction = Parameters<ExtractionStore['savePendingReview']>[1];
+
+const ORIGINAL_KEY = 'families/family-a/profiles/me/documents/doc-1/original.jpg';
+
+// Kho + S3 + AI giả cho unit test: một chứng từ (mặc định `doc-1` thuộc `family-a`), AI tốn $0.001/lần gọi.
+export function createMemoryExtractionDeps(options: Options) {
+  const { documentId = 'doc-1', familyId: ownerFamilyId = 'family-a' } = options;
+  const originalBytes = new Uint8Array([1, 2, 3]);
+  const document: DocumentToExtract = {
+    id: documentId,
+    status: options.status ?? 'uploaded',
+    declaredType: options.declaredType ?? null,
+    originalKey: ORIGINAL_KEY,
+    mimeType: options.mimeType ?? 'image/jpeg',
+  };
+  const objects = new Map([[ORIGINAL_KEY, originalBytes]]);
+  const statusHistory: string[] = [];
+  const extractions: (SavedExtraction & { documentId: string })[] = [];
+  const extractorCalls: ExtractorImage[] = [];
+  const setStatus = async (status: DocumentToExtract['status']) => {
+    document.status = status;
+    statusHistory.push(status);
+  };
+  const deps: ExtractionDependencies = {
+    repository: {
+      withFamily: (familyId, work) =>
+        work({
+          findDocument: async (id) =>
+            familyId === ownerFamilyId && id === document.id ? { ...document } : null,
+          markExtracting: () => setStatus('extracting'),
+          markManualEntry: () => setStatus('manual_entry'),
+          savePendingReview: async (documentId, extraction) => {
+            extractions.push({ documentId, ...extraction });
+            await setStatus('pending_review');
+          },
+        }),
+    },
+    storage: {
+      get: async (key) => {
+        const bytes = objects.get(key);
+        if (!bytes) throw new Error(`Không có object ${key}`);
+        return bytes;
+      },
+    },
+    images: { heicToJpeg: async () => new Uint8Array([0xff, 0xd8]) },
+    extractor: {
+      extract: async (image) => {
+        extractorCalls.push(image);
+        if (options.result instanceof Error) throw options.result;
+        return {
+          ...options.result,
+          provider: 'openrouter',
+          model: 'google/gemini-3.1-flash-lite',
+          costUsd: 0.001,
+        };
+      },
+    },
+  };
+  return { deps, statusHistory, extractions, extractorCalls, objects, originalBytes };
+}

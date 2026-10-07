@@ -1,4 +1,4 @@
-import type { ExtractionPayload } from './extractionPayloadSchema.js';
+import type { ExtractionPayload } from '@angia/contracts';
 import type { FieldScore } from './scoreExtraction.js';
 
 /** Ngưỡng R1 (Master Plan §2): dưới 70% trường đúng → dừng UC1. */

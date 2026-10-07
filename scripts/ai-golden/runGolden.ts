@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { callVisionModel } from './callVisionModel.js';
-import { EXTRACTION_PROMPT } from './extractionPrompt.js';
+import { callVisionModel } from '../../apps/worker/src/features/extraction/infrastructure/callVisionModel.js';
+import { EXTRACTION_PROMPT } from '../../apps/worker/src/features/extraction/infrastructure/extractionPrompt.js';
 import { loadGoldenConfig } from './loadGoldenConfig.js';
 import { loadGoldenSet } from './loadGoldenSet.js';
 import { renderReport } from './renderReport.js';

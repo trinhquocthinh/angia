@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791176954081,
+      "tag": "0000_skeleton",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791177005049,
+      "tag": "0001_health_profiles_family_immutable",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791181624846,
+      "tag": "0002_family_policy_nullif",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791262949197,
+      "tag": "0003_consent_invitations",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791298160603,
+      "tag": "0004_pgboss_schema",
+      "breakpoints": true
+    }
+  ]
+}

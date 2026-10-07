@@ -1,5 +1,6 @@
 import { createRoute, type OpenAPIHono } from '@hono/zod-openapi';
 import { healthResponseSchema } from '@angia/contracts';
+import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { checkHealth } from '../application/checkHealth.js';
 import type { HealthProbes } from '../application/ports.js';
 
@@ -20,7 +21,7 @@ const healthRoute = createRoute({
   },
 });
 
-export function registerHealthRoute(app: OpenAPIHono, probes: HealthProbes): void {
+export function registerHealthRoute(app: OpenAPIHono<AppEnv>, probes: HealthProbes): void {
   app.openapi(healthRoute, async (c) => {
     const report = await checkHealth(probes);
     c.header('Cache-Control', 'no-store');

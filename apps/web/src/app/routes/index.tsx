@@ -1,6 +1,3 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { WelcomePage } from '@src/features/welcome/presentation/WelcomePage';
-
-export const Route = createFileRoute('/')({
-  component: WelcomePage,
-});
+import { HomePage } from '@src/features/profiles/presentation/HomePage';
+export const Route = createFileRoute('/')({ component: HomePage });

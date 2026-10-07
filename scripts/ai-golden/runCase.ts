@@ -1,6 +1,6 @@
-import type { VisionResponse } from './callVisionModel.js';
-import type { ExtractionPayload } from './extractionPayloadSchema.js';
-import { parseModelJson } from './parseModelJson.js';
+import type { VisionResponse } from '../../apps/worker/src/features/extraction/infrastructure/callVisionModel.js';
+import type { ExtractionPayload } from '@angia/contracts';
+import { parseModelJson } from '../../apps/worker/src/features/extraction/infrastructure/parseModelJson.js';
 import { scoreExtraction } from './scoreExtraction.js';
 import type { CaseResult } from './summarizeModel.js';
 

@@ -8,22 +8,30 @@
     "build": "tsc -b tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "start": "node dist/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "generate:openapi": "tsx scripts/generateOpenApi.ts"
+    "generate:openapi": "tsx scripts/generateOpenApi.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx --env-file=../../.env src/shared/db/migrate.ts"
   },
   "dependencies": {
     "@angia/contracts": "workspace:*",
     "@aws-sdk/client-s3": "3.1139.0",
     "@hono/node-server": "2.1.1",
     "@hono/zod-openapi": "1.6.3",
+    "@opentelemetry/api": "1.9.1",
+    "drizzle-orm": "0.45.3",
     "hono": "4.13.9",
+    "openid-client": "6.8.8",
     "pg": "8.23.0",
+    "pg-boss": "12.36.0",
     "pino": "10.3.1",
+    "uuid": "14.0.2",
     "zod": "4.6.5"
   },
   "devDependencies": {
     "@testcontainers/postgresql": "12.1.0",
     "@types/node": "22.20.4",
     "@types/pg": "8.23.1",
+    "drizzle-kit": "0.31.11",
     "tsc-alias": "1.9.5",
     "tsx": "4.23.15",
     "typescript": "5.9.3"

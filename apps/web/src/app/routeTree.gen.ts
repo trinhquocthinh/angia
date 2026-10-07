@@ -10,33 +10,115 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ConsentInviteRouteImport } from './routes/consent-invite'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as UploadRouteImport } from './routes/upload'
+import { Route as WaitingRouteImport } from './routes/waiting'
+import { Route as ProfilesNewRouteImport } from './routes/profiles.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConsentInviteRoute = ConsentInviteRouteImport.update({
+  id: '/consent-invite',
+  path: '/consent-invite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UploadRoute = UploadRouteImport.update({
+  id: '/upload',
+  path: '/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WaitingRoute = WaitingRouteImport.update({
+  id: '/waiting',
+  path: '/waiting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfilesNewRoute = ProfilesNewRouteImport.update({
+  id: '/profiles/new',
+  path: '/profiles/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/consent-invite': typeof ConsentInviteRoute
+  '/login': typeof LoginRoute
+  '/upload': typeof UploadRoute
+  '/waiting': typeof WaitingRoute
+  '/profiles/new': typeof ProfilesNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/consent-invite': typeof ConsentInviteRoute
+  '/login': typeof LoginRoute
+  '/upload': typeof UploadRoute
+  '/waiting': typeof WaitingRoute
+  '/profiles/new': typeof ProfilesNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/consent-invite': typeof ConsentInviteRoute
+  '/login': typeof LoginRoute
+  '/upload': typeof UploadRoute
+  '/waiting': typeof WaitingRoute
+  '/profiles/new': typeof ProfilesNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/consent-invite'
+    | '/login'
+    | '/upload'
+    | '/waiting'
+    | '/profiles/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/consent-invite'
+    | '/login'
+    | '/upload'
+    | '/waiting'
+    | '/profiles/new'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/consent-invite'
+    | '/login'
+    | '/upload'
+    | '/waiting'
+    | '/profiles/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  ConsentInviteRoute: typeof ConsentInviteRoute
+  LoginRoute: typeof LoginRoute
+  UploadRoute: typeof UploadRoute
+  WaitingRoute: typeof WaitingRoute
+  ProfilesNewRoute: typeof ProfilesNewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +130,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/consent-invite': {
+      id: '/consent-invite'
+      path: '/consent-invite'
+      fullPath: '/consent-invite'
+      preLoaderRoute: typeof ConsentInviteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/upload': {
+      id: '/upload'
+      path: '/upload'
+      fullPath: '/upload'
+      preLoaderRoute: typeof UploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/waiting': {
+      id: '/waiting'
+      path: '/waiting'
+      fullPath: '/waiting'
+      preLoaderRoute: typeof WaitingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profiles/new': {
+      id: '/profiles/new'
+      path: '/profiles/new'
+      fullPath: '/profiles/new'
+      preLoaderRoute: typeof ProfilesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  ConsentInviteRoute: ConsentInviteRoute,
+  LoginRoute: LoginRoute,
+  UploadRoute: UploadRoute,
+  WaitingRoute: WaitingRoute,
+  ProfilesNewRoute: ProfilesNewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

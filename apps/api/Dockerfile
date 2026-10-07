@@ -46,6 +46,8 @@ RUN yarn workspaces focus @angia/api --production && yarn cache clean --all && r
 
 COPY --from=build /app/packages/contracts/dist packages/contracts/dist
 COPY --from=build /app/apps/api/dist apps/api/dist
+# Migration SQL cho container angia-migrate: node apps/api/dist/shared/db/migrate.js (DATABASE_OWNER_URL).
+COPY apps/api/drizzle apps/api/drizzle
 
 USER 10001:10001
 EXPOSE 3000

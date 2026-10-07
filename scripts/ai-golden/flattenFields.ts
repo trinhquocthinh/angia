@@ -1,4 +1,4 @@
-import type { ExtractionPayload } from './extractionPayloadSchema.js';
+import type { ExtractionPayload } from '@angia/contracts';
 
 /** Trải payload thành các trường lá: `facility`, `items[0].name`... Dòng thuốc/xét nghiệm ghép theo thứ tự. */
 export const flattenFields = (payload: ExtractionPayload): Map<string, unknown> => {
