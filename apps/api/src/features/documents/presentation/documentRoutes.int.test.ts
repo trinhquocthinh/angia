@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { ConsentInvitationCreated, HealthProfile, UploadBatchResponse } from '@angia/contracts';
+import type { HealthProfile, UploadBatchResponse } from '@angia/contracts';
+import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -52,24 +53,9 @@ describe('Tải ảnh chứng từ: route thật, transaction và RLS (E2-S5-T1)
     const main = await t.session(familyId);
     const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' });
     const profile = (await created.json()) as HealthProfile;
-    if (consented) await consent(main, profile.id);
+    if (consented) await acceptConsentInvitation(t, main, profile.id);
     return { familyId, main, profile };
   };
-  const consent = async (main: SeededSession, profileId: string) => {
-    const invitation = await t.call(main, 'POST', `/api/health-profiles/${profileId}/consent-invitations`);
-    const { token } = (await invitation.json()) as ConsentInvitationCreated;
-    const responded = await t.app.request('/api/consent-invitations/respond', {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${token}`,
-        'content-type': 'application/json',
-        origin: 'http://localhost:5173',
-      },
-      body: JSON.stringify({ decision: 'accepted', basis: 'self', respondentName: 'Mẹ' }),
-    });
-    expect(responded.status).toBe(200);
-  };
-
   it('TC-011 → TC-012 → TC-020: chặn khi chưa đồng thuận, sau khi người nhận đồng ý thì lưu ảnh 3 MB', async () => {
     const { familyId, main, profile } = await profileFixture(false);
     const before = await counts();
@@ -78,7 +64,7 @@ describe('Tải ảnh chứng từ: route thật, transaction và RLS (E2-S5-T1)
     expect(await blocked.json()).toMatchObject({ error: { code: 'ERR_CONSENT_REQUIRED' } });
     expect(await counts()).toEqual(before);
 
-    await consent(main, profile.id);
+    await acceptConsentInvitation(t, main, profile.id);
     const response = await upload(main, profile.id, [{ name: 'Nguyen Van A.jpg', bytes: image(3 * MiB) }], {
       declaredType: 'prescription',
     });

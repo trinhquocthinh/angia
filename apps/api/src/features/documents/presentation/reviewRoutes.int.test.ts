@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { ApprovedDocumentResponse, DocumentReview, HealthProfile, Measurement } from '@angia/contracts';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
+import { PENDING_JPEG, seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 
 const reading = {
@@ -16,7 +17,6 @@ const reading = {
   glucoseValue: null,
   glucoseUnit: null,
 } as const;
-const JPEG = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3]);
 
 describe('Duyệt số đo từ ảnh máy đo: route thật, transaction và RLS (E2-S6-T1)', () => {
   let t: ProfileTestApp;
@@ -27,31 +27,13 @@ describe('Duyệt số đo từ ảnh máy đo: route thật, transaction và RL
     await t?.stop();
   });
 
-  // Chứng từ đã qua worker: pending_review + bản trích xuất + ảnh gốc trong S3 giả.
   const pendingFixture = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
     const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Ba' });
     const profile = (await created.json()) as HealthProfile;
-    const batchId = randomUUID();
-    const documentId = randomUUID();
-    const key = `families/${familyId}/profiles/${profile.id}/documents/${documentId}/original.jpg`;
-    await t.owner.query(
-      'INSERT INTO upload_batches(id,family_id,health_profile_id,created_by) VALUES ($1,$2,$3,$4)',
-      [batchId, familyId, profile.id, main.accountId],
-    );
-    await t.owner.query(
-      `INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,type,status,original_key,mime_type,size_bytes)
-       VALUES ($1,$2,$3,$4,'device_reading','pending_review',$5,'image/jpeg',$6)`,
-      [documentId, familyId, profile.id, batchId, key, JPEG.length],
-    );
-    await t.owner.query(
-      `INSERT INTO extractions(id,family_id,source_document_id,provider,model,payload,cost_usd)
-       VALUES ($1,$2,$3,'fake','fake',$4,0)`,
-      [randomUUID(), familyId, documentId, reading],
-    );
-    t.objects.set(key, { body: JPEG, contentType: 'image/jpeg' });
-    return { familyId, main, profile, documentId, key };
+    const owner = { familyId, profileId: profile.id, accountId: main.accountId };
+    return { familyId, main, profile, ...(await seedPendingDocument(t, owner, reading)) };
   };
   const approve = (user: SeededSession, id: string, data: object = {}, confirmOutOfRange?: boolean) =>
     t.call(user, 'POST', `/api/source-documents/${id}/approve`, {
@@ -88,7 +70,7 @@ describe('Duyệt số đo từ ảnh máy đo: route thật, transaction và RL
     expect(JSON.stringify(review)).not.toMatch(/families\//);
     const image = await t.call(main, 'GET', `/api/source-documents/${documentId}/image`);
     expect(image.headers.get('content-type')).toBe('image/jpeg');
-    expect(new Uint8Array(await image.arrayBuffer())).toEqual(JPEG);
+    expect(new Uint8Array(await image.arrayBuffer())).toEqual(PENDING_JPEG);
   });
 
   it('TC-034 → TC-032 → TC-033 → TC-035: chưa duyệt không có số đo; 1300 bị chặn; sửa 130 thì lưu; duyệt lại bị từ chối', async () => {
@@ -111,7 +93,7 @@ describe('Duyệt số đo từ ảnh máy đo: route thật, transaction và RL
         diastolic: 90,
       }),
     ]);
-    expect(t.objects.get(key)!.body).toEqual(JPEG);
+    expect(t.objects.get(key)!.body).toEqual(PENDING_JPEG);
     const again = await approve(main, documentId, { systolic: 130 });
     expect(again.status).toBe(409);
     expect(await again.json()).toMatchObject({ error: { code: 'ERR_INVALID_STATE_TRANSITION' } });
