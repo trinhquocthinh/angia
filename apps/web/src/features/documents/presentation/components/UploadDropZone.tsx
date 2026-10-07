@@ -56,7 +56,7 @@ export function UploadDropZone({
       <span className="mt-1 max-w-[480px] text-[13px] leading-5 text-[#404945]">
         {disabled
           ? 'Đang gửi ảnh, chờ gửi xong rồi chọn thêm.'
-          : `Hỗ trợ JPG, PNG, HEIC, WebP · Tối đa 10 MB mỗi ảnh · Tối đa ${MAX_FILES_PER_PICK} ảnh mỗi lần chọn`}
+          : `Hỗ trợ JPG, PNG, HEIC, WebP · Tối đa 30 MB mỗi ảnh, ảnh lớn được nén trên máy trước khi gửi · Tối đa ${MAX_FILES_PER_PICK} ảnh mỗi lần chọn`}
       </span>
       <span className="mt-4 flex min-h-11 items-center gap-2 rounded-xl bg-white px-6 text-sm font-semibold text-[#004135] shadow-sm transition-colors group-hover:bg-[#004135] group-hover:text-white">
         <DocumentIcon name="image" /> Duyệt ảnh từ thiết bị

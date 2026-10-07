@@ -9,7 +9,7 @@ function retryAfterSeconds(xhr: XMLHttpRequest): number | undefined {
   return value && /^\d+$/.test(value) ? Number(value) : undefined;
 }
 
-// openapi-fetch không báo tiến trình tải lên nên dùng XHR; hợp đồng vẫn theo UploadBatchResponse sinh từ OpenAPI.
+// Gửi cả lô trong một request. openapi-fetch không báo tiến trình tải lên nên dùng XHR; hợp đồng vẫn theo UploadBatchResponse sinh từ OpenAPI.
 export function createXhrDocumentUploader(
   createXhr: XhrFactory = () => new XMLHttpRequest(),
 ): DocumentUploader {
@@ -31,7 +31,7 @@ export function createXhrDocumentUploader(
         };
         xhr.onerror = () => reject(new DocumentUploadError(0));
         const form = new FormData();
-        form.append('files', request.file, request.file.name);
+        for (const { fileName, file } of request.files) form.append('files', file, fileName);
         if (request.declaredType) form.append('declaredType', request.declaredType);
         xhr.send(form);
       }),

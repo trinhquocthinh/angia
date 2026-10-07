@@ -29,7 +29,7 @@ export function UploadTile({
           <DocumentIcon name="image" size={32} />
         </span>
       )}
-      {item.status === 'ready' && !locked && (
+      {(item.status === 'ready' || item.status === 'preparing') && !locked && (
         <button
           type="button"
           onClick={onRemove}

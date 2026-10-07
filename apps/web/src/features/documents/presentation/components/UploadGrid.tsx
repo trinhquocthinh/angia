@@ -1,5 +1,6 @@
 import type { UploadItem } from '../../application/uploadQueue';
 import { DocumentIcon } from './DocumentIcon';
+import { UploadSummary } from './UploadSummary';
 import { UploadTile } from './UploadTile';
 
 export function UploadGrid({
@@ -10,7 +11,7 @@ export function UploadGrid({
   onRemove,
 }: {
   items: UploadItem[];
-  summary: { ready: number; total: number; done: number; active: number; failed: number };
+  summary: { preparing: number; ready: number; total: number; done: number; active: number; failed: number };
   locked: boolean;
   onRetry: () => void;
   onRemove: (id: string) => void;
@@ -20,27 +21,7 @@ export function UploadGrid({
   return (
     <section className="flex flex-col gap-2" aria-label="Ảnh đã chọn">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="flex flex-wrap items-center gap-2 text-lg font-bold text-[#131d1d]">
-          {summary.total} ảnh đã chọn
-          {summary.ready > 0 && (
-            <>
-              <Dot />
-              <span className="text-sm font-semibold text-[#404945]">{summary.ready} chưa gửi</span>
-            </>
-          )}
-          {summary.done > 0 && (
-            <>
-              <Dot />
-              <span className="text-sm font-semibold text-[#286958]">{summary.done} đã gửi</span>
-            </>
-          )}
-          {summary.active > 0 && (
-            <>
-              <Dot />
-              <span className="text-sm font-semibold text-[#833b00]">{summary.active} đang gửi</span>
-            </>
-          )}
-        </p>
+        <UploadSummary summary={summary} />
         {summary.failed > 0 && (
           <button
             type="button"
@@ -59,4 +40,3 @@ export function UploadGrid({
     </section>
   );
 }
-const Dot = () => <span className="h-1.5 w-1.5 rounded-full bg-[#bfc9c4]" aria-hidden="true" />;

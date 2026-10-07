@@ -1,4 +1,5 @@
 import { DocumentUploadError } from './DocumentUploadError';
+import type { RejectedFileCode } from './ports';
 
 const BY_CODE: Record<string, string> = {
   ERR_NO_VALID_FILE: 'Tệp không phải ảnh JPG, PNG, HEIC, WebP hợp lệ hoặc vượt 10 MB.',
@@ -18,3 +19,11 @@ export function uploadErrorMessage(error: unknown): string {
 
 export const isSessionError = (error: unknown) =>
   error instanceof DocumentUploadError && (error.status === 401 || error.status === 403);
+
+// Tệp máy chủ loại trong lô (`rejectedFiles`), các ảnh khác của lô vẫn được nhận.
+export function rejectedFileMessage(code: RejectedFileCode | undefined): string {
+  if (code === 'ERR_FILE_TOO_LARGE') return 'Máy chủ không nhận: ảnh vượt quá 10 MB.';
+  if (code === 'ERR_UNSUPPORTED_FILE')
+    return 'Máy chủ không nhận: không phải ảnh JPG, PNG, HEIC, WebP hợp lệ.';
+  return 'Không tải được ảnh. Vui lòng thử lại.';
+}

@@ -5,11 +5,16 @@ import { createProfilesRepository } from '@src/features/profiles/infrastructure/
 import { ProfileFrame } from '@src/features/profiles/presentation/components/ProfileFrame';
 import { RecipientNotice } from '@src/features/profiles/presentation/components/RecipientNotice';
 import '@src/features/profiles/presentation/profiles.css';
+import { compressImage } from '@src/shared/utils/image/compressImage';
+import { createBrowserImageCodec } from '@src/shared/utils/image/createBrowserImageCodec';
+import type { ImagePreparer } from '../application/ports';
 import { createXhrDocumentUploader } from '../infrastructure/createXhrDocumentUploader';
 import { UploadWorkspace } from './components/UploadWorkspace';
 
 const profilesRepository = createProfilesRepository();
 const uploader = createXhrDocumentUploader();
+const imageCodec = createBrowserImageCodec();
+const prepareImage: ImagePreparer = (file) => compressImage(file, imageCodec);
 
 export function UploadPage() {
   const session = useCurrentSession(fetchCurrentSession);
@@ -23,6 +28,7 @@ export function UploadPage() {
         {main ? (
           <UploadWorkspace
             uploader={uploader}
+            prepare={prepareImage}
             csrfToken={session.data.csrfToken}
             profiles={profiles}
             loading={workspace.profiles.isPending}
