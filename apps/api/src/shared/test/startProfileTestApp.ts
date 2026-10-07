@@ -6,11 +6,12 @@ import pg from 'pg';
 import type { PgBoss } from 'pg-boss';
 import { createApp } from '@src/createApp.js';
 import { createDocumentRepository } from '@src/features/documents/infrastructure/createDocumentRepository.js';
+import { createReviewRepository } from '@src/features/documents/infrastructure/createReviewRepository.js';
+import { createMeasurementRepository } from '@src/features/measurements/infrastructure/createMeasurementRepository.js';
 import { createExtractionQueue } from '@src/features/documents/infrastructure/createExtractionQueue.js';
 import { newId } from '@src/shared/db/schema/newId.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
 import { createSessionRepository } from '@src/shared/auth/infrastructure/createSessionRepository.js';
-import type { ObjectStorage } from '@src/features/documents/application/ports.js';
 import { createDatabase, type Database } from '@src/shared/db/createDatabase.js';
 import { runMigrations } from '@src/shared/db/runMigrations.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
@@ -21,7 +22,12 @@ import { createFakeFamilyAdminRepository } from './createFakeFamilyAdminReposito
 import { seedAccount, seedSession, TEST_COOKIE_SECRET, type SeededSession } from './seedAuthFixtures.js';
 import { startTestDatabase } from './startTestDatabase.js';
 
-function buildApp(database: Database, appBaseUrl: string, storage: ObjectStorage, boss: PgBoss) {
+function buildApp(
+  database: Database,
+  appBaseUrl: string,
+  memory: ReturnType<typeof createMemoryObjectStorage>,
+  boss: PgBoss,
+) {
   const stub = createStubAuthDeps();
   return createApp({
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
@@ -42,8 +48,10 @@ function buildApp(database: Database, appBaseUrl: string, storage: ObjectStorage
     documents: {
       repository: createDocumentRepository(database, createExtractionQueue(boss)),
       newId,
-      storage,
+      storage: memory.storage,
     },
+    review: { repository: createReviewRepository(database), reader: memory.reader },
+    measurements: createMeasurementRepository(database),
   });
 }
 
@@ -54,12 +62,12 @@ export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') 
   await owner.connect();
   const pool = new pg.Pool({ connectionString: db.appUrl });
   const database = createDatabase(pool);
-  const { storage, objects } = createMemoryObjectStorage();
+  const memory = createMemoryObjectStorage();
   // pg-boss thật trên role app (migrate:false) như server.ts; job chỉ được gửi, không có worker xử lý.
   const boss = createPgBoss(db.appUrl, createSilentLogger());
   await boss.start();
   await boss.createQueue(EXTRACT_DOCUMENT_QUEUE, EXTRACT_DOCUMENT_QUEUE_OPTIONS);
-  const app = buildApp(database, appBaseUrl, storage, boss);
+  const app = buildApp(database, appBaseUrl, memory, boss);
   const family = async () => {
     const id = randomUUID();
     await owner.query('INSERT INTO families(id,name) VALUES ($1,$2)', [id, 'Nhà']);
@@ -92,7 +100,7 @@ export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') 
     call,
     stop,
     database,
-    objects,
+    objects: memory.objects,
     codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
   };
 }

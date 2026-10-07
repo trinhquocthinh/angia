@@ -39,6 +39,19 @@ export {
   uploadBatchResponseSchema,
 } from './documents/uploadBatchSchemas.js';
 export type { SourceDocument, UploadBatchResponse } from './documents/uploadBatchSchemas.js';
+export {
+  approveDocumentRequestSchema,
+  approvedDocumentResponseSchema,
+  deviceReadingApprovalSchema,
+  documentReviewResponseSchema,
+} from './documents/reviewSchemas.js';
+export type {
+  ApproveDocumentRequest,
+  ApprovedDocumentResponse,
+  DocumentReview,
+} from './documents/reviewSchemas.js';
+export { measurementListQuerySchema, measurementSchema } from './measurements/measurementSchema.js';
+export type { Measurement } from './measurements/measurementSchema.js';
 export { extractionPayloadSchema } from './extraction/extractionPayloadSchema.js';
 export type { ExtractionPayload } from './extraction/extractionPayloadSchema.js';
 export {

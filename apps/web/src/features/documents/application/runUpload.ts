@@ -12,14 +12,14 @@ export async function runUpload(
   if (!item.profileId) return null;
   dispatch({ type: 'start', id: item.id });
   try {
-    await uploader.upload({
+    const batch = await uploader.upload({
       profileId: item.profileId,
       file: item.file,
       declaredType: item.declaredType,
       csrfToken,
       onProgress: (percent) => dispatch({ type: 'progress', id: item.id, percent }),
     });
-    dispatch({ type: 'done', id: item.id });
+    dispatch({ type: 'done', id: item.id, documentId: batch.documents[0]?.id ?? null });
     return null;
   } catch (error) {
     dispatch({ type: 'fail', id: item.id, message: uploadErrorMessage(error) });

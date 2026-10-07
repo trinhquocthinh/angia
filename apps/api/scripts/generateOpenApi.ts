@@ -1,22 +1,9 @@
-import { createStubDocumentDeps } from '../src/shared/test/createStubDocumentDeps.js';
-import { createStubInvitationDeps } from '../src/shared/test/createStubInvitationDeps.js';
-import { createStubProfileRepository } from '../src/shared/test/createStubProfileRepository.js';
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { createApp } from '../src/createApp.js';
-import { createStubAuthDeps } from '../src/shared/test/createStubAuthDeps.js';
-import { createFakeFamilyAdminRepository } from '../src/shared/test/createFakeFamilyAdminRepository.js';
+import { createStubApp } from '../src/shared/test/createStubApp.js';
 
 // Sinh OpenAPI từ route Zod; probe/auth/repository giả vì chỉ cần cấu trúc route, không gọi hạ tầng.
-const noopProbe = () => Promise.resolve();
-const app = createApp({
-  consentInvitations: createStubInvitationDeps(),
-  documents: createStubDocumentDeps(),
-  healthProbes: { db: noopProbe, storage: noopProbe },
-  auth: createStubAuthDeps(),
-  profiles: createStubProfileRepository(),
-  familyAdmin: createFakeFamilyAdminRepository().repository,
-});
+const app = createStubApp();
 
 const document = app.getOpenAPI31Document({
   openapi: '3.1.0',

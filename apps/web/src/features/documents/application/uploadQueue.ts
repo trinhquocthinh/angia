@@ -20,13 +20,15 @@ export interface UploadItem {
   error: string | null;
   // Object URL cục bộ cho ảnh xem trước; null với tệp bị loại.
   previewUrl: string | null;
+  // ID chứng từ server trả về khi gửi xong, để mở thẳng màn duyệt.
+  documentId?: string | null;
 }
 export type UploadAction =
   | { type: 'add'; items: UploadItem[] }
   | { type: 'submit'; profileId: string; declaredType: DocumentType | null }
   | { type: 'start'; id: string }
   | { type: 'progress'; id: string; percent: number }
-  | { type: 'done'; id: string }
+  | { type: 'done'; id: string; documentId: string | null }
   | { type: 'fail'; id: string; message: string }
   | { type: 'retry' }
   | { type: 'remove'; id: string }
@@ -73,7 +75,7 @@ export function uploadQueueReducer(state: UploadItem[], action: UploadAction): U
     case 'progress':
       return update(state, action.id, { progress: Math.min(100, Math.max(0, Math.round(action.percent))) });
     case 'done':
-      return update(state, action.id, { status: 'done', progress: 100 });
+      return update(state, action.id, { status: 'done', progress: 100, documentId: action.documentId });
     case 'fail':
       return update(state, action.id, { status: 'failed', error: action.message });
     case 'retry':
@@ -105,5 +107,6 @@ export function summarizeQueue(state: UploadItem[]) {
     active: count('queued', 'uploading'),
     failed: count('failed'),
     rejected: count('rejected'),
+    firstDocumentId: state.find((item) => item.status === 'done' && item.documentId)?.documentId ?? null,
   };
 }

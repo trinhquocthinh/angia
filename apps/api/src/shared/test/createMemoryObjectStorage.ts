@@ -1,4 +1,5 @@
 import type { ObjectStorage } from '@src/features/documents/application/ports.js';
+import type { ObjectReader } from '@src/features/documents/application/reviewPorts.js';
 
 // S3 giả trong bộ nhớ: test route/RLS trên PostgreSQL thật; adapter S3 kiểm chứng với Garage dev/SIT.
 export function createMemoryObjectStorage() {
@@ -11,5 +12,11 @@ export function createMemoryObjectStorage() {
       objects.delete(key);
     },
   };
-  return { storage, objects };
+  const reader: ObjectReader = {
+    get: async (key) => {
+      const object = objects.get(key);
+      return object ? { body: new Blob([object.body]).stream(), contentType: object.contentType } : null;
+    },
+  };
+  return { storage, reader, objects };
 }

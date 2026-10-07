@@ -54,10 +54,18 @@ describe('Hàng đợi tải ảnh: giữ ở trình duyệt, chỉ gửi khi b�
     expect(nextQueued(state)).toBeUndefined();
     state = uploadQueueReducer(state, { type: 'progress', id: a!.id, percent: 64 });
     expect(state[0]).toMatchObject({ status: 'uploading', progress: 64 });
-    state = uploadQueueReducer(state, { type: 'done', id: a!.id });
+    state = uploadQueueReducer(state, { type: 'done', id: a!.id, documentId: 'doc-a' });
     state = uploadQueueReducer(state, { type: 'start', id: b!.id });
     state = uploadQueueReducer(state, { type: 'fail', id: b!.id, message: 'Mất kết nối' });
-    expect(summarizeQueue(state)).toEqual({ ready: 0, total: 2, done: 1, active: 0, failed: 1, rejected: 0 });
+    expect(summarizeQueue(state)).toEqual({
+      ready: 0,
+      total: 2,
+      done: 1,
+      active: 0,
+      failed: 1,
+      rejected: 0,
+      firstDocumentId: 'doc-a',
+    });
     state = uploadQueueReducer(state, { type: 'retry' });
     expect(state[1]).toMatchObject({ status: 'queued', attempt: 1, progress: 0, error: null });
   });

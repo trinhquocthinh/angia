@@ -2,6 +2,10 @@ import { ProfileIcon } from './ProfileIcon';
 import type { ReactNode } from 'react';
 import type { HealthProfile, ProfileSession } from '../../application/ports';
 import { ProfileSidebar } from './ProfileSidebar';
+import { useReviewQueue } from '@src/features/documents/application/useReviewWorkspace';
+import { createReviewRepository } from '@src/features/documents/infrastructure/createReviewRepository';
+
+const reviewRepository = createReviewRepository();
 export function ProfileFrame({
   session,
   profiles,
@@ -13,6 +17,7 @@ export function ProfileFrame({
   logout: { isPending: boolean; isError: boolean; mutate: () => void };
   children: ReactNode;
 }) {
+  const queue = useReviewQueue(reviewRepository, session);
   return (
     <div className="min-h-dvh bg-[#f0fcfb] text-[#131d1d]">
       <ProfileSidebar
@@ -21,6 +26,7 @@ export function ProfileFrame({
         pending={logout.isPending}
         error={logout.isError}
         onLogout={() => logout.mutate()}
+        pendingCount={queue.data?.length}
       />
       <div className="min-w-0 lg:ml-[240px]">
         <header className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-b border-[#e4f0ef] px-4 py-3 lg:px-8">

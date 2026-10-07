@@ -15,7 +15,10 @@ import { Route as ConsentInviteRouteImport } from './routes/consent-invite'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as UploadRouteImport } from './routes/upload'
 import { Route as WaitingRouteImport } from './routes/waiting'
+import { Route as ProfilesProfileIdRouteImport } from './routes/profiles.$profileId'
 import { Route as ProfilesNewRouteImport } from './routes/profiles.new'
+import { Route as ReviewIndexRouteImport } from './routes/review.index'
+import { Route as ReviewDocumentIdRouteImport } from './routes/review.$documentId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -47,9 +50,24 @@ const WaitingRoute = WaitingRouteImport.update({
   path: '/waiting',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfilesProfileIdRoute = ProfilesProfileIdRouteImport.update({
+  id: '/profiles/$profileId',
+  path: '/profiles/$profileId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfilesNewRoute = ProfilesNewRouteImport.update({
   id: '/profiles/new',
   path: '/profiles/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReviewIndexRoute = ReviewIndexRouteImport.update({
+  id: '/review/',
+  path: '/review/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReviewDocumentIdRoute = ReviewDocumentIdRouteImport.update({
+  id: '/review/$documentId',
+  path: '/review/$documentId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -60,7 +78,10 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/upload': typeof UploadRoute
   '/waiting': typeof WaitingRoute
+  '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
+  '/review/$documentId': typeof ReviewDocumentIdRoute
+  '/review/': typeof ReviewIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,7 +90,10 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/upload': typeof UploadRoute
   '/waiting': typeof WaitingRoute
+  '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
+  '/review/$documentId': typeof ReviewDocumentIdRoute
+  '/review': typeof ReviewIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,7 +103,10 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/upload': typeof UploadRoute
   '/waiting': typeof WaitingRoute
+  '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
+  '/review/$documentId': typeof ReviewDocumentIdRoute
+  '/review/': typeof ReviewIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,7 +117,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/upload'
     | '/waiting'
+    | '/profiles/$profileId'
     | '/profiles/new'
+    | '/review/$documentId'
+    | '/review/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -99,7 +129,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/upload'
     | '/waiting'
+    | '/profiles/$profileId'
     | '/profiles/new'
+    | '/review/$documentId'
+    | '/review'
   id:
     | '__root__'
     | '/'
@@ -108,7 +141,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/upload'
     | '/waiting'
+    | '/profiles/$profileId'
     | '/profiles/new'
+    | '/review/$documentId'
+    | '/review/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,7 +154,10 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   UploadRoute: typeof UploadRoute
   WaitingRoute: typeof WaitingRoute
+  ProfilesProfileIdRoute: typeof ProfilesProfileIdRoute
   ProfilesNewRoute: typeof ProfilesNewRoute
+  ReviewDocumentIdRoute: typeof ReviewDocumentIdRoute
+  ReviewIndexRoute: typeof ReviewIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -165,11 +204,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WaitingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profiles/$profileId': {
+      id: '/profiles/$profileId'
+      path: '/profiles/$profileId'
+      fullPath: '/profiles/$profileId'
+      preLoaderRoute: typeof ProfilesProfileIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profiles/new': {
       id: '/profiles/new'
       path: '/profiles/new'
       fullPath: '/profiles/new'
       preLoaderRoute: typeof ProfilesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/review/': {
+      id: '/review/'
+      path: '/review'
+      fullPath: '/review/'
+      preLoaderRoute: typeof ReviewIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/review/$documentId': {
+      id: '/review/$documentId'
+      path: '/review/$documentId'
+      fullPath: '/review/$documentId'
+      preLoaderRoute: typeof ReviewDocumentIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -182,7 +242,10 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   UploadRoute: UploadRoute,
   WaitingRoute: WaitingRoute,
+  ProfilesProfileIdRoute: ProfilesProfileIdRoute,
   ProfilesNewRoute: ProfilesNewRoute,
+  ReviewDocumentIdRoute: ReviewDocumentIdRoute,
+  ReviewIndexRoute: ReviewIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
