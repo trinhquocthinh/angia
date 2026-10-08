@@ -1,8 +1,8 @@
 import { existsSync } from 'node:fs';
-import { readdir, stat } from 'node:fs/promises';
+import { mkdtemp, readdir, rm, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { spoolMultipartFiles } from './spoolMultipartFiles.js';
 
 const limits = { fieldName: 'files', maxFiles: 3, maxFileBytes: 1000, maxBodyBytes: 10_000 };
@@ -16,6 +16,15 @@ const multipart = (files: { name: string; bytes: Uint8Array; field?: string }[],
 const spoolDirs = async () => (await readdir(tmpdir())).filter((name) => name.startsWith('angia-upload-'));
 
 describe('Nhận multipart theo luồng ra đĩa tạm (SPEC-008, E3-S1-T1)', () => {
+  let root: string;
+  beforeAll(async () => {
+    root = await mkdtemp(join(tmpdir(), 'angia-spool-tests-'));
+    for (const key of ['TMPDIR', 'TMP', 'TEMP']) vi.stubEnv(key, root);
+  });
+  afterAll(async () => {
+    vi.unstubAllEnvs();
+    await rm(root, { recursive: true, force: true });
+  });
   it('ghi từng tệp ra đĩa: giữ tên gốc UTF-8, số byte, phần đầu; đọc lại đúng nội dung; dispose xóa thư mục', async () => {
     const before = await spoolDirs();
     const result = await spoolMultipartFiles(

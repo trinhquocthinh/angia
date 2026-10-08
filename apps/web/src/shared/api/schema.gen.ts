@@ -847,6 +847,15 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
+        /** @description ERR_UPLOAD_TIMEOUT: 30 giây không có dữ liệu hoặc body quá 5 phút */
+        408: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
         /** @description ERR_CONSENT_REQUIRED */
         409: {
           headers: {

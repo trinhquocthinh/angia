@@ -31,6 +31,8 @@ jobs:
           path: node_modules/.cache/eslint
           key: eslint-${{ runner.os }}-${{ hashFiles('yarn.lock', 'eslint.config.mjs') }}-${{ github.sha }}
           restore-keys: eslint-${{ runner.os }}-${{ hashFiles('yarn.lock', 'eslint.config.mjs') }}-
+      - name: Kiểm tra advisory của dependency runtime
+        run: yarn npm audit --all --recursive --environment production
       - name: Hợp đồng OpenAPI khớp với mã đã commit
         run: yarn check:api
       - run: yarn typecheck

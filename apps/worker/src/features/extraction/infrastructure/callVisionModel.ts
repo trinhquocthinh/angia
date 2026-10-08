@@ -61,7 +61,11 @@ export const callVisionModel = async (
       ...(request.disableReasoning ? { reasoning: { enabled: false } } : {}),
     }),
   });
-  if (!response.ok) throw new Error(`HTTP ${response.status}: ${(await response.text()).slice(0, 200)}`);
+  if (!response.ok) {
+    // Không đọc nội dung lỗi nhà cung cấp: có thể chứa thông tin trong ảnh/prompt.
+    await response.body?.cancel().catch(() => undefined);
+    throw new Error(`HTTP ${response.status}`);
+  }
 
   const completion = completionSchema.parse(await response.json());
   return {

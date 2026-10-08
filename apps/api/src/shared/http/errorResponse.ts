@@ -61,6 +61,10 @@ const ERROR_CATALOG = {
     message: 'Vui lòng lựa chọn đơn vị đo lường cho chỉ số đường huyết (mmol/L hoặc mg/dL).',
   },
   ERR_VALIDATION: { status: 422, message: 'Dữ liệu gửi lên không đúng định dạng quy định.' },
+  ERR_UPLOAD_TIMEOUT: {
+    status: 408,
+    message: 'Tải ảnh mất quá lâu hoặc bị gián đoạn. Vui lòng kiểm tra kết nối và gửi lại.',
+  },
   ERR_UPLOAD_BUSY: {
     status: 503,
     message: 'Hệ thống đang nhận ảnh của nhiều người cùng lúc. Vui lòng thử lại sau ít giây.',

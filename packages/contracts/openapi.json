@@ -1928,6 +1928,16 @@
               }
             }
           },
+          "408": {
+            "description": "ERR_UPLOAD_TIMEOUT: 30 giây không có dữ liệu hoặc body quá 5 phút",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "409": {
             "description": "ERR_CONSENT_REQUIRED",
             "content": {

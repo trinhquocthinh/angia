@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
 import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
@@ -76,6 +78,32 @@ describe('Giới hạn 3 lô tải lên xử lý đồng thời (E3-S1-T1)', () 
 
     slow.slice(1).forEach((upload) => upload.finish());
     expect((await Promise.all(pending.slice(1))).map((response) => response.status)).toEqual([201, 201]);
+  });
+
+  it('TC-110: main khác gia đình và hồ sơ không tồn tại bị từ chối trước body treo', async () => {
+    const other = await t.session(await t.family());
+    const slowRequest = (id: string) => {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 2000);
+      return Promise.resolve(
+        t.app.request(`/api/health-profiles/${id}/upload-batches`, {
+          method: 'POST',
+          headers: {
+            cookie: other.cookie,
+            'x-csrf-token': other.csrf,
+            'content-type': `multipart/form-data; boundary=${BOUNDARY}`,
+          },
+          body: new ReadableStream<Uint8Array>(),
+          signal: controller.signal,
+          duplex: 'half',
+        } as RequestInit),
+      ).finally(() => clearTimeout(timer));
+    };
+    await expectCrossFamilyDenied(
+      () => slowRequest(profileId),
+      () => slowRequest(randomUUID()),
+    );
+    expect((await quick()).status).toBe(201);
   });
 
   it('lô bị từ chối vì lỗi (quá số tệp, sai hồ sơ) vẫn trả chỗ', async () => {

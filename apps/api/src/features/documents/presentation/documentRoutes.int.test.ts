@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto';
-import { readdir } from 'node:fs/promises';
+import { mkdtemp, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { join } from 'node:path';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { HealthProfile, UploadBatchResponse } from '@angia/contracts';
 import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
@@ -23,11 +24,20 @@ const spoolDirs = async () => (await readdir(tmpdir())).filter((name) => name.st
 
 describe('Tải chứng từ đơn lẻ/theo lô: route thật, transaction và RLS (E2-S5-T1, E3-S1-T1)', () => {
   let t: ProfileTestApp;
+  let uploadTmpRoot: string;
   beforeAll(async () => {
+    // Cô lập tệp tạm khỏi các suite upload chạy song song (TC-023).
+    uploadTmpRoot = await mkdtemp(join(tmpdir(), 'angia-document-routes-'));
+    for (const name of ['TMPDIR', 'TMP', 'TEMP']) vi.stubEnv(name, uploadTmpRoot);
     t = await startProfileTestApp();
   });
   afterAll(async () => {
-    await t?.stop();
+    try {
+      await t?.stop();
+    } finally {
+      vi.unstubAllEnvs();
+      if (uploadTmpRoot) await rm(uploadTmpRoot, { recursive: true, force: true });
+    }
   });
 
   const upload = (

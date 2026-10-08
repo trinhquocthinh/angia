@@ -79,8 +79,10 @@ describe('callVisionModel', () => {
     await expect(callVisionModel(request, fetchFn)).rejects.toThrow();
   });
 
-  it('ném lỗi kèm mã HTTP khi dịch vụ trả lỗi', async () => {
-    const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(new Response('quota', { status: 429 }));
-    await expect(callVisionModel(request, fetchFn)).rejects.toThrow('HTTP 429');
+  it('TC-109: lỗi HTTP giữ mã trạng thái, không mang nội dung riêng tư từ nhà cung cấp', async () => {
+    const fetchFn = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(new Response('SYNTHETIC_PRIVATE_PATIENT', { status: 429 }));
+    await expect(callVisionModel(request, fetchFn)).rejects.toThrow(/^HTTP 429$/);
   });
 });

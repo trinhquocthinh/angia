@@ -1,22 +1,21 @@
-import { once } from 'node:events';
 import { createReadStream, createWriteStream } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { Readable, Transform, type Writable } from 'node:stream';
+import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import busboy from 'busboy';
+import { feedMultipartBody, type BodyReadLimits } from './feedMultipartBody.js';
 
 // Đủ cho magic bytes JPEG/PNG/WebP và hộp ftyp của HEIC.
 const HEAD_BYTES = 4096;
 const MAX_FIELDS = 10;
 const MAX_FIELD_BYTES = 1024;
 
-export interface SpoolLimits {
+export interface SpoolLimits extends BodyReadLimits {
   fieldName: string;
   maxFiles: number;
   maxFileBytes: number;
-  maxBodyBytes: number;
 }
 interface SpooledFile {
   fileName: string;
@@ -31,7 +30,7 @@ interface SpooledUpload {
   /** Xóa thư mục tạm; gọi trong `finally` của handler. */
   dispose(): Promise<void>;
 }
-type SpoolFailure = { ok: false; code: 'ERR_BATCH_TOO_LARGE' | 'ERR_VALIDATION' };
+type SpoolFailure = { ok: false; code: 'ERR_BATCH_TOO_LARGE' | 'ERR_VALIDATION' | 'ERR_UPLOAD_TIMEOUT' };
 type SpoolOutcome = { ok: true; value: SpooledUpload } | SpoolFailure;
 
 interface ParseState {
@@ -44,7 +43,7 @@ interface ParseState {
 // (lô 10 × 10 MiB = 100 MiB, nhân số người tải đồng thời, dễ vượt mem_limit 256 MB của API). Lô quá số tệp hoặc body quá trần dừng đọc ngay.
 export async function spoolMultipartFiles(request: Request, limits: SpoolLimits): Promise<SpoolOutcome> {
   if (Number(request.headers.get('content-length') ?? 0) > limits.maxBodyBytes) {
-    await request.body?.cancel();
+    void request.body?.cancel().catch(() => undefined);
     return { ok: false, code: 'ERR_BATCH_TOO_LARGE' };
   }
   const parser = createParser(request.headers.get('content-type'), limits);
@@ -52,7 +51,7 @@ export async function spoolMultipartFiles(request: Request, limits: SpoolLimits)
   const dir = await mkdtemp(join(tmpdir(), 'angia-upload-'));
   const dispose = () => rm(dir, { recursive: true, force: true });
   try {
-    const parsed = await parse(request.body, parser, dir, limits);
+    const parsed = await parse(request.body, parser, dir, limits, request.signal);
     if (parsed.failure) {
       await dispose();
       return { ok: false, code: parsed.failure };
@@ -87,11 +86,14 @@ async function parse(
   parser: busboy.Busboy,
   dir: string,
   limits: SpoolLimits,
+  signal: AbortSignal,
 ): Promise<ParseState> {
   const state: ParseState = { files: [], fields: {}, failure: null };
   parser.on('file', (name, stream, info) => {
     if (name !== limits.fieldName || state.failure) return void stream.resume();
-    state.files.push(spoolFile(stream, join(dir, String(state.files.length)), info.filename ?? ''));
+    const file = spoolFile(stream, join(dir, String(state.files.length)), info.filename ?? '');
+    void file.catch(() => undefined); // Gắn xử lý lỗi ngay, rồi thu kết quả bằng allSettled ở dưới.
+    state.files.push(file);
   });
   parser.on('field', (name, value) => {
     state.fields[name] = value;
@@ -105,8 +107,15 @@ async function parse(
     });
     parser.on('close', resolve);
   });
-  const withinLimit = await feed(body, parser, limits.maxBodyBytes, () => state.failure !== null);
-  if (!withinLimit) state.failure ??= 'ERR_BATCH_TOO_LARGE';
+  const result = await feedMultipartBody(body, parser, limits, signal, () => state.failure !== null);
+  if (result !== 'complete') {
+    state.failure ??=
+      result === 'timeout'
+        ? 'ERR_UPLOAD_TIMEOUT'
+        : result === 'too-large'
+          ? 'ERR_BATCH_TOO_LARGE'
+          : 'ERR_VALIDATION';
+  }
   if (state.failure) parser.destroy();
   await closed;
   // Chờ mọi luồng ghi đĩa kết thúc trước khi dọn thư mục; lỗi ghi khi lô đã hỏng thì bỏ qua.
@@ -114,34 +123,6 @@ async function parse(
   const writeError = settled.find((result) => result.status === 'rejected');
   if (writeError && !state.failure) throw writeError.reason;
   return state;
-}
-
-// Đếm byte thực nhận (không tin content-length) và tôn trọng backpressure của parser.
-async function feed(
-  body: ReadableStream<Uint8Array>,
-  parser: Writable,
-  maxBodyBytes: number,
-  shouldStop: () => boolean,
-): Promise<boolean> {
-  const reader = body.getReader();
-  let received = 0;
-  for (;;) {
-    if (shouldStop()) {
-      await reader.cancel();
-      return true;
-    }
-    const { done, value } = await reader.read();
-    if (done) {
-      parser.end();
-      return true;
-    }
-    received += value.byteLength;
-    if (received > maxBodyBytes) {
-      await reader.cancel();
-      return false;
-    }
-    if (!parser.write(value)) await once(parser, 'drain').catch(() => undefined);
-  }
 }
 
 async function spoolFile(stream: Readable, path: string, fileName: string): Promise<SpooledFile> {

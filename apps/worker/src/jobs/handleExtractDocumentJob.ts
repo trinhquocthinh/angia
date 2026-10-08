@@ -25,7 +25,7 @@ export function handleExtractDocumentJob(deps: ExtractionDependencies, logger: L
       return outcome;
     } catch (error) {
       logger.warn(
-        { jobId: job.id, documentId, retryCount: job.retryCount, reason: (error as Error).message },
+        { jobId: job.id, documentId, retryCount: job.retryCount, reason: 'extraction_failed' },
         'Gọi AI lỗi, pg-boss sẽ thử lại',
       );
       throw error;
