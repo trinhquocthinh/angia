@@ -1,13 +1,22 @@
+import type { OcrImageApproval } from './canUseApprovedOcrImage.js';
 export type DocumentType = 'prescription' | 'lab_result' | 'device_reading';
 type DocumentStatus =
-  'uploaded' | 'extracting' | 'pending_review' | 'approved' | 'rejected' | 'manual_entry' | 'awaiting_budget';
+  | 'uploaded'
+  | 'awaiting_privacy'
+  | 'extracting'
+  | 'pending_review'
+  | 'approved'
+  | 'rejected'
+  | 'manual_entry'
+  | 'awaiting_budget';
 
 // Chứng từ worker cần để trích xuất; không chứa định danh hồ sơ gửi được sang AI (Tech Spec §5.2).
-export interface DocumentToExtract {
+export interface DocumentToExtract extends OcrImageApproval {
   id: string;
   status: DocumentStatus;
   declaredType: DocumentType | null;
   originalKey: string;
+  previewKey: string | null;
   mimeType: string;
 }
 

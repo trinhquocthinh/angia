@@ -1,14 +1,24 @@
+import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
+import { createPrivacyQueue } from '@src/features/documentPrivacy/infrastructure/createPrivacyQueue.js';
+import { hashPrivacyPng } from '@src/features/documentPrivacy/infrastructure/hashPrivacyPng.js';
 import { createInvitationRepository } from '@src/features/consentInvitations/infrastructure/createInvitationRepository.js';
 import { createInvitationTokenCodec } from '@src/features/consentInvitations/infrastructure/createInvitationTokenCodec.js';
 import { randomUUID } from 'node:crypto';
-import { EXTRACT_DOCUMENT_QUEUE, EXTRACT_DOCUMENT_QUEUE_OPTIONS } from '@angia/contracts';
+import {
+  CONVERT_HEIC_QUEUE,
+  CONVERT_HEIC_QUEUE_OPTIONS,
+  PREPARE_OCR_IMAGE_QUEUE,
+  PREPARE_OCR_IMAGE_QUEUE_OPTIONS,
+  EXTRACT_DOCUMENT_QUEUE,
+  EXTRACT_DOCUMENT_QUEUE_OPTIONS,
+} from '@angia/contracts';
 import pg from 'pg';
 import type { PgBoss } from 'pg-boss';
 import { createApp } from '@src/createApp.js';
 import { createDocumentRepository } from '@src/features/documents/infrastructure/createDocumentRepository.js';
 import { createReviewRepository } from '@src/features/documents/infrastructure/createReviewRepository.js';
 import { createMeasurementRepository } from '@src/features/measurements/infrastructure/createMeasurementRepository.js';
-import { createExtractionQueue } from '@src/features/documents/infrastructure/createExtractionQueue.js';
+import { createPreviewQueue } from '@src/features/documents/infrastructure/createPreviewQueue.js';
 import { newId } from '@src/shared/db/schema/newId.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
 import { createSessionRepository } from '@src/shared/auth/infrastructure/createSessionRepository.js';
@@ -29,6 +39,7 @@ function buildApp(
   boss: PgBoss,
 ) {
   const stub = createStubAuthDeps();
+  const privacyQueue = createPrivacyQueue(boss);
   return createApp({
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
     auth: {
@@ -46,11 +57,19 @@ function buildApp(
       appBaseUrl,
     },
     documents: {
-      repository: createDocumentRepository(database, createExtractionQueue(boss)),
+      repository: createDocumentRepository(database, createPreviewQueue(boss)),
       newId,
       storage: memory.storage,
     },
     review: { repository: createReviewRepository(database), reader: memory.reader },
+    privacy: {
+      repository: createPrivacyRepository(database, privacyQueue),
+      reader: memory.reader,
+      queue: privacyQueue,
+      hashPng: hashPrivacyPng,
+      newId: randomUUID,
+      now: () => new Date(),
+    },
     measurements: createMeasurementRepository(database),
   });
 }
@@ -66,6 +85,8 @@ export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') 
   // pg-boss thật trên role app (migrate:false) như server.ts; job chỉ được gửi, không có worker xử lý.
   const boss = createPgBoss(db.appUrl, createSilentLogger());
   await boss.start();
+  await boss.createQueue(CONVERT_HEIC_QUEUE, CONVERT_HEIC_QUEUE_OPTIONS);
+  await boss.createQueue(PREPARE_OCR_IMAGE_QUEUE, PREPARE_OCR_IMAGE_QUEUE_OPTIONS);
   await boss.createQueue(EXTRACT_DOCUMENT_QUEUE, EXTRACT_DOCUMENT_QUEUE_OPTIONS);
   const app = buildApp(database, appBaseUrl, memory, boss);
   const family = async () => {
@@ -100,6 +121,7 @@ export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') 
     call,
     stop,
     database,
+    boss,
     objects: memory.objects,
     codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
   };

@@ -48,7 +48,7 @@ export function createMemoryDocumentDeps(profiles: Profile[], options: { failPut
             pendingDocuments.push(document);
             return document;
           },
-          enqueueExtraction: async (documentId) => {
+          enqueuePreview: async (documentId) => {
             pendingJobs.push({ documentId, familyId });
           },
         });

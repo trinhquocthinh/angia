@@ -23,6 +23,7 @@ export const uploadBatchRoute = createRoute({
     401: error('ERR_UNAUTHENTICATED'),
     403: error('ERR_FORBIDDEN: cần main cùng gia đình và CSRF'),
     404: error('ERR_NOT_FOUND: hồ sơ không thuộc gia đình'),
+    408: error('ERR_UPLOAD_TIMEOUT: 30 giây không có dữ liệu hoặc body quá 5 phút'),
     409: error('ERR_CONSENT_REQUIRED'),
     413: error('ERR_BATCH_TOO_LARGE: quá 10 tệp hoặc body vượt trần'),
     422: error('ERR_VALIDATION (không có tệp, sai loại khai báo) hoặc ERR_NO_VALID_FILE'),

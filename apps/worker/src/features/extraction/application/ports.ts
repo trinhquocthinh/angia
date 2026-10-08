@@ -44,4 +44,13 @@ export interface ExtractionDependencies {
   storage: ObjectReader;
   images: ImageConverter;
   extractor: DocumentExtractor;
+  ocrImages: ApprovedOcrImageReader;
+}
+
+export interface PreviewImageConverter {
+  toWebp(bytes: Uint8Array, mimeType: string): Promise<Uint8Array>;
+}
+
+export interface ApprovedOcrImageReader {
+  get(key: string): Promise<ExtractorImage & { sha256: string }>;
 }

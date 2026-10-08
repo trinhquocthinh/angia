@@ -7,6 +7,7 @@ import { createConcurrencyLimit } from '@src/shared/http/createConcurrencyLimit.
 import { errorResponse } from '@src/shared/http/errorResponse.js';
 import { spoolMultipartFiles } from '@src/shared/http/spoolMultipartFiles.js';
 import type { DocumentDependencies } from '../application/ports.js';
+import { checkUploadTarget } from '../application/checkUploadTarget.js';
 import { uploadDocument } from '../application/uploadDocument.js';
 import { MAX_FILE_BYTES, MAX_FILES_PER_UPLOAD } from '../domain/SourceDocument.js';
 import { uploadBatchRoute } from './documentRouteDefinitions.js';
@@ -35,6 +36,9 @@ export function registerDocumentRoutes(app: OpenAPIHono<AppEnv>, deps: DocumentD
   app.post('/api/health-profiles/:id/upload-batches', async (c) => {
     const profileId = profileIdSchema.safeParse(c.req.param('id'));
     if (!profileId.success) return errorResponse(c, 'ERR_VALIDATION');
+    const session = c.get('session')!;
+    const target = await checkUploadTarget(deps.repository, session.family!.id, profileId.data);
+    if (!target.ok) return errorResponse(c, target.code);
     // Giữ chỗ suốt lúc nhận body, ghi S3 và DB — đó là phần tốn đĩa, mạng và bộ nhớ.
     const release = uploadSlots.tryAcquire();
     if (!release) {

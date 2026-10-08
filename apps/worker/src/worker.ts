@@ -1,3 +1,15 @@
+import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
+import { createPrivacyStorage } from '@src/features/documentPrivacy/infrastructure/createPrivacyStorage.js';
+import { createPrivacyImageRenderer } from '@src/features/documentPrivacy/infrastructure/createPrivacyImageRenderer.js';
+import { handlePrepareOcrImageJob } from '@src/jobs/handlePrepareOcrImageJob.js';
+import { registerPrepareOcrImageJob } from '@src/jobs/registerPrepareOcrImageJob.js';
+import { v7 as newId } from 'uuid';
+import { createApprovedOcrImageReader } from '@src/features/extraction/infrastructure/createApprovedOcrImageReader.js';
+import { createDocumentPreviewConverter } from '@src/features/extraction/infrastructure/createDocumentPreviewConverter.js';
+import { createPreviewRepository } from '@src/features/documentPreview/infrastructure/createPreviewRepository.js';
+import { createPreviewStorage } from '@src/features/documentPreview/infrastructure/createPreviewStorage.js';
+import { handleConvertHeicJob } from '@src/jobs/handleConvertHeicJob.js';
+import { registerConvertHeicJob } from '@src/jobs/registerConvertHeicJob.js';
 import pg from 'pg';
 import { pino } from 'pino';
 import { createExtractionRepository } from '@src/features/extraction/infrastructure/createExtractionRepository.js';
@@ -37,11 +49,39 @@ try {
       storage: createS3ObjectReader(createS3Client(config), config.S3_BUCKET),
       images: createHeicImageConverter(),
       extractor: createExtractor(config),
+      ocrImages: createApprovedOcrImageReader(createS3ObjectReader(createS3Client(config), config.S3_BUCKET)),
     },
     logger,
   );
   await registerExtractDocumentJob(boss, handler);
-  logger.info({ aiProvider: config.AI_PROVIDER }, 'Worker sẵn sàng — đã đăng ký job extract-document');
+  await registerConvertHeicJob(
+    boss,
+    handleConvertHeicJob(
+      {
+        repository: createPreviewRepository(pool),
+        storage: createPreviewStorage(createS3Client(config), config.S3_BUCKET),
+        images: createDocumentPreviewConverter(),
+        newId,
+      },
+      logger,
+    ),
+  );
+  await registerPrepareOcrImageJob(
+    boss,
+    handlePrepareOcrImageJob(
+      {
+        repository: createPrivacyRepository(pool),
+        storage: createPrivacyStorage(createS3Client(config), config.S3_BUCKET),
+        images: createPrivacyImageRenderer(),
+        newId,
+      },
+      logger,
+    ),
+  );
+  logger.info(
+    { aiProvider: config.AI_PROVIDER },
+    'Worker sẵn sàng — đã đăng ký job convert-heic, prepare-ocr-image và extract-document',
+  );
 } catch (error) {
   logger.error({ reason: (error as Error).message }, 'Worker không khởi động được');
   process.exitCode = 1;

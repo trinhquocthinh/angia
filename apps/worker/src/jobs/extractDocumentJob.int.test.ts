@@ -1,6 +1,10 @@
-import { randomUUID } from 'node:crypto';
+import { prepareDocumentPreview } from '@src/features/documentPreview/application/prepareDocumentPreview.js';
+import { createPreviewRepository } from '@src/features/documentPreview/infrastructure/createPreviewRepository.js';
+import { handleConvertHeicJob } from './handleConvertHeicJob.js';
+import { registerConvertHeicJob } from './registerConvertHeicJob.js';
+import { createHash, randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { EXTRACT_DOCUMENT_QUEUE } from '@angia/contracts';
+import { CONVERT_HEIC_QUEUE, EXTRACT_DOCUMENT_QUEUE } from '@angia/contracts';
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
@@ -31,6 +35,15 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
     storage: { get: async () => new Uint8Array([0xff, 0xd8, 0xff]) },
     images: { heicToJpeg: async (bytes) => bytes },
     extractor: createFakeExtractor(),
+    ocrImages: {
+      get: async () => ({
+        bytes: new Uint8Array([0xff, 0xd8, 0xff]),
+        mimeType: 'image/jpeg',
+        sha256: createHash('sha256')
+          .update(new Uint8Array([0xff, 0xd8, 0xff]))
+          .digest('hex'),
+      }),
+    },
   });
 
   beforeAll(async () => {
@@ -62,7 +75,7 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
     await container?.stop();
   });
 
-  const seedDocument = async (declaredType: string | null = null) => {
+  const seedDocument = async (declaredType: string | null = null, approved = true) => {
     const [familyId, profileId, batchId, documentId, accountId] = [
       randomUUID(),
       randomUUID(),
@@ -84,9 +97,23 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
       [batchId, familyId, profileId, accountId],
     );
     await owner.query(
-      `INSERT INTO source_documents(id, family_id, health_profile_id, batch_id, type, status, original_key, mime_type, size_bytes)
-       VALUES ($1, $2, $3, $4, $5, 'uploaded', 'k/original.jpg', 'image/jpeg', 3)`,
-      [documentId, familyId, profileId, batchId, declaredType],
+      `INSERT INTO source_documents(id, family_id, health_profile_id, batch_id, type, status, original_key, mime_type, size_bytes, ocr_image_key, ocr_image_sha256, privacy_approved_by, privacy_approved_at)
+       VALUES ($1, $2, $3, $4, $5, CASE WHEN $8::uuid IS NOT NULL THEN 'extracting' ELSE 'uploaded' END, $9, 'image/jpeg', 3, $6, $7, $8, CASE WHEN $8::uuid IS NOT NULL THEN now() ELSE NULL END)`,
+      [
+        documentId,
+        familyId,
+        profileId,
+        batchId,
+        declaredType,
+        approved ? `families/${familyId}/profiles/${profileId}/documents/${documentId}/ocr.jpg` : null,
+        approved
+          ? createHash('sha256')
+              .update(new Uint8Array([0xff, 0xd8, 0xff]))
+              .digest('hex')
+          : null,
+        approved ? accountId : null,
+        `families/${familyId}/profiles/${profileId}/documents/${documentId}/original.jpg`,
+      ],
     );
     return { familyId, documentId };
   };
@@ -115,7 +142,7 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
     expect(extraction.rows[0].payload.items[0].name).toBe('Amlodipin');
   });
 
-  it('SPEC-006: familyId của job không khớp chứng từ → RLS che, bỏ qua, chứng từ giữ uploaded', async () => {
+  it('SPEC-006: familyId của job không khớp chứng từ → RLS che, bỏ qua, chứng từ giữ extracting', async () => {
     const { documentId } = await seedDocument();
     const other = await seedDocument();
     const handler = handleExtractDocumentJob(deps(), logger);
@@ -126,7 +153,7 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
       retryLimit: 2,
     });
     expect(outcome).toEqual({ status: 'skipped' });
-    expect(await documentState(documentId)).toMatchObject({ status: 'uploaded', extractions: 0 });
+    expect(await documentState(documentId)).toMatchObject({ status: 'extracting', extractions: 0 });
   });
 
   it('khai lab_result nhưng AI trả đơn thuốc → manual_entry, không tạo Extraction', async () => {
@@ -138,5 +165,45 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
       type: 'lab_result',
       extractions: 0,
     });
+  });
+  const previewDeps = () => ({
+    repository: createPreviewRepository(pool),
+    newId: randomUUID,
+    images: { toWebp: async () => new Uint8Array([1, 2, 3]) },
+    storage: { get: async () => new Uint8Array([1]), put: async () => {}, delete: async () => {} },
+  });
+  it('TC-156: job convert-heic thật → lưu previewKey, awaiting_privacy; RLS/CAS chặn nhóm khác và job lặp', async () => {
+    const own = await seedDocument(null, false);
+    const other = await seedDocument(null, false);
+    expect(
+      await prepareDocumentPreview(previewDeps(), { ...own, familyId: other.familyId, finalAttempt: false }),
+    ).toEqual({ status: 'skipped' });
+    await registerConvertHeicJob(boss, handleConvertHeicJob(previewDeps(), logger));
+    await boss.send(CONVERT_HEIC_QUEUE, own);
+    await expect
+      .poll(() => documentState(own.documentId), { timeout: 15000, interval: 250 })
+      .toMatchObject({ status: 'awaiting_privacy', extractions: 0 });
+    const row = (
+      await owner.query('SELECT preview_key, original_key FROM source_documents WHERE id=$1', [
+        own.documentId,
+      ])
+    ).rows[0];
+    expect(row.preview_key).toContain(`families/${own.familyId}/`);
+    expect(row.preview_key).toMatch(/\.webp$/);
+    expect(row.original_key).toMatch(/original\.jpg$/);
+    expect(await prepareDocumentPreview(previewDeps(), { ...own, finalAttempt: false })).toEqual({
+      status: 'skipped',
+    });
+    expect(await documentState(other.documentId)).toMatchObject({ status: 'uploaded', extractions: 0 });
+  });
+  it('TC-157: job OCR cũ thiếu xác nhận → manual_entry, không tạo Extraction', async () => {
+    const own = await seedDocument(null, false);
+    expect(
+      await handleExtractDocumentJob(
+        deps(),
+        logger,
+      )({ id: 'legacy', data: own, retryCount: 0, retryLimit: 2 }),
+    ).toMatchObject({ status: 'manual_entry', reason: 'privacy_required', costUsd: 0 });
+    expect(await documentState(own.documentId)).toMatchObject({ status: 'manual_entry', extractions: 0 });
   });
 });

@@ -7,7 +7,11 @@ export function createReviewRepository(client = apiClient): ReviewRepository {
     queue: async (signal) =>
       readReviewResponse(
         await client.GET('/api/source-documents', {
-          params: { query: { status: ['uploaded', 'extracting', 'pending_review', 'manual_entry'] } },
+          params: {
+            query: {
+              status: ['uploaded', 'awaiting_privacy', 'extracting', 'pending_review', 'manual_entry'],
+            },
+          },
           signal: signal ?? null,
         }),
       ),

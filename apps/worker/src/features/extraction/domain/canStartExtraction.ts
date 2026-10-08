@@ -1,7 +1,7 @@
 import type { DocumentToExtract } from './ExtractionDocument.js';
 
-// FSM BR §3.1: chỉ uploaded → extracting. `extracting` là lần thử lại của pg-boss sau lỗi gọi AI;
-// trạng thái khác nghĩa là job trùng hoặc người dùng đã xử lý, không gọi AI nữa.
+// BR-041: transaction duyệt riêng tư chuyển sang extracting và enqueue OCR.
+// Worker chỉ chạy trạng thái này, kể cả retry; uploaded/awaiting_privacy chưa được gọi AI.
 export function canStartExtraction(status: DocumentToExtract['status']): boolean {
-  return status === 'uploaded' || status === 'extracting';
+  return status === 'extracting';
 }

@@ -20,8 +20,9 @@ COPY packages/contracts/package.json packages/contracts/
 RUN yarn workspaces focus @angia/web
 
 COPY tsconfig.base.json ./
+COPY packages/contracts packages/contracts
 COPY apps/web apps/web
-RUN yarn workspace @angia/web build
+RUN yarn workspace @angia/contracts build && yarn workspace @angia/web build
 
 # ---------------------------------------------------------------------------
 # Stage 2: nginx không đặc quyền phục vụ file tĩnh (API do Caddy định tuyến riêng)

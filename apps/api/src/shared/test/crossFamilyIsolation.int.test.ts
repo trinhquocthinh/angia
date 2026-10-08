@@ -82,6 +82,24 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     'POST /api/health-profiles/:id/upload-batches': (u, x) => upload(u, x.profileId),
     'GET /api/source-documents/:id/review': (u, x) => t.call(u, 'GET', `${documents}/${x.documentId}/review`),
     'GET /api/source-documents/:id/image': (u, x) => t.call(u, 'GET', `${documents}/${x.documentId}/image`),
+    'POST /api/source-documents/:id/privacy-drafts': (u, x) =>
+      t.call(u, 'POST', `${documents}/${x.documentId}/privacy-drafts`, {
+        rotation: 0,
+        crop: { left: 0, top: 0, width: 1_000_000, height: 1_000_000 },
+        masks: [],
+      }),
+    'GET /api/source-documents/:id/privacy-draft': (u, x) =>
+      t.call(u, 'GET', `${documents}/${x.documentId}/privacy-draft`),
+    'GET /api/source-documents/:id/privacy-drafts/:draftId/image': (u, x) =>
+      t.call(u, 'GET', `${documents}/${x.documentId}/privacy-drafts/${x.accountId}/image`),
+    'POST /api/source-documents/:id/privacy-approval': (u, x) =>
+      t.call(u, 'POST', `${documents}/${x.documentId}/privacy-approval`, {
+        draftId: x.accountId,
+        sha256: 'a'.repeat(64),
+        confirmed: true,
+      }),
+    'POST /api/source-documents/:id/manual-entry': (u, x) =>
+      t.call(u, 'POST', `${documents}/${x.documentId}/manual-entry`),
     'POST /api/source-documents/:id/approve': (u, x) =>
       t.call(u, 'POST', `${documents}/${x.documentId}/approve`, { type: 'device_reading', data: reading }),
     'GET /api/health-profiles/:id/measurements': (u, x) =>

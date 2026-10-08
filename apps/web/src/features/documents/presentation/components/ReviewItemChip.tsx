@@ -1,6 +1,8 @@
 import type { ReviewItemState } from '../../application/reviewQueuePolling';
 
 const CHIPS: Record<ReviewItemState, { label: string; className: string }> = {
+  preparing: { label: 'Đang chuẩn bị ảnh…', className: 'bg-[#fff4e5] text-[#5c3a00]' },
+  privacy: { label: 'Chờ kiểm tra riêng tư', className: 'bg-[#e4f0ef] text-[#55615f]' },
   reading: { label: 'AI đang đọc…', className: 'bg-[#fff4e5] text-[#5c3a00]' },
   ready: { label: 'Đã đọc xong', className: 'bg-[#b3eddf] text-[#004135]' },
   later: { label: 'Duyệt ở bản sau', className: 'bg-[#e4f0ef] text-[#55615f]' },
