@@ -11,8 +11,13 @@
       "project": ["src/**/*.ts!", "!src/shared/test/**!", "scripts/**/*.ts"]
     },
     "apps/worker": {
-      "entry": ["src/worker.ts!"],
-      "project": ["src/**/*.ts!", "!src/shared/test/**!"]
+      "entry": [
+        "src/worker.ts!",
+        "src/features/extraction/infrastructure/heicConversionChild.ts!",
+        "src/features/extraction/infrastructure/documentPreviewChild.ts!",
+        "src/features/documentPrivacy/infrastructure/privacyPngChild.ts!"
+      ],
+      "project": ["src/**/*.ts!", "!src/shared/test/**!", "!src/**/*.test-helper.ts!"]
     },
     "apps/web": {
       "entry": ["src/app/routes/**/*.tsx!"],

@@ -16,13 +16,15 @@ export function createExtractionStore(client: pg.PoolClient, familyId: string): 
     findDocument: async (id) =>
       (
         await client.query<DocumentToExtract>(
-          `SELECT id, status, type AS "declaredType", original_key AS "originalKey", mime_type AS "mimeType"
+          `SELECT id, status, type AS "declaredType", original_key AS "originalKey", mime_type AS "mimeType", preview_key AS "previewKey",
+           ocr_image_key AS "ocrImageKey", ocr_image_sha256 AS "ocrImageSha256",
+           privacy_approved_by AS "privacyApprovedBy", privacy_approved_at AS "privacyApprovedAt"
            FROM source_documents WHERE id = $1 AND family_id = $2 FOR UPDATE`,
           [id, familyId],
         )
       ).rows[0] ?? null,
-    markExtracting: (id) => transition(id, 'extracting', ['uploaded', 'extracting']),
-    markManualEntry: (id) => transition(id, 'manual_entry', ['extracting']),
+    markExtracting: (id) => transition(id, 'extracting', ['extracting']),
+    markManualEntry: (id) => transition(id, 'manual_entry', ['uploaded', 'extracting']),
     savePendingReview: async (id, extraction) => {
       const updated = await client.query(
         `UPDATE source_documents SET status = 'pending_review', type = $1

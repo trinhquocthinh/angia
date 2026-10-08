@@ -15,10 +15,15 @@ describe('Hàng đợi khi AI đang đọc ảnh', () => {
   });
 
   it('trạng thái hiển thị: đang đọc, sẵn sàng duyệt, duyệt ở bản sau, cần nhập tay', () => {
-    expect(reviewItemState(doc('uploaded'))).toBe('reading');
+    expect(reviewItemState(doc('uploaded'))).toBe('preparing');
     expect(reviewItemState(doc('extracting', null))).toBe('reading');
     expect(reviewItemState(doc('pending_review'))).toBe('ready');
     expect(reviewItemState(doc('pending_review', 'prescription'))).toBe('later');
     expect(reviewItemState(doc('manual_entry'))).toBe('manual');
   });
+});
+
+it('TC-155: awaiting_privacy vẫn hiển thị chờ riêng tư, không polling như AI đang đọc', () => {
+  expect(reviewItemState(doc('awaiting_privacy'))).toBe('privacy');
+  expect(reviewPollInterval([doc('awaiting_privacy')])).toBe(false);
 });

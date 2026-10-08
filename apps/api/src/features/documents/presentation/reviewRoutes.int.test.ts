@@ -158,4 +158,29 @@ describe('Duyệt số đo từ ảnh máy đo: route thật, transaction và RL
     });
     expect(await prescription.json()).toMatchObject({ error: { code: 'ERR_VALIDATION' } });
   });
+  it('TC-160: preview WebP của awaiting_privacy được stream đúng, nhóm khác bị chặn', async () => {
+    const own = await pendingFixture();
+    const other = await t.session(await t.family());
+    const previewKey = own.key + '.preview.webp';
+    const preview = new Uint8Array([82, 73, 70, 70, 0, 0, 0, 0, 87, 69, 66, 80]);
+    t.objects.set(previewKey, { body: preview, contentType: 'image/webp' });
+    await t.owner.query("UPDATE source_documents SET status='awaiting_privacy',preview_key=$1 WHERE id=$2", [
+      previewKey,
+      own.documentId,
+    ]);
+    const response = await t.call(
+      own.main,
+      'GET',
+      `/api/source-documents/${own.documentId}/image?variant=preview`,
+    );
+    expect(response.headers.get('content-type')).toBe('image/webp');
+    expect(new Uint8Array(await response.arrayBuffer())).toEqual(preview);
+    const queue = await t.call(own.main, 'GET', '/api/source-documents?status=awaiting_privacy');
+    expect(((await queue.json()) as { id: string }[]).map((d) => d.id)).toEqual([own.documentId]);
+    await expectCrossFamilyDenied(
+      () => t.call(other, 'GET', `/api/source-documents/${own.documentId}/image?variant=preview`),
+      () => t.call(other, 'GET', `/api/source-documents/${randomUUID()}/image?variant=preview`),
+    );
+    expect(t.objects.get(own.key)!.body).toEqual(PENDING_JPEG);
+  });
 });

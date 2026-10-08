@@ -2,13 +2,13 @@ import { and, eq } from 'drizzle-orm';
 import { healthProfiles, sourceDocuments, uploadBatches } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import type { DocumentStore } from '../application/ports.js';
-import type { ExtractionQueue } from './createExtractionQueue.js';
+import type { PreviewQueue } from './createPreviewQueue.js';
 
 // Chạy trong transaction đã SET LOCAL app.family_id; bộ lọc family_id bổ sung phòng thủ theo chiều sâu.
 export function createDocumentStore(
   tx: FamilyScopedTx,
   familyId: string,
-  queue: ExtractionQueue,
+  queue: PreviewQueue,
 ): DocumentStore {
   return {
     findProfile: async (id) =>
@@ -30,6 +30,6 @@ export function createDocumentStore(
       if (!document) throw new Error('Không tạo được chứng từ');
       return document;
     },
-    enqueueExtraction: (documentId) => queue(tx, { documentId, familyId }),
+    enqueuePreview: (documentId) => queue(tx, { documentId, familyId }),
   };
 }

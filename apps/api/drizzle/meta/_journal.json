@@ -36,6 +36,20 @@
       "when": 1791298160603,
       "tag": "0004_pgboss_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791442934225,
+      "tag": "0005_document_privacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791442934226,
+      "tag": "0006_privacy_drafts",
+      "breakpoints": true
     }
   ]
 }

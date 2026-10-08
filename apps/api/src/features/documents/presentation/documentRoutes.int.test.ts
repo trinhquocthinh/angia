@@ -61,7 +61,7 @@ describe('Tải chứng từ đơn lẻ/theo lô: route thật, transaction và 
       await t.owner.query(
         `SELECT (SELECT count(*)::int FROM upload_batches) AS batches,
                 (SELECT count(*)::int FROM source_documents) AS documents,
-                (SELECT count(*)::int FROM pgboss.job WHERE name = 'extract-document') AS jobs`,
+                (SELECT count(*)::int FROM pgboss.job WHERE name = 'convert-heic') AS jobs`,
       )
     ).rows[0];
   const profileFixture = async (consented = true) => {
@@ -114,7 +114,7 @@ describe('Tải chứng từ đơn lẻ/theo lô: route thật, transaction và 
     expect(t.objects.get(key)).toMatchObject({ contentType: 'image/jpeg' });
     expect(t.objects.get(key)!.body.length).toBe(3 * MiB);
     // E2-S5-T2: job OCR ghi cùng transaction, payload chỉ có ID (không tên tệp/hồ sơ).
-    const jobs = await t.owner.query(`SELECT data, state FROM pgboss.job WHERE name = 'extract-document'`);
+    const jobs = await t.owner.query(`SELECT data, state FROM pgboss.job WHERE name = 'convert-heic'`);
     expect(jobs.rows.filter((job) => job.data.documentId === documentId)).toEqual([
       { data: { documentId, familyId }, state: 'created' },
     ]);

@@ -21,7 +21,7 @@ interface UploadRequest {
 // Số tệp kiểm trước, không cần DB (route đã chặn lô quá trần ngay lúc nhận multipart);
 // sau đó theo flowchart SPEC-008: hồ sơ → đồng thuận (BR-009) → từng tệp.
 // Object S3 ghi trong transaction; mọi lỗi (kể cả commit) xóa object đã ghi để không mồ côi.
-// Job extract-document ghi cùng transaction nên chỉ tồn tại khi chứng từ đã commit.
+// Job convert-heic ghi cùng transaction nên chỉ tồn tại khi chứng từ đã commit.
 export async function uploadDocument(
   deps: DocumentDependencies,
   request: UploadRequest,
@@ -77,7 +77,7 @@ async function storeUpload(
         sizeBytes: file.sizeBytes,
       }),
     );
-    await store.enqueueExtraction(id);
+    await store.enqueuePreview(id);
   }
   return { ok: true, value: { id: batchId, documents, rejectedFiles } };
 }

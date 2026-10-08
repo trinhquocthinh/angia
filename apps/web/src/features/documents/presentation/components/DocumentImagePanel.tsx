@@ -13,20 +13,20 @@ const sizeLabel = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1).replace
 const action =
   'inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-white px-3 text-sm font-medium text-[#004135] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]';
 
-// Ảnh gốc qua API (cùng cookie phiên). HEIC chưa có bản xem trước tới E3-S2-T1: trình duyệt không hiển thị được thì báo + link mở ảnh gốc.
+// WebP xem trước qua API cùng cookie phiên; giữ liên kết mở tệp gốc để đối chiếu.
 export function DocumentImagePanel({ document }: { document: SourceDocument }) {
   const [turns, setTurns] = useState(0);
   const [failed, setFailed] = useState(false);
   const original = documentImageUrl(document.id, 'original');
   return (
     <section
-      aria-label="Ảnh chứng từ gốc"
+      aria-label="Ảnh chứng từ"
       className="flex flex-col gap-3 rounded-[20px] bg-[#eaf6f5] p-3 lg:h-full"
     >
       <div className="flex items-center justify-between gap-2 px-1 text-xs font-semibold uppercase tracking-wider text-[#286958]">
-        <span>Ảnh chứng từ gốc</span>
+        <span>Ảnh chứng từ</span>
         <span className="rounded-md bg-white px-2 py-1 font-mono text-[11px] text-[#55615f]">
-          {FORMAT[document.mimeType] ?? 'ẢNH'} · {sizeLabel(document.sizeBytes)}
+          Tệp gốc: {FORMAT[document.mimeType] ?? 'ẢNH'} · {sizeLabel(document.sizeBytes)}
         </span>
       </div>
       <div className="flex min-h-[260px] flex-1 items-center justify-center overflow-hidden rounded-2xl bg-white">

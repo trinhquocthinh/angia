@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createMemoryExtractionDeps } from '@src/shared/test/createMemoryExtractionDeps.js';
+import { ImageConversionError } from './ImageConversionError.js';
 import { extractDocument } from './extractDocument.js';
 
 const prescription = { type: 'prescription' as const, items: [{ name: 'Amlodipin' }] };
@@ -76,10 +77,10 @@ describe('Trích xuất chứng từ bằng Vision-LLM (SPEC-009, E2-S5-T2)', ()
   it('TC-079: AI chỉ nhận byte ảnh và mimeType, không có ID hồ sơ/nhóm/chứng từ', async () => {
     const memory = createMemoryExtractionDeps({ result: { ok: true, content: prescription } });
     await extractDocument(memory.deps, job);
-    expect(memory.extractorCalls).toEqual([{ bytes: memory.originalBytes, mimeType: 'image/jpeg' }]);
+    expect(memory.extractorCalls).toEqual([{ bytes: memory.approvedBytes, mimeType: 'image/jpeg' }]);
   });
 
-  it('ảnh HEIC được giải mã sang JPEG trước khi gửi AI', async () => {
+  it('ảnh gốc HEIC không được đọc: chỉ gửi bản JPEG OCR đã duyệt', async () => {
     const memory = createMemoryExtractionDeps({
       mimeType: 'image/heic',
       result: { ok: true, content: prescription },
@@ -100,4 +101,93 @@ describe('Trích xuất chứng từ bằng Vision-LLM (SPEC-009, E2-S5-T2)', ()
       expect(memory.extractorCalls).toEqual([]);
     }
   });
+});
+
+it('TC-125: ảnh không xử lý được → nhập tay ngay, không gọi AI, giữ ảnh gốc', async () => {
+  const memory = createMemoryExtractionDeps({
+    mimeType: 'image/heic',
+    result: new Error('không được gọi'),
+  });
+  memory.deps.ocrImages.get = async () => {
+    throw new ImageConversionError();
+  };
+  expect(await extractDocument(memory.deps, job)).toEqual({
+    status: 'manual_entry',
+    reason: 'image_unusable',
+    costUsd: 0,
+  });
+  expect(memory.extractorCalls).toEqual([]);
+  expect(memory.statusHistory).toEqual(['extracting', 'manual_entry']);
+  expect(memory.objects.has('families/family-a/profiles/me/documents/doc-1/original.jpg')).toBe(true);
+});
+
+it('TC-150: thiếu xác nhận riêng tư → chặn AI và chuyển job OCR cũ sang nhập tay', async () => {
+  const memory = createMemoryExtractionDeps({ result: { ok: true, content: prescription } });
+  const original = memory.deps.repository.withFamily;
+  memory.deps.repository.withFamily = (family, work) =>
+    original(family, (store) =>
+      work({
+        ...store,
+        findDocument: async (id) => {
+          const document = await store.findDocument(id);
+          return document ? { ...document, privacyApprovedAt: null } : null;
+        },
+      }),
+    );
+  expect(await extractDocument(memory.deps, job)).toEqual({
+    status: 'manual_entry',
+    reason: 'privacy_required',
+    costUsd: 0,
+  });
+  expect(memory.extractorCalls).toEqual([]);
+});
+
+it('TC-151: byte bản OCR đổi → hash không khớp, không AI hoặc fallback ảnh gốc', async () => {
+  const memory = createMemoryExtractionDeps({ result: { ok: true, content: prescription } });
+  memory.objects.set(memory.ocrKey, new Uint8Array([0xff, 0xd8, 1]));
+  expect(await extractDocument(memory.deps, job)).toMatchObject({
+    status: 'manual_entry',
+    reason: 'image_unusable',
+    costUsd: 0,
+  });
+  expect(memory.extractorCalls).toEqual([]);
+});
+it('TC-152: bản OCR trỏ sang gia đình khác → chặn trước đọc ảnh', async () => {
+  const memory = createMemoryExtractionDeps({ result: { ok: true, content: prescription } });
+  const original = memory.deps.repository.withFamily;
+  memory.deps.repository.withFamily = (family, work) =>
+    original(family, (store) =>
+      work({
+        ...store,
+        findDocument: async (id) => {
+          const document = await store.findDocument(id);
+          return document ? { ...document, ocrImageKey: 'families/other/ocr.jpg' } : null;
+        },
+      }),
+    );
+  expect(await extractDocument(memory.deps, job)).toMatchObject({
+    status: 'manual_entry',
+    reason: 'privacy_required',
+  });
+  expect(memory.extractorCalls).toEqual([]);
+});
+
+it('TC-159: khóa OCR trùng preview → chặn AI trước đọc ảnh', async () => {
+  const memory = createMemoryExtractionDeps({ result: { ok: true, content: prescription } });
+  const original = memory.deps.repository.withFamily;
+  memory.deps.repository.withFamily = (family, work) =>
+    original(family, (store) =>
+      work({
+        ...store,
+        findDocument: async (id) => {
+          const document = await store.findDocument(id);
+          return document ? { ...document, previewKey: document.ocrImageKey } : null;
+        },
+      }),
+    );
+  expect(await extractDocument(memory.deps, job)).toMatchObject({
+    status: 'manual_entry',
+    reason: 'privacy_required',
+  });
+  expect(memory.extractorCalls).toEqual([]);
 });

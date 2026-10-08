@@ -11,6 +11,7 @@ export const sourceDocumentSchema = z
     type: documentTypeSchema.nullable(),
     status: z.enum([
       'uploaded',
+      'awaiting_privacy',
       'extracting',
       'pending_review',
       'approved',

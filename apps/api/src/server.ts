@@ -1,14 +1,24 @@
+import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
+import { createPrivacyQueue } from '@src/features/documentPrivacy/infrastructure/createPrivacyQueue.js';
+import { hashPrivacyPng } from '@src/features/documentPrivacy/infrastructure/hashPrivacyPng.js';
 import { createInvitationRepository } from '@src/features/consentInvitations/infrastructure/createInvitationRepository.js';
 import { createInvitationTokenCodec } from '@src/features/consentInvitations/infrastructure/createInvitationTokenCodec.js';
 import { createDocumentRepository } from '@src/features/documents/infrastructure/createDocumentRepository.js';
-import { createExtractionQueue } from '@src/features/documents/infrastructure/createExtractionQueue.js';
+import { createPreviewQueue } from '@src/features/documents/infrastructure/createPreviewQueue.js';
 import { createReviewRepository } from '@src/features/documents/infrastructure/createReviewRepository.js';
 import { createS3ObjectReader } from '@src/features/documents/infrastructure/createS3ObjectReader.js';
 import { createS3ObjectStorage } from '@src/features/documents/infrastructure/createS3ObjectStorage.js';
 import { createMeasurementRepository } from '@src/features/measurements/infrastructure/createMeasurementRepository.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
 import { randomBytes, randomUUID } from 'node:crypto';
-import { EXTRACT_DOCUMENT_QUEUE, EXTRACT_DOCUMENT_QUEUE_OPTIONS } from '@angia/contracts';
+import {
+  CONVERT_HEIC_QUEUE,
+  CONVERT_HEIC_QUEUE_OPTIONS,
+  PREPARE_OCR_IMAGE_QUEUE,
+  PREPARE_OCR_IMAGE_QUEUE_OPTIONS,
+  EXTRACT_DOCUMENT_QUEUE,
+  EXTRACT_DOCUMENT_QUEUE_OPTIONS,
+} from '@angia/contracts';
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
 import { createApp } from '@src/createApp.js';
@@ -35,7 +45,11 @@ const s3 = createS3Client(config);
 const boss = createPgBoss(config.DATABASE_URL, logger);
 await boss.start();
 // Idempotent: worker cũng tạo queue này; bên nào khởi động trước đều gửi được job.
+await boss.createQueue(CONVERT_HEIC_QUEUE, CONVERT_HEIC_QUEUE_OPTIONS);
+
+await boss.createQueue(PREPARE_OCR_IMAGE_QUEUE, PREPARE_OCR_IMAGE_QUEUE_OPTIONS);
 await boss.createQueue(EXTRACT_DOCUMENT_QUEUE, EXTRACT_DOCUMENT_QUEUE_OPTIONS);
+const privacyQueue = createPrivacyQueue(boss);
 
 const app = createApp({
   healthProbes: {
@@ -71,11 +85,19 @@ const app = createApp({
     appBaseUrl: config.APP_BASE_URL,
   },
   documents: {
-    repository: createDocumentRepository(db, createExtractionQueue(boss)),
+    repository: createDocumentRepository(db, createPreviewQueue(boss)),
     storage: createS3ObjectStorage(s3, config.S3_BUCKET),
     newId,
   },
   review: { repository: createReviewRepository(db), reader: createS3ObjectReader(s3, config.S3_BUCKET) },
+  privacy: {
+    repository: createPrivacyRepository(db, privacyQueue),
+    queue: privacyQueue,
+    reader: createS3ObjectReader(s3, config.S3_BUCKET),
+    hashPng: hashPrivacyPng,
+    newId: randomUUID,
+    now: () => new Date(),
+  },
   measurements: createMeasurementRepository(db),
 });
 

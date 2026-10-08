@@ -58,7 +58,7 @@ describe('Tải lên chứng từ đơn lẻ hoặc theo lô (SPEC-008)', () => 
     expect(memory.objects.get(key)?.body.length).toBe(3 * 1024 * 1024);
   });
 
-  it('SPEC-008 → SPEC-009: chứng từ hợp lệ được đẩy job extract-document kèm nhóm của phiên', async () => {
+  it('SPEC-008 → SPEC-009: chứng từ hợp lệ được đẩy job convert-heic kèm nhóm của phiên', async () => {
     const memory = createMemoryDocumentDeps(profiles);
     await uploadDocument(memory.deps, request());
     expect(memory.jobs).toEqual([{ documentId: 'id-2', familyId: 'family-a' }]);

@@ -7,8 +7,8 @@ export interface DocumentStore {
   findProfile(id: string): Promise<UploadTarget | null>;
   insertBatch(batch: { id: string; healthProfileId: string; createdBy: string }): Promise<void>;
   insertDocument(document: NewSourceDocument): Promise<SourceDocument>;
-  /** Đẩy job OCR trong cùng transaction: chứng từ và job cùng commit hoặc cùng rollback (SPEC-008 → SPEC-009). */
-  enqueueExtraction(documentId: string): Promise<void>;
+  /** Đẩy job preview trong cùng transaction: chứng từ và job cùng commit hoặc cùng rollback (SPEC-008 → SPEC-009). */
+  enqueuePreview(documentId: string): Promise<void>;
 }
 export interface DocumentRepository {
   withFamily<T>(familyId: string, work: (store: DocumentStore) => Promise<T>): Promise<T>;

@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import type {
   ExtractionDependencies,
   ExtractionStore,
@@ -23,20 +24,18 @@ interface Options {
 
 type SavedExtraction = Parameters<ExtractionStore['savePendingReview']>[1];
 
-const ORIGINAL_KEY = 'families/family-a/profiles/me/documents/doc-1/original.jpg';
-
 // Kho + S3 + AI giả cho unit test: một chứng từ (mặc định `doc-1` thuộc `family-a`), AI tốn $0.001/lần gọi.
 export function createMemoryExtractionDeps(options: Options) {
   const { documentId = 'doc-1', familyId: ownerFamilyId = 'family-a' } = options;
-  const originalBytes = new Uint8Array([1, 2, 3]);
-  const document: DocumentToExtract = {
-    id: documentId,
-    status: options.status ?? 'uploaded',
-    declaredType: options.declaredType ?? null,
-    originalKey: ORIGINAL_KEY,
-    mimeType: options.mimeType ?? 'image/jpeg',
-  };
-  const objects = new Map([[ORIGINAL_KEY, originalBytes]]);
+  const { document, originalBytes, approvedBytes, ocrKey } = createDocumentFixture(
+    options,
+    documentId,
+    ownerFamilyId,
+  );
+  const objects = new Map([
+    [document.originalKey, originalBytes],
+    [ocrKey, approvedBytes],
+  ]);
   const statusHistory: string[] = [];
   const extractions: (SavedExtraction & { documentId: string })[] = [];
   const extractorCalls: ExtractorImage[] = [];
@@ -59,13 +58,16 @@ export function createMemoryExtractionDeps(options: Options) {
         }),
     },
     storage: {
-      get: async (key) => {
-        const bytes = objects.get(key);
-        if (!bytes) throw new Error(`Không có object ${key}`);
-        return bytes;
-      },
+      get: async (key) => getMemoryObject(objects, key),
     },
     images: { heicToJpeg: async () => new Uint8Array([0xff, 0xd8]) },
+    ocrImages: {
+      get: async (key) => {
+        const bytes = objects.get(key);
+        if (!bytes) throw new Error('Không có ảnh OCR');
+        return { bytes, mimeType: 'image/jpeg', sha256: createHash('sha256').update(bytes).digest('hex') };
+      },
+    },
     extractor: {
       extract: async (image) => {
         extractorCalls.push(image);
@@ -79,5 +81,31 @@ export function createMemoryExtractionDeps(options: Options) {
       },
     },
   };
-  return { deps, statusHistory, extractions, extractorCalls, objects, originalBytes };
+  return { deps, statusHistory, extractions, extractorCalls, objects, originalBytes, approvedBytes, ocrKey };
+}
+
+function createDocumentFixture(options: Options, documentId: string, ownerFamilyId: string) {
+  const ORIGINAL_KEY = `families/${ownerFamilyId}/profiles/me/documents/${documentId}/original.jpg`;
+  const originalBytes = new Uint8Array([1, 2, 3]);
+  const approvedBytes = new Uint8Array([0xff, 0xd8]);
+  const ocrKey = ORIGINAL_KEY + '.ocr.jpg';
+  const document: DocumentToExtract = {
+    id: documentId,
+    status: options.status ?? 'extracting',
+    declaredType: options.declaredType ?? null,
+    originalKey: ORIGINAL_KEY,
+    previewKey: null,
+    ocrImageKey: ocrKey,
+    ocrImageSha256: createHash('sha256').update(approvedBytes).digest('hex'),
+    privacyApprovedBy: 'account-main',
+    privacyApprovedAt: new Date('2026-10-08T00:00:00Z'),
+    mimeType: options.mimeType ?? 'image/jpeg',
+  };
+  return { document, originalBytes, approvedBytes, ocrKey };
+}
+
+function getMemoryObject(objects: Map<string, Uint8Array>, key: string): Uint8Array {
+  const bytes = objects.get(key);
+  if (!bytes) throw new Error('Không có object');
+  return bytes;
 }

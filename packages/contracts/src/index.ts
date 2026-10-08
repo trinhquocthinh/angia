@@ -60,3 +60,28 @@ export {
   extractDocumentJobSchema,
 } from './jobs/extractDocumentJob.js';
 export type { ExtractDocumentJob } from './jobs/extractDocumentJob.js';
+export {
+  CONVERT_HEIC_QUEUE,
+  CONVERT_HEIC_QUEUE_OPTIONS,
+  convertHeicJobSchema,
+} from './jobs/convertHeicJob.js';
+export type { ConvertHeicJob } from './jobs/convertHeicJob.js';
+export {
+  privacyRectangleSchema,
+  createPrivacyDraftRequestSchema,
+  approvePrivacyRequestSchema,
+  privacyDraftSchema,
+} from './documents/privacySchemas.js';
+export type {
+  PrivacyRectangle,
+  PrivacyEdits,
+  CreatePrivacyDraftRequest,
+  ApprovePrivacyRequest,
+  PrivacyDraft,
+} from './documents/privacySchemas.js';
+export {
+  PREPARE_OCR_IMAGE_QUEUE,
+  PREPARE_OCR_IMAGE_QUEUE_OPTIONS,
+  prepareOcrImageJobSchema,
+} from './jobs/prepareOcrImageJob.js';
+export type { PrepareOcrImageJob } from './jobs/prepareOcrImageJob.js';

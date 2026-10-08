@@ -1,3 +1,6 @@
+import { registerPrivacyHeaders } from '@src/features/documentPrivacy/presentation/registerPrivacyHeaders.js';
+import type { PrivacyDependencies } from '@src/features/documentPrivacy/application/ports.js';
+import { registerPrivacyRoutes } from '@src/features/documentPrivacy/presentation/registerPrivacyRoutes.js';
 import {
   registerInvitationRoutes,
   type InvitationRouteDependencies,
@@ -33,6 +36,7 @@ export type AppDependencies = {
   consentInvitations: InvitationRouteDependencies;
   documents: DocumentDependencies;
   review: ReviewDependencies;
+  privacy: PrivacyDependencies;
   measurements: MeasurementRepository;
 };
 
@@ -56,6 +60,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
     deps.auth.logger.error({ reason: error.name }, 'Lỗi chưa xử lý');
     return errorResponse(c, 'ERR_INTERNAL');
   });
+  registerPrivacyHeaders(app);
   app.use(
     '/api/*',
     except(
@@ -71,6 +76,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerProfileRoutes(app, deps.profiles, deps.auth.login.now);
   registerDocumentRoutes(app, deps.documents);
   registerReviewRoutes(app, deps.review);
+  registerPrivacyRoutes(app, deps.privacy);
   registerMeasurementRoutes(app, deps.measurements);
   registerInvitationRoutes(app, deps.consentInvitations);
   return app;

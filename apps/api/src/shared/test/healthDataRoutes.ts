@@ -17,6 +17,11 @@ export const HEALTH_DATA_ROUTES = {
   'GET /api/source-documents/:id/review': 'scoped',
   'GET /api/source-documents/:id/image': 'scoped',
   'POST /api/source-documents/:id/approve': 'scoped',
+  'POST /api/source-documents/:id/privacy-drafts': 'scoped',
+  'GET /api/source-documents/:id/privacy-draft': 'scoped',
+  'GET /api/source-documents/:id/privacy-drafts/:draftId/image': 'scoped',
+  'POST /api/source-documents/:id/privacy-approval': 'scoped',
+  'POST /api/source-documents/:id/manual-entry': 'scoped',
   'GET /api/health-profiles/:id/measurements': 'scoped',
 } as const;
 

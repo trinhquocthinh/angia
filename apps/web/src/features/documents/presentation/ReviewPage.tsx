@@ -8,6 +8,7 @@ import { RecipientNotice } from '@src/features/profiles/presentation/components/
 import '@src/features/profiles/presentation/profiles.css';
 import { useReviewQueue } from '../application/useReviewWorkspace';
 import { createReviewRepository } from '../infrastructure/createReviewRepository';
+import { createPrivacyRepository } from '../infrastructure/createPrivacyRepository';
 import { ReviewDetail } from './components/ReviewDetail';
 import { ReviewNotice } from './components/ReviewNotice';
 import { ReviewQueue } from './components/ReviewQueue';
@@ -15,6 +16,7 @@ import { UploadedNotice } from './components/UploadedNotice';
 
 const profilesRepository = createProfilesRepository();
 const reviewRepository = createReviewRepository();
+const privacyRepository = createPrivacyRepository();
 
 // Master–Detail trên desktop (hàng đợi | ảnh + form); di động: `/review` là danh sách, `/review/:id` là màn duyệt.
 export function ReviewPage({ documentId = null }: { documentId?: string | null }) {
@@ -46,6 +48,7 @@ export function ReviewPage({ documentId = null }: { documentId?: string | null }
             {documentId ? (
               <ReviewDetail
                 repository={reviewRepository}
+                privacyRepository={privacyRepository}
                 session={session.data}
                 documentId={documentId}
                 queue={documents}
