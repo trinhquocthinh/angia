@@ -47,6 +47,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@angia/web@workspace:apps/web"
   dependencies:
+    "@angia/contracts": "workspace:*"
     "@fontsource/be-vietnam-pro": "npm:5.3.0"
     "@hookform/resolvers": "npm:5.9.1"
     "@tailwindcss/vite": "npm:4.3.3"
