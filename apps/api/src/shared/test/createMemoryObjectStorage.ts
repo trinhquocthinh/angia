@@ -5,8 +5,8 @@ import type { ObjectReader } from '@src/features/documents/application/reviewPor
 export function createMemoryObjectStorage() {
   const objects = new Map<string, { body: Uint8Array; contentType: string }>();
   const storage: ObjectStorage = {
-    put: async (key, body, contentType) => {
-      objects.set(key, { body, contentType });
+    put: async (key, stream, contentType) => {
+      objects.set(key, { body: new Uint8Array(await new Response(stream).arrayBuffer()), contentType });
     },
     delete: async (key) => {
       objects.delete(key);

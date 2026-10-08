@@ -13,6 +13,10 @@ class FakeXhr {
   upload: { onprogress: ((event: ProgressEvent) => void) | null } = { onprogress: null };
   onload: (() => void) | null = null;
   onerror: (() => void) | null = null;
+  responseHeaders: Record<string, string> = {};
+  getResponseHeader(name: string) {
+    return this.responseHeaders[name.toLowerCase()] ?? null;
+  }
   open(method: string, url: string) {
     this.opened = [method, url];
   }
@@ -29,7 +33,10 @@ const start = (declaredType: 'lab_result' | null = 'lab_result') => {
   const file = new File([new Uint8Array([0xff, 0xd8, 0xff])], 'xn.jpg', { type: 'image/jpeg' });
   const promise = createXhrDocumentUploader(() => xhr as unknown as XMLHttpRequest).upload({
     profileId: 'p-1',
-    file,
+    files: [
+      { fileName: 'anh-01.jpg', file },
+      { fileName: 'anh-02.jpg', file },
+    ],
     declaredType,
     csrfToken: 'csrf',
     onProgress,
@@ -38,13 +45,14 @@ const start = (declaredType: 'lab_result' | null = 'lab_result') => {
 };
 
 describe('Adapter XHR tải ảnh chứng từ', () => {
-  it('gửi multipart `files` + declaredType kèm CSRF và cookie, báo tiến trình', async () => {
-    const { xhr, onProgress, promise, file } = start();
+  it('gửi cả lô trong một multipart `files` + declaredType kèm CSRF và cookie, báo tiến trình', async () => {
+    const { xhr, onProgress, promise } = start();
     expect(xhr.opened).toEqual(['POST', '/api/health-profiles/p-1/upload-batches']);
     expect(xhr.headers).toEqual({ 'X-CSRF-Token': 'csrf' });
     expect(xhr.withCredentials).toBe(true);
-    expect(xhr.sent!.get('files')).toBeInstanceOf(File);
-    expect((xhr.sent!.get('files') as File).name).toBe(file.name);
+    const sent = xhr.sent!.getAll('files') as File[];
+    expect(sent.map((part) => part.name)).toEqual(['anh-01.jpg', 'anh-02.jpg']);
+    expect(sent[0]).toBeInstanceOf(File);
     expect(xhr.sent!.get('declaredType')).toBe('lab_result');
     xhr.upload.onprogress!({ lengthComputable: true, loaded: 32, total: 64 } as ProgressEvent);
     expect(onProgress).toHaveBeenCalledWith(50);
@@ -64,5 +72,20 @@ describe('Adapter XHR tải ảnh chứng từ', () => {
     const network = start();
     network.xhr.onerror!();
     await expect(network.promise).rejects.toMatchObject({ status: 0 });
+  });
+  it.each([
+    ['7', 7],
+    ['không phải số', undefined],
+    [undefined, undefined],
+  ])('503 ERR_UPLOAD_BUSY mang theo Retry-After %s', async (header, seconds) => {
+    const busy = start();
+    Object.assign(busy.xhr, {
+      status: 503,
+      response: { error: { code: 'ERR_UPLOAD_BUSY' } },
+      responseHeaders: header === undefined ? {} : { 'retry-after': header },
+    });
+    busy.xhr.onload!();
+    await expect(busy.promise).rejects.toEqual(new DocumentUploadError(503, 'ERR_UPLOAD_BUSY', seconds));
+    await expect(busy.promise).rejects.toMatchObject({ retryAfterSeconds: seconds });
   });
 });

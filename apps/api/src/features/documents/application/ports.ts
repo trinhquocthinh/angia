@@ -14,7 +14,12 @@ export interface DocumentRepository {
   withFamily<T>(familyId: string, work: (store: DocumentStore) => Promise<T>): Promise<T>;
 }
 export interface ObjectStorage {
-  put(key: string, body: Uint8Array, contentType: string): Promise<void>;
+  put(
+    key: string,
+    body: ReadableStream<Uint8Array>,
+    contentType: string,
+    contentLength: number,
+  ): Promise<void>;
   delete(key: string): Promise<void>;
 }
 export interface DocumentDependencies {

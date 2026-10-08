@@ -21,7 +21,8 @@ export const listDocumentsRoute = createRoute({
   method: 'get',
   path: '/api/source-documents',
   tags: ['documents'],
-  summary: 'Danh sách chứng từ của gia đình theo bộ lọc, mới nhất trước',
+  summary:
+    'Danh sách chứng từ của gia đình theo bộ lọc, mới nhất trước; lọc theo lô thì theo ngày chứng từ tăng dần',
   request: {
     query: z.object({
       // Lặp tham số để lọc nhiều trạng thái: ?status=uploaded&status=extracting&status=pending_review
@@ -29,6 +30,7 @@ export const listDocumentsRoute = createRoute({
         .union([sourceDocumentSchema.shape.status, z.array(sourceDocumentSchema.shape.status)])
         .optional(),
       profileId: z.uuid().optional(),
+      batchId: z.uuid().optional(),
     }),
   },
   responses: {

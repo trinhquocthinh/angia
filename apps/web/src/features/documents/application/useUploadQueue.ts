@@ -1,29 +1,46 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import type { DocumentType, DocumentUploader } from './ports';
+import type { DocumentType, DocumentUploader, ImagePreparer } from './ports';
+import { prepareUpload } from './prepareUpload';
 import { runUpload } from './runUpload';
 import { isSessionError } from './uploadErrorMessage';
-import { nextQueued, planUpload, summarizeQueue, uploadQueueReducer } from './uploadQueue';
+import { nextBatch, nextPreparing, planUpload, summarizeQueue, uploadQueueReducer } from './uploadQueue';
 
-// Ảnh chỉ được gửi sau submit ("Xong"), lần lượt từng tấm. Không hủy request khi unmount: StrictMode
-// giả lập unmount sẽ làm ảnh kẹt "đang tải"; rời trang giữa chừng thì ảnh còn chờ không được gửi.
-export function useUploadQueue(uploader: DocumentUploader, csrfToken: string | undefined) {
+// Ảnh được nén ngay khi thêm (lần lượt từng tấm), chỉ gửi sau submit ("Xong") theo lô ≤ 10 ảnh/request.
+// Không hủy request khi unmount: StrictMode giả lập unmount sẽ làm ảnh kẹt "đang tải".
+export function useUploadQueue(
+  uploader: DocumentUploader,
+  prepare: ImagePreparer,
+  csrfToken: string | undefined,
+) {
   const client = useQueryClient();
   const [items, dispatch] = useReducer(uploadQueueReducer, []);
   const started = useRef(new Set<string>());
   const previews = useRef(new Map<string, string>());
-  const next = csrfToken ? nextQueued(items) : undefined;
+
+  // StrictMode chạy effect hai lần trước khi state kịp áp dụng: khóa theo id (nén) và id:lượt (gửi).
+  useEffect(() => {
+    const item = nextPreparing(items);
+    if (!item || started.current.has(`prepare:${item.id}`)) return;
+    started.current.add(`prepare:${item.id}`);
+    void prepareUpload(item.file, prepare).then((result) =>
+      dispatch(
+        result.ok
+          ? { type: 'prepared', id: item.id, upload: result.upload }
+          : { type: 'reject', id: item.id, problem: result.problem },
+      ),
+    );
+  }, [items, prepare]);
 
   useEffect(() => {
-    if (!next || !csrfToken) return;
-    const key = `${next.id}:${next.attempt}`;
-    // StrictMode chạy effect hai lần trước khi state 'uploading' kịp áp dụng.
-    if (started.current.has(key)) return;
+    const batch = csrfToken ? nextBatch(items) : [];
+    const key = batch.map((item) => `${item.id}:${item.attempt}`).join(',');
+    if (!csrfToken || !key || started.current.has(key)) return;
     started.current.add(key);
-    void runUpload(next, uploader, csrfToken, dispatch).then((error) => {
+    void runUpload(batch, uploader, csrfToken, dispatch).then((error) => {
       if (isSessionError(error)) void client.invalidateQueries({ queryKey: ['current-session'] });
     });
-  }, [next, csrfToken, uploader, client]);
+  }, [items, csrfToken, uploader, client]);
 
   // Hook gắn từ lúc mở trang (chưa có ảnh) nên lần unmount giả của StrictMode không thu hồi nhầm URL.
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
-import type { DocumentType, DocumentUploader } from '../../application/ports';
+import type { DocumentType, DocumentUploader, ImagePreparer } from '../../application/ports';
 import { MAX_FILES_PER_PICK } from '../../application/uploadQueue';
 import { useLeaveWarning } from '../../application/useLeaveWarning';
 import { useUploadQueue } from '../../application/useUploadQueue';
@@ -14,6 +14,7 @@ import { UploadIntro } from './UploadIntro';
 
 type UploadWorkspaceProps = {
   uploader: DocumentUploader;
+  prepare: ImagePreparer;
   csrfToken: string;
   profiles: HealthProfile[];
   loading: boolean;
@@ -21,15 +22,15 @@ type UploadWorkspaceProps = {
   retry: () => void;
 };
 
-export function UploadWorkspace({ uploader, csrfToken, profiles, ...status }: UploadWorkspaceProps) {
-  const queue = useUploadQueue(uploader, csrfToken);
+export function UploadWorkspace({ uploader, prepare, csrfToken, profiles, ...status }: UploadWorkspaceProps) {
+  const queue = useUploadQueue(uploader, prepare, csrfToken);
   const navigate = useNavigate();
   const [profileId, setProfileId] = useState<string | null>(null);
   const [declaredType, setDeclaredType] = useState<DocumentType | null>(null);
   const [tooMany, setTooMany] = useState(false);
   const { summary } = queue;
   const sending = summary.active > 0;
-  useLeaveWarning(sending || summary.ready > 0);
+  useLeaveWarning(sending || summary.ready > 0 || summary.preparing > 0);
   const ready = profiles.find((profile) => profile.id === profileId && profile.consentStatus === 'confirmed');
   // Gửi hết, không lỗi → mở thẳng chứng từ đầu tiên vừa gửi (ảnh hiện ngay, form tự hiện khi AI đọc xong).
   const finished = summary.done > 0 && summary.total === summary.done;

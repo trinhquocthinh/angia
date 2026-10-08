@@ -18,7 +18,8 @@ interface UploadRequest {
   declaredType?: DocumentType | undefined;
 }
 
-// Thứ tự kiểm tra theo flowchart SPEC-008: hồ sơ → đồng thuận (BR-009) → số tệp → từng tệp.
+// Số tệp kiểm trước, không cần DB (route đã chặn lô quá trần ngay lúc nhận multipart);
+// sau đó theo flowchart SPEC-008: hồ sơ → đồng thuận (BR-009) → từng tệp.
 // Object S3 ghi trong transaction; mọi lỗi (kể cả commit) xóa object đã ghi để không mồ côi.
 // Job extract-document ghi cùng transaction nên chỉ tồn tại khi chứng từ đã commit.
 export async function uploadDocument(
@@ -26,7 +27,8 @@ export async function uploadDocument(
   request: UploadRequest,
 ): Promise<DocumentOutcome<UploadBatch>> {
   const { files } = request;
-  if (files.length === 0 || files.length > MAX_FILES_PER_UPLOAD) return { ok: false, code: 'ERR_VALIDATION' };
+  if (files.length === 0) return { ok: false, code: 'ERR_VALIDATION' };
+  if (files.length > MAX_FILES_PER_UPLOAD) return { ok: false, code: 'ERR_BATCH_TOO_LARGE' };
   const storedKeys: string[] = [];
   try {
     return await deps.repository.withFamily(request.familyId, (store) =>
@@ -47,7 +49,7 @@ async function storeUpload(
   const profile = await store.findProfile(request.profileId);
   if (!profile) return { ok: false, code: 'ERR_NOT_FOUND' };
   if (profile.consentStatus !== 'confirmed') return { ok: false, code: 'ERR_CONSENT_REQUIRED' };
-  const checked = request.files.map((file) => ({ file, result: classifyFile(file.bytes) }));
+  const checked = request.files.map((file) => ({ file, result: classifyFile(file.head, file.sizeBytes) }));
   const rejectedFiles = checked.flatMap(({ file, result }) =>
     result.ok ? [] : [{ fileName: file.fileName, code: result.code }],
   );
@@ -60,8 +62,10 @@ async function storeUpload(
     const id = deps.newId();
     const location = { familyId: request.familyId, healthProfileId: request.profileId, documentId: id };
     const originalKey = documentObjectKey(location, result.extension);
-    await deps.storage.put(originalKey, file.bytes, result.mimeType);
+    // Ghi tuần tự theo luồng: bộ nhớ không tăng theo kích thước lô. Ghi khóa trước khi put
+    // để lỗi mất phản hồi sau khi S3 đã nhận vẫn được dọn (xóa khóa chưa tồn tại là vô hại).
     storedKeys.push(originalKey);
+    await deps.storage.put(originalKey, file.open(), result.mimeType, file.sizeBytes);
     documents.push(
       await store.insertDocument({
         id,
@@ -70,7 +74,7 @@ async function storeUpload(
         type: request.declaredType ?? null,
         originalKey,
         mimeType: result.mimeType,
-        sizeBytes: file.bytes.length,
+        sizeBytes: file.sizeBytes,
       }),
     );
     await store.enqueueExtraction(id);

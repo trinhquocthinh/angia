@@ -4,6 +4,8 @@ import type { DocumentStatus, SourceDocument } from '../domain/SourceDocument.js
 export interface DocumentFilter {
   statuses?: DocumentStatus[] | undefined;
   profileId?: string | undefined;
+  /** Lọc theo lô: sắp theo ngày chứng từ tăng dần, chưa rõ ngày ở cuối (TC-022). */
+  batchId?: string | undefined;
 }
 export interface ReviewStore {
   listDocuments(filter: DocumentFilter): Promise<SourceDocument[]>;

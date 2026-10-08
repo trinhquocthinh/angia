@@ -2,6 +2,12 @@ import type { UploadItem } from '../../application/uploadQueue';
 import { DocumentIcon } from './DocumentIcon';
 
 const megabytes = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+const reason = ({ problem, file }: UploadItem) =>
+  problem === 'too_large'
+    ? `Dung lượng vượt quá 30 MB (${megabytes(file.size)})`
+    : problem === 'not_compressible'
+      ? `Trình duyệt không nén được ảnh này, vượt quá 10 MB (${megabytes(file.size)})`
+      : 'Chỉ nhận ảnh JPG, PNG, HEIC, WebP';
 
 export function RejectedFiles({
   items,
@@ -51,9 +57,7 @@ export function RejectedFiles({
             </span>
             <span className="min-w-0 break-all font-medium text-[#131d1d]">{item.file.name}</span>
             <span className="rounded-full bg-[#ffdad6] px-2 py-0.5 text-[11px] font-medium text-[#ba1a1a]">
-              {item.problem === 'too_large'
-                ? `Dung lượng vượt quá 10 MB (${megabytes(item.file.size)})`
-                : 'Chỉ nhận ảnh JPG, PNG, HEIC, WebP'}
+              {reason(item)}
             </span>
           </li>
         ))}

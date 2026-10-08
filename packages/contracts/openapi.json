@@ -1865,7 +1865,7 @@
         "tags": [
           "documents"
         ],
-        "summary": "Tải lên 01 ảnh chứng từ (JPEG/PNG/HEIC/WebP ≤ 10 MiB) cho hồ sơ đã đồng thuận",
+        "summary": "Tải lên 1–10 ảnh chứng từ (JPEG/PNG/HEIC/WebP ≤ 10 MiB/ảnh) cho hồ sơ đã đồng thuận",
         "parameters": [
           {
             "schema": {
@@ -1889,7 +1889,7 @@
         },
         "responses": {
           "201": {
-            "description": "Lô tải lên với chứng từ trạng thái uploaded",
+            "description": "Lô tải lên: chứng từ hợp lệ trạng thái uploaded, tệp bị loại trong rejectedFiles",
             "content": {
               "application/json": {
                 "schema": {
@@ -1938,8 +1938,28 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_BATCH_TOO_LARGE: quá 10 tệp hoặc body vượt trần",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
-            "description": "ERR_VALIDATION (không đúng 1 tệp) hoặc ERR_NO_VALID_FILE",
+            "description": "ERR_VALIDATION (không có tệp, sai loại khai báo) hoặc ERR_NO_VALID_FILE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_UPLOAD_BUSY: đã có 3 lô đang xử lý; thử lại sau số giây trong Retry-After",
             "content": {
               "application/json": {
                 "schema": {
@@ -1956,7 +1976,7 @@
         "tags": [
           "documents"
         ],
-        "summary": "Danh sách chứng từ của gia đình theo bộ lọc, mới nhất trước",
+        "summary": "Danh sách chứng từ của gia đình theo bộ lọc, mới nhất trước; lọc theo lô thì theo ngày chứng từ tăng dần",
         "parameters": [
           {
             "schema": {
@@ -2001,6 +2021,15 @@
             },
             "required": false,
             "name": "profileId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "name": "batchId",
             "in": "query"
           }
         ],

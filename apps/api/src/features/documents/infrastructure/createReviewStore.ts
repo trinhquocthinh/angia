@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, type SQL } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, type SQL, sql } from 'drizzle-orm';
 import {
   toMeasurement,
   toMeasurementRow,
@@ -11,15 +11,24 @@ import type { ReviewStore } from '../application/reviewPorts.js';
 export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewStore {
   const owned = (id: string) => and(eq(sourceDocuments.id, id), eq(sourceDocuments.familyId, familyId));
   return {
-    listDocuments: async ({ statuses, profileId }) => {
+    listDocuments: async ({ statuses, profileId, batchId }) => {
       const conditions: SQL[] = [eq(sourceDocuments.familyId, familyId)];
       if (statuses?.length) conditions.push(inArray(sourceDocuments.status, statuses));
       if (profileId) conditions.push(eq(sourceDocuments.healthProfileId, profileId));
+      if (batchId) conditions.push(eq(sourceDocuments.batchId, batchId));
+      // Trong một lô: theo ngày chứng từ, chưa rõ ngày ở cuối (US-006); còn lại mới nhất trước.
+      const order = batchId
+        ? [
+            sql`${sourceDocuments.documentDate} ASC NULLS LAST`,
+            asc(sourceDocuments.createdAt),
+            asc(sourceDocuments.id),
+          ]
+        : [desc(sourceDocuments.createdAt), desc(sourceDocuments.id)];
       return tx
         .select()
         .from(sourceDocuments)
         .where(and(...conditions))
-        .orderBy(desc(sourceDocuments.createdAt), desc(sourceDocuments.id));
+        .orderBy(...order);
     },
     findDocument: async (id, options) => {
       const query = tx.select().from(sourceDocuments).where(owned(id));

@@ -1,4 +1,6 @@
 import { randomUUID } from 'node:crypto';
+import { readdir } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile, UploadBatchResponse } from '@angia/contracts';
 import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
@@ -14,8 +16,12 @@ const image = (size: number, head = [0xff, 0xd8, 0xff, 0xe0]) => {
   return bytes;
 };
 const HEIC_HEAD = [0, 0, 0, 24, ...[...'ftypheic'].map((c) => c.charCodeAt(0)), 0, 0, 0, 0];
+const jpegs = (count: number) =>
+  Array.from({ length: count }, (_, i) => ({ name: `${i}.jpg`, bytes: image(1024) }));
+const pdf = { name: 'ket-qua.pdf', bytes: new TextEncoder().encode('%PDF-1.7 ...') };
+const spoolDirs = async () => (await readdir(tmpdir())).filter((name) => name.startsWith('angia-upload-'));
 
-describe('Tải ảnh chứng từ: route thật, transaction và RLS (E2-S5-T1)', () => {
+describe('Tải chứng từ đơn lẻ/theo lô: route thật, transaction và RLS (E2-S5-T1, E3-S1-T1)', () => {
   let t: ProfileTestApp;
   beforeAll(async () => {
     t = await startProfileTestApp();
@@ -126,38 +132,89 @@ describe('Tải ảnh chứng từ: route thật, transaction và RLS (E2-S5-T1)
   });
 
   it.each([
-    ['TC-080: đúng 10 MiB được nhận', 10 * MiB, 201],
-    ['TC-080: 10 MiB + 1 byte → ERR_NO_VALID_FILE', 10 * MiB + 1, 422],
-    ['TC-026: tệp 20 MB bị chặn trước khi parse → ERR_NO_VALID_FILE', 20 * MiB, 422],
-  ])('%s', async (_name, size, status) => {
-    const fixture = await profileFixture();
+    ['TC-021: 5 ảnh', 5],
+    ['TC-081: đúng 10 ảnh (biên)', 10],
+  ])('%s → cùng một UploadBatch, mỗi chứng từ một object S3 và một job', async (_name, count) => {
+    const { main, profile } = await profileFixture();
     const before = await counts();
-    const response = await upload(fixture.main, fixture.profile.id, [{ name: 'a.jpg', bytes: image(size) }]);
-    expect(response.status).toBe(status);
-    if (status === 422) {
-      expect(await response.json()).toMatchObject({ error: { code: 'ERR_NO_VALID_FILE' } });
-      expect(await counts()).toEqual(before);
-    }
+    const response = await upload(main, profile.id, jpegs(count));
+    expect(response.status).toBe(201);
+    const batch = (await response.json()) as UploadBatchResponse;
+    expect(batch.documents).toHaveLength(count);
+    expect(new Set(batch.documents.map((d) => d.batchId))).toEqual(new Set([batch.id]));
+    expect(await counts()).toEqual({
+      batches: before.batches + 1,
+      documents: before.documents + count,
+      jobs: before.jobs + count,
+    });
   });
 
-  it('TC-024: tệp PDF duy nhất → ERR_NO_VALID_FILE; 0 hoặc 2 tệp, loại khai báo sai → ERR_VALIDATION', async () => {
+  it('TC-023: lô 11 tệp → 413 ERR_BATCH_TOO_LARGE, không lưu gì, không để lại tệp tạm', async () => {
+    const { main, profile } = await profileFixture();
+    const [before, dirs] = [await counts(), await spoolDirs()];
+    const response = await upload(main, profile.id, jpegs(11));
+    expect(response.status).toBe(413);
+    expect(await response.json()).toMatchObject({ error: { code: 'ERR_BATCH_TOO_LARGE' } });
+    expect([await counts(), await spoolDirs()]).toEqual([before, dirs]);
+  });
+
+  it('TC-024/TC-080: 9 ảnh + PDF, rồi ảnh đúng 10 MiB + ảnh 10 MiB + 1 byte → tệp lỗi vào rejectedFiles', async () => {
+    const { main, profile } = await profileFixture();
+    const mixed = await upload(main, profile.id, [...jpegs(9), pdf]);
+    expect(mixed.status).toBe(201);
+    const batch = (await mixed.json()) as UploadBatchResponse;
+    expect(batch.documents).toHaveLength(9);
+    expect(batch.rejectedFiles).toEqual([{ fileName: 'ket-qua.pdf', code: 'ERR_UNSUPPORTED_FILE' }]);
+
+    const boundary = await upload(main, profile.id, [
+      { name: 'vừa đủ.jpg', bytes: image(10 * MiB) },
+      { name: 'quá lớn.jpg', bytes: image(10 * MiB + 1) },
+    ]);
+    expect(boundary.status).toBe(201);
+    const sized = (await boundary.json()) as UploadBatchResponse;
+    expect(sized.documents.map((d) => d.sizeBytes)).toEqual([10 * MiB]);
+    expect(sized.rejectedFiles).toEqual([{ fileName: 'quá lớn.jpg', code: 'ERR_FILE_TOO_LARGE' }]);
+  });
+
+  it.each([
+    ['TC-026: tệp 20 MB duy nhất', [{ name: 'a.jpg', bytes: image(20 * MiB) }]],
+    ['TC-024: tệp PDF duy nhất', [pdf]],
+  ])('%s → 422 ERR_NO_VALID_FILE, không lưu gì', async (_name, files) => {
     const fixture = await profileFixture();
     const before = await counts();
-    const pdf = await upload(fixture.main, fixture.profile.id, [
-      { name: 'a.pdf', bytes: new TextEncoder().encode('%PDF-1.7 ...') },
-    ]);
-    expect(pdf.status).toBe(422);
-    expect(await pdf.json()).toMatchObject({ error: { code: 'ERR_NO_VALID_FILE' } });
-    const jpg = { name: 'a.jpg', bytes: image(1024) };
+    const response = await upload(fixture.main, fixture.profile.id, files);
+    expect(response.status).toBe(422);
+    expect(await response.json()).toMatchObject({ error: { code: 'ERR_NO_VALID_FILE' } });
+    expect(await counts()).toEqual(before);
+  });
+
+  it('0 tệp, loại khai báo sai, id hồ sơ không phải UUID → ERR_VALIDATION', async () => {
+    const fixture = await profileFixture();
+    const before = await counts();
     for (const response of [
       await upload(fixture.main, fixture.profile.id, []),
-      await upload(fixture.main, fixture.profile.id, [jpg, jpg]),
-      await upload(fixture.main, fixture.profile.id, [jpg], { declaredType: 'xray' }),
+      await upload(fixture.main, fixture.profile.id, jpegs(1), { declaredType: 'xray' }),
+      await upload(fixture.main, 'khong-phai-uuid', jpegs(1)),
     ]) {
       expect(response.status).toBe(422);
       expect(await response.json()).toMatchObject({ error: { code: 'ERR_VALIDATION' } });
     }
     expect(await counts()).toEqual(before);
+  });
+
+  it('TC-022: chứng từ của lô theo ngày tăng dần, chưa rõ ngày ở cuối; nhóm khác không thấy', async () => {
+    const { main, profile } = await profileFixture();
+    const batch = (await (await upload(main, profile.id, jpegs(3))).json()) as UploadBatchResponse;
+    const [sep, unknown, aug] = batch.documents.map((d) => d.id);
+    await t.owner.query(`UPDATE source_documents SET document_date = $2 WHERE id = $1`, [sep, '2026-09-05']);
+    await t.owner.query(`UPDATE source_documents SET document_date = $2 WHERE id = $1`, [aug, '2026-08-01']);
+    await upload(main, profile.id, jpegs(1));
+    const listed = await t.call(main, 'GET', `/api/source-documents?batchId=${batch.id}`);
+    expect(((await listed.json()) as { id: string }[]).map((d) => d.id)).toEqual([aug, sep, unknown]);
+    const other = await t.session(await t.family());
+    expect(await (await t.call(other, 'GET', `/api/source-documents?batchId=${batch.id}`)).json()).toEqual(
+      [],
+    );
   });
 
   it('member và request thiếu CSRF bị chặn 403, không phiên 401', async () => {
