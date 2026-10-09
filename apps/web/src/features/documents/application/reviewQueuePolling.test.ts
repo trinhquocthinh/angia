@@ -18,7 +18,8 @@ describe('Hàng đợi khi AI đang đọc ảnh', () => {
     expect(reviewItemState(doc('uploaded'))).toBe('preparing');
     expect(reviewItemState(doc('extracting', null))).toBe('reading');
     expect(reviewItemState(doc('pending_review'))).toBe('ready');
-    expect(reviewItemState(doc('pending_review', 'prescription'))).toBe('later');
+    expect(reviewItemState(doc('pending_review', 'prescription'))).toBe('ready');
+    expect(reviewItemState(doc('pending_review', 'lab_result'))).toBe('later');
     expect(reviewItemState(doc('manual_entry'))).toBe('manual');
   });
 });

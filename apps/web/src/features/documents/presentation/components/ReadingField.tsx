@@ -7,13 +7,24 @@ type ReadingFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   error?: string | undefined;
   flagged?: boolean;
   hint?: ReactNode;
+  // Ô chữ (nơi khám, chẩn đoán, cách dùng) dùng cỡ chữ thường thay cho con số lớn.
+  compact?: boolean;
 };
 
 const inputClass =
-  'min-h-12 w-full rounded-xl bg-[#eaf6f5] px-4 text-lg font-semibold tabular-nums text-[#131d1d] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958] aria-invalid:outline-2 aria-invalid:outline-[#b42318]';
+  'min-h-12 w-full rounded-xl bg-[#eaf6f5] px-4 text-[#131d1d] outline-none read-only:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958] aria-invalid:outline-2 aria-invalid:outline-[#b42318]';
 
 // Ô số đo: con số lớn (Design §3), đơn vị nhỏ màu phụ; lỗi hiển thị ngay dưới ô (SPEC-010).
-export function ReadingField({ id, label, unit, error, flagged = false, hint, ...input }: ReadingFieldProps) {
+export function ReadingField({
+  id,
+  label,
+  unit,
+  error,
+  flagged = false,
+  hint,
+  compact = false,
+  ...input
+}: ReadingFieldProps) {
   const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined;
   return (
     <div className="flex min-w-0 flex-col gap-1.5">
@@ -25,7 +36,7 @@ export function ReadingField({ id, label, unit, error, flagged = false, hint, ..
           id={id}
           aria-invalid={Boolean(error) || flagged || undefined}
           aria-describedby={describedBy}
-          className={`${inputClass} ${unit ? 'pr-20' : ''} ${flagged && !error ? 'bg-[#fff4e5]' : ''}`}
+          className={`${inputClass} ${compact ? 'text-base' : 'text-lg font-semibold tabular-nums'} ${unit ? 'pr-20' : ''} ${flagged && !error ? 'bg-[#fff4e5]' : ''}`}
           {...input}
         />
         {unit && (

@@ -3,6 +3,7 @@ import type { ApproveDocumentRequest, SourceDocument } from '../../application/r
 import type { ReviewRequestError } from '../../application/ReviewRequestError';
 import { reviewItemState } from '../../application/reviewQueuePolling';
 import { ExtractingPlaceholder } from './ExtractingPlaceholder';
+import { PrescriptionForm } from './PrescriptionForm';
 import { ReadingForm } from './ReadingForm';
 import { ReviewNotice } from './ReviewNotice';
 type DetailBodyProps = {
@@ -32,11 +33,15 @@ export function ReviewDetailBody({ document, extraction, pending, error, onSubmi
     );
   if (document.status !== 'pending_review')
     return <ReviewNotice title="Chứng từ không còn chờ duyệt" body="Chứng từ này đã được xử lý trước đó." />;
+  if (document.type === 'prescription')
+    return (
+      <PrescriptionForm key={document.id} payload={extraction?.type === 'prescription' ? extraction : null} />
+    );
   if (document.type !== 'device_reading')
     return (
       <ReviewNotice
         title="Sẽ duyệt được ở bản cập nhật sau"
-        body="Hiện mới duyệt được ảnh màn hình máy đo huyết áp/đường huyết. Đơn thuốc và kết quả xét nghiệm vẫn được giữ trong hàng đợi."
+        body="Hiện chưa duyệt được kết quả xét nghiệm. Chứng từ vẫn được giữ trong hàng đợi."
       />
     );
   const payload = extraction?.type === 'device_reading' ? extraction : null;

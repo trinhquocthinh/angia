@@ -2098,6 +2098,8 @@ export interface components {
             type: 'prescription';
             issuedDate: string | null;
             facility: string | null;
+            /** @default null */
+            diagnosis: string | null;
             items: {
               name: string;
               strength: string | null;
