@@ -1,4 +1,5 @@
 import type { PrivacyEditorAction } from '../../application/privacyEditorState';
+import { PrivacyToolIcon } from './PrivacyToolIcon';
 type Props = {
   disabled: boolean;
   mode: 'crop' | 'mask';
@@ -8,12 +9,13 @@ type Props = {
   dispatch: (action: PrivacyEditorAction) => void;
 };
 const button =
-  'min-h-11 rounded-xl border border-[#d6e5df] bg-white px-3 text-sm font-medium text-[#004135] disabled:opacity-40';
+  'flex min-h-11 items-center gap-1.5 rounded-xl bg-white px-3 text-xs font-semibold text-[#004135] shadow-sm transition-colors aria-pressed:bg-[#004135] aria-pressed:text-white disabled:opacity-40';
 export function PrivacyModeControls({ disabled, mode, count, setMode, setSelected, dispatch }: Props) {
   return (
     <div className="flex flex-wrap gap-2">
       <button
         type="button"
+        aria-label="Cắt vùng nội dung"
         disabled={disabled}
         aria-pressed={mode === 'crop'}
         className={button}
@@ -22,16 +24,19 @@ export function PrivacyModeControls({ disabled, mode, count, setMode, setSelecte
           setSelected(-1);
         }}
       >
+        <PrivacyToolIcon name="crop" />
         Cắt vùng nội dung
       </button>
       <button
         type="button"
+        aria-label="Che thông tin"
         disabled={disabled}
         aria-pressed={mode === 'mask'}
         className={button}
         onClick={() => setMode('mask')}
       >
-        Che thông tin
+        <PrivacyToolIcon name="mask" />
+        Che thông tin{mode === 'mask' ? ' (Đang chọn)' : ''}
       </button>
       <button
         type="button"
@@ -42,6 +47,7 @@ export function PrivacyModeControls({ disabled, mode, count, setMode, setSelecte
           setSelected(count);
         }}
       >
+        <PrivacyToolIcon name="add" />
         Thêm vùng che
       </button>
     </div>

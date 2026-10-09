@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { privacyPoint } from './privacyPoint';
 import { privacyDragRectangle } from './privacyDragRectangle';
-import { privacySetRectangle } from './privacySetRectangle';
+import { privacyRectangleInput } from './privacyRectangleInput';
 
 describe('Hình học vùng cắt và che', () => {
   it('TC-200: quy đổi đúng điểm trên hộp ảnh, không dùng kích thước khung ngoài', () => {
@@ -24,9 +24,9 @@ describe('Hình học vùng cắt và che', () => {
   });
   it('TC-203: ô số không tạo chiều dài âm hoặc vượt ảnh', () => {
     const rect = { left: 800000, top: 0, width: 200000, height: 1000000 };
-    expect(privacySetRectangle(rect, 'width', 600000).width).toBe(200000);
-    expect(privacySetRectangle(rect, 'left', 990000).left).toBe(800000);
-    expect(privacySetRectangle(rect, 'height', 0).height).toBe(1);
-    expect(privacySetRectangle(rect, 'top', Number.NaN)).toEqual(rect);
+    expect(privacyRectangleInput(rect, 'width', '60', 'crop')).toBeNull();
+    expect(privacyRectangleInput(rect, 'left', '99', 'crop')).toMatchObject({ left: 990000, width: 10000 });
+    expect(privacyRectangleInput(rect, 'height', '0', 'crop')).toBeNull();
+    expect(privacyRectangleInput(rect, 'top', 'NaN', 'crop')).toBeNull();
   });
 });

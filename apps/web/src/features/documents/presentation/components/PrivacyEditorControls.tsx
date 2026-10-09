@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import type { PrivacyEditorState, PrivacyEditorAction } from '../../application/privacyEditorState';
 import { PrivacyRectangleFields } from './PrivacyRectangleFields';
-import { PrivacyModeControls } from './PrivacyModeControls';
-import { PrivacyHistoryControls } from './PrivacyHistoryControls';
+import { PrivacyToolbar } from './PrivacyToolbar';
 import { PrivacyRegionSelector } from './PrivacyRegionSelector';
 type Props = {
   state: PrivacyEditorState;
@@ -10,40 +10,56 @@ type Props = {
   mode: 'crop' | 'mask';
   setMode: (mode: 'crop' | 'mask') => void;
   dispatch: (action: PrivacyEditorAction) => void;
+  onInputPending: (pending: boolean) => void;
+  children: (toolbar: ReactNode, fields: ReactNode) => ReactNode;
 };
-export function PrivacyEditorControls({ state, disabled, mode, setMode, dispatch }: Props) {
+export function PrivacyEditorControls({
+  state,
+  disabled,
+  mode,
+  setMode,
+  dispatch,
+  onInputPending,
+  children,
+}: Props) {
   const [selected, setSelected] = useState(-1);
-  const count = state.edits.masks.length;
-  const index = selected < count ? selected : -1;
+  const [reset, setReset] = useState(0);
+  const index = selected < state.edits.masks.length ? selected : -1;
   const rectangle = index < 0 ? state.edits.crop : state.edits.masks[index]!;
-  return (
+  const select = (value: number) => {
+    onInputPending(false);
+    setReset((value) => value + 1);
+    setSelected(value);
+  };
+  const control = (action: PrivacyEditorAction) => {
+    onInputPending(false);
+    setReset((value) => value + 1);
+    dispatch(action);
+  };
+  const toolbar = (
+    <PrivacyToolbar
+      disabled={disabled}
+      mode={mode}
+      state={state}
+      setMode={setMode}
+      setSelected={select}
+      dispatch={control}
+    />
+  );
+  const fields = (
     <div className="flex flex-col gap-3">
-      <PrivacyModeControls
-        disabled={disabled}
-        mode={mode}
-        count={count}
-        setMode={setMode}
-        setSelected={setSelected}
-        dispatch={dispatch}
-      />
-      <PrivacyHistoryControls
-        disabled={disabled}
-        canUndo={Boolean(state.history.length)}
-        setSelected={setSelected}
-        dispatch={dispatch}
-      />
-      <p className="text-xs leading-5 text-[#55615f]">
-        Kéo trên ảnh để cắt hoặc che. Xoay ảnh sẽ đặt lại toàn bộ vùng cắt và vùng che. Có thể hoàn tác hoặc
-        dùng các ô số bên dưới.
-      </p>
       <PrivacyRegionSelector
         disabled={disabled}
-        count={count}
+        count={state.edits.masks.length}
         index={index}
-        setSelected={setSelected}
-        dispatch={dispatch}
+        setSelected={select}
+        dispatch={control}
       />
       <PrivacyRectangleFields
+        key={`${reset}:${index}:${state.edits.rotation}:${Object.values(rectangle).join(':')}`}
+        kind={index < 0 ? 'crop' : 'mask'}
+        onBegin={() => dispatch({ type: 'invalidate' })}
+        onPendingChange={onInputPending}
         label={index < 0 ? 'Vùng cắt' : `Vùng che ${index + 1}`}
         rectangle={rectangle}
         disabled={disabled}
@@ -55,4 +71,5 @@ export function PrivacyEditorControls({ state, disabled, mode, setMode, dispatch
       />
     </div>
   );
+  return children(toolbar, fields);
 }

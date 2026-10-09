@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/newsreader/600-normal.ttf') format('truetype');
+}
+.privacy-studio-title {
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 600;
+  font-optical-sizing: auto;
+}
