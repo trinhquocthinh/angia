@@ -1,9 +1,14 @@
+import type { ProfileConsent } from '@src/features/documents/application/ports.js';
 import type { DocumentFilter, ReviewRepository } from '@src/features/documents/application/reviewPorts.js';
 import type { SourceDocument } from '@src/features/documents/domain/SourceDocument.js';
 import type { LabResult } from '@src/features/labResults/domain/LabResult.js';
 import type { Measurement } from '@src/features/measurements/domain/Measurement.js';
 import type { Prescription } from '@src/features/prescriptions/domain/Prescription.js';
 
+interface MemoryProfile extends ProfileConsent {
+  id: string;
+  familyId: string;
+}
 const CREATED_AT = new Date('2026-10-07T00:00:00Z');
 
 const filterDocuments = (documents: SourceDocument[], familyId: string, filter: DocumentFilter) =>
@@ -16,9 +21,11 @@ const filterDocuments = (documents: SourceDocument[], familyId: string, filter: 
 
 // Kho duyệt giả cho unit test: ghi tạm theo transaction, chỉ "commit" khi work thành công.
 // Phân trang thật kiểm ở integration test; bản giả trả cả danh sách.
+// Mặc định hồ sơ `me` của family-a đã đồng thuận (nhập trực tiếp SPEC-011).
 export function createMemoryReviewRepository(
   seed: SourceDocument[],
   extractions: Record<string, unknown> = {},
+  profiles: MemoryProfile[] = [{ id: 'me', familyId: 'family-a', consentStatus: 'confirmed' }],
 ) {
   const documents = seed.map((document) => ({ ...document }));
   const measurements: Measurement[] = [];
@@ -60,7 +67,8 @@ export function createMemoryReviewRepository(
           pendingLabs.push(...rows);
           return rows;
         },
-        markApproved: async (id, documentDate) => update(id, { status: 'approved', documentDate }),
+        findProfile: async (id) => profiles.find((p) => p.id === id && p.familyId === familyId) ?? null,
+        markApproved: async (id, changes) => update(id, { status: 'approved', ...changes }),
         markRejected: async (id) => update(id, { status: 'rejected' }),
       });
       measurements.push(...pending.measurements);

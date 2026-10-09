@@ -19,13 +19,15 @@ import { RowErrorSummary } from './RowErrorSummary';
 
 type LabResultFormProps = {
   payload: LabResultPayload | null;
+  /** Nhập tay (SPEC-011): form trống, không nhắc tới dữ liệu AI. */
+  manual?: boolean;
   pending: boolean;
   error: ReviewRequestError | null;
   onSubmit: (request: ApproveDocumentRequest) => void;
 };
 
 // SPEC-010 + BR-022: form phiếu xét nghiệm nhiều chỉ số điền sẵn từ AI, chép nguyên văn rồi "Lưu vào sổ".
-export function LabResultForm({ payload, pending, error, onSubmit }: LabResultFormProps) {
+export function LabResultForm({ payload, manual = false, pending, error, onSubmit }: LabResultFormProps) {
   const form = useForm<LabResultFormValues>({
     resolver: zodResolver(labResultFormSchema),
     defaultValues: toLabResultFormValues(payload),
@@ -39,7 +41,7 @@ export function LabResultForm({ payload, pending, error, onSubmit }: LabResultFo
   );
   return (
     <form noValidate onSubmit={(event) => void submit(event)} className="flex flex-col gap-6">
-      <LabResultGeneralFields form={form} aiDate={Boolean(payload?.resultDate)} />
+      <LabResultGeneralFields form={form} aiDate={manual || Boolean(payload?.resultDate)} />
       <section
         aria-labelledby="lab-items-title"
         className="flex flex-col gap-4 rounded-[20px] bg-white p-5 lg:p-6"
@@ -47,7 +49,7 @@ export function LabResultForm({ payload, pending, error, onSubmit }: LabResultFo
         <h2 id="lab-items-title" className="text-xs font-semibold uppercase tracking-wider text-[#286958]">
           Danh sách chỉ số ({items.fields.length} chỉ số)
         </h2>
-        {payload === null && (
+        {payload === null && !manual && (
           <p className="text-sm text-[#55615f]">Chưa có dữ liệu AI trích xuất, vui lòng nhập theo ảnh.</p>
         )}
         <ol className="flex flex-col gap-4">

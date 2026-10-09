@@ -5,7 +5,7 @@ const CHIPS: Record<ReviewItemState, { label: string; className: string }> = {
   privacy: { label: 'Chờ kiểm tra riêng tư', className: 'bg-[#e4f0ef] text-[#55615f]' },
   reading: { label: 'AI đang đọc…', className: 'bg-[#fff4e5] text-[#5c3a00]' },
   ready: { label: 'Đã đọc xong', className: 'bg-[#b3eddf] text-[#004135]' },
-  manual: { label: 'Cần nhập tay (bản sau)', className: 'bg-[#e4f0ef] text-[#55615f]' },
+  manual: { label: 'Cần nhập tay', className: 'bg-[#e4f0ef] text-[#55615f]' },
 };
 
 export function ReviewItemChip({ state }: { state: ReviewItemState }) {

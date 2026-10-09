@@ -17,6 +17,7 @@ import {
   rejectDocumentRoute,
 } from './reviewRouteDefinitions.js';
 import { toApprovedDocumentResponse } from './toApprovedDocumentResponse.js';
+import { toApproveErrorJson } from './toApproveErrorJson.js';
 import { toSourceDocumentResponse } from './toSourceDocumentResponse.js';
 
 export interface ReviewDependencies {
@@ -65,11 +66,7 @@ export function registerReviewRoutes(app: OpenAPIHono<AppEnv>, deps: ReviewDepen
       documentId: c.req.valid('param').id,
     });
     if (result.ok) return c.json(toApprovedDocumentResponse(result.value), 200);
-    if (result.code === 'ERR_OUT_OF_RANGE_UNCONFIRMED')
-      return c.json(...errorJson(result.code, { fields: result.fields }));
-    if (result.code === 'ERR_DOSE_INFO_MISSING')
-      return c.json(...errorJson(result.code, { invalidItemIndexes: result.invalidItemIndexes }));
-    return c.json(...errorJson(result.code));
+    return c.json(...toApproveErrorJson(result));
   });
   app.openapi(rejectDocumentRoute, async (c) => {
     const result = await rejectDocument(deps.repository, familyOf(c), c.req.valid('param').id);

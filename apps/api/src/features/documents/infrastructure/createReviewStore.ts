@@ -5,7 +5,7 @@ import {
   toMeasurementRow,
 } from '@src/features/measurements/infrastructure/measurementRows.js';
 import { insertPrescription } from '@src/features/prescriptions/infrastructure/insertPrescription.js';
-import { extractions, measurements, sourceDocuments } from '@src/shared/db/schema/index.js';
+import { extractions, healthProfiles, measurements, sourceDocuments } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import type { ReviewStore } from '../application/reviewPorts.js';
 import { listDocumentPage } from './listDocumentPage.js';
@@ -35,13 +35,21 @@ export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewS
     },
     insertPrescription: (input) => insertPrescription(tx, familyId, input),
     insertLabResults: (inputs) => insertLabResults(tx, familyId, inputs),
-    markApproved: async (id, documentDate) => {
+    findProfile: async (id) =>
+      (
+        await tx
+          .select({ consentStatus: healthProfiles.consentStatus })
+          .from(healthProfiles)
+          .where(and(eq(healthProfiles.id, id), eq(healthProfiles.familyId, familyId)))
+          .for('share')
+      )[0] ?? null,
+    markApproved: async (id, changes, from) => {
       const [row] = await tx
         .update(sourceDocuments)
-        .set({ status: 'approved', documentDate })
-        .where(and(owned(id), eq(sourceDocuments.status, 'pending_review')))
+        .set({ status: 'approved', ...changes })
+        .where(and(owned(id), inArray(sourceDocuments.status, [...from])))
         .returning();
-      if (!row) throw new Error('Chứng từ không còn ở trạng thái chờ duyệt');
+      if (!row) throw new Error('Chứng từ không còn ở trạng thái được duyệt');
       return row;
     },
     markRejected: async (id, from) => {

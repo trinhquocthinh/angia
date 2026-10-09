@@ -1,7 +1,8 @@
 import type { LabResult, NewLabResult } from '@src/features/labResults/domain/LabResult.js';
 import type { Measurement, NewMeasurement } from '@src/features/measurements/domain/Measurement.js';
 import type { NewPrescription, Prescription } from '@src/features/prescriptions/domain/Prescription.js';
-import type { DocumentStatus, SourceDocument } from '../domain/SourceDocument.js';
+import type { DocumentStatus, DocumentType, SourceDocument } from '../domain/SourceDocument.js';
+import type { ProfileConsent } from './ports.js';
 
 export interface DocumentFilter {
   statuses?: DocumentStatus[] | undefined;
@@ -25,7 +26,14 @@ export interface ReviewStore {
   insertMeasurement(input: NewMeasurement): Promise<Measurement>;
   insertPrescription(input: NewPrescription): Promise<Prescription>;
   insertLabResults(inputs: NewLabResult[]): Promise<LabResult[]>;
-  markApproved(id: string, documentDate: string): Promise<SourceDocument>;
+  /** Hồ sơ cùng gia đình (khóa chia sẻ) để nhập trực tiếp không kèm chứng từ. */
+  findProfile(id: string): Promise<ProfileConsent | null>;
+  /** Ghi ngày chứng từ và loại (nhập tay có thể đổi loại); chỉ cập nhật khi trạng thái còn thuộc `from`. */
+  markApproved(
+    id: string,
+    changes: { documentDate: string; type: DocumentType },
+    from: readonly DocumentStatus[],
+  ): Promise<SourceDocument>;
   /** Chỉ cập nhật khi trạng thái còn thuộc `from` (bảo vệ thêm ngoài khóa dòng). */
   markRejected(id: string, from: readonly DocumentStatus[]): Promise<SourceDocument>;
 }

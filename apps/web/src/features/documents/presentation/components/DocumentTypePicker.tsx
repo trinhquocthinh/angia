@@ -3,7 +3,7 @@ import { ChoiceChip } from './ChoiceChip';
 import { DocumentIcon, type DocumentIconName } from './DocumentIcon';
 import { PickerCard } from './PickerCard';
 
-const TYPES: { value: DocumentType; label: string; icon: DocumentIconName }[] = [
+export const DOCUMENT_TYPES: { value: DocumentType; label: string; icon: DocumentIconName }[] = [
   { value: 'prescription', label: 'Đơn thuốc', icon: 'prescription' },
   { value: 'lab_result', label: 'Xét nghiệm', icon: 'lab' },
   { value: 'device_reading', label: 'Máy đo cá nhân', icon: 'monitor' },
@@ -19,7 +19,7 @@ export function DocumentTypePicker({
 }) {
   return (
     <PickerCard icon="category" title="Loại giấy tờ" hint="Tùy chọn gợi ý">
-      {TYPES.map((type) => (
+      {DOCUMENT_TYPES.map((type) => (
         <ChoiceChip
           key={type.value}
           selected={value === type.value}

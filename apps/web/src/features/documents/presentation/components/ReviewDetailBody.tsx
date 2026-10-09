@@ -4,6 +4,7 @@ import type { ReviewRequestError } from '../../application/ReviewRequestError';
 import { reviewItemState } from '../../application/reviewQueuePolling';
 import { ExtractingPlaceholder } from './ExtractingPlaceholder';
 import { LabResultForm } from './LabResultForm';
+import { ManualEntryForm } from './ManualEntryForm';
 import { PrescriptionForm } from './PrescriptionForm';
 import { ReadingForm } from './ReadingForm';
 import { ReviewNotice } from './ReviewNotice';
@@ -27,9 +28,13 @@ export function ReviewDetailBody({ document, extraction, pending, error, onSubmi
   if (state === 'reading') return <ExtractingPlaceholder />;
   if (state === 'manual')
     return (
-      <ReviewNotice
-        title="Cần nhập tay"
-        body="Ảnh vẫn được lưu. Nhập tay theo ảnh sẽ có ở bản cập nhật sau; ảnh không dùng được thì có thể loại bỏ."
+      <ManualEntryForm
+        key={document.id}
+        initialType={document.type}
+        intro="Chứng từ này cần nhập tay. Chọn loại dữ liệu rồi nhập theo ảnh; ảnh không dùng được thì có thể loại bỏ."
+        pending={pending}
+        error={error}
+        onSubmit={onSubmit}
       />
     );
   if (document.status !== 'pending_review')

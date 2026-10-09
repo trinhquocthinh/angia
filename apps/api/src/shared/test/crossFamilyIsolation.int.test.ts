@@ -109,6 +109,11 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'POST', `${documents}/${x.documentId}/reject`),
     'GET /api/health-profiles/:id/measurements': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/measurements`),
+    'POST /api/health-profiles/:id/manual-records': (u, x) =>
+      t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
+        type: 'device_reading',
+        data: reading,
+      }),
   };
 
   // Gia đình nạn nhân: hồ sơ đã đồng thuận, chứng từ chờ duyệt có ảnh, link mời đã dùng.

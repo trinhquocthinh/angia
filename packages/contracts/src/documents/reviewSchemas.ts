@@ -56,3 +56,10 @@ export const sourceDocumentPageSchema = z
   .object({ items: z.array(sourceDocumentSchema), nextCursor: z.uuid().nullable() })
   .meta({ id: 'SourceDocumentPage' });
 export type SourceDocumentPage = z.infer<typeof sourceDocumentPageSchema>;
+
+// SPEC-011 nhập trực tiếp không kèm chứng từ: cùng thân lệnh với duyệt, trả các bản ghi đã lưu
+// (đều có `manualWithoutSource = true`, `sourceDocumentId = null`).
+export const manualRecordsResponseSchema = approvedDocumentResponseSchema
+  .omit({ document: true })
+  .meta({ id: 'ManualRecordsResponse' });
+export type ManualRecordsResponse = z.infer<typeof manualRecordsResponseSchema>;

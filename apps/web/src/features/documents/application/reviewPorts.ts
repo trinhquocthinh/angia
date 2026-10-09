@@ -11,6 +11,7 @@ export type PrescriptionApproval = Extract<ApproveDocumentRequest, { type: 'pres
 export type LabResultPayload = Extract<ExtractionPayload, { type: 'lab_result' }>;
 export type LabResultApproval = Extract<ApproveDocumentRequest, { type: 'lab_result' }>['data'];
 type ApprovedDocument = components['schemas']['ApprovedDocumentResponse'];
+type ManualRecords = components['schemas']['ManualRecordsResponse'];
 type SourceDocumentPage = components['schemas']['SourceDocumentPage'];
 
 export interface ReviewRepository {
@@ -19,4 +20,10 @@ export interface ReviewRepository {
   review(id: string, signal?: AbortSignal): Promise<DocumentReview>;
   approve(id: string, body: ApproveDocumentRequest, csrfToken: string): Promise<ApprovedDocument>;
   reject(id: string, csrfToken: string): Promise<SourceDocument>;
+  /** SPEC-011: nhập trực tiếp không kèm ảnh, bản ghi gắn cờ manualWithoutSource. */
+  createManualRecords(
+    profileId: string,
+    body: ApproveDocumentRequest,
+    csrfToken: string,
+  ): Promise<ManualRecords>;
 }

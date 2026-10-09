@@ -2,10 +2,12 @@ import { currentVietnamYear } from '@src/features/profiles/application/currentVi
 import type { HealthProfile } from '@src/features/profiles/application/ports';
 import { formatDay, readingText } from '../../application/formatMeasurement';
 import type { Measurement } from '../../application/ports';
+import { ManualEntryLink } from './ManualEntryLink';
 
 const TABS = ['Diễn biến sức khỏe', 'Thuốc điều trị', 'Kết quả xét nghiệm', 'Hồ sơ & Giấy tờ khám'];
 
-// Đầu trang hồ sơ (Stitch 718c9615): tên, tuổi theo năm sinh nếu có, chỉ số mới nhất; các tab khác mở ở Epic sau.
+// Đầu trang hồ sơ (Stitch 718c9615): tên, tuổi theo năm sinh nếu có, chỉ số mới nhất, lối vào nhập tay không kèm ảnh
+// (SPEC-011); các tab khác mở ở Epic sau.
 export function ProfileHealthHeader({
   profile,
   latest,
@@ -47,6 +49,7 @@ export function ProfileHealthHeader({
             )}
           </p>
         </div>
+        <ManualEntryLink profileId={profile.id} />
       </div>
       <nav aria-label="Các mục hồ sơ" className="flex gap-1 overflow-x-auto border-b border-[#e4f0ef]">
         {TABS.map((tab, index) => (

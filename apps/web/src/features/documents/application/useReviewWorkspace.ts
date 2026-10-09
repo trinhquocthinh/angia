@@ -67,3 +67,17 @@ export function useRejectDocument(
     onSuccess: () => client.invalidateQueries({ queryKey: reviewScopeKey(session) }),
   });
 }
+
+// SPEC-011 nhập trực tiếp: lưu xong làm mới số đo của hồ sơ.
+export function useCreateManualRecords(
+  repository: ReviewRepository,
+  session: Session | null | undefined,
+  profileId: string,
+) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (body: ApproveDocumentRequest) =>
+      repository.createManualRecords(profileId, body, session?.csrfToken ?? ''),
+    onSuccess: () => client.invalidateQueries({ queryKey: ['measurements'] }),
+  });
+}

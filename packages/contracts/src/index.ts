@@ -45,12 +45,14 @@ export {
   deviceReadingApprovalSchema,
   documentListQuerySchema,
   documentReviewResponseSchema,
+  manualRecordsResponseSchema,
   sourceDocumentPageSchema,
 } from './documents/reviewSchemas.js';
 export type {
   ApproveDocumentRequest,
   ApprovedDocumentResponse,
   DocumentReview,
+  ManualRecordsResponse,
   SourceDocumentPage,
 } from './documents/reviewSchemas.js';
 export { prescriptionSchema } from './prescriptions/prescriptionSchema.js';

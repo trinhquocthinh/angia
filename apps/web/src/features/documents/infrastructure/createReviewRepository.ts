@@ -34,6 +34,14 @@ export function createReviewRepository(client = apiClient): ReviewRepository {
           headers: { 'X-CSRF-Token': csrfToken },
         }),
       ),
+    createManualRecords: async (profileId, body, csrfToken) =>
+      readReviewResponse(
+        await client.POST('/api/health-profiles/{id}/manual-records', {
+          params: { path: { id: profileId } },
+          body,
+          headers: { 'X-CSRF-Token': csrfToken },
+        }),
+      ),
     reject: async (id, csrfToken) =>
       readReviewResponse(
         await client.POST('/api/source-documents/{id}/reject', {

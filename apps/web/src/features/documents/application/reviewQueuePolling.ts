@@ -13,7 +13,7 @@ export function reviewPollInterval(documents: SourceDocument[] | undefined): num
 
 export type ReviewItemState = 'preparing' | 'privacy' | 'reading' | 'ready' | 'manual';
 
-// Duyệt được số đo máy (E2-S6-T1), đơn thuốc (E3-S3-T1) và xét nghiệm (E3-S3-T2); nhập tay (manual_entry) thuộc bản sau.
+// Duyệt được số đo máy (E2-S6-T1), đơn thuốc (E3-S3-T1) và xét nghiệm (E3-S3-T2); manual_entry mở form nhập tay cạnh ảnh (E3-S4-T1).
 export function reviewItemState(document: SourceDocument): ReviewItemState {
   if (document.status === 'uploaded') return 'preparing';
   if (document.status === 'awaiting_privacy') return 'privacy';
