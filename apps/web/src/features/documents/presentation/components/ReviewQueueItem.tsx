@@ -39,6 +39,8 @@ export function ReviewQueueItem({ document, profileName, active }: ReviewQueueIt
           <span className="font-semibold text-[#131d1d]">{type.title}</span>
           <span className="truncate text-sm text-[#55615f]">{profileName}</span>
         </span>
+      </span>
+      <span className="pl-12">
         <ReviewItemChip state={reviewItemState(document)} />
       </span>
       <span className="flex items-center justify-between pl-12 text-xs text-[#55615f]">

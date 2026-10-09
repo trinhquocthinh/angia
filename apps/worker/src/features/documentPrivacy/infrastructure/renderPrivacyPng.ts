@@ -45,7 +45,7 @@ export async function renderPrivacyPng(
     paintMasks(data, info.width, mapped.masks);
     const output = await sharp(data, { raw: { width: info.width, height: info.height, channels: 3 } })
       .extract(mapped.crop)
-      .png()
+      .png({ compressionLevel: 9, adaptiveFiltering: true })
       .toBuffer();
     if (output.byteLength > MAX_BYTES) throw new ImageConversionError();
     return output;

@@ -16,12 +16,12 @@ export function ReviewQueue({ documents, profileNames, activeId, loading, error,
   return (
     <section aria-labelledby="review-queue-title" className="flex flex-col gap-4 rounded-[20px] bg-white p-4">
       <div className="flex flex-col gap-1">
-        <div className="flex items-center justify-between gap-2">
-          <h1 id="review-queue-title" className="text-xl font-semibold text-[#004135]">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h1 id="review-queue-title" className="whitespace-nowrap text-lg font-semibold text-[#004135]">
             Chờ xác nhận
           </h1>
           {!loading && !error && (
-            <span className="rounded-full bg-[#b3eddf] px-2.5 py-0.5 text-xs font-semibold text-[#004135]">
+            <span className="whitespace-nowrap rounded-full bg-[#b3eddf] px-2.5 py-0.5 text-xs font-semibold text-[#004135]">
               {documents.length} chứng từ
             </span>
           )}

@@ -22,7 +22,20 @@ export function PrivacyOverlay({ edits, mode, disabled, gesture }: Props) {
       onLostPointerCapture={gesture.cancel}
     >
       {edits.masks.map((mask: PrivacyRectangle, index: number) => (
-        <rect key={index} x={mask.left} y={mask.top} width={mask.width} height={mask.height} fill="black" />
+        <g key={index}>
+          <rect x={mask.left} y={mask.top} width={mask.width} height={mask.height} fill="black" />
+          <text
+            x={mask.left + mask.width / 2}
+            y={mask.top + mask.height / 2}
+            fontSize={18000}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="#ffffff"
+            fillOpacity={0.7}
+          >
+            VÙNG CHE ĐEN #{index + 1}
+          </text>
+        </g>
       ))}
       <rect
         x={edits.crop.left}
@@ -31,7 +44,8 @@ export function PrivacyOverlay({ edits, mode, disabled, gesture }: Props) {
         height={edits.crop.height}
         fill="none"
         stroke="#286958"
-        strokeWidth={3}
+        strokeWidth={2}
+        strokeDasharray="8 6"
         vectorEffect="non-scaling-stroke"
       />
       {rect && (

@@ -10,13 +10,15 @@ export function PrivacyRegionSelector({ disabled, count, index, setSelected, dis
   return (
     <>
       <label className="flex flex-col gap-1 text-sm text-[#004135]">
-        Vùng cần chỉnh
+        <span className="flex items-center justify-between gap-2 font-semibold">
+          Vùng cần chỉnh<span className="text-[11px] font-medium text-[#286958]">{count}/32 vùng che</span>
+        </span>
         <select
           aria-label="Vùng cần chỉnh"
           disabled={disabled}
           value={index}
           onChange={(event) => setSelected(Number(event.target.value))}
-          className="min-h-11 rounded-lg border border-[#d6e5df] bg-white px-2"
+          className="min-h-11 rounded-xl border-0 bg-[#eaf6f5] px-3 text-sm"
         >
           <option value={-1}>Vùng cắt</option>
           {Array.from({ length: count }, (_, n) => (
@@ -27,12 +29,11 @@ export function PrivacyRegionSelector({ disabled, count, index, setSelected, dis
         </select>
       </label>
       <div className="flex items-center justify-between gap-2 text-xs text-[#55615f]">
-        <span>{count}/32 vùng che</span>
         {index >= 0 && (
           <button
             type="button"
             disabled={disabled}
-            className="min-h-11 rounded-xl border border-[#d6e5df] bg-white px-3 text-sm font-medium text-[#004135] disabled:opacity-40"
+            className="ml-auto min-h-11 rounded-lg px-2 text-xs font-medium text-[#ba1a1a] disabled:opacity-40"
             onClick={() => {
               dispatch({ type: 'remove-mask', index });
               setSelected(-1);

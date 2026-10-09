@@ -1,10 +1,10 @@
 import type { usePrivacyWorkspace } from '../../application/usePrivacyWorkspace';
 import { PrivacyDraftReview } from './PrivacyDraftReview';
-type Props = { workspace: ReturnType<typeof usePrivacyWorkspace> };
-export function PrivacyReviewPanel({ workspace }: Props) {
+type Props = { workspace: ReturnType<typeof usePrivacyWorkspace>; inputPending: boolean };
+export function PrivacyReviewPanel({ workspace, inputPending }: Props) {
   const { state, dispatch, busy, error, query } = workspace;
   return (
-    <div className="flex flex-col gap-4 rounded-[20px] bg-[#f6f9f8] p-4">
+    <div className="flex flex-col gap-3">
       {query.isPending && (
         <p role="status" className="text-sm text-[#55615f]">
           Đang tải trạng thái kiểm tra…
@@ -35,18 +35,12 @@ export function PrivacyReviewPanel({ workspace }: Props) {
             : state.candidate.state
         }
         state={state}
-        busy={busy || query.isError}
+        busy={busy || query.isError || inputPending}
         dispatch={dispatch}
-        onApprove={() => void workspace.approve()}
+        onApprove={() => {
+          if (!inputPending) void workspace.approve();
+        }}
       />
-      <button
-        type="button"
-        disabled={busy}
-        onClick={() => void workspace.manual()}
-        className="min-h-11 rounded-xl border border-[#d6e5df] bg-white px-4 text-sm font-medium text-[#004135] disabled:opacity-40"
-      >
-        Chọn nhập tay
-      </button>
     </div>
   );
 }

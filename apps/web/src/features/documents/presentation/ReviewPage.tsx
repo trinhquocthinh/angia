@@ -33,7 +33,7 @@ export function ReviewPage({ documentId = null }: { documentId?: string | null }
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
       <UploadedNotice />
       {main ? (
-        <div className="grid gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
+        <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
           <div className={documentId ? 'max-lg:hidden' : ''}>
             <ReviewQueue
               documents={documents}

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { components } from '@src/shared/api/schema.gen';
 import type { PrivacyRepository } from '../../application/privacyPorts';
 import { usePrivacyWorkspace } from '../../application/usePrivacyWorkspace';
@@ -10,10 +11,19 @@ type Props = {
 };
 export function PrivacyEditor({ repository, session, documentId }: Props) {
   const workspace = usePrivacyWorkspace(repository, session, documentId);
+  const [inputPending, setInputPending] = useState(false);
+  const ready = workspace.state.candidate.state === 'ready';
   return (
-    <section aria-label="Kiểm tra riêng tư" className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-      <PrivacyEditPanel workspace={workspace} documentId={documentId} />
-      <PrivacyReviewPanel workspace={workspace} />
+    <section aria-label="Kiểm tra riêng tư" className="flex min-w-0 flex-col gap-5">
+      <PrivacyEditPanel
+        workspace={workspace}
+        documentId={documentId}
+        inputPending={inputPending}
+        onInputPending={setInputPending}
+      >
+        {!ready && <PrivacyReviewPanel workspace={workspace} inputPending={inputPending} />}
+      </PrivacyEditPanel>
+      {ready && <PrivacyReviewPanel workspace={workspace} inputPending={inputPending} />}
     </section>
   );
 }

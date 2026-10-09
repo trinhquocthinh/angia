@@ -35,7 +35,7 @@ describe('Giao diện kiểm tra riêng tư', () => {
         onChange={noop}
       />,
     );
-    expect(text.match(/type="number"/g)).toHaveLength(4);
+    expect(text.match(/inputMode="decimal"/g)).toHaveLength(4);
     expect(text).toContain('Vùng cắt — Trái');
     expect(text).toContain('max="100"');
   });

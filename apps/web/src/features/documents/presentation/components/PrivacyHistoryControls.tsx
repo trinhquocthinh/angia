@@ -1,3 +1,4 @@
+import { PrivacyToolIcon } from './PrivacyToolIcon';
 import type { PrivacyEditorAction } from '../../application/privacyEditorState';
 type Props = {
   disabled: boolean;
@@ -6,7 +7,7 @@ type Props = {
   dispatch: (action: PrivacyEditorAction) => void;
 };
 const button =
-  'min-h-11 rounded-xl border border-[#d6e5df] bg-white px-3 text-sm font-medium text-[#004135] disabled:opacity-40';
+  'flex min-h-11 items-center gap-1.5 rounded-xl bg-white px-3 text-xs font-semibold text-[#004135] disabled:opacity-40';
 export function PrivacyHistoryControls({ disabled, canUndo, setSelected, dispatch }: Props) {
   return (
     <div className="flex flex-wrap gap-2">
@@ -19,6 +20,7 @@ export function PrivacyHistoryControls({ disabled, canUndo, setSelected, dispatc
           setSelected(-1);
         }}
       >
+        <PrivacyToolIcon name="rotate" />
         Xoay 90°
       </button>
       <button
@@ -27,6 +29,7 @@ export function PrivacyHistoryControls({ disabled, canUndo, setSelected, dispatc
         className={button}
         onClick={() => dispatch({ type: 'undo' })}
       >
+        <PrivacyToolIcon name="undo" />
         Hoàn tác
       </button>
     </div>

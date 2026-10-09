@@ -54,3 +54,21 @@ it('TC-185: PNG trên 10 MiB bị từ chối, không giảm pixel hoặc chất
   expect(original.length).toBeLessThan(10 * 1024 * 1024);
   await expect(renderPrivacyPng(original, 'image/jpeg', edits)).rejects.toThrow();
 });
+it('TC-225: nén ảnh có tương quan không làm đổi pixel và giảm dung lượng PNG', async () => {
+  const width = 512,
+    height = 512;
+  const pixels = Buffer.alloc(width * height * 3);
+  for (let y = 0; y < height; y++)
+    for (let x = 0; x < width; x++) {
+      const offset = (y * width + x) * 3;
+      pixels[offset] = (x * 73 + y * 17) % 256;
+      pixels[offset + 1] = (x * 91 + y * 11) % 256;
+      pixels[offset + 2] = (x * 23 + y * 7) % 256;
+    }
+  const original = await sharp(pixels, { raw: { width, height, channels: 3 } })
+    .png()
+    .toBuffer();
+  const output = await renderPrivacyPng(original, 'image/png', edits);
+  expect(output.length).toBeLessThan(original.length * 0.5);
+  expect(await sharp(output).raw().toBuffer()).toEqual(pixels);
+});
