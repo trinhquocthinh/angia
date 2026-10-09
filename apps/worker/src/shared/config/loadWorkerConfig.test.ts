@@ -31,4 +31,17 @@ describe('Cấu hình worker', () => {
       AI_PROVIDER: 'openrouter',
     });
   });
+
+  it('ngân sách AI (BR-018): mặc định trần $5.00, ước tính $0.02; giá trị âm/không phải số bị từ chối', () => {
+    expect(loadWorkerConfig(base)).toMatchObject({
+      AI_DEFAULT_MONTHLY_CAP_USD: 5,
+      AI_ESTIMATED_COST_USD: 0.02,
+    });
+    expect(
+      loadWorkerConfig({ ...base, AI_DEFAULT_MONTHLY_CAP_USD: '2.50', AI_ESTIMATED_COST_USD: '0.01' }),
+    ).toMatchObject({ AI_DEFAULT_MONTHLY_CAP_USD: 2.5, AI_ESTIMATED_COST_USD: 0.01 });
+    expect(() => loadWorkerConfig({ ...base, AI_DEFAULT_MONTHLY_CAP_USD: '-1' })).toThrow();
+    expect(() => loadWorkerConfig({ ...base, AI_ESTIMATED_COST_USD: '0' })).toThrow();
+    expect(() => loadWorkerConfig({ ...base, AI_ESTIMATED_COST_USD: 'abc' })).toThrow();
+  });
 });

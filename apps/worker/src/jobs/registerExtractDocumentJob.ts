@@ -1,4 +1,4 @@
-import { EXTRACT_DOCUMENT_QUEUE, EXTRACT_DOCUMENT_QUEUE_OPTIONS } from '@angia/contracts';
+import { EXTRACT_DOCUMENT_QUEUE, ensureExtractDocumentQueues } from '@angia/contracts';
 import type { PgBoss } from 'pg-boss';
 import type { handleExtractDocumentJob } from './handleExtractDocumentJob.js';
 
@@ -7,7 +7,7 @@ export async function registerExtractDocumentJob(
   boss: PgBoss,
   handler: ReturnType<typeof handleExtractDocumentJob>,
 ): Promise<void> {
-  await boss.createQueue(EXTRACT_DOCUMENT_QUEUE, EXTRACT_DOCUMENT_QUEUE_OPTIONS);
+  await ensureExtractDocumentQueues(boss);
   await boss.work(
     EXTRACT_DOCUMENT_QUEUE,
     { batchSize: 1, localConcurrency: 1, includeMetadata: true },

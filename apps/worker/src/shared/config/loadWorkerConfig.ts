@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // Nguồn duy nhất đọc biến môi trường của worker (10-setup-and-ops-guide §3).
-// AI_FALLBACK_MODEL và ngân sách bổ sung ở E3-S6; ntfy ở v0.1b.
+// AI_FALLBACK_MODEL bổ sung ở E3-S6-T2; ntfy ở v0.1b.
 const workerEnvSchema = z
   .object({
     STACK: z.enum(['dev', 'sit', 'prod']),
@@ -18,6 +18,9 @@ const workerEnvSchema = z
     OPENROUTER_BASE_URL: z.string().url().default('https://openrouter.ai/api/v1'),
     OPENROUTER_API_KEY: z.string().optional(),
     AI_PRIMARY_MODEL: z.string().min(1).default('google/gemini-3.1-flash-lite'),
+    // BR-018: trần khởi tạo khi chưa có tháng nào trong extraction_spend; ước tính giữ chỗ mỗi lần gọi AI.
+    AI_DEFAULT_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(5),
+    AI_ESTIMATED_COST_USD: z.coerce.number().positive().default(0.02),
   })
   .refine((env) => env.AI_PROVIDER !== 'openrouter' || Boolean(env.OPENROUTER_API_KEY), {
     message: 'AI_PROVIDER=openrouter bắt buộc có OPENROUTER_API_KEY',

@@ -3,7 +3,8 @@ import { ImageConversionError } from './ImageConversionError.js';
 import { assessExtraction } from '../domain/assessExtraction.js';
 import { canStartExtraction } from '../domain/canStartExtraction.js';
 import type { DocumentToExtract } from '../domain/ExtractionDocument.js';
-import type { ExtractionDependencies, ExtractorImage, ExtractorResult } from './ports.js';
+import type { BudgetCall, ExtractionDependencies, ExtractorImage, ExtractorResult } from './ports.js';
+import { toBudgetCall } from './toBudgetCall.js';
 
 interface ExtractionJob {
   documentId: string;
@@ -21,15 +22,18 @@ type ManualReason =
   | 'privacy_required';
 export type ExtractionOutcome =
   | { status: 'skipped' }
+  | { status: 'awaiting_budget' }
   | { status: 'pending_review'; costUsd: number }
   | { status: 'manual_entry'; reason: ManualReason; costUsd: number };
 
-// SPEC-009/BR-041: chỉ extracting đã duyệt riêng tư → pending_review | manual_entry. Không giữ transaction
-// trong lúc gọi AI; kiểm ngân sách (awaiting_budget) và model dự phòng bổ sung ở E3-S6.
+// SPEC-009/BR-041/BR-018: chỉ extracting đã duyệt riêng tư và giữ được ngân sách mới gọi AI →
+// pending_review | manual_entry; hết ngân sách → awaiting_budget. Không giữ transaction trong lúc gọi AI;
+// model dự phòng bổ sung ở E3-S6-T2.
 export async function extractDocument(
   deps: ExtractionDependencies,
   job: ExtractionJob,
 ): Promise<ExtractionOutcome> {
+  const call = toBudgetCall(deps.budget);
   const document = await deps.repository.withFamily(job.familyId, async (store) => {
     const found = await store.findDocument(job.documentId);
     if (!found || (found.status !== 'uploaded' && !canStartExtraction(found.status))) return null;
@@ -43,52 +47,68 @@ export async function extractDocument(
       await store.markManualEntry(found.id);
       return 'privacy_required' as const;
     }
+    if (!(await store.reserveBudget(found.id, call))) {
+      await store.markAwaitingBudget(found.id);
+      return 'awaiting_budget' as const;
+    }
     await store.markExtracting(found.id);
     return found;
   });
   if (!document) return { status: 'skipped' };
   if (document === 'privacy_required')
     return { status: 'manual_entry', reason: 'privacy_required', costUsd: 0 };
+  if (document === 'awaiting_budget') return { status: 'awaiting_budget' };
   let result: ExtractorResult;
   try {
     result = await deps.extractor.extract(await loadImage(deps, document));
   } catch (error) {
-    if (error instanceof ImageConversionError) return toManualEntry(deps, job, 'image_unusable', 0);
-    if (!job.finalAttempt) throw error;
-    return toManualEntry(deps, job, 'extractor_failed', 0);
+    if (error instanceof ImageConversionError) return toManualEntry(deps, job, call, 'image_unusable', 0);
+    if (!job.finalAttempt) {
+      // Lỗi mạng/HTTP không có usage.cost: trả lại chỗ giữ, lần thử lại sẽ giữ chỗ mới.
+      await deps.repository.withFamily(job.familyId, (store) => store.settleBudget(job.documentId, 0, call));
+      throw error;
+    }
+    return toManualEntry(deps, job, call, 'extractor_failed', 0);
   }
-  return finish(deps, job, document, result);
+  return finish(deps, job, call, document, result);
 }
 
 async function finish(
   deps: ExtractionDependencies,
   job: ExtractionJob,
+  call: BudgetCall,
   document: DocumentToExtract,
   result: ExtractorResult,
 ): Promise<ExtractionOutcome> {
-  if (!result.ok) return toManualEntry(deps, job, result.reason, result.costUsd);
+  if (!result.ok) return toManualEntry(deps, job, call, result.reason, result.costUsd);
   const verdict = assessExtraction(document.declaredType, result.content);
-  if (!verdict.usable) return toManualEntry(deps, job, verdict.reason, result.costUsd);
+  if (!verdict.usable) return toManualEntry(deps, job, call, verdict.reason, result.costUsd);
   const { provider, model, costUsd, content } = result;
-  await deps.repository.withFamily(job.familyId, (store) =>
-    store.savePendingReview(document.id, {
+  await deps.repository.withFamily(job.familyId, async (store) => {
+    await store.savePendingReview(document.id, {
       type: content.type,
       provider,
       model,
       payload: content,
       costUsd,
-    }),
-  );
+    });
+    await store.settleBudget(document.id, costUsd, call);
+  });
   return { status: 'pending_review', costUsd };
 }
 
+// Quyết toán cùng transaction với chuyển trạng thái: chi phí thực của lời gọi (nếu có) được ghi đúng một lần.
 async function toManualEntry(
   deps: ExtractionDependencies,
   job: ExtractionJob,
+  call: BudgetCall,
   reason: ManualReason,
   costUsd: number,
 ): Promise<ExtractionOutcome> {
-  await deps.repository.withFamily(job.familyId, (store) => store.markManualEntry(job.documentId));
+  await deps.repository.withFamily(job.familyId, async (store) => {
+    await store.markManualEntry(job.documentId);
+    await store.settleBudget(job.documentId, costUsd, call);
+  });
   return { status: 'manual_entry', reason, costUsd };
 }
 

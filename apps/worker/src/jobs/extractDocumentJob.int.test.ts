@@ -3,6 +3,7 @@ import { createPreviewRepository } from '@src/features/documentPreview/infrastru
 import { handleConvertHeicJob } from './handleConvertHeicJob.js';
 import { registerConvertHeicJob } from './registerConvertHeicJob.js';
 import { createHash, randomUUID } from 'node:crypto';
+import { APPROVED_OCR_BYTES, seedExtractingDocument } from '@src/shared/test/seedExtractingDocument.js';
 import { fileURLToPath } from 'node:url';
 import { CONVERT_HEIC_QUEUE, EXTRACT_DOCUMENT_QUEUE } from '@angia/contracts';
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
@@ -32,16 +33,15 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
   let boss: PgBoss;
   const deps = (): ExtractionDependencies => ({
     repository: createExtractionRepository(pool),
+    budget: { estimatedCostUsd: 0.02, defaultMonthlyCapUsd: 5, now: () => new Date() },
     storage: { get: async () => new Uint8Array([0xff, 0xd8, 0xff]) },
     images: { heicToJpeg: async (bytes) => bytes },
     extractor: createFakeExtractor(),
     ocrImages: {
       get: async () => ({
-        bytes: new Uint8Array([0xff, 0xd8, 0xff]),
+        bytes: APPROVED_OCR_BYTES,
         mimeType: 'image/jpeg',
-        sha256: createHash('sha256')
-          .update(new Uint8Array([0xff, 0xd8, 0xff]))
-          .digest('hex'),
+        sha256: createHash('sha256').update(APPROVED_OCR_BYTES).digest('hex'),
       }),
     },
   });
@@ -75,48 +75,8 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
     await container?.stop();
   });
 
-  const seedDocument = async (declaredType: string | null = null, approved = true) => {
-    const [familyId, profileId, batchId, documentId, accountId] = [
-      randomUUID(),
-      randomUUID(),
-      randomUUID(),
-      randomUUID(),
-      randomUUID(),
-    ];
-    await owner.query(`INSERT INTO families(id, name) VALUES ($1, 'Nhà')`, [familyId]);
-    await owner.query(
-      `INSERT INTO accounts(id, oidc_subject, display_name, family_id, family_role) VALUES ($1, $3, 'Main', $2, 'main')`,
-      [accountId, familyId, `sub-${accountId}`],
-    );
-    await owner.query(`INSERT INTO health_profiles(id, family_id, display_name) VALUES ($1, $2, 'Mẹ')`, [
-      profileId,
-      familyId,
-    ]);
-    await owner.query(
-      `INSERT INTO upload_batches(id, family_id, health_profile_id, created_by) VALUES ($1, $2, $3, $4)`,
-      [batchId, familyId, profileId, accountId],
-    );
-    await owner.query(
-      `INSERT INTO source_documents(id, family_id, health_profile_id, batch_id, type, status, original_key, mime_type, size_bytes, ocr_image_key, ocr_image_sha256, privacy_approved_by, privacy_approved_at)
-       VALUES ($1, $2, $3, $4, $5, CASE WHEN $8::uuid IS NOT NULL THEN 'extracting' ELSE 'uploaded' END, $9, 'image/jpeg', 3, $6, $7, $8, CASE WHEN $8::uuid IS NOT NULL THEN now() ELSE NULL END)`,
-      [
-        documentId,
-        familyId,
-        profileId,
-        batchId,
-        declaredType,
-        approved ? `families/${familyId}/profiles/${profileId}/documents/${documentId}/ocr.jpg` : null,
-        approved
-          ? createHash('sha256')
-              .update(new Uint8Array([0xff, 0xd8, 0xff]))
-              .digest('hex')
-          : null,
-        approved ? accountId : null,
-        `families/${familyId}/profiles/${profileId}/documents/${documentId}/original.jpg`,
-      ],
-    );
-    return { familyId, documentId };
-  };
+  const seedDocument = (declaredType: string | null = null, approved = true) =>
+    seedExtractingDocument(owner, declaredType, approved);
   const documentState = async (documentId: string) =>
     (
       await owner.query(

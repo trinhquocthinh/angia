@@ -17,13 +17,18 @@ import { createFakeExtractor } from '@src/features/extraction/infrastructure/cre
 import { createHeicImageConverter } from '@src/features/extraction/infrastructure/createHeicImageConverter.js';
 import { createOpenRouterExtractor } from '@src/features/extraction/infrastructure/createOpenRouterExtractor.js';
 import { createS3ObjectReader } from '@src/features/extraction/infrastructure/createS3ObjectReader.js';
+import { createBudgetRequeueRepository } from '@src/features/extraction/infrastructure/createBudgetRequeueRepository.js';
 import { handleExtractDocumentJob } from '@src/jobs/handleExtractDocumentJob.js';
+import { handleRecoverDeadExtractionJob } from '@src/jobs/handleRecoverDeadExtractionJob.js';
 import { registerExtractDocumentJob } from '@src/jobs/registerExtractDocumentJob.js';
+import { registerRecoverDeadExtractionJob } from '@src/jobs/registerRecoverDeadExtractionJob.js';
+import { registerRequeueAwaitingBudgetJob } from '@src/jobs/registerRequeueAwaitingBudgetJob.js';
 import { loadWorkerConfig, type WorkerConfig } from '@src/shared/config/loadWorkerConfig.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { createS3Client } from '@src/shared/storage/createS3Client.js';
 
-// Composition root của worker: pg-boss (role app, migrate:false) + job extract-document (SPEC-009).
+// Composition root của worker: pg-boss (role app, migrate:false) + job extract-document (SPEC-009),
+// dead-letter phục hồi chứng từ kẹt và job đầu tháng đưa awaiting_budget vào lại hàng đợi (BR-018).
 const config = loadWorkerConfig(process.env);
 const logger = pino({ level: config.LOG_LEVEL, base: { service: 'angia-worker', stack: config.STACK } });
 
@@ -43,17 +48,21 @@ const boss = createPgBoss(config.DATABASE_URL, logger);
 
 try {
   await boss.start();
-  const handler = handleExtractDocumentJob(
-    {
-      repository: createExtractionRepository(pool),
-      storage: createS3ObjectReader(createS3Client(config), config.S3_BUCKET),
-      images: createHeicImageConverter(),
-      extractor: createExtractor(config),
-      ocrImages: createApprovedOcrImageReader(createS3ObjectReader(createS3Client(config), config.S3_BUCKET)),
+  const extraction = {
+    repository: createExtractionRepository(pool),
+    budget: {
+      estimatedCostUsd: config.AI_ESTIMATED_COST_USD,
+      defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,
+      now: () => new Date(),
     },
-    logger,
-  );
-  await registerExtractDocumentJob(boss, handler);
+    storage: createS3ObjectReader(createS3Client(config), config.S3_BUCKET),
+    images: createHeicImageConverter(),
+    extractor: createExtractor(config),
+    ocrImages: createApprovedOcrImageReader(createS3ObjectReader(createS3Client(config), config.S3_BUCKET)),
+  };
+  await registerExtractDocumentJob(boss, handleExtractDocumentJob(extraction, logger));
+  await registerRecoverDeadExtractionJob(boss, handleRecoverDeadExtractionJob(extraction, logger));
+  await registerRequeueAwaitingBudgetJob(boss, createBudgetRequeueRepository(pool, boss), logger);
   await registerConvertHeicJob(
     boss,
     handleConvertHeicJob(
@@ -80,7 +89,7 @@ try {
   );
   logger.info(
     { aiProvider: config.AI_PROVIDER },
-    'Worker sẵn sàng — đã đăng ký job convert-heic, prepare-ocr-image và extract-document',
+    'Worker sẵn sàng — đã đăng ký job convert-heic, prepare-ocr-image, extract-document và ngân sách AI',
   );
 } catch (error) {
   logger.error({ reason: (error as Error).message }, 'Worker không khởi động được');

@@ -16,8 +16,7 @@ import {
   CONVERT_HEIC_QUEUE_OPTIONS,
   PREPARE_OCR_IMAGE_QUEUE,
   PREPARE_OCR_IMAGE_QUEUE_OPTIONS,
-  EXTRACT_DOCUMENT_QUEUE,
-  EXTRACT_DOCUMENT_QUEUE_OPTIONS,
+  ensureExtractDocumentQueues,
 } from '@angia/contracts';
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
@@ -48,7 +47,7 @@ await boss.start();
 await boss.createQueue(CONVERT_HEIC_QUEUE, CONVERT_HEIC_QUEUE_OPTIONS);
 
 await boss.createQueue(PREPARE_OCR_IMAGE_QUEUE, PREPARE_OCR_IMAGE_QUEUE_OPTIONS);
-await boss.createQueue(EXTRACT_DOCUMENT_QUEUE, EXTRACT_DOCUMENT_QUEUE_OPTIONS);
+await ensureExtractDocumentQueues(boss);
 const privacyQueue = createPrivacyQueue(boss);
 
 const app = createApp({

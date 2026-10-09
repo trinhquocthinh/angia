@@ -9,8 +9,7 @@ import {
   CONVERT_HEIC_QUEUE_OPTIONS,
   PREPARE_OCR_IMAGE_QUEUE,
   PREPARE_OCR_IMAGE_QUEUE_OPTIONS,
-  EXTRACT_DOCUMENT_QUEUE,
-  EXTRACT_DOCUMENT_QUEUE_OPTIONS,
+  ensureExtractDocumentQueues,
 } from '@angia/contracts';
 import pg from 'pg';
 import type { PgBoss } from 'pg-boss';
@@ -87,7 +86,7 @@ export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') 
   await boss.start();
   await boss.createQueue(CONVERT_HEIC_QUEUE, CONVERT_HEIC_QUEUE_OPTIONS);
   await boss.createQueue(PREPARE_OCR_IMAGE_QUEUE, PREPARE_OCR_IMAGE_QUEUE_OPTIONS);
-  await boss.createQueue(EXTRACT_DOCUMENT_QUEUE, EXTRACT_DOCUMENT_QUEUE_OPTIONS);
+  await ensureExtractDocumentQueues(boss);
   const app = buildApp(database, appBaseUrl, memory, boss);
   const family = async () => {
     const id = randomUUID();

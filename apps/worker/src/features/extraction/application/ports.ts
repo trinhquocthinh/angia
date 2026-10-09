@@ -8,11 +8,22 @@ type SavedExtraction = {
   payload: ExtractedContent;
   costUsd: number;
 };
+/** Tháng ngân sách và tham số cấu hình của một lần giữ chỗ/quyết toán (BR-018). */
+export interface BudgetCall {
+  month: string;
+  estimatedCostUsd: number;
+  defaultMonthlyCapUsd: number;
+}
 export interface ExtractionStore {
   findDocument(id: string): Promise<DocumentToExtract | null>;
   markExtracting(id: string): Promise<void>;
   markManualEntry(id: string): Promise<void>;
+  markAwaitingBudget(id: string): Promise<void>;
   savePendingReview(id: string, extraction: SavedExtraction): Promise<void>;
+  /** Giữ chỗ nguyên tử (đã dùng + ước tính ≤ trần); chứng từ đã có chỗ giữ thì dùng lại. false = hết ngân sách. */
+  reserveBudget(id: string, call: BudgetCall): Promise<boolean>;
+  /** Xóa chỗ giữ rồi ghi chi phí thực vào đúng tháng đã giữ; chạy lặp không tính trùng. */
+  settleBudget(id: string, costUsd: number, call: BudgetCall): Promise<void>;
 }
 export interface ExtractionRepository {
   withFamily<T>(familyId: string, work: (store: ExtractionStore) => Promise<T>): Promise<T>;
@@ -39,8 +50,14 @@ export type ExtractorResult =
 export interface DocumentExtractor {
   extract(image: ExtractorImage): Promise<ExtractorResult>;
 }
+export interface BudgetPolicy {
+  estimatedCostUsd: number;
+  defaultMonthlyCapUsd: number;
+  now(): Date;
+}
 export interface ExtractionDependencies {
   repository: ExtractionRepository;
+  budget: BudgetPolicy;
   storage: ObjectReader;
   images: ImageConverter;
   extractor: DocumentExtractor;
@@ -53,4 +70,10 @@ export interface PreviewImageConverter {
 
 export interface ApprovedOcrImageReader {
   get(key: string): Promise<ExtractorImage & { sha256: string }>;
+}
+
+/** Duyệt gia đình (bảng families không áp RLS) rồi trong withFamilyScope chuyển + enqueue cùng transaction. */
+export interface BudgetRequeueRepository {
+  listFamilyIds(): Promise<string[]>;
+  requeueFamily(familyId: string): Promise<number>;
 }
