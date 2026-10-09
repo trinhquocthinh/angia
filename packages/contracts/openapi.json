@@ -591,6 +591,13 @@
                       "null"
                     ]
                   },
+                  "diagnosis": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "default": null
+                  },
                   "items": {
                     "type": "array",
                     "items": {

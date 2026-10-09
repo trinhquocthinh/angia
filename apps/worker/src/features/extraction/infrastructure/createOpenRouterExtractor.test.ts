@@ -6,7 +6,7 @@ const options = {
   apiKey: 'sk-or-test',
   model: 'google/gemini-3.1-flash-lite',
 };
-const prescription = { type: 'prescription', issuedDate: null, facility: null, items: [] };
+const prescription = { type: 'prescription', issuedDate: null, facility: null, diagnosis: null, items: [] };
 const reply = (content: string) =>
   new Response(
     JSON.stringify({

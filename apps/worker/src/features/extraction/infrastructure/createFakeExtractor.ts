@@ -6,6 +6,7 @@ const SAMPLE_PRESCRIPTION: ExtractionPayload = {
   type: 'prescription',
   issuedDate: '2026-10-01',
   facility: 'Phòng khám giả lập',
+  diagnosis: 'Tăng huyết áp',
   items: [
     {
       name: 'Amlodipin',

@@ -5,6 +5,7 @@ const prescription = {
   type: 'prescription',
   issuedDate: '2026-10-01',
   facility: 'Bệnh viện Đa khoa Tỉnh',
+  diagnosis: 'Tăng huyết áp vô căn (I10)',
   items: [
     {
       name: 'Amlodipin',
@@ -24,6 +25,12 @@ describe('extractionPayloadSchema (SDD §2.1)', () => {
     expect(extractionPayloadSchema.safeParse(prescription).success).toBe(true);
   });
 
+  it('đơn thuốc trích xuất trước khi có trường chẩn đoán được hiểu là chẩn đoán null', () => {
+    const legacy: Record<string, unknown> = { ...prescription };
+    delete legacy.diagnosis;
+    const result = extractionPayloadSchema.parse(legacy);
+    expect(result.type === 'prescription' && result.diagnosis).toBeNull();
+  });
   it('chấp nhận phiếu xét nghiệm đúng mẫu SDD §2.1b', () => {
     const lab = {
       type: 'lab_result',
