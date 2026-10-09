@@ -12,16 +12,19 @@ import { sourceDocumentSchema } from './uploadBatchSchemas.js';
 
 export { deviceReadingApprovalSchema };
 
-// SPEC-010: lệnh duyệt theo loại chứng từ; `confirmOutOfRange` chỉ có nghĩa với số đo máy (SPEC-019).
+// SPEC-010: lệnh duyệt theo loại chứng từ; `confirmOutOfRange` chỉ có nghĩa với số đo máy (SPEC-019),
+// `confirmDuplicate` xác nhận lưu thêm dù trùng bản đã lưu (SPEC-012, BR-017).
+const confirmDuplicate = z.boolean().optional();
 export const approveDocumentRequestSchema = z
   .discriminatedUnion('type', [
     z.object({
       type: z.literal('device_reading'),
       data: deviceReadingApprovalSchema,
       confirmOutOfRange: z.boolean().optional(),
+      confirmDuplicate,
     }),
-    z.object({ type: z.literal('prescription'), data: prescriptionApprovalSchema }),
-    z.object({ type: z.literal('lab_result'), data: labResultApprovalSchema }),
+    z.object({ type: z.literal('prescription'), data: prescriptionApprovalSchema, confirmDuplicate }),
+    z.object({ type: z.literal('lab_result'), data: labResultApprovalSchema, confirmDuplicate }),
   ])
   .meta({ id: 'ApproveDocumentRequest' });
 export type ApproveDocumentRequest = z.infer<typeof approveDocumentRequestSchema>;

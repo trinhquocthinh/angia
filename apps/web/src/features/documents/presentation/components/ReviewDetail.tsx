@@ -1,15 +1,13 @@
 import { useNavigate } from '@tanstack/react-router';
 import type { components } from '@src/shared/api/schema.gen';
 import { nextDocumentId } from '../../application/reviewQueue';
-import type { ApproveDocumentRequest, ReviewRepository, SourceDocument } from '../../application/reviewPorts';
-import { ReviewRequestError } from '../../application/ReviewRequestError';
-import { useApproveDocument, useDocumentReview } from '../../application/useReviewWorkspace';
+import type { ReviewRepository, SourceDocument } from '../../application/reviewPorts';
+import { useDocumentReview } from '../../application/useReviewWorkspace';
 import { DocumentImagePanel } from './DocumentImagePanel';
 import { ReviewNotice } from './ReviewNotice';
 import { PrivacyEditor } from './PrivacyEditor';
-import { ReviewDetailBody } from './ReviewDetailBody';
 import { ReviewDetailHeading } from './ReviewDetailHeading';
-import { RejectDocumentControl } from './RejectDocumentControl';
+import { ReviewFormColumn } from './ReviewFormColumn';
 import { ReviewLoading } from './ReviewLoading';
 import type { PrivacyRepository } from '../../application/privacyPorts';
 
@@ -44,7 +42,6 @@ export function ReviewDetail({
 }: ReviewDetailProps) {
   const goNext = useGoToNextDocument(queue, documentId);
   const review = useDocumentReview(repository, session, documentId);
-  const approve = useApproveDocument(repository, session, documentId);
   if (review.isPending) return <ReviewLoading />;
   if (review.isError)
     return (
@@ -54,8 +51,6 @@ export function ReviewDetail({
       />
     );
   const { document, extraction } = review.data;
-  const save = (request: ApproveDocumentRequest) => approve.mutate(request, { onSuccess: goNext });
-  const rejectable = document.status === 'pending_review' || document.status === 'manual_entry';
   const profileName = profileNames.get(document.healthProfileId) ?? 'Hồ sơ';
   return (
     <div className="flex flex-col gap-4">
@@ -70,22 +65,11 @@ export function ReviewDetail({
       ) : (
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <DocumentImagePanel key={`${document.id}:${document.status}`} document={document} />
-          <div className="flex flex-col gap-4">
-            <ReviewDetailBody
-              document={document}
-              extraction={extraction}
-              pending={approve.isPending}
-              error={approve.error instanceof ReviewRequestError ? approve.error : null}
-              onSubmit={save}
-            />
-            {rejectable && (
-              <RejectDocumentControl
-                key={document.id}
-                {...{ repository, session, documentId }}
-                onRejected={goNext}
-              />
-            )}
-          </div>
+          <ReviewFormColumn
+            key={document.id}
+            {...{ repository, session, document, extraction }}
+            onDone={goNext}
+          />
         </div>
       )}
     </div>

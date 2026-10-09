@@ -1,9 +1,12 @@
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import { insertLabResults } from '@src/features/labResults/infrastructure/insertLabResults.js';
+import { findLabResultsOn } from '@src/features/labResults/infrastructure/findLabResultsOn.js';
+import { findMeasurementsOn } from '@src/features/measurements/infrastructure/findMeasurementsOn.js';
 import {
   toMeasurement,
   toMeasurementRow,
 } from '@src/features/measurements/infrastructure/measurementRows.js';
+import { findPrescriptionsOn } from '@src/features/prescriptions/infrastructure/findPrescriptionsOn.js';
 import { insertPrescription } from '@src/features/prescriptions/infrastructure/insertPrescription.js';
 import { extractions, healthProfiles, measurements, sourceDocuments } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
@@ -35,6 +38,9 @@ export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewS
     },
     insertPrescription: (input) => insertPrescription(tx, familyId, input),
     insertLabResults: (inputs) => insertLabResults(tx, familyId, inputs),
+    findPrescriptionsOn: (profileId, date) => findPrescriptionsOn(tx, familyId, profileId, date),
+    findLabResultsOn: (profileId, date) => findLabResultsOn(tx, familyId, profileId, date),
+    findMeasurementsOn: (profileId, kind, date) => findMeasurementsOn(tx, familyId, profileId, kind, date),
     findProfile: async (id) =>
       (
         await tx

@@ -39,6 +39,24 @@ describe('Đọc phản hồi API duyệt chứng từ', () => {
     });
   });
 
+  it('ERR_DUPLICATE_UNCONFIRMED giữ thông tin bản đã lưu bị trùng (SPEC-012)', async () => {
+    const duplicate = {
+      duplicateOf: null,
+      recordDate: '2026-10-01',
+      facility: 'BV Tỉnh',
+      savedAt: '2026-10-02T03:00:00.000Z',
+    };
+    const error = { error: { code: 'ERR_DUPLICATE_UNCONFIRMED', message: 'Trùng', details: duplicate } };
+    await expect(readReviewResponse({ error, response: response(409) })).rejects.toMatchObject({
+      code: 'ERR_DUPLICATE_UNCONFIRMED',
+      duplicate,
+    });
+    const broken = { error: { code: 'ERR_DUPLICATE_UNCONFIRMED', message: 'Trùng', details: {} } };
+    await expect(readReviewResponse({ error: broken, response: response(409) })).rejects.toMatchObject({
+      duplicate: null,
+    });
+  });
+
   it('lỗi 5xx dùng thông điệp chung, không lộ chi tiết', async () => {
     await expect(
       readReviewResponse({ error: { error: { message: 'stack' } }, response: response(500) }),

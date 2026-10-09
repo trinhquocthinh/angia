@@ -8,8 +8,10 @@ import { ProfileFrame } from '@src/features/profiles/presentation/components/Pro
 import { RecipientNotice } from '@src/features/profiles/presentation/components/RecipientNotice';
 import '@src/features/profiles/presentation/profiles.css';
 import { ReviewRequestError } from '../application/ReviewRequestError';
+import { useDuplicatePrompt } from '../application/useDuplicatePrompt';
 import { useCreateManualRecords } from '../application/useReviewWorkspace';
 import { createReviewRepository } from '../infrastructure/createReviewRepository';
+import { DuplicateNotice } from './components/DuplicateNotice';
 import { ManualRecordContent } from './components/ManualRecordContent';
 import { ReviewLoading } from './components/ReviewLoading';
 
@@ -22,6 +24,8 @@ export function ManualRecordPage({ profileId }: { profileId: string }) {
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(profilesRepository, session.data);
   const create = useCreateManualRecords(reviewRepository, session.data, profileId);
+  const error = create.error instanceof ReviewRequestError ? create.error : null;
+  const duplicate = useDuplicatePrompt((request) => create.mutate(request), error);
   useProfileSessionRecovery(workspace.profiles.error);
   if (!session.data) return null;
   const main = session.data.role === 'main';
@@ -37,8 +41,18 @@ export function ManualRecordPage({ profileId }: { profileId: string }) {
           profile={profiles.find((item) => item.id === profileId) ?? null}
           saved={create.isSuccess}
           pending={create.isPending}
-          error={create.error instanceof ReviewRequestError ? create.error : null}
-          onSubmit={(request) => create.mutate(request)}
+          error={duplicate.formError}
+          onSubmit={duplicate.submit}
+          notice={
+            duplicate.prompt && (
+              <DuplicateNotice
+                duplicate={duplicate.prompt.record}
+                type={duplicate.prompt.type}
+                pending={create.isPending}
+                onConfirm={() => create.mutate(duplicate.prompt!.request)}
+              />
+            )
+          }
           onAgain={() => create.reset()}
           onBack={() => void navigate({ to: '/profiles/$profileId', params: { profileId } })}
         />

@@ -35,7 +35,11 @@ export interface LabResultDraft {
   items: { testName: string; value: string; unit: string | null; referenceRange: string | null }[];
 }
 
-export type ApprovalDraft =
-  | { type: 'device_reading'; data: DeviceReadingDraft; confirmOutOfRange?: boolean | undefined }
-  | { type: 'prescription'; data: PrescriptionDraft }
-  | { type: 'lab_result'; data: LabResultDraft };
+// `confirmDuplicate`: người duyệt chủ ý lưu thêm dù trùng chứng từ đã lưu (SPEC-012, BR-017).
+type Confirmable = { confirmDuplicate?: boolean | undefined };
+export type ApprovalDraft = Confirmable &
+  (
+    | { type: 'device_reading'; data: DeviceReadingDraft; confirmOutOfRange?: boolean | undefined }
+    | { type: 'prescription'; data: PrescriptionDraft }
+    | { type: 'lab_result'; data: LabResultDraft }
+  );

@@ -11,12 +11,16 @@ export function saveClinicalRecords(
   target: RecordTarget,
   draft: ApprovalDraft,
 ): Promise<SaveOutcome> {
+  const duplicate = draft.confirmDuplicate ?? false;
   switch (draft.type) {
     case 'device_reading':
-      return saveDeviceReading(store, target, draft.data, draft.confirmOutOfRange ?? false);
+      return saveDeviceReading(store, target, draft.data, {
+        outOfRange: draft.confirmOutOfRange ?? false,
+        duplicate,
+      });
     case 'prescription':
-      return savePrescription(store, target, draft.data);
+      return savePrescription(store, target, draft.data, duplicate);
     case 'lab_result':
-      return saveLabResult(store, target, draft.data);
+      return saveLabResult(store, target, draft.data, duplicate);
   }
 }

@@ -22,6 +22,14 @@ describe('Nhập trực tiếp không kèm ảnh (SPEC-011, BR-014)', () => {
     expect(html).toContain('Loại dữ liệu');
   });
 
+  it('SPEC-012: cảnh báo nghi trùng hiện dưới form nhập', () => {
+    const notice = <p>Giấy tờ này có vẻ đã được lưu trước đó</p>;
+    const html = renderToStaticMarkup(
+      <ManualRecordContent {...props} profile={profile('confirmed')} notice={notice} />,
+    );
+    expect(html).toContain('Giấy tờ này có vẻ đã được lưu trước đó');
+  });
+
   it('BR-009: hồ sơ chưa đồng thuận → không hiện form', () => {
     const html = renderToStaticMarkup(<ManualRecordContent {...props} profile={profile('invited')} />);
     expect(html).toContain('Hồ sơ chưa được đồng ý lưu dữ liệu');

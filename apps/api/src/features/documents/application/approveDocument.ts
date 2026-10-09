@@ -10,8 +10,8 @@ export type ApproveRequest = ApprovalDraft & { familyId: string; documentId: str
 // SPEC-011: chứng từ chờ nhập tay (kể cả hết ngân sách OCR) được nhập theo ảnh và duyệt thẳng.
 const MANUAL: readonly DocumentStatus[] = ['manual_entry', 'awaiting_budget'];
 
-// SPEC-010/011: khóa chứng từ → FSM → đúng loại (nhập tay thì người nhập chọn loại) → kiểm theo loại → ghi + approved.
-// Kiểm trùng (SPEC-012) thuộc E3-S5-T1, đợt thuốc (SPEC-014/015) thuộc E4. Ảnh gốc S3 không bị đụng tới.
+// SPEC-010/011: khóa chứng từ → FSM → đúng loại (nhập tay thì người nhập chọn loại) → kiểm theo loại → kiểm trùng
+// (SPEC-012) → ghi + approved. Đợt thuốc (SPEC-014/015) thuộc E4. Ảnh gốc S3 không bị đụng tới.
 export async function approveDocument(
   repository: ReviewRepository,
   request: ApproveRequest,

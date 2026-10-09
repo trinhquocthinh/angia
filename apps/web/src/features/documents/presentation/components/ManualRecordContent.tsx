@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
 import type { ApproveDocumentRequest } from '../../application/reviewPorts';
 import type { ReviewRequestError } from '../../application/ReviewRequestError';
@@ -10,6 +11,8 @@ type ManualRecordContentProps = {
   pending: boolean;
   error: ReviewRequestError | null;
   onSubmit: (request: ApproveDocumentRequest) => void;
+  /** Cảnh báo dưới form, vd. nghi trùng bản đã lưu (SPEC-012). */
+  notice?: ReactNode;
   onAgain: () => void;
   onBack: () => void;
 };
@@ -17,7 +20,14 @@ type ManualRecordContentProps = {
 const buttonClass = 'min-h-11 rounded-full px-5 text-sm font-semibold';
 
 // SPEC-011 không kèm ảnh: chỉ hồ sơ đã đồng thuận (BR-009); bản ghi gắn cờ nhập tay (BR-014).
-export function ManualRecordContent({ profile, saved, onAgain, onBack, ...form }: ManualRecordContentProps) {
+export function ManualRecordContent({
+  profile,
+  saved,
+  notice,
+  onAgain,
+  onBack,
+  ...form
+}: ManualRecordContentProps) {
   if (!profile)
     return <ReviewNotice title="Không tìm thấy hồ sơ" body="Không tìm thấy hồ sơ này trong gia đình." />;
   if (profile.consentStatus !== 'confirmed')
@@ -54,6 +64,7 @@ export function ManualRecordContent({ profile, saved, onAgain, onBack, ...form }
         intro="Dữ liệu được ghi là nhập tay, không kèm chứng từ gốc. Nhập đúng như trên giấy tờ hoặc màn hình máy đo."
         {...form}
       />
+      {notice}
     </div>
   );
 }

@@ -11,11 +11,19 @@ export interface ClinicalRecords {
 export interface ApprovedRecords extends ClinicalRecords {
   document: SourceDocument;
 }
+/** SPEC-012: bản đã lưu bị trùng; `duplicateOf = null` khi bản đó nhập trực tiếp không kèm chứng từ. */
+export interface DuplicateRecord {
+  duplicateOf: string | null;
+  recordDate: string;
+  facility: string | null;
+  savedAt: Date;
+}
 export type ApproveError =
   | { ok: false; code: 'ERR_NOT_FOUND' | 'ERR_VALIDATION' | 'ERR_INVALID_STATE_TRANSITION' }
   | { ok: false; code: 'ERR_DOCUMENT_DATE_REQUIRED' | 'ERR_BP_INVALID' | 'ERR_GLUCOSE_UNIT_REQUIRED' }
   | { ok: false; code: 'ERR_OUT_OF_RANGE_UNCONFIRMED'; fields: string[] }
-  | { ok: false; code: 'ERR_DOSE_INFO_MISSING'; invalidItemIndexes: number[] };
+  | { ok: false; code: 'ERR_DOSE_INFO_MISSING'; invalidItemIndexes: number[] }
+  | { ok: false; code: 'ERR_DUPLICATE_UNCONFIRMED'; duplicate: DuplicateRecord };
 export type ApproveOutcome = { ok: true; value: ApprovedRecords } | ApproveError;
 
 /** Bản ghi đã lưu kèm ngày ghi nhận (ngày đo/kê/trả kết quả) để cập nhật ngày chứng từ. */

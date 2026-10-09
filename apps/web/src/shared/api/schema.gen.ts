@@ -1182,7 +1182,7 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_INVALID_STATE_TRANSITION */
+        /** @description ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt) */
         409: {
           headers: {
             [name: string]: unknown;
@@ -1343,7 +1343,7 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_CONSENT_REQUIRED */
+        /** @description ERR_CONSENT_REQUIRED, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt) */
         409: {
           headers: {
             [name: string]: unknown;
@@ -2412,6 +2412,7 @@ export interface components {
             glucoseUnit: 'mmol/L' | 'mg/dL' | null;
           };
           confirmOutOfRange?: boolean;
+          confirmDuplicate?: boolean;
         }
       | {
           /** @enum {string} */
@@ -2435,6 +2436,7 @@ export interface components {
               totalQuantity: number | null;
             }[];
           };
+          confirmDuplicate?: boolean;
         }
       | {
           /** @enum {string} */
@@ -2452,6 +2454,7 @@ export interface components {
               referenceRange: string | null;
             }[];
           };
+          confirmDuplicate?: boolean;
         };
     ManualRecordsResponse: {
       measurements: components['schemas']['Measurement'][];

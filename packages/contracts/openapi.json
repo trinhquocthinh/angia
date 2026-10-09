@@ -1280,6 +1280,9 @@
               },
               "confirmOutOfRange": {
                 "type": "boolean"
+              },
+              "confirmDuplicate": {
+                "type": "boolean"
               }
             },
             "required": [
@@ -1421,6 +1424,9 @@
                   "diagnosis",
                   "items"
                 ]
+              },
+              "confirmDuplicate": {
+                "type": "boolean"
               }
             },
             "required": [
@@ -1507,6 +1513,9 @@
                   "facility",
                   "items"
                 ]
+              },
+              "confirmDuplicate": {
+                "type": "boolean"
               }
             },
             "required": [
@@ -3039,7 +3048,7 @@
             }
           },
           "409": {
-            "description": "ERR_INVALID_STATE_TRANSITION",
+            "description": "ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt)",
             "content": {
               "application/json": {
                 "schema": {
@@ -3201,7 +3210,7 @@
             }
           },
           "409": {
-            "description": "ERR_CONSENT_REQUIRED",
+            "description": "ERR_CONSENT_REQUIRED, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt)",
             "content": {
               "application/json": {
                 "schema": {

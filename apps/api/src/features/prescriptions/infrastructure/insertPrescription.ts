@@ -1,10 +1,10 @@
 import { prescriptionItems, prescriptions } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import { normalizeName } from '../domain/normalizeName.js';
-import type { DoseSlot, NewPrescription, Prescription } from '../domain/Prescription.js';
+import type { NewPrescription, Prescription } from '../domain/Prescription.js';
+import { toPrescription } from './prescriptionRows.js';
 
 const toNumeric = (value: number | null) => (value === null ? null : String(value));
-const fromNumeric = (value: string | null) => (value === null ? null : Number(value));
 
 // Đơn + dòng thuốc trong cùng transaction của lệnh duyệt; `position` giữ thứ tự dòng trên đơn.
 export async function insertPrescription(
@@ -32,28 +32,5 @@ export async function insertPrescription(
       })),
     )
     .returning();
-  return {
-    id: row.id,
-    healthProfileId: row.healthProfileId,
-    sourceDocumentId: row.sourceDocumentId,
-    issuedDate: row.issuedDate,
-    facility: row.facility,
-    diagnosis: row.diagnosis,
-    manualWithoutSource: row.manualWithoutSource,
-    createdAt: row.createdAt,
-    items: itemRows
-      .sort((a, b) => a.position - b.position)
-      .map((item) => ({
-        id: item.id,
-        name: item.name,
-        strength: item.strength,
-        quantityPerDose: Number(item.quantityPerDose),
-        doseUnit: item.doseUnit,
-        slots: item.slots as DoseSlot[],
-        durationDays: item.durationDays,
-        longTerm: item.longTerm,
-        note: item.note,
-        totalQuantity: fromNumeric(item.totalQuantity),
-      })),
-  };
+  return toPrescription(row, itemRows);
 }

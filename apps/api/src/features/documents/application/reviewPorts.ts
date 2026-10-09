@@ -1,5 +1,9 @@
 import type { LabResult, NewLabResult } from '@src/features/labResults/domain/LabResult.js';
-import type { Measurement, NewMeasurement } from '@src/features/measurements/domain/Measurement.js';
+import type {
+  Measurement,
+  MeasurementKind,
+  NewMeasurement,
+} from '@src/features/measurements/domain/Measurement.js';
 import type { NewPrescription, Prescription } from '@src/features/prescriptions/domain/Prescription.js';
 import type { DocumentStatus, DocumentType, SourceDocument } from '../domain/SourceDocument.js';
 import type { ProfileConsent } from './ports.js';
@@ -26,6 +30,14 @@ export interface ReviewStore {
   insertMeasurement(input: NewMeasurement): Promise<Measurement>;
   insertPrescription(input: NewPrescription): Promise<Prescription>;
   insertLabResults(inputs: NewLabResult[]): Promise<LabResult[]>;
+  /** Bản ghi đã lưu của hồ sơ trong một ngày để kiểm trùng (SPEC-012), cả bản nhập trực tiếp. */
+  findPrescriptionsOn(healthProfileId: string, issuedDate: string): Promise<Prescription[]>;
+  findLabResultsOn(healthProfileId: string, resultDate: string): Promise<LabResult[]>;
+  findMeasurementsOn(
+    healthProfileId: string,
+    kind: MeasurementKind,
+    measuredOn: string,
+  ): Promise<Measurement[]>;
   /** Hồ sơ cùng gia đình (khóa chia sẻ) để nhập trực tiếp không kèm chứng từ. */
   findProfile(id: string): Promise<ProfileConsent | null>;
   /** Ghi ngày chứng từ và loại (nhập tay có thể đổi loại); chỉ cập nhật khi trạng thái còn thuộc `from`. */
