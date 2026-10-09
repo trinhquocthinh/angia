@@ -51,6 +51,15 @@ export const prescriptionFormSchema = z.object({
 export type PrescriptionFormValues = z.infer<typeof prescriptionFormSchema>;
 export type PrescriptionItemValues = PrescriptionFormValues['items'][number];
 
+// Thứ tự lời nhắn trong tóm tắt dòng lỗi.
+export const PRESCRIPTION_ROW_FIELDS = [
+  'name',
+  'quantityPerDose',
+  'totalQuantity',
+  'slots',
+  'durationDays',
+] as const;
+
 const text = (value: number | string | null) => (value === null ? '' : String(value));
 
 export const emptyPrescriptionItem = (): PrescriptionItemValues => ({

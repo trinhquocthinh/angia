@@ -3,6 +3,7 @@ import type { ApproveDocumentRequest, SourceDocument } from '../../application/r
 import type { ReviewRequestError } from '../../application/ReviewRequestError';
 import { reviewItemState } from '../../application/reviewQueuePolling';
 import { ExtractingPlaceholder } from './ExtractingPlaceholder';
+import { LabResultForm } from './LabResultForm';
 import { PrescriptionForm } from './PrescriptionForm';
 import { ReadingForm } from './ReadingForm';
 import { ReviewNotice } from './ReviewNotice';
@@ -43,11 +44,14 @@ export function ReviewDetailBody({ document, extraction, pending, error, onSubmi
         onSubmit={onSubmit}
       />
     );
-  if (document.type !== 'device_reading')
+  if (document.type === 'lab_result')
     return (
-      <ReviewNotice
-        title="Sẽ duyệt được ở bản cập nhật sau"
-        body="Hiện chưa duyệt được kết quả xét nghiệm. Chứng từ vẫn được giữ trong hàng đợi."
+      <LabResultForm
+        key={document.id}
+        payload={extraction?.type === 'lab_result' ? extraction : null}
+        pending={pending}
+        error={error}
+        onSubmit={onSubmit}
       />
     );
   const payload = extraction?.type === 'device_reading' ? extraction : null;

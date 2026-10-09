@@ -8,6 +8,8 @@ export type PrescriptionPayload = Extract<ExtractionPayload, { type: 'prescripti
 export type DoseSlot = PrescriptionPayload['items'][number]['slots'][number];
 export type ApproveDocumentRequest = components['schemas']['ApproveDocumentRequest'];
 export type PrescriptionApproval = Extract<ApproveDocumentRequest, { type: 'prescription' }>['data'];
+export type LabResultPayload = Extract<ExtractionPayload, { type: 'lab_result' }>;
+export type LabResultApproval = Extract<ApproveDocumentRequest, { type: 'lab_result' }>['data'];
 type ApprovedDocument = components['schemas']['ApprovedDocumentResponse'];
 type SourceDocumentPage = components['schemas']['SourceDocumentPage'];
 

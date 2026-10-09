@@ -1,8 +1,8 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { PrescriptionPayload } from '../../application/reviewPorts';
-import { PrescriptionErrorSummary } from './PrescriptionErrorSummary';
 import { PrescriptionForm } from './PrescriptionForm';
+import { RowErrorSummary } from './RowErrorSummary';
 
 const payload: PrescriptionPayload = {
   type: 'prescription',
@@ -76,17 +76,22 @@ describe('Form duyệt đơn thuốc (SPEC-010, BR-025)', () => {
 describe('Tóm tắt dòng lỗi', () => {
   it('liên kết tới đúng dòng thuốc thiếu thông tin', () => {
     const html = renderToStaticMarkup(
-      <PrescriptionErrorSummary
+      <RowErrorSummary
+        noun="dòng thuốc"
+        anchorPrefix="rx-item"
         rows={[{ index: 1, label: 'Dòng 2 · Metformin', messages: ['Chọn ít nhất một buổi dùng.'] }]}
       />,
     );
     expect(html).toContain('role="alert"');
     expect(html).toContain('href="#rx-item-1"');
+    expect(html).toContain('Còn 1 dòng thuốc thiếu thông tin:');
     expect(html).toContain('Dòng 2 · Metformin');
     expect(html).toContain('Chọn ít nhất một buổi dùng.');
   });
 
   it('không hiện gì khi không có dòng lỗi', () => {
-    expect(renderToStaticMarkup(<PrescriptionErrorSummary rows={[]} />)).toBe('');
+    expect(renderToStaticMarkup(<RowErrorSummary rows={[]} noun="chỉ số" anchorPrefix="lab-item" />)).toBe(
+      '',
+    );
   });
 });

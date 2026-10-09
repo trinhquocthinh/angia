@@ -3,18 +3,20 @@ import { useEffect } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import {
   emptyPrescriptionItem,
+  PRESCRIPTION_ROW_FIELDS,
   prescriptionFormSchema,
   toPrescriptionApproval,
   toPrescriptionFormValues,
   type PrescriptionFormValues,
 } from '../../application/prescriptionForm';
-import { summarizeRowErrors } from '../../application/prescriptionRowErrors';
+import { summarizeRowErrors } from '../../application/rowErrors';
 import type { ApproveDocumentRequest, PrescriptionPayload } from '../../application/reviewPorts';
 import type { ReviewRequestError } from '../../application/ReviewRequestError';
-import { PrescriptionErrorSummary } from './PrescriptionErrorSummary';
+import { AddRowButton } from './AddRowButton';
 import { PrescriptionGeneralFields } from './PrescriptionGeneralFields';
 import { PrescriptionItemCard } from './PrescriptionItemCard';
 import { ReviewSubmitBar } from './ReviewSubmitBar';
+import { RowErrorSummary } from './RowErrorSummary';
 
 type PrescriptionFormProps = {
   payload: PrescriptionPayload | null;
@@ -39,7 +41,7 @@ export function PrescriptionForm({ payload, pending, error, onSubmit }: Prescrip
     for (const index of error?.invalidItemIndexes ?? [])
       form.setError(`items.${index}.durationDays`, { type: 'server', message: SERVER_ROW_MESSAGE });
   }, [error, form]);
-  const rows = summarizeRowErrors(form.formState.errors.items, names);
+  const rows = summarizeRowErrors(form.formState.errors.items, names, PRESCRIPTION_ROW_FIELDS);
   const otherError = error && error.code !== 'ERR_DOSE_INFO_MISSING' ? error.message : null;
   const submit = form.handleSubmit((values) =>
     onSubmit({ type: 'prescription', data: toPrescriptionApproval(values) }),
@@ -67,15 +69,9 @@ export function PrescriptionForm({ payload, pending, error, onSubmit }: Prescrip
             />
           ))}
         </ol>
-        <button
-          type="button"
-          onClick={() => items.append(emptyPrescriptionItem())}
-          className="inline-flex min-h-11 items-center justify-center rounded-xl border border-dashed border-[#6f7975] px-4 text-sm font-semibold text-[#004135] hover:bg-[#eaf6f5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
-        >
-          + Thêm thuốc
-        </button>
+        <AddRowButton label="Thêm thuốc" onAdd={() => items.append(emptyPrescriptionItem())} />
       </section>
-      <PrescriptionErrorSummary rows={rows} />
+      <RowErrorSummary rows={rows} noun="dòng thuốc" anchorPrefix="rx-item" />
       {otherError && (
         <p role="alert" className="rounded-2xl bg-[#fdecea] p-4 text-sm text-[#b42318]">
           {otherError}
