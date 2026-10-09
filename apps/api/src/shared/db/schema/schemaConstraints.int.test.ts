@@ -88,7 +88,7 @@ describe('Ràng buộc lược đồ Walking Skeleton', () => {
     ).resolves.toMatchObject({ rowCount: 1 });
   });
 
-  it('BR-015: chứng từ approved bắt buộc có document_date', async () => {
+  it('TC-088 (BR-015): UPDATE trực tiếp sang approved khi chưa có ngày bị CHECK từ chối', async () => {
     await expect(
       owner.query(`UPDATE source_documents SET status = 'approved' WHERE id = $1`, [documentId]),
     ).rejects.toThrow(/source_documents_approved_has_date/);
@@ -130,11 +130,51 @@ describe('Ràng buộc lược đồ Walking Skeleton', () => {
     ).resolves.toMatchObject({ rowCount: 1 });
   });
 
+  it('BR-025/BR-014: dòng thuốc thiếu số ngày khi không dài hạn, đơn/xét nghiệm không có nguồn bị từ chối', async () => {
+    const prescriptionId = randomUUID();
+    await expect(
+      owner.query(
+        `INSERT INTO prescriptions (id, family_id, health_profile_id, issued_date) VALUES ($1, $2, $3, '2026-10-01')`,
+        [prescriptionId, familyId, profileId],
+      ),
+    ).rejects.toThrow(/prescriptions_has_source/);
+    await owner.query(
+      `INSERT INTO prescriptions (id, family_id, health_profile_id, source_document_id, issued_date)
+       VALUES ($1, $2, $3, $4, '2026-10-01')`,
+      [prescriptionId, familyId, profileId, documentId],
+    );
+    const insertItem = (values: string) =>
+      owner.query(
+        `INSERT INTO prescription_items (id, family_id, prescription_id, position, name, name_normalized,
+           quantity_per_dose, slots, duration_days, long_term) VALUES ($1, $2, $3, 0, 'A', 'a', ${values})`,
+        [randomUUID(), familyId, prescriptionId],
+      );
+    await expect(insertItem(`1, ARRAY['morning'], NULL, false`)).rejects.toThrow(
+      /prescription_items_duration/,
+    );
+    await expect(insertItem(`1, ARRAY[]::text[], 5, false`)).rejects.toThrow(
+      /prescription_items_slots_valid/,
+    );
+    await expect(insertItem(`1, ARRAY['sang'], 5, false`)).rejects.toThrow(/prescription_items_slots_valid/);
+    await expect(insertItem(`0, ARRAY['noon'], 5, false`)).rejects.toThrow(/quantity_positive/);
+    await expect(insertItem(`1, ARRAY['morning', 'evening'], NULL, true`)).resolves.toMatchObject({
+      rowCount: 1,
+    });
+    await expect(
+      owner.query(
+        `INSERT INTO lab_results (id, family_id, health_profile_id, result_date, test_name, test_name_normalized, value)
+         VALUES ($1, $2, $3, '2026-10-01', 'HbA1c', 'hba1c', '7.2')`,
+        [randomUUID(), familyId, profileId],
+      ),
+    ).rejects.toThrow(/lab_results_has_source/);
+  });
+
   it('BR-010: xóa hồ sơ xóa dây chuyền chứng từ, số đo và gỡ liên kết tài khoản', async () => {
     await owner.query(`DELETE FROM health_profiles WHERE id = $1`, [profileId]);
     const remaining = await owner.query<{ total: string }>(
       `SELECT (SELECT count(*) FROM source_documents) + (SELECT count(*) FROM measurements)
-            + (SELECT count(*) FROM upload_batches) AS total`,
+            + (SELECT count(*) FROM upload_batches) + (SELECT count(*) FROM prescriptions)
+            + (SELECT count(*) FROM prescription_items) AS total`,
     );
     expect(remaining.rows[0]?.total).toBe('0');
     const account = await owner.query(`SELECT health_profile_id FROM accounts WHERE id = $1`, [accountId]);

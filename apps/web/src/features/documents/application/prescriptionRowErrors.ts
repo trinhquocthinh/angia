@@ -1,4 +1,4 @@
-const FIELD_ORDER = ['name', 'quantityPerDose', 'slots', 'durationDays'] as const;
+const FIELD_ORDER = ['name', 'quantityPerDose', 'totalQuantity', 'slots', 'durationDays'] as const;
 
 type FieldError = { message?: string | undefined } | undefined;
 type RowErrors = Partial<Record<(typeof FIELD_ORDER)[number], FieldError>> | undefined;

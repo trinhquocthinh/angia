@@ -13,7 +13,7 @@ type ItemCardProps = {
 // Một dòng thuốc của `useFieldArray`; viền đỏ khi dòng còn thiếu thông tin để dễ thấy vị trí lỗi.
 export function PrescriptionItemCard({ form, index, onRemove }: ItemCardProps) {
   const errors = form.formState.errors.items?.[index];
-  const invalid = Boolean(errors?.name ?? errors?.quantityPerDose ?? errors?.slots ?? errors?.durationDays);
+  const invalid = Object.keys(errors ?? {}).length > 0;
   const order = index + 1;
   return (
     <li

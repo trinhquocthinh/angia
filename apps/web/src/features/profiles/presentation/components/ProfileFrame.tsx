@@ -26,7 +26,7 @@ export function ProfileFrame({
         pending={logout.isPending}
         error={logout.isError}
         onLogout={() => logout.mutate()}
-        pendingCount={queue.data?.length}
+        pendingCount={queue.data?.pages.reduce((sum, page) => sum + page.items.length, 0)}
       />
       <div className="min-w-0 lg:ml-[240px]">
         <header className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-b border-[#e4f0ef] px-4 py-3 lg:px-8">

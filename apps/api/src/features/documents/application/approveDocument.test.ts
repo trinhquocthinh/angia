@@ -1,27 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { createMemoryReviewRepository } from '@src/shared/test/createMemoryReviewRepository.js';
-import type { SourceDocument } from '../domain/SourceDocument.js';
+import { reviewDocument } from '@src/shared/test/reviewDocumentFixture.js';
+import type { DeviceReadingDraft } from './approvalDrafts.js';
 import { approveDocument, type ApproveRequest } from './approveDocument.js';
 
-const document = (overrides: Partial<SourceDocument> = {}): SourceDocument => ({
-  id: 'doc-1',
-  familyId: 'family-a',
-  healthProfileId: 'me',
-  batchId: 'batch-1',
-  type: 'device_reading',
-  status: 'pending_review',
-  documentDate: null,
-  originalKey: 'families/family-a/profiles/me/documents/doc-1/original.jpg',
-  previewKey: null,
-  mimeType: 'image/jpeg',
-  sizeBytes: 1024,
-  createdAt: new Date('2026-10-06T00:00:00Z'),
-  ...overrides,
-});
-const request = (
-  data: Partial<ApproveRequest['data']> = {},
-  confirmOutOfRange?: boolean,
-): ApproveRequest => ({
+const document = reviewDocument;
+const request = (data: Partial<DeviceReadingDraft> = {}, confirmOutOfRange?: boolean): ApproveRequest => ({
   familyId: 'family-a',
   documentId: 'doc-1',
   type: 'device_reading',

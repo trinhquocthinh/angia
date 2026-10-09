@@ -60,6 +60,10 @@ const ERROR_CATALOG = {
     status: 422,
     message: 'Vui lòng lựa chọn đơn vị đo lường cho chỉ số đường huyết (mmol/L hoặc mg/dL).',
   },
+  ERR_DOSE_INFO_MISSING: {
+    status: 422,
+    message: 'Thông tin dòng thuốc chưa đầy đủ (yêu cầu buổi dùng, liều dùng và thời lượng).',
+  },
   ERR_VALIDATION: { status: 422, message: 'Dữ liệu gửi lên không đúng định dạng quy định.' },
   ERR_UPLOAD_TIMEOUT: {
     status: 408,

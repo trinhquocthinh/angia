@@ -3,7 +3,7 @@ import { mkdtemp, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import type { HealthProfile, UploadBatchResponse } from '@angia/contracts';
+import type { HealthProfile, SourceDocumentPage, UploadBatchResponse } from '@angia/contracts';
 import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
@@ -220,11 +220,14 @@ describe('Tải chứng từ đơn lẻ/theo lô: route thật, transaction và 
     await t.owner.query(`UPDATE source_documents SET document_date = $2 WHERE id = $1`, [aug, '2026-08-01']);
     await upload(main, profile.id, jpegs(1));
     const listed = await t.call(main, 'GET', `/api/source-documents?batchId=${batch.id}`);
-    expect(((await listed.json()) as { id: string }[]).map((d) => d.id)).toEqual([aug, sep, unknown]);
+    const page = (await listed.json()) as SourceDocumentPage;
+    expect(page.items.map((d) => d.id)).toEqual([aug, sep, unknown]);
+    expect(page.nextCursor).toBeNull();
     const other = await t.session(await t.family());
-    expect(await (await t.call(other, 'GET', `/api/source-documents?batchId=${batch.id}`)).json()).toEqual(
-      [],
-    );
+    expect(await (await t.call(other, 'GET', `/api/source-documents?batchId=${batch.id}`)).json()).toEqual({
+      items: [],
+      nextCursor: null,
+    });
   });
 
   it('member và request thiếu CSRF bị chặn 403, không phiên 401', async () => {

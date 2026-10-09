@@ -18,6 +18,7 @@ const item = (patch: Partial<PrescriptionItemValues> = {}): PrescriptionItemValu
   durationDays: '30',
   longTerm: false,
   note: '',
+  totalQuantity: '',
   fromAi: true,
   ...patch,
 });
@@ -52,6 +53,7 @@ describe('Form đối soát đơn thuốc (SPEC-010, BR-025)', () => {
           durationDays: null,
           longTerm: false,
           note: 'ngày 2 viên chia 2 lần',
+          totalQuantity: 60,
         },
       ],
     };
@@ -69,6 +71,7 @@ describe('Form đối soát đơn thuốc (SPEC-010, BR-025)', () => {
             slots: [],
             durationDays: '',
             note: 'ngày 2 viên chia 2 lần',
+            totalQuantity: '60',
           }),
         ],
       }),
@@ -136,6 +139,7 @@ describe('Form đối soát đơn thuốc (SPEC-010, BR-025)', () => {
           durationDays: null,
           longTerm: true,
           note: 'sau ăn',
+          totalQuantity: null,
         },
       ],
     });
@@ -144,5 +148,14 @@ describe('Form đối soát đơn thuốc (SPEC-010, BR-025)', () => {
   it('giữ thứ tự buổi Sáng → Tối dù người duyệt chọn lộn xộn', () => {
     const approval = toPrescriptionApproval(values({ items: [item({ slots: ['evening', 'morning'] })] }));
     expect(approval.items[0]?.slots).toEqual(['morning', 'evening']);
+  });
+
+  it('tổng số lượng tùy chọn; nhập thì phải là số > 0 và được gửi kèm bản đối soát (E3-S3-T3)', () => {
+    expect(errorsOf(values({ items: [item({ totalQuantity: '0' })] }))).toEqual({
+      'items.0.totalQuantity': 'Nhập số lớn hơn 0 hoặc để trống.',
+    });
+    const approval = toPrescriptionApproval(values({ items: [item({ totalQuantity: '30' })] }));
+    expect(approval.items[0]!.totalQuantity).toBe(30);
+    expect(toPrescriptionApproval(values()).items[0]!.totalQuantity).toBeNull();
   });
 });

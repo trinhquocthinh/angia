@@ -3,18 +3,20 @@ import { extractionPayloadSchema } from '@angia/contracts';
 import { requireMain } from '@src/shared/auth/presentation/requireMain.js';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { errorJson } from '@src/shared/http/errorResponse.js';
-import { toMeasurementResponse } from '@src/features/measurements/presentation/toMeasurementResponse.js';
 import { approveDocument } from '../application/approveDocument.js';
 import { getDocumentReview } from '../application/getDocumentReview.js';
 import { listDocuments } from '../application/listDocuments.js';
 import { openDocumentImage } from '../application/openDocumentImage.js';
+import { rejectDocument } from '../application/rejectDocument.js';
 import type { ObjectReader, ReviewRepository } from '../application/reviewPorts.js';
 import {
   approveDocumentRoute,
   documentImageRoute,
   documentReviewRoute,
   listDocumentsRoute,
+  rejectDocumentRoute,
 } from './reviewRouteDefinitions.js';
+import { toApprovedDocumentResponse } from './toApprovedDocumentResponse.js';
 import { toSourceDocumentResponse } from './toSourceDocumentResponse.js';
 
 export interface ReviewDependencies {
@@ -32,10 +34,10 @@ export function registerReviewRoutes(app: OpenAPIHono<AppEnv>, deps: ReviewDepen
     await next();
   });
   app.openapi(listDocumentsRoute, async (c) => {
-    const { status, profileId, batchId } = c.req.valid('query');
+    const { status, ...filter } = c.req.valid('query');
     const statuses = status === undefined ? undefined : [status].flat();
-    const documents = await listDocuments(deps.repository, familyOf(c), { statuses, profileId, batchId });
-    return c.json(documents.map(toSourceDocumentResponse), 200);
+    const page = await listDocuments(deps.repository, familyOf(c), { ...filter, statuses });
+    return c.json({ items: page.items.map(toSourceDocumentResponse), nextCursor: page.nextCursor }, 200);
   });
   app.openapi(documentReviewRoute, async (c) => {
     const result = await getDocumentReview(deps.repository, familyOf(c), c.req.valid('param').id);
@@ -62,16 +64,16 @@ export function registerReviewRoutes(app: OpenAPIHono<AppEnv>, deps: ReviewDepen
       familyId: familyOf(c),
       documentId: c.req.valid('param').id,
     });
-    if (result.ok) {
-      const { document, measurements } = result.value;
-      const response = {
-        document: toSourceDocumentResponse(document),
-        measurements: measurements.map(toMeasurementResponse),
-      };
-      return c.json(response, 200);
-    }
+    if (result.ok) return c.json(toApprovedDocumentResponse(result.value), 200);
     if (result.code === 'ERR_OUT_OF_RANGE_UNCONFIRMED')
       return c.json(...errorJson(result.code, { fields: result.fields }));
+    if (result.code === 'ERR_DOSE_INFO_MISSING')
+      return c.json(...errorJson(result.code, { invalidItemIndexes: result.invalidItemIndexes }));
     return c.json(...errorJson(result.code));
+  });
+  app.openapi(rejectDocumentRoute, async (c) => {
+    const result = await rejectDocument(deps.repository, familyOf(c), c.req.valid('param').id);
+    if (!result.ok) return c.json(...errorJson(result.code));
+    return c.json(toSourceDocumentResponse(result.value), 200);
   });
 }

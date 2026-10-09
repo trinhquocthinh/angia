@@ -17,6 +17,7 @@ const SAMPLE_PRESCRIPTION: ExtractionPayload = {
       durationDays: 30,
       longTerm: false,
       note: 'Dữ liệu giả lập từ AI_PROVIDER=fake',
+      totalQuantity: 30,
     },
   ],
 };

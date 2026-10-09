@@ -9,6 +9,7 @@ import { ReviewNotice } from './ReviewNotice';
 import { PrivacyEditor } from './PrivacyEditor';
 import { ReviewDetailBody } from './ReviewDetailBody';
 import { ReviewDetailHeading } from './ReviewDetailHeading';
+import { RejectDocumentControl } from './RejectDocumentControl';
 import { ReviewLoading } from './ReviewLoading';
 import type { PrivacyRepository } from '../../application/privacyPorts';
 
@@ -21,6 +22,17 @@ type ReviewDetailProps = {
   profileNames: Map<string, string>;
 };
 
+// Lưu hoặc loại bỏ xong thì sang chứng từ kế tiếp; hết hàng đợi thì về danh sách.
+function useGoToNextDocument(queue: SourceDocument[], documentId: string) {
+  const navigate = useNavigate();
+  return () => {
+    const next = nextDocumentId(queue, documentId);
+    void (next
+      ? navigate({ to: '/review/$documentId', params: { documentId: next } })
+      : navigate({ to: '/review' }));
+  };
+}
+
 // Design §6 `/review/:id`: ảnh phía trên (desktop bên trái), form đối soát, lưu xong sang chứng từ kế tiếp.
 export function ReviewDetail({
   repository,
@@ -30,7 +42,7 @@ export function ReviewDetail({
   queue,
   profileNames,
 }: ReviewDetailProps) {
-  const navigate = useNavigate();
+  const goNext = useGoToNextDocument(queue, documentId);
   const review = useDocumentReview(repository, session, documentId);
   const approve = useApproveDocument(repository, session, documentId);
   if (review.isPending) return <ReviewLoading />;
@@ -42,15 +54,8 @@ export function ReviewDetail({
       />
     );
   const { document, extraction } = review.data;
-  const save = (request: ApproveDocumentRequest) => {
-    const next = nextDocumentId(queue, documentId);
-    approve.mutate(request, {
-      onSuccess: () =>
-        void (next
-          ? navigate({ to: '/review/$documentId', params: { documentId: next } })
-          : navigate({ to: '/review' })),
-    });
-  };
+  const save = (request: ApproveDocumentRequest) => approve.mutate(request, { onSuccess: goNext });
+  const rejectable = document.status === 'pending_review' || document.status === 'manual_entry';
   const profileName = profileNames.get(document.healthProfileId) ?? 'Hồ sơ';
   return (
     <div className="flex flex-col gap-4">
@@ -65,13 +70,22 @@ export function ReviewDetail({
       ) : (
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <DocumentImagePanel key={`${document.id}:${document.status}`} document={document} />
-          <ReviewDetailBody
-            document={document}
-            extraction={extraction}
-            pending={approve.isPending}
-            error={approve.error instanceof ReviewRequestError ? approve.error : null}
-            onSubmit={save}
-          />
+          <div className="flex flex-col gap-4">
+            <ReviewDetailBody
+              document={document}
+              extraction={extraction}
+              pending={approve.isPending}
+              error={approve.error instanceof ReviewRequestError ? approve.error : null}
+              onSubmit={save}
+            />
+            {rejectable && (
+              <RejectDocumentControl
+                key={document.id}
+                {...{ repository, session, documentId }}
+                onRejected={goNext}
+              />
+            )}
+          </div>
         </div>
       )}
     </div>

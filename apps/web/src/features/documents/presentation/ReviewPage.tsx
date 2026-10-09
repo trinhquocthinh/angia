@@ -28,7 +28,7 @@ export function ReviewPage({ documentId = null }: { documentId?: string | null }
   const main = session.data.role === 'main';
   const profiles = workspace.profiles.data ?? [];
   const names = new Map(profiles.map((profile) => [profile.id, profile.displayName]));
-  const documents = queue.data ?? [];
+  const documents = queue.data?.pages.flatMap((page) => page.items) ?? [];
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
       <UploadedNotice />
@@ -42,6 +42,11 @@ export function ReviewPage({ documentId = null }: { documentId?: string | null }
               loading={queue.isPending}
               error={queue.isError}
               retry={() => void queue.refetch()}
+              more={
+                queue.hasNextPage
+                  ? { loading: queue.isFetchingNextPage, load: () => void queue.fetchNextPage() }
+                  : null
+              }
             />
           </div>
           <div className={documentId ? '' : 'max-lg:hidden'}>

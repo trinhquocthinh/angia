@@ -907,7 +907,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Danh sách chứng từ của gia đình theo bộ lọc, mới nhất trước; lọc theo lô thì theo ngày chứng từ tăng dần */
+    /** Danh sách chứng từ của gia đình theo bộ lọc, mới nhất trước, phân trang cursor; lọc theo lô thì theo ngày chứng từ tăng dần và trả cả lô */
     get: {
       parameters: {
         query?: {
@@ -934,6 +934,8 @@ export interface paths {
               )[];
           profileId?: string;
           batchId?: string;
+          limit?: number;
+          cursor?: string;
         };
         header?: never;
         path?: never;
@@ -941,13 +943,13 @@ export interface paths {
       };
       requestBody?: never;
       responses: {
-        /** @description Chứng từ */
+        /** @description Một trang chứng từ; nextCursor null khi hết */
         200: {
           headers: {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['SourceDocument'][];
+            'application/json': components['schemas']['SourceDocumentPage'];
           };
         };
         /** @description ERR_UNAUTHENTICATED */
@@ -961,6 +963,15 @@ export interface paths {
         };
         /** @description ERR_FORBIDDEN: cần main cùng gia đình (và CSRF với lệnh đột biến) */
         403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: limit ngoài 1–100 hoặc cursor không phải UUID */
+        422: {
           headers: {
             [name: string]: unknown;
           };
@@ -1119,7 +1130,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Phê duyệt bản trích xuất số đo máy (E2-S6-T1: chỉ device_reading) */
+    /** Phê duyệt bản đối soát: số đo máy, đơn thuốc hoặc phiếu xét nghiệm */
     post: {
       parameters: {
         query?: never;
@@ -1135,7 +1146,7 @@ export interface paths {
         };
       };
       responses: {
-        /** @description Chứng từ approved và số đo đã lưu */
+        /** @description Chứng từ approved và dữ liệu lâm sàng đã lưu */
         200: {
           headers: {
             [name: string]: unknown;
@@ -1180,8 +1191,82 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_VALIDATION */
+        /** @description ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_DOSE_INFO_MISSING (details.invalidItemIndexes), ERR_VALIDATION */
         422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/source-documents/{id}/reject': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Loại bỏ chứng từ chờ duyệt hoặc chờ nhập tay; ảnh gốc giữ nguyên */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Chứng từ rejected */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['SourceDocument'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: cần main cùng gia đình (và CSRF với lệnh đột biến) */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_INVALID_STATE_TRANSITION */
+        409: {
           headers: {
             [name: string]: unknown;
           };
@@ -2090,6 +2175,11 @@ export interface components {
       /** @enum {string} */
       declaredType?: 'prescription' | 'lab_result' | 'device_reading';
     };
+    SourceDocumentPage: {
+      items: components['schemas']['SourceDocument'][];
+      /** Format: uuid */
+      nextCursor: string | null;
+    };
     DocumentReview: {
       document: components['schemas']['SourceDocument'];
       extraction:
@@ -2109,6 +2199,8 @@ export interface components {
               durationDays: number | null;
               longTerm: boolean;
               note: string | null;
+              /** @default null */
+              totalQuantity: number | null;
             }[];
           }
         | {
@@ -2142,6 +2234,8 @@ export interface components {
     ApprovedDocumentResponse: {
       document: components['schemas']['SourceDocument'];
       measurements: components['schemas']['Measurement'][];
+      prescription: components['schemas']['Prescription'];
+      labResults: components['schemas']['LabResult'][];
     };
     Measurement: {
       /** Format: uuid */
@@ -2165,26 +2259,113 @@ export interface components {
       /** Format: date-time */
       createdAt: string;
     };
-    ApproveDocumentRequest: {
-      /** @enum {string} */
-      type: 'device_reading';
-      data: {
-        /** @enum {string} */
-        type: 'device_reading';
-        /** Format: date */
-        measuredAt: string | null;
-        measuredTime: string | null;
-        /** @enum {string} */
-        kind: 'blood_pressure' | 'glucose';
-        systolic: number | null;
-        diastolic: number | null;
-        pulse: number | null;
-        glucoseValue: number | null;
-        /** @enum {string|null} */
-        glucoseUnit: 'mmol/L' | 'mg/dL' | null;
-      };
-      confirmOutOfRange?: boolean;
+    Prescription: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      healthProfileId: string;
+      /** Format: uuid */
+      sourceDocumentId: string | null;
+      /** Format: date */
+      issuedDate: string;
+      facility: string | null;
+      diagnosis: string | null;
+      manualWithoutSource: boolean;
+      /** Format: date-time */
+      createdAt: string;
+      items: {
+        /** Format: uuid */
+        id: string;
+        name: string;
+        strength: string | null;
+        quantityPerDose: number;
+        doseUnit: string | null;
+        slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+        durationDays: number | null;
+        longTerm: boolean;
+        note: string | null;
+        totalQuantity: number | null;
+      }[];
+    } | null;
+    LabResult: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      healthProfileId: string;
+      /** Format: uuid */
+      sourceDocumentId: string | null;
+      /** Format: date */
+      resultDate: string;
+      testName: string;
+      value: string;
+      unit: string | null;
+      referenceRange: string | null;
+      facility: string | null;
+      manualWithoutSource: boolean;
+      /** Format: date-time */
+      createdAt: string;
     };
+    ApproveDocumentRequest:
+      | {
+          /** @enum {string} */
+          type: 'device_reading';
+          data: {
+            /** @enum {string} */
+            type: 'device_reading';
+            /** Format: date */
+            measuredAt: string | null;
+            measuredTime: string | null;
+            /** @enum {string} */
+            kind: 'blood_pressure' | 'glucose';
+            systolic: number | null;
+            diastolic: number | null;
+            pulse: number | null;
+            glucoseValue: number | null;
+            /** @enum {string|null} */
+            glucoseUnit: 'mmol/L' | 'mg/dL' | null;
+          };
+          confirmOutOfRange?: boolean;
+        }
+      | {
+          /** @enum {string} */
+          type: 'prescription';
+          data: {
+            /** @enum {string} */
+            type: 'prescription';
+            /** Format: date */
+            issuedDate: string | null;
+            facility: string | null;
+            diagnosis: string | null;
+            items: {
+              name: string;
+              strength: string | null;
+              quantityPerDose: number | null;
+              doseUnit: string | null;
+              slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+              durationDays: number | null;
+              longTerm: boolean;
+              note: string | null;
+              totalQuantity: number | null;
+            }[];
+          };
+        }
+      | {
+          /** @enum {string} */
+          type: 'lab_result';
+          data: {
+            /** @enum {string} */
+            type: 'lab_result';
+            /** Format: date */
+            resultDate: string | null;
+            facility: string | null;
+            items: {
+              testName: string;
+              value: string;
+              unit: string | null;
+              referenceRange: string | null;
+            }[];
+          };
+        };
     PrivacyDraft:
       | {
           /** @enum {string} */

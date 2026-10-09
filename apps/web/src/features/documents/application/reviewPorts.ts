@@ -7,10 +7,14 @@ export type DeviceReadingPayload = Extract<ExtractionPayload, { type: 'device_re
 export type PrescriptionPayload = Extract<ExtractionPayload, { type: 'prescription' }>;
 export type DoseSlot = PrescriptionPayload['items'][number]['slots'][number];
 export type ApproveDocumentRequest = components['schemas']['ApproveDocumentRequest'];
+export type PrescriptionApproval = Extract<ApproveDocumentRequest, { type: 'prescription' }>['data'];
 type ApprovedDocument = components['schemas']['ApprovedDocumentResponse'];
+type SourceDocumentPage = components['schemas']['SourceDocumentPage'];
 
 export interface ReviewRepository {
-  queue(signal?: AbortSignal): Promise<SourceDocument[]>;
+  /** F09a: một trang hàng đợi; `cursor` là id chứng từ cuối trang trước. */
+  queue(cursor: string | null, signal?: AbortSignal): Promise<SourceDocumentPage>;
   review(id: string, signal?: AbortSignal): Promise<DocumentReview>;
   approve(id: string, body: ApproveDocumentRequest, csrfToken: string): Promise<ApprovedDocument>;
+  reject(id: string, csrfToken: string): Promise<SourceDocument>;
 }

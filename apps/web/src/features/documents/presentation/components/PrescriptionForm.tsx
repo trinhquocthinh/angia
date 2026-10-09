@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import {
   emptyPrescriptionItem,
@@ -9,15 +9,25 @@ import {
   type PrescriptionFormValues,
 } from '../../application/prescriptionForm';
 import { summarizeRowErrors } from '../../application/prescriptionRowErrors';
-import type { PrescriptionPayload } from '../../application/reviewPorts';
+import type { ApproveDocumentRequest, PrescriptionPayload } from '../../application/reviewPorts';
+import type { ReviewRequestError } from '../../application/ReviewRequestError';
 import { PrescriptionErrorSummary } from './PrescriptionErrorSummary';
 import { PrescriptionGeneralFields } from './PrescriptionGeneralFields';
 import { PrescriptionItemCard } from './PrescriptionItemCard';
 import { ReviewSubmitBar } from './ReviewSubmitBar';
 
-// SPEC-010 + BR-025: form đơn thuốc nhiều dòng điền sẵn từ AI. API lưu đơn thuốc làm ở E3-S3-T3 —
-// tới lúc đó form chỉ kiểm tra đủ thông tin rồi báo chưa lưu được.
-export function PrescriptionForm({ payload }: { payload: PrescriptionPayload | null }) {
+type PrescriptionFormProps = {
+  payload: PrescriptionPayload | null;
+  pending: boolean;
+  error: ReviewRequestError | null;
+  onSubmit: (request: ApproveDocumentRequest) => void;
+};
+
+const SERVER_ROW_MESSAGE = 'Dòng này còn thiếu liều, buổi dùng hoặc số ngày — đối chiếu lại với ảnh.';
+
+// SPEC-010 + BR-025: form đơn thuốc nhiều dòng điền sẵn từ AI, lưu qua API duyệt (E3-S3-T3).
+// API chặn dòng thiếu liều bằng ERR_DOSE_INFO_MISSING kèm chỉ số dòng → gắn lỗi vào đúng dòng.
+export function PrescriptionForm({ payload, pending, error, onSubmit }: PrescriptionFormProps) {
   const form = useForm<PrescriptionFormValues>({
     resolver: zodResolver(prescriptionFormSchema),
     defaultValues: toPrescriptionFormValues(payload),
@@ -25,12 +35,14 @@ export function PrescriptionForm({ payload }: { payload: PrescriptionPayload | n
   });
   const items = useFieldArray({ control: form.control, name: 'items' });
   const names = useWatch({ control: form.control, name: 'items' }).map((item) => item.name);
-  // E3-S3-T3 thay bằng gọi API duyệt với bản đối soát này.
-  const [approval, setApproval] = useState<PrescriptionPayload | null>(null);
+  useEffect(() => {
+    for (const index of error?.invalidItemIndexes ?? [])
+      form.setError(`items.${index}.durationDays`, { type: 'server', message: SERVER_ROW_MESSAGE });
+  }, [error, form]);
   const rows = summarizeRowErrors(form.formState.errors.items, names);
-  const submit = form.handleSubmit(
-    (values) => setApproval(toPrescriptionApproval(values)),
-    () => setApproval(null),
+  const otherError = error && error.code !== 'ERR_DOSE_INFO_MISSING' ? error.message : null;
+  const submit = form.handleSubmit((values) =>
+    onSubmit({ type: 'prescription', data: toPrescriptionApproval(values) }),
   );
   return (
     <form noValidate onSubmit={(event) => void submit(event)} className="flex flex-col gap-6">
@@ -64,13 +76,12 @@ export function PrescriptionForm({ payload }: { payload: PrescriptionPayload | n
         </button>
       </section>
       <PrescriptionErrorSummary rows={rows} />
-      {approval && (
-        <p role="status" className="rounded-2xl bg-[#e4f0f0] p-4 text-sm text-[#20594b]">
-          Đơn thuốc đã đủ thông tin ({approval.items.length} loại thuốc). Lưu đơn thuốc vào sổ sẽ có ở bản cập
-          nhật sau.
+      {otherError && (
+        <p role="alert" className="rounded-2xl bg-[#fdecea] p-4 text-sm text-[#b42318]">
+          {otherError}
         </p>
       )}
-      <ReviewSubmitBar pending={false} disabled={false} />
+      <ReviewSubmitBar pending={pending} disabled={false} />
     </form>
   );
 }

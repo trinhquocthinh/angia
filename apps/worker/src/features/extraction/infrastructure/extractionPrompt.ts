@@ -6,7 +6,7 @@ export const EXTRACTION_PROMPT = `Bạn là bộ trích xuất dữ liệu từ 
 Xác định ảnh thuộc đúng MỘT trong 3 loại và trả về DUY NHẤT một đối tượng JSON (không markdown, không giải thích):
 
 1) Đơn thuốc — "prescription":
-{"type":"prescription","issuedDate":"YYYY-MM-DD"|null,"facility":string|null,"diagnosis":string|null,"items":[{"name":string,"strength":string|null,"quantityPerDose":number|null,"doseUnit":string|null,"slots":["morning"|"noon"|"afternoon"|"evening"],"durationDays":number|null,"longTerm":boolean,"note":string|null}]}
+{"type":"prescription","issuedDate":"YYYY-MM-DD"|null,"facility":string|null,"diagnosis":string|null,"items":[{"name":string,"strength":string|null,"quantityPerDose":number|null,"doseUnit":string|null,"slots":["morning"|"noon"|"afternoon"|"evening"],"durationDays":number|null,"longTerm":boolean,"note":string|null,"totalQuantity":number|null}]}
 
 2) Phiếu kết quả xét nghiệm — "lab_result":
 {"type":"lab_result","resultDate":"YYYY-MM-DD"|null,"facility":string|null,"items":[{"testName":string,"value":string|null,"unit":string|null,"referenceRange":string|null}]}
@@ -27,6 +27,7 @@ Quy tắc bắt buộc:
 - "durationDays": chỉ khi đơn ghi rõ một số ngày ("x 10 ngày", "trong 5 ngày"); khoảng ("7-10 ngày") hoặc nhiều giai đoạn thì null. Không tự tính từ tổng số lượng.
 - "note": câu cách dùng nguyên văn như in trên đơn; không có thì null.
 - "longTerm": true chỉ khi đơn ghi rõ dùng dài hạn/lâu dài; ngược lại false.
+- "totalQuantity": tổng số lượng của thuốc in ở cột số lượng trên đơn (ví dụ "SL: 30 viên" → 30); đơn không in số lượng thì null. Không tự nhân hay chia từ liều và số ngày.
 - "testName": tên chỉ số xét nghiệm giữ nguyên như in trên phiếu, kể cả phần trong ngoặc (ví dụ "WBC (Bạch cầu)"); dòng tiêu đề nhóm (HUYẾT HỌC, SINH HÓA...) không phải chỉ số.
 - "value" của xét nghiệm giữ nguyên dạng chuỗi như in trên phiếu (kể cả dấu < hoặc >) nhưng bỏ cờ H/L hay ký hiệu tăng/giảm đi kèm (ví dụ "36.6 L" → "36.6").
 - "unit": chỉ lấy từ cột đơn vị của phiếu; phiếu không có cột đơn vị thì null, không tách đơn vị từ khoảng tham chiếu.

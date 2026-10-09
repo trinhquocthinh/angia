@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { components } from '@src/shared/api/schema.gen';
 import { isReading, reviewPollInterval } from './reviewQueuePolling';
 import type { ApproveDocumentRequest, ReviewRepository } from './reviewPorts';
@@ -10,13 +10,16 @@ const reviewScopeKey = (session: Session | null | undefined) =>
 
 // Hàng đợi gồm cả chứng từ AI đang đọc (hiện ngay sau khi tải) và chỉ hỏi lại khi còn chứng từ đang đọc.
 // Chỉ main gọi API duyệt (requireMain); khóa query theo tài khoản + gia đình để không lẫn dữ liệu khi đổi phiên.
+// F09a: mỗi trang 50 chứng từ, "Xem thêm" tải trang kế theo cursor.
 export function useReviewQueue(repository: ReviewRepository, session: Session | null | undefined) {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: [...reviewScopeKey(session), 'queue'],
     enabled: session?.role === 'main' && Boolean(session.family),
     retry: false,
-    queryFn: ({ signal }) => repository.queue(signal),
-    refetchInterval: (query) => reviewPollInterval(query.state.data),
+    initialPageParam: null as string | null,
+    queryFn: ({ pageParam, signal }) => repository.queue(pageParam, signal),
+    getNextPageParam: (page) => page.nextCursor,
+    refetchInterval: (query) => reviewPollInterval(query.state.data?.pages.flatMap((page) => page.items)),
   });
 }
 
@@ -49,5 +52,18 @@ export function useApproveDocument(
         client.invalidateQueries({ queryKey: ['measurements'] }),
       ]);
     },
+  });
+}
+
+// Loại bỏ chứng từ chờ duyệt/chờ nhập tay; ảnh gốc giữ nguyên, chứng từ rời hàng đợi.
+export function useRejectDocument(
+  repository: ReviewRepository,
+  session: Session | null | undefined,
+  id: string,
+) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: () => repository.reject(id, session?.csrfToken ?? ''),
+    onSuccess: () => client.invalidateQueries({ queryKey: reviewScopeKey(session) }),
   });
 }

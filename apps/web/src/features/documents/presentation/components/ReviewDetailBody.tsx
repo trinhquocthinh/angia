@@ -28,14 +28,20 @@ export function ReviewDetailBody({ document, extraction, pending, error, onSubmi
     return (
       <ReviewNotice
         title="Cần nhập tay"
-        body="Ảnh vẫn được lưu. Nhập tay theo ảnh sẽ có ở bản cập nhật sau."
+        body="Ảnh vẫn được lưu. Nhập tay theo ảnh sẽ có ở bản cập nhật sau; ảnh không dùng được thì có thể loại bỏ."
       />
     );
   if (document.status !== 'pending_review')
     return <ReviewNotice title="Chứng từ không còn chờ duyệt" body="Chứng từ này đã được xử lý trước đó." />;
   if (document.type === 'prescription')
     return (
-      <PrescriptionForm key={document.id} payload={extraction?.type === 'prescription' ? extraction : null} />
+      <PrescriptionForm
+        key={document.id}
+        payload={extraction?.type === 'prescription' ? extraction : null}
+        pending={pending}
+        error={error}
+        onSubmit={onSubmit}
+      />
     );
   if (document.type !== 'device_reading')
     return (

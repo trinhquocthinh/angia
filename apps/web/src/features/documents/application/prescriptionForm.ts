@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { sortDoseSlots } from './doseSlots';
-import type { PrescriptionPayload } from './reviewPorts';
+import type { PrescriptionApproval, PrescriptionPayload } from './reviewPorts';
 
 // Ô nhập luôn là chuỗi; kiểm tra phía client để chỉ đúng dòng thiếu liều/buổi (BR-025), API vẫn quyết định.
 const DECIMAL = /^\d+([.,]\d+)?$/;
@@ -18,6 +18,8 @@ const itemSchema = z
     durationDays: z.string(),
     longTerm: z.boolean(),
     note: z.string(),
+    // Tổng số lượng in trên đơn, chỉ để gợi ý số ngày (BR-025); tùy chọn.
+    totalQuantity: z.string(),
     // Dòng do AI điền sẵn: liều cần đối chiếu kỹ với ảnh (E1: model từng nhân đôi liều).
     fromAi: z.boolean(),
   })
@@ -30,6 +32,9 @@ const itemSchema = z
     else if (!DECIMAL.test(quantity) || toNumber(quantity) <= 0)
       issue('quantityPerDose', 'Nhập số lớn hơn 0, ví dụ 1 hoặc 0,5.');
     if (item.slots.length === 0) issue('slots', 'Chọn ít nhất một buổi dùng.');
+    const total = item.totalQuantity.trim();
+    if (total !== '' && (!DECIMAL.test(total) || toNumber(total) <= 0))
+      issue('totalQuantity', 'Nhập số lớn hơn 0 hoặc để trống.');
     if (item.longTerm) return;
     const days = item.durationDays.trim();
     if (days === '') issue('durationDays', 'Nhập số ngày dùng hoặc chọn Dài hạn.');
@@ -57,6 +62,7 @@ export const emptyPrescriptionItem = (): PrescriptionItemValues => ({
   durationDays: '',
   longTerm: false,
   note: '',
+  totalQuantity: '',
   fromAi: false,
 });
 
@@ -70,6 +76,7 @@ export function toPrescriptionFormValues(payload: PrescriptionPayload | null): P
     durationDays: text(item.durationDays),
     longTerm: item.longTerm,
     note: text(item.note),
+    totalQuantity: text(item.totalQuantity),
     fromAi: true,
   }));
   return {
@@ -80,8 +87,8 @@ export function toPrescriptionFormValues(payload: PrescriptionPayload | null): P
   };
 }
 
-// Bản đối soát cùng hình dạng payload §2.1a; E3-S3-T3 gửi lên API duyệt.
-export function toPrescriptionApproval(form: PrescriptionFormValues): PrescriptionPayload {
+// Bản đối soát cùng hình dạng payload §2.1a gửi lên API duyệt (E3-S3-T3).
+export function toPrescriptionApproval(form: PrescriptionFormValues): PrescriptionApproval {
   return {
     type: 'prescription',
     issuedDate: form.issuedDate,
@@ -96,6 +103,7 @@ export function toPrescriptionApproval(form: PrescriptionFormValues): Prescripti
       durationDays: item.longTerm ? null : toNumber(item.durationDays),
       longTerm: item.longTerm,
       note: orNull(item.note),
+      totalQuantity: item.totalQuantity.trim() === '' ? null : toNumber(item.totalQuantity),
     })),
   };
 }

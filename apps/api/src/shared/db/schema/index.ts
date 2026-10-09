@@ -8,3 +8,6 @@ export { sourceDocuments } from './sourceDocuments.js';
 export { uploadBatches } from './uploadBatches.js';
 export { consentInvitations } from './consentInvitations.js';
 export { consentLegacyAttestations } from './consentLegacyAttestations.js';
+export { prescriptions } from './prescriptions.js';
+export { prescriptionItems } from './prescriptionItems.js';
+export { labResults } from './labResults.js';

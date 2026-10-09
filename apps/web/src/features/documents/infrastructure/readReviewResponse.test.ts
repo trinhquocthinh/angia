@@ -25,6 +25,20 @@ describe('Đọc phản hồi API duyệt chứng từ', () => {
     });
   });
 
+  it('ERR_DOSE_INFO_MISSING giữ chỉ số dòng thuốc thiếu thông tin để báo đúng dòng', async () => {
+    const error = {
+      error: {
+        code: 'ERR_DOSE_INFO_MISSING',
+        message: 'Thiếu',
+        details: { invalidItemIndexes: [1, 'x', 3] },
+      },
+    };
+    await expect(readReviewResponse({ error, response: response(422) })).rejects.toMatchObject({
+      code: 'ERR_DOSE_INFO_MISSING',
+      invalidItemIndexes: [1, 3],
+    });
+  });
+
   it('lỗi 5xx dùng thông điệp chung, không lộ chi tiết', async () => {
     await expect(
       readReviewResponse({ error: { error: { message: 'stack' } }, response: response(500) }),
