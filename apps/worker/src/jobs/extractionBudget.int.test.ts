@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import {
   EXTRACT_DOCUMENT_QUEUE,
+  REQUEUE_AWAITING_BUDGET_QUEUE,
   ensureExtractDocumentQueues,
   type ExtractionPayload,
 } from '@angia/contracts';
@@ -21,7 +22,6 @@ import { registerRecoverDeadExtractionJob } from './registerRecoverDeadExtractio
 import { registerRequeueAwaitingBudgetJob } from './registerRequeueAwaitingBudgetJob.js';
 
 const logger = pino({ level: 'silent' });
-const REQUEUE_AWAITING_BUDGET_QUEUE = 'requeue-awaiting-budget';
 const NOW = new Date('2026-10-15T03:00:00Z'); // tháng ngân sách 2026-10 giờ Việt Nam
 const PAYLOAD: ExtractionPayload = {
   type: 'device_reading',
@@ -125,6 +125,15 @@ describe('Ngân sách AI trên PostgreSQL + pg-boss thật (E3-S6-T1, BR-018, F0
     await setSpend(4.98);
     expect(await run(countingExtractor().extractor, doc)).toMatchObject({ status: 'pending_review' });
     expect((await spend()).spent_usd).toBe('4.981130');
+  });
+
+  it('TC-041: đã dùng $3.00, Quản trị viên hạ trần còn $2.00 → chứng từ kế tiếp awaiting_budget, không gọi AI', async () => {
+    const doc = await seedExtractingDocument(fx.owner);
+    await setSpend(3, '2026-10', 2);
+    const ai = countingExtractor();
+    expect(await run(ai.extractor, doc)).toEqual({ status: 'awaiting_budget' });
+    expect(ai.calls).toHaveLength(0);
+    expect(await status(doc.documentId)).toBe('awaiting_budget');
   });
 
   it('tháng mới chép trần của tháng gần nhất; chưa có tháng nào thì lấy trần mặc định', async () => {

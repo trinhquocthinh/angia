@@ -8,6 +8,7 @@ const QUEUE_STATUSES = [
   'extracting',
   'pending_review',
   'manual_entry',
+  'awaiting_budget',
 ] as const;
 
 export function createReviewRepository(client = apiClient): ReviewRepository {

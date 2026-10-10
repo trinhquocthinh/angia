@@ -8,6 +8,11 @@ import { ManualEntryForm } from './ManualEntryForm';
 import { PrescriptionForm } from './PrescriptionForm';
 import { ReadingForm } from './ReadingForm';
 import { ReviewNotice } from './ReviewNotice';
+const MANUAL_INTRO =
+  'Chứng từ này cần nhập tay. Chọn loại dữ liệu rồi nhập theo ảnh; ảnh không dùng được thì có thể loại bỏ.';
+// BR-018: hết ngân sách AI tháng này — AI sẽ đọc lại khi có ngân sách, hoặc nhập tay ngay không cần chờ.
+const BUDGET_INTRO =
+  'Đã hết ngân sách AI tháng này nên ảnh đang chờ để AI đọc khi có ngân sách. Bạn có thể nhập tay ngay theo ảnh mà không cần chờ.';
 type DetailBodyProps = {
   document: SourceDocument;
   extraction: components['schemas']['DocumentReview']['extraction'];
@@ -26,12 +31,12 @@ export function ReviewDetailBody({ document, extraction, pending, error, onSubmi
       />
     );
   if (state === 'reading') return <ExtractingPlaceholder />;
-  if (state === 'manual')
+  if (state === 'manual' || state === 'budget')
     return (
       <ManualEntryForm
         key={document.id}
         initialType={document.type}
-        intro="Chứng từ này cần nhập tay. Chọn loại dữ liệu rồi nhập theo ảnh; ảnh không dùng được thì có thể loại bỏ."
+        intro={state === 'budget' ? BUDGET_INTRO : MANUAL_INTRO}
         pending={pending}
         error={error}
         onSubmit={onSubmit}

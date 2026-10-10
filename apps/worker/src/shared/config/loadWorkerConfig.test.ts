@@ -20,6 +20,7 @@ describe('Cấu hình worker', () => {
       AI_PROVIDER: 'fake',
       OPENROUTER_BASE_URL: 'https://openrouter.ai/api/v1',
       AI_PRIMARY_MODEL: 'google/gemini-3.1-flash-lite',
+      AI_FALLBACK_MODEL: 'moonshotai/kimi-k2.6',
     });
   });
 

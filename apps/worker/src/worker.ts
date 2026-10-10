@@ -14,6 +14,7 @@ import pg from 'pg';
 import { pino } from 'pino';
 import { createExtractionRepository } from '@src/features/extraction/infrastructure/createExtractionRepository.js';
 import { createFakeExtractor } from '@src/features/extraction/infrastructure/createFakeExtractor.js';
+import { createFallbackExtractor } from '@src/features/extraction/infrastructure/createFallbackExtractor.js';
 import { createHeicImageConverter } from '@src/features/extraction/infrastructure/createHeicImageConverter.js';
 import { createOpenRouterExtractor } from '@src/features/extraction/infrastructure/createOpenRouterExtractor.js';
 import { createS3ObjectReader } from '@src/features/extraction/infrastructure/createS3ObjectReader.js';
@@ -34,11 +35,16 @@ const logger = pino({ level: config.LOG_LEVEL, base: { service: 'angia-worker', 
 
 function createExtractor(workerConfig: WorkerConfig) {
   if (workerConfig.AI_PROVIDER === 'fake') return createFakeExtractor();
-  return createOpenRouterExtractor({
-    baseUrl: workerConfig.OPENROUTER_BASE_URL,
-    apiKey: workerConfig.OPENROUTER_API_KEY ?? '',
-    model: workerConfig.AI_PRIMARY_MODEL,
-  });
+  const openRouter = (model: string) =>
+    createOpenRouterExtractor({
+      baseUrl: workerConfig.OPENROUTER_BASE_URL,
+      apiKey: workerConfig.OPENROUTER_API_KEY ?? '',
+      model,
+    });
+  return createFallbackExtractor(
+    openRouter(workerConfig.AI_PRIMARY_MODEL),
+    openRouter(workerConfig.AI_FALLBACK_MODEL),
+  );
 }
 
 const pool = new pg.Pool({ connectionString: config.DATABASE_URL, max: 4, connectionTimeoutMillis: 5_000 });

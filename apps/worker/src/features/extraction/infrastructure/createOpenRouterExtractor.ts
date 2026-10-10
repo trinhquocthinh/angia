@@ -13,7 +13,7 @@ interface OpenRouterOptions {
 // Benchmark E1-S1-T1: Gemini 3.1 Flash-Lite ~5.7 s/ảnh; quá 60 s coi như lỗi mạng để pg-boss thử lại.
 const DEFAULT_TIMEOUT_MS = 60_000;
 
-/** Adapter `DocumentExtractor` chính (Tech Spec §1): một model, tắt suy luận, định tuyến ZDR. */
+/** Adapter `DocumentExtractor` một model (Tech Spec §1), tắt suy luận, định tuyến ZDR; ghép chính → dự phòng ở createFallbackExtractor. */
 export function createOpenRouterExtractor(
   options: OpenRouterOptions,
   fetchFn: typeof fetch = fetch,

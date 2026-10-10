@@ -531,6 +531,111 @@ export interface paths {
     };
     trace?: never;
   };
+  '/api/admin/extraction-cap': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Trần và chi phí AI tháng hiện tại (SPEC-013) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Tháng ngân sách giờ Việt Nam; đã dùng gồm phần đang giữ chỗ */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['SpendResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: không phải Quản trị hệ thống hoặc thiếu/sai X-CSRF-Token */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    /** Điều chỉnh trần ngân sách AI tháng hiện tại (SPEC-013) */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['UpdateExtractionCapRequest'];
+        };
+      };
+      responses: {
+        /** @description Trần mới; nâng trần thì chứng từ chờ ngân sách được xử lý lại */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['SpendResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: không phải Quản trị hệ thống hoặc thiếu/sai X-CSRF-Token */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: ngoài 0.00 – 100.00 hoặc lẻ hơn 0.01 */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles': {
     parameters: {
       query?: never;
@@ -2185,6 +2290,14 @@ export interface components {
           /** @enum {string} */
           action: 'remove';
         };
+    SpendResponse: {
+      month: string;
+      monthlyCapUsd: number;
+      spentThisMonthUsd: number;
+    };
+    UpdateExtractionCapRequest: {
+      monthlyCapUsd: number;
+    };
     HealthProfile: {
       /** Format: uuid */
       id: string;

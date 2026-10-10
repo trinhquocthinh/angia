@@ -11,7 +11,7 @@ export function reviewPollInterval(documents: SourceDocument[] | undefined): num
   return documents?.some(isReading) ? POLL_MS : false;
 }
 
-export type ReviewItemState = 'preparing' | 'privacy' | 'reading' | 'ready' | 'manual';
+export type ReviewItemState = 'preparing' | 'privacy' | 'reading' | 'ready' | 'manual' | 'budget';
 
 // Duyệt được số đo máy (E2-S6-T1), đơn thuốc (E3-S3-T1) và xét nghiệm (E3-S3-T2); manual_entry mở form nhập tay cạnh ảnh (E3-S4-T1).
 export function reviewItemState(document: SourceDocument): ReviewItemState {
@@ -19,5 +19,7 @@ export function reviewItemState(document: SourceDocument): ReviewItemState {
   if (document.status === 'awaiting_privacy') return 'privacy';
   if (isReading(document)) return 'reading';
   if (document.status === 'manual_entry') return 'manual';
+  // Hết ngân sách AI (BR-018): chờ tháng mới/Quản trị viên nâng trần, hoặc nhập tay ngay (SPEC-011).
+  if (document.status === 'awaiting_budget') return 'budget';
   return 'ready';
 }

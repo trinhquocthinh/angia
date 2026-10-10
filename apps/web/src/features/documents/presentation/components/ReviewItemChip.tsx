@@ -6,6 +6,7 @@ const CHIPS: Record<ReviewItemState, { label: string; className: string }> = {
   reading: { label: 'AI đang đọc…', className: 'bg-[#fff4e5] text-[#5c3a00]' },
   ready: { label: 'Đã đọc xong', className: 'bg-[#b3eddf] text-[#004135]' },
   manual: { label: 'Cần nhập tay', className: 'bg-[#e4f0ef] text-[#55615f]' },
+  budget: { label: 'Chờ ngân sách AI', className: 'bg-[#fff4e5] text-[#5c3a00]' },
 };
 
 export function ReviewItemChip({ state }: { state: ReviewItemState }) {

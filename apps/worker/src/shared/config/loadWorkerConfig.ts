@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // Nguồn duy nhất đọc biến môi trường của worker (10-setup-and-ops-guide §3).
-// AI_FALLBACK_MODEL bổ sung ở E3-S6-T2; ntfy ở v0.1b.
+// ntfy bổ sung ở v0.1b.
 const workerEnvSchema = z
   .object({
     STACK: z.enum(['dev', 'sit', 'prod']),
@@ -18,6 +18,8 @@ const workerEnvSchema = z
     OPENROUTER_BASE_URL: z.string().url().default('https://openrouter.ai/api/v1'),
     OPENROUTER_API_KEY: z.string().optional(),
     AI_PRIMARY_MODEL: z.string().min(1).default('google/gemini-3.1-flash-lite'),
+    // Model chính lỗi mạng/HTTP/timeout thì gọi model này trong cùng lượt thử (E3-S6-T2).
+    AI_FALLBACK_MODEL: z.string().min(1).default('moonshotai/kimi-k2.6'),
     // BR-018: trần khởi tạo khi chưa có tháng nào trong extraction_spend; ước tính giữ chỗ mỗi lần gọi AI.
     AI_DEFAULT_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(5),
     AI_ESTIMATED_COST_USD: z.coerce.number().positive().default(0.02),

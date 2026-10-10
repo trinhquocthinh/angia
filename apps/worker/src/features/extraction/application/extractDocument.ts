@@ -28,7 +28,7 @@ export type ExtractionOutcome =
 
 // SPEC-009/BR-041/BR-018: chỉ extracting đã duyệt riêng tư và giữ được ngân sách mới gọi AI →
 // pending_review | manual_entry; hết ngân sách → awaiting_budget. Không giữ transaction trong lúc gọi AI;
-// model dự phòng bổ sung ở E3-S6-T2.
+// extractor đã gồm model dự phòng (E3-S6-T2) nên mỗi lượt thử chỉ giữ một chỗ ngân sách.
 export async function extractDocument(
   deps: ExtractionDependencies,
   job: ExtractionJob,

@@ -16,12 +16,15 @@ import {
   CONVERT_HEIC_QUEUE_OPTIONS,
   PREPARE_OCR_IMAGE_QUEUE,
   PREPARE_OCR_IMAGE_QUEUE_OPTIONS,
+  REQUEUE_AWAITING_BUDGET_QUEUE,
+  REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS,
   ensureExtractDocumentQueues,
 } from '@angia/contracts';
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
 import { createApp } from '@src/createApp.js';
 import { createFamilyAdminRepository } from '@src/features/family/infrastructure/createFamilyAdminRepository.js';
+import { createAiBudgetRepository } from '@src/features/family/infrastructure/createAiBudgetRepository.js';
 import { createPostgresProbe } from '@src/features/health/infrastructure/createPostgresProbe.js';
 import { createS3BucketProbe } from '@src/features/health/infrastructure/createS3BucketProbe.js';
 import { createAccountRepository } from '@src/shared/auth/infrastructure/createAccountRepository.js';
@@ -48,6 +51,7 @@ await boss.createQueue(CONVERT_HEIC_QUEUE, CONVERT_HEIC_QUEUE_OPTIONS);
 
 await boss.createQueue(PREPARE_OCR_IMAGE_QUEUE, PREPARE_OCR_IMAGE_QUEUE_OPTIONS);
 await ensureExtractDocumentQueues(boss);
+await boss.createQueue(REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS);
 const privacyQueue = createPrivacyQueue(boss);
 
 const app = createApp({
@@ -75,6 +79,11 @@ const app = createApp({
     logger,
   },
   familyAdmin: createFamilyAdminRepository(db),
+  aiBudget: {
+    repository: createAiBudgetRepository(db, boss),
+    defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,
+    now: () => new Date(),
+  },
   profiles: createProfileRepository(db),
   consentInvitations: {
     repository: createInvitationRepository(db),

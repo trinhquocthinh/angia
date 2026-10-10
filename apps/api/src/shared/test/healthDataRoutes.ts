@@ -33,7 +33,8 @@ export type RouteOfKind<Kind extends string> = {
   [K in HealthDataRoute]: (typeof HEALTH_DATA_ROUTES)[K] extends Kind ? K : never;
 }[HealthDataRoute];
 
-// Không chứa dữ liệu sức khỏe: hạ tầng, xác thực và quản trị nhóm/tài khoản (BR-006).
+// Không chứa dữ liệu sức khỏe: hạ tầng, xác thực, quản trị nhóm/tài khoản (BR-006) và trần ngân sách AI
+// toàn hệ thống (SPEC-013, chỉ số tiền theo tháng).
 export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'GET /api/health',
   'GET /api/auth/login',
@@ -45,4 +46,6 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'GET /api/admin/accounts',
   'POST /api/admin/accounts/:id/membership',
   'PATCH /api/admin/accounts/:id/membership',
+  'GET /api/admin/extraction-cap',
+  'PUT /api/admin/extraction-cap',
 ];

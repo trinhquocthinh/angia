@@ -1,3 +1,4 @@
+import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
 import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
 import { createPrivacyQueue } from '@src/features/documentPrivacy/infrastructure/createPrivacyQueue.js';
 import { hashPrivacyPng } from '@src/features/documentPrivacy/infrastructure/hashPrivacyPng.js';
@@ -47,6 +48,7 @@ function buildApp(
       login: { ...stub.login, sessions: createSessionRepository(database) },
     },
     familyAdmin: createFakeFamilyAdminRepository().repository,
+    aiBudget: createStubAiBudgetDeps(),
     profiles: createProfileRepository(database),
     consentInvitations: {
       repository: createInvitationRepository(database),

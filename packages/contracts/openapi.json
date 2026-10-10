@@ -276,6 +276,39 @@
           }
         ]
       },
+      "SpendResponse": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+          },
+          "monthlyCapUsd": {
+            "type": "number"
+          },
+          "spentThisMonthUsd": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "month",
+          "monthlyCapUsd",
+          "spentThisMonthUsd"
+        ]
+      },
+      "UpdateExtractionCapRequest": {
+        "type": "object",
+        "properties": {
+          "monthlyCapUsd": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "monthlyCapUsd"
+        ]
+      },
       "HealthProfile": {
         "type": "object",
         "properties": {
@@ -2338,6 +2371,104 @@
           },
           "422": {
             "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/extraction-cap": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Trần và chi phí AI tháng hiện tại (SPEC-013)",
+        "responses": {
+          "200": {
+            "description": "Tháng ngân sách giờ Việt Nam; đã dùng gồm phần đang giữ chỗ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpendResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: không phải Quản trị hệ thống hoặc thiếu/sai X-CSRF-Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Điều chỉnh trần ngân sách AI tháng hiện tại (SPEC-013)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateExtractionCapRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Trần mới; nâng trần thì chứng từ chờ ngân sách được xử lý lại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpendResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: không phải Quản trị hệ thống hoặc thiếu/sai X-CSRF-Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: ngoài 0.00 – 100.00 hoặc lẻ hơn 0.01",
             "content": {
               "application/json": {
                 "schema": {
