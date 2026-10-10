@@ -21,31 +21,44 @@ describe('Nhập trần ngân sách AI (SPEC-013)', () => {
   });
 });
 
-describe('Hiển thị mức dùng ngân sách AI', () => {
-  it('định dạng tháng, số tiền và phần trăm đã dùng', () => {
-    expect(describeAiBudget({ month: '2026-10', monthlyCapUsd: 5, spentThisMonthUsd: 1.25 })).toEqual({
+describe('Hiển thị mức dùng ngân sách AI (Stitch f9e3fb04)', () => {
+  it('định dạng số kiểu Việt Nam, phần trăm 1 chữ số, còn lại và ngày đặt lại đầu tháng sau', () => {
+    expect(describeAiBudget({ month: '2026-10', monthlyCapUsd: 5, spentThisMonthUsd: 0.42 })).toEqual({
       monthLabel: 'Tháng 10/2026',
-      spent: '$1.25',
-      cap: '$5.00',
-      percent: 25,
-      exhausted: false,
+      spent: '0,42',
+      cap: '5,00',
+      remaining: '4,58',
+      percent: 8.4,
+      percentLabel: '8,4%',
+      level: 'normal',
+      resetDate: '01/11/2026',
     });
   });
 
-  it('đã dùng ≥ trần (kể cả trần $0) → báo đã chạm trần, thanh tiến độ dừng ở 100%', () => {
+  it('tháng 12 đặt lại vào 01/01 năm sau', () => {
+    expect(describeAiBudget({ month: '2026-12', monthlyCapUsd: 5, spentThisMonthUsd: 0 }).resetDate).toBe(
+      '01/01/2027',
+    );
+  });
+
+  it('từ 90% định mức → cảnh báo; đã dùng ≥ trần (kể cả trần 0) → chạm trần, còn lại 0, thanh dừng ở 100%', () => {
+    expect(describeAiBudget({ month: '2026-10', monthlyCapUsd: 5, spentThisMonthUsd: 4.5 }).level).toBe(
+      'warning',
+    );
     expect(describeAiBudget({ month: '2026-10', monthlyCapUsd: 2, spentThisMonthUsd: 3 })).toMatchObject({
+      remaining: '0,00',
       percent: 100,
-      exhausted: true,
+      level: 'exhausted',
     });
     expect(describeAiBudget({ month: '2026-10', monthlyCapUsd: 0, spentThisMonthUsd: 0 })).toMatchObject({
       percent: 100,
-      exhausted: true,
+      level: 'exhausted',
     });
   });
 
   it('chi phí lẻ dưới 1 cent vẫn hiện 4 chữ số để thấy được lời gọi $0.001', () => {
     expect(describeAiBudget({ month: '2026-10', monthlyCapUsd: 5, spentThisMonthUsd: 0.00113 }).spent).toBe(
-      '$0.0011',
+      '0,0011',
     );
   });
 });
