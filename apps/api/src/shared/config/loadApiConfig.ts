@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // Nguồn duy nhất đọc biến môi trường của API (10-setup-and-ops-guide §3).
-// Chỉ khai báo biến đang dùng; AI/ntfy bổ sung tại Epic tương ứng.
+// Chỉ khai báo biến đang dùng; ntfy bổ sung tại Epic tương ứng.
 const apiEnvSchema = z.object({
   STACK: z.enum(['dev', 'sit', 'prod']),
   PORT: z.coerce.number().int().positive().default(3000),
@@ -21,6 +21,8 @@ const apiEnvSchema = z.object({
   SESSION_COOKIE_SECRET: z.string().min(32),
   APP_BASE_URL: z.string().url(),
   ADMIN_GROUP_NAME: z.string().min(1),
+  // BR-018: trần hiển thị/khởi tạo khi extraction_spend chưa có tháng nào; phải trùng giá trị của worker.
+  AI_DEFAULT_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(5),
 });
 
 export type ApiConfig = z.infer<typeof apiEnvSchema>;

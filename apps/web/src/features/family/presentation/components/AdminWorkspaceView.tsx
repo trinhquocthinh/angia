@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { useAdminWorkspace } from '../../application/useAdminWorkspace';
+import type { useAiBudget } from '../../application/useAiBudget';
 import type { AdminTask } from '../AdminTask';
 import type { AdminSession } from '../AdminSession';
 import { AdminFrame } from './AdminFrame';
@@ -10,9 +11,11 @@ import { ActionDialog } from './ActionDialog';
 export function AdminWorkspaceView({
   session,
   workspace,
+  aiBudget,
 }: {
   session: AdminSession;
   workspace: ReturnType<typeof useAdminWorkspace>;
+  aiBudget: ReturnType<typeof useAiBudget>;
 }) {
   const { families, accounts, action } = workspace;
   const [task, setTask] = useState<AdminTask | null>(null);
@@ -40,6 +43,7 @@ export function AdminWorkspaceView({
       )}
       <AdminDataContent
         workspace={workspace}
+        aiBudget={aiBudget}
         onTask={openTask}
         currentFamilyId={session.family?.id ?? null}
         inlineError={task ? null : action.error}

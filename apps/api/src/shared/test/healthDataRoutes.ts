@@ -17,12 +17,14 @@ export const HEALTH_DATA_ROUTES = {
   'GET /api/source-documents/:id/review': 'scoped',
   'GET /api/source-documents/:id/image': 'scoped',
   'POST /api/source-documents/:id/approve': 'scoped',
+  'POST /api/source-documents/:id/reject': 'scoped',
   'POST /api/source-documents/:id/privacy-drafts': 'scoped',
   'GET /api/source-documents/:id/privacy-draft': 'scoped',
   'GET /api/source-documents/:id/privacy-drafts/:draftId/image': 'scoped',
   'POST /api/source-documents/:id/privacy-approval': 'scoped',
   'POST /api/source-documents/:id/manual-entry': 'scoped',
   'GET /api/health-profiles/:id/measurements': 'scoped',
+  'POST /api/health-profiles/:id/manual-records': 'scoped',
 } as const;
 
 type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;
@@ -31,7 +33,8 @@ export type RouteOfKind<Kind extends string> = {
   [K in HealthDataRoute]: (typeof HEALTH_DATA_ROUTES)[K] extends Kind ? K : never;
 }[HealthDataRoute];
 
-// Không chứa dữ liệu sức khỏe: hạ tầng, xác thực và quản trị nhóm/tài khoản (BR-006).
+// Không chứa dữ liệu sức khỏe: hạ tầng, xác thực, quản trị nhóm/tài khoản (BR-006) và trần ngân sách AI
+// toàn hệ thống (SPEC-013, chỉ số tiền theo tháng).
 export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'GET /api/health',
   'GET /api/auth/login',
@@ -43,4 +46,6 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'GET /api/admin/accounts',
   'POST /api/admin/accounts/:id/membership',
   'PATCH /api/admin/accounts/:id/membership',
+  'GET /api/admin/extraction-cap',
+  'PUT /api/admin/extraction-cap',
 ];

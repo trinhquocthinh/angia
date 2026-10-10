@@ -2,6 +2,7 @@ import { useWatch, type UseFormReturn } from 'react-hook-form';
 import type { PrescriptionFormValues } from '../../application/prescriptionForm';
 import { DoseSlotPicker } from './DoseSlotPicker';
 import { DurationField } from './DurationField';
+import { DurationSuggestion } from './DurationSuggestion';
 import { ReadingField } from './ReadingField';
 
 type DoseFieldsProps = { form: UseFormReturn<PrescriptionFormValues>; index: number };
@@ -12,7 +13,7 @@ export function PrescriptionDoseFields({ form, index }: DoseFieldsProps) {
   const errors = form.formState.errors.items?.[index];
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <ReadingField
           id={`items-${index}-quantityPerDose`}
           label="Mỗi lần dùng *"
@@ -29,9 +30,20 @@ export function PrescriptionDoseFields({ form, index }: DoseFieldsProps) {
           compact
           {...form.register(`items.${index}.doseUnit`)}
         />
+        <div className="col-span-2 sm:col-span-1">
+          <ReadingField
+            id={`items-${index}-totalQuantity`}
+            label="Tổng số lượng trên đơn"
+            inputMode="decimal"
+            autoComplete="off"
+            error={errors?.totalQuantity?.message}
+            {...form.register(`items.${index}.totalQuantity`)}
+          />
+        </div>
       </div>
       <DoseSlotPicker control={form.control} index={index} error={errors?.slots?.message} />
       <DurationField form={form} index={index} />
+      <DurationSuggestion form={form} index={index} />
     </div>
   );
 }

@@ -39,6 +39,9 @@ const SNAPSHOT_TABLES = [
   'source_documents',
   'extractions',
   'measurements',
+  'prescriptions',
+  'prescription_items',
+  'lab_results',
 ];
 
 describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gia đình (E2-S7-T1)', () => {
@@ -102,8 +105,15 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'POST', `${documents}/${x.documentId}/manual-entry`),
     'POST /api/source-documents/:id/approve': (u, x) =>
       t.call(u, 'POST', `${documents}/${x.documentId}/approve`, { type: 'device_reading', data: reading }),
+    'POST /api/source-documents/:id/reject': (u, x) =>
+      t.call(u, 'POST', `${documents}/${x.documentId}/reject`),
     'GET /api/health-profiles/:id/measurements': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/measurements`),
+    'POST /api/health-profiles/:id/manual-records': (u, x) =>
+      t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
+        type: 'device_reading',
+        data: reading,
+      }),
   };
 
   // Gia đình nạn nhân: hồ sơ đã đồng thuận, chứng từ chờ duyệt có ảnh, link mời đã dùng.
@@ -173,8 +183,12 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       'GET /api/health-profiles/linkable-accounts': `${profiles}/linkable-accounts`,
       'GET /api/source-documents': `${documents}?status=pending_review`,
     };
-    const list = async (user: SeededSession, path: string) =>
-      (await (await t.call(user, 'GET', path)).json()) as { id: string; familyId?: string }[];
+    type Item = { id: string; familyId?: string };
+    // Danh sách chứng từ trả trang { items, nextCursor } (F09a), các danh sách khác trả mảng.
+    const list = async (user: SeededSession, path: string) => {
+      const body = (await (await t.call(user, 'GET', path)).json()) as Item[] | { items: Item[] };
+      return Array.isArray(body) ? body : body.items;
+    };
     const own = (await list(victim.main, profiles)) as HealthProfile[];
     expect(own).toHaveLength(3);
     expect(own.every((p) => p.familyId === victim.familyId)).toBe(true);

@@ -3,12 +3,16 @@ import { createStubDocumentDeps } from './createStubDocumentDeps.js';
 import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
 import { createStubProfileRepository } from '@src/shared/test/createStubProfileRepository.js';
 import { randomUUID } from 'node:crypto';
+import { REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS } from '@angia/contracts';
 import pg from 'pg';
 import { createApp } from '@src/createApp.js';
+import { createAiBudgetRepository } from '@src/features/family/infrastructure/createAiBudgetRepository.js';
 import { createFamilyAdminRepository } from '@src/features/family/infrastructure/createFamilyAdminRepository.js';
 import { createSessionRepository } from '@src/shared/auth/infrastructure/createSessionRepository.js';
 import { createDatabase } from '@src/shared/db/createDatabase.js';
 import { runMigrations } from '@src/shared/db/runMigrations.js';
+import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
+import { createSilentLogger } from './createSilentLogger.js';
 import { createStubAuthDeps } from './createStubAuthDeps.js';
 import { type SeededSession, seedAccount, seedSession, TEST_COOKIE_SECRET } from './seedAuthFixtures.js';
 import { startTestDatabase } from './startTestDatabase.js';
@@ -28,6 +32,9 @@ export async function startAdminTestApp() {
   const pool = new pg.Pool({ connectionString: db.appUrl });
   const database = createDatabase(pool);
   const stub = createStubAuthDeps();
+  const boss = createPgBoss(db.appUrl, createSilentLogger());
+  await boss.start();
+  await boss.createQueue(REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS);
   const app = createApp({
     consentInvitations: createStubInvitationDeps(),
     documents: createStubDocumentDeps(),
@@ -40,6 +47,11 @@ export async function startAdminTestApp() {
     },
     profiles: createStubProfileRepository(),
     familyAdmin: createFamilyAdminRepository(database),
+    aiBudget: {
+      repository: createAiBudgetRepository(database, boss),
+      defaultMonthlyCapUsd: 5,
+      now: () => new Date(),
+    },
   });
 
   const call = (session: SeededSession, method: string, path: string, body?: unknown) =>
@@ -66,6 +78,7 @@ export async function startAdminTestApp() {
   const admin = await seedSession(owner, await seedAccount(owner, { admin: true }));
 
   const stop = async () => {
+    await boss.stop({ graceful: false });
     await pool.end();
     await owner.end();
     await db.container.stop();

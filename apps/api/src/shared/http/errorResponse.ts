@@ -48,6 +48,10 @@ const ERROR_CATALOG = {
     message:
       'Chỉ số đo lường vượt ngoài khoảng giá trị vật lý thông thường. Vui lòng kiểm tra hoặc xác nhận.',
   },
+  ERR_DUPLICATE_UNCONFIRMED: {
+    status: 409,
+    message: 'Phát hiện chứng từ có nội dung tương tự đã tồn tại trong hệ thống.',
+  },
   ERR_INVALID_STATE_TRANSITION: {
     status: 409,
     message: 'Thao tác không thể thực hiện tại trạng thái vòng đời hiện tại của đối tượng.',
@@ -59,6 +63,10 @@ const ERROR_CATALOG = {
   ERR_GLUCOSE_UNIT_REQUIRED: {
     status: 422,
     message: 'Vui lòng lựa chọn đơn vị đo lường cho chỉ số đường huyết (mmol/L hoặc mg/dL).',
+  },
+  ERR_DOSE_INFO_MISSING: {
+    status: 422,
+    message: 'Thông tin dòng thuốc chưa đầy đủ (yêu cầu buổi dùng, liều dùng và thời lượng).',
   },
   ERR_VALIDATION: { status: 422, message: 'Dữ liệu gửi lên không đúng định dạng quy định.' },
   ERR_UPLOAD_TIMEOUT: {

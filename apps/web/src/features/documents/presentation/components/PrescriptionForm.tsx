@@ -1,23 +1,43 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import {
   emptyPrescriptionItem,
+  PRESCRIPTION_ROW_FIELDS,
   prescriptionFormSchema,
   toPrescriptionApproval,
   toPrescriptionFormValues,
   type PrescriptionFormValues,
 } from '../../application/prescriptionForm';
-import { summarizeRowErrors } from '../../application/prescriptionRowErrors';
-import type { PrescriptionPayload } from '../../application/reviewPorts';
-import { PrescriptionErrorSummary } from './PrescriptionErrorSummary';
+import { summarizeRowErrors } from '../../application/rowErrors';
+import type { ApproveDocumentRequest, PrescriptionPayload } from '../../application/reviewPorts';
+import type { ReviewRequestError } from '../../application/ReviewRequestError';
+import { AddRowButton } from './AddRowButton';
 import { PrescriptionGeneralFields } from './PrescriptionGeneralFields';
 import { PrescriptionItemCard } from './PrescriptionItemCard';
 import { ReviewSubmitBar } from './ReviewSubmitBar';
+import { RowErrorSummary } from './RowErrorSummary';
 
-// SPEC-010 + BR-025: form đơn thuốc nhiều dòng điền sẵn từ AI. API lưu đơn thuốc làm ở E3-S3-T3 —
-// tới lúc đó form chỉ kiểm tra đủ thông tin rồi báo chưa lưu được.
-export function PrescriptionForm({ payload }: { payload: PrescriptionPayload | null }) {
+type PrescriptionFormProps = {
+  payload: PrescriptionPayload | null;
+  /** Nhập tay (SPEC-011): form trống, không nhắc tới dữ liệu AI. */
+  manual?: boolean;
+  pending: boolean;
+  error: ReviewRequestError | null;
+  onSubmit: (request: ApproveDocumentRequest) => void;
+};
+
+const SERVER_ROW_MESSAGE = 'Dòng này còn thiếu liều, buổi dùng hoặc số ngày — đối chiếu lại với đơn.';
+
+// SPEC-010 + BR-025: form đơn thuốc nhiều dòng điền sẵn từ AI, lưu qua API duyệt (E3-S3-T3).
+// API chặn dòng thiếu liều bằng ERR_DOSE_INFO_MISSING kèm chỉ số dòng → gắn lỗi vào đúng dòng.
+export function PrescriptionForm({
+  payload,
+  manual = false,
+  pending,
+  error,
+  onSubmit,
+}: PrescriptionFormProps) {
   const form = useForm<PrescriptionFormValues>({
     resolver: zodResolver(prescriptionFormSchema),
     defaultValues: toPrescriptionFormValues(payload),
@@ -25,16 +45,18 @@ export function PrescriptionForm({ payload }: { payload: PrescriptionPayload | n
   });
   const items = useFieldArray({ control: form.control, name: 'items' });
   const names = useWatch({ control: form.control, name: 'items' }).map((item) => item.name);
-  // E3-S3-T3 thay bằng gọi API duyệt với bản đối soát này.
-  const [approval, setApproval] = useState<PrescriptionPayload | null>(null);
-  const rows = summarizeRowErrors(form.formState.errors.items, names);
-  const submit = form.handleSubmit(
-    (values) => setApproval(toPrescriptionApproval(values)),
-    () => setApproval(null),
+  useEffect(() => {
+    for (const index of error?.invalidItemIndexes ?? [])
+      form.setError(`items.${index}.durationDays`, { type: 'server', message: SERVER_ROW_MESSAGE });
+  }, [error, form]);
+  const rows = summarizeRowErrors(form.formState.errors.items, names, PRESCRIPTION_ROW_FIELDS);
+  const otherError = error && error.code !== 'ERR_DOSE_INFO_MISSING' ? error.message : null;
+  const submit = form.handleSubmit((values) =>
+    onSubmit({ type: 'prescription', data: toPrescriptionApproval(values) }),
   );
   return (
     <form noValidate onSubmit={(event) => void submit(event)} className="flex flex-col gap-6">
-      <PrescriptionGeneralFields form={form} aiDate={Boolean(payload?.issuedDate)} />
+      <PrescriptionGeneralFields form={form} aiDate={manual || Boolean(payload?.issuedDate)} />
       <section
         aria-labelledby="rx-items-title"
         className="flex flex-col gap-4 rounded-[20px] bg-white p-5 lg:p-6"
@@ -42,7 +64,7 @@ export function PrescriptionForm({ payload }: { payload: PrescriptionPayload | n
         <h2 id="rx-items-title" className="text-xs font-semibold uppercase tracking-wider text-[#286958]">
           Danh sách thuốc ({items.fields.length} loại)
         </h2>
-        {payload === null && (
+        {payload === null && !manual && (
           <p className="text-sm text-[#55615f]">Chưa có dữ liệu AI trích xuất, vui lòng nhập theo ảnh.</p>
         )}
         <ol className="flex flex-col gap-4">
@@ -55,22 +77,15 @@ export function PrescriptionForm({ payload }: { payload: PrescriptionPayload | n
             />
           ))}
         </ol>
-        <button
-          type="button"
-          onClick={() => items.append(emptyPrescriptionItem())}
-          className="inline-flex min-h-11 items-center justify-center rounded-xl border border-dashed border-[#6f7975] px-4 text-sm font-semibold text-[#004135] hover:bg-[#eaf6f5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
-        >
-          + Thêm thuốc
-        </button>
+        <AddRowButton label="Thêm thuốc" onAdd={() => items.append(emptyPrescriptionItem())} />
       </section>
-      <PrescriptionErrorSummary rows={rows} />
-      {approval && (
-        <p role="status" className="rounded-2xl bg-[#e4f0f0] p-4 text-sm text-[#20594b]">
-          Đơn thuốc đã đủ thông tin ({approval.items.length} loại thuốc). Lưu đơn thuốc vào sổ sẽ có ở bản cập
-          nhật sau.
+      <RowErrorSummary rows={rows} noun="dòng thuốc" anchorPrefix="rx-item" />
+      {otherError && (
+        <p role="alert" className="rounded-2xl bg-[#fdecea] p-4 text-sm text-[#b42318]">
+          {otherError}
         </p>
       )}
-      <ReviewSubmitBar pending={false} disabled={false} />
+      <ReviewSubmitBar pending={pending} disabled={false} />
     </form>
   );
 }

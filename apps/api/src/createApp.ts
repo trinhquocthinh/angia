@@ -7,6 +7,7 @@ import {
 } from '@src/features/consentInvitations/presentation/registerInvitationRoutes.js';
 import type { DocumentDependencies } from '@src/features/documents/application/ports.js';
 import { registerDocumentRoutes } from '@src/features/documents/presentation/registerDocumentRoutes.js';
+import { registerManualRecordRoutes } from '@src/features/documents/presentation/registerManualRecordRoutes.js';
 import {
   registerReviewRoutes,
   type ReviewDependencies,
@@ -19,6 +20,8 @@ import { OpenAPIHono } from '@hono/zod-openapi';
 import { except } from 'hono/combine';
 import type { FamilyAdminRepository } from '@src/features/family/application/ports.js';
 import { registerAdminRoutes } from '@src/features/family/presentation/registerAdminRoutes.js';
+import type { AiBudgetDependencies } from '@src/features/family/application/aiBudgetPorts.js';
+import { registerAiBudgetRoutes } from '@src/features/family/presentation/registerAiBudgetRoutes.js';
 import type { HealthProbes } from '@src/features/health/application/ports.js';
 import { registerHealthRoute } from '@src/features/health/presentation/registerHealthRoute.js';
 import { loadSession } from '@src/shared/auth/presentation/loadSession.js';
@@ -32,6 +35,7 @@ export type AppDependencies = {
   healthProbes: HealthProbes;
   auth: AuthRouteDeps;
   familyAdmin: FamilyAdminRepository;
+  aiBudget: AiBudgetDependencies;
   profiles: ProfileRepository;
   consentInvitations: InvitationRouteDependencies;
   documents: DocumentDependencies;
@@ -73,9 +77,11 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerAuthRoutes(app, deps.auth);
   registerMeRoute(app);
   registerAdminRoutes(app, deps.familyAdmin);
+  registerAiBudgetRoutes(app, deps.aiBudget);
   registerProfileRoutes(app, deps.profiles, deps.auth.login.now);
   registerDocumentRoutes(app, deps.documents);
   registerReviewRoutes(app, deps.review);
+  registerManualRecordRoutes(app, deps.review.repository);
   registerPrivacyRoutes(app, deps.privacy);
   registerMeasurementRoutes(app, deps.measurements);
   registerInvitationRoutes(app, deps.consentInvitations);

@@ -10,7 +10,9 @@ interface Owner {
 }
 
 // Chứng từ như vừa qua worker: pending_review + bản trích xuất + ảnh gốc trong S3 giả (chèn bằng role owner).
+// Loại chứng từ lấy theo `payload.type` (mặc định số đo máy).
 export async function seedPendingDocument(t: ProfileTestApp, owner: Owner, payload: object) {
+  const type = 'type' in payload && typeof payload.type === 'string' ? payload.type : 'device_reading';
   const batchId = randomUUID();
   const documentId = randomUUID();
   const { familyId, profileId } = owner;
@@ -21,8 +23,8 @@ export async function seedPendingDocument(t: ProfileTestApp, owner: Owner, paylo
   );
   await t.owner.query(
     `INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,type,status,original_key,mime_type,size_bytes)
-     VALUES ($1,$2,$3,$4,'device_reading','pending_review',$5,'image/jpeg',$6)`,
-    [documentId, familyId, profileId, batchId, key, PENDING_JPEG.length],
+     VALUES ($1,$2,$3,$4,$5,'pending_review',$6,'image/jpeg',$7)`,
+    [documentId, familyId, profileId, batchId, type, key, PENDING_JPEG.length],
   );
   await t.owner.query(
     `INSERT INTO extractions(id,family_id,source_document_id,provider,model,payload,cost_usd)

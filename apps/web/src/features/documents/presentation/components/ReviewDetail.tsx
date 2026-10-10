@@ -1,14 +1,13 @@
 import { useNavigate } from '@tanstack/react-router';
 import type { components } from '@src/shared/api/schema.gen';
 import { nextDocumentId } from '../../application/reviewQueue';
-import type { ApproveDocumentRequest, ReviewRepository, SourceDocument } from '../../application/reviewPorts';
-import { ReviewRequestError } from '../../application/ReviewRequestError';
-import { useApproveDocument, useDocumentReview } from '../../application/useReviewWorkspace';
+import type { ReviewRepository, SourceDocument } from '../../application/reviewPorts';
+import { useDocumentReview } from '../../application/useReviewWorkspace';
 import { DocumentImagePanel } from './DocumentImagePanel';
 import { ReviewNotice } from './ReviewNotice';
 import { PrivacyEditor } from './PrivacyEditor';
-import { ReviewDetailBody } from './ReviewDetailBody';
 import { ReviewDetailHeading } from './ReviewDetailHeading';
+import { ReviewFormColumn } from './ReviewFormColumn';
 import { ReviewLoading } from './ReviewLoading';
 import type { PrivacyRepository } from '../../application/privacyPorts';
 
@@ -21,6 +20,17 @@ type ReviewDetailProps = {
   profileNames: Map<string, string>;
 };
 
+// Lưu hoặc loại bỏ xong thì sang chứng từ kế tiếp; hết hàng đợi thì về danh sách.
+function useGoToNextDocument(queue: SourceDocument[], documentId: string) {
+  const navigate = useNavigate();
+  return () => {
+    const next = nextDocumentId(queue, documentId);
+    void (next
+      ? navigate({ to: '/review/$documentId', params: { documentId: next } })
+      : navigate({ to: '/review' }));
+  };
+}
+
 // Design §6 `/review/:id`: ảnh phía trên (desktop bên trái), form đối soát, lưu xong sang chứng từ kế tiếp.
 export function ReviewDetail({
   repository,
@@ -30,9 +40,8 @@ export function ReviewDetail({
   queue,
   profileNames,
 }: ReviewDetailProps) {
-  const navigate = useNavigate();
+  const goNext = useGoToNextDocument(queue, documentId);
   const review = useDocumentReview(repository, session, documentId);
-  const approve = useApproveDocument(repository, session, documentId);
   if (review.isPending) return <ReviewLoading />;
   if (review.isError)
     return (
@@ -42,15 +51,6 @@ export function ReviewDetail({
       />
     );
   const { document, extraction } = review.data;
-  const save = (request: ApproveDocumentRequest) => {
-    const next = nextDocumentId(queue, documentId);
-    approve.mutate(request, {
-      onSuccess: () =>
-        void (next
-          ? navigate({ to: '/review/$documentId', params: { documentId: next } })
-          : navigate({ to: '/review' })),
-    });
-  };
   const profileName = profileNames.get(document.healthProfileId) ?? 'Hồ sơ';
   return (
     <div className="flex flex-col gap-4">
@@ -65,12 +65,10 @@ export function ReviewDetail({
       ) : (
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <DocumentImagePanel key={`${document.id}:${document.status}`} document={document} />
-          <ReviewDetailBody
-            document={document}
-            extraction={extraction}
-            pending={approve.isPending}
-            error={approve.error instanceof ReviewRequestError ? approve.error : null}
-            onSubmit={save}
+          <ReviewFormColumn
+            key={document.id}
+            {...{ repository, session, document, extraction }}
+            onDone={goNext}
           />
         </div>
       )}

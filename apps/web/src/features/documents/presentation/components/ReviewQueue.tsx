@@ -9,10 +9,13 @@ type ReviewQueueProps = {
   loading: boolean;
   error: boolean;
   retry: () => void;
+  /** F09a: còn trang sau thì hiện "Xem thêm". */
+  more?: { loading: boolean; load: () => void } | null;
 };
 
 // Design §6 `/review`: khung xương khi tải, thẻ lỗi + Thử lại, trạng thái rỗng thân mật.
-export function ReviewQueue({ documents, profileNames, activeId, loading, error, retry }: ReviewQueueProps) {
+export function ReviewQueue(props: ReviewQueueProps) {
+  const { documents, loading, error, more } = props;
   return (
     <section aria-labelledby="review-queue-title" className="flex flex-col gap-4 rounded-[20px] bg-white p-4">
       <div className="flex flex-col gap-1">
@@ -22,13 +25,24 @@ export function ReviewQueue({ documents, profileNames, activeId, loading, error,
           </h1>
           {!loading && !error && (
             <span className="whitespace-nowrap rounded-full bg-[#b3eddf] px-2.5 py-0.5 text-xs font-semibold text-[#004135]">
-              {documents.length} chứng từ
+              {documents.length}
+              {more ? '+' : ''} chứng từ
             </span>
           )}
         </div>
         <p className="text-sm text-[#55615f]">Kiểm tra thông tin đọc từ ảnh chụp trước khi lưu vào sổ.</p>
       </div>
-      <QueueBody {...{ documents, profileNames, activeId, loading, error, retry }} />
+      <QueueBody {...props} />
+      {more && !loading && !error && (
+        <button
+          type="button"
+          disabled={more.loading}
+          onClick={more.load}
+          className="min-h-11 rounded-xl bg-[#eaf6f5] px-4 text-sm font-semibold text-[#004135] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
+        >
+          {more.loading ? 'Đang tải…' : 'Xem thêm'}
+        </button>
+      )}
     </section>
   );
 }

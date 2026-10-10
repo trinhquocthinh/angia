@@ -11,6 +11,7 @@ const item = {
   durationDays: 30,
   longTerm: false,
   note: null,
+  totalQuantity: null,
 };
 
 const expected: ExtractionPayload = {
@@ -57,6 +58,11 @@ describe('scoreExtraction', () => {
 
   it('chưa chấm chẩn đoán vì đáp án golden chưa gán nhãn (E3-S3-T1)', () => {
     const actual = { ...expected, diagnosis: 'Tăng huyết áp' };
+    expect(scoreExtraction(expected, actual)).toMatchObject({ correct: 10, total: FIELDS_PER_ONE_ITEM });
+  });
+
+  it('chưa chấm tổng số lượng vì đáp án golden chưa gán nhãn (E3-S3-T3)', () => {
+    const actual: ExtractionPayload = { ...expected, items: [{ ...item, totalQuantity: 30 }] };
     expect(scoreExtraction(expected, actual)).toMatchObject({ correct: 10, total: FIELDS_PER_ONE_ITEM });
   });
 

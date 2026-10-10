@@ -1,3 +1,4 @@
+import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
 import { createApp } from '@src/createApp.js';
 import { createFakeFamilyAdminRepository } from './createFakeFamilyAdminRepository.js';
 import { createStubAuthDeps } from './createStubAuthDeps.js';
@@ -18,5 +19,6 @@ export function createStubApp() {
     auth: createStubAuthDeps(),
     profiles: createStubProfileRepository(),
     familyAdmin: createFakeFamilyAdminRepository().repository,
+    aiBudget: createStubAiBudgetDeps(),
   });
 }

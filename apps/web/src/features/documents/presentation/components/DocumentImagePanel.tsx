@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { SourceDocument } from '../../application/reviewPorts';
 import { documentImageUrl } from '../../infrastructure/createReviewRepository';
 import { DocumentIcon } from './DocumentIcon';
+import { DocumentImageViewer } from './DocumentImageViewer';
 
 const FORMAT: Record<string, string> = {
   'image/jpeg': 'JPG',
@@ -14,6 +15,7 @@ const action =
   'inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-white px-3 text-sm font-medium text-[#004135] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]';
 
 // WebP xem trước qua API cùng cookie phiên; giữ liên kết mở tệp gốc để đối chiếu.
+// Desktop (xl): khung dính theo màn hình khi cuộn form dài, ảnh cuộn/phóng riêng bên trong.
 export function DocumentImagePanel({ document }: { document: SourceDocument }) {
   const [turns, setTurns] = useState(0);
   const [failed, setFailed] = useState(false);
@@ -21,7 +23,7 @@ export function DocumentImagePanel({ document }: { document: SourceDocument }) {
   return (
     <section
       aria-label="Ảnh chứng từ"
-      className="flex flex-col gap-3 rounded-[20px] bg-[#eaf6f5] p-3 lg:h-full"
+      className="flex h-[65vh] flex-col gap-3 rounded-[20px] bg-[#eaf6f5] p-3 xl:sticky xl:top-4 xl:h-[calc(100dvh-2rem)] xl:self-start"
     >
       <div className="flex items-center justify-between gap-2 px-1 text-xs font-semibold uppercase tracking-wider text-[#286958]">
         <span>Ảnh chứng từ</span>
@@ -29,8 +31,8 @@ export function DocumentImagePanel({ document }: { document: SourceDocument }) {
           Tệp gốc: {FORMAT[document.mimeType] ?? 'ẢNH'} · {sizeLabel(document.sizeBytes)}
         </span>
       </div>
-      <div className="flex min-h-[260px] flex-1 items-center justify-center overflow-hidden rounded-2xl bg-white">
-        {failed ? (
+      {failed ? (
+        <div className="flex min-h-0 flex-1 items-center justify-center rounded-2xl bg-white">
           <div className="flex max-w-xs flex-col items-center gap-3 p-6 text-center text-sm text-[#55615f]">
             <DocumentIcon name="image" size={40} />
             <p>
@@ -38,16 +40,14 @@ export function DocumentImagePanel({ document }: { document: SourceDocument }) {
               chiếu.
             </p>
           </div>
-        ) : (
-          <img
-            src={documentImageUrl(document.id)}
-            alt="Ảnh chứng từ đang duyệt"
-            onError={() => setFailed(true)}
-            style={{ transform: `rotate(${turns * 90}deg)` }}
-            className="max-h-[70vh] w-full object-contain transition-transform motion-reduce:transition-none"
-          />
-        )}
-      </div>
+        </div>
+      ) : (
+        <DocumentImageViewer
+          src={documentImageUrl(document.id)}
+          turns={turns}
+          onError={() => setFailed(true)}
+        />
+      )}
       <div className="flex gap-2">
         <button
           type="button"

@@ -4,8 +4,9 @@ import { normalizeValue } from './normalizeValue.js';
 
 // `note` là câu cách dùng nguyên văn: lệch một dấu câu đã tính sai, không phản ánh khả năng đọc liều.
 // Model vẫn trích nhưng không tính vào ngưỡng R1 (chốt 2026-10-04).
-// `diagnosis` thêm ở E3-S3-T1, đáp án golden chưa gán nhãn nên chưa chấm.
-const isScored = (path: string): boolean => !path.endsWith('.note') && path !== 'diagnosis';
+// `diagnosis` (E3-S3-T1) và `totalQuantity` (E3-S3-T3) đáp án golden chưa gán nhãn nên chưa chấm.
+const isScored = (path: string): boolean =>
+  !path.endsWith('.note') && !path.endsWith('.totalQuantity') && path !== 'diagnosis';
 
 const scoredFields = (payload: ExtractionPayload): Map<string, unknown> =>
   new Map([...flattenFields(payload)].filter(([path]) => isScored(path)));

@@ -3,9 +3,16 @@ import type { ApproveDocumentRequest, SourceDocument } from '../../application/r
 import type { ReviewRequestError } from '../../application/ReviewRequestError';
 import { reviewItemState } from '../../application/reviewQueuePolling';
 import { ExtractingPlaceholder } from './ExtractingPlaceholder';
+import { LabResultForm } from './LabResultForm';
+import { ManualEntryForm } from './ManualEntryForm';
 import { PrescriptionForm } from './PrescriptionForm';
 import { ReadingForm } from './ReadingForm';
 import { ReviewNotice } from './ReviewNotice';
+const MANUAL_INTRO =
+  'Chứng từ này cần nhập tay. Chọn loại dữ liệu rồi nhập theo ảnh; ảnh không dùng được thì có thể loại bỏ.';
+// BR-018: hết ngân sách AI tháng này — AI sẽ đọc lại khi có ngân sách, hoặc nhập tay ngay không cần chờ.
+const BUDGET_INTRO =
+  'Đã hết ngân sách AI tháng này nên ảnh đang chờ để AI đọc khi có ngân sách. Bạn có thể nhập tay ngay theo ảnh mà không cần chờ.';
 type DetailBodyProps = {
   document: SourceDocument;
   extraction: components['schemas']['DocumentReview']['extraction'];
@@ -24,24 +31,37 @@ export function ReviewDetailBody({ document, extraction, pending, error, onSubmi
       />
     );
   if (state === 'reading') return <ExtractingPlaceholder />;
-  if (state === 'manual')
+  if (state === 'manual' || state === 'budget')
     return (
-      <ReviewNotice
-        title="Cần nhập tay"
-        body="Ảnh vẫn được lưu. Nhập tay theo ảnh sẽ có ở bản cập nhật sau."
+      <ManualEntryForm
+        key={document.id}
+        initialType={document.type}
+        intro={state === 'budget' ? BUDGET_INTRO : MANUAL_INTRO}
+        pending={pending}
+        error={error}
+        onSubmit={onSubmit}
       />
     );
   if (document.status !== 'pending_review')
     return <ReviewNotice title="Chứng từ không còn chờ duyệt" body="Chứng từ này đã được xử lý trước đó." />;
   if (document.type === 'prescription')
     return (
-      <PrescriptionForm key={document.id} payload={extraction?.type === 'prescription' ? extraction : null} />
+      <PrescriptionForm
+        key={document.id}
+        payload={extraction?.type === 'prescription' ? extraction : null}
+        pending={pending}
+        error={error}
+        onSubmit={onSubmit}
+      />
     );
-  if (document.type !== 'device_reading')
+  if (document.type === 'lab_result')
     return (
-      <ReviewNotice
-        title="Sẽ duyệt được ở bản cập nhật sau"
-        body="Hiện chưa duyệt được kết quả xét nghiệm. Chứng từ vẫn được giữ trong hàng đợi."
+      <LabResultForm
+        key={document.id}
+        payload={extraction?.type === 'lab_result' ? extraction : null}
+        pending={pending}
+        error={error}
+        onSubmit={onSubmit}
       />
     );
   const payload = extraction?.type === 'device_reading' ? extraction : null;

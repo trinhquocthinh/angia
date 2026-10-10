@@ -7,21 +7,31 @@ const SKELETON_TABLES = [
   'accounts',
   'consent_invitations',
   'consent_legacy_attestations',
+  'extraction_reservations',
+  'extraction_spend',
   'extractions',
   'families',
   'health_profiles',
+  'lab_results',
   'measurements',
+  'prescription_items',
+  'prescriptions',
   'sessions',
   'source_documents',
   'upload_batches',
 ];
-// Bảng dữ liệu sức khỏe bắt buộc RLS (Tech Spec §3); families/accounts/sessions phục vụ xác thực.
+// Bảng dữ liệu sức khỏe bắt buộc RLS (Tech Spec §3); families/accounts/sessions phục vụ xác thực,
+// extraction_spend là bảng quản trị ngân sách phi y tế (E3-S6-T1).
 const RLS_TABLES = [
   'consent_invitations',
   'consent_legacy_attestations',
+  'extraction_reservations',
   'extractions',
   'health_profiles',
+  'lab_results',
   'measurements',
+  'prescription_items',
+  'prescriptions',
   'source_documents',
   'upload_batches',
 ];

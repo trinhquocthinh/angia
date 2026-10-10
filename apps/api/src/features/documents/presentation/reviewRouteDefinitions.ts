@@ -2,8 +2,10 @@ import { createRoute, z } from '@hono/zod-openapi';
 import {
   approveDocumentRequestSchema,
   approvedDocumentResponseSchema,
+  documentListQuerySchema,
   documentReviewResponseSchema,
   errorResponseSchema,
+  sourceDocumentPageSchema,
   sourceDocumentSchema,
 } from '@angia/contracts';
 
@@ -22,23 +24,15 @@ export const listDocumentsRoute = createRoute({
   path: '/api/source-documents',
   tags: ['documents'],
   summary:
-    'Danh sách chứng từ của gia đình theo bộ lọc, mới nhất trước; lọc theo lô thì theo ngày chứng từ tăng dần',
-  request: {
-    query: z.object({
-      // Lặp tham số để lọc nhiều trạng thái: ?status=uploaded&status=extracting&status=pending_review
-      status: z
-        .union([sourceDocumentSchema.shape.status, z.array(sourceDocumentSchema.shape.status)])
-        .optional(),
-      profileId: z.uuid().optional(),
-      batchId: z.uuid().optional(),
-    }),
-  },
+    'Danh sách chứng từ của gia đình theo bộ lọc, mới nhất trước, phân trang cursor; lọc theo lô thì theo ngày chứng từ tăng dần và trả cả lô',
+  request: { query: documentListQuerySchema },
   responses: {
     200: {
-      description: 'Chứng từ',
-      content: { 'application/json': { schema: z.array(sourceDocumentSchema) } },
+      description: 'Một trang chứng từ; nextCursor null khi hết',
+      content: { 'application/json': { schema: sourceDocumentPageSchema } },
     },
     ...guarded,
+    422: error('ERR_VALIDATION: limit ngoài 1–100 hoặc cursor không phải UUID'),
   },
 });
 
@@ -81,21 +75,40 @@ export const approveDocumentRoute = createRoute({
   method: 'post',
   path: '/api/source-documents/{id}/approve',
   tags: ['documents'],
-  summary: 'Phê duyệt bản trích xuất số đo máy (E2-S6-T1: chỉ device_reading)',
+  summary: 'Phê duyệt bản đối soát: số đo máy, đơn thuốc hoặc phiếu xét nghiệm',
   request: {
     params: idParam,
     body: { required: true, content: { 'application/json': { schema: approveDocumentRequestSchema } } },
   },
   responses: {
     200: {
-      description: 'Chứng từ approved và số đo đã lưu',
+      description: 'Chứng từ approved và dữ liệu lâm sàng đã lưu',
       content: { 'application/json': { schema: approvedDocumentResponseSchema } },
     },
     ...guarded,
     404: error('ERR_NOT_FOUND'),
-    409: error('ERR_INVALID_STATE_TRANSITION'),
-    422: error(
-      'ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_VALIDATION',
+    409: error(
+      'ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt)',
     ),
+    422: error(
+      'ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_DOSE_INFO_MISSING (details.invalidItemIndexes), ERR_VALIDATION',
+    ),
+  },
+});
+
+export const rejectDocumentRoute = createRoute({
+  method: 'post',
+  path: '/api/source-documents/{id}/reject',
+  tags: ['documents'],
+  summary: 'Loại bỏ chứng từ chờ duyệt hoặc chờ nhập tay; ảnh gốc giữ nguyên',
+  request: { params: idParam },
+  responses: {
+    200: {
+      description: 'Chứng từ rejected',
+      content: { 'application/json': { schema: sourceDocumentSchema } },
+    },
+    ...guarded,
+    404: error('ERR_NOT_FOUND'),
+    409: error('ERR_INVALID_STATE_TRANSITION'),
   },
 });

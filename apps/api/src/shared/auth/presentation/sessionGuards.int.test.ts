@@ -1,3 +1,4 @@
+import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
 import { createStubReviewDeps } from '@src/shared/test/createStubReviewDeps.js';
 import { createStubDocumentDeps } from '@src/shared/test/createStubDocumentDeps.js';
 import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
@@ -66,6 +67,7 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
       },
       profiles: createStubProfileRepository(),
       familyAdmin: createFakeFamilyAdminRepository().repository,
+      aiBudget: createStubAiBudgetDeps(),
     });
     app.get('/api/test/main-only', requireMain(), (c) => c.text('ok'));
     app.get('/api/test/admin-only', requireAdmin(), (c) => c.text('ok'));

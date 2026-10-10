@@ -31,6 +31,13 @@ describe('extractionPayloadSchema (SDD §2.1)', () => {
     const result = extractionPayloadSchema.parse(legacy);
     expect(result.type === 'prescription' && result.diagnosis).toBeNull();
   });
+  it('dòng thuốc trích xuất trước khi có tổng số lượng được hiểu là totalQuantity null (E3-S3-T3)', () => {
+    const result = extractionPayloadSchema.parse(prescription);
+    expect(result.type === 'prescription' && result.items[0]!.totalQuantity).toBeNull();
+    const withTotal = { ...prescription, items: [{ ...prescription.items[0], totalQuantity: 30 }] };
+    const parsed = extractionPayloadSchema.parse(withTotal);
+    expect(parsed.type === 'prescription' && parsed.items[0]!.totalQuantity).toBe(30);
+  });
   it('chấp nhận phiếu xét nghiệm đúng mẫu SDD §2.1b', () => {
     const lab = {
       type: 'lab_result',

@@ -17,6 +17,8 @@ const prescriptionItem = z.object({
   durationDays: z.number().int().positive().nullable(),
   longTerm: z.boolean(),
   note: text,
+  // Thêm ở E3-S3-T3: tổng số lượng in trên đơn để gợi ý số ngày (BR-025); bản cũ mặc định null.
+  totalQuantity: z.number().positive().nullable().default(null),
 });
 
 const labItem = z.object({

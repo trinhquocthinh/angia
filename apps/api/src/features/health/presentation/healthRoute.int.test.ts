@@ -1,3 +1,4 @@
+import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
 import { createStubReviewDeps } from '@src/shared/test/createStubReviewDeps.js';
 import { createStubDocumentDeps } from '@src/shared/test/createStubDocumentDeps.js';
 import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
@@ -43,6 +44,7 @@ describe('GET /api/health với PostgreSQL thật', () => {
       auth: createStubAuthDeps(),
       profiles: createStubProfileRepository(),
       familyAdmin: createFakeFamilyAdminRepository().repository,
+      aiBudget: createStubAiBudgetDeps(),
     });
   });
 

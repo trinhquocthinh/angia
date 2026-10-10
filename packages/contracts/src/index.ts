@@ -10,6 +10,13 @@ export {
 export type { Account, AssignMembershipRequest, ChangeMembershipRequest } from './family/accountSchema.js';
 export { createFamilyRequestSchema, familySchema } from './family/familySchema.js';
 export type { CreateFamilyRequest, Family } from './family/familySchema.js';
+export { aiBudgetSchema, updateAiBudgetRequestSchema } from './family/aiBudgetSchemas.js';
+export type { AiBudget, UpdateAiBudgetRequest } from './family/aiBudgetSchemas.js';
+export { budgetMonth } from './budget/budgetMonth.js';
+export {
+  REQUEUE_AWAITING_BUDGET_QUEUE,
+  REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS,
+} from './jobs/requeueAwaitingBudgetJob.js';
 export { healthResponseSchema } from './health/healthResponseSchema.js';
 export type { HealthResponse } from './health/healthResponseSchema.js';
 export { healthProfileSchema } from './profiles/healthProfileSchema.js';
@@ -43,20 +50,30 @@ export {
   approveDocumentRequestSchema,
   approvedDocumentResponseSchema,
   deviceReadingApprovalSchema,
+  documentListQuerySchema,
   documentReviewResponseSchema,
+  manualRecordsResponseSchema,
+  sourceDocumentPageSchema,
 } from './documents/reviewSchemas.js';
 export type {
   ApproveDocumentRequest,
   ApprovedDocumentResponse,
   DocumentReview,
+  ManualRecordsResponse,
+  SourceDocumentPage,
 } from './documents/reviewSchemas.js';
+export { prescriptionSchema } from './prescriptions/prescriptionSchema.js';
+export type { Prescription } from './prescriptions/prescriptionSchema.js';
+export { labResultSchema } from './labResults/labResultSchema.js';
+export type { LabResult } from './labResults/labResultSchema.js';
 export { measurementListQuerySchema, measurementSchema } from './measurements/measurementSchema.js';
 export type { Measurement } from './measurements/measurementSchema.js';
 export { extractionPayloadSchema } from './extraction/extractionPayloadSchema.js';
 export type { ExtractionPayload } from './extraction/extractionPayloadSchema.js';
 export {
+  EXTRACT_DOCUMENT_DEAD_LETTER_QUEUE,
   EXTRACT_DOCUMENT_QUEUE,
-  EXTRACT_DOCUMENT_QUEUE_OPTIONS,
+  ensureExtractDocumentQueues,
   extractDocumentJobSchema,
 } from './jobs/extractDocumentJob.js';
 export type { ExtractDocumentJob } from './jobs/extractDocumentJob.js';

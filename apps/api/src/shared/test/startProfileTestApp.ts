@@ -1,3 +1,4 @@
+import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
 import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
 import { createPrivacyQueue } from '@src/features/documentPrivacy/infrastructure/createPrivacyQueue.js';
 import { hashPrivacyPng } from '@src/features/documentPrivacy/infrastructure/hashPrivacyPng.js';
@@ -9,8 +10,7 @@ import {
   CONVERT_HEIC_QUEUE_OPTIONS,
   PREPARE_OCR_IMAGE_QUEUE,
   PREPARE_OCR_IMAGE_QUEUE_OPTIONS,
-  EXTRACT_DOCUMENT_QUEUE,
-  EXTRACT_DOCUMENT_QUEUE_OPTIONS,
+  ensureExtractDocumentQueues,
 } from '@angia/contracts';
 import pg from 'pg';
 import type { PgBoss } from 'pg-boss';
@@ -48,6 +48,7 @@ function buildApp(
       login: { ...stub.login, sessions: createSessionRepository(database) },
     },
     familyAdmin: createFakeFamilyAdminRepository().repository,
+    aiBudget: createStubAiBudgetDeps(),
     profiles: createProfileRepository(database),
     consentInvitations: {
       repository: createInvitationRepository(database),
@@ -87,7 +88,7 @@ export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') 
   await boss.start();
   await boss.createQueue(CONVERT_HEIC_QUEUE, CONVERT_HEIC_QUEUE_OPTIONS);
   await boss.createQueue(PREPARE_OCR_IMAGE_QUEUE, PREPARE_OCR_IMAGE_QUEUE_OPTIONS);
-  await boss.createQueue(EXTRACT_DOCUMENT_QUEUE, EXTRACT_DOCUMENT_QUEUE_OPTIONS);
+  await ensureExtractDocumentQueues(boss);
   const app = buildApp(database, appBaseUrl, memory, boss);
   const family = async () => {
     const id = randomUUID();

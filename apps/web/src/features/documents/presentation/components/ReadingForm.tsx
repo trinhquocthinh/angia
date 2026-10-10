@@ -17,13 +17,15 @@ import { ReviewSubmitBar } from './ReviewSubmitBar';
 
 type ReadingFormProps = {
   payload: DeviceReadingPayload | null;
+  /** Nhập tay (SPEC-011): form trống, không nhắc tới dữ liệu AI. */
+  manual?: boolean;
   pending: boolean;
   error: ReviewRequestError | null;
   onSubmit: (request: ApproveDocumentRequest) => void;
 };
 
 // SPEC-010: form đối soát điền sẵn từ AI; người duyệt sửa rồi "Lưu vào sổ" (Enter cũng lưu).
-export function ReadingForm({ payload, pending, error, onSubmit }: ReadingFormProps) {
+export function ReadingForm({ payload, manual = false, pending, error, onSubmit }: ReadingFormProps) {
   const form = useForm<ReadingFormValues>({
     resolver: zodResolver(readingFormSchema),
     defaultValues: toReadingFormValues(payload),
@@ -47,14 +49,16 @@ export function ReadingForm({ payload, pending, error, onSubmit }: ReadingFormPr
             label="Ngày đo *"
             type="date"
             error={errors.measuredAt?.message}
-            hint={payload?.measuredAt ? undefined : 'AI không đọc được ngày, vui lòng nhập theo máy.'}
+            hint={
+              manual || payload?.measuredAt ? undefined : 'AI không đọc được ngày, vui lòng nhập theo máy.'
+            }
             {...form.register('measuredAt')}
           />
           <ReadingField id="measuredTime" label="Giờ đo" type="time" {...form.register('measuredTime')} />
         </div>
         <ReadingKindPicker register={form.register('kind')} />
         <ReadingValueFields kind={kind} register={form.register} errors={errors} flagged={outOfRange} />
-        {payload === null && (
+        {payload === null && !manual && (
           <p className="text-sm text-[#55615f]">Chưa có dữ liệu AI trích xuất, vui lòng nhập theo ảnh.</p>
         )}
       </section>

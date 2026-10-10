@@ -2,6 +2,7 @@ import type { components } from '@src/shared/api/schema.gen';
 
 export type Family = components['schemas']['Family'];
 export type Account = components['schemas']['Account'];
+export type AiBudget = components['schemas']['SpendResponse'];
 export type FamilyRole = NonNullable<Account['role']>;
 export type AdminCommand =
   | { type: 'create'; name: string }
@@ -19,4 +20,10 @@ export interface AdminRepository {
     body: components['schemas']['ChangeMembershipRequest'],
     csrfToken: string,
   ): Promise<Account>;
+}
+
+// SPEC-013: trần ngân sách AI toàn hệ thống của tháng hiện tại (giờ Việt Nam).
+export interface AiBudgetRepository {
+  get(signal?: AbortSignal): Promise<AiBudget>;
+  setCap(monthlyCapUsd: number, csrfToken: string): Promise<AiBudget>;
 }

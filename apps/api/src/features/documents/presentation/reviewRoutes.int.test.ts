@@ -1,6 +1,12 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { ApprovedDocumentResponse, DocumentReview, HealthProfile, Measurement } from '@angia/contracts';
+import type {
+  ApprovedDocumentResponse,
+  DocumentReview,
+  HealthProfile,
+  Measurement,
+  SourceDocumentPage,
+} from '@angia/contracts';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { PENDING_JPEG, seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
@@ -51,7 +57,7 @@ describe('Duyệt số đo từ ảnh máy đo: route thật, transaction và RL
     const other = await pendingFixture();
     const queue = await t.call(main, 'GET', '/api/source-documents?status=pending_review');
     expect(queue.headers.get('cache-control')).toBe('no-store');
-    const ids = ((await queue.json()) as { id: string }[]).map((d) => d.id);
+    const ids = ((await queue.json()) as SourceDocumentPage).items.map((d) => d.id);
     expect(ids).toEqual([documentId]);
     expect(ids).not.toContain(other.documentId);
     await t.owner.query("UPDATE source_documents SET status='extracting' WHERE id=$1", [other.documentId]);
@@ -62,7 +68,7 @@ describe('Duyệt số đo từ ảnh máy đo: route thật, transaction và RL
       'GET',
       '/api/source-documents?status=extracting&status=pending_review',
     );
-    expect(((await many.json()) as { id: string }[]).map((d) => d.id)).toEqual([own.documentId]);
+    expect(((await many.json()) as SourceDocumentPage).items.map((d) => d.id)).toEqual([own.documentId]);
     const review = (await (
       await t.call(main, 'GET', `/api/source-documents/${documentId}/review`)
     ).json()) as DocumentReview;
@@ -176,7 +182,7 @@ describe('Duyệt số đo từ ảnh máy đo: route thật, transaction và RL
     expect(response.headers.get('content-type')).toBe('image/webp');
     expect(new Uint8Array(await response.arrayBuffer())).toEqual(preview);
     const queue = await t.call(own.main, 'GET', '/api/source-documents?status=awaiting_privacy');
-    expect(((await queue.json()) as { id: string }[]).map((d) => d.id)).toEqual([own.documentId]);
+    expect(((await queue.json()) as SourceDocumentPage).items.map((d) => d.id)).toEqual([own.documentId]);
     await expectCrossFamilyDenied(
       () => t.call(other, 'GET', `/api/source-documents/${own.documentId}/image?variant=preview`),
       () => t.call(other, 'GET', `/api/source-documents/${randomUUID()}/image?variant=preview`),

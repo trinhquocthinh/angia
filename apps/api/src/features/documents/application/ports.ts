@@ -1,10 +1,10 @@
 import type { NewSourceDocument, SourceDocument } from '../domain/SourceDocument.js';
 
-interface UploadTarget {
+export interface ProfileConsent {
   consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed';
 }
 export interface DocumentStore {
-  findProfile(id: string): Promise<UploadTarget | null>;
+  findProfile(id: string): Promise<ProfileConsent | null>;
   insertBatch(batch: { id: string; healthProfileId: string; createdBy: string }): Promise<void>;
   insertDocument(document: NewSourceDocument): Promise<SourceDocument>;
   /** Đẩy job preview trong cùng transaction: chứng từ và job cùng commit hoặc cùng rollback (SPEC-008 → SPEC-009). */
