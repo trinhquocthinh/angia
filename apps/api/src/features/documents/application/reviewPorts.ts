@@ -1,3 +1,7 @@
+import type {
+  MedicationCourse,
+  NewMedicationCourse,
+} from '@src/features/medications/domain/MedicationCourse.js';
 import type { LabResult, NewLabResult } from '@src/features/labResults/domain/LabResult.js';
 import type {
   Measurement,
@@ -29,6 +33,8 @@ export interface ReviewStore {
   findLatestExtraction(documentId: string): Promise<unknown>;
   insertMeasurement(input: NewMeasurement): Promise<Measurement>;
   insertPrescription(input: NewPrescription): Promise<Prescription>;
+  /** BR-024: ghi mọi đợt trong cùng transaction với đơn và trạng thái chứng từ. */
+  insertMedicationCourses(inputs: readonly NewMedicationCourse[]): Promise<MedicationCourse[]>;
   insertLabResults(inputs: NewLabResult[]): Promise<LabResult[]>;
   /** Bản ghi đã lưu của hồ sơ trong một ngày để kiểm trùng (SPEC-012), cả bản nhập trực tiếp. */
   findPrescriptionsOn(healthProfileId: string, issuedDate: string): Promise<Prescription[]>;

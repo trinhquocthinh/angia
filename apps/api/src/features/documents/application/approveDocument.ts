@@ -11,7 +11,7 @@ export type ApproveRequest = ApprovalDraft & { familyId: string; documentId: str
 const MANUAL: readonly DocumentStatus[] = ['manual_entry', 'awaiting_budget'];
 
 // SPEC-010/011: khóa chứng từ → FSM → đúng loại (nhập tay thì người nhập chọn loại) → kiểm theo loại → kiểm trùng
-// (SPEC-012) → ghi + approved. Đợt thuốc (SPEC-014/015) thuộc E4. Ảnh gốc S3 không bị đụng tới.
+// (SPEC-012) → ghi + approved. Đơn + đợt thuốc cùng transaction (SPEC-014); xử lý xung đột thuộc E4-S2-T1. Ảnh gốc S3 không bị đụng tới.
 export async function approveDocument(
   repository: ReviewRepository,
   request: ApproveRequest,

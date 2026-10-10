@@ -1,4 +1,5 @@
 import { and, desc, eq, inArray } from 'drizzle-orm';
+import { insertMedicationCourses } from '@src/features/medications/infrastructure/insertMedicationCourses.js';
 import { insertLabResults } from '@src/features/labResults/infrastructure/insertLabResults.js';
 import { findLabResultsOn } from '@src/features/labResults/infrastructure/findLabResultsOn.js';
 import { findMeasurementsOn } from '@src/features/measurements/infrastructure/findMeasurementsOn.js';
@@ -37,6 +38,7 @@ export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewS
       return toMeasurement(row);
     },
     insertPrescription: (input) => insertPrescription(tx, familyId, input),
+    insertMedicationCourses: (inputs) => insertMedicationCourses(tx, familyId, inputs),
     insertLabResults: (inputs) => insertLabResults(tx, familyId, inputs),
     findPrescriptionsOn: (profileId, date) => findPrescriptionsOn(tx, familyId, profileId, date),
     findLabResultsOn: (profileId, date) => findLabResultsOn(tx, familyId, profileId, date),

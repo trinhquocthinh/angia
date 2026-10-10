@@ -1,3 +1,4 @@
+import { createPrescriptionCourses } from '@src/features/medications/domain/createPrescriptionCourses.js';
 import { findIncompleteDoseItems } from '@src/features/prescriptions/domain/findIncompleteDoseItems.js';
 import type { PrescriptionDraft } from './approvalDrafts.js';
 import { DATE_REQUIRED, provenance, saved, type RecordTarget, type SaveOutcome } from './approvalOutcome.js';
@@ -5,7 +6,7 @@ import { findPrescriptionDuplicate } from './findDuplicateRecord.js';
 import type { ReviewStore } from './reviewPorts.js';
 
 // SPEC-010 + BR-025: ngày kê bắt buộc → mọi dòng đủ liều/buổi/số ngày (hoặc dài hạn) → kiểm trùng
-// (SPEC-012) → lưu đơn.
+// (SPEC-012) → lưu đơn + đợt thuốc trong cùng transaction (SPEC-014).
 // Không tự suy số ngày từ tổng số lượng: gợi ý chỉ ở form và cần người duyệt bấm "Áp dụng".
 export async function savePrescription(
   store: ReviewStore,
@@ -33,5 +34,6 @@ export async function savePrescription(
       durationDays: item.longTerm ? null : item.durationDays,
     })),
   });
+  await store.insertMedicationCourses(createPrescriptionCourses(prescription));
   return saved(data.issuedDate, { prescription });
 }
