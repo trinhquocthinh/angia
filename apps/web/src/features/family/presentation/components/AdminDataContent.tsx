@@ -40,8 +40,7 @@ export function AdminDataContent({
         />
         <FamilyCards families={families.data} accounts={accounts.data} currentFamilyId={currentFamilyId} />
       </div>
-      <aside className="flex flex-col gap-6 min-w-0 max-[1199px]:grid max-[1199px]:grid-cols-[repeat(2,_minmax(0,_1fr))] max-[600px]:grid-cols-[minmax(0,_1fr)]">
-        <AiBudgetCard {...aiBudget} />
+      <aside className="flex flex-col gap-6 min-w-0 max-[1199px]:grid max-[1199px]:grid-cols-2 max-[600px]:grid-cols-[minmax(0,1fr)]">
         <PendingAccountsCard
           accounts={accounts.data}
           families={families.data}
@@ -49,6 +48,7 @@ export function AdminDataContent({
           error={inlineError}
           onSubmit={onSubmit}
         />
+        <AiBudgetCard {...aiBudget} />
         <FamilyAccessCard />
       </aside>
     </div>
