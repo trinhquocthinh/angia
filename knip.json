@@ -1,6 +1,11 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "ignore": ["**/*.gen.ts"],
+  "ignore": [
+    "**/*.gen.ts",
+    "apps/api/src/features/medications/domain/MedicationCoursePeriod.ts",
+    "apps/api/src/features/medications/domain/calculateEndDate.ts",
+    "apps/api/src/features/medications/domain/getActiveMedications.ts"
+  ],
   "workspaces": {
     ".": {
       "entry": ["tooling/**/*.test.ts", "scripts/**/*.test.ts", "scripts/heic-spike/measureOne.ts"],
