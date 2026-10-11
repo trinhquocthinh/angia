@@ -1335,8 +1335,7 @@
                 "startDate",
                 "endDate"
               ]
-            },
-            "minItems": 1
+            }
           }
         },
         "required": [
@@ -1945,6 +1944,166 @@
           "draftId",
           "sha256",
           "confirmed"
+        ],
+        "additionalProperties": false
+      },
+      "MedicationCourse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "healthProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "prescriptionItemId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "prescription",
+              "self_reported"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "strength": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quantityPerDose": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "doseUnit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "morning",
+                "noon",
+                "afternoon",
+                "evening"
+              ]
+            },
+            "minItems": 1
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "ended",
+              "stopped",
+              "replaced"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "healthProfileId",
+          "prescriptionItemId",
+          "source",
+          "name",
+          "strength",
+          "quantityPerDose",
+          "doseUnit",
+          "slots",
+          "startDate",
+          "endDate",
+          "status"
+        ]
+      },
+      "CreateSelfReportedCourseRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "strength": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "quantityPerDose": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0,
+            "maximum": 1000
+          },
+          "doseUnit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "morning",
+                "noon",
+                "afternoon",
+                "evening"
+              ]
+            },
+            "maxItems": 4
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "replace",
+              "parallel"
+            ]
+          },
+          "expectedConflictCourseIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "doseUnit",
+          "startDate"
         ],
         "additionalProperties": false
       },
@@ -4012,6 +4171,104 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/medication-courses": {
+      "post": {
+        "tags": [
+          "medications"
+        ],
+        "summary": "Khai báo thuốc bổ dài hạn không qua đơn thuốc",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSelfReportedCourseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Đợt tự khai báo đã tạo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicationCourse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: main cùng gia đình và CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED, ERR_COURSE_CONFLICT_UNRESOLVED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CourseConflictErrorResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_DOSE_INFO_MISSING, ERR_VALIDATION",
             "content": {
               "application/json": {
                 "schema": {

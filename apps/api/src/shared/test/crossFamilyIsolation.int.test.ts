@@ -41,6 +41,7 @@ const SNAPSHOT_TABLES = [
   'measurements',
   'prescriptions',
   'prescription_items',
+  'medication_courses',
   'lab_results',
 ];
 
@@ -109,6 +110,14 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'POST', `${documents}/${x.documentId}/reject`),
     'GET /api/health-profiles/:id/measurements': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/measurements`),
+    'POST /api/health-profiles/:id/medication-courses': (u, x) =>
+      t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses`, {
+        name: 'Canxi',
+        quantityPerDose: 1,
+        doseUnit: 'viên',
+        slots: ['morning'],
+        startDate: '2026-10-01',
+      }),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
         type: 'device_reading',

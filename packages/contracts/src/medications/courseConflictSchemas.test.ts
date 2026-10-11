@@ -55,4 +55,15 @@ describe('Hợp đồng lựa chọn xung đột thuốc', () => {
       }).success,
     ).toBe(false);
   });
+  it('TC-046: cho phép nhóm rỗng để xác nhận lại khi đợt cũ vừa biến mất', () => {
+    expect(
+      courseConflictErrorResponseSchema.safeParse({
+        error: {
+          code: 'ERR_COURSE_CONFLICT_UNRESOLVED',
+          message: 'Danh sách đã thay đổi',
+          details: { conflicts: [{ itemIndexes: [0], nameNormalized: 'a', courses: [] }] },
+        },
+      }).success,
+    ).toBe(true);
+  });
 });

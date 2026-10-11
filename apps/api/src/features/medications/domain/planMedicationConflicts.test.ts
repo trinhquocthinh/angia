@@ -100,4 +100,17 @@ describe('Kế hoạch giải quyết xung đột thuốc thuần (SPEC-015)', (
       replacementEndDate: '2028-02-29',
     });
   });
+  it('TC-046: toàn bộ đợt xung đột biến mất thì ID cũ vẫn phải xác nhận lại', () => {
+    expect(planMedicationConflicts([], [item(confirmed)], '2026-10-01')).toEqual({
+      ok: false,
+      conflicts: [{ nameNormalized: 'duong glucophage', itemIndexes: [0], courses: [] }],
+    });
+    expect(
+      planMedicationConflicts(
+        [],
+        [item({ resolution: 'replace', expectedConflictCourseIds: [] })],
+        '2026-10-01',
+      ),
+    ).toMatchObject({ ok: true, replaceCourseIds: [] });
+  });
 });

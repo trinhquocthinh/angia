@@ -1,10 +1,20 @@
 import type { CourseConflict } from '@angia/contracts';
-import type { CourseConflictPrompt } from '../application/courseConflictPrompt';
 import type { CourseChoices } from '../application/resolveCoursePrompt';
 
 type Props = {
   conflict: CourseConflict;
-  request: CourseConflictPrompt['request'];
+  request: {
+    data: {
+      issuedDate: string | null;
+      items: readonly {
+        name: string;
+        strength: string | null;
+        quantityPerDose: number | null;
+        doseUnit: string | null;
+        slots: CourseConflict['courses'][number]['slots'];
+      }[];
+    };
+  };
   choice: CourseChoices[string];
   pending: boolean;
   onChange: (value: 'replace' | 'parallel') => void;
@@ -30,7 +40,11 @@ export function CourseConflictGroup({ conflict, request, choice, pending, onChan
           );
         })}
       </ul>
-      <p className="font-semibold">Các đợt đang có hiệu lực:</p>
+      <p className="font-semibold">
+        {conflict.courses.length > 0
+          ? 'Các đợt đang có hiệu lực:'
+          : 'Danh sách đã thay đổi: hiện không còn đợt trùng tên có hiệu lực.'}
+      </p>
       <ul className="my-2 flex flex-col gap-2">
         {conflict.courses.map((course) => (
           <li key={course.id} className="rounded-lg bg-white/70 p-3">

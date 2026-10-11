@@ -28,7 +28,9 @@ export function planMedicationConflicts(
   const replacements = new Set<string>();
   for (const [nameNormalized, itemIndexes] of groups) {
     const matches = active.filter((course) => course.nameNormalized === nameNormalized);
-    if (matches.length === 0) continue;
+    // Kể cả tập hiện tại rỗng, ID cũ vẫn phải đối soát lại (SPEC-015).
+    if (matches.length === 0 && !itemIndexes.some((index) => items[index]!.expectedConflictCourseIds?.length))
+      continue;
     const conflict = { nameNormalized, itemIndexes, courses: matches };
     conflicts.push(conflict);
     const resolution = items[itemIndexes[0]!]!.resolution;

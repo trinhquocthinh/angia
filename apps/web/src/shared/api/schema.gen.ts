@@ -1958,6 +1958,94 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/health-profiles/{id}/medication-courses': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Khai báo thuốc bổ dài hạn không qua đơn thuốc */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['CreateSelfReportedCourseRequest'];
+        };
+      };
+      responses: {
+        /** @description Đợt tự khai báo đã tạo */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['MedicationCourse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: main cùng gia đình và CSRF */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED, ERR_COURSE_CONFLICT_UNRESOLVED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json':
+              components['schemas']['ErrorResponse'] | components['schemas']['CourseConflictErrorResponse'];
+          };
+        };
+        /** @description ERR_DOSE_INFO_MISSING, ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/consent-invitations': {
     parameters: {
       query?: never;
@@ -2652,6 +2740,39 @@ export interface components {
       sha256: string;
       /** @enum {boolean} */
       confirmed: true;
+    };
+    MedicationCourse: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      healthProfileId: string;
+      /** Format: uuid */
+      prescriptionItemId: string | null;
+      /** @enum {string} */
+      source: 'prescription' | 'self_reported';
+      name: string;
+      strength: string | null;
+      quantityPerDose: number;
+      doseUnit: string | null;
+      slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+      /** Format: date */
+      startDate: string;
+      /** Format: date */
+      endDate: string | null;
+      /** @enum {string} */
+      status: 'active' | 'ended' | 'stopped' | 'replaced';
+    };
+    CreateSelfReportedCourseRequest: {
+      name: string;
+      strength?: string | null;
+      quantityPerDose?: number | null;
+      doseUnit: string;
+      slots?: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+      /** Format: date */
+      startDate: string;
+      /** @enum {string} */
+      resolution?: 'replace' | 'parallel';
+      expectedConflictCourseIds?: string[];
     };
     ConsentInvitationCreated: {
       token: string;

@@ -29,7 +29,7 @@ export async function findMedicationCourses(
     .orderBy(medicationCourses.startDate, medicationCourses.id);
   return rows.map(({ course, strength }) => ({
     ...course,
-    strength,
+    strength: course.strength ?? strength,
     status: 'active' as const,
     quantityPerDose: Number(course.quantityPerDose),
     slots: course.slots as DoseSlot[],

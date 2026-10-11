@@ -16,6 +16,7 @@ export function createMemoryMedicationStore(courses: MedicationCourse[], prescri
         .map((c) => ({
           ...c,
           strength:
+            c.strength ??
             prescriptions.flatMap((p) => p.items).find((i) => i.id === c.prescriptionItemId)?.strength ??
             null,
         })),

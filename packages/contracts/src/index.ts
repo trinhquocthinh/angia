@@ -107,3 +107,11 @@ export {
   prepareOcrImageJobSchema,
 } from './jobs/prepareOcrImageJob.js';
 export type { PrepareOcrImageJob } from './jobs/prepareOcrImageJob.js';
+export {
+  createSelfReportedCourseRequestSchema,
+  medicationCourseSchema,
+} from './medications/selfReportedCourseSchemas.js';
+export type {
+  CreateSelfReportedCourseRequest,
+  MedicationCourse,
+} from './medications/selfReportedCourseSchemas.js';

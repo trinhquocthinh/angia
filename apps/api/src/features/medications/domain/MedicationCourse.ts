@@ -6,6 +6,8 @@ export type NewMedicationCourse = MedicationCoursePeriod & {
   readonly prescriptionItemId: string | null;
   readonly source: 'prescription' | 'self_reported';
   readonly name: string;
+  /** Hàm lượng thuốc bổ; thuốc từ đơn tiếp tục đọc qua PrescriptionItem. */
+  readonly strength?: string | null;
   readonly nameNormalized: string;
   readonly quantityPerDose: number;
   readonly doseUnit: string | null;

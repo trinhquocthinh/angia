@@ -16,6 +16,7 @@ export const medicationCourses = pgTable(
     source: text('source', { enum: ['prescription', 'self_reported'] }).notNull(),
     name: text('name').notNull(),
     nameNormalized: text('name_normalized').notNull(),
+    strength: text('strength'),
     quantityPerDose: numeric('quantity_per_dose').notNull(),
     doseUnit: text('dose_unit'),
     slots: text('slots').array().notNull(),
