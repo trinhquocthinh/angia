@@ -1,3 +1,4 @@
+import type { MedicationConflict } from '@src/features/medications/domain/MedicationConflict.js';
 import type { LabResult } from '@src/features/labResults/domain/LabResult.js';
 import type { Measurement } from '@src/features/measurements/domain/Measurement.js';
 import type { Prescription } from '@src/features/prescriptions/domain/Prescription.js';
@@ -23,7 +24,8 @@ export type ApproveError =
   | { ok: false; code: 'ERR_DOCUMENT_DATE_REQUIRED' | 'ERR_BP_INVALID' | 'ERR_GLUCOSE_UNIT_REQUIRED' }
   | { ok: false; code: 'ERR_OUT_OF_RANGE_UNCONFIRMED'; fields: string[] }
   | { ok: false; code: 'ERR_DOSE_INFO_MISSING'; invalidItemIndexes: number[] }
-  | { ok: false; code: 'ERR_DUPLICATE_UNCONFIRMED'; duplicate: DuplicateRecord };
+  | { ok: false; code: 'ERR_DUPLICATE_UNCONFIRMED'; duplicate: DuplicateRecord }
+  | { ok: false; code: 'ERR_COURSE_CONFLICT_UNRESOLVED'; conflicts: MedicationConflict[] };
 export type ApproveOutcome = { ok: true; value: ApprovedRecords } | ApproveError;
 
 /** Bản ghi đã lưu kèm ngày ghi nhận (ngày đo/kê/trả kết quả) để cập nhật ngày chứng từ. */

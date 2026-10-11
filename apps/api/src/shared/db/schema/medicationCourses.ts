@@ -43,7 +43,10 @@ export const medicationCourses = pgTable(
       'medication_courses_slots_valid',
       sql`cardinality(${t.slots}) >= 1 AND ${t.slots} <@ ARRAY['morning', 'noon', 'afternoon', 'evening']::text[]`,
     ),
-    check('medication_courses_dates_valid', sql`${t.endDate} IS NULL OR ${t.endDate} >= ${t.startDate}`),
+    check(
+      'medication_courses_dates_valid',
+      sql`${t.endDate} IS NULL OR ${t.endDate} >= ${t.startDate} OR (${t.status} = 'replaced' AND ${t.endDate} = ${t.startDate} - 1)`,
+    ),
     check('medication_courses_terminal_has_end', sql`${t.status} = 'active' OR ${t.endDate} IS NOT NULL`),
     familyIsolationPolicy(),
   ],

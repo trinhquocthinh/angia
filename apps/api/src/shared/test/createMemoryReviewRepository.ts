@@ -1,3 +1,4 @@
+import { createMemoryMedicationStore } from './createMemoryMedicationStore.js';
 import type { ProfileConsent } from '@src/features/documents/application/ports.js';
 import type {
   DocumentFilter,
@@ -110,6 +111,7 @@ export function createMemoryReviewRepository(
         medicationCourses: [],
       };
       const updates = new Map<string, SourceDocument>();
+      const medicationStore = createMemoryMedicationStore(medicationCourses, prescriptions);
       const owned = (id: string) => documents.find((d) => d.id === id && d.familyId === familyId) ?? null;
       const update = (id: string, changes: Partial<SourceDocument>) => {
         const updated = { ...owned(id)!, ...changes };
@@ -125,6 +127,7 @@ export function createMemoryReviewRepository(
         findLatestExtraction: async (id) => (owned(id) ? (extractions[id] ?? null) : null),
         ...pendingInserters(pending, nextId, CREATED_AT),
         ...savedRecordFinders({ prescriptions, labResults, measurements }),
+        ...medicationStore.store,
         findProfile: async (id) => profiles.find((p) => p.id === id && p.familyId === familyId) ?? null,
         markApproved: async (id, changes) => update(id, { status: 'approved', ...changes }),
         markRejected: async (id) => update(id, { status: 'rejected' }),
@@ -132,6 +135,7 @@ export function createMemoryReviewRepository(
       measurements.push(...pending.measurements);
       prescriptions.push(...pending.prescriptions);
       labResults.push(...pending.labs);
+      medicationStore.commit();
       medicationCourses.push(...pending.medicationCourses);
       for (const [id, updated] of updates) Object.assign(owned(id)!, updated);
       return result;

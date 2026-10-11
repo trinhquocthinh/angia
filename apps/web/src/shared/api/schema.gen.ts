@@ -1287,13 +1287,14 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt) */
+        /** @description ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts) */
         409: {
           headers: {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['ErrorResponse'];
+            'application/json':
+              components['schemas']['ErrorResponse'] | components['schemas']['CourseConflictErrorResponse'];
           };
         };
         /** @description ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_DOSE_INFO_MISSING (details.invalidItemIndexes), ERR_VALIDATION */
@@ -1448,13 +1449,14 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_CONSENT_REQUIRED, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt) */
+        /** @description ERR_CONSENT_REQUIRED, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts) */
         409: {
           headers: {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['ErrorResponse'];
+            'application/json':
+              components['schemas']['ErrorResponse'] | components['schemas']['CourseConflictErrorResponse'];
           };
         };
         /** @description ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_DOSE_INFO_MISSING (details.invalidItemIndexes), ERR_VALIDATION */
@@ -2505,6 +2507,33 @@ export interface components {
       /** Format: date-time */
       createdAt: string;
     };
+    CourseConflictErrorResponse: {
+      error: {
+        /** @enum {string} */
+        code: 'ERR_COURSE_CONFLICT_UNRESOLVED';
+        message: string;
+        details: {
+          conflicts: components['schemas']['MedicationCourseConflict'][];
+        };
+      };
+    };
+    MedicationCourseConflict: {
+      itemIndexes: number[];
+      nameNormalized: string;
+      courses: {
+        /** Format: uuid */
+        id: string;
+        name: string;
+        strength: string | null;
+        quantityPerDose: number;
+        doseUnit: string | null;
+        slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+        /** Format: date */
+        startDate: string;
+        /** Format: date */
+        endDate: string | null;
+      }[];
+    };
     ApproveDocumentRequest:
       | {
           /** @enum {string} */
@@ -2547,6 +2576,9 @@ export interface components {
               longTerm: boolean;
               note: string | null;
               totalQuantity: number | null;
+              /** @enum {string} */
+              resolution?: 'replace' | 'parallel';
+              expectedConflictCourseIds?: string[];
             }[];
           };
           confirmDuplicate?: boolean;

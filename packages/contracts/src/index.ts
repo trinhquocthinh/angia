@@ -62,6 +62,11 @@ export type {
   ManualRecordsResponse,
   SourceDocumentPage,
 } from './documents/reviewSchemas.js';
+export {
+  courseConflictSchema,
+  courseConflictErrorResponseSchema,
+} from './medications/courseConflictSchemas.js';
+export type { CourseConflict } from './medications/courseConflictSchemas.js';
 export { prescriptionSchema } from './prescriptions/prescriptionSchema.js';
 export type { Prescription } from './prescriptions/prescriptionSchema.js';
 export { labResultSchema } from './labResults/labResultSchema.js';

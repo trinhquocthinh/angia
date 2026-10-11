@@ -1,6 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi';
 import {
   approveDocumentRequestSchema,
+  courseConflictErrorResponseSchema,
   approvedDocumentResponseSchema,
   documentListQuerySchema,
   documentReviewResponseSchema,
@@ -87,9 +88,14 @@ export const approveDocumentRoute = createRoute({
     },
     ...guarded,
     404: error('ERR_NOT_FOUND'),
-    409: error(
-      'ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt)',
-    ),
+    409: {
+      ...error(
+        'ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts)',
+      ),
+      content: {
+        'application/json': { schema: z.union([errorResponseSchema, courseConflictErrorResponseSchema]) },
+      },
+    },
     422: error(
       'ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_DOSE_INFO_MISSING (details.invalidItemIndexes), ERR_VALIDATION',
     ),

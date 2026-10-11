@@ -9,6 +9,23 @@ export function toApproveErrorJson(error: SaveError) {
   if (error.code === 'ERR_OUT_OF_RANGE_UNCONFIRMED') return errorJson(error.code, { fields: error.fields });
   if (error.code === 'ERR_DOSE_INFO_MISSING')
     return errorJson(error.code, { invalidItemIndexes: error.invalidItemIndexes });
+  if (error.code === 'ERR_COURSE_CONFLICT_UNRESOLVED')
+    return errorJson(error.code, {
+      conflicts: error.conflicts.map((conflict) => ({
+        itemIndexes: conflict.itemIndexes,
+        nameNormalized: conflict.nameNormalized,
+        courses: conflict.courses.map((c) => ({
+          id: c.id,
+          name: c.name,
+          strength: c.strength ?? null,
+          quantityPerDose: c.quantityPerDose,
+          doseUnit: c.doseUnit,
+          slots: c.slots,
+          startDate: c.startDate,
+          endDate: c.endDate,
+        })),
+      })),
+    });
   if (error.code === 'ERR_DUPLICATE_UNCONFIRMED') {
     const { savedAt, ...duplicate } = error.duplicate;
     return errorJson(error.code, { ...duplicate, savedAt: savedAt.toISOString() });

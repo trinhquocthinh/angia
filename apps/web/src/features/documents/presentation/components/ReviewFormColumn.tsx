@@ -1,3 +1,5 @@
+import { useCourseConflictPrompt } from '@src/features/medications/application/useCourseConflictPrompt';
+import { CourseConflictNotice } from '@src/features/medications/presentation/CourseConflictNotice';
 import type { components } from '@src/shared/api/schema.gen';
 import type { ApproveDocumentRequest, ReviewRepository } from '../../application/reviewPorts';
 import { ReviewRequestError } from '../../application/ReviewRequestError';
@@ -24,26 +26,36 @@ export function ReviewFormColumn({
 }: ReviewFormColumnProps) {
   const approve = useApproveDocument(repository, session, document.id);
   const save = (request: ApproveDocumentRequest) => approve.mutate(request, { onSuccess: onDone });
-  const duplicate = useDuplicatePrompt(
-    save,
-    approve.error instanceof ReviewRequestError ? approve.error : null,
-  );
+  const error = approve.error instanceof ReviewRequestError ? approve.error : null;
+  const courses = useCourseConflictPrompt(save, error);
+  const duplicate = useDuplicatePrompt(courses.submit, courses.formError);
   const rejectable = document.status === 'pending_review' || document.status === 'manual_entry';
   return (
     <div className="flex flex-col gap-4">
-      <ReviewDetailBody
-        document={document}
-        extraction={extraction}
-        pending={approve.isPending}
-        error={duplicate.formError}
-        onSubmit={duplicate.submit}
-      />
+      <fieldset disabled={approve.isPending || Boolean(courses.prompt)} className="min-w-0 border-0 p-0">
+        <ReviewDetailBody
+          document={document}
+          extraction={extraction}
+          pending={approve.isPending}
+          error={duplicate.formError}
+          onSubmit={duplicate.submit}
+        />
+      </fieldset>
+      {courses.prompt && (
+        <CourseConflictNotice
+          key={JSON.stringify(courses.prompt)}
+          prompt={courses.prompt}
+          pending={approve.isPending}
+          onSubmit={duplicate.submit}
+          onCancel={() => approve.reset()}
+        />
+      )}
       {duplicate.prompt && (
         <DuplicateNotice
           duplicate={duplicate.prompt.record}
           type={duplicate.prompt.type}
           pending={approve.isPending}
-          onConfirm={() => save(duplicate.prompt!.request)}
+          onConfirm={() => duplicate.submit(duplicate.prompt!.request)}
         />
       )}
       {rejectable && (

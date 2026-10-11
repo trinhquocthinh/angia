@@ -71,6 +71,13 @@
       "when": 1791644124341,
       "tag": "0009_medication_courses",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791688820620,
+      "tag": "0010_medication_course_replacement",
+      "breakpoints": true
     }
   ]
 }

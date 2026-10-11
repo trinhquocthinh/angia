@@ -1,3 +1,5 @@
+import type { CourseConflict } from '@angia/contracts';
+
 /** SPEC-012: bản đã lưu bị trùng; `duplicateOf = null` khi bản đó nhập trực tiếp không kèm chứng từ. */
 export interface DuplicateRecord {
   duplicateOf: string | null;
@@ -17,6 +19,7 @@ export class ReviewRequestError extends Error {
     public readonly fields: string[] = [],
     public readonly invalidItemIndexes: number[] = [],
     public readonly duplicate: DuplicateRecord | null = null,
+    public readonly courseConflicts: CourseConflict[] = [],
   ) {
     super(message);
     this.name = 'ReviewRequestError';

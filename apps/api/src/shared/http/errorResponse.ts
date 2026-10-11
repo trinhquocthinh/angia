@@ -52,6 +52,10 @@ const ERROR_CATALOG = {
     status: 409,
     message: 'Phát hiện chứng từ có nội dung tương tự đã tồn tại trong hệ thống.',
   },
+  ERR_COURSE_CONFLICT_UNRESOLVED: {
+    status: 409,
+    message: 'Thuốc này đang trong liệu trình điều trị. Vui lòng chọn cơ chế Thay thế hoặc Dùng song song.',
+  },
   ERR_INVALID_STATE_TRANSITION: {
     status: 409,
     message: 'Thao tác không thể thực hiện tại trạng thái vòng đời hiện tại của đối tượng.',
