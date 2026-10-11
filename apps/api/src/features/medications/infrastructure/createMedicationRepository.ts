@@ -2,13 +2,15 @@ import { and, eq } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { healthProfiles } from '@src/shared/db/schema/index.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
-import type { MedicationRepository } from '../application/ports.js';
+import type { MedicationManagementRepository } from '../application/managementPorts.js';
+import { findMedicationCourse } from './findMedicationCourse.js';
+import { stopStoredMedicationCourse } from './stopStoredMedicationCourse.js';
 import { findMedicationCourses } from './findMedicationCourses.js';
 import { insertMedicationCourses } from './insertMedicationCourses.js';
 import { lockMedicationProfile } from './lockMedicationProfile.js';
 import { replaceMedicationCourses } from './replaceMedicationCourses.js';
 
-export function createMedicationRepository(db: Database): MedicationRepository {
+export function createMedicationRepository(db: Database): MedicationManagementRepository {
   return {
     withFamily: (familyId, work) =>
       withFamilyScope(db, familyId, (tx) =>
@@ -22,6 +24,9 @@ export function createMedicationRepository(db: Database): MedicationRepository {
                 .for('share')
             )[0] ?? null,
           lockMedicationProfile: (id) => lockMedicationProfile(tx, familyId, id),
+          findMedicationCourse: (id, courseId) => findMedicationCourse(tx, familyId, id, courseId),
+          stopMedicationCourse: (id, courseId, endDate) =>
+            stopStoredMedicationCourse(tx, familyId, id, courseId, endDate),
           findMedicationCourses: (id) => findMedicationCourses(tx, familyId, id),
           replaceMedicationCourses: (id, ids, endDate) =>
             replaceMedicationCourses(tx, familyId, id, ids, endDate),

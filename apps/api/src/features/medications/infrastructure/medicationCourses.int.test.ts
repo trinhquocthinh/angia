@@ -116,7 +116,7 @@ describe('Bảng đợt thuốc: RLS, ràng buộc và xóa dây chuyền', () =
     [1, [], '2026-10-30', 'active', 'self_reported', 'medication_courses_slots_valid'],
     [1, ['sang'], '2026-10-30', 'active', 'self_reported', 'medication_courses_slots_valid'],
     [1, ['morning'], '2026-09-30', 'active', 'self_reported', 'medication_courses_dates_valid'],
-    [1, ['morning'], '2026-09-30', 'stopped', 'self_reported', 'medication_courses_dates_valid'],
+    [1, ['morning'], '2026-09-29', 'stopped', 'self_reported', 'medication_courses_dates_valid'],
     [1, ['morning'], '2026-09-30', 'ended', 'self_reported', 'medication_courses_dates_valid'],
     [1, ['morning'], '2026-09-29', 'replaced', 'self_reported', 'medication_courses_dates_valid'],
     [1, ['morning'], null, 'stopped', 'self_reported', 'medication_courses_terminal_has_end'],

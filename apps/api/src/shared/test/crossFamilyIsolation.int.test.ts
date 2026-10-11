@@ -5,17 +5,9 @@ import { acceptConsentInvitation } from './acceptConsentInvitation.js';
 import { expectCrossFamilyDenied } from './expectCrossFamilyDenied.js';
 import { HEALTH_DATA_ROUTES, type RouteOfKind } from './healthDataRoutes.js';
 import type { SeededSession } from './seedAuthFixtures.js';
+import type { Target, Probe } from './CrossFamilyTarget.js';
 import { seedPendingDocument } from './seedPendingDocument.js';
 import { startProfileTestApp, type ProfileTestApp } from './startProfileTestApp.js';
-
-// Tài nguyên đích của một request: của gia đình nạn nhân, hoặc toàn ID/token không tồn tại.
-interface Target {
-  profileId: string;
-  documentId: string;
-  accountId: string;
-  token: string;
-}
-type Probe = (user: SeededSession, target: Target) => Response | Promise<Response>;
 
 const reading = {
   type: 'device_reading',
@@ -118,6 +110,12 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
         slots: ['morning'],
         startDate: '2026-10-01',
       }),
+    'GET /api/health-profiles/:id/medication-courses/stoppable': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/medication-courses/stoppable`),
+    'POST /api/health-profiles/:id/medication-courses/:courseId/stop': (u, x) =>
+      t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses/${x.courseId}/stop`, {
+        stopDate: '2026-10-05',
+      }),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
         type: 'device_reading',
@@ -134,7 +132,16 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const token = await acceptConsentInvitation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const { documentId } = await seedPendingDocument(t, owner, reading);
-    return { familyId, main, profile, documentId, token };
+    const course = (await (
+      await t.call(main, 'POST', `${profiles}/${profile.id}/medication-courses`, {
+        name: 'Canxi',
+        quantityPerDose: 1,
+        doseUnit: 'viên',
+        slots: ['morning'],
+        startDate: '2026-10-01',
+      })
+    ).json()) as { id: string };
+    return { familyId, main, profile, documentId, token, courseId: course.id };
   };
   const attackers = async () => {
     const familyId = await t.family();
@@ -154,17 +161,18 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
   it('TC-013, TC-014, TC-015, TC-076: main và Quản trị kiêm main nhóm khác nhận đúng phản hồi của ID không tồn tại, không ghi gì', async () => {
     const victim = await victimFixture();
     const { familyId, main, adminMain } = await attackers();
-    const claims = t.codec.verify(victim.token)!;
     const target: Target = {
       profileId: victim.profile.id,
       documentId: victim.documentId,
       accountId: victim.main.accountId,
-      token: t.codec.issue({ ...claims, familyId }),
+      courseId: victim.courseId,
+      token: t.codec.issue({ ...t.codec.verify(victim.token)!, familyId }),
     };
     const missing: Target = {
       profileId: randomUUID(),
       documentId: randomUUID(),
       accountId: randomUUID(),
+      courseId: randomUUID(),
       token: 'bogus',
     };
     const before = await snapshot();
@@ -237,7 +245,13 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
         ':id',
         pattern.startsWith(documents) ? victim.documentId : victim.profile.id,
       );
-      expect({ route, status: (await t.call(member, method, path)).status }).toEqual({ route, status: 403 });
+      expect({
+        route,
+        status: (await t.call(member, method, path.replace(':courseId', victim.courseId))).status,
+      }).toEqual({
+        route,
+        status: 403,
+      });
     }
   });
 });

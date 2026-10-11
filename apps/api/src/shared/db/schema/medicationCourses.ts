@@ -46,7 +46,7 @@ export const medicationCourses = pgTable(
     ),
     check(
       'medication_courses_dates_valid',
-      sql`${t.endDate} IS NULL OR ${t.endDate} >= ${t.startDate} OR (${t.status} = 'replaced' AND ${t.endDate} = ${t.startDate} - 1)`,
+      sql`${t.endDate} IS NULL OR ${t.endDate} >= ${t.startDate} OR (${t.status} IN ('replaced', 'stopped') AND ${t.endDate} = ${t.startDate} - 1)`,
     ),
     check('medication_courses_terminal_has_end', sql`${t.status} = 'active' OR ${t.endDate} IS NOT NULL`),
     familyIsolationPolicy(),

@@ -1,3 +1,4 @@
+import { StopCourseAction } from '@src/features/medications/presentation/StopCourseAction';
 import { SelfReportedCourseAction } from '@src/features/medications/presentation/SelfReportedCourseAction';
 import { useState } from 'react';
 import { useCurrentSession } from '@src/features/auth/application/useCurrentSession';
@@ -41,7 +42,12 @@ export function ProfileHealthPage({ profileId }: { profileId: string }) {
       ) : (
         <div className="flex flex-col gap-6">
           {profile && <ProfileHealthHeader profile={profile} latest={rows[0] ?? null} />}
-          {profile && <SelfReportedCourseAction profile={profile} session={session.data} />}
+          {profile && (
+            <div className="flex flex-wrap gap-3">
+              <SelfReportedCourseAction profile={profile} session={session.data} />
+              <StopCourseAction profile={profile} session={session.data} />
+            </div>
+          )}
           <section
             aria-labelledby="measurement-table-title"
             className="flex flex-col gap-4 rounded-[20px] bg-white p-5 lg:p-6"

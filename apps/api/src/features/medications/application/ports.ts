@@ -2,7 +2,7 @@ import type { ConflictCourse, MedicationConflict, CourseResolution } from '../do
 import type { MedicationCourse, NewMedicationCourse } from '../domain/MedicationCourse.js';
 import type { DoseSlot } from '@src/features/prescriptions/domain/Prescription.js';
 
-interface MedicationStore {
+export interface MedicationStore {
   findProfile(id: string): Promise<{ consentStatus: string } | null>;
   lockMedicationProfile(profileId: string): Promise<void>;
   findMedicationCourses(profileId: string): Promise<ConflictCourse[]>;

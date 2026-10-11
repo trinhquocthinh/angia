@@ -115,3 +115,10 @@ export type {
   CreateSelfReportedCourseRequest,
   MedicationCourse,
 } from './medications/selfReportedCourseSchemas.js';
+
+export {
+  stopCourseRequestSchema,
+  stoppableCoursesSchema,
+  type StopCourseRequest,
+  type StoppableCourses,
+} from './medications/stopCourseSchemas.js';
