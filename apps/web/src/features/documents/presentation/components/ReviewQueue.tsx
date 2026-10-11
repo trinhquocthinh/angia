@@ -1,5 +1,6 @@
 import { groupQueueByDay } from '../../application/reviewQueue';
 import type { SourceDocument } from '../../application/reviewPorts';
+import { DocumentIcon } from './DocumentIcon';
 import { ReviewQueueItem } from './ReviewQueueItem';
 
 type ReviewQueueProps = {
@@ -17,33 +18,48 @@ type ReviewQueueProps = {
 export function ReviewQueue(props: ReviewQueueProps) {
   const { documents, loading, error, more } = props;
   return (
-    <section aria-labelledby="review-queue-title" className="flex flex-col gap-4 rounded-[20px] bg-white p-4">
-      <div className="flex flex-col gap-1">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h1 id="review-queue-title" className="whitespace-nowrap text-lg font-semibold text-[#004135]">
+    <section
+      aria-labelledby="review-queue-title"
+      className="flex flex-col overflow-hidden rounded-[20px] bg-white"
+    >
+      <div className="flex flex-col gap-1 bg-[#eaf6f5]/60 p-4">
+        <div className="flex items-center justify-between gap-2">
+          <h1
+            id="review-queue-title"
+            className="flex items-center gap-2 whitespace-nowrap text-lg font-semibold text-[#004135]"
+          >
+            <span className="text-[#286958]">
+              <DocumentIcon name="file" size={20} />
+            </span>
             Chờ xác nhận
           </h1>
           {!loading && !error && (
-            <span className="whitespace-nowrap rounded-full bg-[#b3eddf] px-2.5 py-0.5 text-xs font-semibold text-[#004135]">
+            <span className="whitespace-nowrap rounded-full bg-[#aef0da] px-2 py-0.5 text-xs font-bold text-[#2f6f5e]">
               {documents.length}
               {more ? '+' : ''} chứng từ
             </span>
           )}
         </div>
-        <p className="text-sm text-[#55615f]">Kiểm tra thông tin đọc từ ảnh chụp trước khi lưu vào sổ.</p>
+        <p className="text-sm text-[#404945]">Kiểm tra thông tin đọc từ ảnh chụp trước khi lưu vào sổ.</p>
       </div>
-      <QueueBody {...props} />
-      {more && !loading && !error && (
-        <button
-          type="button"
-          disabled={more.loading}
-          onClick={more.load}
-          className="min-h-11 rounded-xl bg-[#eaf6f5] px-4 text-sm font-semibold text-[#004135] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
-        >
-          {more.loading ? 'Đang tải…' : 'Xem thêm'}
-        </button>
-      )}
+      <div className="flex flex-col gap-3 p-2">
+        <QueueBody {...props} />
+        {more && !loading && !error && <MoreButton {...more} />}
+      </div>
     </section>
+  );
+}
+
+function MoreButton({ loading, load }: { loading: boolean; load: () => void }) {
+  return (
+    <button
+      type="button"
+      disabled={loading}
+      onClick={load}
+      className="min-h-11 rounded-xl bg-[#eaf6f5] px-4 text-sm font-semibold text-[#004135] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
+    >
+      {loading ? 'Đang tải…' : 'Xem thêm'}
+    </button>
   );
 }
 
@@ -52,13 +68,13 @@ function QueueBody({ documents, profileNames, activeId, loading, error, retry }:
     return (
       <div role="status" aria-label="Đang tải hàng đợi" className="flex flex-col gap-2">
         {[0, 1, 2].map((key) => (
-          <div key={key} className="h-20 animate-pulse rounded-2xl bg-[#eaf6f5] motion-reduce:animate-none" />
+          <div key={key} className="h-20 animate-pulse rounded-xl bg-[#eaf6f5] motion-reduce:animate-none" />
         ))}
       </div>
     );
   if (error)
     return (
-      <div role="alert" className="flex flex-col items-start gap-3 rounded-2xl bg-[#fdecea] p-4 text-sm">
+      <div role="alert" className="flex flex-col items-start gap-3 rounded-xl bg-[#fdecea] p-4 text-sm">
         <p>Không tải được danh sách chờ duyệt.</p>
         <button
           type="button"
@@ -71,17 +87,18 @@ function QueueBody({ documents, profileNames, activeId, loading, error, retry }:
     );
   if (documents.length === 0)
     return (
-      <p className="rounded-2xl bg-[#eaf6f5] p-6 text-center text-sm text-[#55615f]">
+      <p className="rounded-xl bg-[#eaf6f5] p-6 text-center text-sm text-[#55615f]">
         Không còn chứng từ chờ duyệt.
       </p>
     );
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 py-1">
       {groupQueueByDay(documents, new Date()).map((group) => (
         <div key={group.label} className="flex flex-col gap-1">
-          <h2 className="px-1 text-xs font-semibold uppercase tracking-wider text-[#55615f]">
-            {group.label}
-          </h2>
+          <div className="flex items-center justify-between gap-2 px-2 text-xs text-[#707975]">
+            <h2 className="font-semibold uppercase tracking-wider">{group.label}</h2>
+            <span className="whitespace-nowrap font-medium">{group.documents.length} tài liệu</span>
+          </div>
           <ul className="flex flex-col gap-1">
             {group.documents.map((document) => (
               <li key={document.id}>

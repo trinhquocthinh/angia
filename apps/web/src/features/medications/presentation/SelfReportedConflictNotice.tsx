@@ -27,7 +27,7 @@ export function SelfReportedConflictNotice({ request, conflicts, pending, onSubm
     },
   };
   return (
-    <section className="flex flex-col gap-4 rounded-2xl bg-[#fff4e5] p-4 text-sm leading-6 text-[#5c3a00]">
+    <section className="flex flex-col gap-4 rounded-xl bg-[#ffdbc9] p-4 text-sm leading-6 text-[#321200]">
       <h3 role="alert" className="font-semibold">
         Cần chọn cách xử lý thuốc trùng tên
       </h3>
@@ -55,7 +55,7 @@ export function SelfReportedConflictNotice({ request, conflicts, pending, onSubm
         type="button"
         disabled={pending}
         onClick={onCancel}
-        className="min-h-11 rounded-xl border border-[#b54708] px-4 font-semibold"
+        className="min-h-11 rounded-xl border border-[#602900] px-4 font-semibold"
       >
         Sửa lại khai báo
       </button>

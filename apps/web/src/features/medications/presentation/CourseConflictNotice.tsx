@@ -17,7 +17,7 @@ export function CourseConflictNotice({ prompt, pending, onSubmit, onCancel }: Pr
   return (
     <section
       aria-labelledby="course-conflict-title"
-      className="flex flex-col gap-4 rounded-2xl bg-[#fff4e5] p-4 text-sm leading-6 text-[#5c3a00]"
+      className="flex flex-col gap-4 rounded-xl bg-[#ffdbc9] p-4 text-sm leading-6 text-[#321200]"
     >
       <h2 id="course-conflict-title" className="font-semibold" role="alert">
         Cần chọn cách xử lý thuốc trùng tên
@@ -51,7 +51,7 @@ export function CourseConflictNotice({ prompt, pending, onSubmit, onCancel }: Pr
           type="button"
           disabled={pending}
           onClick={onCancel}
-          className="min-h-11 rounded-xl border border-[#b54708] px-4 font-semibold disabled:opacity-55"
+          className="min-h-11 rounded-xl border border-[#602900] px-4 font-semibold disabled:opacity-55"
         >
           Sửa lại đơn
         </button>

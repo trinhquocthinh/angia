@@ -1,9 +1,11 @@
-import { StopCourseSheetHeader } from './StopCourseSheetHeader';
-import { StopCourseSelector } from './StopCourseSelector';
 import { useState } from 'react';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
+import { formatDay } from '@src/features/measurements/application/formatMeasurement';
 import type { useStoppableCourses } from '../application/useStoppableCourses';
 import type { useStopCourse } from '../application/useStopCourse';
+import { MedicationDrawer } from './MedicationDrawer';
+import { MedicationDrawerFooter } from './MedicationDrawerFooter';
+import { StopCourseChooser } from './StopCourseChooser';
 import { StopCourseForm } from './StopCourseForm';
 type Props = {
   profile: HealthProfile;
@@ -11,55 +13,60 @@ type Props = {
   state: ReturnType<typeof useStopCourse>;
   onClose: () => void;
 };
+
 export function StopCourseSheetBody({ profile, courses, state, onClose }: Props) {
   const [selectedId, setSelectedId] = useState('');
-  const selected = courses.data?.courses.find((course) => course.id === selectedId);
-  const unavailable = courses.isFetching || courses.isError;
+  const consented = profile.consentStatus === 'confirmed';
+  const list = consented && !courses.isFetching && !courses.isError ? courses.data?.courses : undefined;
+  const selected = list?.find((course) => course.id === selectedId);
   return (
-    <div className="flex flex-col gap-5">
-      <StopCourseSheetHeader name={profile.displayName} pending={state.pending} onClose={onClose} />
+    <MedicationDrawer
+      titleId="stop-course-title"
+      title={`Ghi nhận dừng thuốc cho ${profile.displayName}`}
+      subtitle="Chọn đợt thuốc và ngày bắt đầu dừng; lịch sử trước đó được giữ nguyên."
+      closeLabel="Đóng ghi nhận dừng thuốc"
+      pending={state.pending}
+      onClose={onClose}
+    >
       {state.saved ? (
-        <p role="status">
-          Đã ghi nhận dừng {state.saved.name}. Ngày hiệu lực cuối: {state.saved.endDate}.
+        <p role="status" className="mx-6 mt-5 rounded-xl bg-[#e4f0ef] p-4 text-sm leading-6">
+          Đã ghi nhận dừng {state.saved.name}. Ngày hiệu lực cuối:{' '}
+          {state.saved.endDate ? formatDay(state.saved.endDate) : '—'}.
         </p>
-      ) : profile.consentStatus !== 'confirmed' ? (
-        <p role="alert">Hồ sơ chưa được đồng ý lưu dữ liệu.</p>
+      ) : !consented ? (
+        <p role="alert" className="px-6 pt-5">
+          Hồ sơ chưa được đồng ý lưu dữ liệu.
+        </p>
       ) : (
-        <>
-          {courses.isFetching && <p role="status">Đang tải các đợt thuốc…</p>}
-          {courses.isError && (
-            <div role="alert">
-              <p>Không thể tải các đợt thuốc.</p>
-              <button type="button" onClick={() => void courses.refetch()} className="min-h-11 underline">
-                Thử lại
-              </button>
-            </div>
-          )}
-          {state.error && <p role="alert">{state.error.message}</p>}
-          {!unavailable && courses.data?.courses.length === 0 && (
-            <p>Không có đợt thuốc có thể ghi nhận dừng.</p>
-          )}
-          {!unavailable && Boolean(courses.data?.courses.length) && (
-            <>
-              <StopCourseSelector
-                courses={courses.data!.courses}
-                selectedId={selectedId}
-                pending={state.pending}
-                onSelect={setSelectedId}
-              />
-              {selected && (
-                <StopCourseForm
-                  key={`${selected.id}:${courses.data!.today}:${selected.endDate}`}
-                  course={selected}
-                  today={courses.data!.today}
-                  pending={state.pending}
-                  onSubmit={(date) => void state.submit(selected.id, date)}
-                />
-              )}
-            </>
-          )}
-        </>
+        <StopCourseChooser
+          courses={courses}
+          list={list}
+          selected={selected}
+          selectedId={selectedId}
+          pending={state.pending}
+          error={state.error?.message ?? null}
+          onSelect={setSelectedId}
+        />
       )}
-    </div>
+      {selected && !state.saved ? (
+        <StopCourseForm
+          key={`${selected.id}:${courses.data!.today}:${selected.endDate}`}
+          course={selected}
+          today={courses.data!.today}
+          pending={state.pending}
+          onSubmit={(date) => void state.submit(selected.id, date)}
+          onCancel={onClose}
+        />
+      ) : (
+        <MedicationDrawerFooter
+          submitLabel={state.saved || !consented ? null : 'Xác nhận dừng đợt thuốc'}
+          cancelLabel={state.saved || !consented ? 'Đóng' : 'Hủy bỏ & Giữ nguyên đợt thuốc'}
+          disabled={true}
+          submit={false}
+          cancelDisabled={state.pending}
+          onCancel={onClose}
+        />
+      )}
+    </MedicationDrawer>
   );
 }

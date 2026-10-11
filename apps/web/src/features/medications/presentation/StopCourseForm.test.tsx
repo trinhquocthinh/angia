@@ -19,7 +19,13 @@ const course: MedicationCourse = {
 describe('Form dừng đợt thuốc', () => {
   it('TC-051: giới hạn ngày theo server/kỳ hạn, cho dừng cùng ngày bắt đầu', () => {
     const html = renderToStaticMarkup(
-      <StopCourseForm course={course} today="2026-10-11" pending={false} onSubmit={() => undefined} />,
+      <StopCourseForm
+        course={course}
+        today="2026-10-11"
+        pending={false}
+        onSubmit={() => undefined}
+        onCancel={() => undefined}
+      />,
     );
     expect(html).toContain('Canxi');
     expect(html).toContain('500mg');
@@ -33,6 +39,7 @@ describe('Form dừng đợt thuốc', () => {
         today="2026-10-11"
         pending={true}
         onSubmit={() => undefined}
+        onCancel={() => undefined}
       />,
     );
     expect(longTerm).toContain('max="2026-10-11"');

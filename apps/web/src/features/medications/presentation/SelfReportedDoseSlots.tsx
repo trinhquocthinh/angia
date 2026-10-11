@@ -18,7 +18,9 @@ export function SelfReportedDoseSlots({
           aria-invalid={Boolean(error) || undefined}
           aria-describedby={error ? 'supplement-slots-error' : undefined}
         >
-          <legend className="mb-2 text-sm font-medium">Buổi dùng *</legend>
+          <legend className="mb-2 text-xs font-bold tracking-wider text-[#55615f] uppercase">
+            Buổi dùng *
+          </legend>
           <div ref={field.ref} tabIndex={-1} className="flex flex-wrap gap-2 outline-none">
             {DOSE_SLOTS.map((slot) => {
               const selected = field.value.includes(slot.value);

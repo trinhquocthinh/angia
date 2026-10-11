@@ -14,7 +14,10 @@ export function SelfReportedCourseFields({ form }: { form: UseFormReturn<SelfRep
         const message = form.formState.errors[name]?.message;
         return (
           <div key={name} className={name === 'name' ? 'sm:col-span-2' : ''}>
-            <label htmlFor={`supplement-${name}`} className="mb-2 block text-sm font-medium">
+            <label
+              htmlFor={`supplement-${name}`}
+              className="mb-2 block text-xs font-bold tracking-wider text-[#55615f] uppercase"
+            >
               {label}
             </label>
             <input
@@ -25,7 +28,7 @@ export function SelfReportedCourseFields({ form }: { form: UseFormReturn<SelfRep
               inputMode={name === 'quantityPerDose' ? 'decimal' : undefined}
               aria-invalid={Boolean(message) || undefined}
               aria-describedby={message ? `supplement-${name}-error` : undefined}
-              className="min-h-11 w-full rounded-xl border border-[#cbd7d2] px-3 text-base"
+              className="h-12 w-full rounded-xl border border-[#d9e5e4] bg-white px-3.5 text-base text-[#131d1d] placeholder:text-[#8a9592] focus:border-[#004135] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#004135]/20 aria-invalid:border-[#b42318]"
             />
             {message && (
               <p id={`supplement-${name}-error`} className="mt-1 text-sm text-[#b42318]">

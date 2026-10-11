@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import type { CreateSelfReportedCourseRequest } from '@angia/contracts';
@@ -6,6 +7,7 @@ import {
   toSelfReportedCourseRequest,
   type SelfReportedCourseFormValues,
 } from '../application/selfReportedCourseForm';
+import { MedicationDrawerFooter } from './MedicationDrawerFooter';
 import { SelfReportedCourseFields } from './SelfReportedCourseFields';
 import { SelfReportedDoseSlots } from './SelfReportedDoseSlots';
 type Props = {
@@ -13,8 +15,11 @@ type Props = {
   pending: boolean;
   error: string | null;
   onSubmit: (request: CreateSelfReportedCourseRequest) => void;
+  onCancel: () => void;
+  /** Khung đối soát xung đột: nằm ngoài fieldset để vẫn bấm được khi form bị khóa. */
+  children?: ReactNode;
 };
-export function SelfReportedCourseForm({ disabled, pending, error, onSubmit }: Props) {
+export function SelfReportedCourseForm({ disabled, pending, error, onSubmit, onCancel, children }: Props) {
   const form = useForm<SelfReportedCourseFormValues>({
     resolver: zodResolver(selfReportedCourseFormSchema),
     defaultValues: { name: '', strength: '', quantityPerDose: '', doseUnit: '', slots: [], startDate: '' },
@@ -22,26 +27,30 @@ export function SelfReportedCourseForm({ disabled, pending, error, onSubmit }: P
   });
   const submit = form.handleSubmit((values) => onSubmit(toSelfReportedCourseRequest(values)));
   return (
-    <form noValidate onSubmit={(event) => void submit(event)} className="flex flex-col gap-4">
-      <p id="supplement-description" className="text-sm leading-6 text-[#55615f]">
-        Khai báo thuốc bổ, vitamin hoặc thực phẩm chức năng không qua đơn thuốc. Đợt này được ghi nhận dài
-        hạn.
-      </p>
-      <fieldset disabled={disabled} className="flex min-w-0 flex-col gap-4 border-0 p-0">
-        <SelfReportedCourseFields form={form} />
-        <SelfReportedDoseSlots control={form.control} error={form.formState.errors.slots?.message} />
-        {error && (
-          <p role="alert" className="rounded-xl bg-[#fdecea] p-3 text-sm text-[#b42318]">
-            {error}
-          </p>
-        )}
-        <button
-          type="submit"
-          className="min-h-11 rounded-xl bg-[#004135] px-4 font-semibold text-white disabled:opacity-55"
-        >
-          {pending ? 'Đang lưu…' : 'Lưu thuốc bổ'}
-        </button>
-      </fieldset>
+    <form noValidate onSubmit={(event) => void submit(event)} className="flex flex-1 flex-col">
+      <div className="flex flex-col gap-5 px-6 py-5">
+        <p id="supplement-description" className="text-sm leading-6 text-[#55615f]">
+          Đợt này được ghi nhận dài hạn, đến khi bạn ghi nhận dừng thuốc.
+        </p>
+        <fieldset disabled={disabled} className="flex min-w-0 flex-col gap-5 border-0 p-0">
+          <SelfReportedCourseFields form={form} />
+          <SelfReportedDoseSlots control={form.control} error={form.formState.errors.slots?.message} />
+          {error && (
+            <p role="alert" className="rounded-xl bg-[#fdecea] p-3 text-sm text-[#b42318]">
+              {error}
+            </p>
+          )}
+        </fieldset>
+        {children}
+      </div>
+      <MedicationDrawerFooter
+        submitLabel={pending ? 'Đang lưu…' : 'Lưu thuốc bổ'}
+        cancelLabel="Hủy bỏ"
+        disabled={disabled}
+        submit={true}
+        cancelDisabled={pending}
+        onCancel={onCancel}
+      />
     </form>
   );
 }

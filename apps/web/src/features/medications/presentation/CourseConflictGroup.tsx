@@ -23,7 +23,7 @@ const slots = { morning: 'Sáng', noon: 'Trưa', afternoon: 'Chiều', evening: 
 
 export function CourseConflictGroup({ conflict, request, choice, pending, onChange }: Props) {
   return (
-    <fieldset disabled={pending} className="min-w-0 rounded-xl border border-[#d9b98b] p-4">
+    <fieldset disabled={pending} className="min-w-0 rounded-xl border border-[#ffb68c] p-4">
       <legend className="px-1 font-semibold">
         Dòng {conflict.itemIndexes.map((i) => i + 1).join(', ')} ·{' '}
         {request.data.items[conflict.itemIndexes[0]!]!.name}
@@ -66,7 +66,7 @@ export function CourseConflictGroup({ conflict, request, choice, pending, onChan
         {(['replace', 'parallel'] as const).map((value) => (
           <label
             key={value}
-            className="flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-[#b54708] px-3"
+            className="flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-[#602900] bg-white/70 px-3"
           >
             <input
               type="radio"
