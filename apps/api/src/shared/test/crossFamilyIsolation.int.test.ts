@@ -112,6 +112,8 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       }),
     'GET /api/health-profiles/:id/medication-courses/stoppable': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/medication-courses/stoppable`),
+    'GET /api/health-profiles/:id/medication-courses/current': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/medication-courses/current`),
     'POST /api/health-profiles/:id/medication-courses/:courseId/stop': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses/${x.courseId}/stop`, {
         stopDate: '2026-10-05',

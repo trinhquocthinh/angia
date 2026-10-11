@@ -2059,6 +2059,126 @@
           "status"
         ]
       },
+      "CurrentMedications": {
+        "type": "object",
+        "properties": {
+          "today": {
+            "type": "string",
+            "format": "date"
+          },
+          "courses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CurrentMedicationCourse"
+            }
+          }
+        },
+        "required": [
+          "today",
+          "courses"
+        ]
+      },
+      "CurrentMedicationCourse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "healthProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "prescriptionItemId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "prescription",
+              "self_reported"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "strength": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quantityPerDose": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "doseUnit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "morning",
+                "noon",
+                "afternoon",
+                "evening"
+              ]
+            },
+            "minItems": 1
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "ended",
+              "stopped",
+              "replaced"
+            ]
+          },
+          "prescriptionIssuedDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          }
+        },
+        "required": [
+          "id",
+          "healthProfileId",
+          "prescriptionItemId",
+          "source",
+          "name",
+          "strength",
+          "quantityPerDose",
+          "doseUnit",
+          "slots",
+          "startDate",
+          "endDate",
+          "status",
+          "prescriptionIssuedDate"
+        ]
+      },
       "StopCourseRequest": {
         "type": "object",
         "properties": {
@@ -4238,6 +4358,87 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/StoppableCourses"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/medication-courses/current": {
+      "get": {
+        "tags": [
+          "medications"
+        ],
+        "summary": "Danh mục thuốc đang dùng hôm nay theo khoảng hiệu lực (SPEC-018)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ngày Việt Nam và các đợt có hiệu lực hôm nay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentMedications"
                 }
               }
             }

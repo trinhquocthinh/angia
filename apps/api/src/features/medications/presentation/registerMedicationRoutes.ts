@@ -6,6 +6,7 @@ import { createSelfReportedCourse } from '../application/createSelfReportedCours
 import type { MedicationManagementRepository, MedicationClock } from '../application/managementPorts.js';
 import { stopCourse } from '../application/stopCourse.js';
 import { listStoppableCourses } from '../application/listStoppableCourses.js';
+import { registerCurrentMedicationsRoute } from './registerCurrentMedicationsRoute.js';
 import { stopCourseRoute, listStoppableCoursesRoute } from './stopCourseRouteDefinitions.js';
 import { createSelfReportedCourseRoute } from './medicationRouteDefinitions.js';
 import { toCourseConflictErrorJson } from './toCourseConflictErrorJson.js';
@@ -34,6 +35,7 @@ export function registerMedicationRoutes(
       200,
     );
   });
+  registerCurrentMedicationsRoute(app, repository, now);
   app.openapi(stopCourseRoute, async (c) => {
     const params = c.req.valid('param');
     const result = await stopCourse(

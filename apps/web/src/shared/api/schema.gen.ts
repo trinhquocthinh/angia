@@ -2041,6 +2041,89 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/health-profiles/{id}/medication-courses/current': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Danh mục thuốc đang dùng hôm nay theo khoảng hiệu lực (SPEC-018) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Ngày Việt Nam và các đợt có hiệu lực hôm nay */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['CurrentMedications'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/medication-courses/{courseId}/stop': {
     parameters: {
       query?: never;
@@ -2937,6 +3020,34 @@ export interface components {
       endDate: string | null;
       /** @enum {string} */
       status: 'active' | 'ended' | 'stopped' | 'replaced';
+    };
+    CurrentMedications: {
+      /** Format: date */
+      today: string;
+      courses: components['schemas']['CurrentMedicationCourse'][];
+    };
+    CurrentMedicationCourse: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      healthProfileId: string;
+      /** Format: uuid */
+      prescriptionItemId: string | null;
+      /** @enum {string} */
+      source: 'prescription' | 'self_reported';
+      name: string;
+      strength: string | null;
+      quantityPerDose: number;
+      doseUnit: string | null;
+      slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+      /** Format: date */
+      startDate: string;
+      /** Format: date */
+      endDate: string | null;
+      /** @enum {string} */
+      status: 'active' | 'ended' | 'stopped' | 'replaced';
+      /** Format: date */
+      prescriptionIssuedDate: string | null;
     };
     StopCourseRequest: {
       /** Format: date */

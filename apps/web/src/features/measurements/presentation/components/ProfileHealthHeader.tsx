@@ -3,17 +3,18 @@ import type { HealthProfile } from '@src/features/profiles/application/ports';
 import { formatDay, readingText } from '../../application/formatMeasurement';
 import type { Measurement } from '../../application/ports';
 import { ManualEntryLink } from './ManualEntryLink';
-
-const TABS = ['Diễn biến sức khỏe', 'Thuốc điều trị', 'Kết quả xét nghiệm', 'Hồ sơ & Giấy tờ khám'];
+import { ProfileTabs, type ProfileTabKey } from './ProfileTabs';
 
 // Đầu trang hồ sơ (Stitch 718c9615): tên, tuổi theo năm sinh nếu có, chỉ số mới nhất, lối vào nhập tay không kèm ảnh
-// (SPEC-011); các tab khác mở ở Epic sau.
+// (SPEC-011); tab Thuốc điều trị mở ở E4-S4-T1, các tab khác mở ở Epic sau. latest undefined: không hiện dòng chỉ số.
 export function ProfileHealthHeader({
   profile,
   latest,
+  active = 'health',
 }: {
   profile: HealthProfile;
-  latest: Measurement | null;
+  latest?: Measurement | null;
+  active?: ProfileTabKey;
 }) {
   const age = profile.birthYear ? currentVietnamYear() - profile.birthYear : null;
   return (
@@ -36,35 +37,24 @@ export function ProfileHealthHeader({
               </span>
             )}
           </div>
-          <p className="text-sm text-[#55615f]">
-            {latest ? (
-              <>
-                Chỉ số mới nhất:{' '}
-                <strong className="tabular-nums text-[#131d1d]">{readingText(latest)}</strong> (
-                {formatDay(latest.measuredOn)}
-                {latest.measuredTime ? ` · ${latest.measuredTime}` : ''})
-              </>
-            ) : (
-              'Chưa có số đo đã duyệt'
-            )}
-          </p>
+          {latest !== undefined && (
+            <p className="text-sm text-[#55615f]">
+              {latest ? (
+                <>
+                  Chỉ số mới nhất:{' '}
+                  <strong className="tabular-nums text-[#131d1d]">{readingText(latest)}</strong> (
+                  {formatDay(latest.measuredOn)}
+                  {latest.measuredTime ? ` · ${latest.measuredTime}` : ''})
+                </>
+              ) : (
+                'Chưa có số đo đã duyệt'
+              )}
+            </p>
+          )}
         </div>
         <ManualEntryLink profileId={profile.id} />
       </div>
-      <nav aria-label="Các mục hồ sơ" className="flex gap-1 overflow-x-auto border-b border-[#e4f0ef]">
-        {TABS.map((tab, index) => (
-          <button
-            key={tab}
-            type="button"
-            disabled={index > 0}
-            aria-current={index === 0 ? 'page' : undefined}
-            title={index > 0 ? 'Sẽ có ở bản cập nhật sau' : undefined}
-            className="min-h-11 shrink-0 border-b-2 border-transparent px-4 text-sm font-medium text-[#55615f] disabled:opacity-55 aria-[current=page]:border-[#004135] aria-[current=page]:text-[#004135]"
-          >
-            {tab}
-          </button>
-        ))}
-      </nav>
+      <ProfileTabs profileId={profile.id} active={active} />
     </section>
   );
 }

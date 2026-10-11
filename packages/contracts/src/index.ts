@@ -122,3 +122,10 @@ export {
   type StopCourseRequest,
   type StoppableCourses,
 } from './medications/stopCourseSchemas.js';
+
+export {
+  currentMedicationCourseSchema,
+  currentMedicationsSchema,
+  type CurrentMedicationCourse,
+  type CurrentMedications,
+} from './medications/currentMedicationSchemas.js';

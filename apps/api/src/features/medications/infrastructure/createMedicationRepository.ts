@@ -6,6 +6,7 @@ import type { MedicationManagementRepository } from '../application/managementPo
 import { findMedicationCourse } from './findMedicationCourse.js';
 import { stopStoredMedicationCourse } from './stopStoredMedicationCourse.js';
 import { findMedicationCourses } from './findMedicationCourses.js';
+import { findMedicationHistory } from './findMedicationHistory.js';
 import { insertMedicationCourses } from './insertMedicationCourses.js';
 import { lockMedicationProfile } from './lockMedicationProfile.js';
 import { replaceMedicationCourses } from './replaceMedicationCourses.js';
@@ -28,6 +29,7 @@ export function createMedicationRepository(db: Database): MedicationManagementRe
           stopMedicationCourse: (id, courseId, endDate) =>
             stopStoredMedicationCourse(tx, familyId, id, courseId, endDate),
           findMedicationCourses: (id) => findMedicationCourses(tx, familyId, id),
+          findMedicationHistory: (id) => findMedicationHistory(tx, familyId, id),
           replaceMedicationCourses: (id, ids, endDate) =>
             replaceMedicationCourses(tx, familyId, id, ids, endDate),
           insertMedicationCourses: (inputs) => insertMedicationCourses(tx, familyId, inputs),
