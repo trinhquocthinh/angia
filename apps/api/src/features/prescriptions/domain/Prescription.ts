@@ -4,7 +4,9 @@ interface PrescriptionItem {
   id: string;
   name: string;
   strength: string | null;
-  quantityPerDose: number;
+  // Null chỉ khi thuốc dùng ngoài (BR-025).
+  quantityPerDose: number | null;
+  externalUse: boolean;
   doseUnit: string | null;
   slots: DoseSlot[];
   durationDays: number | null;

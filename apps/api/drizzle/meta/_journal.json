@@ -92,6 +92,13 @@
       "when": 1791705889777,
       "tag": "0012_medication_course_stop",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1791789827849,
+      "tag": "0013_prescription_item_external_use",
+      "breakpoints": true
     }
   ]
 }

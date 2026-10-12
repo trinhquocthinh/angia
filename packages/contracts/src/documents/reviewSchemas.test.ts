@@ -30,6 +30,15 @@ describe('ApproveDocumentRequest (SPEC-010, E3-S3-T3)', () => {
     expect(parsed.type === 'prescription' && parsed.data.items[0]!.name).toBe('Amlodipin');
   });
 
+  it('cờ thuốc dùng ngoài mặc định false khi client cũ không gửi; giữ true khi gửi (BR-025)', () => {
+    const parse = (items: object[]) => {
+      const parsed = approveDocumentRequestSchema.parse(prescription({ items }));
+      return parsed.type === 'prescription' && parsed.data.items[0]!.externalUse;
+    };
+    expect(parse([item])).toBe(false);
+    expect(parse([{ ...item, quantityPerDose: null, externalUse: true }])).toBe(true);
+  });
+
   it('để API trả ERR_DOSE_INFO_MISSING đúng dòng: liều/buổi/số ngày trống vẫn qua hợp đồng', () => {
     const missing = { ...item, quantityPerDose: null, slots: [], durationDays: null };
     expect(approveDocumentRequestSchema.safeParse(prescription({ items: [missing] })).success).toBe(true);

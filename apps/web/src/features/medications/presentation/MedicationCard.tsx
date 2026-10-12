@@ -1,6 +1,7 @@
 import type { CurrentMedicationCourse } from '@angia/contracts';
 import { medicationSourceLabel } from '../application/medicationSourceLabel';
 import { remainingDaysLabel } from '../application/remainingDaysLabel';
+import { doseLabel } from '../application/doseLabel';
 
 // Thẻ thuốc trong một buổi: tên + hàm lượng, liều mỗi lần, thời hạn ("Còn N ngày"/"Dài hạn"), nguồn gốc.
 // Chỉ mô tả dữ liệu đã lưu, không nhận định (BR-033).
@@ -23,9 +24,7 @@ export function MedicationCard({ course, today }: { course: CurrentMedicationCou
           {remainingDaysLabel(course.endDate, today)}
         </span>
       </div>
-      <p className="text-sm text-[#404945]">
-        Mỗi lần {course.quantityPerDose.toLocaleString('vi-VN')} {course.doseUnit ?? ''}
-      </p>
+      <p className="text-sm text-[#404945]">{doseLabel(course.quantityPerDose, course.doseUnit)}</p>
       <p className="text-xs text-[#707975]">{medicationSourceLabel(course)}</p>
     </article>
   );

@@ -1,10 +1,9 @@
+import { toNumeric } from '@src/shared/db/numericColumn.js';
 import { prescriptionItems, prescriptions } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import { normalizeName } from '../domain/normalizeName.js';
 import type { NewPrescription, Prescription } from '../domain/Prescription.js';
 import { toPrescription } from './prescriptionRows.js';
-
-const toNumeric = (value: number | null) => (value === null ? null : String(value));
 
 // Đơn + dòng thuốc trong cùng transaction của lệnh duyệt; `position` giữ thứ tự dòng trên đơn.
 export async function insertPrescription(
@@ -27,7 +26,7 @@ export async function insertPrescription(
         prescriptionId: row.id,
         position,
         nameNormalized: normalizeName(item.name),
-        quantityPerDose: String(item.quantityPerDose),
+        quantityPerDose: toNumeric(item.quantityPerDose),
         totalQuantity: toNumeric(item.totalQuantity),
       })),
     )

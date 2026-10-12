@@ -16,6 +16,7 @@ const prompt: CourseConflictPrompt = {
           name: 'Amlodipin',
           strength: '10mg',
           quantityPerDose: 1,
+          externalUse: false,
           doseUnit: 'viên',
           slots: ['evening'],
           durationDays: 30,

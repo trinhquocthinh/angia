@@ -9,7 +9,8 @@ export type NewMedicationCourse = MedicationCoursePeriod & {
   /** Hàm lượng thuốc bổ; thuốc từ đơn tiếp tục đọc qua PrescriptionItem. */
   readonly strength?: string | null;
   readonly nameNormalized: string;
-  readonly quantityPerDose: number;
+  /** Null khi đợt từ dòng thuốc dùng ngoài không ghi liều (BR-025). */
+  readonly quantityPerDose: number | null;
   readonly doseUnit: string | null;
   readonly slots: readonly DoseSlot[];
 };

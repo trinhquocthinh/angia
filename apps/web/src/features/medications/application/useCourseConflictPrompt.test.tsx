@@ -17,6 +17,7 @@ it('giữ nguyên bản đã gửi khi bên gọi sửa đối tượng lệnh s
           name: 'A',
           strength: null,
           quantityPerDose: 1,
+          externalUse: false,
           doseUnit: null,
           slots: ['morning'],
           durationDays: 30,

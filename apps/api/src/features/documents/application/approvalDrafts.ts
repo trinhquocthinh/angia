@@ -13,6 +13,7 @@ interface PrescriptionItemDraft {
   name: string;
   strength: string | null;
   quantityPerDose: number | null;
+  externalUse: boolean;
   doseUnit: string | null;
   slots: DoseSlot[];
   durationDays: number | null;

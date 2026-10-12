@@ -26,6 +26,8 @@ const prescriptionItemApprovalSchema = z.object({
   name: requiredText(200),
   strength: optionalText(100),
   quantityPerDose: z.number().positive().max(1000).nullable(),
+  // Thuốc bôi / dùng ngoài: người duyệt bật, cho phép trống liều mỗi lần (BR-025).
+  externalUse: z.boolean().default(false),
   doseUnit: optionalText(50),
   slots: z
     .array(doseSlotSchema)

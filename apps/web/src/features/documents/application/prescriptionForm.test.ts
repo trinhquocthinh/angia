@@ -17,6 +17,7 @@ const item = (patch: Partial<PrescriptionItemValues> = {}): PrescriptionItemValu
   slots: ['morning'],
   durationDays: '30',
   longTerm: false,
+  externalUse: false,
   note: '',
   totalQuantity: '',
   fromAi: true,
@@ -134,6 +135,7 @@ describe('Form đối soát đơn thuốc (SPEC-010, BR-025)', () => {
           name: 'Amlodipin',
           strength: '5mg',
           quantityPerDose: 0.5,
+          externalUse: false,
           doseUnit: 'viên',
           slots: ['morning'],
           durationDays: null,
@@ -157,5 +159,31 @@ describe('Form đối soát đơn thuốc (SPEC-010, BR-025)', () => {
     const approval = toPrescriptionApproval(values({ items: [item({ totalQuantity: '30' })] }));
     expect(approval.items[0]!.totalQuantity).toBe(30);
     expect(toPrescriptionApproval(values()).items[0]!.totalQuantity).toBeNull();
+  });
+
+  it('TC-243: thuốc dùng ngoài được trống liều mỗi lần, vẫn bắt buộc buổi và số ngày', () => {
+    const external = item({ name: 'Betamethason', quantityPerDose: '', doseUnit: 'tuýp', externalUse: true });
+    expect(errorsOf(values({ items: [external] }))).toEqual({});
+    expect(errorsOf(values({ items: [{ ...external, slots: [], durationDays: '' }] }))).toEqual({
+      'items.0.slots': 'Chọn ít nhất một buổi dùng.',
+      'items.0.durationDays': 'Nhập số ngày dùng hoặc chọn Dài hạn.',
+    });
+    expect(errorsOf(values({ items: [{ ...external, quantityPerDose: '0' }] }))).toEqual({
+      'items.0.quantityPerDose': 'Nhập số lớn hơn 0, ví dụ 1 hoặc 0,5.',
+    });
+    expect(errorsOf(values({ items: [{ ...external, externalUse: false }] }))).toEqual({
+      'items.0.quantityPerDose': 'Nhập số lượng mỗi lần dùng.',
+    });
+  });
+
+  it('TC-241: bản đối soát gửi cờ dùng ngoài và liều trống thành null', () => {
+    const approval = toPrescriptionApproval(
+      values({ items: [item({ quantityPerDose: ' ', externalUse: true })] }),
+    );
+    expect(approval.items[0]).toMatchObject({ quantityPerDose: null, externalUse: true });
+  });
+
+  it('bản trích xuất AI luôn mở với cờ dùng ngoài tắt — người duyệt tự bật', () => {
+    expect(toPrescriptionFormValues(null).items[0]!.externalUse).toBe(false);
   });
 });

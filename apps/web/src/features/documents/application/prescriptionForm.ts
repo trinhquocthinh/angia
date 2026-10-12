@@ -17,6 +17,8 @@ const itemSchema = z
     slots: z.array(z.enum(['morning', 'noon', 'afternoon', 'evening'])),
     durationDays: z.string(),
     longTerm: z.boolean(),
+    // Thuốc bôi / dùng ngoài do người duyệt bật: liều mỗi lần được để trống (BR-025).
+    externalUse: z.boolean(),
     note: z.string(),
     // Tổng số lượng in trên đơn, chỉ để gợi ý số ngày (BR-025); tùy chọn.
     totalQuantity: z.string(),
@@ -28,8 +30,9 @@ const itemSchema = z
       ctx.addIssue({ code: 'custom', path: [path], message });
     if (item.name.trim() === '') issue('name', 'Nhập tên thuốc.');
     const quantity = item.quantityPerDose.trim();
-    if (quantity === '') issue('quantityPerDose', 'Nhập số lượng mỗi lần dùng.');
-    else if (!DECIMAL.test(quantity) || toNumber(quantity) <= 0)
+    if (quantity === '') {
+      if (!item.externalUse) issue('quantityPerDose', 'Nhập số lượng mỗi lần dùng.');
+    } else if (!DECIMAL.test(quantity) || toNumber(quantity) <= 0)
       issue('quantityPerDose', 'Nhập số lớn hơn 0, ví dụ 1 hoặc 0,5.');
     if (item.slots.length === 0) issue('slots', 'Chọn ít nhất một buổi dùng.');
     const total = item.totalQuantity.trim();
@@ -70,6 +73,7 @@ export const emptyPrescriptionItem = (): PrescriptionItemValues => ({
   slots: [],
   durationDays: '',
   longTerm: false,
+  externalUse: false,
   note: '',
   totalQuantity: '',
   fromAi: false,
@@ -84,6 +88,8 @@ export function toPrescriptionFormValues(payload: PrescriptionPayload | null): P
     slots: sortDoseSlots(item.slots),
     durationDays: text(item.durationDays),
     longTerm: item.longTerm,
+    // AI không đọc cờ này; người duyệt tự bật khi là thuốc bôi / dùng ngoài.
+    externalUse: false,
     note: text(item.note),
     totalQuantity: text(item.totalQuantity),
     fromAi: true,
@@ -106,7 +112,8 @@ export function toPrescriptionApproval(form: PrescriptionFormValues): Prescripti
     items: form.items.map((item) => ({
       name: item.name.trim(),
       strength: orNull(item.strength),
-      quantityPerDose: toNumber(item.quantityPerDose),
+      quantityPerDose: item.quantityPerDose.trim() === '' ? null : toNumber(item.quantityPerDose),
+      externalUse: item.externalUse,
       doseUnit: orNull(item.doseUnit),
       slots: sortDoseSlots(item.slots),
       durationDays: item.longTerm ? null : toNumber(item.durationDays),

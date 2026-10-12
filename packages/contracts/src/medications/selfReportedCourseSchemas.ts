@@ -32,7 +32,7 @@ export const medicationCourseSchema = z
     source: z.enum(['prescription', 'self_reported']),
     name: z.string(),
     strength: z.string().nullable(),
-    quantityPerDose: z.number().positive(),
+    quantityPerDose: z.number().positive().nullable(),
     doseUnit: z.string().nullable(),
     slots: z.array(doseSlotSchema).min(1),
     startDate: z.iso.date(),

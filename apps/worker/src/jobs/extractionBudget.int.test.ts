@@ -185,8 +185,17 @@ describe('Ngân sách AI trên PostgreSQL + pg-boss thật (E3-S6-T1, BR-018, F0
       }),
     );
     await boss.send(REQUEUE_AWAITING_BUDGET_QUEUE, {});
-    await expect.poll(() => status(b.documentId), { timeout: 15_000, interval: 250 }).toBe('extracting');
+    // Chờ job requeue duyệt xong mọi gia đình (thứ tự theo UUID ngẫu nhiên, gồm chứng từ awaiting_budget của
+    // TC-028/TC-041): nếu chỉ chờ b, các job enqueue muộn lọt sang test F08a phía sau.
+    const awaiting = async () =>
+      (
+        await fx.owner.query(
+          `SELECT count(*)::int AS n FROM source_documents WHERE status = 'awaiting_budget'`,
+        )
+      ).rows[0].n;
+    await expect.poll(awaiting, { timeout: 15_000, interval: 250 }).toBe(0);
     expect(await status(a.documentId)).toBe('extracting');
+    expect(await status(b.documentId)).toBe('extracting');
     const jobs = await fx.owner.query(`SELECT data FROM pgboss.job WHERE name = $1`, [
       EXTRACT_DOCUMENT_QUEUE,
     ]);

@@ -1,6 +1,7 @@
 import type { MedicationCourse } from '@angia/contracts';
 import { DOSE_SLOTS } from '@src/features/documents/application/doseSlots';
 import { formatDay } from '@src/features/measurements/application/formatMeasurement';
+import { doseLabel } from '../application/doseLabel';
 
 // Thẻ chi tiết đợt đã chọn (Stitch f29c92d0) — chỉ dữ liệu có trong đợt; không gắn nhóm bệnh hay bác sĩ.
 export function StopCourseDetails({ course, today }: { course: MedicationCourse; today: string }) {
@@ -15,7 +16,7 @@ export function StopCourseDetails({ course, today }: { course: MedicationCourse;
             {course.strength ? ` ${course.strength}` : ''}
           </h3>
           <p className="text-xs text-[#55615f]">
-            Mỗi lần {course.quantityPerDose} {course.doseUnit ?? ''} · {slots.join(', ')}
+            {doseLabel(course.quantityPerDose, course.doseUnit)} · {slots.join(', ')}
           </p>
         </div>
         <span className="shrink-0 rounded-full border border-[#004135]/20 bg-[#e8f1ee] px-2.5 py-1 text-[11px] font-semibold text-[#004135]">

@@ -1,5 +1,6 @@
 import type { CourseConflict } from '@angia/contracts';
 import type { CourseChoices } from '../application/resolveCoursePrompt';
+import { doseLabel } from '../application/doseLabel';
 
 type Props = {
   conflict: CourseConflict;
@@ -34,8 +35,8 @@ export function CourseConflictGroup({ conflict, request, choice, pending, onChan
           const item = request.data.items[index]!;
           return (
             <li key={index}>
-              Dòng {index + 1}: {item.name} {item.strength} · mỗi lần {item.quantityPerDose} {item.doseUnit} ·{' '}
-              {item.slots.map((s) => slots[s]).join(', ')}
+              Dòng {index + 1}: {item.name} {item.strength} · {doseLabel(item.quantityPerDose, item.doseUnit)}{' '}
+              · {item.slots.map((s) => slots[s]).join(', ')}
             </li>
           );
         })}
@@ -51,7 +52,7 @@ export function CourseConflictGroup({ conflict, request, choice, pending, onChan
             <strong>
               {course.name} {course.strength}
             </strong>{' '}
-            · mỗi lần {course.quantityPerDose} {course.doseUnit} ·{' '}
+            · {doseLabel(course.quantityPerDose, course.doseUnit)} ·{' '}
             {course.slots.map((s) => slots[s]).join(', ')}
             <div>
               Từ {course.startDate} · {course.endDate ? `đến ${course.endDate}` : 'Dài hạn'}

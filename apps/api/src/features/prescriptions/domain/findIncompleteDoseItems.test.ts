@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { findIncompleteDoseItems, type DoseInfo } from './findIncompleteDoseItems.js';
 
-const complete: DoseInfo = { quantityPerDose: 1, slots: ['morning'], durationDays: 30, longTerm: false };
+const complete: DoseInfo = {
+  quantityPerDose: 1,
+  slots: ['morning'],
+  durationDays: 30,
+  longTerm: false,
+  externalUse: false,
+};
 
 describe('findIncompleteDoseItems — BR-025 chặn dòng thiếu liều/buổi/số ngày', () => {
   it('đơn đủ thông tin không có dòng lỗi; dòng dài hạn không cần số ngày', () => {
@@ -16,5 +22,20 @@ describe('findIncompleteDoseItems — BR-025 chặn dòng thiếu liều/buổi/
   it('thiếu liều mỗi lần hoặc không chọn buổi nào đều bị chặn, giữ thứ tự dòng', () => {
     const items = [{ ...complete, slots: [] }, complete, { ...complete, quantityPerDose: null }];
     expect(findIncompleteDoseItems(items)).toEqual([0, 2]);
+  });
+
+  it('TC-241: dòng thuốc dùng ngoài để trống liều mỗi lần vẫn hợp lệ', () => {
+    expect(findIncompleteDoseItems([{ ...complete, quantityPerDose: null, externalUse: true }])).toEqual([]);
+  });
+
+  it('TC-242: dòng dùng ngoài vẫn bắt buộc buổi và số ngày; liều có nhập phải > 0', () => {
+    const external = { ...complete, quantityPerDose: null, externalUse: true };
+    const items = [
+      { ...external, slots: [] },
+      { ...external, durationDays: null },
+      { ...external, quantityPerDose: 0 },
+      { ...complete, quantityPerDose: null },
+    ];
+    expect(findIncompleteDoseItems(items)).toEqual([0, 1, 2, 3]);
   });
 });

@@ -49,7 +49,8 @@ export async function savePrescription(
       note: item.note,
       totalQuantity: item.totalQuantity,
       // Dữ liệu lựa chọn chỉ thuộc lệnh lưu, không chép vào PrescriptionItem.
-      quantityPerDose: item.quantityPerDose!,
+      quantityPerDose: item.quantityPerDose,
+      externalUse: item.externalUse,
       durationDays: item.longTerm ? null : item.durationDays,
     })),
   });

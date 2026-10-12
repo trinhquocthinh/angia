@@ -156,7 +156,18 @@ describe('Ràng buộc lược đồ Walking Skeleton', () => {
       /prescription_items_slots_valid/,
     );
     await expect(insertItem(`1, ARRAY['sang'], 5, false`)).rejects.toThrow(/prescription_items_slots_valid/);
-    await expect(insertItem(`0, ARRAY['noon'], 5, false`)).rejects.toThrow(/quantity_positive/);
+    await expect(insertItem(`0, ARRAY['noon'], 5, false`)).rejects.toThrow(/quantity_valid/);
+    // TC-242: liều trống chỉ hợp lệ với thuốc dùng ngoài; CHECK không để NULL lọt qua.
+    await expect(insertItem(`NULL, ARRAY['noon'], 5, false`)).rejects.toThrow(/quantity_valid/);
+    const insertExternal = (quantity: string) =>
+      owner.query(
+        `INSERT INTO prescription_items (id, family_id, prescription_id, position, name, name_normalized,
+           quantity_per_dose, external_use, slots, duration_days, long_term)
+         VALUES ($1, $2, $3, 0, 'B', 'b', ${quantity}, true, ARRAY['morning'], 7, false)`,
+        [randomUUID(), familyId, prescriptionId],
+      );
+    await expect(insertExternal('0')).rejects.toThrow(/quantity_valid/);
+    await expect(insertExternal('NULL')).resolves.toMatchObject({ rowCount: 1 });
     await expect(insertItem(`1, ARRAY['morning', 'evening'], NULL, true`)).resolves.toMatchObject({
       rowCount: 1,
     });
