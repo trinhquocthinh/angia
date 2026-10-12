@@ -12,22 +12,30 @@ const PART_HEAD = `--${BOUNDARY}\r\nContent-Disposition: form-data; name="files"
 const PART_TAIL = `\r\n--${BOUNDARY}--\r\n`;
 
 // Body multipart gửi phần đầu rồi treo tới khi `finish()` — mô phỏng người dùng mạng chậm đang giữ chỗ.
+// highWaterMark 0: stream chỉ bị đọc khi handler đã giữ chỗ và bắt đầu nhận body, nên `reading` là tín hiệu
+// "đã giữ chỗ" (không đoán bằng thời gian chờ cố định — runner CI chậm vẫn đang kiểm phiên/hồ sơ).
 function slowMultipart() {
   let finish!: () => void;
+  let markReading!: () => void;
   const gate = new Promise<void>((resolve) => (finish = resolve));
+  const reading = new Promise<void>((resolve) => (markReading = resolve));
   let sent = false;
-  const body = new ReadableStream<Uint8Array>({
-    async pull(controller) {
-      if (sent) return;
-      sent = true;
-      controller.enqueue(encoder.encode(PART_HEAD));
-      await gate;
-      controller.enqueue(new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3]));
-      controller.enqueue(encoder.encode(PART_TAIL));
-      controller.close();
+  const body = new ReadableStream<Uint8Array>(
+    {
+      async pull(controller) {
+        if (sent) return;
+        sent = true;
+        markReading();
+        controller.enqueue(encoder.encode(PART_HEAD));
+        await gate;
+        controller.enqueue(new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3]));
+        controller.enqueue(encoder.encode(PART_TAIL));
+        controller.close();
+      },
     },
-  });
-  return { body, finish };
+    { highWaterMark: 0 },
+  );
+  return { body, finish, reading };
 }
 
 describe('Giới hạn 3 lô tải lên xử lý đồng thời (E3-S1-T1)', () => {
@@ -65,7 +73,7 @@ describe('Giới hạn 3 lô tải lên xử lý đồng thời (E3-S1-T1)', () 
   it('3 lô đang nhận thì lô thứ 4 bị 503 ERR_UPLOAD_BUSY kèm Retry-After; xong một lô thì nhận tiếp', async () => {
     const slow = [slowMultipart(), slowMultipart(), slowMultipart()];
     const pending = slow.map((upload) => send(upload.body));
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await Promise.all(slow.map((upload) => upload.reading));
 
     const busy = await quick();
     expect(busy.status).toBe(503);
