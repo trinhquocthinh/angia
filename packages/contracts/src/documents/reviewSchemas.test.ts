@@ -39,6 +39,14 @@ describe('ApproveDocumentRequest (SPEC-010, E3-S3-T3)', () => {
     expect(parse([{ ...item, quantityPerDose: null, externalUse: true }])).toBe(true);
   });
 
+  it('TC-247/248: buổi "Khi cần" đứng một mình hợp lệ; trộn với buổi trong ngày bị từ chối', () => {
+    const parse = (slots: string[]) =>
+      approveDocumentRequestSchema.safeParse(prescription({ items: [{ ...item, slots }] })).success;
+    expect(parse(['as_needed'])).toBe(true);
+    expect(parse(['morning', 'as_needed'])).toBe(false);
+    expect(parse(['as_needed', 'as_needed'])).toBe(false);
+  });
+
   it('để API trả ERR_DOSE_INFO_MISSING đúng dòng: liều/buổi/số ngày trống vẫn qua hợp đồng', () => {
     const missing = { ...item, quantityPerDose: null, slots: [], durationDays: null };
     expect(approveDocumentRequestSchema.safeParse(prescription({ items: [missing] })).success).toBe(true);

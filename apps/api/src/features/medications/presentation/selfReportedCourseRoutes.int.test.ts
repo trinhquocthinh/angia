@@ -77,7 +77,13 @@ describe('Khai báo thuốc bổ qua route thật + RLS (SPEC-016)', () => {
   });
   it('TC-049: nguồn/thời hạn tùy ý và ngày không tồn tại bị từ chối', async () => {
     const f = await fixture();
-    for (const extra of [{ source: 'prescription' }, { endDate: '2026-10-31' }, { startDate: '2026-02-30' }])
+    // TC-248: thuốc bổ không nhận buổi "Khi cần".
+    for (const extra of [
+      { source: 'prescription' },
+      { endDate: '2026-10-31' },
+      { startDate: '2026-02-30' },
+      { slots: ['as_needed'] },
+    ])
       expect((await f.save({ ...body, ...extra })).status).toBe(422);
     expect(await f.rows()).toEqual([]);
   });

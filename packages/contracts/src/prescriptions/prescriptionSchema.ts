@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
-export const doseSlotSchema = z.enum(['morning', 'noon', 'afternoon', 'evening']);
+// 4 buổi trong ngày — thuốc bổ tự khai và bản trích xuất AI chỉ dùng tập này.
+export const dailyDoseSlotSchema = z.enum(['morning', 'noon', 'afternoon', 'evening']);
+// Dòng thuốc từ đơn thêm "Khi cần" (`as_needed`, BR-025 2026-10-12), chỉ được đứng một mình.
+export const doseSlotSchema = z.enum([...dailyDoseSlotSchema.options, 'as_needed']);
+export const isMixedAsNeeded = (slots: readonly string[]) => slots.includes('as_needed') && slots.length > 1;
 
 // Đơn thuốc đã duyệt (SPEC-010); dòng thuốc theo thứ tự trên đơn.
 export const prescriptionSchema = z

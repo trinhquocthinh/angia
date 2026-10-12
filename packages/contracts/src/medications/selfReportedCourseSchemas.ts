@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { doseSlotSchema } from '../prescriptions/prescriptionSchema.js';
+import { dailyDoseSlotSchema, doseSlotSchema } from '../prescriptions/prescriptionSchema.js';
 
 // Thiếu liều/buổi được chuyển tới Application để trả ERR_DOSE_INFO_MISSING (TC-050).
 // Không cho client gửi source/status/endDate/prescriptionItemId.
@@ -10,7 +10,7 @@ export const createSelfReportedCourseRequestSchema = z
     quantityPerDose: z.number().positive().max(1000).nullable().optional(),
     doseUnit: z.string().trim().min(1).max(50),
     slots: z
-      .array(doseSlotSchema)
+      .array(dailyDoseSlotSchema)
       .max(4)
       .refine((slots) => new Set(slots).size === slots.length, 'Buổi dùng bị lặp')
       .optional(),

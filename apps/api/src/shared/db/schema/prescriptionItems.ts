@@ -33,11 +33,12 @@ export const prescriptionItems = pgTable(
     check('prescription_items_duration', sql`${t.durationDays} IS NOT NULL OR ${t.longTerm} = true`),
     check(
       'prescription_items_quantity_valid',
-      sql`CASE WHEN ${t.quantityPerDose} IS NULL THEN ${t.externalUse} ELSE ${t.quantityPerDose} > 0 END`,
+      sql`CASE WHEN ${t.quantityPerDose} IS NULL THEN ${t.externalUse} OR ${t.slots} = ARRAY['as_needed']::text[] ELSE ${t.quantityPerDose} > 0 END`,
     ),
     check(
       'prescription_items_slots_valid',
-      sql`cardinality(${t.slots}) >= 1 AND ${t.slots} <@ ARRAY['morning', 'noon', 'afternoon', 'evening']::text[]`,
+      // BR-025: ≥ 1 buổi trong ngày, hoặc đúng "Khi cần" đứng một mình.
+      sql`(cardinality(${t.slots}) >= 1 AND ${t.slots} <@ ARRAY['morning', 'noon', 'afternoon', 'evening']::text[]) OR ${t.slots} = ARRAY['as_needed']::text[]`,
     ),
     check('prescription_items_duration_positive', sql`${t.durationDays} IS NULL OR ${t.durationDays} > 0`),
     check('prescription_items_total_positive', sql`${t.totalQuantity} IS NULL OR ${t.totalQuantity} > 0`),

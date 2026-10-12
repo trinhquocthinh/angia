@@ -1,5 +1,6 @@
 import type { CourseConflict } from '@angia/contracts';
 import type { CourseChoices } from '../application/resolveCoursePrompt';
+import { doseSlotLabel } from '@src/features/documents/application/doseSlots';
 import { doseLabel } from '../application/doseLabel';
 
 type Props = {
@@ -20,7 +21,6 @@ type Props = {
   pending: boolean;
   onChange: (value: 'replace' | 'parallel') => void;
 };
-const slots = { morning: 'Sáng', noon: 'Trưa', afternoon: 'Chiều', evening: 'Tối' };
 
 export function CourseConflictGroup({ conflict, request, choice, pending, onChange }: Props) {
   return (
@@ -36,7 +36,7 @@ export function CourseConflictGroup({ conflict, request, choice, pending, onChan
           return (
             <li key={index}>
               Dòng {index + 1}: {item.name} {item.strength} · {doseLabel(item.quantityPerDose, item.doseUnit)}{' '}
-              · {item.slots.map((s) => slots[s]).join(', ')}
+              · {item.slots.map(doseSlotLabel).join(', ')}
             </li>
           );
         })}
@@ -53,7 +53,7 @@ export function CourseConflictGroup({ conflict, request, choice, pending, onChan
               {course.name} {course.strength}
             </strong>{' '}
             · {doseLabel(course.quantityPerDose, course.doseUnit)} ·{' '}
-            {course.slots.map((s) => slots[s]).join(', ')}
+            {course.slots.map(doseSlotLabel).join(', ')}
             <div>
               Từ {course.startDate} · {course.endDate ? `đến ${course.endDate}` : 'Dài hạn'}
             </div>

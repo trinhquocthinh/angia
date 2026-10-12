@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { doseSlotSchema } from '../prescriptions/prescriptionSchema.js';
+import { doseSlotSchema, isMixedAsNeeded } from '../prescriptions/prescriptionSchema.js';
 
 // Bản đối soát người dùng gửi lên. Trường ngày được phép null để API trả ERR_DOCUMENT_DATE_REQUIRED;
 // liều/buổi/số ngày được phép trống để API trả ERR_DOSE_INFO_MISSING chỉ đúng dòng (SPEC-010, BR-025).
@@ -32,7 +32,8 @@ const prescriptionItemApprovalSchema = z.object({
   slots: z
     .array(doseSlotSchema)
     .max(4)
-    .refine((slots) => new Set(slots).size === slots.length, 'Buổi dùng bị lặp'),
+    .refine((slots) => new Set(slots).size === slots.length, 'Buổi dùng bị lặp')
+    .refine((slots) => !isMixedAsNeeded(slots), '"Khi cần" không đi cùng buổi khác'),
   durationDays: z.number().int().positive().max(3650).nullable(),
   longTerm: z.boolean(),
   note: optionalText(500),

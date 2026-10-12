@@ -2825,7 +2825,7 @@ export interface components {
         quantityPerDose: number | null;
         externalUse: boolean;
         doseUnit: string | null;
-        slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+        slots: ('morning' | 'noon' | 'afternoon' | 'evening' | 'as_needed')[];
         durationDays: number | null;
         longTerm: boolean;
         note: string | null;
@@ -2870,7 +2870,7 @@ export interface components {
         strength: string | null;
         quantityPerDose: number | null;
         doseUnit: string | null;
-        slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+        slots: ('morning' | 'noon' | 'afternoon' | 'evening' | 'as_needed')[];
         /** Format: date */
         startDate: string;
         /** Format: date */
@@ -2916,7 +2916,7 @@ export interface components {
               /** @default false */
               externalUse: boolean;
               doseUnit: string | null;
-              slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+              slots: ('morning' | 'noon' | 'afternoon' | 'evening' | 'as_needed')[];
               durationDays: number | null;
               longTerm: boolean;
               note: string | null;
@@ -3016,7 +3016,7 @@ export interface components {
       strength: string | null;
       quantityPerDose: number | null;
       doseUnit: string | null;
-      slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+      slots: ('morning' | 'noon' | 'afternoon' | 'evening' | 'as_needed')[];
       /** Format: date */
       startDate: string;
       /** Format: date */
@@ -3042,7 +3042,7 @@ export interface components {
       strength: string | null;
       quantityPerDose: number | null;
       doseUnit: string | null;
-      slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+      slots: ('morning' | 'noon' | 'afternoon' | 'evening' | 'as_needed')[];
       /** Format: date */
       startDate: string;
       /** Format: date */

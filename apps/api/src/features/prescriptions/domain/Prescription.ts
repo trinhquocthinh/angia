@@ -1,4 +1,5 @@
-export type DoseSlot = 'morning' | 'noon' | 'afternoon' | 'evening';
+// "Khi cần" (`as_needed`) chỉ đứng một mình, không trộn với buổi trong ngày (BR-025 2026-10-12).
+export type DoseSlot = 'morning' | 'noon' | 'afternoon' | 'evening' | 'as_needed';
 
 interface PrescriptionItem {
   id: string;

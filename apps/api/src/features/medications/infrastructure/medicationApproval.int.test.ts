@@ -144,6 +144,20 @@ describe('Phê duyệt tạo đợt thuốc nguyên tử và cô lập gia đìn
     ]);
   });
 
+  it('TC-247: dòng "Khi cần" trống liều → lưu dòng và đợt slots as_needed; trộn buổi → 422', async () => {
+    const f = await fixture();
+    const asNeeded = { ...cream, name: 'Hydrocortison', slots: ['as_needed'], externalUse: false };
+    expect(
+      (await f.approve({ ...prescription, items: [{ ...asNeeded, slots: ['morning', 'as_needed'] }] }))
+        .status,
+    ).toBe(422);
+    const response = await f.approve({ ...prescription, items: [asNeeded] });
+    expect(response.status).toBe(200);
+    expect(await courses(f.profile.id)).toEqual([
+      expect.objectContaining({ name: 'Hydrocortison', slots: ['as_needed'], quantity_per_dose: null }),
+    ]);
+  });
+
   it('TC-242: tắt cờ dùng ngoài mà trống liều → ERR_DOSE_INFO_MISSING, không lưu gì', async () => {
     const f = await fixture();
     const response = await f.approve({ ...prescription, items: [{ ...cream, externalUse: false }] });

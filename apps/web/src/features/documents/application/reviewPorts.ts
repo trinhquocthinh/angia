@@ -5,9 +5,11 @@ type DocumentReview = components['schemas']['DocumentReview'];
 type ExtractionPayload = NonNullable<DocumentReview['extraction']>;
 export type DeviceReadingPayload = Extract<ExtractionPayload, { type: 'device_reading' }>;
 export type PrescriptionPayload = Extract<ExtractionPayload, { type: 'prescription' }>;
-export type DoseSlot = PrescriptionPayload['items'][number]['slots'][number];
+// Bản trích xuất AI chỉ có 4 buổi; bản duyệt thêm "Khi cần" (BR-025 2026-10-12).
+export type DailyDoseSlot = PrescriptionPayload['items'][number]['slots'][number];
 export type ApproveDocumentRequest = components['schemas']['ApproveDocumentRequest'];
 export type PrescriptionApproval = Extract<ApproveDocumentRequest, { type: 'prescription' }>['data'];
+export type DoseSlot = PrescriptionApproval['items'][number]['slots'][number];
 export type LabResultPayload = Extract<ExtractionPayload, { type: 'lab_result' }>;
 export type LabResultApproval = Extract<ApproveDocumentRequest, { type: 'lab_result' }>['data'];
 type ApprovedDocument = components['schemas']['ApprovedDocumentResponse'];

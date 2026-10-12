@@ -168,6 +168,11 @@ describe('Ràng buộc lược đồ Walking Skeleton', () => {
       );
     await expect(insertExternal('0')).rejects.toThrow(/quantity_valid/);
     await expect(insertExternal('NULL')).resolves.toMatchObject({ rowCount: 1 });
+    // TC-247/248: "Khi cần" đứng một mình được trống liều; trộn với buổi trong ngày bị chặn.
+    await expect(insertItem(`NULL, ARRAY['as_needed'], 7, false`)).resolves.toMatchObject({ rowCount: 1 });
+    await expect(insertItem(`1, ARRAY['morning', 'as_needed'], 7, false`)).rejects.toThrow(
+      /prescription_items_slots_valid/,
+    );
     await expect(insertItem(`1, ARRAY['morning', 'evening'], NULL, true`)).resolves.toMatchObject({
       rowCount: 1,
     });
