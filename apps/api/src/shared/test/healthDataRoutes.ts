@@ -24,6 +24,7 @@ export const HEALTH_DATA_ROUTES = {
   'POST /api/source-documents/:id/privacy-approval': 'scoped',
   'POST /api/source-documents/:id/manual-entry': 'scoped',
   'GET /api/health-profiles/:id/measurements': 'scoped',
+  'GET /api/health-profiles/:id/measurements/series': 'scoped',
   'POST /api/health-profiles/:id/manual-records': 'scoped',
   'POST /api/health-profiles/:id/medication-courses': 'scoped',
   'GET /api/health-profiles/:id/medication-courses/stoppable': 'scoped',

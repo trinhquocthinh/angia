@@ -1964,6 +1964,175 @@
         ],
         "additionalProperties": false
       },
+      "MeasurementPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Measurement"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "MeasurementSeries": {
+        "type": "object",
+        "properties": {
+          "points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MeasurementSeriesPoint"
+            }
+          },
+          "weeks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "weekStart": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "hasMeasurement": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "weekStart",
+                "hasMeasurement"
+              ]
+            }
+          }
+        },
+        "required": [
+          "points",
+          "weeks"
+        ]
+      },
+      "MeasurementSeriesPoint": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "healthProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceDocumentId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "blood_pressure",
+              "glucose"
+            ]
+          },
+          "measuredOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "measuredTime": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "systolic": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "diastolic": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "pulse": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "glucoseValue": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "glucoseUnit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "mmol/L",
+              "mg/dL",
+              null
+            ]
+          },
+          "manualWithoutSource": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "displayGlucoseValue": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "displayGlucoseUnit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "mmol/L",
+              "mg/dL",
+              null
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "healthProfileId",
+          "sourceDocumentId",
+          "kind",
+          "measuredOn",
+          "measuredTime",
+          "systolic",
+          "diastolic",
+          "pulse",
+          "glucoseValue",
+          "glucoseUnit",
+          "manualWithoutSource",
+          "createdAt",
+          "displayGlucoseValue",
+          "displayGlucoseUnit"
+        ]
+      },
       "StoppableCourses": {
         "type": "object",
         "properties": {
@@ -4288,7 +4457,7 @@
         "tags": [
           "measurements"
         ],
-        "summary": "Số đo sinh tồn đã duyệt của hồ sơ, mới nhất trước",
+        "summary": "Số đo sinh tồn đã duyệt của hồ sơ, mới nhất trước, phân trang cursor (F09a)",
         "parameters": [
           {
             "schema": {
@@ -4310,18 +4479,35 @@
             "required": false,
             "name": "kind",
             "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
           }
         ],
         "responses": {
           "200": {
-            "description": "Số đo",
+            "description": "Trang số đo",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Measurement"
-                  }
+                  "$ref": "#/components/schemas/MeasurementPage"
                 }
               }
             }
@@ -4348,6 +4534,130 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/measurements/series": {
+      "get": {
+        "tags": [
+          "measurements"
+        ],
+        "summary": "Chuỗi số đo theo tuần trong khoảng ngày (SPEC-020), tối đa 366 ngày",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "blood_pressure",
+                "glucose"
+              ]
+            },
+            "required": true,
+            "name": "kind",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "to",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "mmol/L",
+                "mg/dL"
+              ],
+              "default": "mmol/L"
+            },
+            "required": false,
+            "name": "displayGlucoseUnit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Điểm đo cũ nhất trước và cờ tuần có số đo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasurementSeries"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
             "content": {
               "application/json": {
                 "schema": {

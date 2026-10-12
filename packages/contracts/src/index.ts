@@ -71,8 +71,18 @@ export { prescriptionSchema } from './prescriptions/prescriptionSchema.js';
 export type { Prescription } from './prescriptions/prescriptionSchema.js';
 export { labResultSchema } from './labResults/labResultSchema.js';
 export type { LabResult } from './labResults/labResultSchema.js';
-export { measurementListQuerySchema, measurementSchema } from './measurements/measurementSchema.js';
-export type { Measurement } from './measurements/measurementSchema.js';
+export {
+  measurementListQuerySchema,
+  measurementPageSchema,
+  measurementSchema,
+} from './measurements/measurementSchema.js';
+export type { Measurement, MeasurementPage } from './measurements/measurementSchema.js';
+export {
+  measurementSeriesPointSchema,
+  measurementSeriesQuerySchema,
+  measurementSeriesSchema,
+} from './measurements/measurementSeriesSchema.js';
+export type { MeasurementSeries, MeasurementSeriesPoint } from './measurements/measurementSeriesSchema.js';
 export { extractionPayloadSchema } from './extraction/extractionPayloadSchema.js';
 export type { ExtractionPayload } from './extraction/extractionPayloadSchema.js';
 export {

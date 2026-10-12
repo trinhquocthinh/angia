@@ -4,10 +4,10 @@ import type { MeasurementsRepository } from '../application/ports';
 
 export function createMeasurementsRepository(client = apiClient): MeasurementsRepository {
   return {
-    list: async (profileId, kind, signal) =>
+    list: async (profileId, kind, cursor, signal) =>
       readReviewResponse(
         await client.GET('/api/health-profiles/{id}/measurements', {
-          params: { path: { id: profileId }, query: { kind } },
+          params: { path: { id: profileId }, query: { kind, ...(cursor ? { cursor } : {}) } },
           signal: signal ?? null,
         }),
       ),

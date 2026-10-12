@@ -13,7 +13,7 @@ import type { MeasurementKind } from '../application/ports';
 import { useProfileMeasurements } from '../application/useProfileMeasurements';
 import { createMeasurementsRepository } from '../infrastructure/createMeasurementsRepository';
 import { MeasurementKindToggle } from './components/MeasurementKindToggle';
-import { MeasurementTable } from './components/MeasurementTable';
+import { MeasurementTableSection } from './components/MeasurementTableSection';
 import { ProfileHealthHeader } from './components/ProfileHealthHeader';
 
 const profilesRepository = createProfilesRepository();
@@ -30,7 +30,7 @@ export function ProfileHealthPage({ profileId }: { profileId: string }) {
   const main = session.data.role === 'main';
   const profiles = workspace.profiles.data ?? [];
   const profile = profiles.find((item) => item.id === profileId);
-  const rows = measurements.data ?? [];
+  const rows = measurements.data?.pages.flatMap((page) => page.items) ?? [];
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
       {!main ? (
@@ -56,21 +56,7 @@ export function ProfileHealthPage({ profileId }: { profileId: string }) {
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white p-3 shadow-sm sm:p-4">
             <MeasurementKindToggle kind={kind} onChange={setKind} />
           </div>
-          <section
-            aria-labelledby="measurement-table-title"
-            className="flex flex-col gap-4 rounded-xl bg-white p-5 shadow-sm lg:p-6"
-          >
-            <h2 id="measurement-table-title" className="text-lg font-semibold text-[#004135]">
-              Bảng số đo chi tiết
-            </h2>
-            <MeasurementTable
-              kind={kind}
-              measurements={rows}
-              loading={measurements.isPending}
-              error={measurements.isError}
-              retry={() => void measurements.refetch()}
-            />
-          </section>
+          <MeasurementTableSection kind={kind} measurements={measurements} />
         </div>
       )}
     </ProfileFrame>

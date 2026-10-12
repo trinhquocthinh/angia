@@ -1898,11 +1898,13 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Số đo sinh tồn đã duyệt của hồ sơ, mới nhất trước */
+    /** Số đo sinh tồn đã duyệt của hồ sơ, mới nhất trước, phân trang cursor (F09a) */
     get: {
       parameters: {
         query?: {
           kind?: 'blood_pressure' | 'glucose';
+          limit?: number;
+          cursor?: string;
         };
         header?: never;
         path: {
@@ -1912,13 +1914,13 @@ export interface paths {
       };
       requestBody?: never;
       responses: {
-        /** @description Số đo */
+        /** @description Trang số đo */
         200: {
           headers: {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['Measurement'][];
+            'application/json': components['schemas']['MeasurementPage'];
           };
         };
         /** @description ERR_UNAUTHENTICATED */
@@ -1941,6 +1943,94 @@ export interface paths {
         };
         /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
         404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/measurements/series': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Chuỗi số đo theo tuần trong khoảng ngày (SPEC-020), tối đa 366 ngày */
+    get: {
+      parameters: {
+        query: {
+          kind: 'blood_pressure' | 'glucose';
+          from: string;
+          to: string;
+          displayGlucoseUnit?: 'mmol/L' | 'mg/dL';
+        };
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Điểm đo cũ nhất trước và cờ tuần có số đo */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['MeasurementSeries'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
           headers: {
             [name: string]: unknown;
           };
@@ -2997,6 +3087,44 @@ export interface components {
       sha256: string;
       /** @enum {boolean} */
       confirmed: true;
+    };
+    MeasurementPage: {
+      items: components['schemas']['Measurement'][];
+      /** Format: uuid */
+      nextCursor: string | null;
+    };
+    MeasurementSeries: {
+      points: components['schemas']['MeasurementSeriesPoint'][];
+      weeks: {
+        /** Format: date */
+        weekStart: string;
+        hasMeasurement: boolean;
+      }[];
+    };
+    MeasurementSeriesPoint: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      healthProfileId: string;
+      /** Format: uuid */
+      sourceDocumentId: string | null;
+      /** @enum {string} */
+      kind: 'blood_pressure' | 'glucose';
+      /** Format: date */
+      measuredOn: string;
+      measuredTime: string | null;
+      systolic: number | null;
+      diastolic: number | null;
+      pulse: number | null;
+      glucoseValue: number | null;
+      /** @enum {string|null} */
+      glucoseUnit: 'mmol/L' | 'mg/dL' | null;
+      manualWithoutSource: boolean;
+      /** Format: date-time */
+      createdAt: string;
+      displayGlucoseValue: number | null;
+      /** @enum {string|null} */
+      displayGlucoseUnit: 'mmol/L' | 'mg/dL' | null;
     };
     StoppableCourses: {
       /** Format: date */

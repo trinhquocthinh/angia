@@ -20,6 +20,14 @@ export const measurementSchema = z
   .meta({ id: 'Measurement' });
 export type Measurement = z.infer<typeof measurementSchema>;
 
+// F09a: danh sách số đo phân trang cursor; cursor là id số đo cuối của trang trước.
 export const measurementListQuerySchema = z.object({
   kind: z.enum(['blood_pressure', 'glucose']).optional(),
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+  cursor: z.uuid().optional(),
 });
+
+export const measurementPageSchema = z
+  .object({ items: z.array(measurementSchema), nextCursor: z.uuid().nullable() })
+  .meta({ id: 'MeasurementPage' });
+export type MeasurementPage = z.infer<typeof measurementPageSchema>;

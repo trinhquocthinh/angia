@@ -23,6 +23,7 @@ const reading = {
 const respondBody = { decision: 'accepted', basis: 'self', respondentName: 'Lén' };
 const profiles = '/api/health-profiles';
 const documents = '/api/source-documents';
+const seriesQuery = 'kind=blood_pressure&from=2026-10-01&to=2026-10-31';
 const SNAPSHOT_TABLES = [
   'health_profiles',
   'accounts',
@@ -102,6 +103,8 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'POST', `${documents}/${x.documentId}/reject`),
     'GET /api/health-profiles/:id/measurements': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/measurements`),
+    'GET /api/health-profiles/:id/measurements/series': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/measurements/series?${seriesQuery}`),
     'POST /api/health-profiles/:id/medication-courses': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses`, {
         name: 'Canxi',
@@ -247,13 +250,8 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
         ':id',
         pattern.startsWith(documents) ? victim.documentId : victim.profile.id,
       );
-      expect({
-        route,
-        status: (await t.call(member, method, path.replace(':courseId', victim.courseId))).status,
-      }).toEqual({
-        route,
-        status: 403,
-      });
+      const status = (await t.call(member, method, path.replace(':courseId', victim.courseId))).status;
+      expect({ route, status }).toEqual({ route, status: 403 });
     }
   });
 });
