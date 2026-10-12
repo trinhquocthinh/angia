@@ -4,7 +4,7 @@ import { MedicationCard } from './MedicationCard';
 export function MedicationSlotSection({ group, today }: { group: MedicationSlotGroup; today: string }) {
   const headingId = `medication-slot-${group.slot}`;
   return (
-    <section aria-labelledby={headingId} className="flex flex-col gap-3 rounded-[20px] bg-white p-5">
+    <section aria-labelledby={headingId} className="flex flex-col gap-3 rounded-xl bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between gap-2">
         <h3 id={headingId} className="text-lg font-semibold text-[#004135]">
           {group.label}

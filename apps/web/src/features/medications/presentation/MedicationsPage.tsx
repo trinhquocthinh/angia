@@ -47,13 +47,18 @@ function MedicationsContent({
   const medications = useCurrentMedications(catalogRepository, session, profile);
   return (
     <div className="flex flex-col gap-6">
-      <ProfileHealthHeader profile={profile} active="medications" />
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <ProfileHealthHeader
+        profile={profile}
+        active="medications"
+        actions={
+          <>
+            <SelfReportedCourseAction profile={profile} session={session} />
+            <StopCourseAction profile={profile} session={session} />
+          </>
+        }
+      />
+      <div className="rounded-xl bg-white px-5 py-4 shadow-sm">
         <h2 className="text-lg font-semibold text-[#004135]">Thuốc đang dùng hôm nay</h2>
-        <div className="flex flex-wrap gap-3">
-          <SelfReportedCourseAction profile={profile} session={session} />
-          <StopCourseAction profile={profile} session={session} />
-        </div>
       </div>
       {profile.consentStatus !== 'confirmed' ? (
         <p role="alert" className="rounded-[20px] bg-white p-6 text-sm">

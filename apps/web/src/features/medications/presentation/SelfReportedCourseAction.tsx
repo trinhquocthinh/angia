@@ -21,7 +21,7 @@ export function SelfReportedCourseAction({
         title={
           profile.consentStatus !== 'confirmed' ? 'Cần đồng thuận trước khi khai báo thuốc bổ' : undefined
         }
-        className="min-h-11 rounded-full bg-[#e4f0ef] px-5 text-sm font-semibold text-[#004135] disabled:opacity-55"
+        className="min-h-11 rounded-xl bg-[#e4f0f0] px-4 text-sm font-semibold text-[#404945] transition-colors hover:bg-[#deebea] hover:text-[#131d1d] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
       >
         Khai báo thuốc bổ
       </button>

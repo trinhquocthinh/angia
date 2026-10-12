@@ -13,14 +13,14 @@ export function MeasurementKindToggle({
   onChange: (kind: MeasurementKind) => void;
 }) {
   return (
-    <div role="group" aria-label="Chọn chỉ số" className="inline-flex rounded-xl bg-[#eaf6f5] p-1">
+    <div role="group" aria-label="Chọn chỉ số" className="inline-flex rounded-xl bg-[#e4f0f0] p-1">
       {OPTIONS.map((option) => (
         <button
           key={option.value}
           type="button"
           aria-pressed={kind === option.value}
           onClick={() => onChange(option.value)}
-          className="min-h-11 rounded-lg px-4 text-sm font-medium text-[#3f4946] aria-pressed:bg-white aria-pressed:text-[#004135] aria-pressed:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
+          className="min-h-11 rounded-lg px-4 text-sm font-medium text-[#404945] transition-colors hover:text-[#131d1d] aria-pressed:bg-white aria-pressed:font-semibold aria-pressed:text-[#004135] aria-pressed:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
         >
           {option.label}
         </button>

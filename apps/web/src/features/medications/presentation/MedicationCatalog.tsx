@@ -16,7 +16,7 @@ export function MedicationCatalog({ data, loading, error, retry }: Props) {
     return (
       <div role="status" aria-label="Đang tải danh mục thuốc" className="grid gap-4 md:grid-cols-2">
         {[0, 1].map((key) => (
-          <div key={key} className="h-48 animate-pulse rounded-[20px] bg-white motion-reduce:animate-none" />
+          <div key={key} className="h-48 animate-pulse rounded-xl bg-white motion-reduce:animate-none" />
         ))}
       </div>
     );

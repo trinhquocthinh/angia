@@ -41,23 +41,28 @@ export function ProfileHealthPage({ profileId }: { profileId: string }) {
         </p>
       ) : (
         <div className="flex flex-col gap-6">
-          {profile && <ProfileHealthHeader profile={profile} latest={rows[0] ?? null} />}
           {profile && (
-            <div className="flex flex-wrap gap-3">
-              <SelfReportedCourseAction profile={profile} session={session.data} />
-              <StopCourseAction profile={profile} session={session.data} />
-            </div>
+            <ProfileHealthHeader
+              profile={profile}
+              latest={rows[0] ?? null}
+              actions={
+                <>
+                  <SelfReportedCourseAction profile={profile} session={session.data} />
+                  <StopCourseAction profile={profile} session={session.data} />
+                </>
+              }
+            />
           )}
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white p-3 shadow-sm sm:p-4">
+            <MeasurementKindToggle kind={kind} onChange={setKind} />
+          </div>
           <section
             aria-labelledby="measurement-table-title"
-            className="flex flex-col gap-4 rounded-[20px] bg-white p-5 lg:p-6"
+            className="flex flex-col gap-4 rounded-xl bg-white p-5 shadow-sm lg:p-6"
           >
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 id="measurement-table-title" className="text-lg font-semibold text-[#004135]">
-                Bảng số đo chi tiết
-              </h2>
-              <MeasurementKindToggle kind={kind} onChange={setKind} />
-            </div>
+            <h2 id="measurement-table-title" className="text-lg font-semibold text-[#004135]">
+              Bảng số đo chi tiết
+            </h2>
             <MeasurementTable
               kind={kind}
               measurements={rows}
