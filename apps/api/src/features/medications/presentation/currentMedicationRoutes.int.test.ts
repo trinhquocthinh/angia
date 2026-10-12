@@ -35,8 +35,12 @@ describe('API danh mục thuốc đang dùng + RLS (SPEC-018, E4-S4-T1)', () => 
     await t?.stop();
   });
   it('TC-238: chỉ đợt có hiệu lực hôm nay; kèm ngày kê đơn nguồn và hàm lượng', async () => {
-    // Canxi từ đơn 7 ngày (01/10–07/10) đã qua; các đợt dưới đây bắt đầu 01/10.
+    // Canxi từ đơn 7 ngày, dời về 01/10–07/10 cho đã qua kỳ hạn; các đợt dưới đây bắt đầu 01/10.
     const f = await createStoppingFixture(t, true, true);
+    await t.owner.query(
+      "UPDATE medication_courses SET start_date='2026-10-01', end_date='2026-10-07' WHERE id=$1",
+      [f.course.id],
+    );
     const manual = `/api/health-profiles/${f.profile.id}/manual-records`;
     expect((await t.call(f.main, 'POST', manual, prescription('Amlodipin', null))).status).toBe(200);
     for (const [name, startDate] of [

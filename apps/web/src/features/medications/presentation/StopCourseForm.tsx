@@ -23,7 +23,7 @@ export function StopCourseForm({ course, today, pending, onSubmit, onCancel }: P
       }}
     >
       <fieldset disabled={pending} className="flex flex-col gap-6 border-0 px-6 py-5">
-        <StopCourseDetails course={course} today={today} />
+        <StopCourseDetails course={course} />
         <div className="flex flex-col gap-2">
           <label htmlFor="stop-date" className="text-xs font-bold tracking-wider text-[#55615f] uppercase">
             Dừng từ ngày <span className="text-[#b42318]">*</span>

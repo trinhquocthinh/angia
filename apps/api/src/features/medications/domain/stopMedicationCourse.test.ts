@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { stopMedicationCourse } from './stopMedicationCourse.js';
+import { isStoppableCourse, stopMedicationCourse } from './stopMedicationCourse.js';
 import { getActiveMedications } from './getActiveMedications.js';
 import type { MedicationCourse } from './MedicationCourse.js';
 const course: MedicationCourse = {
@@ -51,15 +51,29 @@ describe('Dừng đợt thuốc (SPEC-017)', () => {
       });
     },
   );
-  it('TC-051: không kéo dài đợt hữu hạn; cho dừng ở biên cuối và ghi hồi tố', () => {
+  it('TC-051: đợt kết thúc đúng hôm nay vẫn dừng được, ngày dừng hồi tố trong kỳ hạn', () => {
     const finite = { ...course, endDate: '2026-10-10' };
-    expect(stopMedicationCourse(finite, '2026-10-11', '2026-10-15')).toEqual({
-      ok: false,
-      code: 'ERR_VALIDATION',
-    });
-    expect(stopMedicationCourse(finite, '2026-10-10', '2026-10-15')).toMatchObject({
+    expect(stopMedicationCourse(finite, '2026-10-10', '2026-10-10')).toMatchObject({
       ok: true,
       value: { endDate: '2026-10-09' },
     });
+    expect(stopMedicationCourse(finite, '2026-10-05', '2026-10-10')).toMatchObject({
+      ok: true,
+      value: { endDate: '2026-10-04' },
+    });
+  });
+  it('TC-244: đợt active đã qua kỳ hạn (đơn cũ lưu trữ) không dừng được', () => {
+    const archived = { ...course, startDate: '2019-08-29', endDate: '2019-09-27' };
+    expect(stopMedicationCourse(archived, '2019-09-01', '2026-10-12')).toEqual({
+      ok: false,
+      code: 'ERR_INVALID_STATE_TRANSITION',
+    });
+    expect(isStoppableCourse(archived, '2026-10-12')).toBe(false);
+    expect(isStoppableCourse({ ...archived, endDate: '2026-10-12' }, '2026-10-12')).toBe(true);
+    expect(isStoppableCourse({ ...archived, endDate: null }, '2026-10-12')).toBe(true);
+    expect(isStoppableCourse({ ...course, startDate: '2026-10-13' }, '2026-10-12')).toBe(false);
+    expect(isStoppableCourse({ ...course, status: 'stopped', endDate: '2026-10-20' }, '2026-10-12')).toBe(
+      false,
+    );
   });
 });
