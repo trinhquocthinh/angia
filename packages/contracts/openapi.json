@@ -1099,7 +1099,8 @@
                       "morning",
                       "noon",
                       "afternoon",
-                      "evening"
+                      "evening",
+                      "as_needed"
                     ]
                   }
                 },
@@ -1318,7 +1319,8 @@
                       "morning",
                       "noon",
                       "afternoon",
-                      "evening"
+                      "evening",
+                      "as_needed"
                     ]
                   },
                   "minItems": 1
@@ -1546,7 +1548,8 @@
                               "morning",
                               "noon",
                               "afternoon",
-                              "evening"
+                              "evening",
+                              "as_needed"
                             ]
                           },
                           "maxItems": 4
@@ -2035,7 +2038,8 @@
                 "morning",
                 "noon",
                 "afternoon",
-                "evening"
+                "evening",
+                "as_needed"
               ]
             },
             "minItems": 1
@@ -2150,7 +2154,8 @@
                 "morning",
                 "noon",
                 "afternoon",
-                "evening"
+                "evening",
+                "as_needed"
               ]
             },
             "minItems": 1

@@ -7,6 +7,9 @@ const DECIMAL = /^\d+([.,]\d+)?$/;
 const INTEGER = /^\d+$/;
 const toNumber = (text: string) => Number(text.trim().replace(',', '.'));
 const orNull = (text: string) => (text.trim() === '' ? null : text.trim());
+// BR-025: thuốc dùng ngoài hoặc dòng "Khi cần" được trống liều mỗi lần.
+export const isDoseOptional = (item: { externalUse: boolean; slots: readonly string[] }) =>
+  item.externalUse || item.slots.includes('as_needed');
 
 const itemSchema = z
   .object({
@@ -14,7 +17,7 @@ const itemSchema = z
     strength: z.string(),
     quantityPerDose: z.string(),
     doseUnit: z.string(),
-    slots: z.array(z.enum(['morning', 'noon', 'afternoon', 'evening'])),
+    slots: z.array(z.enum(['morning', 'noon', 'afternoon', 'evening', 'as_needed'])),
     durationDays: z.string(),
     longTerm: z.boolean(),
     // Thuốc bôi / dùng ngoài do người duyệt bật: liều mỗi lần được để trống (BR-025).
@@ -31,7 +34,7 @@ const itemSchema = z
     if (item.name.trim() === '') issue('name', 'Nhập tên thuốc.');
     const quantity = item.quantityPerDose.trim();
     if (quantity === '') {
-      if (!item.externalUse) issue('quantityPerDose', 'Nhập số lượng mỗi lần dùng.');
+      if (!isDoseOptional(item)) issue('quantityPerDose', 'Nhập số lượng mỗi lần dùng.');
     } else if (!DECIMAL.test(quantity) || toNumber(quantity) <= 0)
       issue('quantityPerDose', 'Nhập số lớn hơn 0, ví dụ 1 hoặc 0,5.');
     if (item.slots.length === 0) issue('slots', 'Chọn ít nhất một buổi dùng.');

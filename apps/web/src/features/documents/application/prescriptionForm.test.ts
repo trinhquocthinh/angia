@@ -176,6 +176,18 @@ describe('Form đối soát đơn thuốc (SPEC-010, BR-025)', () => {
     });
   });
 
+  it('TC-249: dòng "Khi cần" được trống liều mỗi lần, vẫn bắt buộc số ngày', () => {
+    const asNeeded = item({ quantityPerDose: '', slots: ['as_needed'] });
+    expect(errorsOf(values({ items: [asNeeded] }))).toEqual({});
+    expect(errorsOf(values({ items: [{ ...asNeeded, durationDays: '' }] }))).toEqual({
+      'items.0.durationDays': 'Nhập số ngày dùng hoặc chọn Dài hạn.',
+    });
+    expect(toPrescriptionApproval(values({ items: [asNeeded] })).items[0]).toMatchObject({
+      slots: ['as_needed'],
+      quantityPerDose: null,
+    });
+  });
+
   it('TC-241: bản đối soát gửi cờ dùng ngoài và liều trống thành null', () => {
     const approval = toPrescriptionApproval(
       values({ items: [item({ quantityPerDose: ' ', externalUse: true })] }),

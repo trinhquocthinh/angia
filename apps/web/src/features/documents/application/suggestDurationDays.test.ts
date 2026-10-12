@@ -32,6 +32,10 @@ describe('Gợi ý số ngày dùng từ tổng số lượng (BR-025 ngoại l�
     expect(suggestDurationDays(inputs({ durationDays: '10' }))).toBeNull();
   });
 
+  it('TC-249: dòng "Khi cần" không gợi ý — không biết số lần dùng mỗi ngày', () => {
+    expect(suggestDurationDays(inputs({ slots: ['as_needed'] }))).toBeNull();
+  });
+
   it('TC-243: thuốc dùng ngoài không gợi ý — tổng tính theo tuýp/chai, không quy ra số lần', () => {
     expect(
       suggestDurationDays(inputs({ totalQuantity: '4', quantityPerDose: '1', externalUse: true })),

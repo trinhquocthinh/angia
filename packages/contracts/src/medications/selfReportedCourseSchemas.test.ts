@@ -23,6 +23,8 @@ describe('Hợp đồng khai báo thuốc bổ', () => {
     { startDate: '2026-02-30' },
     { doseUnit: ' ' },
     { slots: ['morning', 'morning'] },
+    // TC-248: thuốc bổ chỉ dùng 4 buổi trong ngày, không nhận "Khi cần".
+    { slots: ['as_needed'] },
     { expectedConflictCourseIds: ['không-phải-uuid'] },
     { source: 'prescription' },
     { endDate: '2026-10-31' },

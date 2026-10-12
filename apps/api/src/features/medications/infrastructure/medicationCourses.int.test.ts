@@ -117,6 +117,8 @@ describe('Bảng đợt thuốc: RLS, ràng buộc và xóa dây chuyền', () =
     [null, ['morning'], '2026-10-30', 'active', 'self_reported', 'medication_courses_quantity_valid'],
     [1, [], '2026-10-30', 'active', 'self_reported', 'medication_courses_slots_valid'],
     [1, ['sang'], '2026-10-30', 'active', 'self_reported', 'medication_courses_slots_valid'],
+    // TC-248: thuốc bổ không có buổi "Khi cần".
+    [1, ['as_needed'], '2026-10-30', 'active', 'self_reported', 'medication_courses_slots_valid'],
     [1, ['morning'], '2026-09-30', 'active', 'self_reported', 'medication_courses_dates_valid'],
     [1, ['morning'], '2026-09-29', 'stopped', 'self_reported', 'medication_courses_dates_valid'],
     [1, ['morning'], '2026-09-30', 'ended', 'self_reported', 'medication_courses_dates_valid'],

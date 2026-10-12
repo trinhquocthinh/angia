@@ -46,7 +46,8 @@ export const medicationCourses = pgTable(
     ),
     check(
       'medication_courses_slots_valid',
-      sql`cardinality(${t.slots}) >= 1 AND ${t.slots} <@ ARRAY['morning', 'noon', 'afternoon', 'evening']::text[]`,
+      // "Khi cần" chỉ đến từ dòng thuốc của đơn (BR-025); thuốc bổ giữ 4 buổi.
+      sql`(cardinality(${t.slots}) >= 1 AND ${t.slots} <@ ARRAY['morning', 'noon', 'afternoon', 'evening']::text[]) OR (${t.slots} = ARRAY['as_needed']::text[] AND ${t.source} = 'prescription')`,
     ),
     check(
       'medication_courses_dates_valid',

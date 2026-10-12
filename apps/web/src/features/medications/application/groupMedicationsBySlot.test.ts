@@ -30,6 +30,14 @@ describe('Nhóm danh mục thuốc theo buổi (Design §6, E4-S4-T1)', () => {
     expect(groups[0]!.courses.map((item) => item.name)).toEqual(['Amlodipin', 'Metformin']);
     expect(groups[1]!.courses.map((item) => item.id)).toEqual(['1']);
   });
+  it('TC-247: nhóm "Khi cần" nằm sau Tối', () => {
+    const groups = groupMedicationsBySlot([
+      course('1', 'Hydrocortison', ['as_needed']),
+      course('2', 'Amlodipin', ['evening']),
+    ]);
+    expect(groups.map((group) => group.label)).toEqual(['Tối', 'Khi cần']);
+    expect(groups[1]!.courses.map((item) => item.name)).toEqual(['Hydrocortison']);
+  });
   it('TC-240: không có thuốc thì không có nhóm', () => {
     expect(groupMedicationsBySlot([])).toEqual([]);
   });

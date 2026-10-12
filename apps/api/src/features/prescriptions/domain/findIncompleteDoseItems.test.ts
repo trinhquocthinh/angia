@@ -38,4 +38,10 @@ describe('findIncompleteDoseItems — BR-025 chặn dòng thiếu liều/buổi/
     ];
     expect(findIncompleteDoseItems(items)).toEqual([0, 1, 2, 3]);
   });
+
+  it('TC-247: dòng "Khi cần" để trống liều vẫn hợp lệ; vẫn bắt buộc số ngày khi không dài hạn', () => {
+    const asNeeded = { ...complete, slots: ['as_needed' as const], quantityPerDose: null };
+    expect(findIncompleteDoseItems([asNeeded])).toEqual([]);
+    expect(findIncompleteDoseItems([{ ...asNeeded, durationDays: null }])).toEqual([0]);
+  });
 });

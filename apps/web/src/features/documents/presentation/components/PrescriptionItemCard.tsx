@@ -1,4 +1,4 @@
-import type { UseFormReturn } from 'react-hook-form';
+import { useWatch, type UseFormReturn } from 'react-hook-form';
 import type { PrescriptionFormValues } from '../../application/prescriptionForm';
 import { PrescriptionDoseFields } from './PrescriptionDoseFields';
 import { ItemCard } from './ItemCard';
@@ -14,6 +14,7 @@ type ItemCardProps = {
 export function PrescriptionItemCard({ form, index, onRemove }: ItemCardProps) {
   const errors = form.formState.errors.items?.[index];
   const invalid = Object.keys(errors ?? {}).length > 0;
+  const asNeeded = useWatch({ control: form.control, name: `items.${index}.slots` }).includes('as_needed');
   return (
     <ItemCard
       anchorPrefix="rx-item"
@@ -42,6 +43,7 @@ export function PrescriptionItemCard({ form, index, onRemove }: ItemCardProps) {
       <ReadingField
         id={`items-${index}-note`}
         label="Cách dùng ghi trên đơn"
+        placeholder={asNeeded ? 'Ví dụ: bôi khi ngứa' : undefined}
         autoComplete="off"
         compact
         {...form.register(`items.${index}.note`)}

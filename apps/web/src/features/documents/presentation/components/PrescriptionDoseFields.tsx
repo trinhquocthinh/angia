@@ -1,5 +1,6 @@
 import { useWatch, type UseFormReturn } from 'react-hook-form';
-import type { PrescriptionFormValues } from '../../application/prescriptionForm';
+import { isDoseOptional, type PrescriptionFormValues } from '../../application/prescriptionForm';
+import { DosePerIntakeField } from './DosePerIntakeField';
 import { DoseSlotPicker } from './DoseSlotPicker';
 import { DurationField } from './DurationField';
 import { DurationSuggestion } from './DurationSuggestion';
@@ -9,11 +10,16 @@ import { SwitchField } from './SwitchField';
 type DoseFieldsProps = { form: UseFormReturn<PrescriptionFormValues>; index: number };
 
 // Liều mỗi lần, buổi dùng, thời gian — bắt buộc trích từ đơn hoặc người duyệt nhập tay (BR-025).
-// Thuốc bôi / dùng ngoài: người duyệt bật công tắc thì liều mỗi lần được để trống.
+// Thuốc bôi / dùng ngoài hoặc buổi "Khi cần": liều mỗi lần được để trống.
 export function PrescriptionDoseFields({ form, index }: DoseFieldsProps) {
-  const fromAi = useWatch({ control: form.control, name: `items.${index}.fromAi` });
   const externalUse = useWatch({ control: form.control, name: `items.${index}.externalUse` });
+  const slots = useWatch({ control: form.control, name: `items.${index}.slots` });
+  const doseOptional = isDoseOptional({ externalUse, slots });
   const errors = form.formState.errors.items?.[index];
+  // Đổi sang/khỏi "Khi cần" làm thay đổi yêu cầu liều: kiểm lại để lỗi cũ không đứng sai.
+  const recheckDose = () => {
+    if (errors?.quantityPerDose) void form.trigger(`items.${index}.quantityPerDose`);
+  };
   // Container query thay breakpoint viewport: form nằm trong ngăn hẹp trên desktop. items-start để
   // dòng lỗi dưới một ô không kéo lệch nhãn/ô bên cạnh.
   return (
@@ -27,21 +33,7 @@ export function PrescriptionDoseFields({ form, index }: DoseFieldsProps) {
         Thuốc bôi / dùng ngoài
       </SwitchField>
       <div className="grid grid-cols-2 items-start gap-3 @md:grid-cols-3">
-        <ReadingField
-          id={`items-${index}-quantityPerDose`}
-          label={externalUse ? 'Mỗi lần dùng' : 'Mỗi lần dùng *'}
-          inputMode="decimal"
-          autoComplete="off"
-          error={errors?.quantityPerDose?.message}
-          hint={
-            externalUse
-              ? 'Để trống nếu đơn không ghi số lượng mỗi lần.'
-              : fromAi
-                ? 'AI đọc — đối chiếu số lượng với ảnh.'
-                : undefined
-          }
-          {...form.register(`items.${index}.quantityPerDose`)}
-        />
+        <DosePerIntakeField form={form} index={index} optional={doseOptional} />
         <ReadingField
           id={`items-${index}-doseUnit`}
           label="Đơn vị"
@@ -60,7 +52,12 @@ export function PrescriptionDoseFields({ form, index }: DoseFieldsProps) {
           />
         </div>
       </div>
-      <DoseSlotPicker control={form.control} index={index} error={errors?.slots?.message} />
+      <DoseSlotPicker
+        control={form.control}
+        index={index}
+        error={errors?.slots?.message}
+        onChanged={recheckDose}
+      />
       <DurationField form={form} index={index} />
       <DurationSuggestion form={form} index={index} />
     </div>

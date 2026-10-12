@@ -1,12 +1,12 @@
 import type { MedicationCourse } from '@angia/contracts';
-import { DOSE_SLOTS } from '@src/features/documents/application/doseSlots';
+import { doseSlotLabel, sortDoseSlots } from '@src/features/documents/application/doseSlots';
 import { formatDay } from '@src/features/measurements/application/formatMeasurement';
 import { doseLabel } from '../application/doseLabel';
 
 // Thẻ chi tiết đợt đã chọn (Stitch f29c92d0) — chỉ dữ liệu có trong đợt; không gắn nhóm bệnh hay bác sĩ.
 // Danh sách chỉ gồm đợt còn hiệu lực hôm nay (BR-029), nên nhãn trạng thái luôn là "Đang dùng".
 export function StopCourseDetails({ course }: { course: MedicationCourse }) {
-  const slots = DOSE_SLOTS.filter((slot) => course.slots.includes(slot.value)).map((slot) => slot.label);
+  const slots = sortDoseSlots(course.slots).map(doseSlotLabel);
   return (
     <div className="flex flex-col gap-3 rounded-xl border border-[#d9e5e4] bg-[#f6fbfa] p-4">
       <div className="flex items-start justify-between gap-2">
