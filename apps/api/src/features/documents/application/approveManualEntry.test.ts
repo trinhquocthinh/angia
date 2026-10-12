@@ -7,6 +7,7 @@ const item = {
   name: 'Amlodipin',
   strength: '5mg',
   quantityPerDose: 1,
+  externalUse: false,
   doseUnit: 'viên',
   slots: ['morning' as const],
   durationDays: 30,

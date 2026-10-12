@@ -15,6 +15,7 @@ const request = {
         name: 'A',
         strength: null,
         quantityPerDose: 1,
+        externalUse: false,
         doseUnit: null,
         slots: ['morning'],
         durationDays: 30,

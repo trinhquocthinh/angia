@@ -17,6 +17,7 @@ const prescription = (): Prescription => ({
       name: 'Đường  Glucophage',
       strength: '500mg',
       quantityPerDose: 0.5,
+      externalUse: false,
       doseUnit: null,
       slots: ['morning', 'evening'],
       durationDays: 30,

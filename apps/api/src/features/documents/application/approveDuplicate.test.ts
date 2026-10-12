@@ -9,6 +9,7 @@ const item = (name: string, strength: string) => ({
   name,
   strength,
   quantityPerDose: 1,
+  externalUse: false,
   doseUnit: 'viên',
   slots: ['morning' as const],
   durationDays: 30,

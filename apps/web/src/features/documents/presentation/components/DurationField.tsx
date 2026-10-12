@@ -1,6 +1,7 @@
 import { useWatch, type UseFormReturn } from 'react-hook-form';
 import type { PrescriptionFormValues } from '../../application/prescriptionForm';
 import { ReadingField } from './ReadingField';
+import { SwitchField } from './SwitchField';
 
 type DurationFieldProps = { form: UseFormReturn<PrescriptionFormValues>; index: number };
 
@@ -22,21 +23,14 @@ export function DurationField({ form, index }: DurationFieldProps) {
         error={longTerm ? undefined : error}
         {...form.register(`items.${index}.durationDays`)}
       />
-      <label className="mt-7 flex min-h-12 cursor-pointer items-center gap-3 rounded-xl bg-[#eaf6f5] px-4 text-sm font-medium text-[#3f4946] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-[#286958]">
-        <input
-          type="checkbox"
-          role="switch"
-          className="peer sr-only"
-          {...form.register(`items.${index}.longTerm`, {
-            onChange: () => void form.trigger(`items.${index}.durationDays`),
-          })}
-        />
-        <span
-          aria-hidden="true"
-          className="relative h-6 w-10 shrink-0 rounded-full bg-[#bfc9c4] transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-transform peer-checked:bg-[#004135] peer-checked:after:translate-x-4"
-        />
+      <SwitchField
+        className="mt-7"
+        {...form.register(`items.${index}.longTerm`, {
+          onChange: () => void form.trigger(`items.${index}.durationDays`),
+        })}
+      >
         Dài hạn
-      </label>
+      </SwitchField>
     </div>
   );
 }

@@ -16,6 +16,7 @@ export const request: ApproveDocumentRequest = {
       name: 'Amlodipin',
       strength,
       quantityPerDose: 1,
+      externalUse: false,
       doseUnit: 'viên',
       slots: ['morning'],
       durationDays: 30,

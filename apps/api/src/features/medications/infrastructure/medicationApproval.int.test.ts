@@ -122,6 +122,38 @@ describe('Phê duyệt tạo đợt thuốc nguyên tử và cô lập gia đìn
     await expectEmpty(f.profile.id, f.documentId);
   });
 
+  const cream = {
+    ...prescription.items[0]!,
+    name: 'Betamethason',
+    strength: '15g',
+    quantityPerDose: null,
+    doseUnit: 'tuýp',
+    slots: ['morning', 'evening'],
+    durationDays: 7,
+    totalQuantity: 4,
+  };
+
+  it('TC-241: thuốc dùng ngoài trống liều → lưu dòng và đợt với liều null', async () => {
+    const f = await fixture();
+    const response = await f.approve({ ...prescription, items: [{ ...cream, externalUse: true }] });
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as ApprovedDocumentResponse;
+    expect(body.prescription!.items[0]).toMatchObject({ quantityPerDose: null, externalUse: true });
+    expect(await courses(f.profile.id)).toEqual([
+      expect.objectContaining({ name: 'Betamethason', quantity_per_dose: null, end_date: '2026-10-07' }),
+    ]);
+  });
+
+  it('TC-242: tắt cờ dùng ngoài mà trống liều → ERR_DOSE_INFO_MISSING, không lưu gì', async () => {
+    const f = await fixture();
+    const response = await f.approve({ ...prescription, items: [{ ...cream, externalUse: false }] });
+    expect(response.status).toBe(422);
+    expect(await response.json()).toMatchObject({
+      error: { code: 'ERR_DOSE_INFO_MISSING', details: { invalidItemIndexes: [0] } },
+    });
+    await expectEmpty(f.profile.id, f.documentId);
+  });
+
   it('lỗi ghi đợt rollback cả đơn + dòng thuốc, chứng từ chưa approved', async () => {
     const f = await fixture();
     await t.owner.query(

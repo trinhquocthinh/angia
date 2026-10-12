@@ -1,4 +1,5 @@
 import type { MedicationCourse } from '@angia/contracts';
+import { doseLabel } from '../application/doseLabel';
 export function StopCourseSelector({
   courses,
   selectedId,
@@ -29,8 +30,9 @@ export function StopCourseSelector({
         {courses.map((course, index) => (
           <option key={course.id} value={course.id}>
             {course.name}
-            {course.strength ? ` · ${course.strength}` : ''} · {course.quantityPerDose}{' '}
-            {course.doseUnit ?? ''} · từ {course.startDate.split('-').reverse().join('/')} · đợt {index + 1}
+            {course.strength ? ` · ${course.strength}` : ''} ·{' '}
+            {doseLabel(course.quantityPerDose, course.doseUnit)} · từ{' '}
+            {course.startDate.split('-').reverse().join('/')} · đợt {index + 1}
           </option>
         ))}
       </select>

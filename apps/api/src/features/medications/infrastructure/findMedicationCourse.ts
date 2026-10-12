@@ -1,4 +1,5 @@
 import { and, eq } from 'drizzle-orm';
+import { fromNumeric } from '@src/shared/db/numericColumn.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import { medicationCourses, prescriptionItems } from '@src/shared/db/schema/index.js';
 import type { MedicationCourse } from '../domain/MedicationCourse.js';
@@ -31,7 +32,7 @@ export async function findMedicationCourse(
   return {
     ...row.course,
     strength: row.course.strength ?? row.strength,
-    quantityPerDose: Number(row.course.quantityPerDose),
+    quantityPerDose: fromNumeric(row.course.quantityPerDose),
     slots: row.course.slots as DoseSlot[],
   } as MedicationCourse;
 }

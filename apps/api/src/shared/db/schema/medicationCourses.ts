@@ -17,7 +17,8 @@ export const medicationCourses = pgTable(
     name: text('name').notNull(),
     nameNormalized: text('name_normalized').notNull(),
     strength: text('strength'),
-    quantityPerDose: numeric('quantity_per_dose').notNull(),
+    // Null chỉ với đợt từ dòng thuốc dùng ngoài không ghi liều (BR-025).
+    quantityPerDose: numeric('quantity_per_dose'),
     doseUnit: text('dose_unit'),
     slots: text('slots').array().notNull(),
     startDate: date('start_date').notNull(),
@@ -39,7 +40,10 @@ export const medicationCourses = pgTable(
       'medication_courses_has_source',
       sql`(${t.source} = 'prescription' AND ${t.prescriptionItemId} IS NOT NULL) OR (${t.source} = 'self_reported' AND ${t.prescriptionItemId} IS NULL)`,
     ),
-    check('medication_courses_quantity_positive', sql`${t.quantityPerDose} > 0`),
+    check(
+      'medication_courses_quantity_valid',
+      sql`CASE WHEN ${t.quantityPerDose} IS NULL THEN ${t.source} = 'prescription' ELSE ${t.quantityPerDose} > 0 END`,
+    ),
     check(
       'medication_courses_slots_valid',
       sql`cardinality(${t.slots}) >= 1 AND ${t.slots} <@ ARRAY['morning', 'noon', 'afternoon', 'evening']::text[]`,

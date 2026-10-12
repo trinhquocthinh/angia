@@ -35,6 +35,7 @@ const request = (): ApproveRequest => ({
         name: 'AMLODIPIN',
         strength: '10mg',
         quantityPerDose: 1,
+        externalUse: false,
         doseUnit: 'viên',
         slots: ['evening'],
         durationDays: 30,

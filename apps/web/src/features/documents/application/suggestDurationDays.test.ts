@@ -7,6 +7,7 @@ const inputs = (patch: Partial<DurationInputs> = {}): DurationInputs => ({
   slots: ['morning', 'evening'],
   durationDays: '',
   longTerm: false,
+  externalUse: false,
   ...patch,
 });
 
@@ -29,5 +30,11 @@ describe('Gợi ý số ngày dùng từ tổng số lượng (BR-025 ngoại l�
     expect(suggestDurationDays(inputs({ slots: [] }))).toBeNull();
     expect(suggestDurationDays(inputs({ longTerm: true }))).toBeNull();
     expect(suggestDurationDays(inputs({ durationDays: '10' }))).toBeNull();
+  });
+
+  it('TC-243: thuốc dùng ngoài không gợi ý — tổng tính theo tuýp/chai, không quy ra số lần', () => {
+    expect(
+      suggestDurationDays(inputs({ totalQuantity: '4', quantityPerDose: '1', externalUse: true })),
+    ).toBeNull();
   });
 });

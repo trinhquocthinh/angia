@@ -112,7 +112,9 @@ describe('Bảng đợt thuốc: RLS, ràng buộc và xóa dây chuyền', () =
   });
 
   it.each([
-    [0, ['morning'], '2026-10-30', 'active', 'self_reported', 'medication_courses_quantity_positive'],
+    [0, ['morning'], '2026-10-30', 'active', 'self_reported', 'medication_courses_quantity_valid'],
+    // BR-025: chỉ đợt từ đơn (thuốc dùng ngoài) được trống liều; thuốc bổ vẫn bắt buộc.
+    [null, ['morning'], '2026-10-30', 'active', 'self_reported', 'medication_courses_quantity_valid'],
     [1, [], '2026-10-30', 'active', 'self_reported', 'medication_courses_slots_valid'],
     [1, ['sang'], '2026-10-30', 'active', 'self_reported', 'medication_courses_slots_valid'],
     [1, ['morning'], '2026-09-30', 'active', 'self_reported', 'medication_courses_dates_valid'],

@@ -1,3 +1,4 @@
+import { toNumeric } from '@src/shared/db/numericColumn.js';
 import { medicationCourses } from '@src/shared/db/schema/index.js';
 import { newId } from '@src/shared/db/schema/newId.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
@@ -15,7 +16,7 @@ export async function insertMedicationCourses(
     courses.map((course) => ({
       ...course,
       familyId,
-      quantityPerDose: String(course.quantityPerDose),
+      quantityPerDose: toNumeric(course.quantityPerDose),
       slots: [...course.slots],
     })),
   );

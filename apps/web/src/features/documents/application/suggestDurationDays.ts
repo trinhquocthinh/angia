@@ -2,7 +2,7 @@ import type { PrescriptionItemValues } from './prescriptionForm';
 
 export type DurationInputs = Pick<
   PrescriptionItemValues,
-  'totalQuantity' | 'quantityPerDose' | 'slots' | 'durationDays' | 'longTerm'
+  'totalQuantity' | 'quantityPerDose' | 'slots' | 'durationDays' | 'longTerm' | 'externalUse'
 >;
 export type DurationSuggestion = { days: number; total: number; perDose: number; slotCount: number };
 
@@ -14,9 +14,11 @@ const positive = (text: string) => {
 };
 
 // BR-025 (owner chốt 2026-10-09): chỉ gợi ý, người duyệt bấm "Áp dụng" mới điền. Gợi ý khi đủ tổng số lượng,
-// liều mỗi lần, ≥ 1 buổi, không dài hạn, chưa có số ngày và phép chia ra số nguyên dương.
+// liều mỗi lần, ≥ 1 buổi, không dài hạn, chưa có số ngày và phép chia ra số nguyên dương. Thuốc dùng ngoài không
+// gợi ý: tổng tính theo tuýp/chai, không quy ra số lần dùng.
 export function suggestDurationDays(item: DurationInputs): DurationSuggestion | null {
-  if (item.longTerm || item.durationDays.trim() !== '' || item.slots.length === 0) return null;
+  if (item.externalUse || item.longTerm || item.durationDays.trim() !== '' || item.slots.length === 0)
+    return null;
   const total = positive(item.totalQuantity);
   const perDose = positive(item.quantityPerDose);
   if (total === null || perDose === null) return null;

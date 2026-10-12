@@ -16,7 +16,9 @@ export const prescriptionItems = pgTable(
     name: text('name').notNull(),
     nameNormalized: text('name_normalized').notNull(),
     strength: text('strength'),
-    quantityPerDose: numeric('quantity_per_dose').notNull(),
+    quantityPerDose: numeric('quantity_per_dose'),
+    // Thuốc bôi / dùng ngoài do người duyệt bật: cho phép trống liều mỗi lần (BR-025).
+    externalUse: boolean('external_use').notNull().default(false),
     doseUnit: text('dose_unit'),
     slots: text('slots').array().notNull(),
     durationDays: integer('duration_days'),
@@ -29,7 +31,10 @@ export const prescriptionItems = pgTable(
     index('prescription_items_prescription_idx').on(t.prescriptionId),
     // BR-025: đủ liều, buổi và số ngày hoặc dài hạn.
     check('prescription_items_duration', sql`${t.durationDays} IS NOT NULL OR ${t.longTerm} = true`),
-    check('prescription_items_quantity_positive', sql`${t.quantityPerDose} > 0`),
+    check(
+      'prescription_items_quantity_valid',
+      sql`CASE WHEN ${t.quantityPerDose} IS NULL THEN ${t.externalUse} ELSE ${t.quantityPerDose} > 0 END`,
+    ),
     check(
       'prescription_items_slots_valid',
       sql`cardinality(${t.slots}) >= 1 AND ${t.slots} <@ ARRAY['morning', 'noon', 'afternoon', 'evening']::text[]`,

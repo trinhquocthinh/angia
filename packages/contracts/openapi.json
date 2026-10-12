@@ -1077,7 +1077,13 @@
                   ]
                 },
                 "quantityPerDose": {
-                  "type": "number"
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "externalUse": {
+                  "type": "boolean"
                 },
                 "doseUnit": {
                   "type": [
@@ -1124,6 +1130,7 @@
                 "name",
                 "strength",
                 "quantityPerDose",
+                "externalUse",
                 "doseUnit",
                 "slots",
                 "durationDays",
@@ -1291,7 +1298,10 @@
                   ]
                 },
                 "quantityPerDose": {
-                  "type": "number",
+                  "type": [
+                    "number",
+                    "null"
+                  ],
                   "exclusiveMinimum": 0
                 },
                 "doseUnit": {
@@ -1516,6 +1526,10 @@
                           ],
                           "exclusiveMinimum": 0,
                           "maximum": 1000
+                        },
+                        "externalUse": {
+                          "type": "boolean",
+                          "default": false
                         },
                         "doseUnit": {
                           "type": [
@@ -2001,7 +2015,10 @@
             ]
           },
           "quantityPerDose": {
-            "type": "number",
+            "type": [
+              "number",
+              "null"
+            ],
             "exclusiveMinimum": 0
           },
           "doseUnit": {
@@ -2113,7 +2130,10 @@
             ]
           },
           "quantityPerDose": {
-            "type": "number",
+            "type": [
+              "number",
+              "null"
+            ],
             "exclusiveMinimum": 0
           },
           "doseUnit": {

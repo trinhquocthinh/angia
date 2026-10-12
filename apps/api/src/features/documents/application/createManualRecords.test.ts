@@ -53,6 +53,7 @@ describe('Nhập trực tiếp không qua ảnh (SPEC-011, BR-014, BR-009)', () 
             name: 'Amlodipin',
             strength: '5mg',
             quantityPerDose: 1,
+            externalUse: false,
             doseUnit: 'viên',
             slots: ['morning'],
             durationDays: null,
