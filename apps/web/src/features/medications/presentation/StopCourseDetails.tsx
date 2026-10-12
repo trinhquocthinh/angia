@@ -4,8 +4,8 @@ import { formatDay } from '@src/features/measurements/application/formatMeasurem
 import { doseLabel } from '../application/doseLabel';
 
 // Thẻ chi tiết đợt đã chọn (Stitch f29c92d0) — chỉ dữ liệu có trong đợt; không gắn nhóm bệnh hay bác sĩ.
-export function StopCourseDetails({ course, today }: { course: MedicationCourse; today: string }) {
-  const overdue = course.endDate !== null && course.endDate < today;
+// Danh sách chỉ gồm đợt còn hiệu lực hôm nay (BR-029), nên nhãn trạng thái luôn là "Đang dùng".
+export function StopCourseDetails({ course }: { course: MedicationCourse }) {
   const slots = DOSE_SLOTS.filter((slot) => course.slots.includes(slot.value)).map((slot) => slot.label);
   return (
     <div className="flex flex-col gap-3 rounded-xl border border-[#d9e5e4] bg-[#f6fbfa] p-4">
@@ -20,7 +20,7 @@ export function StopCourseDetails({ course, today }: { course: MedicationCourse;
           </p>
         </div>
         <span className="shrink-0 rounded-full border border-[#004135]/20 bg-[#e8f1ee] px-2.5 py-1 text-[11px] font-semibold text-[#004135]">
-          {overdue ? 'Đã qua kỳ hạn' : 'Đang dùng'}
+          Đang dùng
         </span>
       </div>
       <dl className="grid grid-cols-2 gap-3 border-t border-[#d9e5e4] pt-3 text-xs">

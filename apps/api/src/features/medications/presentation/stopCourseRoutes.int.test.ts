@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { vietnamDate } from '@src/shared/test/createFiniteCourse.js';
 import { createStoppingFixture } from '@src/shared/test/createStoppingFixture.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -38,10 +39,25 @@ describe('API dừng đợt thuốc + RLS (SPEC-017)', () => {
   });
   it('TC-051: đợt từ đơn hữu hạn không bị kéo dài; đọc đúng hàm lượng', async () => {
     const f = await createStoppingFixture(t, true, true);
-    expect(f.course).toMatchObject({ source: 'prescription', strength: '500mg', endDate: '2026-10-07' });
-    expect((await f.stop('2026-10-08')).status).toBe(422);
-    expect((await f.stop('2026-10-07')).status).toBe(200);
-    expect(await f.rows()).toEqual([{ id: f.course.id, status: 'stopped', end_date: '2026-10-06' }]);
+    expect(f.course).toMatchObject({ source: 'prescription', strength: '500mg', endDate: vietnamDate(3) });
+    expect((await f.stop(vietnamDate(1))).status).toBe(422);
+    expect((await f.stop(vietnamDate(-1))).status).toBe(200);
+    expect(await f.rows()).toEqual([{ id: f.course.id, status: 'stopped', end_date: vietnamDate(-2) }]);
+  });
+  it('TC-244: đợt active đã qua kỳ hạn không có trong danh sách và không dừng được', async () => {
+    const f = await createStoppingFixture(t, true, true);
+    await t.owner.query(
+      "UPDATE medication_courses SET start_date='2019-08-29', end_date='2019-09-27' WHERE id=$1",
+      [f.course.id],
+    );
+    expect(await (await t.call(f.main, 'GET', `${f.collection}/stoppable`)).json()).toMatchObject({
+      courses: [],
+    });
+    const before = await f.rows();
+    const response = await f.stop('2019-09-01');
+    expect(response.status).toBe(409);
+    expect(await response.json()).toMatchObject({ error: { code: 'ERR_INVALID_STATE_TRANSITION' } });
+    expect(await f.rows()).toEqual(before);
   });
   it.each(['ended', 'stopped', 'replaced'])('TC-052: %s trả 409, không sửa ngày kết thúc', async (status) => {
     const f = await createStoppingFixture(t);
@@ -120,7 +136,7 @@ describe('API dừng đợt thuốc + RLS (SPEC-017)', () => {
     ).toBe(404);
     expect((await f.rows())[0].status).toBe('active');
   });
-  it('TC-051: danh sách chỉ có đợt active đã bắt đầu, gồm cả đợt active cần ghi hồi tố', async () => {
+  it('TC-051: danh sách chỉ có đợt active đã bắt đầu và còn hiệu lực hôm nay', async () => {
     const f = await createStoppingFixture(t, true, true);
     await t.call(f.main, 'POST', f.collection, {
       name: 'Vitamin',
