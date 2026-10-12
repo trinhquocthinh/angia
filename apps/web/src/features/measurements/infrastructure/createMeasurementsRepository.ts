@@ -11,5 +11,12 @@ export function createMeasurementsRepository(client = apiClient): MeasurementsRe
           signal: signal ?? null,
         }),
       ),
+    series: async (profileId, kind, { from, to }, signal) =>
+      readReviewResponse(
+        await client.GET('/api/health-profiles/{id}/measurements/series', {
+          params: { path: { id: profileId }, query: { kind, from, to, displayGlucoseUnit: 'mmol/L' } },
+          signal: signal ?? null,
+        }),
+      ),
   };
 }
