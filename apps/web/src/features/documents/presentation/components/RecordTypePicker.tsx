@@ -13,10 +13,12 @@ export function RecordTypePicker({
   onChange: (value: DocumentType) => void;
 }) {
   return (
-    <PickerCard icon="category" title="Loại dữ liệu" hint="Bắt buộc">
+    <PickerCard icon="category" title="Loại dữ liệu" hint="Bắt buộc" required>
       {DOCUMENT_TYPES.map((type) => (
         <ChoiceChip key={type.value} selected={value === type.value} onClick={() => onChange(type.value)}>
-          <DocumentIcon name={type.icon} size={16} />
+          <span className={value === type.value ? 'text-[#b3eddf]' : 'text-[#707975]'}>
+            <DocumentIcon name={type.icon} size={16} />
+          </span>
           {type.label}
         </ChoiceChip>
       ))}

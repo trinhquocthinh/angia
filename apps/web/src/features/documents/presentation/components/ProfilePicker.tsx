@@ -18,7 +18,7 @@ export function ProfilePicker({
 }) {
   const waiting = profiles.filter((profile) => profile.consentStatus !== 'confirmed');
   return (
-    <PickerCard icon="people" title="Của ai?" hint="Bắt buộc">
+    <PickerCard icon="family" title="Của ai?" hint="Bắt buộc" required>
       {profiles.length === 0 && (
         <p className="text-sm text-[#55615f]">
           Chưa có hồ sơ.{' '}
@@ -39,7 +39,9 @@ export function ProfilePicker({
             onClick={() => onSelect(profile.id)}
           >
             {selected ? (
-              <DocumentIcon name="check" size={16} />
+              <span className="text-[#b3eddf]">
+                <DocumentIcon name="checkCircle" size={16} />
+              </span>
             ) : (
               <span className="h-2 w-2 rounded-full bg-[#bfc9c4]" aria-hidden="true" />
             )}
