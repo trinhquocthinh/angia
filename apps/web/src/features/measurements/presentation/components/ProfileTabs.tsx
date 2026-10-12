@@ -20,6 +20,8 @@ export function ProfileTabs({ profileId, active }: { profileId: string; active: 
           key={tab.key}
           to={tab.to}
           params={{ profileId }}
+          // Link tự gắn aria-current khi URL khớp tiền tố: tab "Diễn biến" sẽ sáng cả ở /medications.
+          activeOptions={{ exact: true }}
           aria-current={tab.key === active ? 'page' : undefined}
           className={tabClass}
         >
