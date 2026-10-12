@@ -13,6 +13,7 @@ type ManualRecordContentProps = {
   onSubmit: (request: ApproveDocumentRequest) => void;
   /** Cảnh báo dưới form, vd. nghi trùng bản đã lưu (SPEC-012). */
   notice?: ReactNode;
+  formDisabled?: boolean;
   onAgain: () => void;
   onBack: () => void;
 };
@@ -24,6 +25,7 @@ export function ManualRecordContent({
   profile,
   saved,
   notice,
+  formDisabled = false,
   onAgain,
   onBack,
   ...form
@@ -59,11 +61,13 @@ export function ManualRecordContent({
       <h1 className="auth-heading text-2xl font-semibold text-[#004135]">
         Nhập tay cho {profile.displayName}
       </h1>
-      <ManualEntryForm
-        initialType={null}
-        intro="Dữ liệu được ghi là nhập tay, không kèm chứng từ gốc. Nhập đúng như trên giấy tờ hoặc màn hình máy đo."
-        {...form}
-      />
+      <fieldset disabled={formDisabled} className="min-w-0 border-0 p-0">
+        <ManualEntryForm
+          initialType={null}
+          intro="Dữ liệu được ghi là nhập tay, không kèm chứng từ gốc. Nhập đúng như trên giấy tờ hoặc màn hình máy đo."
+          {...form}
+        />
+      </fieldset>
       {notice}
     </div>
   );

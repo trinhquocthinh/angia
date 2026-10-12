@@ -1,3 +1,5 @@
+import type { MedicationManagementRepository } from '@src/features/medications/application/managementPorts.js';
+import { registerMedicationRoutes } from '@src/features/medications/presentation/registerMedicationRoutes.js';
 import { registerPrivacyHeaders } from '@src/features/documentPrivacy/presentation/registerPrivacyHeaders.js';
 import type { PrivacyDependencies } from '@src/features/documentPrivacy/application/ports.js';
 import { registerPrivacyRoutes } from '@src/features/documentPrivacy/presentation/registerPrivacyRoutes.js';
@@ -42,6 +44,7 @@ export type AppDependencies = {
   review: ReviewDependencies;
   privacy: PrivacyDependencies;
   measurements: MeasurementRepository;
+  medications: MedicationManagementRepository;
 };
 
 // Ngoại lệ duy nhất của "mọi route /api cần phiên" (Tech Spec §4); logout vẫn cần phiên + CSRF.
@@ -84,6 +87,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerManualRecordRoutes(app, deps.review.repository);
   registerPrivacyRoutes(app, deps.privacy);
   registerMeasurementRoutes(app, deps.measurements);
+  registerMedicationRoutes(app, deps.medications, deps.auth.login.now);
   registerInvitationRoutes(app, deps.consentInvitations);
   return app;
 }

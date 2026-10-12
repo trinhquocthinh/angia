@@ -1,3 +1,4 @@
+import { toCourseConflictErrorJson } from '@src/features/medications/presentation/toCourseConflictErrorJson.js';
 import { errorJson } from '@src/shared/http/errorResponse.js';
 import type { ApproveError } from '../application/approvalOutcome.js';
 
@@ -9,6 +10,7 @@ export function toApproveErrorJson(error: SaveError) {
   if (error.code === 'ERR_OUT_OF_RANGE_UNCONFIRMED') return errorJson(error.code, { fields: error.fields });
   if (error.code === 'ERR_DOSE_INFO_MISSING')
     return errorJson(error.code, { invalidItemIndexes: error.invalidItemIndexes });
+  if (error.code === 'ERR_COURSE_CONFLICT_UNRESOLVED') return toCourseConflictErrorJson(error.conflicts);
   if (error.code === 'ERR_DUPLICATE_UNCONFIRMED') {
     const { savedAt, ...duplicate } = error.duplicate;
     return errorJson(error.code, { ...duplicate, savedAt: savedAt.toISOString() });

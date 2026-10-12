@@ -1,4 +1,8 @@
 import { and, desc, eq, inArray } from 'drizzle-orm';
+import { lockMedicationProfile } from '@src/features/medications/infrastructure/lockMedicationProfile.js';
+import { findMedicationCourses } from '@src/features/medications/infrastructure/findMedicationCourses.js';
+import { replaceMedicationCourses } from '@src/features/medications/infrastructure/replaceMedicationCourses.js';
+import { insertMedicationCourses } from '@src/features/medications/infrastructure/insertMedicationCourses.js';
 import { insertLabResults } from '@src/features/labResults/infrastructure/insertLabResults.js';
 import { findLabResultsOn } from '@src/features/labResults/infrastructure/findLabResultsOn.js';
 import { findMeasurementsOn } from '@src/features/measurements/infrastructure/findMeasurementsOn.js';
@@ -37,6 +41,11 @@ export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewS
       return toMeasurement(row);
     },
     insertPrescription: (input) => insertPrescription(tx, familyId, input),
+    insertMedicationCourses: (inputs) => insertMedicationCourses(tx, familyId, inputs),
+    lockMedicationProfile: (profileId) => lockMedicationProfile(tx, familyId, profileId),
+    findMedicationCourses: (profileId) => findMedicationCourses(tx, familyId, profileId),
+    replaceMedicationCourses: (profileId, ids, endDate) =>
+      replaceMedicationCourses(tx, familyId, profileId, ids, endDate),
     insertLabResults: (inputs) => insertLabResults(tx, familyId, inputs),
     findPrescriptionsOn: (profileId, date) => findPrescriptionsOn(tx, familyId, profileId, date),
     findLabResultsOn: (profileId, date) => findLabResultsOn(tx, familyId, profileId, date),

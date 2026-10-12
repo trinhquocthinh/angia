@@ -1,3 +1,5 @@
+import { useCourseConflictPrompt } from '@src/features/medications/application/useCourseConflictPrompt';
+import { CourseConflictNotice } from '@src/features/medications/presentation/CourseConflictNotice';
 import { useNavigate } from '@tanstack/react-router';
 import { useCurrentSession } from '@src/features/auth/application/useCurrentSession';
 import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
@@ -25,7 +27,8 @@ export function ManualRecordPage({ profileId }: { profileId: string }) {
   const workspace = useProfilesWorkspace(profilesRepository, session.data);
   const create = useCreateManualRecords(reviewRepository, session.data, profileId);
   const error = create.error instanceof ReviewRequestError ? create.error : null;
-  const duplicate = useDuplicatePrompt((request) => create.mutate(request), error);
+  const courses = useCourseConflictPrompt((request) => create.mutate(request), error);
+  const duplicate = useDuplicatePrompt(courses.submit, courses.formError);
   useProfileSessionRecovery(workspace.profiles.error);
   if (!session.data) return null;
   const main = session.data.role === 'main';
@@ -42,16 +45,28 @@ export function ManualRecordPage({ profileId }: { profileId: string }) {
           saved={create.isSuccess}
           pending={create.isPending}
           error={duplicate.formError}
+          formDisabled={create.isPending || Boolean(courses.prompt)}
           onSubmit={duplicate.submit}
           notice={
-            duplicate.prompt && (
-              <DuplicateNotice
-                duplicate={duplicate.prompt.record}
-                type={duplicate.prompt.type}
-                pending={create.isPending}
-                onConfirm={() => create.mutate(duplicate.prompt!.request)}
-              />
-            )
+            <>
+              {courses.prompt && (
+                <CourseConflictNotice
+                  key={JSON.stringify(courses.prompt)}
+                  prompt={courses.prompt}
+                  pending={create.isPending}
+                  onSubmit={duplicate.submit}
+                  onCancel={() => create.reset()}
+                />
+              )}
+              {duplicate.prompt && (
+                <DuplicateNotice
+                  duplicate={duplicate.prompt.record}
+                  type={duplicate.prompt.type}
+                  pending={create.isPending}
+                  onConfirm={() => duplicate.submit(duplicate.prompt!.request)}
+                />
+              )}
+            </>
           }
           onAgain={() => create.reset()}
           onBack={() => void navigate({ to: '/profiles/$profileId', params: { profileId } })}

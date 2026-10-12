@@ -19,6 +19,7 @@ const time = (iso: string) =>
 type ReviewQueueItemProps = { document: SourceDocument; profileName: string; active: boolean };
 
 // Hiện ngay khi ảnh vừa lên (AI đang đọc); đơn thuốc/xét nghiệm và nhập tay vẫn hiện để không bị "mất".
+// Bố cục Stitch 626ca318: avatar nhỏ + tiêu đề/hồ sơ, chip trạng thái bên phải, dòng phụ loại + giờ.
 export function ReviewQueueItem({ document, profileName, active }: ReviewQueueItemProps) {
   const type = TYPES[document.type ?? ''] ?? { title: 'Ảnh chứng từ', icon: 'file' as const };
   return (
@@ -26,28 +27,38 @@ export function ReviewQueueItem({ document, profileName, active }: ReviewQueueIt
       to="/review/$documentId"
       params={{ documentId: document.id }}
       aria-current={active ? 'page' : undefined}
-      className={`flex flex-col gap-2 rounded-2xl p-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958] ${active ? 'bg-[#c8f5e9] shadow-[inset_4px_0_0_#004135]' : 'hover:bg-[#eaf6f5]'}`}
+      className={`relative flex flex-col gap-2 rounded-xl p-3 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958] ${active ? 'bg-[#deebea] pl-5 shadow-sm' : 'hover:bg-[#eaf6f5]'}`}
     >
-      <span className="flex items-start gap-3">
+      {active && (
         <span
           aria-hidden="true"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#b3eddf] text-sm font-semibold text-[#004135]"
-        >
-          {profileName.slice(0, 1)}
+          className="absolute top-3 bottom-3 left-0 w-1.5 rounded-r-full bg-[#20594b]"
+        />
+      )}
+      <span className="flex flex-wrap items-start justify-between gap-x-2 gap-y-1.5">
+        <span className="flex min-w-0 items-center gap-2">
+          <span
+            aria-hidden="true"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#aef0da] text-sm font-bold text-[#002019]"
+          >
+            {profileName.slice(0, 1)}
+          </span>
+          <span className="flex min-w-0 flex-col">
+            <span
+              className={`truncate text-sm ${active ? 'font-bold text-[#004135]' : 'font-semibold text-[#131d1d]'}`}
+            >
+              {type.title}
+            </span>
+            <span className="truncate text-sm text-[#404945]">{profileName}</span>
+          </span>
         </span>
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="font-semibold text-[#131d1d]">{type.title}</span>
-          <span className="truncate text-sm text-[#55615f]">{profileName}</span>
-        </span>
-      </span>
-      <span className="pl-12">
         <ReviewItemChip state={reviewItemState(document)} />
       </span>
-      <span className="flex items-center justify-between pl-12 text-xs text-[#55615f]">
+      <span className="flex items-center justify-between text-[11px] text-[#707975]">
         <span className="flex items-center gap-1">
           <DocumentIcon name={type.icon} size={14} /> Tải lên
         </span>
-        <span>{time(document.createdAt)}</span>
+        <span className="font-medium tabular-nums">{time(document.createdAt)}</span>
       </span>
     </Link>
   );

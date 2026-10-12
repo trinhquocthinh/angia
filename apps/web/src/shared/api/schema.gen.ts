@@ -1287,13 +1287,14 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt) */
+        /** @description ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts) */
         409: {
           headers: {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['ErrorResponse'];
+            'application/json':
+              components['schemas']['ErrorResponse'] | components['schemas']['CourseConflictErrorResponse'];
           };
         };
         /** @description ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_DOSE_INFO_MISSING (details.invalidItemIndexes), ERR_VALIDATION */
@@ -1448,13 +1449,14 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_CONSENT_REQUIRED, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt) */
+        /** @description ERR_CONSENT_REQUIRED, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts) */
         409: {
           headers: {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['ErrorResponse'];
+            'application/json':
+              components['schemas']['ErrorResponse'] | components['schemas']['CourseConflictErrorResponse'];
           };
         };
         /** @description ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_DOSE_INFO_MISSING (details.invalidItemIndexes), ERR_VALIDATION */
@@ -1950,6 +1952,348 @@ export interface paths {
     };
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/medication-courses/stoppable': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Liệt kê đợt active đã bắt đầu để ghi nhận dừng */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Ngày Việt Nam và các đợt có thể ghi nhận dừng */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['StoppableCourses'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/medication-courses/current': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Danh mục thuốc đang dùng hôm nay theo khoảng hiệu lực (SPEC-018) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Ngày Việt Nam và các đợt có hiệu lực hôm nay */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['CurrentMedications'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/medication-courses/{courseId}/stop': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Ghi nhận dừng đợt thuốc từ một ngày trong quá khứ hoặc hôm nay */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+          courseId: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['StopCourseRequest'];
+        };
+      };
+      responses: {
+        /** @description Đợt thuốc đã dừng */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['MedicationCourse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED, ERR_INVALID_STATE_TRANSITION */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/medication-courses': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Khai báo thuốc bổ dài hạn không qua đơn thuốc */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['CreateSelfReportedCourseRequest'];
+        };
+      };
+      responses: {
+        /** @description Đợt tự khai báo đã tạo */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['MedicationCourse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: main cùng gia đình và CSRF */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED, ERR_COURSE_CONFLICT_UNRESOLVED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json':
+              components['schemas']['ErrorResponse'] | components['schemas']['CourseConflictErrorResponse'];
+          };
+        };
+        /** @description ERR_DOSE_INFO_MISSING, ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
     delete?: never;
     options?: never;
     head?: never;
@@ -2505,6 +2849,33 @@ export interface components {
       /** Format: date-time */
       createdAt: string;
     };
+    CourseConflictErrorResponse: {
+      error: {
+        /** @enum {string} */
+        code: 'ERR_COURSE_CONFLICT_UNRESOLVED';
+        message: string;
+        details: {
+          conflicts: components['schemas']['MedicationCourseConflict'][];
+        };
+      };
+    };
+    MedicationCourseConflict: {
+      itemIndexes: number[];
+      nameNormalized: string;
+      courses: {
+        /** Format: uuid */
+        id: string;
+        name: string;
+        strength: string | null;
+        quantityPerDose: number;
+        doseUnit: string | null;
+        slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+        /** Format: date */
+        startDate: string;
+        /** Format: date */
+        endDate: string | null;
+      }[];
+    };
     ApproveDocumentRequest:
       | {
           /** @enum {string} */
@@ -2547,6 +2918,9 @@ export interface components {
               longTerm: boolean;
               note: string | null;
               totalQuantity: number | null;
+              /** @enum {string} */
+              resolution?: 'replace' | 'parallel';
+              expectedConflictCourseIds?: string[];
             }[];
           };
           confirmDuplicate?: boolean;
@@ -2620,6 +2994,76 @@ export interface components {
       sha256: string;
       /** @enum {boolean} */
       confirmed: true;
+    };
+    StoppableCourses: {
+      /** Format: date */
+      today: string;
+      courses: components['schemas']['MedicationCourse'][];
+    };
+    MedicationCourse: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      healthProfileId: string;
+      /** Format: uuid */
+      prescriptionItemId: string | null;
+      /** @enum {string} */
+      source: 'prescription' | 'self_reported';
+      name: string;
+      strength: string | null;
+      quantityPerDose: number;
+      doseUnit: string | null;
+      slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+      /** Format: date */
+      startDate: string;
+      /** Format: date */
+      endDate: string | null;
+      /** @enum {string} */
+      status: 'active' | 'ended' | 'stopped' | 'replaced';
+    };
+    CurrentMedications: {
+      /** Format: date */
+      today: string;
+      courses: components['schemas']['CurrentMedicationCourse'][];
+    };
+    CurrentMedicationCourse: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      healthProfileId: string;
+      /** Format: uuid */
+      prescriptionItemId: string | null;
+      /** @enum {string} */
+      source: 'prescription' | 'self_reported';
+      name: string;
+      strength: string | null;
+      quantityPerDose: number;
+      doseUnit: string | null;
+      slots: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+      /** Format: date */
+      startDate: string;
+      /** Format: date */
+      endDate: string | null;
+      /** @enum {string} */
+      status: 'active' | 'ended' | 'stopped' | 'replaced';
+      /** Format: date */
+      prescriptionIssuedDate: string | null;
+    };
+    StopCourseRequest: {
+      /** Format: date */
+      stopDate: string;
+    };
+    CreateSelfReportedCourseRequest: {
+      name: string;
+      strength?: string | null;
+      quantityPerDose?: number | null;
+      doseUnit: string;
+      slots?: ('morning' | 'noon' | 'afternoon' | 'evening')[];
+      /** Format: date */
+      startDate: string;
+      /** @enum {string} */
+      resolution?: 'replace' | 'parallel';
+      expectedConflictCourseIds?: string[];
     };
     ConsentInvitationCreated: {
       token: string;

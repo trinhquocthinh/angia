@@ -51,6 +51,20 @@ const reading = (measuredTime: string | null) => ({
 });
 const MOTHER = prescription(['Amlodipin', 'Metformin']);
 const AGAIN = prescription(['amlodipin', 'METFORMIN']);
+const parallel = (memory: ReturnType<typeof createMemoryReviewRepository>) => ({
+  ...AGAIN,
+  confirmDuplicate: true,
+  data: {
+    ...AGAIN.data,
+    items: AGAIN.data.items.map((row) => ({
+      ...row,
+      resolution: 'parallel' as const,
+      expectedConflictCourseIds: memory.medicationCourses
+        .filter((c) => c.nameNormalized === row.name.toLowerCase())
+        .map((c) => c.id),
+    })),
+  },
+});
 
 // Hồ sơ "Mẹ" (me) và "Ba" (father), mỗi người một chứng từ chờ duyệt cùng loại.
 function setup(type: 'prescription' | 'lab_result' | 'device_reading' = 'prescription') {
@@ -94,7 +108,10 @@ describe('Kiểm trùng chứng từ khi duyệt (SPEC-012, BR-017)', () => {
   it('TC-039: gửi lại với confirmDuplicate = true → lưu thêm đơn thứ hai', async () => {
     const { memory, approve } = setup();
     await approve('doc-1', MOTHER);
-    expect((await approve('doc-2', { ...AGAIN, confirmDuplicate: true })).ok).toBe(true);
+    expect(await approve('doc-2', { ...AGAIN, confirmDuplicate: true })).toMatchObject({
+      code: 'ERR_COURSE_CONFLICT_UNRESOLVED',
+    });
+    expect((await approve('doc-2', parallel(memory))).ok).toBe(true);
     expect(memory.prescriptions).toHaveLength(2);
     expect(memory.documents[1]!.status).toBe('approved');
   });
@@ -136,13 +153,16 @@ describe('Kiểm trùng chứng từ khi duyệt (SPEC-012, BR-017)', () => {
 
 describe('Kiểm trùng khi nhập trực tiếp không ảnh (SPEC-011 kế thừa SPEC-012)', () => {
   it('bản trùng là bản nhập trực tiếp → duplicateOf = null', async () => {
-    const { manual } = setup();
+    const { manual, memory } = setup();
     expect((await manual('me', MOTHER)).ok).toBe(true);
     expect(await manual('me', AGAIN)).toMatchObject({
       code: 'ERR_DUPLICATE_UNCONFIRMED',
       duplicate: { duplicateOf: null, recordDate: '2026-09-05' },
     });
-    expect((await manual('me', { ...AGAIN, confirmDuplicate: true })).ok).toBe(true);
+    expect(await manual('me', { ...AGAIN, confirmDuplicate: true })).toMatchObject({
+      code: 'ERR_COURSE_CONFLICT_UNRESOLVED',
+    });
+    expect((await manual('me', parallel(memory))).ok).toBe(true);
   });
 
   it('duyệt chứng từ trùng với bản nhập trực tiếp trước đó cũng bị chặn', async () => {

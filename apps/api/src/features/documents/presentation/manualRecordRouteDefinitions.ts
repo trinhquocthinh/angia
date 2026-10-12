@@ -1,6 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi';
 import {
   approveDocumentRequestSchema,
+  courseConflictErrorResponseSchema,
   errorResponseSchema,
   manualRecordsResponseSchema,
 } from '@angia/contracts';
@@ -27,9 +28,14 @@ export const manualRecordsRoute = createRoute({
     401: error('ERR_UNAUTHENTICATED'),
     403: error('ERR_FORBIDDEN: cần main cùng gia đình và CSRF'),
     404: error('ERR_NOT_FOUND'),
-    409: error(
-      'ERR_CONSENT_REQUIRED, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt)',
-    ),
+    409: {
+      ...error(
+        'ERR_CONSENT_REQUIRED, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts)',
+      ),
+      content: {
+        'application/json': { schema: z.union([errorResponseSchema, courseConflictErrorResponseSchema]) },
+      },
+    },
     422: error(
       'ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_DOSE_INFO_MISSING (details.invalidItemIndexes), ERR_VALIDATION',
     ),

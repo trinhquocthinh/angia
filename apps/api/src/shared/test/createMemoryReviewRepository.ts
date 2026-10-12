@@ -1,3 +1,4 @@
+import { createMemoryMedicationStore } from './createMemoryMedicationStore.js';
 import type { ProfileConsent } from '@src/features/documents/application/ports.js';
 import type {
   DocumentFilter,
@@ -6,6 +7,7 @@ import type {
 } from '@src/features/documents/application/reviewPorts.js';
 import type { SourceDocument } from '@src/features/documents/domain/SourceDocument.js';
 import type { LabResult } from '@src/features/labResults/domain/LabResult.js';
+import type { MedicationCourse } from '@src/features/medications/domain/MedicationCourse.js';
 import type { Measurement } from '@src/features/measurements/domain/Measurement.js';
 import type { Prescription } from '@src/features/prescriptions/domain/Prescription.js';
 
@@ -47,6 +49,7 @@ interface PendingRecords {
   measurements: Measurement[];
   prescriptions: Prescription[];
   labs: LabResult[];
+  medicationCourses: MedicationCourse[];
 }
 
 // Ghi tạm vào `pending`, chỉ "commit" khi work thành công.
@@ -54,7 +57,10 @@ const pendingInserters = (
   pending: PendingRecords,
   nextId: (prefix: string) => string,
   createdAt: Date,
-): Pick<ReviewStore, 'insertMeasurement' | 'insertPrescription' | 'insertLabResults'> => ({
+): Pick<
+  ReviewStore,
+  'insertMeasurement' | 'insertPrescription' | 'insertLabResults' | 'insertMedicationCourses'
+> => ({
   insertMeasurement: async (input) => {
     const measurement = { ...input, id: nextId('m'), createdAt };
     pending.measurements.push(measurement);
@@ -65,6 +71,11 @@ const pendingInserters = (
     const prescription = { ...input, items, id: nextId('p'), createdAt };
     pending.prescriptions.push(prescription);
     return prescription;
+  },
+  insertMedicationCourses: async (inputs) => {
+    const courses = inputs.map((input) => ({ ...input, id: nextId('mc') }));
+    pending.medicationCourses.push(...courses);
+    return courses;
   },
   insertLabResults: async (inputs) => {
     const rows = inputs.map((input) => ({ ...input, id: nextId('l'), createdAt }));
@@ -85,6 +96,7 @@ export function createMemoryReviewRepository(
   const measurements: Measurement[] = [];
   const prescriptions: Prescription[] = [];
   const labResults: LabResult[] = [];
+  const medicationCourses: MedicationCourse[] = [];
   let ids = 0;
   let transactions = 0;
   const nextId = (prefix: string) => `${prefix}-${++ids}`;
@@ -92,8 +104,14 @@ export function createMemoryReviewRepository(
     withFamily: async (familyId, work) => {
       // Như now() của PostgreSQL: mọi dòng ghi trong một transaction cùng thời điểm tạo.
       const CREATED_AT = new Date(BASE_CREATED_AT.getTime() + ++transactions * 1000);
-      const pending: PendingRecords = { measurements: [], prescriptions: [], labs: [] };
+      const pending: PendingRecords = {
+        measurements: [],
+        prescriptions: [],
+        labs: [],
+        medicationCourses: [],
+      };
       const updates = new Map<string, SourceDocument>();
+      const medicationStore = createMemoryMedicationStore(medicationCourses, prescriptions);
       const owned = (id: string) => documents.find((d) => d.id === id && d.familyId === familyId) ?? null;
       const update = (id: string, changes: Partial<SourceDocument>) => {
         const updated = { ...owned(id)!, ...changes };
@@ -109,6 +127,7 @@ export function createMemoryReviewRepository(
         findLatestExtraction: async (id) => (owned(id) ? (extractions[id] ?? null) : null),
         ...pendingInserters(pending, nextId, CREATED_AT),
         ...savedRecordFinders({ prescriptions, labResults, measurements }),
+        ...medicationStore.store,
         findProfile: async (id) => profiles.find((p) => p.id === id && p.familyId === familyId) ?? null,
         markApproved: async (id, changes) => update(id, { status: 'approved', ...changes }),
         markRejected: async (id) => update(id, { status: 'rejected' }),
@@ -116,9 +135,11 @@ export function createMemoryReviewRepository(
       measurements.push(...pending.measurements);
       prescriptions.push(...pending.prescriptions);
       labResults.push(...pending.labs);
+      medicationStore.commit();
+      medicationCourses.push(...pending.medicationCourses);
       for (const [id, updated] of updates) Object.assign(owned(id)!, updated);
       return result;
     },
   };
-  return { repository, documents, measurements, prescriptions, labResults };
+  return { repository, documents, measurements, prescriptions, labResults, medicationCourses };
 }

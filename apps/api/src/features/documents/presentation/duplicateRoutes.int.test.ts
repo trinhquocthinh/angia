@@ -87,7 +87,23 @@ describe('Kiểm trùng chứng từ: route thật + RLS (SPEC-012, BR-017, E3-S
     });
     const state = await t.owner.query('SELECT status FROM source_documents WHERE id = $1', [second]);
     expect(state.rows[0]).toEqual({ status: 'pending_review' });
-    expect((await approve(main, second, again, true)).status).toBe(200);
+    const conflict = await approve(main, second, again, true);
+    expect(conflict.status).toBe(409);
+    const body = (await conflict.json()) as {
+      error: { code: string; details: { conflicts: { itemIndexes: number[]; courses: { id: string }[] }[] } };
+    };
+    expect(body.error.code).toBe('ERR_COURSE_CONFLICT_UNRESOLVED');
+    const resolved = {
+      ...again,
+      items: again.items.map((row, index) => ({
+        ...row,
+        resolution: 'parallel',
+        expectedConflictCourseIds: body.error.details.conflicts
+          .find((c) => c.itemIndexes.includes(index))!
+          .courses.map((c) => c.id),
+      })),
+    };
+    expect((await approve(main, second, resolved, true)).status).toBe(200);
   });
 
   it('TC-040: hồ sơ khác hoặc gia đình khác có đơn giống hệt → không trùng (RLS không lộ bản của nhóm khác)', async () => {

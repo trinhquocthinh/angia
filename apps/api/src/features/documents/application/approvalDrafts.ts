@@ -1,3 +1,4 @@
+import type { CourseResolution } from '@src/features/medications/domain/MedicationConflict.js';
 import type { MeasurementValues } from '@src/features/measurements/domain/Measurement.js';
 import type { DoseSlot } from '@src/features/prescriptions/domain/Prescription.js';
 
@@ -18,6 +19,8 @@ interface PrescriptionItemDraft {
   longTerm: boolean;
   note: string | null;
   totalQuantity: number | null;
+  resolution?: CourseResolution | undefined;
+  expectedConflictCourseIds?: string[] | undefined;
 }
 
 export interface PrescriptionDraft {

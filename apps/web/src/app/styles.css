@@ -24,3 +24,14 @@ body {
   color: var(--color-text-primary);
   font-family: var(--font-sans);
 }
+
+/* Mọi dropdown dùng chung mũi tên riêng, cách mép phải 12px; để ngoài @layer nên thắng tiện ích px-* của Tailwind. */
+select:not([multiple]):not([size]) {
+  appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23404945' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.125rem;
+  text-overflow: ellipsis;
+}

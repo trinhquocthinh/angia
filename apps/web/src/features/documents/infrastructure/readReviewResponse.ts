@@ -1,3 +1,4 @@
+import { courseConflictErrorResponseSchema } from '@angia/contracts';
 import { ReviewRequestError, type DuplicateRecord } from '../application/ReviewRequestError';
 
 type ErrorDetails = { fields?: unknown; invalidItemIndexes?: unknown } & Partial<
@@ -26,6 +27,7 @@ export async function readReviewResponse<T>(result: {
   if (result.response.ok && result.data !== undefined) return result.data;
   const body = result.error as ErrorBody | undefined;
   const details = body?.error?.details;
+  const conflict = result.response.status === 409 ? courseConflictErrorResponseSchema.safeParse(body) : null;
   throw new ReviewRequestError(
     result.response.status < 500 && body?.error?.message
       ? body.error.message
@@ -35,5 +37,6 @@ export async function readReviewResponse<T>(result: {
     listOf(details?.fields, isString),
     listOf(details?.invalidItemIndexes, isIndex),
     readDuplicate(details),
+    conflict?.success ? conflict.data.error.details.conflicts : [],
   );
 }

@@ -64,6 +64,34 @@
       "when": 1791563907562,
       "tag": "0008_extraction_budget",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791644124341,
+      "tag": "0009_medication_courses",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791688820620,
+      "tag": "0010_medication_course_replacement",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791697136665,
+      "tag": "0011_medication_course_strength",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791705889777,
+      "tag": "0012_medication_course_stop",
+      "breakpoints": true
     }
   ]
 }

@@ -5,7 +5,7 @@ import { PickerCard } from './PickerCard';
 
 export const DOCUMENT_TYPES: { value: DocumentType; label: string; icon: DocumentIconName }[] = [
   { value: 'prescription', label: 'Đơn thuốc', icon: 'prescription' },
-  { value: 'lab_result', label: 'Xét nghiệm', icon: 'lab' },
+  { value: 'lab_result', label: 'Xét nghiệm', icon: 'microscope' },
   { value: 'device_reading', label: 'Máy đo cá nhân', icon: 'monitor' },
 ];
 
@@ -25,7 +25,9 @@ export function DocumentTypePicker({
           selected={value === type.value}
           onClick={() => onChange(value === type.value ? null : type.value)}
         >
-          <DocumentIcon name={type.icon} size={16} />
+          <span className={value === type.value ? 'text-[#b3eddf]' : 'text-[#707975]'}>
+            <DocumentIcon name={type.icon} size={16} />
+          </span>
           {type.label}
         </ChoiceChip>
       ))}

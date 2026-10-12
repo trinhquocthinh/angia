@@ -1,3 +1,4 @@
+import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
 import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
 import { createPrivacyQueue } from '@src/features/documentPrivacy/infrastructure/createPrivacyQueue.js';
 import { hashPrivacyPng } from '@src/features/documentPrivacy/infrastructure/hashPrivacyPng.js';
@@ -107,6 +108,7 @@ const app = createApp({
     now: () => new Date(),
   },
   measurements: createMeasurementRepository(db),
+  medications: createMedicationRepository(db),
 });
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {

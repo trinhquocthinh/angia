@@ -1,3 +1,4 @@
+import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
 import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
 import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
 import { createPrivacyQueue } from '@src/features/documentPrivacy/infrastructure/createPrivacyQueue.js';
@@ -72,6 +73,7 @@ function buildApp(
       now: () => new Date(),
     },
     measurements: createMeasurementRepository(database),
+    medications: createMedicationRepository(database),
   });
 }
 

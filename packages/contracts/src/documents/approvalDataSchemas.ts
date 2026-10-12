@@ -35,6 +35,11 @@ const prescriptionItemApprovalSchema = z.object({
   longTerm: z.boolean(),
   note: optionalText(500),
   totalQuantity: z.number().positive().max(100000).nullable(),
+  resolution: z.enum(['replace', 'parallel']).optional(),
+  expectedConflictCourseIds: z
+    .array(z.uuid())
+    .refine((ids) => new Set(ids).size === ids.length, 'Đợt thuốc bị lặp')
+    .optional(),
 });
 
 export const prescriptionApprovalSchema = z.object({

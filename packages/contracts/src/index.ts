@@ -62,6 +62,11 @@ export type {
   ManualRecordsResponse,
   SourceDocumentPage,
 } from './documents/reviewSchemas.js';
+export {
+  courseConflictSchema,
+  courseConflictErrorResponseSchema,
+} from './medications/courseConflictSchemas.js';
+export type { CourseConflict } from './medications/courseConflictSchemas.js';
 export { prescriptionSchema } from './prescriptions/prescriptionSchema.js';
 export type { Prescription } from './prescriptions/prescriptionSchema.js';
 export { labResultSchema } from './labResults/labResultSchema.js';
@@ -102,3 +107,25 @@ export {
   prepareOcrImageJobSchema,
 } from './jobs/prepareOcrImageJob.js';
 export type { PrepareOcrImageJob } from './jobs/prepareOcrImageJob.js';
+export {
+  createSelfReportedCourseRequestSchema,
+  medicationCourseSchema,
+} from './medications/selfReportedCourseSchemas.js';
+export type {
+  CreateSelfReportedCourseRequest,
+  MedicationCourse,
+} from './medications/selfReportedCourseSchemas.js';
+
+export {
+  stopCourseRequestSchema,
+  stoppableCoursesSchema,
+  type StopCourseRequest,
+  type StoppableCourses,
+} from './medications/stopCourseSchemas.js';
+
+export {
+  currentMedicationCourseSchema,
+  currentMedicationsSchema,
+  type CurrentMedicationCourse,
+  type CurrentMedications,
+} from './medications/currentMedicationSchemas.js';

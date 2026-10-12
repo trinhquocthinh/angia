@@ -20,6 +20,7 @@ import { Route as ProfilesNewRouteImport } from './routes/profiles.new'
 import { Route as ReviewIndexRouteImport } from './routes/review.index'
 import { Route as ReviewDocumentIdRouteImport } from './routes/review.$documentId'
 import { Route as ProfilesProfileIdManualRouteImport } from './routes/profiles.$profileId_.manual'
+import { Route as ProfilesProfileIdMedicationsRouteImport } from './routes/profiles.$profileId_.medications'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -76,6 +77,12 @@ const ProfilesProfileIdManualRoute = ProfilesProfileIdManualRouteImport.update({
   path: '/profiles/$profileId/manual',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfilesProfileIdMedicationsRoute =
+  ProfilesProfileIdMedicationsRouteImport.update({
+    id: '/profiles/$profileId_/medications',
+    path: '/profiles/$profileId/medications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/review/$documentId': typeof ReviewDocumentIdRoute
   '/review/': typeof ReviewIndexRoute
   '/profiles/$profileId/manual': typeof ProfilesProfileIdManualRoute
+  '/profiles/$profileId/medications': typeof ProfilesProfileIdMedicationsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -102,6 +110,7 @@ export interface FileRoutesByTo {
   '/review/$documentId': typeof ReviewDocumentIdRoute
   '/review': typeof ReviewIndexRoute
   '/profiles/$profileId/manual': typeof ProfilesProfileIdManualRoute
+  '/profiles/$profileId/medications': typeof ProfilesProfileIdMedicationsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,6 +125,7 @@ export interface FileRoutesById {
   '/review/$documentId': typeof ReviewDocumentIdRoute
   '/review/': typeof ReviewIndexRoute
   '/profiles/$profileId_/manual': typeof ProfilesProfileIdManualRoute
+  '/profiles/$profileId_/medications': typeof ProfilesProfileIdMedicationsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/review/$documentId'
     | '/review/'
     | '/profiles/$profileId/manual'
+    | '/profiles/$profileId/medications'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/review/$documentId'
     | '/review'
     | '/profiles/$profileId/manual'
+    | '/profiles/$profileId/medications'
   id:
     | '__root__'
     | '/'
@@ -157,6 +169,7 @@ export interface FileRouteTypes {
     | '/review/$documentId'
     | '/review/'
     | '/profiles/$profileId_/manual'
+    | '/profiles/$profileId_/medications'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -171,6 +184,7 @@ export interface RootRouteChildren {
   ReviewDocumentIdRoute: typeof ReviewDocumentIdRoute
   ReviewIndexRoute: typeof ReviewIndexRoute
   ProfilesProfileIdManualRoute: typeof ProfilesProfileIdManualRoute
+  ProfilesProfileIdMedicationsRoute: typeof ProfilesProfileIdMedicationsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -252,6 +266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfilesProfileIdManualRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profiles/$profileId_/medications': {
+      id: '/profiles/$profileId_/medications'
+      path: '/profiles/$profileId/medications'
+      fullPath: '/profiles/$profileId/medications'
+      preLoaderRoute: typeof ProfilesProfileIdMedicationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -267,6 +288,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReviewDocumentIdRoute: ReviewDocumentIdRoute,
   ReviewIndexRoute: ReviewIndexRoute,
   ProfilesProfileIdManualRoute: ProfilesProfileIdManualRoute,
+  ProfilesProfileIdMedicationsRoute: ProfilesProfileIdMedicationsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

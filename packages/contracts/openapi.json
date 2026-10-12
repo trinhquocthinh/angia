@@ -1214,6 +1214,136 @@
           "createdAt"
         ]
       },
+      "CourseConflictErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "ERR_COURSE_CONFLICT_UNRESOLVED"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object",
+                "properties": {
+                  "conflicts": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/MedicationCourseConflict"
+                    },
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "conflicts"
+                ]
+              }
+            },
+            "required": [
+              "code",
+              "message",
+              "details"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "MedicationCourseConflict": {
+        "type": "object",
+        "properties": {
+          "itemIndexes": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 49
+            },
+            "minItems": 1
+          },
+          "nameNormalized": {
+            "type": "string",
+            "minLength": 1
+          },
+          "courses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "strength": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "quantityPerDose": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "doseUnit": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "slots": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "morning",
+                      "noon",
+                      "afternoon",
+                      "evening"
+                    ]
+                  },
+                  "minItems": 1
+                },
+                "startDate": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "endDate": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "strength",
+                "quantityPerDose",
+                "doseUnit",
+                "slots",
+                "startDate",
+                "endDate"
+              ]
+            }
+          }
+        },
+        "required": [
+          "itemIndexes",
+          "nameNormalized",
+          "courses"
+        ]
+      },
       "ApproveDocumentRequest": {
         "oneOf": [
           {
@@ -1432,6 +1562,20 @@
                           ],
                           "exclusiveMinimum": 0,
                           "maximum": 100000
+                        },
+                        "resolution": {
+                          "type": "string",
+                          "enum": [
+                            "replace",
+                            "parallel"
+                          ]
+                        },
+                        "expectedConflictCourseIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
                         }
                       },
                       "required": [
@@ -1800,6 +1944,318 @@
           "draftId",
           "sha256",
           "confirmed"
+        ],
+        "additionalProperties": false
+      },
+      "StoppableCourses": {
+        "type": "object",
+        "properties": {
+          "today": {
+            "type": "string",
+            "format": "date"
+          },
+          "courses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MedicationCourse"
+            }
+          }
+        },
+        "required": [
+          "today",
+          "courses"
+        ]
+      },
+      "MedicationCourse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "healthProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "prescriptionItemId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "prescription",
+              "self_reported"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "strength": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quantityPerDose": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "doseUnit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "morning",
+                "noon",
+                "afternoon",
+                "evening"
+              ]
+            },
+            "minItems": 1
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "ended",
+              "stopped",
+              "replaced"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "healthProfileId",
+          "prescriptionItemId",
+          "source",
+          "name",
+          "strength",
+          "quantityPerDose",
+          "doseUnit",
+          "slots",
+          "startDate",
+          "endDate",
+          "status"
+        ]
+      },
+      "CurrentMedications": {
+        "type": "object",
+        "properties": {
+          "today": {
+            "type": "string",
+            "format": "date"
+          },
+          "courses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CurrentMedicationCourse"
+            }
+          }
+        },
+        "required": [
+          "today",
+          "courses"
+        ]
+      },
+      "CurrentMedicationCourse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "healthProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "prescriptionItemId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "prescription",
+              "self_reported"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "strength": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quantityPerDose": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "doseUnit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "morning",
+                "noon",
+                "afternoon",
+                "evening"
+              ]
+            },
+            "minItems": 1
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "ended",
+              "stopped",
+              "replaced"
+            ]
+          },
+          "prescriptionIssuedDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          }
+        },
+        "required": [
+          "id",
+          "healthProfileId",
+          "prescriptionItemId",
+          "source",
+          "name",
+          "strength",
+          "quantityPerDose",
+          "doseUnit",
+          "slots",
+          "startDate",
+          "endDate",
+          "status",
+          "prescriptionIssuedDate"
+        ]
+      },
+      "StopCourseRequest": {
+        "type": "object",
+        "properties": {
+          "stopDate": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "stopDate"
+        ],
+        "additionalProperties": false
+      },
+      "CreateSelfReportedCourseRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "strength": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "quantityPerDose": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0,
+            "maximum": 1000
+          },
+          "doseUnit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "morning",
+                "noon",
+                "afternoon",
+                "evening"
+              ]
+            },
+            "maxItems": 4
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "replace",
+              "parallel"
+            ]
+          },
+          "expectedConflictCourseIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "doseUnit",
+          "startDate"
         ],
         "additionalProperties": false
       },
@@ -3179,11 +3635,18 @@
             }
           },
           "409": {
-            "description": "ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt)",
+            "description": "ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts)",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CourseConflictErrorResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -3341,11 +3804,18 @@
             }
           },
           "409": {
-            "description": "ERR_CONSENT_REQUIRED, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt)",
+            "description": "ERR_CONSENT_REQUIRED, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts)",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CourseConflictErrorResponse"
+                    }
+                  ]
                 }
               }
             }
@@ -3853,6 +4323,366 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/medication-courses/stoppable": {
+      "get": {
+        "tags": [
+          "medications"
+        ],
+        "summary": "Liệt kê đợt active đã bắt đầu để ghi nhận dừng",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ngày Việt Nam và các đợt có thể ghi nhận dừng",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoppableCourses"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/medication-courses/current": {
+      "get": {
+        "tags": [
+          "medications"
+        ],
+        "summary": "Danh mục thuốc đang dùng hôm nay theo khoảng hiệu lực (SPEC-018)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ngày Việt Nam và các đợt có hiệu lực hôm nay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentMedications"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/medication-courses/{courseId}/stop": {
+      "post": {
+        "tags": [
+          "medications"
+        ],
+        "summary": "Ghi nhận dừng đợt thuốc từ một ngày trong quá khứ hoặc hôm nay",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "courseId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StopCourseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đợt thuốc đã dừng",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicationCourse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED, ERR_INVALID_STATE_TRANSITION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/medication-courses": {
+      "post": {
+        "tags": [
+          "medications"
+        ],
+        "summary": "Khai báo thuốc bổ dài hạn không qua đơn thuốc",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSelfReportedCourseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Đợt tự khai báo đã tạo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicationCourse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: main cùng gia đình và CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED, ERR_COURSE_CONFLICT_UNRESOLVED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CourseConflictErrorResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_DOSE_INFO_MISSING, ERR_VALIDATION",
             "content": {
               "application/json": {
                 "schema": {

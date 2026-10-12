@@ -1,26 +1,35 @@
 import type { ReviewItemState } from '../../application/reviewQueuePolling';
 
-const CHIPS: Record<ReviewItemState, { label: string; className: string }> = {
-  preparing: { label: 'Đang chuẩn bị ảnh…', className: 'bg-[#fff4e5] text-[#5c3a00]' },
-  privacy: { label: 'Chờ kiểm tra riêng tư', className: 'bg-[#e4f0ef] text-[#55615f]' },
-  reading: { label: 'AI đang đọc…', className: 'bg-[#fff4e5] text-[#5c3a00]' },
-  ready: { label: 'Đã đọc xong', className: 'bg-[#b3eddf] text-[#004135]' },
-  manual: { label: 'Cần nhập tay', className: 'bg-[#e4f0ef] text-[#55615f]' },
-  budget: { label: 'Chờ ngân sách AI', className: 'bg-[#fff4e5] text-[#5c3a00]' },
+// Chip trạng thái theo Stitch 626ca318: chữ + chấm màu (không chỉ dựa vào màu); đang xử lý thì chấm nhấp nháy.
+const CHIPS: Record<ReviewItemState, { label: string; className: string; dot: string; busy?: boolean }> = {
+  preparing: {
+    label: 'Đang chuẩn bị ảnh…',
+    className: 'bg-[#d9e5e4] text-[#404945]',
+    dot: 'bg-[#707975]',
+    busy: true,
+  },
+  privacy: { label: 'Chờ kiểm tra riêng tư', className: 'bg-[#e4f0f0] text-[#404945]', dot: 'bg-[#707975]' },
+  reading: {
+    label: 'AI đang đọc…',
+    className: 'bg-[#d9e5e4] text-[#404945]',
+    dot: 'bg-[#707975]',
+    busy: true,
+  },
+  ready: { label: 'Đã đọc xong', className: 'bg-[#aef0da] text-[#2f6f5e]', dot: 'bg-[#286958]' },
+  manual: { label: 'Cần nhập tay', className: 'bg-[#ffdbc9] text-[#753400]', dot: 'bg-[#602900]' },
+  budget: { label: 'Chờ ngân sách AI', className: 'bg-[#ffdbc9] text-[#753400]', dot: 'bg-[#602900]' },
 };
 
 export function ReviewItemChip({ state }: { state: ReviewItemState }) {
   const chip = CHIPS[state];
   return (
     <span
-      className={`flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium ${chip.className}`}
+      className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold ${chip.className}`}
     >
-      {state === 'reading' && (
-        <span
-          aria-hidden="true"
-          className="h-1.5 w-1.5 animate-pulse rounded-full bg-current motion-reduce:animate-none"
-        />
-      )}
+      <span
+        aria-hidden="true"
+        className={`h-1.5 w-1.5 rounded-full ${chip.dot} ${chip.busy ? 'animate-pulse motion-reduce:animate-none' : ''}`}
+      />
       {chip.label}
     </span>
   );

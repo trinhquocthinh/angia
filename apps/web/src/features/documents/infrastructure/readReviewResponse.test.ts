@@ -63,3 +63,38 @@ describe('Đọc phản hồi API duyệt chứng từ', () => {
     ).rejects.toMatchObject({ message: 'Không thể tải hoặc lưu chứng từ. Vui lòng thử lại.', status: 500 });
   });
 });
+
+describe('Đọc xung đột thuốc từ lỗi 409', () => {
+  it('TC-046: giữ chi tiết mọi đợt để người duyệt xác nhận', async () => {
+    const conflicts = [
+      {
+        itemIndexes: [0],
+        nameNormalized: 'amlodipin',
+        courses: [
+          {
+            id: '01900000-0000-7000-8000-000000000001',
+            name: 'Amlodipin',
+            strength: null,
+            quantityPerDose: 1,
+            doseUnit: 'viên',
+            slots: ['morning'],
+            startDate: '2026-09-01',
+            endDate: null,
+          },
+        ],
+      },
+    ];
+    await expect(
+      readReviewResponse({
+        response: new Response(null, { status: 409 }),
+        error: {
+          error: {
+            code: 'ERR_COURSE_CONFLICT_UNRESOLVED',
+            message: 'Chọn cách xử lý',
+            details: { conflicts },
+          },
+        },
+      }),
+    ).rejects.toMatchObject({ courseConflicts: conflicts });
+  });
+});
