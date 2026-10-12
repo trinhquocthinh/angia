@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useCurrentSession } from '@src/features/auth/application/useCurrentSession';
 import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
 import { useProfilesWorkspace } from '@src/features/profiles/application/useProfilesWorkspace';
@@ -9,6 +10,8 @@ import { compressImage } from '@src/shared/utils/image/compressImage';
 import { createBrowserImageCodec } from '@src/shared/utils/image/createBrowserImageCodec';
 import type { ImagePreparer } from '../application/ports';
 import { createXhrDocumentUploader } from '../infrastructure/createXhrDocumentUploader';
+import { dismissPrivacyReminder, shouldShowPrivacyReminder } from '../infrastructure/privacyReminderStorage';
+import { UploadPrivacyReminder } from './components/UploadPrivacyReminder';
 import { UploadWorkspace } from './components/UploadWorkspace';
 
 const profilesRepository = createProfilesRepository();
@@ -19,12 +22,22 @@ const prepareImage: ImagePreparer = (file) => compressImage(file, imageCodec);
 export function UploadPage() {
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(profilesRepository, session.data);
+  // BR-041 bổ sung: nhắc không chụp thông tin cá nhân mỗi lần mở trang, trừ khi đã chọn "Không nhắc lại".
+  const [reminder, setReminder] = useState(() => shouldShowPrivacyReminder());
   if (!session.data) return null;
   const main = session.data.role === 'main';
   const profiles = workspace.profiles.data ?? [];
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
       <div className="mx-auto flex w-full flex-col gap-6">
+        {main && reminder && (
+          <UploadPrivacyReminder
+            onClose={(dontRemind) => {
+              if (dontRemind) dismissPrivacyReminder();
+              setReminder(false);
+            }}
+          />
+        )}
         {main ? (
           <UploadWorkspace
             uploader={uploader}
