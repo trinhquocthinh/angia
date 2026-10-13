@@ -13,6 +13,7 @@ const repository: MeasurementRepository = {
         nextCursor: page.cursor ? null : 'm-1',
       }),
       listMeasurementsBetween: async () => [],
+      listAdherencePeriodsBetween: async () => [],
     }),
 };
 const page = { limit: 50, cursor: undefined };

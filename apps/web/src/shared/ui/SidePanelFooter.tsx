@@ -10,7 +10,7 @@ type Props = {
   onCancel: () => void;
 };
 
-export function MedicationDrawerFooter({
+export function SidePanelFooter({
   submitLabel,
   cancelLabel,
   disabled,

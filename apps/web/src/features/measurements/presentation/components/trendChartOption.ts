@@ -1,4 +1,6 @@
 import type { EChartsCoreOption } from 'echarts/core';
+import type { PeriodBand } from '@src/features/adherence/application/periodBands';
+import { STATUS_LABEL } from '@src/features/adherence/application/periodText';
 import { formatDay } from '../../application/formatMeasurement';
 import type { TrendLine, TrendPoint } from '../../application/buildTrendLines';
 
@@ -10,6 +12,44 @@ const COLORS: Record<TrendLine['key'], string> = {
 };
 const TEXT_SECONDARY = '#55615F';
 const BORDER = '#E4E0DA';
+
+// Design §4.1: đang dùng = color.accent.soft; ngưng = color.period.stopped + hoa văn sọc, cấm màu đỏ.
+// decal của ECharts không áp cho markArea nên sọc là pattern ảnh SVG lặp lại.
+const STOPPED_HATCH = `data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="#F1ECE4"/>' +
+    '<path d="M-2 2l4-4M0 8l8-8M6 10l4-4" stroke="#6B5E51" stroke-opacity="0.28" stroke-width="1.2"/></svg>',
+)}`;
+const BAND_STYLE: Record<PeriodBand['status'], { color: string | { image: string; repeat: 'repeat' } }> = {
+  taking: { color: '#E3EFEA' },
+  stopped: { color: { image: STOPPED_HATCH, repeat: 'repeat' } },
+};
+const BAND_TEXT = '#4A5250';
+
+// Series rỗng chỉ để mang markArea; đặt đầu tiên để nằm dưới các đường số đo.
+function bandSeries(bands: PeriodBand[]) {
+  if (bands.length === 0) return [];
+  const data = bands.map((band) => [
+    {
+      xAxis: `${band.from}T00:00`,
+      itemStyle: BAND_STYLE[band.status],
+      label: { formatter: STATUS_LABEL[band.status] },
+    },
+    { xAxis: `${band.to}T23:59` },
+  ]);
+  return [
+    {
+      type: 'line',
+      name: 'Giai đoạn dùng thuốc',
+      data: [],
+      silent: true,
+      markArea: {
+        silent: true,
+        label: { show: true, position: 'insideTopLeft', color: BAND_TEXT, fontSize: 11, fontWeight: 600 },
+        data,
+      },
+    },
+  ];
+}
 
 const pointTime = ([at]: TrendPoint) => {
   const [day = '', time = ''] = at.split('T');
@@ -53,6 +93,7 @@ export function trendChartOption(
   lines: TrendLine[],
   range: { from: string; to: string },
   animate: boolean,
+  bands: PeriodBand[] = [],
 ): EChartsCoreOption {
   return {
     animation: animate,
@@ -75,6 +116,6 @@ export function trendChartOption(
       axisLabel: { color: TEXT_SECONDARY },
       splitLine: { lineStyle: { color: BORDER } },
     },
-    series: lines.flatMap(lineSeries),
+    series: [...bandSeries(bands), ...lines.flatMap(lineSeries)],
   };
 }

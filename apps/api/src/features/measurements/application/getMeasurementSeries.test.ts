@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { AdherencePeriod } from '@src/features/adherence/domain/AdherencePeriod.js';
 import type { Measurement, MeasurementKind } from '../domain/Measurement.js';
 import { getMeasurementSeries } from './getMeasurementSeries.js';
 import type { MeasurementRepository } from './ports.js';
@@ -12,7 +13,21 @@ const stored = [
   ),
   reading('2026-09-01', 'glucose'),
 ];
+const period = (fromDate: string, toDate: string | null) =>
+  ({
+    id: `p-${fromDate}`,
+    medicationName: 'Amlodipin',
+    status: 'taking',
+    fromDate,
+    toDate,
+  }) as AdherencePeriod;
+const periods = [
+  period('2026-07-01', '2026-08-31'),
+  period('2026-09-01', '2026-09-30'),
+  period('2026-10-01', null),
+];
 const calls: unknown[][] = [];
+const periodCalls: unknown[][] = [];
 const repository: MeasurementRepository = {
   withFamily: (familyId, work) =>
     work({
@@ -22,6 +37,11 @@ const repository: MeasurementRepository = {
         calls.push(args);
         const [, kind, from, to] = args;
         return stored.filter((m) => m.kind === kind && m.measuredOn >= from && m.measuredOn <= to);
+      },
+      listAdherencePeriodsBetween: async (...args) => {
+        periodCalls.push(args);
+        const [, from, to] = args;
+        return periods.filter((p) => p.fromDate <= to && (p.toDate === null || p.toDate >= from));
       },
     }),
 };
@@ -53,6 +73,7 @@ describe('getMeasurementSeries — SPEC-020', () => {
       ok: true,
       value: {
         points: [],
+        periods: [periods[1], periods[2]],
         weeks: [
           { weekStart: '2026-09-28', hasMeasurement: false },
           { weekStart: '2026-10-05', hasMeasurement: false },
@@ -61,12 +82,24 @@ describe('getMeasurementSeries — SPEC-020', () => {
     });
   });
 
+  it('TC-064 — SPEC-023: kèm giai đoạn dùng thuốc giao với [from, to], cùng khoảng với số đo', async () => {
+    const result = await getMeasurementSeries(repository, {
+      ...request,
+      from: '2026-09-15',
+      to: '2026-10-11',
+    });
+    if (!result.ok) throw new Error(result.code);
+    expect(result.value.periods.map((p) => p.id)).toEqual(['p-2026-09-01', 'p-2026-10-01']);
+    expect(periodCalls.at(-1)).toEqual(['me', '2026-09-15', '2026-10-11']);
+  });
+
   it('SPEC-006: hồ sơ gia đình khác → ERR_NOT_FOUND, không đọc số đo', async () => {
-    const before = calls.length;
+    const [before, periodsBefore] = [calls.length, periodCalls.length];
     expect(await getMeasurementSeries(repository, { ...request, familyId: 'family-b' })).toEqual({
       ok: false,
       code: 'ERR_NOT_FOUND',
     });
     expect(calls).toHaveLength(before);
+    expect(periodCalls).toHaveLength(periodsBefore);
   });
 });

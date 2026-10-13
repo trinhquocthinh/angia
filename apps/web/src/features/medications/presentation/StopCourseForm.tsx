@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { MedicationCourse } from '@angia/contracts';
 import { formatDay } from '@src/features/measurements/application/formatMeasurement';
-import { MedicationDrawerFooter } from './MedicationDrawerFooter';
+import { SidePanelFooter } from '@src/shared/ui/SidePanelFooter';
 import { StopCourseDetails } from './StopCourseDetails';
 type Props = {
   course: MedicationCourse;
@@ -44,7 +44,7 @@ export function StopCourseForm({ course, today, pending, onSubmit, onCancel }: P
           </p>
         </div>
       </fieldset>
-      <MedicationDrawerFooter
+      <SidePanelFooter
         submitLabel={pending ? 'Đang ghi nhận…' : 'Xác nhận dừng đợt thuốc'}
         cancelLabel="Hủy bỏ & Giữ nguyên đợt thuốc"
         disabled={pending || invalid}

@@ -2,6 +2,7 @@ import { and, eq } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { healthProfiles } from '@src/shared/db/schema/index.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
+import { listAdherencePeriodsBetween } from '@src/features/adherence/infrastructure/listAdherencePeriodsBetween.js';
 import type { MeasurementRepository } from '../application/ports.js';
 import { listMeasurementPage } from './listMeasurementPage.js';
 import { listMeasurementsBetween } from './listMeasurementsBetween.js';
@@ -23,6 +24,8 @@ export function createMeasurementRepository(db: Database): MeasurementRepository
             listMeasurementPage(tx, familyId, profileId, kind, page),
           listMeasurementsBetween: (profileId, kind, from, to) =>
             listMeasurementsBetween(tx, familyId, profileId, kind, from, to),
+          listAdherencePeriodsBetween: (profileId, from, to) =>
+            listAdherencePeriodsBetween(tx, familyId, profileId, from, to),
         }),
       ),
   };

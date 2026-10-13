@@ -3330,6 +3330,7 @@ export interface components {
         weekStart: string;
         hasMeasurement: boolean;
       }[];
+      periods: components['schemas']['AdherencePeriod'][];
     };
     MeasurementSeriesPoint: {
       /** Format: uuid */
@@ -3356,6 +3357,20 @@ export interface components {
       /** @enum {string|null} */
       displayGlucoseUnit: 'mmol/L' | 'mg/dL' | null;
     };
+    AdherencePeriod: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      healthProfileId: string;
+      medicationName: string;
+      status: components['schemas']['AdherenceStatus'];
+      /** Format: date */
+      fromDate: string;
+      /** Format: date */
+      toDate: string | null;
+    };
+    /** @enum {string} */
+    AdherenceStatus: 'taking' | 'stopped';
     LabSeriesResponse: components['schemas']['LabSeries'][];
     LabSeries: {
       testName: string;
@@ -3436,20 +3451,6 @@ export interface components {
       today: string;
       periods: components['schemas']['AdherencePeriod'][];
     };
-    AdherencePeriod: {
-      /** Format: uuid */
-      id: string;
-      /** Format: uuid */
-      healthProfileId: string;
-      medicationName: string;
-      status: components['schemas']['AdherenceStatus'];
-      /** Format: date */
-      fromDate: string;
-      /** Format: date */
-      toDate: string | null;
-    };
-    /** @enum {string} */
-    AdherenceStatus: 'taking' | 'stopped';
     RecordAdherencePeriodRequest: {
       medicationName: string;
       status: components['schemas']['AdherenceStatus'];

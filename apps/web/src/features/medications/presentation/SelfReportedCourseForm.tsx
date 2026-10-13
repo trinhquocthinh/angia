@@ -7,7 +7,7 @@ import {
   toSelfReportedCourseRequest,
   type SelfReportedCourseFormValues,
 } from '../application/selfReportedCourseForm';
-import { MedicationDrawerFooter } from './MedicationDrawerFooter';
+import { SidePanelFooter } from '@src/shared/ui/SidePanelFooter';
 import { SelfReportedCourseFields } from './SelfReportedCourseFields';
 import { SelfReportedDoseSlots } from './SelfReportedDoseSlots';
 type Props = {
@@ -43,7 +43,7 @@ export function SelfReportedCourseForm({ disabled, pending, error, onSubmit, onC
         </fieldset>
         {children}
       </div>
-      <MedicationDrawerFooter
+      <SidePanelFooter
         submitLabel={pending ? 'Đang lưu…' : 'Lưu thuốc bổ'}
         cancelLabel="Hủy bỏ"
         disabled={disabled}

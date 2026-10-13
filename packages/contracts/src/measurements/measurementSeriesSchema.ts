@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { adherencePeriodSchema } from '../adherence/adherencePeriodSchemas.js';
 import { measurementSchema } from './measurementSchema.js';
 
 const glucoseUnit = z.enum(['mmol/L', 'mg/dL']);
@@ -27,6 +28,8 @@ export const measurementSeriesSchema = z
   .object({
     points: z.array(measurementSeriesPointSchema),
     weeks: z.array(z.object({ weekStart: z.iso.date(), hasMeasurement: z.boolean() })),
+    // SPEC-023: giai đoạn dùng thuốc giao với [from, to], mốc giữ nguyên; không có trường nhận xét (BR-033).
+    periods: z.array(adherencePeriodSchema),
   })
   .meta({ id: 'MeasurementSeries' });
 export type MeasurementSeries = z.infer<typeof measurementSeriesSchema>;

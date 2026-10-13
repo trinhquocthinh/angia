@@ -1,3 +1,4 @@
+import type { AdherencePeriod } from '@src/features/adherence/domain/AdherencePeriod.js';
 import type { Measurement, MeasurementKind } from '../domain/Measurement.js';
 
 /** F09a: số bản tối đa của một trang và id số đo cuối trang trước. */
@@ -24,6 +25,8 @@ interface MeasurementStore {
     from: string,
     to: string,
   ): Promise<Measurement[]>;
+  /** SPEC-023: giai đoạn dùng thuốc giao với [from, to], theo tên chuẩn hóa rồi mốc tăng dần. */
+  listAdherencePeriodsBetween(profileId: string, from: string, to: string): Promise<AdherencePeriod[]>;
 }
 export interface MeasurementRepository {
   withFamily<T>(familyId: string, work: (store: MeasurementStore) => Promise<T>): Promise<T>;

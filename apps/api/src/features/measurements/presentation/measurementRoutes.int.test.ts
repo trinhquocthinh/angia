@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile, MeasurementPage, MeasurementSeries } from '@angia/contracts';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
+import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 
@@ -91,6 +92,52 @@ describe('API số đo: phân trang F09a và chuỗi theo tuần SPEC-020 (E5-S1
       '2026-09-14',
     ]);
     expect(series.weeks.at(-1)).toEqual({ weekStart: '2026-10-05', hasMeasurement: true });
+  });
+
+  it('TC-064 — SPEC-023: 6 số đo + 2 giai đoạn giao khoảng, JSON không có trường nhận xét', async () => {
+    const f = await fixture();
+    await acceptConsentInvitation(t, f.main, f.profile.id);
+    const days = ['2026-09-02', '2026-09-09', '2026-09-16', '2026-09-23', '2026-09-30', '2026-10-07'];
+    for (const measuredOn of days) await insertBloodPressure(f.familyId, f.profile.id, { measuredOn });
+    const adherence = `/api/health-profiles/${f.profile.id}/adherence-periods`;
+    const record = async (medicationName: string, status: string, fromDate: string) =>
+      expect((await t.call(f.main, 'POST', adherence, { medicationName, status, fromDate })).status).toBe(
+        201,
+      );
+    // Hai giai đoạn Amlodipin kết thúc trước 31/08 và Metformin bắt đầu sau 11/10 → không trả.
+    await record('Amlodipin', 'taking', '2026-07-01');
+    await record('Amlodipin', 'stopped', '2026-07-15');
+    await record('Amlodipin', 'taking', '2026-08-01');
+    await record('Amlodipin', 'stopped', '2026-09-15');
+    await record('Metformin', 'taking', '2026-10-12');
+    const series = await getJson<MeasurementSeries>(
+      f.main,
+      `${f.base}/series?kind=blood_pressure&from=2026-08-31&to=2026-10-11`,
+    );
+    expect(series.points).toHaveLength(6);
+    expect(series.periods).toEqual([
+      expect.objectContaining({
+        medicationName: 'Amlodipin',
+        status: 'taking',
+        fromDate: '2026-08-01',
+        toDate: '2026-09-14',
+      }),
+      expect.objectContaining({
+        medicationName: 'Amlodipin',
+        status: 'stopped',
+        fromDate: '2026-09-15',
+        toDate: null,
+      }),
+    ]);
+    expect(Object.keys(series).sort()).toEqual(['periods', 'points', 'weeks']);
+    expect(Object.keys(series.periods[0]!).sort()).toEqual([
+      'fromDate',
+      'healthProfileId',
+      'id',
+      'medicationName',
+      'status',
+      'toDate',
+    ]);
   });
 
   it('TC-059 — 126 mg/dL hiển thị 7.0 mmol/L; DB giữ nguyên 126 mg/dL', async () => {

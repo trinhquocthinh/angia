@@ -1,3 +1,4 @@
+import { AdherenceOverlay } from '@src/features/adherence/presentation/AdherenceOverlay';
 import type { MeasurementKind } from '../../application/ports';
 import type { useMeasurementSeries } from '../../application/useMeasurementSeries';
 import { ChartSkeleton, MeasurementTrend } from './MeasurementTrend';
@@ -6,6 +7,9 @@ type Props = {
   kind: MeasurementKind;
   weeks: number;
   series: ReturnType<typeof useMeasurementSeries>;
+  /** Tên chuẩn hóa của thuốc đang tô nền; null → thuốc có mốc mới nhất. */
+  medication: string | null;
+  onMedicationChange: (key: string) => void;
 };
 
 const TITLE: Record<MeasurementKind, string> = {
@@ -13,8 +17,14 @@ const TITLE: Record<MeasurementKind, string> = {
   glucose: 'Diễn biến đường huyết (mmol/L)',
 };
 
-// Khung "Diễn biến … N tuần" (Stitch 718c9615); giai đoạn dùng thuốc (markArea) thuộc E5-S3-T2.
-export function MeasurementTrendSection({ kind, weeks, series: { range, query } }: Props) {
+// Khung "Diễn biến … N tuần" (Stitch 718c9615) kèm nền giai đoạn dùng thuốc (markArea, E5-S3-T2).
+export function MeasurementTrendSection({
+  kind,
+  weeks,
+  series: { range, query },
+  medication,
+  onMedicationChange,
+}: Props) {
   return (
     <section
       aria-labelledby="measurement-trend-title"
@@ -37,7 +47,16 @@ export function MeasurementTrendSection({ kind, weeks, series: { range, query } 
           </button>
         </div>
       ) : (
-        <MeasurementTrend kind={kind} weeks={weeks} range={range} series={query.data} />
+        <AdherenceOverlay
+          periods={query.data.periods}
+          range={range}
+          selected={medication}
+          onSelect={onMedicationChange}
+        >
+          {(bands) => (
+            <MeasurementTrend kind={kind} weeks={weeks} range={range} series={query.data} bands={bands} />
+          )}
+        </AdherenceOverlay>
       )}
     </section>
   );

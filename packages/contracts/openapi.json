@@ -2013,11 +2013,18 @@
                 "hasMeasurement"
               ]
             }
+          },
+          "periods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdherencePeriod"
+            }
           }
         },
         "required": [
           "points",
-          "weeks"
+          "weeks",
+          "periods"
         ]
       },
       "MeasurementSeriesPoint": {
@@ -2131,6 +2138,51 @@
           "createdAt",
           "displayGlucoseValue",
           "displayGlucoseUnit"
+        ]
+      },
+      "AdherencePeriod": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "healthProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "medicationName": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AdherenceStatus"
+          },
+          "fromDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "toDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          }
+        },
+        "required": [
+          "id",
+          "healthProfileId",
+          "medicationName",
+          "status",
+          "fromDate",
+          "toDate"
+        ]
+      },
+      "AdherenceStatus": {
+        "type": "string",
+        "enum": [
+          "taking",
+          "stopped"
         ]
       },
       "LabSeriesResponse": {
@@ -2494,51 +2546,6 @@
         "required": [
           "today",
           "periods"
-        ]
-      },
-      "AdherencePeriod": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "healthProfileId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "medicationName": {
-            "type": "string"
-          },
-          "status": {
-            "$ref": "#/components/schemas/AdherenceStatus"
-          },
-          "fromDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "toDate": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date"
-          }
-        },
-        "required": [
-          "id",
-          "healthProfileId",
-          "medicationName",
-          "status",
-          "fromDate",
-          "toDate"
-        ]
-      },
-      "AdherenceStatus": {
-        "type": "string",
-        "enum": [
-          "taking",
-          "stopped"
         ]
       },
       "RecordAdherencePeriodRequest": {

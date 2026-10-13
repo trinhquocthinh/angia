@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import type { PeriodBand } from '@src/features/adherence/application/periodBands';
 import { buildTrendLines } from '../../application/buildTrendLines';
 import { describeSeries } from '../../application/describeSeries';
 import type { MeasurementKind, MeasurementSeries } from '../../application/ports';
@@ -16,6 +17,8 @@ type Props = {
   weeks: number;
   range: { from: string; to: string };
   series: MeasurementSeries;
+  /** Dải nền giai đoạn của thuốc đang chọn (E5-S3-T2), đã cắt theo khoảng. */
+  bands: PeriodBand[];
 };
 
 export const ChartSkeleton = () => (
@@ -27,7 +30,7 @@ export const ChartSkeleton = () => (
 );
 
 // Rỗng → câu nhắc; < 4 điểm → thẻ thống kê; đủ điểm → biểu đồ (aria-hidden) + bảng số liệu ẩn.
-export function MeasurementTrend({ kind, weeks, range, series }: Props) {
+export function MeasurementTrend({ kind, weeks, range, series, bands }: Props) {
   const { points } = series;
   if (points.length === 0)
     return (
@@ -42,7 +45,7 @@ export function MeasurementTrend({ kind, weeks, range, series }: Props) {
     <div className="flex flex-col gap-2">
       <div className="h-72" aria-hidden="true">
         <Suspense fallback={<ChartSkeleton />}>
-          <MeasurementTrendChart lines={lines} range={range} />
+          <MeasurementTrendChart lines={lines} range={range} bands={bands} />
         </Suspense>
       </div>
       {lines.some((line) => line.bridges.length > 0) && (

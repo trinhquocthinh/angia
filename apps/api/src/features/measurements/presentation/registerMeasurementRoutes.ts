@@ -1,6 +1,7 @@
 import type { OpenAPIHono } from '@hono/zod-openapi';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { errorJson } from '@src/shared/http/errorResponse.js';
+import { toAdherencePeriodResponse } from '@src/features/adherence/presentation/toAdherencePeriodResponse.js';
 import { getMeasurementSeries } from '../application/getMeasurementSeries.js';
 import { listMeasurements } from '../application/listMeasurements.js';
 import type { MeasurementRepository } from '../application/ports.js';
@@ -35,6 +36,7 @@ export function registerMeasurementRoutes(app: OpenAPIHono<AppEnv>, repository: 
     });
     if (!result.ok) return c.json(...errorJson(result.code));
     const points = result.value.points.map((point) => toSeriesPointResponse(point, displayGlucoseUnit));
-    return c.json({ points, weeks: result.value.weeks }, 200);
+    const periods = result.value.periods.map(toAdherencePeriodResponse);
+    return c.json({ points, weeks: result.value.weeks, periods }, 200);
   });
 }
