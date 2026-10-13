@@ -2,6 +2,7 @@ import { and, eq } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { healthProfiles } from '@src/shared/db/schema/index.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
+import { findProfilePrescription } from '@src/features/prescriptions/infrastructure/findProfilePrescription.js';
 import type { MedicationManagementRepository } from '../application/managementPorts.js';
 import { findMedicationCourse } from './findMedicationCourse.js';
 import { stopStoredMedicationCourse } from './stopStoredMedicationCourse.js';
@@ -26,6 +27,7 @@ export function createMedicationRepository(db: Database): MedicationManagementRe
             )[0] ?? null,
           lockMedicationProfile: (id) => lockMedicationProfile(tx, familyId, id),
           findMedicationCourse: (id, courseId) => findMedicationCourse(tx, familyId, id, courseId),
+          findPrescription: (id, prescriptionId) => findProfilePrescription(tx, familyId, id, prescriptionId),
           stopMedicationCourse: (id, courseId, endDate) =>
             stopStoredMedicationCourse(tx, familyId, id, courseId, endDate),
           findMedicationCourses: (id) => findMedicationCourses(tx, familyId, id),

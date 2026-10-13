@@ -54,5 +54,5 @@ export function createReviewRepository(client = apiClient): ReviewRepository {
 }
 
 // Ảnh đọc qua API cùng cookie phiên; <img> không gửi CSRF nên route là GET.
-export const documentImageUrl = (id: string, variant: 'preview' | 'original' = 'preview') =>
+export const documentImageUrl = (id: string, variant: 'preview' | 'original' | 'ocr' = 'preview') =>
   `/api/source-documents/${id}/image?variant=${variant}`;

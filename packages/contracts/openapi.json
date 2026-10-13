@@ -1964,6 +1964,364 @@
         ],
         "additionalProperties": false
       },
+      "MeasurementPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Measurement"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "MeasurementSeries": {
+        "type": "object",
+        "properties": {
+          "points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MeasurementSeriesPoint"
+            }
+          },
+          "weeks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "weekStart": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "hasMeasurement": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "weekStart",
+                "hasMeasurement"
+              ]
+            }
+          },
+          "periods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdherencePeriod"
+            }
+          }
+        },
+        "required": [
+          "points",
+          "weeks",
+          "periods"
+        ]
+      },
+      "MeasurementSeriesPoint": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "healthProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceDocumentId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "blood_pressure",
+              "glucose"
+            ]
+          },
+          "measuredOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "measuredTime": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "systolic": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "diastolic": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "pulse": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "glucoseValue": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "glucoseUnit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "mmol/L",
+              "mg/dL",
+              null
+            ]
+          },
+          "manualWithoutSource": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "displayGlucoseValue": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "displayGlucoseUnit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "mmol/L",
+              "mg/dL",
+              null
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "healthProfileId",
+          "sourceDocumentId",
+          "kind",
+          "measuredOn",
+          "measuredTime",
+          "systolic",
+          "diastolic",
+          "pulse",
+          "glucoseValue",
+          "glucoseUnit",
+          "manualWithoutSource",
+          "createdAt",
+          "displayGlucoseValue",
+          "displayGlucoseUnit"
+        ]
+      },
+      "AdherencePeriod": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "healthProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "medicationName": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AdherenceStatus"
+          },
+          "fromDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "toDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          }
+        },
+        "required": [
+          "id",
+          "healthProfileId",
+          "medicationName",
+          "status",
+          "fromDate",
+          "toDate"
+        ]
+      },
+      "AdherenceStatus": {
+        "type": "string",
+        "enum": [
+          "taking",
+          "stopped"
+        ]
+      },
+      "LabSeriesResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/LabSeries"
+        }
+      },
+      "LabSeries": {
+        "type": "object",
+        "properties": {
+          "testName": {
+            "type": "string"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabResult"
+            }
+          }
+        },
+        "required": [
+          "testName",
+          "results"
+        ]
+      },
+      "DocumentEntryPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentEntry"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "DocumentEntry": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "origin": {
+            "type": "string",
+            "enum": [
+              "document",
+              "manual"
+            ]
+          },
+          "type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "prescription",
+              "lab_result",
+              "device_reading",
+              null
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "uploaded",
+              "awaiting_privacy",
+              "extracting",
+              "pending_review",
+              "approved",
+              "rejected",
+              "manual_entry",
+              "awaiting_budget",
+              "manual_record"
+            ]
+          },
+          "entryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "dateKnown": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "hasOcrImage": {
+            "type": "boolean"
+          },
+          "records": {
+            "type": "object",
+            "properties": {
+              "prescription": {
+                "$ref": "#/components/schemas/Prescription"
+              },
+              "labResults": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LabResult"
+                }
+              },
+              "measurements": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Measurement"
+                }
+              }
+            },
+            "required": [
+              "prescription",
+              "labResults",
+              "measurements"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "origin",
+          "type",
+          "status",
+          "entryDate",
+          "dateKnown",
+          "createdAt",
+          "hasOcrImage",
+          "records"
+        ]
+      },
       "StoppableCourses": {
         "type": "object",
         "properties": {
@@ -2204,6 +2562,79 @@
           "prescriptionIssuedDate"
         ]
       },
+      "ReusePrescriptionResponse": {
+        "type": "object",
+        "properties": {
+          "courses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MedicationCourse"
+            }
+          }
+        },
+        "required": [
+          "courses"
+        ]
+      },
+      "ReusePrescriptionRequest": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "prescriptionItemId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "durationDays": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 1,
+                  "maximum": 3650
+                },
+                "longTerm": {
+                  "type": "boolean"
+                },
+                "resolution": {
+                  "type": "string",
+                  "enum": [
+                    "replace",
+                    "parallel"
+                  ]
+                },
+                "expectedConflictCourseIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              },
+              "required": [
+                "prescriptionItemId",
+                "durationDays",
+                "longTerm"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 50
+          }
+        },
+        "required": [
+          "startDate",
+          "items"
+        ],
+        "additionalProperties": false
+      },
       "StopCourseRequest": {
         "type": "object",
         "properties": {
@@ -2281,6 +2712,48 @@
           "name",
           "doseUnit",
           "startDate"
+        ],
+        "additionalProperties": false
+      },
+      "AdherencePeriodList": {
+        "type": "object",
+        "properties": {
+          "today": {
+            "type": "string",
+            "format": "date"
+          },
+          "periods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdherencePeriod"
+            }
+          }
+        },
+        "required": [
+          "today",
+          "periods"
+        ]
+      },
+      "RecordAdherencePeriodRequest": {
+        "type": "object",
+        "properties": {
+          "medicationName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "status": {
+            "$ref": "#/components/schemas/AdherenceStatus"
+          },
+          "fromDate": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "medicationName",
+          "status",
+          "fromDate"
         ],
         "additionalProperties": false
       },
@@ -3521,7 +3994,7 @@
         "tags": [
           "documents"
         ],
-        "summary": "Luồng ảnh chứng từ (preview chưa có thì trả ảnh gốc)",
+        "summary": "Luồng ảnh chứng từ (preview chưa có thì trả ảnh gốc; ocr = bản đã che đã gửi AI)",
         "parameters": [
           {
             "schema": {
@@ -3537,7 +4010,8 @@
               "type": "string",
               "enum": [
                 "preview",
-                "original"
+                "original",
+                "ocr"
               ],
               "default": "original"
             },
@@ -4288,7 +4762,7 @@
         "tags": [
           "measurements"
         ],
-        "summary": "Số đo sinh tồn đã duyệt của hồ sơ, mới nhất trước",
+        "summary": "Số đo sinh tồn đã duyệt của hồ sơ, mới nhất trước, phân trang cursor (F09a)",
         "parameters": [
           {
             "schema": {
@@ -4310,18 +4784,35 @@
             "required": false,
             "name": "kind",
             "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
           }
         ],
         "responses": {
           "200": {
-            "description": "Số đo",
+            "description": "Trang số đo",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Measurement"
-                  }
+                  "$ref": "#/components/schemas/MeasurementPage"
                 }
               }
             }
@@ -4348,6 +4839,316 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/measurements/series": {
+      "get": {
+        "tags": [
+          "measurements"
+        ],
+        "summary": "Chuỗi số đo theo tuần trong khoảng ngày (SPEC-020), tối đa 366 ngày",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "blood_pressure",
+                "glucose"
+              ]
+            },
+            "required": true,
+            "name": "kind",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "to",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "mmol/L",
+                "mg/dL"
+              ],
+              "default": "mmol/L"
+            },
+            "required": false,
+            "name": "displayGlucoseUnit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Điểm đo cũ nhất trước và cờ tuần có số đo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasurementSeries"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/lab-result-series": {
+      "get": {
+        "tags": [
+          "lab-results"
+        ],
+        "summary": "Chuỗi biến thiên kết quả xét nghiệm theo chỉ số (SPEC-021), không phân trang",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "required": false,
+            "name": "testName",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nhóm chỉ số có kết quả mới nhất trước; kết quả trong nhóm cũ nhất trước",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabSeriesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/document-entries": {
+      "get": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Danh mục chứng từ và đơn/phiếu nhập trực tiếp của hồ sơ, kèm bản ghi đã lưu (SPEC-028)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "prescription",
+                "lab_result",
+                "device_reading"
+              ]
+            },
+            "required": false,
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Một trang mục theo ngày mục, thời điểm lưu, id giảm dần; nextCursor null khi hết",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentEntryPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: type, limit hoặc cursor không hợp lệ",
             "content": {
               "application/json": {
                 "schema": {
@@ -4510,6 +5311,113 @@
           },
           "422": {
             "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/prescriptions/{prescriptionId}/reuse": {
+      "post": {
+        "tags": [
+          "medications"
+        ],
+        "summary": "Dùng lại đơn đã lưu: sinh đợt thuốc mới từ các dòng chọn (SPEC-029)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "prescriptionId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReusePrescriptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Các đợt mới theo thứ tự dòng gửi lên",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReusePrescriptionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: main cùng gia đình và CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ hoặc đơn không thuộc gia đình/hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED, ERR_COURSE_CONFLICT_UNRESOLVED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CourseConflictErrorResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION, ERR_DOSE_INFO_MISSING (details.invalidItemIndexes)",
             "content": {
               "application/json": {
                 "schema": {
@@ -4708,6 +5616,176 @@
           },
           "422": {
             "description": "ERR_DOSE_INFO_MISSING, ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/adherence-periods": {
+      "get": {
+        "tags": [
+          "adherence"
+        ],
+        "summary": "Liệt kê giai đoạn dùng thuốc thực tế của hồ sơ",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ngày Việt Nam và các giai đoạn theo tên thuốc chuẩn hóa, mốc tăng dần",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdherencePeriodList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "adherence"
+        ],
+        "summary": "Ghi nhận giai đoạn dùng/ngưng thuốc thực tế (SPEC-022), tự đóng giai đoạn đang mở",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordAdherencePeriodRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Giai đoạn mới đang mở",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdherencePeriod"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: mốc không sau giai đoạn trước, ở tương lai hoặc trùng trạng thái",
             "content": {
               "application/json": {
                 "schema": {

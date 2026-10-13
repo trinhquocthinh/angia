@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const documentTypeSchema = z.enum(['prescription', 'lab_result', 'device_reading']);
+export const documentTypeSchema = z.enum(['prescription', 'lab_result', 'device_reading']);
 
 // Không trả khóa S3: ảnh chỉ đọc qua route stream có kiểm tra gia đình (Tech Spec §4).
 export const sourceDocumentSchema = z

@@ -10,27 +10,32 @@ import { ProfileFrame } from '@src/features/profiles/presentation/components/Pro
 import { RecipientNotice } from '@src/features/profiles/presentation/components/RecipientNotice';
 import '@src/features/profiles/presentation/profiles.css';
 import type { MeasurementKind } from '../application/ports';
+import type { WeekSpan } from '../application/seriesRange';
+import { useMeasurementSeries } from '../application/useMeasurementSeries';
 import { useProfileMeasurements } from '../application/useProfileMeasurements';
 import { createMeasurementsRepository } from '../infrastructure/createMeasurementsRepository';
-import { MeasurementKindToggle } from './components/MeasurementKindToggle';
-import { MeasurementTable } from './components/MeasurementTable';
+import { MeasurementTableSection } from './components/MeasurementTableSection';
+import { MeasurementTrendSection } from './components/MeasurementTrendSection';
+import { HealthTrendToolbar } from './components/HealthTrendToolbar';
 import { ProfileHealthHeader } from './components/ProfileHealthHeader';
 
 const profilesRepository = createProfilesRepository();
 const measurementsRepository = createMeasurementsRepository();
-
-// Tab "Diễn biến sức khỏe" tối giản cho E2-S6-T1: bảng số đo đã duyệt; đồ thị, thẻ thống kê, lọc tuần thuộc E5.
+// Tab "Diễn biến sức khỏe": biểu đồ N tuần (E5-S1-T2) + nền giai đoạn thuốc (E5-S3-T2) và bảng số đo đã duyệt (E2-S6-T1).
 export function ProfileHealthPage({ profileId }: { profileId: string }) {
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(profilesRepository, session.data);
   const [kind, setKind] = useState<MeasurementKind>('blood_pressure');
+  const [weeks, setWeeks] = useState<WeekSpan>(12);
+  const [medication, setMedication] = useState<string | null>(null);
   const measurements = useProfileMeasurements(measurementsRepository, session.data, profileId, kind);
+  const series = useMeasurementSeries(measurementsRepository, session.data, profileId, kind, weeks);
   useProfileSessionRecovery(workspace.profiles.error);
   if (!session.data) return null;
   const main = session.data.role === 'main';
   const profiles = workspace.profiles.data ?? [];
   const profile = profiles.find((item) => item.id === profileId);
-  const rows = measurements.data ?? [];
+  const rows = measurements.data?.pages.flatMap((page) => page.items) ?? [];
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
       {!main ? (
@@ -53,24 +58,23 @@ export function ProfileHealthPage({ profileId }: { profileId: string }) {
               }
             />
           )}
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white p-3 shadow-sm sm:p-4">
-            <MeasurementKindToggle kind={kind} onChange={setKind} />
-          </div>
-          <section
-            aria-labelledby="measurement-table-title"
-            className="flex flex-col gap-4 rounded-xl bg-white p-5 shadow-sm lg:p-6"
-          >
-            <h2 id="measurement-table-title" className="text-lg font-semibold text-[#004135]">
-              Bảng số đo chi tiết
-            </h2>
-            <MeasurementTable
-              kind={kind}
-              measurements={rows}
-              loading={measurements.isPending}
-              error={measurements.isError}
-              retry={() => void measurements.refetch()}
-            />
-          </section>
+          <HealthTrendToolbar
+            kind={kind}
+            weeks={weeks}
+            onKindChange={setKind}
+            onWeeksChange={setWeeks}
+            profile={profile}
+            session={session.data}
+            onMedicationSaved={setMedication}
+          />
+          <MeasurementTrendSection
+            kind={kind}
+            weeks={weeks}
+            series={series}
+            medication={medication}
+            onMedicationChange={setMedication}
+          />
+          <MeasurementTableSection kind={kind} measurements={measurements} />
         </div>
       )}
     </ProfileFrame>

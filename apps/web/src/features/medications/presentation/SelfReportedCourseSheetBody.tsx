@@ -1,14 +1,14 @@
 import type { HealthProfile } from '@src/features/profiles/application/ports';
 import type { useSelfReportedCourse } from '../application/useSelfReportedCourse';
-import { MedicationDrawer } from './MedicationDrawer';
-import { MedicationDrawerFooter } from './MedicationDrawerFooter';
+import { SidePanel } from '@src/shared/ui/SidePanel';
+import { SidePanelFooter } from '@src/shared/ui/SidePanelFooter';
 import { SelfReportedCourseForm } from './SelfReportedCourseForm';
 import { SelfReportedConflictNotice } from './SelfReportedConflictNotice';
 type Props = { profile: HealthProfile; state: ReturnType<typeof useSelfReportedCourse>; onClose: () => void };
 export function SelfReportedCourseSheetBody({ profile, state, onClose }: Props) {
   const editing = !state.saved && profile.consentStatus === 'confirmed';
   return (
-    <MedicationDrawer
+    <SidePanel
       titleId="supplement-title"
       title={`Khai báo thuốc bổ cho ${profile.displayName}`}
       subtitle="Thuốc bổ, vitamin hoặc thực phẩm chức năng không qua đơn thuốc."
@@ -44,7 +44,7 @@ export function SelfReportedCourseSheetBody({ profile, state, onClose }: Props) 
         </SelfReportedCourseForm>
       )}
       {!editing && (
-        <MedicationDrawerFooter
+        <SidePanelFooter
           submitLabel={null}
           cancelLabel="Đóng"
           disabled={true}
@@ -53,6 +53,6 @@ export function SelfReportedCourseSheetBody({ profile, state, onClose }: Props) 
           onCancel={onClose}
         />
       )}
-    </MedicationDrawer>
+    </SidePanel>
   );
 }

@@ -41,6 +41,7 @@ function fixture(
     },
     findMedicationCourses: async () => [saved, { ...course, id: 'future', startDate: '2026-10-13' }],
     findMedicationHistory: async () => [],
+    findPrescription: async () => null,
     replaceMedicationCourses: async () => undefined,
     insertMedicationCourses: async () => [],
   };

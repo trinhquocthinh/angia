@@ -5,6 +5,7 @@ import { runMigrations } from './runMigrations.js';
 
 const SKELETON_TABLES = [
   'accounts',
+  'adherence_periods',
   'consent_invitations',
   'consent_legacy_attestations',
   'extraction_reservations',
@@ -24,6 +25,7 @@ const SKELETON_TABLES = [
 // Bảng dữ liệu sức khỏe bắt buộc RLS (Tech Spec §3); families/accounts/sessions phục vụ xác thực,
 // extraction_spend là bảng quản trị ngân sách phi y tế (E3-S6-T1).
 const RLS_TABLES = [
+  'adherence_periods',
   'consent_invitations',
   'consent_legacy_attestations',
   'extraction_reservations',

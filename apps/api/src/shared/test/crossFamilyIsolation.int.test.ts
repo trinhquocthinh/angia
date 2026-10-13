@@ -7,35 +7,15 @@ import { HEALTH_DATA_ROUTES, type RouteOfKind } from './healthDataRoutes.js';
 import type { SeededSession } from './seedAuthFixtures.js';
 import type { Target, Probe } from './CrossFamilyTarget.js';
 import { seedPendingDocument } from './seedPendingDocument.js';
+import { snapshotHealthTables } from './snapshotHealthTables.js';
+import { manualPrescription as prescription, manualReading as reading } from './healthDataFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from './startProfileTestApp.js';
 
-const reading = {
-  type: 'device_reading',
-  measuredAt: '2026-10-05',
-  measuredTime: '07:10',
-  kind: 'blood_pressure',
-  systolic: 130,
-  diastolic: 90,
-  pulse: 78,
-  glucoseValue: null,
-  glucoseUnit: null,
-} as const;
 const respondBody = { decision: 'accepted', basis: 'self', respondentName: 'Lén' };
 const profiles = '/api/health-profiles';
 const documents = '/api/source-documents';
-const SNAPSHOT_TABLES = [
-  'health_profiles',
-  'accounts',
-  'consent_invitations',
-  'upload_batches',
-  'source_documents',
-  'extractions',
-  'measurements',
-  'prescriptions',
-  'prescription_items',
-  'medication_courses',
-  'lab_results',
-];
+const adherence = { medicationName: 'Canxi', status: 'taking', fromDate: '2026-10-01' };
+const seriesQuery = 'kind=blood_pressure&from=2026-10-01&to=2026-10-31';
 
 describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gia đình (E2-S7-T1)', () => {
   let t: ProfileTestApp;
@@ -102,6 +82,12 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'POST', `${documents}/${x.documentId}/reject`),
     'GET /api/health-profiles/:id/measurements': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/measurements`),
+    'GET /api/health-profiles/:id/measurements/series': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/measurements/series?${seriesQuery}`),
+    'GET /api/health-profiles/:id/lab-result-series': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/lab-result-series`),
+    'GET /api/health-profiles/:id/document-entries': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/document-entries`),
     'POST /api/health-profiles/:id/medication-courses': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses`, {
         name: 'Canxi',
@@ -118,6 +104,15 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses/${x.courseId}/stop`, {
         stopDate: '2026-10-05',
       }),
+    'POST /api/health-profiles/:id/prescriptions/:prescriptionId/reuse': (u, x) =>
+      t.call(u, 'POST', `${profiles}/${x.profileId}/prescriptions/${x.prescriptionId}/reuse`, {
+        startDate: '2026-10-02',
+        items: [{ prescriptionItemId: x.courseId, durationDays: 7, longTerm: false }],
+      }),
+    'GET /api/health-profiles/:id/adherence-periods': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/adherence-periods`),
+    'POST /api/health-profiles/:id/adherence-periods': (u, x) =>
+      t.call(u, 'POST', `${profiles}/${x.profileId}/adherence-periods`, { ...adherence, status: 'stopped' }),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
         type: 'device_reading',
@@ -143,7 +138,11 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
         startDate: '2026-10-01',
       })
     ).json()) as { id: string };
-    return { familyId, main, profile, documentId, token, courseId: course.id };
+    await t.call(main, 'POST', `${profiles}/${profile.id}/adherence-periods`, adherence);
+    const body = { type: 'prescription', data: prescription };
+    const saved = await t.call(main, 'POST', `${profiles}/${profile.id}/manual-records`, body);
+    const { id: prescriptionId } = ((await saved.json()) as { prescription: { id: string } }).prescription;
+    return { familyId, main, profile, documentId, token, courseId: course.id, prescriptionId };
   };
   const attackers = async () => {
     const familyId = await t.family();
@@ -151,14 +150,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const adminMain = await t.session(familyId, 'main', 'Quản trị kiêm main', true);
     return { familyId, main, adminMain };
   };
-  const snapshot = async () => {
-    const tables: Record<string, unknown> = {};
-    for (const table of SNAPSHOT_TABLES) {
-      const sql = `SELECT coalesce(json_agg(x ORDER BY x.id), '[]') AS rows FROM ${table} x`;
-      tables[table] = (await t.owner.query(sql)).rows[0].rows;
-    }
-    return tables;
-  };
+  const snapshot = () => snapshotHealthTables(t.owner);
 
   it('TC-013, TC-014, TC-015, TC-076: main và Quản trị kiêm main nhóm khác nhận đúng phản hồi của ID không tồn tại, không ghi gì', async () => {
     const victim = await victimFixture();
@@ -168,6 +160,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       documentId: victim.documentId,
       accountId: victim.main.accountId,
       courseId: victim.courseId,
+      prescriptionId: victim.prescriptionId,
       token: t.codec.issue({ ...t.codec.verify(victim.token)!, familyId }),
     };
     const missing: Target = {
@@ -175,6 +168,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       documentId: randomUUID(),
       accountId: randomUUID(),
       courseId: randomUUID(),
+      prescriptionId: randomUUID(),
       token: 'bogus',
     };
     const before = await snapshot();
@@ -247,13 +241,11 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
         ':id',
         pattern.startsWith(documents) ? victim.documentId : victim.profile.id,
       );
-      expect({
-        route,
-        status: (await t.call(member, method, path.replace(':courseId', victim.courseId))).status,
-      }).toEqual({
-        route,
-        status: 403,
-      });
+      const concrete = path
+        .replace(':courseId', victim.courseId)
+        .replace(':prescriptionId', victim.prescriptionId);
+      const status = (await t.call(member, method, concrete)).status;
+      expect({ route, status }).toEqual({ route, status: 403 });
     }
   });
 });

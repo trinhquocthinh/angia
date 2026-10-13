@@ -71,8 +71,24 @@ export { prescriptionSchema } from './prescriptions/prescriptionSchema.js';
 export type { Prescription } from './prescriptions/prescriptionSchema.js';
 export { labResultSchema } from './labResults/labResultSchema.js';
 export type { LabResult } from './labResults/labResultSchema.js';
-export { measurementListQuerySchema, measurementSchema } from './measurements/measurementSchema.js';
-export type { Measurement } from './measurements/measurementSchema.js';
+export {
+  labSeriesQuerySchema,
+  labSeriesResponseSchema,
+  labSeriesSchema,
+} from './labResults/labSeriesSchema.js';
+export type { LabSeries } from './labResults/labSeriesSchema.js';
+export {
+  measurementListQuerySchema,
+  measurementPageSchema,
+  measurementSchema,
+} from './measurements/measurementSchema.js';
+export type { Measurement, MeasurementPage } from './measurements/measurementSchema.js';
+export {
+  measurementSeriesPointSchema,
+  measurementSeriesQuerySchema,
+  measurementSeriesSchema,
+} from './measurements/measurementSeriesSchema.js';
+export type { MeasurementSeries, MeasurementSeriesPoint } from './measurements/measurementSeriesSchema.js';
 export { extractionPayloadSchema } from './extraction/extractionPayloadSchema.js';
 export type { ExtractionPayload } from './extraction/extractionPayloadSchema.js';
 export {
@@ -129,3 +145,27 @@ export {
   type CurrentMedicationCourse,
   type CurrentMedications,
 } from './medications/currentMedicationSchemas.js';
+export {
+  adherencePeriodListSchema,
+  adherencePeriodSchema,
+  recordAdherencePeriodRequestSchema,
+} from './adherence/adherencePeriodSchemas.js';
+export type {
+  AdherencePeriod,
+  AdherencePeriodList,
+  RecordAdherencePeriodRequest,
+} from './adherence/adherencePeriodSchemas.js';
+export {
+  documentEntryPageSchema,
+  documentEntryQuerySchema,
+  documentEntrySchema,
+} from './documents/documentEntrySchemas.js';
+export type { DocumentEntry, DocumentEntryPage } from './documents/documentEntrySchemas.js';
+export {
+  reusePrescriptionRequestSchema,
+  reusePrescriptionResponseSchema,
+} from './medications/reusePrescriptionSchemas.js';
+export type {
+  ReusePrescriptionRequest,
+  ReusePrescriptionResponse,
+} from './medications/reusePrescriptionSchemas.js';

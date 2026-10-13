@@ -1,3 +1,5 @@
+import type { AdherenceRepository } from '@src/features/adherence/application/ports.js';
+import { registerAdherenceRoutes } from '@src/features/adherence/presentation/registerAdherenceRoutes.js';
 import type { MedicationManagementRepository } from '@src/features/medications/application/managementPorts.js';
 import { registerMedicationRoutes } from '@src/features/medications/presentation/registerMedicationRoutes.js';
 import { registerPrivacyHeaders } from '@src/features/documentPrivacy/presentation/registerPrivacyHeaders.js';
@@ -14,6 +16,10 @@ import {
   registerReviewRoutes,
   type ReviewDependencies,
 } from '@src/features/documents/presentation/registerReviewRoutes.js';
+import type { LabResultRepository } from '@src/features/labResults/application/ports.js';
+import type { DocumentEntryRepository } from '@src/features/documents/application/documentEntryPorts.js';
+import { registerDocumentEntryRoutes } from '@src/features/documents/presentation/registerDocumentEntryRoutes.js';
+import { registerLabResultRoutes } from '@src/features/labResults/presentation/registerLabResultRoutes.js';
 import type { MeasurementRepository } from '@src/features/measurements/application/ports.js';
 import { registerMeasurementRoutes } from '@src/features/measurements/presentation/registerMeasurementRoutes.js';
 import type { ProfileRepository } from '@src/features/profiles/application/ports.js';
@@ -44,7 +50,10 @@ export type AppDependencies = {
   review: ReviewDependencies;
   privacy: PrivacyDependencies;
   measurements: MeasurementRepository;
+  labResults: LabResultRepository;
+  documentEntries: DocumentEntryRepository;
   medications: MedicationManagementRepository;
+  adherence: AdherenceRepository;
 };
 
 // Ngoại lệ duy nhất của "mọi route /api cần phiên" (Tech Spec §4); logout vẫn cần phiên + CSRF.
@@ -87,7 +96,10 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerManualRecordRoutes(app, deps.review.repository);
   registerPrivacyRoutes(app, deps.privacy);
   registerMeasurementRoutes(app, deps.measurements);
+  registerLabResultRoutes(app, deps.labResults);
+  registerDocumentEntryRoutes(app, deps.documentEntries);
   registerMedicationRoutes(app, deps.medications, deps.auth.login.now);
+  registerAdherenceRoutes(app, deps.adherence, deps.auth.login.now);
   registerInvitationRoutes(app, deps.consentInvitations);
   return app;
 }

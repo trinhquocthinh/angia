@@ -91,13 +91,19 @@ describe('Bảng đợt thuốc: RLS, ràng buộc và xóa dây chuyền', () =
     ).rejects.toMatchObject({ cause: { code: '42501' } });
   });
 
-  it('một dòng đơn chỉ sinh một đợt và lỗi ghi không tạo thêm dòng', async () => {
-    await expect(
-      withFamilyScope(db, familyId, (tx) => insertMedicationCourses(tx, familyId, [input])),
-    ).rejects.toMatchObject({
-      cause: { code: '23505', constraint: 'medication_courses_prescription_item_unique' },
-    });
-    expect((await owner.query('SELECT id FROM medication_courses')).rows).toHaveLength(1);
+  it('TC-278: một dòng đơn sinh được nhiều đợt (Dùng lại đơn, migration 0016)', async () => {
+    await withFamilyScope(db, familyId, (tx) =>
+      insertMedicationCourses(tx, familyId, [{ ...input, startDate: '2026-11-01', endDate: '2026-11-30' }]),
+    );
+    const rows = await owner.query('SELECT id FROM medication_courses WHERE prescription_item_id = $1', [
+      itemId,
+    ]);
+    expect(rows.rows).toHaveLength(2);
+    const index = await owner.query(
+      `SELECT indexname FROM pg_indexes WHERE tablename = 'medication_courses'
+      AND indexname = 'medication_courses_prescription_item_idx'`,
+    );
+    expect(index.rows).toHaveLength(1);
   });
 
   it('FK composite chặn hồ sơ thuộc gia đình khác ngay cả khi owner ghi', async () => {

@@ -57,10 +57,10 @@ export const documentImageRoute = createRoute({
   method: 'get',
   path: '/api/source-documents/{id}/image',
   tags: ['documents'],
-  summary: 'Luồng ảnh chứng từ (preview chưa có thì trả ảnh gốc)',
+  summary: 'Luồng ảnh chứng từ (preview chưa có thì trả ảnh gốc; ocr = bản đã che đã gửi AI)',
   request: {
     params: idParam,
-    query: z.object({ variant: z.enum(['preview', 'original']).default('original') }),
+    query: z.object({ variant: z.enum(['preview', 'original', 'ocr']).default('original') }),
   },
   responses: {
     200: {

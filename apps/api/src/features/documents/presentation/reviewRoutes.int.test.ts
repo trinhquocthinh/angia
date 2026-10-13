@@ -4,7 +4,7 @@ import type {
   ApprovedDocumentResponse,
   DocumentReview,
   HealthProfile,
-  Measurement,
+  MeasurementPage,
   SourceDocumentPage,
 } from '@angia/contracts';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
@@ -48,9 +48,11 @@ describe('Duyệt số đo từ ảnh máy đo: route thật, transaction và RL
       ...(confirmOutOfRange === undefined ? {} : { confirmOutOfRange }),
     });
   const measurementsOf = async (user: SeededSession, profileId: string) =>
-    (await (
-      await t.call(user, 'GET', `/api/health-profiles/${profileId}/measurements`)
-    ).json()) as Measurement[];
+    (
+      (await (
+        await t.call(user, 'GET', `/api/health-profiles/${profileId}/measurements`)
+      ).json()) as MeasurementPage
+    ).items;
 
   it('hàng đợi chỉ gồm chứng từ pending_review của gia đình; trả bản trích xuất và ảnh gốc', async () => {
     const { main, documentId } = await pendingFixture();

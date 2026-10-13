@@ -43,6 +43,7 @@ export function createMemoryDocumentDeps(profiles: Profile[], options: { failPut
               status: 'uploaded',
               documentDate: null,
               previewKey: null,
+              ocrImageKey: null,
               createdAt: new Date('2026-10-06T00:00:00Z'),
             };
             pendingDocuments.push(document);

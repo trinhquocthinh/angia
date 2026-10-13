@@ -11,6 +11,7 @@ export const reviewDocument = (overrides: Partial<SourceDocument> = {}): SourceD
   documentDate: null,
   originalKey: 'families/family-a/profiles/me/documents/doc-1/original.jpg',
   previewKey: null,
+  ocrImageKey: null,
   mimeType: 'image/jpeg',
   sizeBytes: 1024,
   createdAt: new Date('2026-10-06T00:00:00Z'),

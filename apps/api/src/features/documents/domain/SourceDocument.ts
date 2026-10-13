@@ -25,6 +25,8 @@ export interface SourceDocument {
   documentDate: string | null;
   originalKey: string;
   previewKey: string | null;
+  /** Bản đã che đã gửi AI (E3-S2-T1); null khi chưa qua bước riêng tư. */
+  ocrImageKey: string | null;
   mimeType: string;
   sizeBytes: number;
   createdAt: Date;

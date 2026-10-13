@@ -1,3 +1,4 @@
+import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
 import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
 import { createPrivacyQueue } from '@src/features/documentPrivacy/infrastructure/createPrivacyQueue.js';
@@ -9,6 +10,8 @@ import { createPreviewQueue } from '@src/features/documents/infrastructure/creat
 import { createReviewRepository } from '@src/features/documents/infrastructure/createReviewRepository.js';
 import { createS3ObjectReader } from '@src/features/documents/infrastructure/createS3ObjectReader.js';
 import { createS3ObjectStorage } from '@src/features/documents/infrastructure/createS3ObjectStorage.js';
+import { createLabResultRepository } from '@src/features/labResults/infrastructure/createLabResultRepository.js';
+import { createDocumentEntryRepository } from '@src/features/documents/infrastructure/createDocumentEntryRepository.js';
 import { createMeasurementRepository } from '@src/features/measurements/infrastructure/createMeasurementRepository.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
 import { randomBytes, randomUUID } from 'node:crypto';
@@ -108,7 +111,10 @@ const app = createApp({
     now: () => new Date(),
   },
   measurements: createMeasurementRepository(db),
+  labResults: createLabResultRepository(db),
+  documentEntries: createDocumentEntryRepository(db),
   medications: createMedicationRepository(db),
+  adherence: createAdherenceRepository(db),
 });
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {

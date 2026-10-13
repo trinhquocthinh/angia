@@ -1166,11 +1166,11 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Luồng ảnh chứng từ (preview chưa có thì trả ảnh gốc) */
+    /** Luồng ảnh chứng từ (preview chưa có thì trả ảnh gốc; ocr = bản đã che đã gửi AI) */
     get: {
       parameters: {
         query?: {
-          variant?: 'preview' | 'original';
+          variant?: 'preview' | 'original' | 'ocr';
         };
         header?: never;
         path: {
@@ -1898,11 +1898,13 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Số đo sinh tồn đã duyệt của hồ sơ, mới nhất trước */
+    /** Số đo sinh tồn đã duyệt của hồ sơ, mới nhất trước, phân trang cursor (F09a) */
     get: {
       parameters: {
         query?: {
           kind?: 'blood_pressure' | 'glucose';
+          limit?: number;
+          cursor?: string;
         };
         header?: never;
         path: {
@@ -1912,13 +1914,13 @@ export interface paths {
       };
       requestBody?: never;
       responses: {
-        /** @description Số đo */
+        /** @description Trang số đo */
         200: {
           headers: {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['Measurement'][];
+            'application/json': components['schemas']['MeasurementPage'];
           };
         };
         /** @description ERR_UNAUTHENTICATED */
@@ -1941,6 +1943,248 @@ export interface paths {
         };
         /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
         404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/measurements/series': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Chuỗi số đo theo tuần trong khoảng ngày (SPEC-020), tối đa 366 ngày */
+    get: {
+      parameters: {
+        query: {
+          kind: 'blood_pressure' | 'glucose';
+          from: string;
+          to: string;
+          displayGlucoseUnit?: 'mmol/L' | 'mg/dL';
+        };
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Điểm đo cũ nhất trước và cờ tuần có số đo */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['MeasurementSeries'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/lab-result-series': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Chuỗi biến thiên kết quả xét nghiệm theo chỉ số (SPEC-021), không phân trang */
+    get: {
+      parameters: {
+        query?: {
+          testName?: string;
+        };
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Nhóm chỉ số có kết quả mới nhất trước; kết quả trong nhóm cũ nhất trước */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['LabSeriesResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/document-entries': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Danh mục chứng từ và đơn/phiếu nhập trực tiếp của hồ sơ, kèm bản ghi đã lưu (SPEC-028) */
+    get: {
+      parameters: {
+        query?: {
+          type?: 'prescription' | 'lab_result' | 'device_reading';
+          limit?: number;
+          cursor?: string;
+        };
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Một trang mục theo ngày mục, thời điểm lưu, id giảm dần; nextCursor null khi hết */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['DocumentEntryPage'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: type, limit hoặc cursor không hợp lệ */
+        422: {
           headers: {
             [name: string]: unknown;
           };
@@ -2124,6 +2368,95 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/health-profiles/{id}/prescriptions/{prescriptionId}/reuse': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Dùng lại đơn đã lưu: sinh đợt thuốc mới từ các dòng chọn (SPEC-029) */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+          prescriptionId: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['ReusePrescriptionRequest'];
+        };
+      };
+      responses: {
+        /** @description Các đợt mới theo thứ tự dòng gửi lên */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ReusePrescriptionResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: main cùng gia đình và CSRF */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ hoặc đơn không thuộc gia đình/hồ sơ */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED, ERR_COURSE_CONFLICT_UNRESOLVED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json':
+              components['schemas']['ErrorResponse'] | components['schemas']['CourseConflictErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION, ERR_DOSE_INFO_MISSING (details.invalidItemIndexes) */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/medication-courses/{courseId}/stop': {
     parameters: {
       query?: never;
@@ -2284,6 +2617,160 @@ export interface paths {
           };
         };
         /** @description ERR_DOSE_INFO_MISSING, ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/adherence-periods': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Liệt kê giai đoạn dùng thuốc thực tế của hồ sơ */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Ngày Việt Nam và các giai đoạn theo tên thuốc chuẩn hóa, mốc tăng dần */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AdherencePeriodList'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    /** Ghi nhận giai đoạn dùng/ngưng thuốc thực tế (SPEC-022), tự đóng giai đoạn đang mở */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['RecordAdherencePeriodRequest'];
+        };
+      };
+      responses: {
+        /** @description Giai đoạn mới đang mở */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AdherencePeriod'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: mốc không sau giai đoạn trước, ở tương lai hoặc trùng trạng thái */
         422: {
           headers: {
             [name: string]: unknown;
@@ -2998,6 +3485,98 @@ export interface components {
       /** @enum {boolean} */
       confirmed: true;
     };
+    MeasurementPage: {
+      items: components['schemas']['Measurement'][];
+      /** Format: uuid */
+      nextCursor: string | null;
+    };
+    MeasurementSeries: {
+      points: components['schemas']['MeasurementSeriesPoint'][];
+      weeks: {
+        /** Format: date */
+        weekStart: string;
+        hasMeasurement: boolean;
+      }[];
+      periods: components['schemas']['AdherencePeriod'][];
+    };
+    MeasurementSeriesPoint: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      healthProfileId: string;
+      /** Format: uuid */
+      sourceDocumentId: string | null;
+      /** @enum {string} */
+      kind: 'blood_pressure' | 'glucose';
+      /** Format: date */
+      measuredOn: string;
+      measuredTime: string | null;
+      systolic: number | null;
+      diastolic: number | null;
+      pulse: number | null;
+      glucoseValue: number | null;
+      /** @enum {string|null} */
+      glucoseUnit: 'mmol/L' | 'mg/dL' | null;
+      manualWithoutSource: boolean;
+      /** Format: date-time */
+      createdAt: string;
+      displayGlucoseValue: number | null;
+      /** @enum {string|null} */
+      displayGlucoseUnit: 'mmol/L' | 'mg/dL' | null;
+    };
+    AdherencePeriod: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      healthProfileId: string;
+      medicationName: string;
+      status: components['schemas']['AdherenceStatus'];
+      /** Format: date */
+      fromDate: string;
+      /** Format: date */
+      toDate: string | null;
+    };
+    /** @enum {string} */
+    AdherenceStatus: 'taking' | 'stopped';
+    LabSeriesResponse: components['schemas']['LabSeries'][];
+    LabSeries: {
+      testName: string;
+      results: components['schemas']['LabResult'][];
+    };
+    DocumentEntryPage: {
+      items: components['schemas']['DocumentEntry'][];
+      nextCursor: string | null;
+    };
+    DocumentEntry: {
+      /** Format: uuid */
+      id: string;
+      /** @enum {string} */
+      origin: 'document' | 'manual';
+      /** @enum {string|null} */
+      type: 'prescription' | 'lab_result' | 'device_reading' | null;
+      /** @enum {string} */
+      status:
+        | 'uploaded'
+        | 'awaiting_privacy'
+        | 'extracting'
+        | 'pending_review'
+        | 'approved'
+        | 'rejected'
+        | 'manual_entry'
+        | 'awaiting_budget'
+        | 'manual_record';
+      /** Format: date */
+      entryDate: string;
+      dateKnown: boolean;
+      /** Format: date-time */
+      createdAt: string;
+      hasOcrImage: boolean;
+      records: {
+        prescription: components['schemas']['Prescription'];
+        labResults: components['schemas']['LabResult'][];
+        measurements: components['schemas']['Measurement'][];
+      };
+    };
     StoppableCourses: {
       /** Format: date */
       today: string;
@@ -3052,6 +3631,22 @@ export interface components {
       /** Format: date */
       prescriptionIssuedDate: string | null;
     };
+    ReusePrescriptionResponse: {
+      courses: components['schemas']['MedicationCourse'][];
+    };
+    ReusePrescriptionRequest: {
+      /** Format: date */
+      startDate: string;
+      items: {
+        /** Format: uuid */
+        prescriptionItemId: string;
+        durationDays: number | null;
+        longTerm: boolean;
+        /** @enum {string} */
+        resolution?: 'replace' | 'parallel';
+        expectedConflictCourseIds?: string[];
+      }[];
+    };
     StopCourseRequest: {
       /** Format: date */
       stopDate: string;
@@ -3067,6 +3662,17 @@ export interface components {
       /** @enum {string} */
       resolution?: 'replace' | 'parallel';
       expectedConflictCourseIds?: string[];
+    };
+    AdherencePeriodList: {
+      /** Format: date */
+      today: string;
+      periods: components['schemas']['AdherencePeriod'][];
+    };
+    RecordAdherencePeriodRequest: {
+      medicationName: string;
+      status: components['schemas']['AdherenceStatus'];
+      /** Format: date */
+      fromDate: string;
     };
     ConsentInvitationCreated: {
       token: string;

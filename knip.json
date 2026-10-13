@@ -21,7 +21,7 @@
     },
     "apps/web": {
       "entry": ["src/app/routes/**/*.tsx!"],
-      "project": ["src/**/*.{ts,tsx,css}!"]
+      "project": ["src/**/*.{ts,tsx,css}!", "!src/**/*.test-helper.ts!"]
     },
     "packages/contracts": {
       "project": ["src/**/*.ts!"]

@@ -24,11 +24,17 @@ export const HEALTH_DATA_ROUTES = {
   'POST /api/source-documents/:id/privacy-approval': 'scoped',
   'POST /api/source-documents/:id/manual-entry': 'scoped',
   'GET /api/health-profiles/:id/measurements': 'scoped',
+  'GET /api/health-profiles/:id/measurements/series': 'scoped',
+  'GET /api/health-profiles/:id/lab-result-series': 'scoped',
+  'GET /api/health-profiles/:id/document-entries': 'scoped',
   'POST /api/health-profiles/:id/manual-records': 'scoped',
   'POST /api/health-profiles/:id/medication-courses': 'scoped',
   'GET /api/health-profiles/:id/medication-courses/stoppable': 'scoped',
   'GET /api/health-profiles/:id/medication-courses/current': 'scoped',
   'POST /api/health-profiles/:id/medication-courses/:courseId/stop': 'scoped',
+  'POST /api/health-profiles/:id/prescriptions/:prescriptionId/reuse': 'scoped',
+  'GET /api/health-profiles/:id/adherence-periods': 'scoped',
+  'POST /api/health-profiles/:id/adherence-periods': 'scoped',
 } as const;
 
 type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;

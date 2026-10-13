@@ -1,0 +1,2 @@
+ALTER TABLE "medication_courses" DROP CONSTRAINT "medication_courses_prescription_item_unique";--> statement-breakpoint
+CREATE INDEX "medication_courses_prescription_item_idx" ON "medication_courses" USING btree ("prescription_item_id");

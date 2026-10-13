@@ -97,7 +97,10 @@ describe('Nhập liệu thủ công: route thật + RLS (SPEC-011, E3-S4-T1)', (
     );
     expect(rows.rows).toEqual([{ source_document_id: null, manual_without_source: true }]);
     const listed = await t.call(main, 'GET', `/api/health-profiles/${profile.id}/measurements`);
-    expect(await listed.json()).toEqual([expect.objectContaining({ manualWithoutSource: true })]);
+    expect(await listed.json()).toEqual({
+      items: [expect.objectContaining({ manualWithoutSource: true })],
+      nextCursor: null,
+    });
   });
 
   it('BR-009: hồ sơ chưa đồng thuận → 409 ERR_CONSENT_REQUIRED, không lưu', async () => {

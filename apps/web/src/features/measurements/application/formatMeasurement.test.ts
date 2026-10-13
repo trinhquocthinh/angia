@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatDay, readingText } from './formatMeasurement';
+import { displayReadingText, formatDay, readingText } from './formatMeasurement';
 import type { Measurement } from './ports';
 
 const base: Measurement = {
@@ -45,5 +45,22 @@ describe('Hiển thị số đo đã duyệt', () => {
         glucoseUnit: 'mg/dL',
       }),
     ).toBe('126 mg/dL');
+  });
+
+  it('chuỗi biểu đồ: đường huyết theo giá trị hiển thị mmol/L, luôn 1 số lẻ (BR-020)', () => {
+    const glucose = {
+      ...base,
+      kind: 'glucose' as const,
+      systolic: null,
+      diastolic: null,
+      glucoseValue: 126,
+      glucoseUnit: 'mg/dL' as const,
+      displayGlucoseValue: 7,
+      displayGlucoseUnit: 'mmol/L' as const,
+    };
+    expect(displayReadingText(glucose)).toBe('7,0 mmol/L');
+    expect(displayReadingText({ ...base, displayGlucoseValue: null, displayGlucoseUnit: null })).toBe(
+      '152/94 mmHg',
+    );
   });
 });

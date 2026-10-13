@@ -1,42 +1,19 @@
-import { useCurrentSession } from '@src/features/auth/application/useCurrentSession';
-import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
 import { ProfileHealthHeader } from '@src/features/measurements/presentation/components/ProfileHealthHeader';
-import { useProfileSessionRecovery } from '@src/features/profiles/application/useProfileSessionRecovery';
-import { useProfilesWorkspace } from '@src/features/profiles/application/useProfilesWorkspace';
-import { createProfilesRepository } from '@src/features/profiles/infrastructure/createProfilesRepository';
-import { ProfileFrame } from '@src/features/profiles/presentation/components/ProfileFrame';
-import { RecipientNotice } from '@src/features/profiles/presentation/components/RecipientNotice';
-import '@src/features/profiles/presentation/profiles.css';
+import { ProfileSectionPage } from '@src/features/profiles/presentation/components/ProfileSectionPage';
 import { useCurrentMedications } from '../application/useCurrentMedications';
 import { createMedicationCatalogRepository } from '../infrastructure/createMedicationCatalogRepository';
 import { MedicationCatalog } from './MedicationCatalog';
 import { SelfReportedCourseAction } from './SelfReportedCourseAction';
 import { StopCourseAction } from './StopCourseAction';
 
-const profilesRepository = createProfilesRepository();
 const catalogRepository = createMedicationCatalogRepository();
 
 // Tab "Thuốc điều trị" (E4-S4-T1): danh mục thuốc đang dùng hôm nay theo buổi (SPEC-018).
 export function MedicationsPage({ profileId }: { profileId: string }) {
-  const session = useCurrentSession(fetchCurrentSession);
-  const workspace = useProfilesWorkspace(profilesRepository, session.data);
-  const profiles = workspace.profiles.data ?? [];
-  const profile = profiles.find((item) => item.id === profileId);
-  useProfileSessionRecovery(workspace.profiles.error);
-  if (!session.data) return null;
-  const main = session.data.role === 'main';
   return (
-    <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
-      {!main ? (
-        <RecipientNotice />
-      ) : workspace.profiles.isSuccess && !profile ? (
-        <p role="alert" className="rounded-[20px] bg-white p-6 text-sm">
-          Không tìm thấy hồ sơ này trong gia đình.
-        </p>
-      ) : (
-        profile && <MedicationsContent profile={profile} session={session.data} />
-      )}
-    </ProfileFrame>
+    <ProfileSectionPage profileId={profileId}>
+      {(profile, session) => <MedicationsContent profile={profile} session={session} />}
+    </ProfileSectionPage>
   );
 }
 

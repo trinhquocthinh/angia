@@ -3,8 +3,8 @@ import type { HealthProfile } from '@src/features/profiles/application/ports';
 import { formatDay } from '@src/features/measurements/application/formatMeasurement';
 import type { useStoppableCourses } from '../application/useStoppableCourses';
 import type { useStopCourse } from '../application/useStopCourse';
-import { MedicationDrawer } from './MedicationDrawer';
-import { MedicationDrawerFooter } from './MedicationDrawerFooter';
+import { SidePanel } from '@src/shared/ui/SidePanel';
+import { SidePanelFooter } from '@src/shared/ui/SidePanelFooter';
 import { StopCourseChooser } from './StopCourseChooser';
 import { StopCourseForm } from './StopCourseForm';
 type Props = {
@@ -20,7 +20,7 @@ export function StopCourseSheetBody({ profile, courses, state, onClose }: Props)
   const list = consented && !courses.isFetching && !courses.isError ? courses.data?.courses : undefined;
   const selected = list?.find((course) => course.id === selectedId);
   return (
-    <MedicationDrawer
+    <SidePanel
       titleId="stop-course-title"
       title={`Ghi nhận dừng thuốc cho ${profile.displayName}`}
       subtitle="Chọn đợt thuốc và ngày bắt đầu dừng; lịch sử trước đó được giữ nguyên."
@@ -58,7 +58,7 @@ export function StopCourseSheetBody({ profile, courses, state, onClose }: Props)
           onCancel={onClose}
         />
       ) : (
-        <MedicationDrawerFooter
+        <SidePanelFooter
           submitLabel={state.saved || !consented ? null : 'Xác nhận dừng đợt thuốc'}
           cancelLabel={state.saved || !consented ? 'Đóng' : 'Hủy bỏ & Giữ nguyên đợt thuốc'}
           disabled={true}
@@ -67,6 +67,6 @@ export function StopCourseSheetBody({ profile, courses, state, onClose }: Props)
           onCancel={onClose}
         />
       )}
-    </MedicationDrawer>
+    </SidePanel>
   );
 }
