@@ -7,6 +7,7 @@ import { HEALTH_DATA_ROUTES, type RouteOfKind } from './healthDataRoutes.js';
 import type { SeededSession } from './seedAuthFixtures.js';
 import type { Target, Probe } from './CrossFamilyTarget.js';
 import { seedPendingDocument } from './seedPendingDocument.js';
+import { snapshotHealthTables } from './snapshotHealthTables.js';
 import { startProfileTestApp, type ProfileTestApp } from './startProfileTestApp.js';
 
 const reading = {
@@ -23,20 +24,8 @@ const reading = {
 const respondBody = { decision: 'accepted', basis: 'self', respondentName: 'Lén' };
 const profiles = '/api/health-profiles';
 const documents = '/api/source-documents';
+const adherence = { medicationName: 'Canxi', status: 'taking', fromDate: '2026-10-01' };
 const seriesQuery = 'kind=blood_pressure&from=2026-10-01&to=2026-10-31';
-const SNAPSHOT_TABLES = [
-  'health_profiles',
-  'accounts',
-  'consent_invitations',
-  'upload_batches',
-  'source_documents',
-  'extractions',
-  'measurements',
-  'prescriptions',
-  'prescription_items',
-  'medication_courses',
-  'lab_results',
-];
 
 describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gia đình (E2-S7-T1)', () => {
   let t: ProfileTestApp;
@@ -123,6 +112,10 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses/${x.courseId}/stop`, {
         stopDate: '2026-10-05',
       }),
+    'GET /api/health-profiles/:id/adherence-periods': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/adherence-periods`),
+    'POST /api/health-profiles/:id/adherence-periods': (u, x) =>
+      t.call(u, 'POST', `${profiles}/${x.profileId}/adherence-periods`, { ...adherence, status: 'stopped' }),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
         type: 'device_reading',
@@ -148,6 +141,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
         startDate: '2026-10-01',
       })
     ).json()) as { id: string };
+    await t.call(main, 'POST', `${profiles}/${profile.id}/adherence-periods`, adherence);
     return { familyId, main, profile, documentId, token, courseId: course.id };
   };
   const attackers = async () => {
@@ -156,14 +150,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const adminMain = await t.session(familyId, 'main', 'Quản trị kiêm main', true);
     return { familyId, main, adminMain };
   };
-  const snapshot = async () => {
-    const tables: Record<string, unknown> = {};
-    for (const table of SNAPSHOT_TABLES) {
-      const sql = `SELECT coalesce(json_agg(x ORDER BY x.id), '[]') AS rows FROM ${table} x`;
-      tables[table] = (await t.owner.query(sql)).rows[0].rows;
-    }
-    return tables;
-  };
+  const snapshot = () => snapshotHealthTables(t.owner);
 
   it('TC-013, TC-014, TC-015, TC-076: main và Quản trị kiêm main nhóm khác nhận đúng phản hồi của ID không tồn tại, không ghi gì', async () => {
     const victim = await victimFixture();

@@ -1,3 +1,4 @@
+import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
 import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
 import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
@@ -76,6 +77,7 @@ function buildApp(
     measurements: createMeasurementRepository(database),
     labResults: createLabResultRepository(database),
     medications: createMedicationRepository(database),
+    adherence: createAdherenceRepository(database),
   });
 }
 

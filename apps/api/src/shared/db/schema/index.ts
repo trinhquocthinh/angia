@@ -14,3 +14,4 @@ export { labResults } from './labResults.js';
 export { extractionSpend } from './extractionSpend.js';
 export { extractionReservations } from './extractionReservations.js';
 export { medicationCourses } from './medicationCourses.js';
+export { adherencePeriods } from './adherencePeriods.js';

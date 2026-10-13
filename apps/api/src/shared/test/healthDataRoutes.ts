@@ -31,6 +31,8 @@ export const HEALTH_DATA_ROUTES = {
   'GET /api/health-profiles/:id/medication-courses/stoppable': 'scoped',
   'GET /api/health-profiles/:id/medication-courses/current': 'scoped',
   'POST /api/health-profiles/:id/medication-courses/:courseId/stop': 'scoped',
+  'GET /api/health-profiles/:id/adherence-periods': 'scoped',
+  'POST /api/health-profiles/:id/adherence-periods': 'scoped',
 } as const;
 
 type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;

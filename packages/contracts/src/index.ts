@@ -145,3 +145,13 @@ export {
   type CurrentMedicationCourse,
   type CurrentMedications,
 } from './medications/currentMedicationSchemas.js';
+export {
+  adherencePeriodListSchema,
+  adherencePeriodSchema,
+  recordAdherencePeriodRequestSchema,
+} from './adherence/adherencePeriodSchemas.js';
+export type {
+  AdherencePeriod,
+  AdherencePeriodList,
+  RecordAdherencePeriodRequest,
+} from './adherence/adherencePeriodSchemas.js';

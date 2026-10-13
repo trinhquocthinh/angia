@@ -1,3 +1,4 @@
+import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
 import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
 import { createPrivacyQueue } from '@src/features/documentPrivacy/infrastructure/createPrivacyQueue.js';
@@ -111,6 +112,7 @@ const app = createApp({
   measurements: createMeasurementRepository(db),
   labResults: createLabResultRepository(db),
   medications: createMedicationRepository(db),
+  adherence: createAdherenceRepository(db),
 });
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {

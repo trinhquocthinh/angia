@@ -2477,6 +2477,93 @@
         ],
         "additionalProperties": false
       },
+      "AdherencePeriodList": {
+        "type": "object",
+        "properties": {
+          "today": {
+            "type": "string",
+            "format": "date"
+          },
+          "periods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdherencePeriod"
+            }
+          }
+        },
+        "required": [
+          "today",
+          "periods"
+        ]
+      },
+      "AdherencePeriod": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "healthProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "medicationName": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AdherenceStatus"
+          },
+          "fromDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "toDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          }
+        },
+        "required": [
+          "id",
+          "healthProfileId",
+          "medicationName",
+          "status",
+          "fromDate",
+          "toDate"
+        ]
+      },
+      "AdherenceStatus": {
+        "type": "string",
+        "enum": [
+          "taking",
+          "stopped"
+        ]
+      },
+      "RecordAdherencePeriodRequest": {
+        "type": "object",
+        "properties": {
+          "medicationName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "status": {
+            "$ref": "#/components/schemas/AdherenceStatus"
+          },
+          "fromDate": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "medicationName",
+          "status",
+          "fromDate"
+        ],
+        "additionalProperties": false
+      },
       "ConsentInvitationCreated": {
         "type": "object",
         "properties": {
@@ -5123,6 +5210,176 @@
           },
           "422": {
             "description": "ERR_DOSE_INFO_MISSING, ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/adherence-periods": {
+      "get": {
+        "tags": [
+          "adherence"
+        ],
+        "summary": "Liệt kê giai đoạn dùng thuốc thực tế của hồ sơ",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ngày Việt Nam và các giai đoạn theo tên thuốc chuẩn hóa, mốc tăng dần",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdherencePeriodList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "adherence"
+        ],
+        "summary": "Ghi nhận giai đoạn dùng/ngưng thuốc thực tế (SPEC-022), tự đóng giai đoạn đang mở",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordAdherencePeriodRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Giai đoạn mới đang mở",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdherencePeriod"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: mốc không sau giai đoạn trước, ở tương lai hoặc trùng trạng thái",
             "content": {
               "application/json": {
                 "schema": {

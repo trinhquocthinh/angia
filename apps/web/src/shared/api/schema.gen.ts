@@ -2466,6 +2466,160 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/health-profiles/{id}/adherence-periods': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Liệt kê giai đoạn dùng thuốc thực tế của hồ sơ */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Ngày Việt Nam và các giai đoạn theo tên thuốc chuẩn hóa, mốc tăng dần */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AdherencePeriodList'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    /** Ghi nhận giai đoạn dùng/ngưng thuốc thực tế (SPEC-022), tự đóng giai đoạn đang mở */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['RecordAdherencePeriodRequest'];
+        };
+      };
+      responses: {
+        /** @description Giai đoạn mới đang mở */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AdherencePeriod'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: mốc không sau giai đoạn trước, ở tương lai hoặc trùng trạng thái */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/consent-invitations': {
     parameters: {
       query?: never;
@@ -3276,6 +3430,31 @@ export interface components {
       /** @enum {string} */
       resolution?: 'replace' | 'parallel';
       expectedConflictCourseIds?: string[];
+    };
+    AdherencePeriodList: {
+      /** Format: date */
+      today: string;
+      periods: components['schemas']['AdherencePeriod'][];
+    };
+    AdherencePeriod: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      healthProfileId: string;
+      medicationName: string;
+      status: components['schemas']['AdherenceStatus'];
+      /** Format: date */
+      fromDate: string;
+      /** Format: date */
+      toDate: string | null;
+    };
+    /** @enum {string} */
+    AdherenceStatus: 'taking' | 'stopped';
+    RecordAdherencePeriodRequest: {
+      medicationName: string;
+      status: components['schemas']['AdherenceStatus'];
+      /** Format: date */
+      fromDate: string;
     };
     ConsentInvitationCreated: {
       token: string;
