@@ -14,6 +14,8 @@ import {
   registerReviewRoutes,
   type ReviewDependencies,
 } from '@src/features/documents/presentation/registerReviewRoutes.js';
+import type { LabResultRepository } from '@src/features/labResults/application/ports.js';
+import { registerLabResultRoutes } from '@src/features/labResults/presentation/registerLabResultRoutes.js';
 import type { MeasurementRepository } from '@src/features/measurements/application/ports.js';
 import { registerMeasurementRoutes } from '@src/features/measurements/presentation/registerMeasurementRoutes.js';
 import type { ProfileRepository } from '@src/features/profiles/application/ports.js';
@@ -44,6 +46,7 @@ export type AppDependencies = {
   review: ReviewDependencies;
   privacy: PrivacyDependencies;
   measurements: MeasurementRepository;
+  labResults: LabResultRepository;
   medications: MedicationManagementRepository;
 };
 
@@ -87,6 +90,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerManualRecordRoutes(app, deps.review.repository);
   registerPrivacyRoutes(app, deps.privacy);
   registerMeasurementRoutes(app, deps.measurements);
+  registerLabResultRoutes(app, deps.labResults);
   registerMedicationRoutes(app, deps.medications, deps.auth.login.now);
   registerInvitationRoutes(app, deps.consentInvitations);
   return app;

@@ -18,6 +18,7 @@ import type { PgBoss } from 'pg-boss';
 import { createApp } from '@src/createApp.js';
 import { createDocumentRepository } from '@src/features/documents/infrastructure/createDocumentRepository.js';
 import { createReviewRepository } from '@src/features/documents/infrastructure/createReviewRepository.js';
+import { createLabResultRepository } from '@src/features/labResults/infrastructure/createLabResultRepository.js';
 import { createMeasurementRepository } from '@src/features/measurements/infrastructure/createMeasurementRepository.js';
 import { createPreviewQueue } from '@src/features/documents/infrastructure/createPreviewQueue.js';
 import { newId } from '@src/shared/db/schema/newId.js';
@@ -73,6 +74,7 @@ function buildApp(
       now: () => new Date(),
     },
     measurements: createMeasurementRepository(database),
+    labResults: createLabResultRepository(database),
     medications: createMedicationRepository(database),
   });
 }

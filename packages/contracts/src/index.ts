@@ -72,6 +72,12 @@ export type { Prescription } from './prescriptions/prescriptionSchema.js';
 export { labResultSchema } from './labResults/labResultSchema.js';
 export type { LabResult } from './labResults/labResultSchema.js';
 export {
+  labSeriesQuerySchema,
+  labSeriesResponseSchema,
+  labSeriesSchema,
+} from './labResults/labSeriesSchema.js';
+export type { LabSeries } from './labResults/labSeriesSchema.js';
+export {
   measurementListQuerySchema,
   measurementPageSchema,
   measurementSchema,

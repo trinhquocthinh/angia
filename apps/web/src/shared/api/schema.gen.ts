@@ -2048,6 +2048,82 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/health-profiles/{id}/lab-result-series': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Chuỗi biến thiên kết quả xét nghiệm theo chỉ số (SPEC-021), không phân trang */
+    get: {
+      parameters: {
+        query?: {
+          testName?: string;
+        };
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Nhóm chỉ số có kết quả mới nhất trước; kết quả trong nhóm cũ nhất trước */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['LabSeriesResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/medication-courses/stoppable': {
     parameters: {
       query?: never;
@@ -3125,6 +3201,11 @@ export interface components {
       displayGlucoseValue: number | null;
       /** @enum {string|null} */
       displayGlucoseUnit: 'mmol/L' | 'mg/dL' | null;
+    };
+    LabSeriesResponse: components['schemas']['LabSeries'][];
+    LabSeries: {
+      testName: string;
+      results: components['schemas']['LabResult'][];
     };
     StoppableCourses: {
       /** Format: date */

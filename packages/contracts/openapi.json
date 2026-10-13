@@ -2133,6 +2133,30 @@
           "displayGlucoseUnit"
         ]
       },
+      "LabSeriesResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/LabSeries"
+        }
+      },
+      "LabSeries": {
+        "type": "object",
+        "properties": {
+          "testName": {
+            "type": "string"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabResult"
+            }
+          }
+        },
+        "required": [
+          "testName",
+          "results"
+        ]
+      },
       "StoppableCourses": {
         "type": "object",
         "properties": {
@@ -4622,6 +4646,87 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MeasurementSeries"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/lab-result-series": {
+      "get": {
+        "tags": [
+          "lab-results"
+        ],
+        "summary": "Chuỗi biến thiên kết quả xét nghiệm theo chỉ số (SPEC-021), không phân trang",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "required": false,
+            "name": "testName",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nhóm chỉ số có kết quả mới nhất trước; kết quả trong nhóm cũ nhất trước",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabSeriesResponse"
                 }
               }
             }

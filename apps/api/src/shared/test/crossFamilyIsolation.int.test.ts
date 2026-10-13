@@ -105,6 +105,8 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'GET', `${profiles}/${x.profileId}/measurements`),
     'GET /api/health-profiles/:id/measurements/series': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/measurements/series?${seriesQuery}`),
+    'GET /api/health-profiles/:id/lab-result-series': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/lab-result-series`),
     'POST /api/health-profiles/:id/medication-courses': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses`, {
         name: 'Canxi',

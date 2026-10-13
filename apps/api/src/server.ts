@@ -9,6 +9,7 @@ import { createPreviewQueue } from '@src/features/documents/infrastructure/creat
 import { createReviewRepository } from '@src/features/documents/infrastructure/createReviewRepository.js';
 import { createS3ObjectReader } from '@src/features/documents/infrastructure/createS3ObjectReader.js';
 import { createS3ObjectStorage } from '@src/features/documents/infrastructure/createS3ObjectStorage.js';
+import { createLabResultRepository } from '@src/features/labResults/infrastructure/createLabResultRepository.js';
 import { createMeasurementRepository } from '@src/features/measurements/infrastructure/createMeasurementRepository.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
 import { randomBytes, randomUUID } from 'node:crypto';
@@ -108,6 +109,7 @@ const app = createApp({
     now: () => new Date(),
   },
   measurements: createMeasurementRepository(db),
+  labResults: createLabResultRepository(db),
   medications: createMedicationRepository(db),
 });
 
