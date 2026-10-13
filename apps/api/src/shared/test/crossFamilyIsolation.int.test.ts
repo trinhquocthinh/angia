@@ -8,19 +8,9 @@ import type { SeededSession } from './seedAuthFixtures.js';
 import type { Target, Probe } from './CrossFamilyTarget.js';
 import { seedPendingDocument } from './seedPendingDocument.js';
 import { snapshotHealthTables } from './snapshotHealthTables.js';
+import { manualPrescription as prescription, manualReading as reading } from './healthDataFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from './startProfileTestApp.js';
 
-const reading = {
-  type: 'device_reading',
-  measuredAt: '2026-10-05',
-  measuredTime: '07:10',
-  kind: 'blood_pressure',
-  systolic: 130,
-  diastolic: 90,
-  pulse: 78,
-  glucoseValue: null,
-  glucoseUnit: null,
-} as const;
 const respondBody = { decision: 'accepted', basis: 'self', respondentName: 'Lén' };
 const profiles = '/api/health-profiles';
 const documents = '/api/source-documents';
@@ -96,6 +86,8 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'GET', `${profiles}/${x.profileId}/measurements/series?${seriesQuery}`),
     'GET /api/health-profiles/:id/lab-result-series': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/lab-result-series`),
+    'GET /api/health-profiles/:id/document-entries': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/document-entries`),
     'POST /api/health-profiles/:id/medication-courses': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses`, {
         name: 'Canxi',
@@ -111,6 +103,11 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     'POST /api/health-profiles/:id/medication-courses/:courseId/stop': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses/${x.courseId}/stop`, {
         stopDate: '2026-10-05',
+      }),
+    'POST /api/health-profiles/:id/prescriptions/:prescriptionId/reuse': (u, x) =>
+      t.call(u, 'POST', `${profiles}/${x.profileId}/prescriptions/${x.prescriptionId}/reuse`, {
+        startDate: '2026-10-02',
+        items: [{ prescriptionItemId: x.courseId, durationDays: 7, longTerm: false }],
       }),
     'GET /api/health-profiles/:id/adherence-periods': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/adherence-periods`),
@@ -142,7 +139,10 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       })
     ).json()) as { id: string };
     await t.call(main, 'POST', `${profiles}/${profile.id}/adherence-periods`, adherence);
-    return { familyId, main, profile, documentId, token, courseId: course.id };
+    const body = { type: 'prescription', data: prescription };
+    const saved = await t.call(main, 'POST', `${profiles}/${profile.id}/manual-records`, body);
+    const { id: prescriptionId } = ((await saved.json()) as { prescription: { id: string } }).prescription;
+    return { familyId, main, profile, documentId, token, courseId: course.id, prescriptionId };
   };
   const attackers = async () => {
     const familyId = await t.family();
@@ -160,6 +160,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       documentId: victim.documentId,
       accountId: victim.main.accountId,
       courseId: victim.courseId,
+      prescriptionId: victim.prescriptionId,
       token: t.codec.issue({ ...t.codec.verify(victim.token)!, familyId }),
     };
     const missing: Target = {
@@ -167,6 +168,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       documentId: randomUUID(),
       accountId: randomUUID(),
       courseId: randomUUID(),
+      prescriptionId: randomUUID(),
       token: 'bogus',
     };
     const before = await snapshot();
@@ -239,7 +241,10 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
         ':id',
         pattern.startsWith(documents) ? victim.documentId : victim.profile.id,
       );
-      const status = (await t.call(member, method, path.replace(':courseId', victim.courseId))).status;
+      const concrete = path
+        .replace(':courseId', victim.courseId)
+        .replace(':prescriptionId', victim.prescriptionId);
+      const status = (await t.call(member, method, concrete)).status;
       expect({ route, status }).toEqual({ route, status: 403 });
     }
   });

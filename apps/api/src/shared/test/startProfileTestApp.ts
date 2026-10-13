@@ -20,6 +20,7 @@ import { createApp } from '@src/createApp.js';
 import { createDocumentRepository } from '@src/features/documents/infrastructure/createDocumentRepository.js';
 import { createReviewRepository } from '@src/features/documents/infrastructure/createReviewRepository.js';
 import { createLabResultRepository } from '@src/features/labResults/infrastructure/createLabResultRepository.js';
+import { createDocumentEntryRepository } from '@src/features/documents/infrastructure/createDocumentEntryRepository.js';
 import { createMeasurementRepository } from '@src/features/measurements/infrastructure/createMeasurementRepository.js';
 import { createPreviewQueue } from '@src/features/documents/infrastructure/createPreviewQueue.js';
 import { newId } from '@src/shared/db/schema/newId.js';
@@ -76,6 +77,7 @@ function buildApp(
     },
     measurements: createMeasurementRepository(database),
     labResults: createLabResultRepository(database),
+    documentEntries: createDocumentEntryRepository(database),
     medications: createMedicationRepository(database),
     adherence: createAdherenceRepository(database),
   });

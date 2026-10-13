@@ -2209,6 +2209,119 @@
           "results"
         ]
       },
+      "DocumentEntryPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentEntry"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "DocumentEntry": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "origin": {
+            "type": "string",
+            "enum": [
+              "document",
+              "manual"
+            ]
+          },
+          "type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "prescription",
+              "lab_result",
+              "device_reading",
+              null
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "uploaded",
+              "awaiting_privacy",
+              "extracting",
+              "pending_review",
+              "approved",
+              "rejected",
+              "manual_entry",
+              "awaiting_budget",
+              "manual_record"
+            ]
+          },
+          "entryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "dateKnown": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "hasOcrImage": {
+            "type": "boolean"
+          },
+          "records": {
+            "type": "object",
+            "properties": {
+              "prescription": {
+                "$ref": "#/components/schemas/Prescription"
+              },
+              "labResults": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LabResult"
+                }
+              },
+              "measurements": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Measurement"
+                }
+              }
+            },
+            "required": [
+              "prescription",
+              "labResults",
+              "measurements"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "origin",
+          "type",
+          "status",
+          "entryDate",
+          "dateKnown",
+          "createdAt",
+          "hasOcrImage",
+          "records"
+        ]
+      },
       "StoppableCourses": {
         "type": "object",
         "properties": {
@@ -2448,6 +2561,79 @@
           "status",
           "prescriptionIssuedDate"
         ]
+      },
+      "ReusePrescriptionResponse": {
+        "type": "object",
+        "properties": {
+          "courses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MedicationCourse"
+            }
+          }
+        },
+        "required": [
+          "courses"
+        ]
+      },
+      "ReusePrescriptionRequest": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "prescriptionItemId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "durationDays": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 1,
+                  "maximum": 3650
+                },
+                "longTerm": {
+                  "type": "boolean"
+                },
+                "resolution": {
+                  "type": "string",
+                  "enum": [
+                    "replace",
+                    "parallel"
+                  ]
+                },
+                "expectedConflictCourseIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              },
+              "required": [
+                "prescriptionItemId",
+                "durationDays",
+                "longTerm"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 50
+          }
+        },
+        "required": [
+          "startDate",
+          "items"
+        ],
+        "additionalProperties": false
       },
       "StopCourseRequest": {
         "type": "object",
@@ -3808,7 +3994,7 @@
         "tags": [
           "documents"
         ],
-        "summary": "Luồng ảnh chứng từ (preview chưa có thì trả ảnh gốc)",
+        "summary": "Luồng ảnh chứng từ (preview chưa có thì trả ảnh gốc; ocr = bản đã che đã gửi AI)",
         "parameters": [
           {
             "schema": {
@@ -3824,7 +4010,8 @@
               "type": "string",
               "enum": [
                 "preview",
-                "original"
+                "original",
+                "ocr"
               ],
               "default": "original"
             },
@@ -4868,6 +5055,111 @@
         }
       }
     },
+    "/api/health-profiles/{id}/document-entries": {
+      "get": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Danh mục chứng từ và đơn/phiếu nhập trực tiếp của hồ sơ, kèm bản ghi đã lưu (SPEC-028)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "prescription",
+                "lab_result",
+                "device_reading"
+              ]
+            },
+            "required": false,
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Một trang mục theo ngày mục, thời điểm lưu, id giảm dần; nextCursor null khi hết",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentEntryPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: type, limit hoặc cursor không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/health-profiles/{id}/medication-courses/stoppable": {
       "get": {
         "tags": [
@@ -5019,6 +5311,113 @@
           },
           "422": {
             "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/prescriptions/{prescriptionId}/reuse": {
+      "post": {
+        "tags": [
+          "medications"
+        ],
+        "summary": "Dùng lại đơn đã lưu: sinh đợt thuốc mới từ các dòng chọn (SPEC-029)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "prescriptionId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReusePrescriptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Các đợt mới theo thứ tự dòng gửi lên",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReusePrescriptionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: main cùng gia đình và CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ hoặc đơn không thuộc gia đình/hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED, ERR_COURSE_CONFLICT_UNRESOLVED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CourseConflictErrorResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION, ERR_DOSE_INFO_MISSING (details.invalidItemIndexes)",
             "content": {
               "application/json": {
                 "schema": {

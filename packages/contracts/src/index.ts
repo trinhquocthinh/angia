@@ -155,3 +155,17 @@ export type {
   AdherencePeriodList,
   RecordAdherencePeriodRequest,
 } from './adherence/adherencePeriodSchemas.js';
+export {
+  documentEntryPageSchema,
+  documentEntryQuerySchema,
+  documentEntrySchema,
+} from './documents/documentEntrySchemas.js';
+export type { DocumentEntry, DocumentEntryPage } from './documents/documentEntrySchemas.js';
+export {
+  reusePrescriptionRequestSchema,
+  reusePrescriptionResponseSchema,
+} from './medications/reusePrescriptionSchemas.js';
+export type {
+  ReusePrescriptionRequest,
+  ReusePrescriptionResponse,
+} from './medications/reusePrescriptionSchemas.js';

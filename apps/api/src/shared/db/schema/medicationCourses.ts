@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { check, date, foreignKey, index, numeric, pgTable, text, unique, uuid } from 'drizzle-orm/pg-core';
+import { check, date, foreignKey, index, numeric, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import { familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
 import { healthProfiles } from './healthProfiles.js';
 import { prescriptionItems } from './prescriptionItems.js';
@@ -31,7 +31,8 @@ export const medicationCourses = pgTable(
       columns: [t.healthProfileId, t.familyId],
       foreignColumns: [healthProfiles.id, healthProfiles.familyId],
     }).onDelete('cascade'),
-    unique('medication_courses_prescription_item_unique').on(t.prescriptionItemId),
+    // Một dòng đơn nhiều đợt: đợt gốc + các lần "Dùng lại đơn" (SPEC-029, migration 0016).
+    index('medication_courses_prescription_item_idx').on(t.prescriptionItemId),
     index('medication_courses_profile_status_idx').on(t.healthProfileId, t.status),
     index('medication_courses_profile_name_idx').on(t.healthProfileId, t.nameNormalized),
     check('medication_courses_source_valid', sql`${t.source} IN ('prescription', 'self_reported')`),

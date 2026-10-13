@@ -1,3 +1,4 @@
+import type { Prescription } from '@src/features/prescriptions/domain/Prescription.js';
 import type { MedicationCourse } from '../domain/MedicationCourse.js';
 import type { MedicationStore } from './ports.js';
 /** Đợt kèm ngày kê của đơn nguồn (null với đợt tự khai báo) cho danh mục E4-S4-T1. */
@@ -6,6 +7,8 @@ interface MedicationManagementStore extends MedicationStore {
   /** Mọi đợt của hồ sơ, mọi trạng thái; bên gọi lọc theo ngày bằng SPEC-018. */
   findMedicationHistory(profileId: string): Promise<CurrentMedicationCourse[]>;
   findMedicationCourse(profileId: string, courseId: string): Promise<MedicationCourse | null>;
+  /** Đơn đã lưu của đúng hồ sơ (kèm dòng) để Dùng lại đơn (SPEC-029). */
+  findPrescription(profileId: string, prescriptionId: string): Promise<Prescription | null>;
   stopMedicationCourse(
     profileId: string,
     courseId: string,

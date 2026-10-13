@@ -5,6 +5,7 @@ export interface Target {
   documentId: string;
   accountId: string;
   courseId: string;
+  prescriptionId: string;
   token: string;
 }
 export type Probe = (user: SeededSession, target: Target) => Response | Promise<Response>;

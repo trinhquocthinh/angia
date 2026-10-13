@@ -2,7 +2,7 @@ import { mondayOf } from './mondayOf';
 
 export type WeekSpan = 4 | 12 | 26;
 
-const vietnamToday = (now: Date) =>
+export const vietnamToday = (now: Date) =>
   new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Ho_Chi_Minh',
     year: 'numeric',

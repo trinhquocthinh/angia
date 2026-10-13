@@ -7,6 +7,7 @@ import type { MedicationManagementRepository, MedicationClock } from '../applica
 import { stopCourse } from '../application/stopCourse.js';
 import { listStoppableCourses } from '../application/listStoppableCourses.js';
 import { registerCurrentMedicationsRoute } from './registerCurrentMedicationsRoute.js';
+import { registerReusePrescriptionRoute } from './registerReusePrescriptionRoute.js';
 import { stopCourseRoute, listStoppableCoursesRoute } from './stopCourseRouteDefinitions.js';
 import { createSelfReportedCourseRoute } from './medicationRouteDefinitions.js';
 import { toCourseConflictErrorJson } from './toCourseConflictErrorJson.js';
@@ -36,6 +37,7 @@ export function registerMedicationRoutes(
     );
   });
   registerCurrentMedicationsRoute(app, repository, now);
+  registerReusePrescriptionRoute(app, repository, now);
   app.openapi(stopCourseRoute, async (c) => {
     const params = c.req.valid('param');
     const result = await stopCourse(

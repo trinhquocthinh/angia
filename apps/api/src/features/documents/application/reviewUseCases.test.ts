@@ -16,6 +16,7 @@ const doc = (id: string, overrides: Partial<SourceDocument> = {}): SourceDocumen
   documentDate: null,
   originalKey: `k/${id}/original.heic`,
   previewKey: null,
+  ocrImageKey: null,
   mimeType: 'image/heic',
   sizeBytes: 10,
   createdAt: new Date('2026-10-06T00:00:00Z'),
