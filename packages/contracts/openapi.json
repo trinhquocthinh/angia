@@ -2757,6 +2757,87 @@
         ],
         "additionalProperties": false
       },
+      "VisitSummary": {
+        "type": "object",
+        "properties": {
+          "profile": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string"
+              },
+              "birthYear": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "displayName",
+              "birthYear"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "currentMedications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CurrentMedicationCourse"
+            }
+          },
+          "measurements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Measurement"
+            }
+          },
+          "latestLabResults": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabResult"
+            }
+          },
+          "adherencePeriods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdherencePeriod"
+            }
+          },
+          "disclaimer": {
+            "type": "string",
+            "enum": [
+              "Tài liệu tổng hợp từ gia đình, không phải chỉ định y khoa."
+            ]
+          }
+        },
+        "required": [
+          "profile",
+          "createdAt",
+          "from",
+          "to",
+          "currentMedications",
+          "measurements",
+          "latestLabResults",
+          "adherencePeriods",
+          "disclaimer"
+        ]
+      },
       "ConsentInvitationCreated": {
         "type": "object",
         "properties": {
@@ -5786,6 +5867,105 @@
           },
           "422": {
             "description": "ERR_VALIDATION: mốc không sau giai đoạn trước, ở tương lai hoặc trùng trạng thái",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/visit-summary": {
+      "get": {
+        "tags": [
+          "visit-summary"
+        ],
+        "summary": "Dữ liệu bản tóm tắt hồ sơ tái khám (SPEC-024), mặc định 3 tháng gần nhất",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": false,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": false,
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thuốc đang dùng, số đo, xét nghiệm mới nhất, giai đoạn dùng thuốc và dòng miễn trừ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisitSummary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: from > to, to sau hôm nay hoặc khoảng quá 366 ngày",
             "content": {
               "application/json": {
                 "schema": {

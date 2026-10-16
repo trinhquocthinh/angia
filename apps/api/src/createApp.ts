@@ -22,6 +22,8 @@ import { registerDocumentEntryRoutes } from '@src/features/documents/presentatio
 import { registerLabResultRoutes } from '@src/features/labResults/presentation/registerLabResultRoutes.js';
 import type { MeasurementRepository } from '@src/features/measurements/application/ports.js';
 import { registerMeasurementRoutes } from '@src/features/measurements/presentation/registerMeasurementRoutes.js';
+import type { VisitSummaryRepository } from '@src/features/visitSummary/application/ports.js';
+import { registerVisitSummaryRoute } from '@src/features/visitSummary/presentation/registerVisitSummaryRoute.js';
 import type { ProfileRepository } from '@src/features/profiles/application/ports.js';
 import { registerProfileRoutes } from '@src/features/profiles/presentation/registerProfileRoutes.js';
 import { OpenAPIHono } from '@hono/zod-openapi';
@@ -54,6 +56,7 @@ export type AppDependencies = {
   documentEntries: DocumentEntryRepository;
   medications: MedicationManagementRepository;
   adherence: AdherenceRepository;
+  visitSummary: VisitSummaryRepository;
 };
 
 // Ngoại lệ duy nhất của "mọi route /api cần phiên" (Tech Spec §4); logout vẫn cần phiên + CSRF.
@@ -100,6 +103,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerDocumentEntryRoutes(app, deps.documentEntries);
   registerMedicationRoutes(app, deps.medications, deps.auth.login.now);
   registerAdherenceRoutes(app, deps.adherence, deps.auth.login.now);
+  registerVisitSummaryRoute(app, deps.visitSummary, deps.auth.login.now);
   registerInvitationRoutes(app, deps.consentInvitations);
   return app;
 }

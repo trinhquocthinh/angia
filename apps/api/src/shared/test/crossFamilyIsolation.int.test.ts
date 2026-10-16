@@ -113,6 +113,8 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'GET', `${profiles}/${x.profileId}/adherence-periods`),
     'POST /api/health-profiles/:id/adherence-periods': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/adherence-periods`, { ...adherence, status: 'stopped' }),
+    'GET /api/health-profiles/:id/visit-summary': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/visit-summary`),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
         type: 'device_reading',

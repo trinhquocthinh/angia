@@ -2787,6 +2787,92 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/health-profiles/{id}/visit-summary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Dữ liệu bản tóm tắt hồ sơ tái khám (SPEC-024), mặc định 3 tháng gần nhất */
+    get: {
+      parameters: {
+        query?: {
+          from?: string;
+          to?: string;
+        };
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Thuốc đang dùng, số đo, xét nghiệm mới nhất, giai đoạn dùng thuốc và dòng miễn trừ */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['VisitSummary'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: from > to, to sau hôm nay hoặc khoảng quá 366 ngày */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/consent-invitations': {
     parameters: {
       query?: never;
@@ -3673,6 +3759,26 @@ export interface components {
       status: components['schemas']['AdherenceStatus'];
       /** Format: date */
       fromDate: string;
+    };
+    VisitSummary: {
+      profile: {
+        /** Format: uuid */
+        id: string;
+        displayName: string;
+        birthYear: number | null;
+      };
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date */
+      from: string;
+      /** Format: date */
+      to: string;
+      currentMedications: components['schemas']['CurrentMedicationCourse'][];
+      measurements: components['schemas']['Measurement'][];
+      latestLabResults: components['schemas']['LabResult'][];
+      adherencePeriods: components['schemas']['AdherencePeriod'][];
+      /** @enum {string} */
+      disclaimer: 'Tài liệu tổng hợp từ gia đình, không phải chỉ định y khoa.';
     };
     ConsentInvitationCreated: {
       token: string;

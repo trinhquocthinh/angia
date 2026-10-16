@@ -12,6 +12,7 @@ import { createS3ObjectReader } from '@src/features/documents/infrastructure/cre
 import { createS3ObjectStorage } from '@src/features/documents/infrastructure/createS3ObjectStorage.js';
 import { createLabResultRepository } from '@src/features/labResults/infrastructure/createLabResultRepository.js';
 import { createDocumentEntryRepository } from '@src/features/documents/infrastructure/createDocumentEntryRepository.js';
+import { createVisitSummaryRepository } from '@src/features/visitSummary/infrastructure/createVisitSummaryRepository.js';
 import { createMeasurementRepository } from '@src/features/measurements/infrastructure/createMeasurementRepository.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
 import { randomBytes, randomUUID } from 'node:crypto';
@@ -115,6 +116,7 @@ const app = createApp({
   documentEntries: createDocumentEntryRepository(db),
   medications: createMedicationRepository(db),
   adherence: createAdherenceRepository(db),
+  visitSummary: createVisitSummaryRepository(db),
 });
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {
