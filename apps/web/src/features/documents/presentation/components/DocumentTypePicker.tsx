@@ -9,7 +9,8 @@ export const DOCUMENT_TYPES: { value: DocumentType; label: string; icon: Documen
   { value: 'device_reading', label: 'Máy đo cá nhân', icon: 'monitor' },
 ];
 
-// Loại chỉ là gợi ý (declaredType tùy chọn); bấm lại để bỏ chọn.
+// Loại chỉ là gợi ý (declaredType tùy chọn). Mặc định "AI tự nhận" từng ảnh — phù hợp lô trộn nhiều loại;
+// chọn một loại thì ảnh AI đọc ra loại khác chuyển sang nhập tay (BR-016). Bấm lại chip loại để bỏ chọn.
 export function DocumentTypePicker({
   value,
   onChange,
@@ -19,6 +20,9 @@ export function DocumentTypePicker({
 }) {
   return (
     <PickerCard icon="category" title="Loại giấy tờ" hint="Tùy chọn gợi ý">
+      <ChoiceChip selected={value === null} onClick={() => onChange(null)}>
+        AI tự nhận
+      </ChoiceChip>
       {DOCUMENT_TYPES.map((type) => (
         <ChoiceChip
           key={type.value}
@@ -31,6 +35,10 @@ export function DocumentTypePicker({
           {type.label}
         </ChoiceChip>
       ))}
+      <p className="basis-full text-xs leading-5 text-[#55615f]">
+        Chọn nhiều loại giấy tờ trong một lần tải: để AI tự nhận từng ảnh. Chỉ chọn một loại khi mọi ảnh cùng
+        loại — ảnh khác loại sẽ chuyển sang nhập tay.
+      </p>
     </PickerCard>
   );
 }

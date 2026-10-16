@@ -100,7 +100,11 @@ describe('TC-285 tab Hồ sơ & Giấy tờ khám', () => {
     const masked = panel(entry({ hasOcrImage: true }));
     expect(masked).toContain('Bản đã gửi AI');
     expect(masked).not.toContain('Dùng lại đơn này');
-    expect(panel(entry())).not.toContain('Bản đã gửi AI');
+    const plain = panel(entry());
+    expect(plain).not.toContain('Bản đã gửi AI');
+    // Ảnh gốc HEIC trình duyệt không hiển thị được: dùng bản xem trước WebP như màn duyệt.
+    expect(plain).toContain('variant=preview');
+    expect(plain).not.toContain('variant=original');
     const rx = panel(items[1]!);
     expect(rx).toContain('Dùng lại đơn này');
     expect(rx).not.toContain('<img');

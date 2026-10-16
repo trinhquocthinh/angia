@@ -11,8 +11,10 @@ type ReadingFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   compact?: boolean;
 };
 
-const inputClass =
-  'min-h-12 w-full rounded-xl bg-[#eaf6f5] px-4 text-[#131d1d] outline-none read-only:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958] aria-invalid:outline-2 aria-invalid:outline-[#b42318]';
+// Khung ô (nền, viền lỗi/focus) bọc cả ô nhập và đơn vị: đơn vị nằm cạnh, không chồng lên chữ số.
+const boxClass =
+  'flex min-h-12 items-center gap-2 rounded-xl bg-[#eaf6f5] px-4 has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-[#286958] has-[input[aria-invalid=true]]:outline-2 has-[input[aria-invalid=true]]:outline-[#b42318]';
+const inputClass = 'min-h-12 min-w-0 flex-1 bg-transparent text-[#131d1d] outline-none read-only:opacity-50';
 
 // Ô số đo: con số lớn (Design §3), đơn vị nhỏ màu phụ; lỗi hiển thị ngay dưới ô (SPEC-010).
 export function ReadingField({
@@ -31,19 +33,15 @@ export function ReadingField({
       <label htmlFor={id} className="text-sm font-medium text-[#3f4946]">
         {label}
       </label>
-      <div className="relative">
+      <div className={`${boxClass} ${flagged && !error ? 'bg-[#fff4e5]' : ''}`}>
         <input
           id={id}
           aria-invalid={Boolean(error) || flagged || undefined}
           aria-describedby={describedBy}
-          className={`${inputClass} ${compact ? 'text-base' : 'text-lg font-semibold tabular-nums'} ${unit ? 'pr-20' : ''} ${flagged && !error ? 'bg-[#fff4e5]' : ''}`}
+          className={`${inputClass} ${compact ? 'text-base' : 'text-lg font-semibold tabular-nums'}`}
           {...input}
         />
-        {unit && (
-          <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-xs text-[#55615f]">
-            {unit}
-          </span>
-        )}
+        {unit && <span className="shrink-0 text-xs whitespace-nowrap text-[#55615f]">{unit}</span>}
       </div>
       {error ? (
         <p id={`${id}-error`} className="text-sm text-[#b42318]">

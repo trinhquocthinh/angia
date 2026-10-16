@@ -26,7 +26,7 @@ type Props = {
   onMedicationSaved: (key: string) => void;
 };
 
-// Thanh công cụ tab Diễn biến; nút "Ghi giai đoạn dùng thuốc" (E5-S3-T2) đặt cuối như Stitch 718c9615.
+// Thanh công cụ tab Diễn biến; nút "Ghi thực tế dùng thuốc" (E5-S3-T2) đặt cuối như Stitch 718c9615.
 export function HealthTrendToolbar({ kind, weeks, onKindChange, onWeeksChange, ...adherence }: Props) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white p-3 shadow-sm sm:p-4">
