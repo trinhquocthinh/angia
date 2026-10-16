@@ -64,18 +64,20 @@
   padding: 3px 8px 3px 0;
   border-bottom: 1px solid #f1ece4;
   vertical-align: top;
+  overflow-wrap: anywhere;
 }
 .summary-table tr {
   break-inside: avoid;
 }
 .summary-grid {
   display: grid;
-  grid-template-columns: 1.25fr 1fr;
+  /* minmax(0, …): cột được co nhỏ hơn nội dung không ngắt dòng, bảng không tràn khỏi trang A4. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 28px;
   align-items: start;
 }
 .summary-grid--even {
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 .summary-measurements--wide .summary-table {
   font-size: 9.5pt;

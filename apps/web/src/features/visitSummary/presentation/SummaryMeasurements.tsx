@@ -54,9 +54,9 @@ export function SummaryMeasurements({ rows }: { rows: SummaryMeasurementRow[] })
 function MeasurementCells({ row, paired = false }: { row: SummaryMeasurementRow; paired?: boolean }) {
   return (
     <>
-      <td className={`whitespace-nowrap${paired ? ' summary-pair-start' : ''}`}>
-        {row.date}
-        {row.time && <span className="summary-muted"> {row.time}</span>}
+      <td className={paired ? 'summary-pair-start' : undefined}>
+        <span className="whitespace-nowrap">{row.date}</span>
+        {row.time && <span className="summary-muted whitespace-nowrap"> {row.time}</span>}
       </td>
       <td>{row.bloodPressure ?? '—'}</td>
       <td>{row.pulse ?? '—'}</td>

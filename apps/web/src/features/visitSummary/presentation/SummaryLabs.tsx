@@ -23,7 +23,9 @@ export function SummaryLabs({ rows }: { rows: SummaryLabRow[] }) {
                 <tr key={row.id}>
                   <td className="break-words">
                     {row.testName}
-                    <span className="summary-muted block text-[9pt] leading-[12pt]">{row.date}</span>
+                    <span className="summary-muted block text-[9pt] leading-[12pt] whitespace-nowrap">
+                      {row.date}
+                    </span>
                   </td>
                   <td className="whitespace-nowrap">{row.result}</td>
                   <td className="break-words">{row.referenceRange}</td>
