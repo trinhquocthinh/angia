@@ -49,4 +49,14 @@ describe('Hộp xác nhận ngoài khoảng khả dĩ trên form máy đo (SPEC-
     expect(html).toContain('Chứng từ đã được duyệt.');
     expect(html).not.toContain('Tôi đã đối chiếu với ảnh');
   });
+
+  it('ô số không bị đơn vị che: đơn vị nằm cạnh ô nhập, lưới 3 cột theo bề rộng khung form', () => {
+    const html = renderToStaticMarkup(<ReadingForm {...props} error={null} />);
+    // Cột form hẹp (màn duyệt) vẫn xếp 1 cột cho tới khi khung đủ rộng — container query, không theo viewport.
+    expect(html).toMatch(/class="@container"/);
+    expect(html).toContain('@md:grid-cols-3');
+    // Đơn vị không chồng lên ô (không absolute + padding cố định); ô nhập co giãn phần còn lại.
+    expect(html).not.toContain('pr-20');
+    expect(html).toMatch(/<input id="systolic"[^>]*class="[^"]*min-w-0 flex-1/);
+  });
 });

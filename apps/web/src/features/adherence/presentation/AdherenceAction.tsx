@@ -8,7 +8,7 @@ const repository = createAdherenceRepository();
 
 type Props = { profile: HealthProfile; session: ProfileSession; onSaved: (period: AdherencePeriod) => void };
 
-// Nút "Ghi giai đoạn dùng thuốc" trên thanh công cụ tab Diễn biến (Stitch 718c9615); chỉ main.
+// Nút "Ghi thực tế dùng thuốc" (đổi tên 2026-10-16 để không nhầm với dừng đợt thuốc) trên thanh công cụ tab Diễn biến (Stitch 718c9615); chỉ main.
 export function AdherenceAction({ profile, session, onSaved }: Props) {
   const [open, setOpen] = useState(false);
   if (session.role !== 'main' || !session.family) return null;
@@ -19,7 +19,7 @@ export function AdherenceAction({ profile, session, onSaved }: Props) {
         onClick={() => setOpen(true)}
         className="min-h-11 rounded-xl bg-[#e3efea] px-4 text-sm font-semibold text-[#004135] transition-colors hover:bg-[#d3e7df] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
       >
-        Ghi giai đoạn dùng thuốc
+        Ghi thực tế dùng thuốc
       </button>
       {open && (
         <AdherenceSheet

@@ -10,6 +10,7 @@ import { useAdherencePeriods } from '../application/useAdherencePeriods';
 import { useRecordAdherence } from '../application/useRecordAdherence';
 import { AdherenceForm } from './AdherenceForm';
 import { AdherenceSheetNotice } from './AdherenceSheetNotice';
+import { StopCoursesFollowUp } from './StopCoursesFollowUp';
 
 const catalogRepository = createMedicationCatalogRepository();
 
@@ -32,9 +33,9 @@ export function AdherenceSheet({ profile, session, repository, onClose, onSaved 
   return (
     <SidePanel
       titleId="adherence-title"
-      title={`Giai đoạn dùng thuốc của ${profile.displayName}`}
-      subtitle="Ghi nhận thực tế đang dùng hay đã ngưng một thuốc từ ngày nào."
-      closeLabel="Đóng ghi nhận giai đoạn"
+      title={`Thực tế dùng thuốc của ${profile.displayName}`}
+      subtitle="Ghi nhận người bệnh thực tế đang dùng hay đã ngưng một thuốc từ ngày nào, để đối chiếu trên biểu đồ. Không thay đổi danh mục thuốc điều trị."
+      closeLabel="Đóng ghi nhận thực tế dùng thuốc"
       pending={record.pending}
       onClose={onClose}
     >
@@ -55,6 +56,9 @@ export function AdherenceSheet({ profile, session, repository, onClose, onSaved 
             list={list}
             saved={record.saved}
           />
+          {record.saved?.status === 'stopped' && (
+            <StopCoursesFollowUp profile={profile} session={session} saved={record.saved} />
+          )}
           <SidePanelFooter
             submitLabel={null}
             cancelLabel="Đóng"
