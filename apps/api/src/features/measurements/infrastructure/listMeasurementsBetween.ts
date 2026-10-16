@@ -5,11 +5,12 @@ import type { Measurement, MeasurementKind } from '../domain/Measurement.js';
 import { toDbKind, toMeasurement } from './measurementRows.js';
 
 // SPEC-020: dùng chỉ mục (health_profile_id, kind, measured_on); cũ nhất trước — đúng thứ tự ngược trang danh sách.
+// SPEC-024 (bản tóm tắt tái khám) gọi với kind undefined để lấy mọi loại số đo.
 export async function listMeasurementsBetween(
   tx: FamilyScopedTx,
   familyId: string,
   profileId: string,
-  kind: MeasurementKind,
+  kind: MeasurementKind | undefined,
   from: string,
   to: string,
 ): Promise<Measurement[]> {
@@ -20,7 +21,7 @@ export async function listMeasurementsBetween(
       and(
         eq(measurements.familyId, familyId),
         eq(measurements.healthProfileId, profileId),
-        eq(measurements.kind, toDbKind(kind)),
+        kind === undefined ? undefined : eq(measurements.kind, toDbKind(kind)),
         between(measurements.measuredOn, from, to),
       ),
     )

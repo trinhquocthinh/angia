@@ -1,0 +1,159 @@
+/* Bản tóm tắt đi khám A4 (Design v0.1 §7, Web §6): 794×1123 px = A4 ở 96 dpi, chữ 11 pt, in đen trắng vẫn đọc được.
+   Màn hình hiện bản xem trước co theo bề ngang; lệnh in chỉ in bản sao trong .summary-print-root (không sidebar). */
+.summary-sheet {
+  box-sizing: border-box;
+  width: 794px;
+  min-height: 1123px;
+  padding: 56px 64px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  color: #1f2a2a;
+  font:
+    400 11pt/15pt 'Be Vietnam Pro',
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
+  box-shadow: 0 12px 32px rgb(31 42 42 / 0.12);
+}
+/* Khung trình bày: màn hình xếp dọc, chân trang dính đáy trang; khi in là bảng để chân trang lặp mỗi trang. */
+.summary-frame,
+.summary-frame > tbody,
+.summary-frame > tfoot,
+.summary-frame tr.summary-frame__row,
+.summary-frame td.summary-frame__cell {
+  display: block;
+}
+.summary-frame {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-collapse: collapse;
+}
+.summary-frame > tfoot {
+  margin-top: auto;
+}
+.summary-content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 18px;
+}
+.summary-sheet h3 {
+  margin: 0 0 6px;
+  font-size: 13pt;
+  line-height: 18pt;
+  font-weight: 600;
+}
+.summary-muted {
+  color: #55615f;
+}
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.summary-table th {
+  padding: 4px 8px 4px 0;
+  border-bottom: 1px solid #e4e0da;
+  color: #55615f;
+  font-weight: 500;
+  text-align: left;
+}
+.summary-table td {
+  padding: 3px 8px 3px 0;
+  border-bottom: 1px solid #f1ece4;
+  vertical-align: top;
+}
+.summary-table tr {
+  break-inside: avoid;
+}
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+.summary-grid--even {
+  grid-template-columns: 1fr 1fr;
+}
+.summary-measurements--wide .summary-table {
+  font-size: 9.5pt;
+  line-height: 13pt;
+}
+.summary-measurements--wide .summary-table td {
+  padding: 2px 6px 2px 0;
+}
+.summary-table .summary-pair-start {
+  padding-left: 12px;
+  border-left: 1px solid #e4e0da;
+}
+.summary-table th {
+  white-space: nowrap;
+}
+.summary-swatch {
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  flex: none;
+  border: 1px solid #1f2a2a;
+  background: #e3efea;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+.summary-swatch--stopped {
+  background-color: #f1ece4;
+  background-image: repeating-linear-gradient(135deg, #1f2a2a 0 1px, transparent 1px 4px);
+}
+.summary-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 10px;
+  border-top: 1px solid #e4e0da;
+  color: #55615f;
+}
+.summary-print-root {
+  display: none;
+}
+
+@page {
+  size: A4 portrait;
+  margin: 12mm 15mm;
+}
+
+@media print {
+  body:has(.summary-print-root) > :not(.summary-print-root) {
+    display: none !important;
+  }
+  html:has(.summary-print-root),
+  body:has(.summary-print-root) {
+    background: #fff;
+  }
+  .summary-print-root {
+    display: block;
+  }
+  .summary-print-root .summary-sheet {
+    width: auto;
+    min-height: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+  .summary-print-root .summary-frame {
+    display: table;
+    width: 100%;
+  }
+  .summary-print-root .summary-frame > tbody {
+    display: table-row-group;
+  }
+  .summary-print-root .summary-frame > tfoot {
+    display: table-footer-group;
+  }
+  .summary-print-root .summary-frame tr.summary-frame__row {
+    display: table-row;
+  }
+  .summary-print-root .summary-frame td.summary-frame__cell {
+    display: table-cell;
+    padding: 0;
+  }
+}

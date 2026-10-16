@@ -169,3 +169,5 @@ export type {
   ReusePrescriptionRequest,
   ReusePrescriptionResponse,
 } from './medications/reusePrescriptionSchemas.js';
+export { visitSummaryQuerySchema, visitSummarySchema } from './visitSummary/visitSummarySchemas.js';
+export type { VisitSummary } from './visitSummary/visitSummarySchemas.js';

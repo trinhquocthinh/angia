@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { currentVietnamYear } from '@src/features/profiles/application/currentVietnamYear';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
+import { VisitSummaryLink } from '@src/features/visitSummary/presentation/VisitSummaryLink';
 import { formatDay, readingText } from '../../application/formatMeasurement';
 import type { Measurement } from '../../application/ports';
 import { ManualEntryLink } from './ManualEntryLink';
@@ -47,6 +48,7 @@ export function ProfileHealthHeader({ profile, latest, active = 'health', action
         </div>
         <div className="flex flex-wrap items-center gap-2 self-start md:self-center">
           {actions}
+          <VisitSummaryLink profileId={profile.id} />
           <ManualEntryLink profileId={profile.id} />
         </div>
       </section>
