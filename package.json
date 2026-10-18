@@ -26,7 +26,7 @@
     "generate:api": "yarn build:contracts && yarn workspace @angia/api generate:openapi && yarn workspace @angia/web generate:api",
     "check:api": "yarn generate:api && git diff --exit-code -- packages/contracts/openapi.json apps/web/src/shared/api/",
     "verify:fast": "yarn typecheck && vitest run --project \"unit*\" --changed",
-    "verify": "yarn generate:api && yarn typecheck && yarn lint && yarn format:check && yarn test && yarn dup && yarn knip && yarn build",
+    "verify": "yarn generate:api && yarn typecheck && yarn lint && yarn format:check && yarn test && yarn dup && yarn knip && yarn build && yarn perf:budget",
     "dev:infra": "docker compose -f docker-compose.dev.yml --project-directory . up -d --wait && yarn dev:storage-init",
     "dev:storage-init": "bash scripts/dev/garage-init.sh",
     "db:generate": "yarn workspace @angia/api db:generate",
@@ -34,6 +34,7 @@
     "ai:golden": "tsx --env-file=.env scripts/ai-golden/runGolden.ts",
     "heic:spike": "tsx scripts/heic-spike/runHeicSpike.ts",
     "heic:spike:docker": "bash scripts/heic-spike/runInDocker.sh",
+    "perf:budget": "tsx scripts/perf/checkBundleBudget.ts",
     "postinstall": "husky"
   },
   "devDependencies": {

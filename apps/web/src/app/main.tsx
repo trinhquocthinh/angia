@@ -2,10 +2,17 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { isConsentInvitationRoute } from '@src/features/auth/application/isConsentInvitationRoute';
+import { prefetchCurrentSession } from '@src/features/auth/application/prefetchCurrentSession';
+import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
 import { routeTree } from './routeTree.gen';
 import './styles.css';
 
 const queryClient = new QueryClient();
+// Trang mời đồng thuận không cần phiên (SessionBoundary bỏ qua AuthBoundary) nên không gọi /api/me.
+if (!isConsentInvitationRoute(window.location.pathname)) {
+  void prefetchCurrentSession(queryClient, fetchCurrentSession);
+}
 const router = createRouter({ routeTree });
 
 declare module '@tanstack/react-router' {

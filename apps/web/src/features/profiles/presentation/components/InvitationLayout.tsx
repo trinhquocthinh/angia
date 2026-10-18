@@ -11,7 +11,7 @@ export function InvitationLayout({ children }: { children: ReactNode }) {
         />
         <header className="relative flex flex-col items-center text-center">
           <div className="mb-3 rounded-xl bg-[#eaf6f5] p-2">
-            <img src="/logo.png" alt="" width={48} height={48} className="h-12 w-12 object-contain" />
+            <img src="/logo.webp" alt="" width={48} height={48} className="h-12 w-12 object-contain" />
           </div>
           <p className="auth-heading text-xl font-semibold tracking-wider text-[#004135]">AN GIA</p>
           <p className="auth-heading mt-1 text-xs italic leading-5 text-[#286958]">

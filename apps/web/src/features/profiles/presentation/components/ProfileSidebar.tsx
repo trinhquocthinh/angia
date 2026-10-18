@@ -26,7 +26,7 @@ export function ProfileSidebar({
   return (
     <aside className="flex flex-col bg-[#eaf6f5] p-4 lg:fixed lg:inset-y-0 lg:w-[240px] lg:overflow-y-auto">
       <a href="/" className="flex items-center gap-2 font-bold text-[#004135]">
-        <img src="/logo.png" alt="" className="h-12 w-12 object-contain" />
+        <img src="/logo.webp" alt="" className="h-12 w-12 object-contain" />
         <span>
           AN GIA<small className="block text-[10px] uppercase tracking-wider">Sổ sức khỏe gia đình</small>
         </span>

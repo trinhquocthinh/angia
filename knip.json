@@ -21,7 +21,8 @@
     },
     "apps/web": {
       "entry": ["src/app/routes/**/*.tsx!"],
-      "project": ["src/**/*.{ts,tsx,css}!", "!src/**/*.test-helper.ts!"]
+      "project": ["src/**/*.{ts,tsx,css}!", "!src/**/*.test-helper.ts!"],
+      "ignoreDependencies": ["@fontsource/be-vietnam-pro", "@fontsource/newsreader"]
     },
     "packages/contracts": {
       "project": ["src/**/*.ts!"]

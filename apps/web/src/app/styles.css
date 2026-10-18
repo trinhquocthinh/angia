@@ -1,7 +1,5 @@
 @import 'tailwindcss';
-@import '@fontsource/be-vietnam-pro/400.css';
-@import '@fontsource/be-vietnam-pro/500.css';
-@import '@fontsource/be-vietnam-pro/600.css';
+@import './fonts.css';
 
 /* Design tokens theo 09-design-criteria §4.1 (chế độ sáng; dark mode là nợ kỹ thuật #8). */
 @theme {

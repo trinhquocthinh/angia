@@ -7,7 +7,7 @@ export function SidebarHeader() {
         to="/admin"
         className="admin-brand flex gap-2 items-center text-[#004135] no-underline font-bold text-[18px] tracking-[-0.025em] leading-[22px] [&_img]:w-14 [&_img]:h-14 [&_img]:object-contain [&_small]:block [&_small]:text-[10px] [&_small]:leading-[14px] [&_small]:tracking-[0.06em] [&_small]:uppercase [&_small]:text-[#286958] [&_small]:font-semibold"
       >
-        <img src="/logo.png" alt="" />
+        <img src="/logo.webp" alt="" />
         <span>
           AN GIA<small>Sổ sức khỏe gia đình</small>
         </span>
