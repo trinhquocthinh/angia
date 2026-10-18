@@ -49,6 +49,7 @@ __metadata:
   dependencies:
     "@angia/contracts": "workspace:*"
     "@fontsource/be-vietnam-pro": "npm:5.3.0"
+    "@fontsource/newsreader": "npm:5.3.0"
     "@hookform/resolvers": "npm:5.9.1"
     "@tailwindcss/vite": "npm:4.3.3"
     "@tanstack/react-query": "npm:5.103.2"
@@ -1332,6 +1333,13 @@ __metadata:
   version: 5.3.0
   resolution: "@fontsource/be-vietnam-pro@npm:5.3.0"
   checksum: 10c0/a2356aad9cc9f481ce6b9c13e7fb145eafe877cfba38fabc1ff84e07227af477b9607249b64824672f6e74edcd108e38cef930edd5cc2f5b64b75d668c43756f
+  languageName: node
+  linkType: hard
+
+"@fontsource/newsreader@npm:5.3.0":
+  version: 5.3.0
+  resolution: "@fontsource/newsreader@npm:5.3.0"
+  checksum: 10c0/deda64f6553ad7d05e3f91e2e5a8b10657b28ef04317a8f231cd4524509ac3a33aca3e752df8ab3496e426ac99b51183bdda92d33f80136b525e5b8ba0a96553
   languageName: node
   linkType: hard
 
