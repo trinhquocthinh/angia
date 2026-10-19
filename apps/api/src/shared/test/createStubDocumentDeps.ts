@@ -1,3 +1,4 @@
+import { TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
 import type { DocumentDependencies } from '@src/features/documents/application/ports.js';
 
 const notConfigured = () => Promise.reject(new Error('Kho chứng từ chưa cấu hình trong test này'));
@@ -8,5 +9,6 @@ export function createStubDocumentDeps(): DocumentDependencies {
     repository: { withFamily: notConfigured },
     storage: { put: notConfigured, delete: notConfigured },
     newId: () => 'stub',
+    quota: TEST_QUOTA_POLICY,
   };
 }

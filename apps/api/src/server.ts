@@ -111,6 +111,7 @@ const app = createApp({
     repository: createDocumentRepository(db, createPreviewQueue(boss)),
     storage: createS3ObjectStorage(s3, config.S3_BUCKET),
     newId,
+    quota: quotaPolicy,
   },
   review: { repository: createReviewRepository(db), reader: createS3ObjectReader(s3, config.S3_BUCKET) },
   privacy: {

@@ -2,6 +2,8 @@ import { and, eq } from 'drizzle-orm';
 import { healthProfiles, sourceDocuments, uploadBatches } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import type { DocumentStore } from '../application/ports.js';
+import { lockFamilyQuota } from '@src/features/familyQuota/infrastructure/lockFamilyQuota.js';
+import { readFamilyUsage } from '@src/features/familyQuota/infrastructure/readFamilyUsage.js';
 import type { PreviewQueue } from './createPreviewQueue.js';
 
 // Chạy trong transaction đã SET LOCAL app.family_id; bộ lọc family_id bổ sung phòng thủ theo chiều sâu.
@@ -11,6 +13,10 @@ export function createDocumentStore(
   queue: PreviewQueue,
 ): DocumentStore {
   return {
+    readQuotaUsage: async (dayStart, lock) => {
+      if (lock) await lockFamilyQuota(tx, familyId);
+      return readFamilyUsage(tx, familyId, dayStart);
+    },
     findProfile: async (id) =>
       (
         await tx

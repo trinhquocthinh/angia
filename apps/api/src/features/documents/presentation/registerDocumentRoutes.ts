@@ -7,6 +7,8 @@ import { createConcurrencyLimit } from '@src/shared/http/createConcurrencyLimit.
 import { errorResponse } from '@src/shared/http/errorResponse.js';
 import { spoolMultipartFiles } from '@src/shared/http/spoolMultipartFiles.js';
 import type { DocumentDependencies } from '../application/ports.js';
+import { quotaErrorResponse } from '../../familyQuota/presentation/quotaErrorResponse.js';
+import { checkUploadQuota } from '../application/checkUploadQuota.js';
 import { checkUploadTarget } from '../application/checkUploadTarget.js';
 import { uploadDocument } from '../application/uploadDocument.js';
 import { MAX_FILE_BYTES, MAX_FILES_PER_UPLOAD } from '../domain/SourceDocument.js';
@@ -39,6 +41,8 @@ export function registerDocumentRoutes(app: OpenAPIHono<AppEnv>, deps: DocumentD
     const session = c.get('session')!;
     const target = await checkUploadTarget(deps.repository, session.family!.id, profileId.data);
     if (!target.ok) return errorResponse(c, target.code);
+    const quota = await checkUploadQuota(deps, session.family!.id);
+    if (!quota.ok) return quotaErrorResponse(c, quota, deps.quota.now());
     // Giữ chỗ suốt lúc nhận body, ghi S3 và DB — đó là phần tốn đĩa, mạng và bộ nhớ.
     const release = uploadSlots.tryAcquire();
     if (!release) {
@@ -67,7 +71,10 @@ async function handleUpload(c: Context<AppEnv>, deps: DocumentDependencies, prof
       declaredType: declaredType.data,
       files: spooled.value.files,
     });
-    return result.ok ? c.json(toUploadBatchResponse(result.value), 201) : errorResponse(c, result.code);
+    if (result.ok) return c.json(toUploadBatchResponse(result.value), 201);
+    return 'details' in result
+      ? quotaErrorResponse(c, result, deps.quota.now())
+      : errorResponse(c, result.code);
   } finally {
     await spooled.value.dispose();
   }
