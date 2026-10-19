@@ -16,14 +16,14 @@ Trước khi viết code: đọc SPEC liên quan trong `04-sdd.md` và mã subta
 
 ## Lệnh thường dùng
 
-| Lệnh                | Việc                                                              |
-| ------------------- | ----------------------------------------------------------------- |
-| `yarn dev:infra`    | Khởi động PostgreSQL + Garage dev và khởi tạo bucket/key          |
-| `yarn dev`          | Chạy contracts (watch) + API + worker + web                       |
-| `yarn verify:fast`  | Typecheck + unit test liên quan (hook pre-push)                   |
-| `yarn verify`       | OpenAPI → typecheck → lint → format → test → jscpd → knip → build |
-| `yarn test:int`     | Integration test với Testcontainers PostgreSQL                    |
-| `yarn generate:api` | Sinh `packages/contracts/openapi.json` và kiểu client web         |
+| Lệnh                | Việc                                                                            |
+| ------------------- | ------------------------------------------------------------------------------- |
+| `yarn dev:infra`    | Khởi động PostgreSQL + Garage dev và khởi tạo bucket/key                        |
+| `yarn dev`          | Chạy contracts (watch) + API + worker + web                                     |
+| `yarn verify:fast`  | Typecheck + unit test liên quan (hook pre-push)                                 |
+| `yarn verify`       | OpenAPI → typecheck → lint → format → test → jscpd → knip → build → perf:budget |
+| `yarn test:int`     | Integration test với Testcontainers PostgreSQL                                  |
+| `yarn generate:api` | Sinh `packages/contracts/openapi.json` và kiểu client web                       |
 
 ## Bẫy đã biết
 

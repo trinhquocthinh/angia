@@ -89,7 +89,7 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
   it('role app khởi động pg-boss với migrate:false; job gửi qua hàng đợi → pending_review + Extraction', async () => {
     const { familyId, documentId } = await seedDocument();
     await registerExtractDocumentJob(boss, handleExtractDocumentJob(deps(), logger));
-    await boss.send(EXTRACT_DOCUMENT_QUEUE, { documentId, familyId });
+    const jobId = await boss.send(EXTRACT_DOCUMENT_QUEUE, { documentId, familyId });
     await expect
       .poll(() => documentState(documentId), { timeout: 15_000, interval: 250 })
       .toEqual({
@@ -100,6 +100,13 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
     const extraction = await owner.query('SELECT family_id, provider, payload FROM extractions');
     expect(extraction.rows[0]).toMatchObject({ family_id: familyId, provider: 'fake' });
     expect(extraction.rows[0].payload.items[0].name).toBe('Amlodipin');
+    // TC-095: outcome nằm ở output của job để `yarn ops:ocr-latency` tách chứng từ có bản trích xuất.
+    await expect
+      .poll(async () => (await boss.getJobById(EXTRACT_DOCUMENT_QUEUE, jobId ?? ''))?.output, {
+        timeout: 5_000,
+        interval: 100,
+      })
+      .toMatchObject({ status: 'pending_review' });
   });
 
   it('SPEC-006: familyId của job không khớp chứng từ → RLS che, bỏ qua, chứng từ giữ extracting', async () => {
