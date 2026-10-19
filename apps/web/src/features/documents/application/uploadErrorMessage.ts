@@ -6,6 +6,13 @@ const BY_CODE: Record<string, string> = {
   ERR_CONSENT_REQUIRED: 'Hồ sơ chưa có đồng thuận. Gửi link mời ở Trang chủ trước khi tải ảnh.',
   ERR_NOT_FOUND: 'Không tìm thấy hồ sơ này trong gia đình.',
   ERR_UPLOAD_BUSY: 'Đang có nhiều người cùng tải ảnh. Chờ ít giây rồi bấm Thử lại.',
+  // SPEC-030: quota gia đình và nhịp thao tác — thông điệp SDD §4, không tự gửi lại.
+  ERR_STORAGE_QUOTA:
+    'Gia đình đã dùng hết dung lượng lưu ảnh. Liên hệ quản trị viên để nâng dung lượng; bạn vẫn có thể nhập tay không kèm ảnh.',
+  ERR_DAILY_UPLOAD_QUOTA:
+    'Hôm nay gia đình đã tải đủ số ảnh cho phép. Bạn có thể tải tiếp từ 0 giờ ngày mai.',
+  ERR_QUEUE_QUOTA: 'Đang có nhiều ảnh chờ xử lý. Vui lòng đợi xử lý xong rồi gửi tiếp.',
+  ERR_RATE_LIMITED: 'Bạn thao tác hơi nhanh. Vui lòng thử lại sau ít giây.',
 };
 
 export function uploadErrorMessage(error: unknown): string {

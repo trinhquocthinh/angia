@@ -30,6 +30,10 @@ import { createSessionRepository } from '@src/shared/auth/infrastructure/createS
 import { createDatabase, type Database } from '@src/shared/db/createDatabase.js';
 import { runMigrations } from '@src/shared/db/runMigrations.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
+import { createFamilyUsageRepository } from '@src/features/familyQuota/infrastructure/createFamilyUsageRepository.js';
+import type { QuotaLimits } from '@src/features/familyQuota/domain/FamilyQuota.js';
+import { createFamilyCapRepository } from '@src/features/family/infrastructure/createFamilyCapRepository.js';
+import { TEST_AI_POLICY, TEST_HEAVY_RATE_LIMIT, TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
 import { createMemoryObjectStorage } from './createMemoryObjectStorage.js';
 import { createSilentLogger } from './createSilentLogger.js';
 import { createStubAuthDeps } from './createStubAuthDeps.js';
@@ -37,12 +41,19 @@ import { createFakeFamilyAdminRepository } from './createFakeFamilyAdminReposito
 import { seedAccount, seedSession, TEST_COOKIE_SECRET, type SeededSession } from './seedAuthFixtures.js';
 import { startTestDatabase } from './startTestDatabase.js';
 
+export interface ProfileTestOptions {
+  quota?: Partial<QuotaLimits>;
+  heavyRateLimit?: { perMinute: number; now(): number };
+}
+
 function buildApp(
   database: Database,
   appBaseUrl: string,
   memory: ReturnType<typeof createMemoryObjectStorage>,
   boss: PgBoss,
+  options: ProfileTestOptions,
 ) {
+  const quota = { ...TEST_QUOTA_POLICY, limits: { ...TEST_QUOTA_POLICY.limits, ...options.quota } };
   const stub = createStubAuthDeps();
   const privacyQueue = createPrivacyQueue(boss);
   return createApp({
@@ -66,6 +77,7 @@ function buildApp(
       repository: createDocumentRepository(database, createPreviewQueue(boss)),
       newId,
       storage: memory.storage,
+      quota,
     },
     review: { repository: createReviewRepository(database), reader: memory.reader },
     privacy: {
@@ -75,6 +87,8 @@ function buildApp(
       hashPng: hashPrivacyPng,
       newId: randomUUID,
       now: () => new Date(),
+      quota,
+      ai: TEST_AI_POLICY,
     },
     measurements: createMeasurementRepository(database),
     labResults: createLabResultRepository(database),
@@ -82,10 +96,20 @@ function buildApp(
     medications: createMedicationRepository(database),
     adherence: createAdherenceRepository(database),
     visitSummary: createVisitSummaryRepository(database),
+    familyUsage: { repository: createFamilyUsageRepository(database), quota, ai: TEST_AI_POLICY },
+    heavyRateLimit: options.heavyRateLimit ?? TEST_HEAVY_RATE_LIMIT,
+    familyCaps: {
+      repository: createFamilyCapRepository(database, boss),
+      defaultFamilyCapUsd: 0.5,
+      now: () => new Date(),
+    },
   });
 }
 
-export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') {
+export async function startProfileTestApp(
+  appBaseUrl = 'http://localhost:5173',
+  options: ProfileTestOptions = {},
+) {
   const db = await startTestDatabase();
   await runMigrations(db.ownerUrl);
   const owner = new pg.Client({ connectionString: db.ownerUrl });
@@ -99,7 +123,7 @@ export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') 
   await boss.createQueue(CONVERT_HEIC_QUEUE, CONVERT_HEIC_QUEUE_OPTIONS);
   await boss.createQueue(PREPARE_OCR_IMAGE_QUEUE, PREPARE_OCR_IMAGE_QUEUE_OPTIONS);
   await ensureExtractDocumentQueues(boss);
-  const app = buildApp(database, appBaseUrl, memory, boss);
+  const app = buildApp(database, appBaseUrl, memory, boss, options);
   const family = async () => {
     const id = randomUUID();
     await owner.query('INSERT INTO families(id,name) VALUES ($1,$2)', [id, 'Nhà']);
@@ -134,6 +158,8 @@ export async function startProfileTestApp(appBaseUrl = 'http://localhost:5173') 
     database,
     boss,
     objects: memory.objects,
+    failNthPut: memory.failNthPut,
+    holdNextPut: memory.holdNextPut,
     codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
   };
 }

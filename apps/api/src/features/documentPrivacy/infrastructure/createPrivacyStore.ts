@@ -2,10 +2,18 @@ import { and, eq } from 'drizzle-orm';
 import { healthProfiles, sourceDocuments } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import type { PrivacyStore } from '../application/ports.js';
+import { lockFamilyQuota } from '@src/features/familyQuota/infrastructure/lockFamilyQuota.js';
+import { readAiBudget } from '@src/features/familyQuota/infrastructure/readAiBudget.js';
+import { readFamilyUsage } from '@src/features/familyQuota/infrastructure/readFamilyUsage.js';
 import type { PrivacyQueue } from './createPrivacyQueue.js';
 export function createPrivacyStore(tx: FamilyScopedTx, familyId: string, queue: PrivacyQueue): PrivacyStore {
   const owned = (id: string) => and(eq(sourceDocuments.id, id), eq(sourceDocuments.familyId, familyId));
   return {
+    readQuotaUsage: async (dayStart, lock) => {
+      if (lock) await lockFamilyQuota(tx, familyId);
+      return readFamilyUsage(tx, familyId, dayStart);
+    },
+    readAiBudget: (month, policy) => readAiBudget(tx, familyId, month, policy),
     findDocument: async (id, lock) => {
       const query = tx.select().from(sourceDocuments).where(owned(id));
       return (await (lock ? query.for('update') : query))[0] ?? null;

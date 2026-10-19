@@ -145,3 +145,19 @@ describe('Gửi một lô ảnh và cập nhật trạng thái từng ô', () =>
     expect(sleeps).toEqual([]);
   });
 });
+
+describe('Lỗi quota/rate limit không tự gửi lại (SPEC-030)', () => {
+  it('TC-302: ERR_QUEUE_QUOTA → báo lỗi ngay, không chờ hay thử lại', async () => {
+    const upload = vi.fn<DocumentUploader['upload']>(async () => {
+      throw new DocumentUploadError(429, 'ERR_QUEUE_QUOTA', 30);
+    });
+    const { actions } = await run(upload);
+    expect(upload).toHaveBeenCalledTimes(1);
+    expect(sleeps).toEqual([]);
+    expect(actions.at(-1)).toEqual({
+      type: 'fail',
+      ids: ['i1'],
+      message: 'Đang có nhiều ảnh chờ xử lý. Vui lòng đợi xử lý xong rồi gửi tiếp.',
+    });
+  });
+});

@@ -8,6 +8,8 @@ import {
   type UploadBatch,
   type UploadedFile,
 } from '../domain/SourceDocument.js';
+import { checkFamilyQuota } from '../../familyQuota/application/checkFamilyQuota.js';
+import type { QuotaFailure } from '../../familyQuota/domain/FamilyQuota.js';
 import type { DocumentDependencies, DocumentStore } from './ports.js';
 
 interface UploadRequest {
@@ -25,7 +27,7 @@ interface UploadRequest {
 export async function uploadDocument(
   deps: DocumentDependencies,
   request: UploadRequest,
-): Promise<DocumentOutcome<UploadBatch>> {
+): Promise<DocumentOutcome<UploadBatch> | QuotaFailure> {
   const { files } = request;
   if (files.length === 0) return { ok: false, code: 'ERR_VALIDATION' };
   if (files.length > MAX_FILES_PER_UPLOAD) return { ok: false, code: 'ERR_BATCH_TOO_LARGE' };
@@ -45,7 +47,7 @@ async function storeUpload(
   store: DocumentStore,
   request: UploadRequest,
   storedKeys: string[],
-): Promise<DocumentOutcome<UploadBatch>> {
+): Promise<DocumentOutcome<UploadBatch> | QuotaFailure> {
   const profile = await store.findProfile(request.profileId);
   if (!profile) return { ok: false, code: 'ERR_NOT_FOUND' };
   if (profile.consentStatus !== 'confirmed') return { ok: false, code: 'ERR_CONSENT_REQUIRED' };
@@ -54,6 +56,17 @@ async function storeUpload(
     result.ok ? [] : [{ fileName: file.fileName, code: result.code }],
   );
   if (rejectedFiles.length === checked.length) return { ok: false, code: 'ERR_NO_VALID_FILE' };
+  // SPEC-030: khóa quota gia đình rồi đếm lại trước lệnh ghi S3 đầu tiên — lô đồng thời cùng gia đình xếp hàng;
+  // lỗi sau đó rollback nên quota tự trả (số đo tính từ dòng đã commit). Tệp bị loại không tính.
+  const valid = checked.filter(({ result }) => result.ok).map(({ file }) => file);
+  const bytes = valid.reduce((sum, file) => sum + file.sizeBytes, 0);
+  const quota = await checkFamilyQuota(
+    store.readQuotaUsage,
+    deps.quota,
+    { files: valid.length, bytes, jobs: valid.length },
+    true,
+  );
+  if (!quota.ok) return quota;
   const batchId = deps.newId();
   await store.insertBatch({ id: batchId, healthProfileId: request.profileId, createdBy: request.accountId });
   const documents: SourceDocument[] = [];

@@ -25,8 +25,13 @@ export const uploadBatchRoute = createRoute({
     404: error('ERR_NOT_FOUND: hồ sơ không thuộc gia đình'),
     408: error('ERR_UPLOAD_TIMEOUT: 30 giây không có dữ liệu hoặc body quá 5 phút'),
     409: error('ERR_CONSENT_REQUIRED'),
-    413: error('ERR_BATCH_TOO_LARGE: quá 10 tệp hoặc body vượt trần'),
+    413: error(
+      'ERR_BATCH_TOO_LARGE: quá 10 tệp hoặc body vượt trần; ERR_STORAGE_QUOTA: hết dung lượng gia đình',
+    ),
     422: error('ERR_VALIDATION (không có tệp, sai loại khai báo) hoặc ERR_NO_VALID_FILE'),
+    429: error(
+      'ERR_DAILY_UPLOAD_QUOTA (Retry-After tới 0 giờ VN) | ERR_QUEUE_QUOTA (Retry-After: 30) | ERR_RATE_LIMITED — SPEC-030',
+    ),
     503: error('ERR_UPLOAD_BUSY: đã có 3 lô đang xử lý; thử lại sau số giây trong Retry-After'),
   },
 });

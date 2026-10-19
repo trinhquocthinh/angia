@@ -32,6 +32,10 @@ import type { FamilyAdminRepository } from '@src/features/family/application/por
 import { registerAdminRoutes } from '@src/features/family/presentation/registerAdminRoutes.js';
 import type { AiBudgetDependencies } from '@src/features/family/application/aiBudgetPorts.js';
 import { registerAiBudgetRoutes } from '@src/features/family/presentation/registerAiBudgetRoutes.js';
+import type { FamilyCapDependencies } from '@src/features/family/application/familyCapPorts.js';
+import { registerFamilyCapRoutes } from '@src/features/family/presentation/registerFamilyCapRoutes.js';
+import type { FamilyUsageDependencies } from '@src/features/familyQuota/application/ports.js';
+import { registerFamilyUsageRoute } from '@src/features/familyQuota/presentation/registerFamilyUsageRoute.js';
 import type { HealthProbes } from '@src/features/health/application/ports.js';
 import { registerHealthRoute } from '@src/features/health/presentation/registerHealthRoute.js';
 import { loadSession } from '@src/shared/auth/presentation/loadSession.js';
@@ -39,6 +43,7 @@ import { type AuthRouteDeps, registerAuthRoutes } from '@src/shared/auth/present
 import { registerMeRoute } from '@src/shared/auth/presentation/registerMeRoute.js';
 import { requireSession } from '@src/shared/auth/presentation/requireSession.js';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
+import { createSlidingWindowLimiter } from '@src/shared/http/createSlidingWindowLimiter.js';
 import { errorResponse } from '@src/shared/http/errorResponse.js';
 
 export type AppDependencies = {
@@ -57,6 +62,10 @@ export type AppDependencies = {
   medications: MedicationManagementRepository;
   adherence: AdherenceRepository;
   visitSummary: VisitSummaryRepository;
+  familyUsage: FamilyUsageDependencies;
+  familyCaps: FamilyCapDependencies;
+  // F03b: nhịp thao tác nặng mỗi tài khoản/thao tác trong 60 s (đếm trong tiến trình).
+  heavyRateLimit: { perMinute: number; now(): number };
 };
 
 // Ngoại lệ duy nhất của "mọi route /api cần phiên" (Tech Spec §4); logout vẫn cần phiên + CSRF.
@@ -93,11 +102,19 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerMeRoute(app);
   registerAdminRoutes(app, deps.familyAdmin);
   registerAiBudgetRoutes(app, deps.aiBudget);
+  registerFamilyUsageRoute(app, deps.familyUsage);
+  registerFamilyCapRoutes(app, deps.familyCaps);
   registerProfileRoutes(app, deps.profiles, deps.auth.login.now);
-  registerDocumentRoutes(app, deps.documents);
+  // Một limiter dùng chung cho mọi thao tác nặng; khóa tách theo tài khoản + thao tác.
+  const heavyLimiter = createSlidingWindowLimiter({
+    limit: deps.heavyRateLimit.perMinute,
+    windowMs: 60_000,
+    now: deps.heavyRateLimit.now,
+  });
+  registerDocumentRoutes(app, deps.documents, heavyLimiter);
   registerReviewRoutes(app, deps.review);
   registerManualRecordRoutes(app, deps.review.repository);
-  registerPrivacyRoutes(app, deps.privacy);
+  registerPrivacyRoutes(app, deps.privacy, heavyLimiter);
   registerMeasurementRoutes(app, deps.measurements);
   registerLabResultRoutes(app, deps.labResults);
   registerDocumentEntryRoutes(app, deps.documentEntries);

@@ -6,8 +6,10 @@ type Props = {
   busy: boolean;
   dispatch: (action: PrivacyEditorAction) => void;
   onApprove: () => void;
+  aiExhausted?: boolean;
+  onManual?: () => void;
 };
-export function PrivacyDraftReview({ state, busy, dispatch, onApprove }: Props) {
+export function PrivacyDraftReview({ state, busy, dispatch, onApprove, aiExhausted, onManual }: Props) {
   const draft = state.candidate;
   if (draft.state === 'pending')
     return (
@@ -51,6 +53,8 @@ export function PrivacyDraftReview({ state, busy, dispatch, onApprove }: Props) 
         busy={busy}
         dispatch={dispatch}
         onApprove={onApprove}
+        aiExhausted={aiExhausted ?? false}
+        onManual={onManual ?? (() => undefined)}
       />
     </section>
   );

@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { useState } from 'react';
+import type { FamilyUsage } from '@angia/contracts';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
 import type { DocumentType, DocumentUploader, ImagePreparer } from '../../application/ports';
-import { MAX_FILES_PER_PICK } from '../../application/uploadQueue';
 import { useLeaveWarning } from '../../application/useLeaveWarning';
 import { useUploadQueue } from '../../application/useUploadQueue';
+import { usageBlockReason } from '../../application/familyUsageState';
+import { useOpenUploadedDocument } from '../../application/useOpenUploadedDocument';
+import { UploadPickNotices } from './UploadPickNotices';
+import { FamilyUsageCard } from './FamilyUsageCard';
 import { ProfileChoices } from './ProfileChoices';
 import { RejectedFiles } from './RejectedFiles';
 import { UploadActions } from './UploadActions';
@@ -17,33 +20,35 @@ type UploadWorkspaceProps = {
   prepare: ImagePreparer;
   csrfToken: string;
   profiles: HealthProfile[];
+  usage: FamilyUsage | null;
   loading: boolean;
   error: boolean;
   retry: () => void;
 };
 
-export function UploadWorkspace({ uploader, prepare, csrfToken, profiles, ...status }: UploadWorkspaceProps) {
+export function UploadWorkspace({
+  uploader,
+  prepare,
+  csrfToken,
+  profiles,
+  usage,
+  ...status
+}: UploadWorkspaceProps) {
   const queue = useUploadQueue(uploader, prepare, csrfToken);
-  const navigate = useNavigate();
   const [profileId, setProfileId] = useState<string | null>(null);
   const [declaredType, setDeclaredType] = useState<DocumentType | null>(null);
   const [tooMany, setTooMany] = useState(false);
   const { summary } = queue;
   const sending = summary.active > 0;
+  // SPEC-030: chạm trần nào thì khóa chọn ảnh kèm lý do; máy chủ vẫn là nơi quyết định.
+  const blocked = usage ? usageBlockReason(usage) : null;
   useLeaveWarning(sending || summary.ready > 0 || summary.preparing > 0);
   const ready = profiles.find((profile) => profile.id === profileId && profile.consentStatus === 'confirmed');
-  // Gửi hết, không lỗi → mở thẳng chứng từ đầu tiên vừa gửi (ảnh hiện ngay, form tự hiện khi AI đọc xong).
-  const finished = summary.done > 0 && summary.total === summary.done;
-  useEffect(() => {
-    if (!finished) return;
-    const state = { uploadedCount: summary.done };
-    void (summary.firstDocumentId
-      ? navigate({ to: '/review/$documentId', params: { documentId: summary.firstDocumentId }, state })
-      : navigate({ to: '/review', state }));
-  }, [finished, navigate, summary.done, summary.firstDocumentId]);
+  useOpenUploadedDocument(summary);
   return (
     <>
       <UploadIntro />
+      {usage && <FamilyUsageCard usage={usage} />}
       <ProfileChoices
         profiles={profiles}
         {...status}
@@ -53,12 +58,12 @@ export function UploadWorkspace({ uploader, prepare, csrfToken, profiles, ...sta
         declaredType={declaredType}
         onType={setDeclaredType}
       />
-      <UploadDropZone disabled={sending} onFiles={(files) => files.length && setTooMany(!queue.add(files))} />
-      {tooMany && (
-        <p role="alert" className="rounded-xl bg-[#ffdad6]/60 p-3 text-sm text-[#93000a]">
-          Mỗi lần chỉ chọn tối đa {MAX_FILES_PER_PICK} ảnh. Không ảnh nào trong lần chọn vừa rồi được thêm.
-        </p>
-      )}
+      <UploadDropZone
+        disabled={sending || blocked !== null}
+        blockedReason={sending ? null : blocked}
+        onFiles={(files) => files.length && setTooMany(!queue.add(files))}
+      />
+      <UploadPickNotices tooMany={tooMany} usage={usage} readyCount={summary.ready} />
       <UploadGrid
         items={queue.items}
         summary={summary}

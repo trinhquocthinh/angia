@@ -7,9 +7,11 @@ import { REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS } 
 import pg from 'pg';
 import { createApp } from '@src/createApp.js';
 import { createAiBudgetRepository } from '@src/features/family/infrastructure/createAiBudgetRepository.js';
+import { createFamilyCapRepository } from '@src/features/family/infrastructure/createFamilyCapRepository.js';
 import { createFamilyAdminRepository } from '@src/features/family/infrastructure/createFamilyAdminRepository.js';
 import { createSessionRepository } from '@src/shared/auth/infrastructure/createSessionRepository.js';
-import { createDatabase } from '@src/shared/db/createDatabase.js';
+import { createDatabase, type Database } from '@src/shared/db/createDatabase.js';
+import type { PgBoss } from 'pg-boss';
 import { runMigrations } from '@src/shared/db/runMigrations.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { createSilentLogger } from './createSilentLogger.js';
@@ -24,6 +26,20 @@ interface MembershipRow {
 }
 
 // App thật trên PostgreSQL Testcontainers (role app NOBYPASSRLS) cho test route /api/admin/*.
+// Ngân sách AI toàn hệ thống (SPEC-013) và trần theo gia đình (SPEC-031) trên DB + pg-boss thật.
+const budgetAdminDeps = (database: Database, boss: PgBoss) => ({
+  aiBudget: {
+    repository: createAiBudgetRepository(database, boss),
+    defaultMonthlyCapUsd: 5,
+    now: () => new Date(),
+  },
+  familyCaps: {
+    repository: createFamilyCapRepository(database, boss),
+    defaultFamilyCapUsd: 0.5,
+    now: () => new Date(),
+  },
+});
+
 export async function startAdminTestApp() {
   const db = await startTestDatabase();
   await runMigrations(db.ownerUrl);
@@ -47,11 +63,7 @@ export async function startAdminTestApp() {
     },
     profiles: createStubProfileRepository(),
     familyAdmin: createFamilyAdminRepository(database),
-    aiBudget: {
-      repository: createAiBudgetRepository(database, boss),
-      defaultMonthlyCapUsd: 5,
-      now: () => new Date(),
-    },
+    ...budgetAdminDeps(database, boss),
   });
 
   const call = (session: SeededSession, method: string, path: string, body?: unknown) =>

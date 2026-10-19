@@ -1,5 +1,7 @@
 import type { useAdminWorkspace } from '../../application/useAdminWorkspace';
 import type { useAiBudget } from '../../application/useAiBudget';
+import type { useFamilyCaps } from '../../application/useFamilyCaps';
+import { FamilyCapsCard } from './FamilyCapsCard';
 import { AiBudgetCard } from './AiBudgetCard';
 import type { AdminCommand } from '../../application/ports';
 import type { AdminTask } from '../AdminTask';
@@ -13,6 +15,7 @@ import { FamilyAccessCard } from './FamilyAccessCard';
 export function AdminDataContent({
   workspace,
   aiBudget,
+  familyCaps,
   onTask,
   currentFamilyId,
   onSubmit,
@@ -20,6 +23,7 @@ export function AdminDataContent({
 }: {
   workspace: ReturnType<typeof useAdminWorkspace>;
   aiBudget: ReturnType<typeof useAiBudget>;
+  familyCaps: ReturnType<typeof useFamilyCaps>;
   onTask: (task: AdminTask) => void;
   currentFamilyId: string | null;
   onSubmit: (command: AdminCommand) => void;
@@ -49,6 +53,7 @@ export function AdminDataContent({
           onSubmit={onSubmit}
         />
         <AiBudgetCard {...aiBudget} />
+        <FamilyCapsCard {...familyCaps} />
         <FamilyAccessCard />
       </aside>
     </div>

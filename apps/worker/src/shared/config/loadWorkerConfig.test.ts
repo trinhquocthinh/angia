@@ -45,4 +45,9 @@ describe('Cấu hình worker', () => {
     expect(() => loadWorkerConfig({ ...base, AI_ESTIMATED_COST_USD: '0' })).toThrow();
     expect(() => loadWorkerConfig({ ...base, AI_ESTIMATED_COST_USD: 'abc' })).toThrow();
   });
+
+  it('trần AI theo gia đình (SPEC-031): mặc định $0.50, giá trị âm bị từ chối', () => {
+    expect(loadWorkerConfig(base)).toMatchObject({ AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: 0.5 });
+    expect(() => loadWorkerConfig({ ...base, AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: '-0.1' })).toThrow();
+  });
 });

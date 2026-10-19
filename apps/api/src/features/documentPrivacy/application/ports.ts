@@ -1,6 +1,8 @@
 import type { PrivacyDraft } from '@angia/contracts';
 import type { PrivacyDocument } from '../domain/PrivacyDocument.js';
 import type { PrivacyEdits } from '../domain/privacyEdits.js';
+import type { AiBudgetPolicy, QuotaPolicy, ReadQuotaUsage } from '../../familyQuota/application/ports.js';
+import type { AiBudgetSnapshot } from '../../familyQuota/domain/evaluateAiBudget.js';
 import type { ObjectReader } from '../../documents/application/reviewPorts.js';
 type PrivacyUpdate = Partial<
   Pick<
@@ -15,6 +17,10 @@ type PrivacyUpdate = Partial<
   >
 >;
 export interface PrivacyStore {
+  /** SPEC-030: mức dùng của gia đình trong transaction này; `lock` khóa quota theo gia đình trước khi đếm. */
+  readQuotaUsage: ReadQuotaUsage;
+  /** SPEC-031: ngân sách AI tháng của gia đình (chỉ đọc). */
+  readAiBudget(month: string, policy: AiBudgetPolicy): Promise<AiBudgetSnapshot>;
   findDocument(id: string, lock?: boolean): Promise<PrivacyDocument | null>;
   consentConfirmed(profileId: string): Promise<boolean>;
   updateDocument(id: string, update: PrivacyUpdate): Promise<PrivacyDocument>;
@@ -34,5 +40,7 @@ export interface PrivacyDependencies {
   hashPng(body: ReadableStream<Uint8Array>): Promise<string | null>;
   newId(): string;
   now(): Date;
+  quota: QuotaPolicy;
+  ai: AiBudgetPolicy;
 }
 export type { PrivacyDraft };

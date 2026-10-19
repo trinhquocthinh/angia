@@ -50,7 +50,12 @@ describe('Model dự phòng trên PostgreSQL thật (E3-S6-T2, SPEC-009, BR-016)
   let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
   const deps = (extractor: ExtractionDependencies['extractor']): ExtractionDependencies => ({
     repository: createExtractionRepository(fx.pool),
-    budget: { estimatedCostUsd: 0.02, defaultMonthlyCapUsd: 5, now: () => new Date('2026-10-15T03:00:00Z') },
+    budget: {
+      estimatedCostUsd: 0.02,
+      defaultMonthlyCapUsd: 5,
+      defaultFamilyCapUsd: 0.5,
+      now: () => new Date('2026-10-15T03:00:00Z'),
+    },
     storage: { get: async () => APPROVED_OCR_BYTES },
     images: { heicToJpeg: async (bytes) => bytes },
     extractor,

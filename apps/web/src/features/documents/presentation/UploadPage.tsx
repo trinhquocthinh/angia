@@ -9,6 +9,8 @@ import '@src/features/profiles/presentation/profiles.css';
 import { compressImage } from '@src/shared/utils/image/compressImage';
 import { createBrowserImageCodec } from '@src/shared/utils/image/createBrowserImageCodec';
 import type { ImagePreparer } from '../application/ports';
+import { useFamilyUsage } from '../application/useFamilyUsage';
+import { createFamilyUsageRepository } from '../infrastructure/createFamilyUsageRepository';
 import { createXhrDocumentUploader } from '../infrastructure/createXhrDocumentUploader';
 import { dismissPrivacyReminder, shouldShowPrivacyReminder } from '../infrastructure/privacyReminderStorage';
 import { UploadPrivacyReminder } from './components/UploadPrivacyReminder';
@@ -16,6 +18,7 @@ import { UploadWorkspace } from './components/UploadWorkspace';
 
 const profilesRepository = createProfilesRepository();
 const uploader = createXhrDocumentUploader();
+const usageRepository = createFamilyUsageRepository();
 const imageCodec = createBrowserImageCodec();
 const prepareImage: ImagePreparer = (file) => compressImage(file, imageCodec);
 
@@ -24,6 +27,7 @@ export function UploadPage() {
   const workspace = useProfilesWorkspace(profilesRepository, session.data);
   // BR-041 bổ sung: nhắc không chụp thông tin cá nhân mỗi lần mở trang, trừ khi đã chọn "Không nhắc lại".
   const [reminder, setReminder] = useState(() => shouldShowPrivacyReminder());
+  const usage = useFamilyUsage(usageRepository, session.data?.role === 'main');
   if (!session.data) return null;
   const main = session.data.role === 'main';
   const profiles = workspace.profiles.data ?? [];
@@ -44,6 +48,7 @@ export function UploadPage() {
             prepare={prepareImage}
             csrfToken={session.data.csrfToken}
             profiles={profiles}
+            usage={usage.data ?? null}
             loading={workspace.profiles.isPending}
             error={workspace.profiles.isError}
             retry={() => void workspace.profiles.refetch()}

@@ -1,5 +1,9 @@
 import type { PrivacyOutcome, PrivacyDocument } from '../domain/PrivacyDocument.js';
 import { isPrivacyImageKey } from '../domain/isPrivacyImageKey.js';
+import { budgetMonth } from '@angia/contracts';
+import { evaluateAiBudget } from '../../familyQuota/domain/evaluateAiBudget.js';
+import { checkFamilyQuota } from '../../familyQuota/application/checkFamilyQuota.js';
+import { ONE_JOB, type QuotaFailure } from '../../familyQuota/domain/FamilyQuota.js';
 import type { PrivacyDependencies } from './ports.js';
 export interface ApprovalInput {
   familyId: string;
@@ -12,7 +16,7 @@ export interface ApprovalInput {
 export async function approvePrivacy(
   deps: PrivacyDependencies,
   input: ApprovalInput,
-): Promise<PrivacyOutcome<PrivacyDocument>> {
+): Promise<PrivacyOutcome<PrivacyDocument> | QuotaFailure> {
   const candidate = await deps.repository.withFamily(input.familyId, (store) =>
     store.findDocument(input.documentId),
   );
@@ -47,11 +51,19 @@ export async function approvePrivacy(
       return { ok: false, code: 'ERR_INVALID_STATE_TRANSITION' };
     if (!(await store.consentConfirmed(doc.healthProfileId)))
       return { ok: false, code: 'ERR_CONSENT_REQUIRED' };
-    const approved = await store.updateDocument(doc.id, {
-      status: 'extracting',
-      privacyApprovedBy: input.accountId,
-      privacyApprovedAt: deps.now(),
-    });
+    const approval = { privacyApprovedBy: input.accountId, privacyApprovedAt: deps.now() };
+    // SPEC-031: gia đình (hoặc hệ thống) hết trần AI tháng → ghi nhận duyệt nhưng xếp chờ ngân sách, không tạo job;
+    // requeue đầu tháng/khi nâng trần đọc tiếp bản ảnh đã duyệt này.
+    const budget = await store.readAiBudget(budgetMonth(deps.ai.now()), deps.ai);
+    if (evaluateAiBudget(budget, deps.ai.estimatedCostUsd).exhausted)
+      return {
+        ok: true,
+        value: await store.updateDocument(doc.id, { status: 'awaiting_budget', ...approval }),
+      };
+    // SPEC-030: xác nhận thêm một job OCR; chứng từ đã duyệt (idempotent) đã trả về ở trên, không bị chặn.
+    const quota = await checkFamilyQuota(store.readQuotaUsage, deps.quota, ONE_JOB, true);
+    if (!quota.ok) return quota;
+    const approved = await store.updateDocument(doc.id, { status: 'extracting', ...approval });
     await store.enqueueExtraction(doc.id);
     return { ok: true, value: approved };
   });

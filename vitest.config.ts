@@ -57,6 +57,19 @@ export default defineConfig({
         test: {
           name: 'int',
           include: ['apps/api/src/**/*.int.test.ts'],
+          // Đo hiệu năng chạy riêng (`yarn test:perf`): chạy song song với cả bộ int thì số đo nhiễu theo tải máy.
+          exclude: ['**/*.perf.int.test.ts', '**/node_modules/**'],
+          environment: 'node',
+          testTimeout: 120_000,
+          hookTimeout: 120_000,
+        },
+      },
+      {
+        extends: false,
+        resolve: { alias: aliasFor(apiSrc) },
+        test: {
+          name: 'perf-db',
+          include: ['apps/api/src/**/*.perf.int.test.ts'],
           environment: 'node',
           testTimeout: 120_000,
           hookTimeout: 120_000,

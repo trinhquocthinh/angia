@@ -28,6 +28,8 @@ import {
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
 import { createApp } from '@src/createApp.js';
+import { createFamilyCapRepository } from '@src/features/family/infrastructure/createFamilyCapRepository.js';
+import { createFamilyUsageRepository } from '@src/features/familyQuota/infrastructure/createFamilyUsageRepository.js';
 import { createFamilyAdminRepository } from '@src/features/family/infrastructure/createFamilyAdminRepository.js';
 import { createAiBudgetRepository } from '@src/features/family/infrastructure/createAiBudgetRepository.js';
 import { createPostgresProbe } from '@src/features/health/infrastructure/createPostgresProbe.js';
@@ -59,6 +61,22 @@ await ensureExtractDocumentQueues(boss);
 await boss.createQueue(REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS);
 const privacyQueue = createPrivacyQueue(boss);
 
+// F03b (SPEC-030): ngưỡng quota dùng chung cho upload, bước riêng tư và route mức đã dùng.
+const quotaPolicy = {
+  limits: {
+    storageBytes: config.QUOTA_FAMILY_STORAGE_BYTES,
+    dailyUploads: config.QUOTA_FAMILY_DAILY_UPLOADS,
+    pendingJobs: config.QUOTA_FAMILY_PENDING_JOBS,
+  },
+  now: () => new Date(),
+};
+// SPEC-031: tham số ngân sách AI dùng chung cho duyệt riêng tư và mức dùng (trùng env worker).
+const aiPolicy = {
+  estimatedCostUsd: config.AI_ESTIMATED_COST_USD,
+  defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,
+  defaultFamilyCapUsd: config.AI_DEFAULT_FAMILY_MONTHLY_CAP_USD,
+  now: () => new Date(),
+};
 const app = createApp({
   healthProbes: {
     db: createPostgresProbe(pool),
@@ -101,6 +119,7 @@ const app = createApp({
     repository: createDocumentRepository(db, createPreviewQueue(boss)),
     storage: createS3ObjectStorage(s3, config.S3_BUCKET),
     newId,
+    quota: quotaPolicy,
   },
   review: { repository: createReviewRepository(db), reader: createS3ObjectReader(s3, config.S3_BUCKET) },
   privacy: {
@@ -110,6 +129,8 @@ const app = createApp({
     hashPng: hashPrivacyPng,
     newId: randomUUID,
     now: () => new Date(),
+    quota: quotaPolicy,
+    ai: aiPolicy,
   },
   measurements: createMeasurementRepository(db),
   labResults: createLabResultRepository(db),
@@ -117,6 +138,13 @@ const app = createApp({
   medications: createMedicationRepository(db),
   adherence: createAdherenceRepository(db),
   visitSummary: createVisitSummaryRepository(db),
+  familyUsage: { repository: createFamilyUsageRepository(db), quota: quotaPolicy, ai: aiPolicy },
+  familyCaps: {
+    repository: createFamilyCapRepository(db, boss),
+    defaultFamilyCapUsd: config.AI_DEFAULT_FAMILY_MONTHLY_CAP_USD,
+    now: () => new Date(),
+  },
+  heavyRateLimit: { perMinute: config.RATE_LIMIT_HEAVY_PER_MINUTE, now: () => Date.now() },
 });
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {

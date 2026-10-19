@@ -59,6 +59,7 @@ try {
     budget: {
       estimatedCostUsd: config.AI_ESTIMATED_COST_USD,
       defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,
+      defaultFamilyCapUsd: config.AI_DEFAULT_FAMILY_MONTHLY_CAP_USD,
       now: () => new Date(),
     },
     storage: createS3ObjectReader(createS3Client(config), config.S3_BUCKET),
@@ -68,7 +69,12 @@ try {
   };
   await registerExtractDocumentJob(boss, handleExtractDocumentJob(extraction, logger));
   await registerRecoverDeadExtractionJob(boss, handleRecoverDeadExtractionJob(extraction, logger));
-  await registerRequeueAwaitingBudgetJob(boss, createBudgetRequeueRepository(pool, boss), logger);
+  await registerRequeueAwaitingBudgetJob(
+    boss,
+    createBudgetRequeueRepository(pool, boss),
+    extraction.budget,
+    logger,
+  );
   await registerConvertHeicJob(
     boss,
     handleConvertHeicJob(

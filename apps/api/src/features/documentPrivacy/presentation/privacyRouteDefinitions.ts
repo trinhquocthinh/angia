@@ -20,6 +20,7 @@ const mutating = {
   409: error('ERR_INVALID_STATE_TRANSITION, ERR_CONSENT_REQUIRED'),
   413: error('Giới hạn body 16 KiB'),
   422: error('ERR_VALIDATION'),
+  429: error('ERR_QUEUE_QUOTA (Retry-After: 30) | ERR_RATE_LIMITED (Retry-After) — SPEC-030'),
 };
 const params = z.object({ id: z.uuid() });
 const document = {

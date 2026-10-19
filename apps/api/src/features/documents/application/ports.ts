@@ -1,9 +1,12 @@
+import type { QuotaPolicy, ReadQuotaUsage } from '../../familyQuota/application/ports.js';
 import type { NewSourceDocument, SourceDocument } from '../domain/SourceDocument.js';
 
 export interface ProfileConsent {
   consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed';
 }
 export interface DocumentStore {
+  /** SPEC-030: mức dùng của gia đình trong transaction này; `lock` khóa quota theo gia đình trước khi đếm. */
+  readQuotaUsage: ReadQuotaUsage;
   findProfile(id: string): Promise<ProfileConsent | null>;
   insertBatch(batch: { id: string; healthProfileId: string; createdBy: string }): Promise<void>;
   insertDocument(document: NewSourceDocument): Promise<SourceDocument>;
@@ -26,4 +29,5 @@ export interface DocumentDependencies {
   repository: DocumentRepository;
   storage: ObjectStorage;
   newId(): string;
+  quota: QuotaPolicy;
 }

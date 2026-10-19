@@ -178,3 +178,52 @@ describe('Tải lên chứng từ đơn lẻ hoặc theo lô (SPEC-008)', () => 
     expect(memory.objects.size).toBe(0);
   });
 });
+
+describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () => {
+  const limits = { storageBytes: 100, dailyUploads: 10, pendingJobs: 10 };
+
+  it('TC-295: lô vượt dung lượng còn lại → ERR_STORAGE_QUOTA, không ghi S3 hay lô nào', async () => {
+    const memory = createMemoryDocumentDeps(profiles, {
+      limits,
+      usage: { storageBytes: 95, uploadsToday: 0, pendingJobs: 0 },
+    });
+    const result = await uploadDocument(
+      memory.deps,
+      request({ files: [file('a.jpg', jpeg(4)), file('b.jpg', jpeg(4))] }),
+    );
+    expect(result).toEqual({
+      ok: false,
+      code: 'ERR_STORAGE_QUOTA',
+      details: { usedBytes: 95, limitBytes: 100, requestedBytes: 8 },
+    });
+    expect(memory.objects.size).toBe(0);
+    expect(memory.batches).toEqual([]);
+  });
+
+  it('tệp bị loại (PDF) không tính vào số ảnh, byte hay job xin thêm', async () => {
+    const memory = createMemoryDocumentDeps(profiles, {
+      limits,
+      usage: { storageBytes: 0, uploadsToday: 9, pendingJobs: 9 },
+    });
+    const result = await uploadDocument(
+      memory.deps,
+      request({ files: [file('a.jpg', jpeg(4)), file('x.pdf', pdf)] }),
+    );
+    expect(result.ok).toBe(true);
+  });
+
+  it('khóa quota và đọc mức dùng sau khi kiểm hồ sơ, trước khi tạo lô', async () => {
+    const memory = createMemoryDocumentDeps(profiles, { limits });
+    expect((await uploadDocument(memory.deps, request({ files: [file('a.jpg', jpeg(4))] }))).ok).toBe(true);
+    expect(memory.calls).toEqual(['quota:lock', 'insertBatch']);
+  });
+
+  it('lô toàn tệp lỗi vẫn trả ERR_NO_VALID_FILE, không đọc quota', async () => {
+    const memory = createMemoryDocumentDeps(profiles, { limits });
+    expect(await uploadDocument(memory.deps, request({ files: [file('x.pdf', pdf)] }))).toEqual({
+      ok: false,
+      code: 'ERR_NO_VALID_FILE',
+    });
+    expect(memory.calls).toEqual([]);
+  });
+});

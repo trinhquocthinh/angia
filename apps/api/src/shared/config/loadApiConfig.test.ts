@@ -25,3 +25,37 @@ describe('Origin ứng dụng trong cấu hình API', () => {
     expect(() => loadApiConfig({ ...env, APP_BASE_URL: 'bogus' })).toThrow();
   });
 });
+
+describe('Ngưỡng quota tài nguyên gia đình (SPEC-030, BR-043)', () => {
+  it('mặc định 2 GiB, 100 ảnh/ngày, 10 chứng từ chờ worker, 10 thao tác nặng/phút', () => {
+    const config = loadApiConfig(env);
+    expect(config.QUOTA_FAMILY_STORAGE_BYTES).toBe(2147483648);
+    expect(config.QUOTA_FAMILY_DAILY_UPLOADS).toBe(100);
+    expect(config.QUOTA_FAMILY_PENDING_JOBS).toBe(10);
+    expect(config.RATE_LIMIT_HEAVY_PER_MINUTE).toBe(10);
+  });
+
+  it('chỉ nhận số nguyên dương', () => {
+    for (const name of [
+      'QUOTA_FAMILY_STORAGE_BYTES',
+      'QUOTA_FAMILY_DAILY_UPLOADS',
+      'QUOTA_FAMILY_PENDING_JOBS',
+      'RATE_LIMIT_HEAVY_PER_MINUTE',
+    ]) {
+      for (const value of ['0', '-1', '1.5'])
+        expect(() => loadApiConfig({ ...env, [name]: value })).toThrow();
+    }
+    expect(loadApiConfig({ ...env, QUOTA_FAMILY_PENDING_JOBS: '3' }).QUOTA_FAMILY_PENDING_JOBS).toBe(3);
+  });
+});
+
+describe('Trần AI theo gia đình (SPEC-031, BR-018)', () => {
+  it('mặc định trần gia đình $0.50 và ước tính $0.02 (trùng worker); giá trị âm bị từ chối', () => {
+    expect(loadApiConfig(env)).toMatchObject({
+      AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: 0.5,
+      AI_ESTIMATED_COST_USD: 0.02,
+    });
+    expect(() => loadApiConfig({ ...env, AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: '-1' })).toThrow();
+    expect(() => loadApiConfig({ ...env, AI_ESTIMATED_COST_USD: '0' })).toThrow();
+  });
+});

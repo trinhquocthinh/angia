@@ -1,7 +1,5 @@
 import { z } from 'zod';
-
-// Số tiền USD đúng đến cent: so sau khi nhân 100 để tránh sai số dấu phẩy động (1.1 * 100 = 110.00000000000001).
-const isWholeCents = (value: number) => Math.abs(value * 100 - Math.round(value * 100)) < 1e-6;
+import { isWholeCents } from './isWholeCents.js';
 
 // SPEC-013: trần áp dụng toàn hệ thống cho tháng ngân sách hiện tại (Asia/Ho_Chi_Minh, BR-018).
 export const updateAiBudgetRequestSchema = z

@@ -309,6 +309,143 @@
           "monthlyCapUsd"
         ]
       },
+      "FamilyUsage": {
+        "type": "object",
+        "properties": {
+          "storage": {
+            "type": "object",
+            "properties": {
+              "usedBytes": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "limitBytes": {
+                "type": "integer",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "usedBytes",
+              "limitBytes"
+            ]
+          },
+          "dailyUploads": {
+            "type": "object",
+            "properties": {
+              "used": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "limit": {
+                "type": "integer",
+                "exclusiveMinimum": 0
+              },
+              "resetsAt": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "used",
+              "limit",
+              "resetsAt"
+            ]
+          },
+          "pendingJobs": {
+            "type": "object",
+            "properties": {
+              "used": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "limit": {
+                "type": "integer",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "used",
+              "limit"
+            ]
+          },
+          "aiOcr": {
+            "type": "object",
+            "properties": {
+              "month": {
+                "type": "string",
+                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+              },
+              "usedPercent": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "exhausted": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "month",
+              "usedPercent",
+              "exhausted"
+            ]
+          }
+        },
+        "required": [
+          "storage",
+          "dailyUploads",
+          "pendingJobs",
+          "aiOcr"
+        ]
+      },
+      "FamilyExtractionCap": {
+        "type": "object",
+        "properties": {
+          "familyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "familyName": {
+            "type": "string"
+          },
+          "month": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+          },
+          "capUsd": {
+            "type": "number"
+          },
+          "capIsDefault": {
+            "type": "boolean"
+          },
+          "spentUsd": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "familyId",
+          "familyName",
+          "month",
+          "capUsd",
+          "capIsDefault",
+          "spentUsd"
+        ]
+      },
+      "UpdateFamilyExtractionCapRequest": {
+        "type": "object",
+        "properties": {
+          "capUsd": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "capUsd"
+        ]
+      },
       "HealthProfile": {
         "type": "object",
         "properties": {
@@ -3515,6 +3652,170 @@
         }
       }
     },
+    "/api/family/usage": {
+      "get": {
+        "tags": [
+          "family"
+        ],
+        "summary": "Mức đã dùng / trần tài nguyên của gia đình (SPEC-030)",
+        "responses": {
+          "200": {
+            "description": "Chỉ số của gia đình phiên",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyUsage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: không phải người chăm sóc chính",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/family-extraction-caps": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Trần và chi phí OCR tháng hiện tại của từng gia đình (SPEC-031)",
+        "responses": {
+          "200": {
+            "description": "Gia đình cũ nhất trước; chi phí gồm phần đang giữ chỗ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FamilyExtractionCap"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: không phải Quản trị hệ thống hoặc thiếu/sai X-CSRF-Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/families/{id}/extraction-cap": {
+      "put": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Đặt trần OCR riêng của một gia đình; null = về mặc định (SPEC-031)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFamilyExtractionCapRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Trần hiệu lực sau khi đặt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyExtractionCap"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: không phải Quản trị hệ thống hoặc thiếu/sai X-CSRF-Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/health-profiles": {
       "get": {
         "tags": [
@@ -3849,7 +4150,7 @@
             }
           },
           "413": {
-            "description": "ERR_BATCH_TOO_LARGE: quá 10 tệp hoặc body vượt trần",
+            "description": "ERR_BATCH_TOO_LARGE: quá 10 tệp hoặc body vượt trần; ERR_STORAGE_QUOTA: hết dung lượng gia đình",
             "content": {
               "application/json": {
                 "schema": {
@@ -3860,6 +4161,16 @@
           },
           "422": {
             "description": "ERR_VALIDATION (không có tệp, sai loại khai báo) hoặc ERR_NO_VALID_FILE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_DAILY_UPLOAD_QUOTA (Retry-After tới 0 giờ VN) | ERR_QUEUE_QUOTA (Retry-After: 30) | ERR_RATE_LIMITED — SPEC-030",
             "content": {
               "application/json": {
                 "schema": {
@@ -4510,6 +4821,16 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "ERR_QUEUE_QUOTA (Retry-After: 30) | ERR_RATE_LIMITED (Retry-After) — SPEC-030",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -4743,6 +5064,16 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "ERR_QUEUE_QUOTA (Retry-After: 30) | ERR_RATE_LIMITED (Retry-After) — SPEC-030",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -4827,6 +5158,16 @@
           },
           "422": {
             "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_QUEUE_QUOTA (Retry-After: 30) | ERR_RATE_LIMITED (Retry-After) — SPEC-030",
             "content": {
               "application/json": {
                 "schema": {
