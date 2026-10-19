@@ -65,7 +65,7 @@ describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () =>
     const held = t.holdNextPut();
     const first = upload(home.main, home.profileId);
     await held.arrived;
-    const second = upload(home.main, home.profileId);
+    const second = Promise.resolve(upload(home.main, home.profileId));
     const waited = await Promise.race([second.then(() => 'settled'), sleep(500).then(() => 'waiting')]);
     expect(waited).toBe('waiting');
     held.release();

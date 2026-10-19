@@ -23,6 +23,7 @@ Trước khi viết code: đọc SPEC liên quan trong `04-sdd.md` và mã subta
 | `yarn verify:fast`  | Typecheck + unit test liên quan (hook pre-push)                                 |
 | `yarn verify`       | OpenAPI → typecheck → lint → format → test → jscpd → knip → build → perf:budget |
 | `yarn test:int`     | Integration test với Testcontainers PostgreSQL                                  |
+| `yarn test:perf`    | Đo hiệu năng truy vấn DB chạy riêng (Testcontainers, không song song bộ int)    |
 | `yarn generate:api` | Sinh `packages/contracts/openapi.json` và kiểu client web                       |
 
 ## Bẫy đã biết
