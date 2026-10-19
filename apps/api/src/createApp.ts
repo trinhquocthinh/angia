@@ -41,6 +41,7 @@ import { type AuthRouteDeps, registerAuthRoutes } from '@src/shared/auth/present
 import { registerMeRoute } from '@src/shared/auth/presentation/registerMeRoute.js';
 import { requireSession } from '@src/shared/auth/presentation/requireSession.js';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
+import { createSlidingWindowLimiter } from '@src/shared/http/createSlidingWindowLimiter.js';
 import { errorResponse } from '@src/shared/http/errorResponse.js';
 
 export type AppDependencies = {
@@ -100,10 +101,16 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerAiBudgetRoutes(app, deps.aiBudget);
   registerFamilyUsageRoute(app, deps.familyUsage);
   registerProfileRoutes(app, deps.profiles, deps.auth.login.now);
-  registerDocumentRoutes(app, deps.documents);
+  // Một limiter dùng chung cho mọi thao tác nặng; khóa tách theo tài khoản + thao tác.
+  const heavyLimiter = createSlidingWindowLimiter({
+    limit: deps.heavyRateLimit.perMinute,
+    windowMs: 60_000,
+    now: deps.heavyRateLimit.now,
+  });
+  registerDocumentRoutes(app, deps.documents, heavyLimiter);
   registerReviewRoutes(app, deps.review);
   registerManualRecordRoutes(app, deps.review.repository);
-  registerPrivacyRoutes(app, deps.privacy);
+  registerPrivacyRoutes(app, deps.privacy, heavyLimiter);
   registerMeasurementRoutes(app, deps.measurements);
   registerLabResultRoutes(app, deps.labResults);
   registerDocumentEntryRoutes(app, deps.documentEntries);

@@ -3,9 +3,16 @@ import { hashPrivacyPng } from '@src/features/documentPrivacy/infrastructure/has
 import type { privacyFixture } from './privacyFixture.js';
 export function createPrivacyFixtureDependencies(f: ReturnType<typeof privacyFixture>): PrivacyDependencies {
   const store: PrivacyStore = {
+    readQuotaUsage: async (_dayStart, lock) => {
+      f.calls.push(lock ? 'quota:lock' : 'quota:read');
+      return f.usage;
+    },
     findDocument: async () => (f.missing ? null : structuredClone(f.doc)),
     consentConfirmed: async () => f.consent,
-    updateDocument: async (_id, u) => Object.assign(f.doc, u),
+    updateDocument: async (_id, u) => {
+      f.calls.push('update');
+      return Object.assign(f.doc, u);
+    },
     enqueuePreparation: async () => {
       f.jobs.push('prepare');
     },
@@ -43,5 +50,9 @@ export function createPrivacyFixtureDependencies(f: ReturnType<typeof privacyFix
     hashPng: hashPrivacyPng,
     newId: () => f.draftId,
     now: () => new Date('2026-10-08T00:00:00Z'),
+    quota: {
+      limits: { storageBytes: 100, dailyUploads: 10, pendingJobs: 3 },
+      now: () => new Date('2026-10-08T00:00:00Z'),
+    },
   };
 }

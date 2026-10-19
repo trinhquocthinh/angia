@@ -4,7 +4,9 @@ import type { Context } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { createConcurrencyLimit } from '@src/shared/http/createConcurrencyLimit.js';
+import type { SlidingWindowLimiter } from '@src/shared/http/createSlidingWindowLimiter.js';
 import { errorResponse } from '@src/shared/http/errorResponse.js';
+import { rateLimitHeavy } from '@src/shared/http/rateLimitHeavy.js';
 import { spoolMultipartFiles } from '@src/shared/http/spoolMultipartFiles.js';
 import type { DocumentDependencies } from '../application/ports.js';
 import { quotaErrorResponse } from '../../familyQuota/presentation/quotaErrorResponse.js';
@@ -32,9 +34,15 @@ const declaredTypeSchema = uploadBatchRequestSchema.shape.declaredType;
 
 // requireMain + no-store cho /api/health-profiles/* đã gắn ở registerProfileRoutes.
 // Không dùng app.openapi: validator form của zod-openapi parse cả body vào RAM. Chỉ đăng ký tài liệu OpenAPI.
-export function registerDocumentRoutes(app: OpenAPIHono<AppEnv>, deps: DocumentDependencies): void {
+export function registerDocumentRoutes(
+  app: OpenAPIHono<AppEnv>,
+  deps: DocumentDependencies,
+  limiter: SlidingWindowLimiter,
+): void {
   const uploadSlots = createConcurrencyLimit(MAX_CONCURRENT_UPLOADS);
   app.openAPIRegistry.registerPath(uploadBatchRoute);
+  // SPEC-030: chạy sau requireMain của /api/health-profiles/* và trước kiểm hồ sơ/quota/slot.
+  app.use('/api/health-profiles/:id/upload-batches', rateLimitHeavy(limiter, 'upload'));
   app.post('/api/health-profiles/:id/upload-batches', async (c) => {
     const profileId = profileIdSchema.safeParse(c.req.param('id'));
     if (!profileId.success) return errorResponse(c, 'ERR_VALIDATION');

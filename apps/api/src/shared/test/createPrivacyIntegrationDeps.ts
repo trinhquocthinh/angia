@@ -3,6 +3,7 @@ import type { PrivacyQueue } from '@src/features/documentPrivacy/infrastructure/
 import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
 import { hashPrivacyPng } from '@src/features/documentPrivacy/infrastructure/hashPrivacyPng.js';
 import type { PrivacyDependencies } from '@src/features/documentPrivacy/application/ports.js';
+import { TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
 import type { ProfileTestApp } from './startProfileTestApp.js';
 export function createPrivacyIntegrationDeps(
   t: ProfileTestApp,
@@ -15,6 +16,7 @@ export function createPrivacyIntegrationDeps(
     hashPng: hashPrivacyPng,
     newId: randomUUID,
     now: () => new Date(),
+    quota: TEST_QUOTA_POLICY,
     reader: {
       get: async (key) => {
         const object = t.objects.get(key);

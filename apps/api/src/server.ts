@@ -121,6 +121,7 @@ const app = createApp({
     hashPng: hashPrivacyPng,
     newId: randomUUID,
     now: () => new Date(),
+    quota: quotaPolicy,
   },
   measurements: createMeasurementRepository(db),
   labResults: createLabResultRepository(db),

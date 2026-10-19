@@ -14,6 +14,9 @@ export function privacyFixture() {
     missing: false,
     jobState: 'active' as string | null,
     jobs: [] as string[],
+    // SPEC-030: mức dùng trả cho kiểm quota và nhật ký thứ tự gọi kho.
+    usage: { storageBytes: 0, uploadsToday: 0, pendingJobs: 0 },
+    calls: [] as string[],
     inTx: false,
     onRead: () => {},
     target: { familyId: 'family', documentId: 'doc' },

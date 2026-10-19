@@ -86,6 +86,7 @@ function buildApp(
       hashPng: hashPrivacyPng,
       newId: randomUUID,
       now: () => new Date(),
+      quota,
     },
     measurements: createMeasurementRepository(database),
     labResults: createLabResultRepository(database),

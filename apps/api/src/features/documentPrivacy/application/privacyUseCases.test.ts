@@ -111,3 +111,53 @@ describe('Bản nháp và xác nhận ảnh', () => {
     });
   });
 });
+
+describe('Quota chờ worker ở bước riêng tư (SPEC-030, BR-043)', () => {
+  const full = { storageBytes: 0, uploadsToday: 0, pendingJobs: 3 };
+
+  it('TC-299: hàng đợi gia đình đầy → tạo bản kiểm tra trả ERR_QUEUE_QUOTA, không cập nhật hay enqueue', async () => {
+    const f = privacyFixture();
+    f.usage = full;
+    expect(await createPrivacyDraft(f.deps, { ...f.target, edits: { ...edits, masks: [] } })).toEqual({
+      ok: false,
+      code: 'ERR_QUEUE_QUOTA',
+      details: { used: 3, limit: 3, requested: 1 },
+    });
+    expect(f.jobs).toEqual([]);
+    expect(f.calls).toEqual(['quota:lock']);
+  });
+
+  it('TC-299: hàng đợi gia đình đầy → xác nhận gửi AI trả ERR_QUEUE_QUOTA, không enqueue OCR', async () => {
+    const f = privacyFixture();
+    f.ready();
+    f.usage = full;
+    expect(await approvePrivacy(f.deps, f.approval)).toMatchObject({ ok: false, code: 'ERR_QUEUE_QUOTA' });
+    expect(f.jobs).toEqual([]);
+    expect(f.doc.status).toBe('awaiting_privacy');
+  });
+
+  it('chứng từ đã duyệt gọi lại vẫn trả thành công dù hàng đợi đầy (idempotent)', async () => {
+    const f = privacyFixture();
+    f.ready();
+    expect((await approvePrivacy(f.deps, f.approval)).ok).toBe(true);
+    f.usage = full;
+    expect((await approvePrivacy(f.deps, f.approval)).ok).toBe(true);
+  });
+
+  it('dung lượng và ảnh/ngày đã vượt nhưng hàng đợi còn chỗ thì không chặn', async () => {
+    const f = privacyFixture();
+    f.usage = { storageBytes: 500, uploadsToday: 50, pendingJobs: 0 };
+    expect((await createPrivacyDraft(f.deps, { ...f.target, edits: { ...edits, masks: [] } })).ok).toBe(true);
+    expect(f.calls).toEqual(['quota:lock', 'update']);
+  });
+
+  it('kiểm quota sau kiểm đồng thuận: thiếu đồng thuận vẫn trả ERR_CONSENT_REQUIRED', async () => {
+    const f = privacyFixture();
+    f.consent = false;
+    f.usage = full;
+    expect(await createPrivacyDraft(f.deps, { ...f.target, edits: { ...edits, masks: [] } })).toEqual({
+      ok: false,
+      code: 'ERR_CONSENT_REQUIRED',
+    });
+  });
+});

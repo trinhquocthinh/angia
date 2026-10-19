@@ -6,6 +6,7 @@ import { OpenAPIHono } from '@hono/zod-openapi';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { SessionContext } from '@src/shared/auth/domain/SessionContext.js';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
+import { createSlidingWindowLimiter } from '@src/shared/http/createSlidingWindowLimiter.js';
 import { createMemoryDocumentDeps } from '@src/shared/test/createMemoryDocumentDeps.js';
 import { registerDocumentRoutes } from './registerDocumentRoutes.js';
 
@@ -36,7 +37,11 @@ const setup = () => {
     c.set('session', session);
     await next();
   });
-  registerDocumentRoutes(app, memory.deps);
+  registerDocumentRoutes(
+    app,
+    memory.deps,
+    createSlidingWindowLimiter({ limit: 1000, windowMs: 60_000, now: () => Date.now() }),
+  );
   return { app, memory, targets };
 };
 const slowBody = () => {
