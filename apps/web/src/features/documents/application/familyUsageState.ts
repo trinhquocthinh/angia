@@ -3,7 +3,7 @@ import type { FamilyUsage } from '@angia/contracts';
 const GIB = 1024 ** 3;
 const gibibytes = new Intl.NumberFormat('vi-VN', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
-export const formatGibibytes = (bytes: number) => `${gibibytes.format(bytes / GIB)} GiB`;
+const formatGibibytes = (bytes: number) => `${gibibytes.format(bytes / GIB)} GiB`;
 export const formatStorageUsage = (used: number, limit: number) =>
   `${gibibytes.format(used / GIB)} / ${formatGibibytes(limit)}`;
 

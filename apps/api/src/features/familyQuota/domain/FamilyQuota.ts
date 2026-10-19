@@ -17,7 +17,7 @@ export interface QuotaRequest {
   jobs: number;
 }
 
-export type QuotaCode = 'ERR_STORAGE_QUOTA' | 'ERR_DAILY_UPLOAD_QUOTA' | 'ERR_QUEUE_QUOTA';
+type QuotaCode = 'ERR_STORAGE_QUOTA' | 'ERR_DAILY_UPLOAD_QUOTA' | 'ERR_QUEUE_QUOTA';
 
 export interface QuotaFailure {
   ok: false;

@@ -1,6 +1,6 @@
 import type { FamilyUsage } from '@angia/contracts';
 import { describe, expect, it } from 'vitest';
-import { formatGibibytes, remainingUploadSlots, usageBlockReason } from './familyUsageState';
+import { formatStorageUsage, remainingUploadSlots, usageBlockReason } from './familyUsageState';
 
 const usage = (
   overrides: Partial<{ storage: number; daily: number; pending: number }> = {},
@@ -33,7 +33,7 @@ describe('TC-302 — trạng thái mức sử dụng của gia đình trên tran
   });
 
   it('định dạng dung lượng GiB kiểu Việt Nam, một chữ số thập phân', () => {
-    expect(formatGibibytes(1288490188)).toBe('1,2 GiB');
-    expect(formatGibibytes(2 * 1024 ** 3)).toBe('2,0 GiB');
+    expect(formatStorageUsage(1288490188, 2 * 1024 ** 3)).toBe('1,2 / 2,0 GiB');
+    expect(formatStorageUsage(0, 5 * 1024 ** 3)).toBe('0,0 / 5,0 GiB');
   });
 });
