@@ -28,6 +28,7 @@ import {
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
 import { createApp } from '@src/createApp.js';
+import { createFamilyUsageRepository } from '@src/features/familyQuota/infrastructure/createFamilyUsageRepository.js';
 import { createFamilyAdminRepository } from '@src/features/family/infrastructure/createFamilyAdminRepository.js';
 import { createAiBudgetRepository } from '@src/features/family/infrastructure/createAiBudgetRepository.js';
 import { createPostgresProbe } from '@src/features/health/infrastructure/createPostgresProbe.js';
@@ -59,6 +60,15 @@ await ensureExtractDocumentQueues(boss);
 await boss.createQueue(REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS);
 const privacyQueue = createPrivacyQueue(boss);
 
+// F03b (SPEC-030): ngưỡng quota dùng chung cho upload, bước riêng tư và route mức đã dùng.
+const quotaPolicy = {
+  limits: {
+    storageBytes: config.QUOTA_FAMILY_STORAGE_BYTES,
+    dailyUploads: config.QUOTA_FAMILY_DAILY_UPLOADS,
+    pendingJobs: config.QUOTA_FAMILY_PENDING_JOBS,
+  },
+  now: () => new Date(),
+};
 const app = createApp({
   healthProbes: {
     db: createPostgresProbe(pool),
@@ -117,6 +127,8 @@ const app = createApp({
   medications: createMedicationRepository(db),
   adherence: createAdherenceRepository(db),
   visitSummary: createVisitSummaryRepository(db),
+  familyUsage: { repository: createFamilyUsageRepository(db), quota: quotaPolicy },
+  heavyRateLimit: { perMinute: config.RATE_LIMIT_HEAVY_PER_MINUTE, now: () => Date.now() },
 });
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {

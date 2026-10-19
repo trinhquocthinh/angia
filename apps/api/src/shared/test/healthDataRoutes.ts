@@ -59,4 +59,6 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'PATCH /api/admin/accounts/:id/membership',
   'GET /api/admin/extraction-cap',
   'PUT /api/admin/extraction-cap',
+  // SPEC-030: chỉ số đếm (byte, số ảnh) của gia đình phiên, không chứa bản ghi sức khỏe.
+  'GET /api/family/usage',
 ];

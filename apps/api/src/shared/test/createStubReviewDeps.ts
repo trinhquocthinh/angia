@@ -1,4 +1,5 @@
 import { createStubPrivacyDeps } from './createStubPrivacyDeps.js';
+import { TEST_HEAVY_RATE_LIMIT, TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
 import type { AppDependencies } from '@src/createApp.js';
 
 const notConfigured = () => Promise.reject(new Error('Kho duyệt/số đo chưa cấu hình trong test này'));
@@ -14,6 +15,8 @@ export function createStubReviewDeps(): Pick<
   | 'medications'
   | 'adherence'
   | 'visitSummary'
+  | 'familyUsage'
+  | 'heavyRateLimit'
 > {
   return {
     privacy: createStubPrivacyDeps(),
@@ -24,5 +27,7 @@ export function createStubReviewDeps(): Pick<
     measurements: { withFamily: notConfigured },
     labResults: { withFamily: notConfigured },
     documentEntries: { withFamily: notConfigured },
+    familyUsage: { repository: { read: notConfigured }, quota: TEST_QUOTA_POLICY },
+    heavyRateLimit: TEST_HEAVY_RATE_LIMIT,
   };
 }

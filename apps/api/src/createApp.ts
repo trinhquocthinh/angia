@@ -32,6 +32,8 @@ import type { FamilyAdminRepository } from '@src/features/family/application/por
 import { registerAdminRoutes } from '@src/features/family/presentation/registerAdminRoutes.js';
 import type { AiBudgetDependencies } from '@src/features/family/application/aiBudgetPorts.js';
 import { registerAiBudgetRoutes } from '@src/features/family/presentation/registerAiBudgetRoutes.js';
+import type { FamilyUsageDependencies } from '@src/features/familyQuota/application/ports.js';
+import { registerFamilyUsageRoute } from '@src/features/familyQuota/presentation/registerFamilyUsageRoute.js';
 import type { HealthProbes } from '@src/features/health/application/ports.js';
 import { registerHealthRoute } from '@src/features/health/presentation/registerHealthRoute.js';
 import { loadSession } from '@src/shared/auth/presentation/loadSession.js';
@@ -57,6 +59,9 @@ export type AppDependencies = {
   medications: MedicationManagementRepository;
   adherence: AdherenceRepository;
   visitSummary: VisitSummaryRepository;
+  familyUsage: FamilyUsageDependencies;
+  // F03b: nhịp thao tác nặng mỗi tài khoản/thao tác trong 60 s (đếm trong tiến trình).
+  heavyRateLimit: { perMinute: number; now(): number };
 };
 
 // Ngoại lệ duy nhất của "mọi route /api cần phiên" (Tech Spec §4); logout vẫn cần phiên + CSRF.
@@ -93,6 +98,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerMeRoute(app);
   registerAdminRoutes(app, deps.familyAdmin);
   registerAiBudgetRoutes(app, deps.aiBudget);
+  registerFamilyUsageRoute(app, deps.familyUsage);
   registerProfileRoutes(app, deps.profiles, deps.auth.login.now);
   registerDocumentRoutes(app, deps.documents);
   registerReviewRoutes(app, deps.review);

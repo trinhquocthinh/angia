@@ -30,6 +30,8 @@ import { createSessionRepository } from '@src/shared/auth/infrastructure/createS
 import { createDatabase, type Database } from '@src/shared/db/createDatabase.js';
 import { runMigrations } from '@src/shared/db/runMigrations.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
+import { createFamilyUsageRepository } from '@src/features/familyQuota/infrastructure/createFamilyUsageRepository.js';
+import { TEST_HEAVY_RATE_LIMIT, TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
 import { createMemoryObjectStorage } from './createMemoryObjectStorage.js';
 import { createSilentLogger } from './createSilentLogger.js';
 import { createStubAuthDeps } from './createStubAuthDeps.js';
@@ -82,6 +84,8 @@ function buildApp(
     medications: createMedicationRepository(database),
     adherence: createAdherenceRepository(database),
     visitSummary: createVisitSummaryRepository(database),
+    familyUsage: { repository: createFamilyUsageRepository(database), quota: TEST_QUOTA_POLICY },
+    heavyRateLimit: TEST_HEAVY_RATE_LIMIT,
   });
 }
 
