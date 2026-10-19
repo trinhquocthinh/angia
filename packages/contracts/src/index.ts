@@ -13,12 +13,22 @@ export type { CreateFamilyRequest, Family } from './family/familySchema.js';
 export { aiBudgetSchema, updateAiBudgetRequestSchema } from './family/aiBudgetSchemas.js';
 export type { AiBudget, UpdateAiBudgetRequest } from './family/aiBudgetSchemas.js';
 export { familyUsageSchema } from './family/familyUsageSchema.js';
+export {
+  familyExtractionCapSchema,
+  updateFamilyExtractionCapRequestSchema,
+} from './family/familyExtractionCapSchemas.js';
+export type {
+  FamilyExtractionCap,
+  UpdateFamilyExtractionCapRequest,
+} from './family/familyExtractionCapSchemas.js';
 export type { FamilyUsage } from './family/familyUsageSchema.js';
 export { budgetMonth } from './budget/budgetMonth.js';
 export {
   REQUEUE_AWAITING_BUDGET_QUEUE,
   REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS,
+  requeueAwaitingBudgetJobSchema,
 } from './jobs/requeueAwaitingBudgetJob.js';
+export type { RequeueAwaitingBudgetJob } from './jobs/requeueAwaitingBudgetJob.js';
 export { healthResponseSchema } from './health/healthResponseSchema.js';
 export type { HealthResponse } from './health/healthResponseSchema.js';
 export { healthProfileSchema } from './profiles/healthProfileSchema.js';
