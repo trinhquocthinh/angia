@@ -9,7 +9,7 @@ interface UsageRow extends Record<string, unknown> {
 }
 
 // Job preview (convert-heic) không có dead-letter: hết lượt (≈ 3 × 300 s + giãn cách) thì chứng từ kẹt ở uploaded.
-// Quá mốc này không tính "chờ worker" để chứng từ kẹt không khóa gia đình mãi (review F03b, ruling chờ owner duyệt).
+// Quá mốc này không tính "chờ worker" để chứng từ kẹt không khóa gia đình mãi (SPEC-030, owner duyệt 2026-10-19).
 const STUCK_UPLOAD_AFTER = '1 hour';
 
 // SPEC-030: đếm từ source_documents (RLS + family_id phòng thủ). Dung lượng chỉ tính ảnh gốc, mọi trạng thái;
