@@ -50,6 +50,27 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
     expect(other.pendingJobs.used).toBe(1);
   });
 
+  it('chứng từ kẹt ở uploaded quá 1 giờ (job preview đã hết lượt) không còn tính vào chờ worker', async () => {
+    const familyId = await t.family();
+    const main = await t.session(familyId);
+    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Ông' });
+    const profileId = ((await created.json()) as HealthProfile).id;
+    const owner = { familyId, profileId, accountId: main.accountId };
+    await seedQuotaDocument(t, owner, {
+      status: 'uploaded',
+      sizeBytes: 1,
+      createdAt: new Date(Date.now() - 2 * 3600_000),
+    });
+    await seedQuotaDocument(t, owner, {
+      status: 'uploaded',
+      sizeBytes: 1,
+      createdAt: new Date(Date.now() - 30 * 60_000),
+    });
+    const usage = (await (await t.call(main, 'GET', '/api/family/usage')).json()) as FamilyUsage;
+    expect(usage.pendingJobs.used).toBe(1);
+    expect(usage.storage.usedBytes).toBe(2);
+  });
+
   it('TC-301: tài khoản không phải người chăm sóc chính → 403; không phiên → 401', async () => {
     const member = await t.session(owners.a.familyId, 'member');
     expect((await t.call(member, 'GET', '/api/family/usage')).status).toBe(403);
