@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { DocumentType, DocumentUploader, ImagePreparer } from './ports';
 import { prepareUpload } from './prepareUpload';
 import { runUpload } from './runUpload';
+import { FAMILY_USAGE_KEY } from './useFamilyUsage';
 import { isSessionError } from './uploadErrorMessage';
 import { nextBatch, nextPreparing, planUpload, summarizeQueue, uploadQueueReducer } from './uploadQueue';
 
@@ -38,6 +39,8 @@ export function useUploadQueue(
     if (!csrfToken || !key || started.current.has(key)) return;
     started.current.add(key);
     void runUpload(batch, uploader, csrfToken, dispatch).then((error) => {
+      // SPEC-030: lô xong hay lỗi đều đổi mức dùng của gia đình.
+      void client.invalidateQueries({ queryKey: FAMILY_USAGE_KEY });
       if (isSessionError(error)) void client.invalidateQueries({ queryKey: ['current-session'] });
     });
   }, [items, csrfToken, uploader, client]);

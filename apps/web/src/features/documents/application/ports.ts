@@ -1,3 +1,4 @@
+import type { FamilyUsage } from '@angia/contracts';
 import type { components } from '@src/shared/api/schema.gen';
 export type UploadBatchResponse = components['schemas']['UploadBatchResponse'];
 export type DocumentType = NonNullable<components['schemas']['UploadBatchRequest']['declaredType']>;
@@ -15,3 +16,6 @@ export interface DocumentUploader {
 }
 // Nén/chuyển định dạng ảnh trước khi gửi; trả chính tệp gốc khi không cần hoặc không xử lý được.
 export type ImagePreparer = (file: File) => Promise<File>;
+export interface FamilyUsageRepository {
+  get(signal?: AbortSignal): Promise<FamilyUsage>;
+}
