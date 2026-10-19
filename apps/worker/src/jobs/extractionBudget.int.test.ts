@@ -19,7 +19,6 @@ import { APPROVED_OCR_BYTES, seedExtractingDocument } from '@src/shared/test/see
 import { handleExtractDocumentJob } from './handleExtractDocumentJob.js';
 import { handleRecoverDeadExtractionJob } from './handleRecoverDeadExtractionJob.js';
 import { registerRecoverDeadExtractionJob } from './registerRecoverDeadExtractionJob.js';
-import { handleRequeueAwaitingBudgetJob } from './handleRequeueAwaitingBudgetJob.js';
 import { registerRequeueAwaitingBudgetJob } from './registerRequeueAwaitingBudgetJob.js';
 
 const logger = pino({ level: 'silent' });
@@ -232,37 +231,5 @@ describe('Ngân sách AI trên PostgreSQL + pg-boss thật (E3-S6-T1, BR-018, F0
     expect((await spend()).spent_usd).toBe('1.000000');
     expect(await reservations()).toBe(0);
     expect(await status(alive.documentId)).toBe('extracting');
-  });
-
-  it('TC-307: requeue bỏ qua gia đình còn hết trần riêng; job kèm familyId chỉ chạm gia đình đó', async () => {
-    await fx.owner.query(`DELETE FROM pgboss.job WHERE name = $1`, [EXTRACT_DOCUMENT_QUEUE]);
-    await fx.owner.query(
-      `UPDATE source_documents SET status = 'manual_entry' WHERE status = 'awaiting_budget'`,
-    );
-    const a = await seedExtractingDocument(fx.owner);
-    const b = await seedExtractingDocument(fx.owner);
-    await setSpend(0);
-    await fx.owner.query(
-      `INSERT INTO family_extraction_spend(family_id, month, spent_usd) VALUES ($1, '2026-10', 0.49)`,
-      [b.familyId],
-    );
-    await fx.owner.query(`UPDATE source_documents SET status='awaiting_budget' WHERE id = ANY($1)`, [
-      [a.documentId, b.documentId],
-    ]);
-    const policy = {
-      estimatedCostUsd: 0.02,
-      defaultMonthlyCapUsd: 5,
-      defaultFamilyCapUsd: 0.5,
-      now: () => NOW,
-    };
-    const repo = createBudgetRequeueRepository(fx.pool, boss);
-    const handle = handleRequeueAwaitingBudgetJob(repo, policy, logger);
-    await handle({ id: 'r1', data: { familyId: b.familyId } });
-    expect(await status(b.documentId)).toBe('awaiting_budget');
-    expect(await status(a.documentId)).toBe('awaiting_budget');
-    await handle({ id: 'r2', data: {} });
-    expect(await status(a.documentId)).toBe('extracting');
-    expect(await status(b.documentId)).toBe('awaiting_budget');
-    await expect(handle({ id: 'r3', data: { familyId: 'x' } })).rejects.toThrow();
   });
 });

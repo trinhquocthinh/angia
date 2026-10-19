@@ -161,4 +161,17 @@ describe('Trần chi phí OCR theo gia đình trên PostgreSQL thật (SPEC-031,
     expect(await familySpent(doc.familyId)).toBe('0.001130');
     expect(await globalSpent()).toBe('0.001130');
   });
+
+  it('chỗ giữ mở từ trước khi có trần gia đình (deploy F03b): quyết toán không làm âm dòng gia đình, chứng từ không kẹt', async () => {
+    const doc = await seedExtractingDocument(fx.owner);
+    await setGlobal(1.02);
+    await setFamily(doc.familyId, 0.001);
+    await fx.owner.query(
+      `INSERT INTO extraction_reservations(source_document_id, family_id, month, amount_usd) VALUES ($1, $2, '2026-10', 0.02)`,
+      [doc.documentId, doc.familyId],
+    );
+    expect(await run(countingExtractor().extractor, doc)).toMatchObject({ status: 'pending_review' });
+    expect(await familySpent(doc.familyId)).toBe('0.000000');
+    expect(await globalSpent()).toBe('1.001130');
+  });
 });

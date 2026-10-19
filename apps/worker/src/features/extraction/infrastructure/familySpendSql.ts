@@ -24,7 +24,8 @@ export async function reserveFamily(
   return reserved.rowCount === 1;
 }
 
-// Cộng/trừ chi phí vào dòng gia đình (quyết toán, trả chỗ, bù trừ khi trần tổng hết); không âm nhờ CHECK.
+// Cộng/trừ chi phí vào dòng gia đình (quyết toán, trả chỗ, bù trừ khi trần tổng hết). Kẹp ≥ 0: chỗ giữ mở từ trước
+// khi có dòng gia đình (deploy F03b đợt 2) trả về nhiều hơn đã cộng — không để CHECK làm kẹt chứng từ.
 export const adjustFamily = (
   client: pg.PoolClient,
   familyId: string,
@@ -32,7 +33,7 @@ export const adjustFamily = (
   deltaUsd: string | number,
 ) =>
   client.query(
-    `UPDATE family_extraction_spend SET spent_usd = spent_usd + $3::numeric, updated_at = now()
+    `UPDATE family_extraction_spend SET spent_usd = GREATEST(spent_usd + $3::numeric, 0), updated_at = now()
      WHERE family_id = $1 AND month = $2`,
     [familyId, month, deltaUsd],
   );
