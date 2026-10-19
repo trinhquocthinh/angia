@@ -23,6 +23,8 @@ const workerEnvSchema = z
     // BR-018: trần khởi tạo khi chưa có tháng nào trong extraction_spend; ước tính giữ chỗ mỗi lần gọi AI.
     AI_DEFAULT_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(5),
     AI_ESTIMATED_COST_USD: z.coerce.number().positive().default(0.02),
+    // SPEC-031: trần mặc định mỗi gia đình/tháng khi families.extraction_cap_usd để trống; trùng giá trị API.
+    AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(0.5),
   })
   .refine((env) => env.AI_PROVIDER !== 'openrouter' || Boolean(env.OPENROUTER_API_KEY), {
     message: 'AI_PROVIDER=openrouter bắt buộc có OPENROUTER_API_KEY',

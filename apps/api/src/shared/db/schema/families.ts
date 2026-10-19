@@ -1,9 +1,21 @@
-import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { check, numeric, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { newId } from './newId.js';
 
 // Không dùng columns.ts để tránh vòng import (familyIdColumn tham chiếu bảng này).
-export const families = pgTable('families', {
-  id: uuid('id').primaryKey().$defaultFn(newId),
-  name: text('name').notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-});
+export const families = pgTable(
+  'families',
+  {
+    id: uuid('id').primaryKey().$defaultFn(newId),
+    name: text('name').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    // SPEC-031: trần chi phí OCR riêng của gia đình mỗi tháng; NULL = AI_DEFAULT_FAMILY_MONTHLY_CAP_USD.
+    extractionCapUsd: numeric('extraction_cap_usd', { precision: 10, scale: 2 }),
+  },
+  (table) => [
+    check(
+      'families_extraction_cap_range',
+      sql`${table.extractionCapUsd} IS NULL OR ${table.extractionCapUsd} BETWEEN 0 AND 100`,
+    ),
+  ],
+);

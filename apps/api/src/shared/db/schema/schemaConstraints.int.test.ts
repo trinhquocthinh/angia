@@ -196,4 +196,31 @@ describe('Ràng buộc lược đồ Walking Skeleton', () => {
     const account = await owner.query(`SELECT health_profile_id FROM accounts WHERE id = $1`, [accountId]);
     expect(account.rows[0]).toEqual({ health_profile_id: null });
   });
+
+  it('trần AI theo gia đình (F03b đợt 2): chi tiêu không âm, trần 0–100, khóa (gia đình, tháng) duy nhất', async () => {
+    await owner.query(
+      `INSERT INTO extraction_spend (month, cap_usd) VALUES ('2026-09', 5) ON CONFLICT DO NOTHING`,
+    );
+    await owner.query(`INSERT INTO family_extraction_spend (family_id, month) VALUES ($1, '2026-09')`, [
+      familyId,
+    ]);
+    await expect(
+      owner.query(`INSERT INTO family_extraction_spend (family_id, month) VALUES ($1, '2026-09')`, [
+        familyId,
+      ]),
+    ).rejects.toThrow();
+    await expect(
+      owner.query(`UPDATE family_extraction_spend SET spent_usd = -0.01 WHERE family_id = $1`, [familyId]),
+    ).rejects.toThrow();
+    await expect(
+      owner.query(`INSERT INTO family_extraction_spend (family_id, month) VALUES ($1, '2099-01')`, [
+        otherFamilyId,
+      ]),
+    ).rejects.toThrow();
+    await expect(
+      owner.query(`UPDATE families SET extraction_cap_usd = 100.01 WHERE id = $1`, [familyId]),
+    ).rejects.toThrow();
+    await owner.query(`UPDATE families SET extraction_cap_usd = 0.5 WHERE id = $1`, [familyId]);
+    await owner.query(`UPDATE families SET extraction_cap_usd = NULL WHERE id = $1`, [familyId]);
+  });
 });

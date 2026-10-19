@@ -48,3 +48,14 @@ describe('Ngưỡng quota tài nguyên gia đình (SPEC-030, BR-043)', () => {
     expect(loadApiConfig({ ...env, QUOTA_FAMILY_PENDING_JOBS: '3' }).QUOTA_FAMILY_PENDING_JOBS).toBe(3);
   });
 });
+
+describe('Trần AI theo gia đình (SPEC-031, BR-018)', () => {
+  it('mặc định trần gia đình $0.50 và ước tính $0.02 (trùng worker); giá trị âm bị từ chối', () => {
+    expect(loadApiConfig(env)).toMatchObject({
+      AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: 0.5,
+      AI_ESTIMATED_COST_USD: 0.02,
+    });
+    expect(() => loadApiConfig({ ...env, AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: '-1' })).toThrow();
+    expect(() => loadApiConfig({ ...env, AI_ESTIMATED_COST_USD: '0' })).toThrow();
+  });
+});

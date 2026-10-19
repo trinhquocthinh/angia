@@ -23,6 +23,9 @@ const apiEnvSchema = z.object({
   ADMIN_GROUP_NAME: z.string().min(1),
   // BR-018: trần hiển thị/khởi tạo khi extraction_spend chưa có tháng nào; phải trùng giá trị của worker.
   AI_DEFAULT_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(5),
+  // SPEC-031: trần AI mặc định mỗi gia đình/tháng và ước tính mỗi lời gọi — phải trùng giá trị của worker.
+  AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(0.5),
+  AI_ESTIMATED_COST_USD: z.coerce.number().positive().default(0.02),
   // F03b (SPEC-030, BR-043): quota tài nguyên theo gia đình và nhịp thao tác nặng theo tài khoản.
   QUOTA_FAMILY_STORAGE_BYTES: z.coerce
     .number()

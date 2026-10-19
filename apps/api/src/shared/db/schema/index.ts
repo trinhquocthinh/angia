@@ -13,5 +13,6 @@ export { prescriptionItems } from './prescriptionItems.js';
 export { labResults } from './labResults.js';
 export { extractionSpend } from './extractionSpend.js';
 export { extractionReservations } from './extractionReservations.js';
+export { familyExtractionSpend } from './familyExtractionSpend.js';
 export { medicationCourses } from './medicationCourses.js';
 export { adherencePeriods } from './adherencePeriods.js';
