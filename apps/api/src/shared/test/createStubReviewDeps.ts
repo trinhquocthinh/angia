@@ -16,6 +16,7 @@ export function createStubReviewDeps(): Pick<
   | 'adherence'
   | 'visitSummary'
   | 'familyUsage'
+  | 'familyCaps'
   | 'heavyRateLimit'
 > {
   return {
@@ -33,5 +34,10 @@ export function createStubReviewDeps(): Pick<
       ai: TEST_AI_POLICY,
     },
     heavyRateLimit: TEST_HEAVY_RATE_LIMIT,
+    familyCaps: {
+      repository: { list: notConfigured, inTransaction: notConfigured },
+      defaultFamilyCapUsd: 0.5,
+      now: () => new Date(),
+    },
   };
 }

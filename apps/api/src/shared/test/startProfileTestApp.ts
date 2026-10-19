@@ -32,6 +32,7 @@ import { runMigrations } from '@src/shared/db/runMigrations.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { createFamilyUsageRepository } from '@src/features/familyQuota/infrastructure/createFamilyUsageRepository.js';
 import type { QuotaLimits } from '@src/features/familyQuota/domain/FamilyQuota.js';
+import { createFamilyCapRepository } from '@src/features/family/infrastructure/createFamilyCapRepository.js';
 import { TEST_AI_POLICY, TEST_HEAVY_RATE_LIMIT, TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
 import { createMemoryObjectStorage } from './createMemoryObjectStorage.js';
 import { createSilentLogger } from './createSilentLogger.js';
@@ -97,6 +98,11 @@ function buildApp(
     visitSummary: createVisitSummaryRepository(database),
     familyUsage: { repository: createFamilyUsageRepository(database), quota, ai: TEST_AI_POLICY },
     heavyRateLimit: options.heavyRateLimit ?? TEST_HEAVY_RATE_LIMIT,
+    familyCaps: {
+      repository: createFamilyCapRepository(database, boss),
+      defaultFamilyCapUsd: 0.5,
+      now: () => new Date(),
+    },
   });
 }
 

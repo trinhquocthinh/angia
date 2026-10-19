@@ -61,4 +61,7 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'PUT /api/admin/extraction-cap',
   // SPEC-030: chỉ số đếm (byte, số ảnh) của gia đình phiên, không chứa bản ghi sức khỏe.
   'GET /api/family/usage',
+  // SPEC-031: trần/chi phí OCR (USD) theo gia đình — dữ liệu quản trị, không phải bản ghi sức khỏe.
+  'GET /api/admin/family-extraction-caps',
+  'PUT /api/admin/families/:id/extraction-cap',
 ];

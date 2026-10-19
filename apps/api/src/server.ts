@@ -28,6 +28,7 @@ import {
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
 import { createApp } from '@src/createApp.js';
+import { createFamilyCapRepository } from '@src/features/family/infrastructure/createFamilyCapRepository.js';
 import { createFamilyUsageRepository } from '@src/features/familyQuota/infrastructure/createFamilyUsageRepository.js';
 import { createFamilyAdminRepository } from '@src/features/family/infrastructure/createFamilyAdminRepository.js';
 import { createAiBudgetRepository } from '@src/features/family/infrastructure/createAiBudgetRepository.js';
@@ -138,6 +139,11 @@ const app = createApp({
   adherence: createAdherenceRepository(db),
   visitSummary: createVisitSummaryRepository(db),
   familyUsage: { repository: createFamilyUsageRepository(db), quota: quotaPolicy, ai: aiPolicy },
+  familyCaps: {
+    repository: createFamilyCapRepository(db, boss),
+    defaultFamilyCapUsd: config.AI_DEFAULT_FAMILY_MONTHLY_CAP_USD,
+    now: () => new Date(),
+  },
   heavyRateLimit: { perMinute: config.RATE_LIMIT_HEAVY_PER_MINUTE, now: () => Date.now() },
 });
 
