@@ -11,8 +11,23 @@ export function createMemoryObjectStorage() {
     failAt = n;
     putsSinceArm = 0;
   };
+  // Giữ lần ghi kế tiếp tới khi release (giả lập S3 chậm giữa transaction ghi) — kiểm khóa quota đồng thời.
+  let hold: { reached: () => void; gate: Promise<void> } | null = null;
+  const holdNextPut = () => {
+    let reached!: () => void;
+    let release!: () => void;
+    const arrived = new Promise<void>((resolve) => (reached = resolve));
+    hold = { reached, gate: new Promise<void>((resolve) => (release = resolve)) };
+    return { arrived, release };
+  };
   const storage: ObjectStorage = {
     put: async (key, stream, contentType) => {
+      const held = hold;
+      if (held) {
+        hold = null;
+        held.reached();
+        await held.gate;
+      }
       if (failAt !== null && ++putsSinceArm === failAt) {
         failAt = null;
         throw new Error('S3 lỗi giả lập');
@@ -29,5 +44,5 @@ export function createMemoryObjectStorage() {
       return object ? { body: new Blob([object.body]).stream(), contentType: object.contentType } : null;
     },
   };
-  return { storage, reader, objects, failNthPut };
+  return { storage, reader, objects, failNthPut, holdNextPut };
 }

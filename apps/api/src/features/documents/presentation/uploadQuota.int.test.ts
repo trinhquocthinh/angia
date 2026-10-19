@@ -9,6 +9,7 @@ import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/start
 const JPEG = new Uint8Array(20).fill(7);
 JPEG.set([0xff, 0xd8, 0xff, 0xe0]);
 const LIMITS = { storageBytes: 100, dailyUploads: 4, pendingJobs: 4 };
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () => {
   let t: ProfileTestApp;
@@ -56,6 +57,20 @@ describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () =>
     expect(rejected.headers.get('retry-after')).toBeNull();
     expect(t.objects.size).toBe(objectsBefore + 1);
     expect(await documentCount(home.familyId)).toBe(2);
+  });
+
+  it('TC-295: lô B phải chờ khóa quota khi lô A đang ghi dở, rồi bị từ chối theo mức dùng đã commit của A', async () => {
+    const home = await household();
+    await home.seed({ status: 'rejected', sizeBytes: 70 });
+    const held = t.holdNextPut();
+    const first = upload(home.main, home.profileId);
+    await held.arrived;
+    const second = upload(home.main, home.profileId);
+    const waited = await Promise.race([second.then(() => 'settled'), sleep(500).then(() => 'waiting')]);
+    expect(waited).toBe('waiting');
+    held.release();
+    expect((await first).status).toBe(201);
+    expect((await second).status).toBe(413);
   });
 
   it('TC-295: hai lô đồng thời sát trần ảnh/ngày → 201 và 429 kèm Retry-After tới 0 giờ giờ VN', async () => {

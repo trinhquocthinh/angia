@@ -152,6 +152,7 @@ export async function startProfileTestApp(
     boss,
     objects: memory.objects,
     failNthPut: memory.failNthPut,
+    holdNextPut: memory.holdNextPut,
     codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
   };
 }
