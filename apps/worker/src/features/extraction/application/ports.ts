@@ -13,6 +13,8 @@ export interface BudgetCall {
   month: string;
   estimatedCostUsd: number;
   defaultMonthlyCapUsd: number;
+  /** SPEC-031: trần mỗi gia đình/tháng khi families.extraction_cap_usd để trống. */
+  defaultFamilyCapUsd: number;
 }
 export interface ExtractionStore {
   findDocument(id: string): Promise<DocumentToExtract | null>;
@@ -20,9 +22,9 @@ export interface ExtractionStore {
   markManualEntry(id: string): Promise<void>;
   markAwaitingBudget(id: string): Promise<void>;
   savePendingReview(id: string, extraction: SavedExtraction): Promise<void>;
-  /** Giữ chỗ nguyên tử (đã dùng + ước tính ≤ trần); chứng từ đã có chỗ giữ thì dùng lại. false = hết ngân sách. */
+  /** Giữ chỗ nguyên tử trên trần gia đình rồi trần tổng; chứng từ đã có chỗ giữ thì dùng lại. false = hết một trong hai. */
   reserveBudget(id: string, call: BudgetCall): Promise<boolean>;
-  /** Xóa chỗ giữ rồi ghi chi phí thực vào đúng tháng đã giữ; chạy lặp không tính trùng. */
+  /** Xóa chỗ giữ rồi ghi chi phí thực vào đúng tháng đã giữ, trên cả dòng gia đình và dòng tổng; chạy lặp không tính trùng. */
   settleBudget(id: string, costUsd: number, call: BudgetCall): Promise<void>;
 }
 export interface ExtractionRepository {
@@ -53,6 +55,7 @@ export interface DocumentExtractor {
 export interface BudgetPolicy {
   estimatedCostUsd: number;
   defaultMonthlyCapUsd: number;
+  defaultFamilyCapUsd: number;
   now(): Date;
 }
 export interface ExtractionDependencies {

@@ -54,7 +54,7 @@ describe('Ngân sách AI trên PostgreSQL + pg-boss thật (E3-S6-T1, BR-018, F0
   let boss: PgBoss;
   const deps = (extractor: DocumentExtractor): ExtractionDependencies => ({
     repository: createExtractionRepository(fx.pool),
-    budget: { estimatedCostUsd: 0.02, defaultMonthlyCapUsd: 5, now: () => NOW },
+    budget: { estimatedCostUsd: 0.02, defaultMonthlyCapUsd: 5, defaultFamilyCapUsd: 0.5, now: () => NOW },
     storage: { get: async () => APPROVED_OCR_BYTES },
     images: { heicToJpeg: async (bytes) => bytes },
     extractor,
@@ -99,7 +99,9 @@ describe('Ngân sách AI trên PostgreSQL + pg-boss thật (E3-S6-T1, BR-018, F0
     await fx?.close();
   });
   beforeEach(async () => {
-    await fx.owner.query('DELETE FROM extraction_reservations; DELETE FROM extraction_spend');
+    await fx.owner.query(
+      'DELETE FROM extraction_reservations; DELETE FROM family_extraction_spend; DELETE FROM extraction_spend',
+    );
   });
 
   it('TC-027: đã dùng $1.00 / trần $5.00 → pending_review, chi phí tháng tăng đúng chi phí thực', async () => {
@@ -140,7 +142,7 @@ describe('Ngân sách AI trên PostgreSQL + pg-boss thật (E3-S6-T1, BR-018, F0
     await setSpend(2.9, '2026-09', 3);
     await run(countingExtractor().extractor, await seedExtractingDocument(fx.owner));
     expect(await spend()).toEqual({ spent_usd: '0.001130', cap_usd: '3.00' });
-    await fx.owner.query('DELETE FROM extraction_spend');
+    await fx.owner.query('DELETE FROM family_extraction_spend; DELETE FROM extraction_spend');
     await run(countingExtractor().extractor, await seedExtractingDocument(fx.owner));
     expect((await spend()).cap_usd).toBe('5.00');
   });

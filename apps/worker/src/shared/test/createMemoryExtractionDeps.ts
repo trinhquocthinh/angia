@@ -68,7 +68,12 @@ export function createMemoryExtractionDeps(options: Options) {
           },
         }),
     },
-    budget: { estimatedCostUsd: 0.02, defaultMonthlyCapUsd: 5, now: () => MEMORY_NOW },
+    budget: {
+      estimatedCostUsd: 0.02,
+      defaultMonthlyCapUsd: 5,
+      defaultFamilyCapUsd: 0.5,
+      now: () => MEMORY_NOW,
+    },
     storage: {
       get: async (key) => getMemoryObject(objects, key),
     },

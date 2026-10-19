@@ -33,7 +33,12 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
   let boss: PgBoss;
   const deps = (): ExtractionDependencies => ({
     repository: createExtractionRepository(pool),
-    budget: { estimatedCostUsd: 0.02, defaultMonthlyCapUsd: 5, now: () => new Date() },
+    budget: {
+      estimatedCostUsd: 0.02,
+      defaultMonthlyCapUsd: 5,
+      defaultFamilyCapUsd: 0.5,
+      now: () => new Date(),
+    },
     storage: { get: async () => new Uint8Array([0xff, 0xd8, 0xff]) },
     images: { heicToJpeg: async (bytes) => bytes },
     extractor: createFakeExtractor(),
