@@ -69,7 +69,12 @@ try {
   };
   await registerExtractDocumentJob(boss, handleExtractDocumentJob(extraction, logger));
   await registerRecoverDeadExtractionJob(boss, handleRecoverDeadExtractionJob(extraction, logger));
-  await registerRequeueAwaitingBudgetJob(boss, createBudgetRequeueRepository(pool, boss), logger);
+  await registerRequeueAwaitingBudgetJob(
+    boss,
+    createBudgetRequeueRepository(pool, boss),
+    extraction.budget,
+    logger,
+  );
   await registerConvertHeicJob(
     boss,
     handleConvertHeicJob(

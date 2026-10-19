@@ -78,5 +78,6 @@ export interface ApprovedOcrImageReader {
 /** Duyệt gia đình (bảng families không áp RLS) rồi trong withFamilyScope chuyển + enqueue cùng transaction. */
 export interface BudgetRequeueRepository {
   listFamilyIds(): Promise<string[]>;
-  requeueFamily(familyId: string): Promise<number>;
+  /** Gia đình còn hết trần riêng tháng này (SPEC-031) → 0, không đổi gì. */
+  requeueFamily(familyId: string, call: BudgetCall): Promise<number>;
 }
