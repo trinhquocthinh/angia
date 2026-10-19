@@ -23,6 +23,15 @@ const apiEnvSchema = z.object({
   ADMIN_GROUP_NAME: z.string().min(1),
   // BR-018: trần hiển thị/khởi tạo khi extraction_spend chưa có tháng nào; phải trùng giá trị của worker.
   AI_DEFAULT_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(5),
+  // F03b (SPEC-030, BR-043): quota tài nguyên theo gia đình và nhịp thao tác nặng theo tài khoản.
+  QUOTA_FAMILY_STORAGE_BYTES: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(2 * 1024 * 1024 * 1024),
+  QUOTA_FAMILY_DAILY_UPLOADS: z.coerce.number().int().positive().default(100),
+  QUOTA_FAMILY_PENDING_JOBS: z.coerce.number().int().positive().default(10),
+  RATE_LIMIT_HEAVY_PER_MINUTE: z.coerce.number().int().positive().default(10),
 });
 
 export type ApiConfig = z.infer<typeof apiEnvSchema>;

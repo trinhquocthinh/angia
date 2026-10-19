@@ -81,6 +81,20 @@ const ERROR_CATALOG = {
     status: 503,
     message: 'Hệ thống đang nhận ảnh của nhiều người cùng lúc. Vui lòng thử lại sau ít giây.',
   },
+  ERR_STORAGE_QUOTA: {
+    status: 413,
+    message:
+      'Gia đình đã dùng hết dung lượng lưu ảnh. Liên hệ quản trị viên để nâng dung lượng; bạn vẫn có thể nhập tay không kèm ảnh.',
+  },
+  ERR_DAILY_UPLOAD_QUOTA: {
+    status: 429,
+    message: 'Hôm nay gia đình đã tải đủ số ảnh cho phép. Bạn có thể tải tiếp từ 0 giờ ngày mai.',
+  },
+  ERR_QUEUE_QUOTA: {
+    status: 429,
+    message: 'Đang có nhiều ảnh chờ xử lý. Vui lòng đợi xử lý xong rồi gửi tiếp.',
+  },
+  ERR_RATE_LIMITED: { status: 429, message: 'Bạn thao tác hơi nhanh. Vui lòng thử lại sau ít giây.' },
   ERR_INTERNAL: { status: 500, message: 'Đã xảy ra lỗi nội bộ hệ thống. Vui lòng thử lại sau.' },
 } as const;
 

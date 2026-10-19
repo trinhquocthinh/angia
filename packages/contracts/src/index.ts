@@ -12,6 +12,8 @@ export { createFamilyRequestSchema, familySchema } from './family/familySchema.j
 export type { CreateFamilyRequest, Family } from './family/familySchema.js';
 export { aiBudgetSchema, updateAiBudgetRequestSchema } from './family/aiBudgetSchemas.js';
 export type { AiBudget, UpdateAiBudgetRequest } from './family/aiBudgetSchemas.js';
+export { familyUsageSchema } from './family/familyUsageSchema.js';
+export type { FamilyUsage } from './family/familyUsageSchema.js';
 export { budgetMonth } from './budget/budgetMonth.js';
 export {
   REQUEUE_AWAITING_BUDGET_QUEUE,
