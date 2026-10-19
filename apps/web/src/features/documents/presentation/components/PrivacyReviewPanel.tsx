@@ -1,7 +1,11 @@
 import type { usePrivacyWorkspace } from '../../application/usePrivacyWorkspace';
 import { PrivacyDraftReview } from './PrivacyDraftReview';
-type Props = { workspace: ReturnType<typeof usePrivacyWorkspace>; inputPending: boolean };
-export function PrivacyReviewPanel({ workspace, inputPending }: Props) {
+type Props = {
+  workspace: ReturnType<typeof usePrivacyWorkspace>;
+  inputPending: boolean;
+  aiExhausted: boolean;
+};
+export function PrivacyReviewPanel({ workspace, inputPending, aiExhausted }: Props) {
   const { state, dispatch, busy, error, query } = workspace;
   return (
     <div className="flex flex-col gap-3">
@@ -40,6 +44,8 @@ export function PrivacyReviewPanel({ workspace, inputPending }: Props) {
         onApprove={() => {
           if (!inputPending) void workspace.approve();
         }}
+        aiExhausted={aiExhausted}
+        onManual={() => void workspace.manual()}
       />
     </div>
   );

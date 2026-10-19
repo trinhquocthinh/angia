@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import type { components } from '@src/shared/api/schema.gen';
 import type { PrivacyRepository } from '../../application/privacyPorts';
+import { useFamilyUsage } from '../../application/useFamilyUsage';
 import { usePrivacyWorkspace } from '../../application/usePrivacyWorkspace';
+import { createFamilyUsageRepository } from '../../infrastructure/createFamilyUsageRepository';
 import { PrivacyEditPanel } from './PrivacyEditPanel';
 import { PrivacyReviewPanel } from './PrivacyReviewPanel';
 type Props = {
@@ -9,8 +11,12 @@ type Props = {
   session: components['schemas']['MeContextResponse'];
   documentId: string;
 };
+const usageRepository = createFamilyUsageRepository();
+
 export function PrivacyEditor({ repository, session, documentId }: Props) {
   const workspace = usePrivacyWorkspace(repository, session, documentId);
+  // SPEC-031: hết trần đọc tự động tháng này → khóa gửi AI, cho nhập tay hoặc xếp hàng chờ.
+  const aiExhausted = useFamilyUsage(usageRepository, true).data?.aiOcr.exhausted ?? false;
   const [inputPending, setInputPending] = useState(false);
   const ready = workspace.state.candidate.state === 'ready';
   return (
@@ -21,9 +27,13 @@ export function PrivacyEditor({ repository, session, documentId }: Props) {
         inputPending={inputPending}
         onInputPending={setInputPending}
       >
-        {!ready && <PrivacyReviewPanel workspace={workspace} inputPending={inputPending} />}
+        {!ready && (
+          <PrivacyReviewPanel workspace={workspace} inputPending={inputPending} aiExhausted={aiExhausted} />
+        )}
       </PrivacyEditPanel>
-      {ready && <PrivacyReviewPanel workspace={workspace} inputPending={inputPending} />}
+      {ready && (
+        <PrivacyReviewPanel workspace={workspace} inputPending={inputPending} aiExhausted={aiExhausted} />
+      )}
     </section>
   );
 }

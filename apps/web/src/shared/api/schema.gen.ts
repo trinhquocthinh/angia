@@ -690,6 +690,138 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/admin/family-extraction-caps': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Trần và chi phí OCR tháng hiện tại của từng gia đình (SPEC-031) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Gia đình cũ nhất trước; chi phí gồm phần đang giữ chỗ */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['FamilyExtractionCap'][];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: không phải Quản trị hệ thống hoặc thiếu/sai X-CSRF-Token */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/admin/families/{id}/extraction-cap': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Đặt trần OCR riêng của một gia đình; null = về mặc định (SPEC-031) */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['UpdateFamilyExtractionCapRequest'];
+        };
+      };
+      responses: {
+        /** @description Trần hiệu lực sau khi đặt */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['FamilyExtractionCap'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: không phải Quản trị hệ thống hoặc thiếu/sai X-CSRF-Token */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles': {
     parameters: {
       query?: never;
@@ -3319,6 +3451,23 @@ export interface components {
         used: number;
         limit: number;
       };
+      aiOcr: {
+        month: string;
+        usedPercent: number;
+        exhausted: boolean;
+      };
+    };
+    FamilyExtractionCap: {
+      /** Format: uuid */
+      familyId: string;
+      familyName: string;
+      month: string;
+      capUsd: number;
+      capIsDefault: boolean;
+      spentUsd: number;
+    };
+    UpdateFamilyExtractionCapRequest: {
+      capUsd: number | null;
     };
     HealthProfile: {
       /** Format: uuid */

@@ -36,7 +36,7 @@ export function FamilyUsageCard({ usage }: { usage: FamilyUsage }) {
       <h2 id="family-usage-title" className="auth-heading text-base font-semibold text-[#004135]">
         Mức sử dụng của gia đình
       </h2>
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <UsageBar
           label={formatStorageUsage(storage.usedBytes, storage.limitBytes)}
           used={storage.usedBytes}
@@ -51,6 +51,11 @@ export function FamilyUsageCard({ usage }: { usage: FamilyUsage }) {
           label={`${pendingJobs.used} / ${pendingJobs.limit} ảnh đang xử lý`}
           used={pendingJobs.used}
           limit={pendingJobs.limit}
+        />
+        <UsageBar
+          label={`Đọc chữ tự động tháng này: đã dùng ${usage.aiOcr.usedPercent}%`}
+          used={usage.aiOcr.usedPercent}
+          limit={100}
         />
       </div>
       {reason && (

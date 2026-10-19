@@ -11,13 +11,13 @@ const usage: FamilyUsage = {
 };
 
 describe('TC-302 — thẻ "Mức sử dụng của gia đình" (SPEC-030)', () => {
-  it('hiện ba thanh tiến độ với số đã dùng / trần', () => {
+  it('hiện các thanh tiến độ với số đã dùng / trần (3 tài nguyên + đọc chữ tự động)', () => {
     const html = renderToStaticMarkup(<FamilyUsageCard usage={usage} />);
     expect(html).toContain('Mức sử dụng của gia đình');
     expect(html).toContain('1,2 / 2,0 GiB');
     expect(html).toContain('37 / 100 ảnh hôm nay');
     expect(html).toContain('2 / 10 ảnh đang xử lý');
-    expect(html.match(/role="progressbar"/g)).toHaveLength(3);
+    expect(html.match(/role="progressbar"/g)).toHaveLength(4);
     expect(html).toContain('aria-valuenow="37"');
     expect(html).not.toContain('role="status"');
   });
@@ -27,5 +27,17 @@ describe('TC-302 — thẻ "Mức sử dụng của gia đình" (SPEC-030)', () 
     const html = renderToStaticMarkup(<FamilyUsageCard usage={full} />);
     expect(html).toContain('role="status"');
     expect(html).toContain('Đang có 10 ảnh chờ xử lý. Vui lòng đợi xử lý xong rồi gửi tiếp.');
+  });
+
+  it('TC-309: thêm thanh phần trăm đọc chữ tự động tháng này, không hiện số tiền', () => {
+    const html = renderToStaticMarkup(
+      <FamilyUsageCard
+        usage={{ ...usage, aiOcr: { month: '2026-10', usedPercent: 42, exhausted: false } }}
+      />,
+    );
+    expect(html).toContain('Đọc chữ tự động tháng này: đã dùng 42%');
+    expect(html).toContain('aria-valuenow="42"');
+    expect(html).not.toContain('$');
+    expect(html).not.toContain('USD');
   });
 });
