@@ -16,6 +16,7 @@ import { createVisitSummaryRepository } from '@src/features/visitSummary/infrast
 import { createMeasurementRepository } from '@src/features/measurements/infrastructure/createMeasurementRepository.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
 import { randomBytes, randomUUID } from 'node:crypto';
+import { tmpdir } from 'node:os';
 import {
   CONVERT_HEIC_QUEUE,
   CONVERT_HEIC_QUEUE_OPTIONS,
@@ -43,6 +44,7 @@ import { createPool } from '@src/shared/db/createPool.js';
 import { newId } from '@src/shared/db/schema/newId.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { createS3Client } from '@src/shared/storage/createS3Client.js';
+import { sweepOrphanUploadDirs } from '@src/shared/http/sweepOrphanUploadDirs.js';
 
 // Composition root: đọc config, khởi tạo adapter hạ tầng và tiêm vào app.
 const config = loadApiConfig(process.env);
@@ -146,6 +148,15 @@ const app = createApp({
   },
   heavyRateLimit: { perMinute: config.RATE_LIMIT_HEAVY_PER_MINUTE, now: () => Date.now() },
 });
+
+// F08b (nợ #21): dọn ảnh chứng từ tạm còn lại khi tiến trình trước chết giữa request, trước khi nhận request mới.
+const swept = await sweepOrphanUploadDirs({
+  root: tmpdir(),
+  graceMs: config.UPLOAD_ORPHAN_GRACE_MINUTES * 60_000,
+  now: () => new Date(),
+  uid: process.getuid?.() ?? -1,
+});
+if (swept.removed > 0 || swept.failed > 0) logger.warn(swept, 'Đã dọn thư mục tải lên tạm mồ côi');
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {
   logger.info({ port: info.port }, 'API đã sẵn sàng');
