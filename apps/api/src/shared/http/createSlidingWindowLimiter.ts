@@ -31,6 +31,10 @@ export function createSlidingWindowLimiter({ limit, windowMs, now }: LimiterOpti
       hits.set(key, times);
       return { ok: true };
     },
+    // Trả lại mốc gần nhất của khóa: request đã tính nhưng bị từ chối vì lý do khác (vd. hết slot upload).
+    refund(key: string): void {
+      hits.get(key)?.pop();
+    },
     size: () => hits.size,
   };
 }

@@ -6,7 +6,7 @@ import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { createConcurrencyLimit } from '@src/shared/http/createConcurrencyLimit.js';
 import type { SlidingWindowLimiter } from '@src/shared/http/createSlidingWindowLimiter.js';
 import { errorResponse } from '@src/shared/http/errorResponse.js';
-import { rateLimitHeavy } from '@src/shared/http/rateLimitHeavy.js';
+import { heavyKey, rateLimitHeavy } from '@src/shared/http/rateLimitHeavy.js';
 import { spoolMultipartFiles } from '@src/shared/http/spoolMultipartFiles.js';
 import type { DocumentDependencies } from '../application/ports.js';
 import { quotaErrorResponse } from '../../familyQuota/presentation/quotaErrorResponse.js';
@@ -54,6 +54,8 @@ export function registerDocumentRoutes(
     // Giữ chỗ suốt lúc nhận body, ghi S3 và DB — đó là phần tốn đĩa, mạng và bộ nhớ.
     const release = uploadSlots.tryAcquire();
     if (!release) {
+      // Web tự gửi lại khi bận (tối đa 5 lần): lượt bị từ chối vì hết slot không tính vào nhịp thao tác.
+      limiter.refund(heavyKey(session.account.id, 'upload'));
       c.header('Retry-After', String(BUSY_RETRY_AFTER_SECONDS));
       return errorResponse(c, 'ERR_UPLOAD_BUSY');
     }

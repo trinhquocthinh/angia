@@ -38,4 +38,13 @@ describe('TC-294 — rate limit cửa sổ trượt theo tài khoản và thao t
     limiter.hit('c:upload');
     expect(limiter.size()).toBe(1);
   });
+
+  it('trả lại lượt vừa tính (request bị từ chối vì máy chủ bận) để không tiêu nhịp của người dùng', () => {
+    const { limiter } = setup();
+    for (let i = 0; i < 10; i += 1) limiter.hit('a:upload');
+    limiter.refund('a:upload');
+    expect(limiter.hit('a:upload')).toEqual({ ok: true });
+    expect(limiter.hit('a:upload')).toEqual({ ok: false, retryAfterSeconds: 60 });
+    limiter.refund('khong-co:upload');
+  });
 });
