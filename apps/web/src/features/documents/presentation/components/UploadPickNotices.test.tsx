@@ -7,6 +7,7 @@ const usage = (daily: number, pending: number): FamilyUsage => ({
   storage: { usedBytes: 0, limitBytes: 100 },
   dailyUploads: { used: daily, limit: 100, resetsAt: '2026-10-20T00:00:00+07:00' },
   pendingJobs: { used: pending, limit: 10 },
+  aiOcr: { month: '2026-10', usedPercent: 0, exhausted: false },
 });
 
 describe('TC-302 — cảnh báo số ảnh chờ gửi vượt chỗ còn lại (SPEC-030)', () => {

@@ -9,6 +9,12 @@ export const familyUsageSchema = z
     storage: z.object({ usedBytes: count, limitBytes: limit }),
     dailyUploads: z.object({ used: count, limit, resetsAt: z.string() }),
     pendingJobs: z.object({ used: count, limit }),
+    // SPEC-031: gia đình chỉ thấy phần trăm trần AI tháng (giờ VN); exhausted = lời gọi kế tiếp sẽ vượt trần.
+    aiOcr: z.object({
+      month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
+      usedPercent: z.number().int().min(0).max(100),
+      exhausted: z.boolean(),
+    }),
   })
   .meta({ id: 'FamilyUsage' });
 

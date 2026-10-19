@@ -7,6 +7,7 @@ const usage: FamilyUsage = {
   storage: { usedBytes: 1288490188, limitBytes: 2 * 1024 ** 3 },
   dailyUploads: { used: 37, limit: 100, resetsAt: '2026-10-20T00:00:00+07:00' },
   pendingJobs: { used: 2, limit: 10 },
+  aiOcr: { month: '2026-10', usedPercent: 0, exhausted: false },
 };
 
 describe('TC-302 — thẻ "Mức sử dụng của gia đình" (SPEC-030)', () => {

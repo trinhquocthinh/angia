@@ -161,3 +161,38 @@ describe('Quota chờ worker ở bước riêng tư (SPEC-030, BR-043)', () => {
     });
   });
 });
+
+describe('Hết trần AI của gia đình ở bước duyệt riêng tư (SPEC-031, BR-018)', () => {
+  it('TC-306: gia đình hết trần → chứng từ awaiting_budget, ghi người duyệt, không enqueue OCR', async () => {
+    const f = privacyFixture();
+    f.ready();
+    f.aiBudget = { familySpentUsd: 0.49, familyCapUsd: 0.5, globalSpentUsd: 0, globalCapUsd: 5 };
+    expect(await approvePrivacy(f.deps, f.approval)).toMatchObject({
+      ok: true,
+      value: { status: 'awaiting_budget', privacyApprovedBy: 'actor' },
+    });
+    expect(f.jobs).toEqual([]);
+  });
+
+  it('hết trần thì không cần chỗ trong hàng đợi worker (không tạo job)', async () => {
+    const f = privacyFixture();
+    f.ready();
+    f.aiBudget = { familySpentUsd: 0.1, familyCapUsd: 0.5, globalSpentUsd: 4.99, globalCapUsd: 5 };
+    f.usage = { storageBytes: 0, uploadsToday: 0, pendingJobs: 3 };
+    expect(await approvePrivacy(f.deps, f.approval)).toMatchObject({
+      ok: true,
+      value: { status: 'awaiting_budget' },
+    });
+  });
+
+  it('còn trần → luồng cũ: extracting và enqueue OCR', async () => {
+    const f = privacyFixture();
+    f.ready();
+    f.aiBudget = { familySpentUsd: 0.48, familyCapUsd: 0.5, globalSpentUsd: 0, globalCapUsd: 5 };
+    expect(await approvePrivacy(f.deps, f.approval)).toMatchObject({
+      ok: true,
+      value: { status: 'extracting' },
+    });
+    expect(f.jobs).toEqual(['extract']);
+  });
+});

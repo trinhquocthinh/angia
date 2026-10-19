@@ -67,18 +67,22 @@ function createMembershipStore(tx: Executor): MembershipStore {
   };
 }
 
+// Chỉ trường của Family (SPEC-001); trần AI riêng (SPEC-031) đọc qua route quản trị trần.
+const familyColumns = { id: families.id, name: families.name, createdAt: families.createdAt };
+
 // families/accounts không áp RLS (cấu trúc nhóm, không phải dữ liệu sức khỏe) nên chạy thẳng trên role app.
 export function createFamilyAdminRepository(db: Database): FamilyAdminRepository {
   return {
     async createFamily(name) {
-      const [row] = await db.insert(families).values({ name }).returning();
+      const [row] = await db.insert(families).values({ name }).returning(familyColumns);
       if (!row) {
         throw new Error('INSERT families không trả về dòng nào');
       }
       return row;
     },
 
-    listFamilies: () => db.select().from(families).orderBy(asc(families.createdAt), asc(families.id)),
+    listFamilies: () =>
+      db.select(familyColumns).from(families).orderBy(asc(families.createdAt), asc(families.id)),
 
     listAccounts: () =>
       db.select(memberAccountColumns).from(accounts).orderBy(asc(accounts.createdAt), asc(accounts.id)),

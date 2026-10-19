@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { FamilyUsage, HealthProfile } from '@angia/contracts';
+import { budgetMonth, type FamilyUsage, type HealthProfile } from '@angia/contracts';
 import { seedQuotaDocument } from '@src/shared/test/seedQuotaDocument.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -44,6 +44,7 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
       storage: { usedBytes: 6 * MiB, limitBytes: 2 * 1024 * MiB },
       dailyUploads: { used: 2, limit: 100, resetsAt: `${resetsAt}T00:00:00+07:00` },
       pendingJobs: { used: 2, limit: 10 },
+      aiOcr: { month: budgetMonth(new Date()), usedPercent: 0, exhausted: false },
     });
     const other = (await (await t.call(owners.b.main, 'GET', '/api/family/usage')).json()) as FamilyUsage;
     expect(other.storage.usedBytes).toBe(7 * MiB);
@@ -69,6 +70,27 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
     const usage = (await (await t.call(main, 'GET', '/api/family/usage')).json()) as FamilyUsage;
     expect(usage.pendingJobs.used).toBe(1);
     expect(usage.storage.usedBytes).toBe(2);
+  });
+
+  it('TC-306: aiOcr theo trần gia đình tháng hiện tại; chưa có dòng chi tiêu thì 0% và không ghi DB', async () => {
+    const month = budgetMonth(new Date());
+    const before = await (await t.call(owners.b.main, 'GET', '/api/family/usage')).json();
+    expect((before as FamilyUsage).aiOcr).toEqual({ month, usedPercent: 0, exhausted: false });
+    const rows = await t.owner.query(
+      'SELECT count(*)::int AS n FROM family_extraction_spend WHERE family_id=$1',
+      [owners.b.familyId],
+    );
+    expect(rows.rows[0].n).toBe(0);
+    await t.owner.query(
+      `INSERT INTO extraction_spend (month, cap_usd) VALUES ($1, 5) ON CONFLICT DO NOTHING`,
+      [month],
+    );
+    await t.owner.query(
+      `INSERT INTO family_extraction_spend (family_id, month, spent_usd) VALUES ($1, $2, 0.49)`,
+      [owners.a.familyId, month],
+    );
+    const usage = (await (await t.call(owners.a.main, 'GET', '/api/family/usage')).json()) as FamilyUsage;
+    expect(usage.aiOcr).toEqual({ month, usedPercent: 98, exhausted: true });
   });
 
   it('TC-301: tài khoản không phải người chăm sóc chính → 403; không phiên → 401', async () => {

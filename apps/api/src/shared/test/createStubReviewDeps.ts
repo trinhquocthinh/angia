@@ -1,5 +1,5 @@
 import { createStubPrivacyDeps } from './createStubPrivacyDeps.js';
-import { TEST_HEAVY_RATE_LIMIT, TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
+import { TEST_AI_POLICY, TEST_HEAVY_RATE_LIMIT, TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
 import type { AppDependencies } from '@src/createApp.js';
 
 const notConfigured = () => Promise.reject(new Error('Kho duyệt/số đo chưa cấu hình trong test này'));
@@ -27,7 +27,11 @@ export function createStubReviewDeps(): Pick<
     measurements: { withFamily: notConfigured },
     labResults: { withFamily: notConfigured },
     documentEntries: { withFamily: notConfigured },
-    familyUsage: { repository: { read: notConfigured }, quota: TEST_QUOTA_POLICY },
+    familyUsage: {
+      repository: { read: notConfigured, readAiBudget: notConfigured },
+      quota: TEST_QUOTA_POLICY,
+      ai: TEST_AI_POLICY,
+    },
     heavyRateLimit: TEST_HEAVY_RATE_LIMIT,
   };
 }

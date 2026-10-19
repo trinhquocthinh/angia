@@ -1,4 +1,4 @@
-import { TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
+import { TEST_AI_POLICY, TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
 import type { PrivacyDependencies } from '@src/features/documentPrivacy/application/ports.js';
 const notConfigured = () =>
   Promise.reject(new Error('Kho ảnh bảo vệ định danh chưa cấu hình trong test này'));
@@ -11,5 +11,6 @@ export function createStubPrivacyDeps(): PrivacyDependencies {
     newId: () => 'stub',
     now: () => new Date(),
     quota: TEST_QUOTA_POLICY,
+    ai: TEST_AI_POLICY,
   };
 }

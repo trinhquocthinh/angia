@@ -32,7 +32,7 @@ import { runMigrations } from '@src/shared/db/runMigrations.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { createFamilyUsageRepository } from '@src/features/familyQuota/infrastructure/createFamilyUsageRepository.js';
 import type { QuotaLimits } from '@src/features/familyQuota/domain/FamilyQuota.js';
-import { TEST_HEAVY_RATE_LIMIT, TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
+import { TEST_AI_POLICY, TEST_HEAVY_RATE_LIMIT, TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
 import { createMemoryObjectStorage } from './createMemoryObjectStorage.js';
 import { createSilentLogger } from './createSilentLogger.js';
 import { createStubAuthDeps } from './createStubAuthDeps.js';
@@ -87,6 +87,7 @@ function buildApp(
       newId: randomUUID,
       now: () => new Date(),
       quota,
+      ai: TEST_AI_POLICY,
     },
     measurements: createMeasurementRepository(database),
     labResults: createLabResultRepository(database),
@@ -94,7 +95,7 @@ function buildApp(
     medications: createMedicationRepository(database),
     adherence: createAdherenceRepository(database),
     visitSummary: createVisitSummaryRepository(database),
-    familyUsage: { repository: createFamilyUsageRepository(database), quota },
+    familyUsage: { repository: createFamilyUsageRepository(database), quota, ai: TEST_AI_POLICY },
     heavyRateLimit: options.heavyRateLimit ?? TEST_HEAVY_RATE_LIMIT,
   });
 }

@@ -8,6 +8,7 @@ const usage = (
   storage: { usedBytes: overrides.storage ?? 0, limitBytes: 2 * 1024 ** 3 },
   dailyUploads: { used: overrides.daily ?? 0, limit: 100, resetsAt: '2026-10-20T00:00:00+07:00' },
   pendingJobs: { used: overrides.pending ?? 0, limit: 10 },
+  aiOcr: { month: '2026-10', usedPercent: 0, exhausted: false },
 });
 
 describe('TC-302 — trạng thái mức sử dụng của gia đình trên trang tải ảnh (SPEC-030)', () => {

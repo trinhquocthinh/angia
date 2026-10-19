@@ -69,6 +69,13 @@ const quotaPolicy = {
   },
   now: () => new Date(),
 };
+// SPEC-031: tham số ngân sách AI dùng chung cho duyệt riêng tư và mức dùng (trùng env worker).
+const aiPolicy = {
+  estimatedCostUsd: config.AI_ESTIMATED_COST_USD,
+  defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,
+  defaultFamilyCapUsd: config.AI_DEFAULT_FAMILY_MONTHLY_CAP_USD,
+  now: () => new Date(),
+};
 const app = createApp({
   healthProbes: {
     db: createPostgresProbe(pool),
@@ -122,6 +129,7 @@ const app = createApp({
     newId: randomUUID,
     now: () => new Date(),
     quota: quotaPolicy,
+    ai: aiPolicy,
   },
   measurements: createMeasurementRepository(db),
   labResults: createLabResultRepository(db),
@@ -129,7 +137,7 @@ const app = createApp({
   medications: createMedicationRepository(db),
   adherence: createAdherenceRepository(db),
   visitSummary: createVisitSummaryRepository(db),
-  familyUsage: { repository: createFamilyUsageRepository(db), quota: quotaPolicy },
+  familyUsage: { repository: createFamilyUsageRepository(db), quota: quotaPolicy, ai: aiPolicy },
   heavyRateLimit: { perMinute: config.RATE_LIMIT_HEAVY_PER_MINUTE, now: () => Date.now() },
 });
 
