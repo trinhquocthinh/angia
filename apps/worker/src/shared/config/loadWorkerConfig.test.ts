@@ -51,6 +51,42 @@ describe('Cấu hình worker', () => {
     expect(() => loadWorkerConfig({ ...base, AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: '-0.1' })).toThrow();
   });
 
+  it('TC-332: biến đồng bộ IdP — bắt buộc ở sit/prod, tùy chọn ở dev, mặc định angia-admins/10/false', () => {
+    expect(loadWorkerConfig(base)).toMatchObject({
+      ADMIN_GROUP_NAME: 'angia-admins',
+      IDP_SYNC_MAX_REVOKES: 10,
+      IDP_SYNC_DRY_RUN: false,
+    });
+    expect(loadWorkerConfig(base).AUTHENTIK_API_TOKEN).toBeUndefined();
+    // .env dev chép từ .env.example để trống các biến này = chưa cấu hình
+    expect(
+      loadWorkerConfig({ ...base, AUTHENTIK_URL: '', AUTHENTIK_API_TOKEN: '', IDP_ACCESS_GROUP_NAME: '' })
+        .AUTHENTIK_API_TOKEN,
+    ).toBeUndefined();
+    const idp = {
+      AUTHENTIK_URL: 'https://auth.example.test',
+      AUTHENTIK_API_TOKEN: 't',
+      IDP_ACCESS_GROUP_NAME: 'angia-sit-users',
+    };
+    expect(() => loadWorkerConfig({ ...base, STACK: 'sit' })).toThrow('AUTHENTIK_API_TOKEN');
+    expect(() =>
+      loadWorkerConfig({ ...base, STACK: 'prod', ...idp, IDP_ACCESS_GROUP_NAME: undefined }),
+    ).toThrow('IDP_ACCESS_GROUP_NAME');
+    // dev có token thì phải đủ bộ biến
+    expect(() => loadWorkerConfig({ ...base, AUTHENTIK_API_TOKEN: 't' })).toThrow('AUTHENTIK_URL');
+    expect(loadWorkerConfig({ ...base, STACK: 'sit', ...idp, IDP_SYNC_DRY_RUN: 'true' })).toMatchObject({
+      IDP_SYNC_DRY_RUN: true,
+      IDP_ACCESS_GROUP_NAME: 'angia-sit-users',
+    });
+    for (const invalid of [
+      { IDP_SYNC_MAX_REVOKES: '0' },
+      { IDP_SYNC_MAX_REVOKES: '2.5' },
+      { IDP_SYNC_DRY_RUN: 'yes' },
+      { AUTHENTIK_URL: 'not-a-url' },
+    ])
+      expect(() => loadWorkerConfig({ ...base, ...invalid })).toThrow();
+  });
+
   it('TC-321: biến dọn object mồ côi có mặc định 24/500/false và từ chối giá trị không hợp lệ', () => {
     expect(loadWorkerConfig(base)).toMatchObject({
       ORPHAN_OBJECT_GRACE_HOURS: 24,
