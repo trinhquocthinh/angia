@@ -25,6 +25,13 @@ const workerEnvSchema = z
     AI_ESTIMATED_COST_USD: z.coerce.number().positive().default(0.02),
     // SPEC-031: trần mặc định mỗi gia đình/tháng khi families.extraction_cap_usd để trống; trùng giá trị API.
     AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(0.5),
+    // BR-044/SPEC-032: dọn object S3 mồ côi — ân hạn (giờ), trần xóa mỗi lần quét, chạy thử chỉ đếm.
+    ORPHAN_OBJECT_GRACE_HOURS: z.coerce.number().int().min(1).default(24),
+    ORPHAN_OBJECT_MAX_DELETES: z.coerce.number().int().min(1).default(500),
+    ORPHAN_OBJECT_DRY_RUN: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((value) => value === 'true'),
   })
   .refine((env) => env.AI_PROVIDER !== 'openrouter' || Boolean(env.OPENROUTER_API_KEY), {
     message: 'AI_PROVIDER=openrouter bắt buộc có OPENROUTER_API_KEY',
