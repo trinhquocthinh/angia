@@ -24,12 +24,16 @@ import { handleRecoverDeadExtractionJob } from '@src/jobs/handleRecoverDeadExtra
 import { registerExtractDocumentJob } from '@src/jobs/registerExtractDocumentJob.js';
 import { registerRecoverDeadExtractionJob } from '@src/jobs/registerRecoverDeadExtractionJob.js';
 import { registerRequeueAwaitingBudgetJob } from '@src/jobs/registerRequeueAwaitingBudgetJob.js';
+import { registerSweepOrphanObjectsJob } from '@src/jobs/registerSweepOrphanObjectsJob.js';
+import { createOrphanRepository } from '@src/features/orphanObjects/infrastructure/createOrphanRepository.js';
+import { createOrphanStorage } from '@src/features/orphanObjects/infrastructure/createOrphanStorage.js';
 import { loadWorkerConfig, type WorkerConfig } from '@src/shared/config/loadWorkerConfig.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { createS3Client } from '@src/shared/storage/createS3Client.js';
 
 // Composition root của worker: pg-boss (role app, migrate:false) + job extract-document (SPEC-009),
-// dead-letter phục hồi chứng từ kẹt và job đầu tháng đưa awaiting_budget vào lại hàng đợi (BR-018).
+// dead-letter phục hồi chứng từ kẹt, job đầu tháng đưa awaiting_budget vào lại hàng đợi (BR-018)
+// và job hằng ngày dọn object S3 mồ côi (BR-044).
 const config = loadWorkerConfig(process.env);
 const logger = pino({ level: config.LOG_LEVEL, base: { service: 'angia-worker', stack: config.STACK } });
 
@@ -99,9 +103,23 @@ try {
       logger,
     ),
   );
+  await registerSweepOrphanObjectsJob(
+    boss,
+    {
+      repository: createOrphanRepository(pool),
+      storage: createOrphanStorage(createS3Client(config), config.S3_BUCKET),
+    },
+    {
+      graceHours: config.ORPHAN_OBJECT_GRACE_HOURS,
+      maxDeletes: config.ORPHAN_OBJECT_MAX_DELETES,
+      dryRun: config.ORPHAN_OBJECT_DRY_RUN,
+      now: () => new Date(),
+    },
+    logger,
+  );
   logger.info(
     { aiProvider: config.AI_PROVIDER },
-    'Worker sẵn sàng — đã đăng ký job convert-heic, prepare-ocr-image, extract-document và ngân sách AI',
+    'Worker sẵn sàng — đã đăng ký job convert-heic, prepare-ocr-image, extract-document, ngân sách AI và dọn object mồ côi',
   );
 } catch (error) {
   logger.error({ reason: (error as Error).message }, 'Worker không khởi động được');
