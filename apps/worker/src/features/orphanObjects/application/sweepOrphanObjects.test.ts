@@ -152,4 +152,41 @@ describe('sweepOrphanObjects (BR-044, SPEC-032)', () => {
     expect(deleted).toEqual([preview(b, 2)]);
     expect(calls.indexOf(`list:families/${b}/`)).toBeLessThan(calls.indexOf(`refs:${b}`));
   });
+  it('TC-320: gia đình lỗi có reason (mã lỗi, không có khóa); lỗi liệt kê gia đình không ném', async () => {
+    const f = fam(1);
+    const { deps } = createDeps({ objects: { [f]: [stored(preview(f, 1))] }, refs: { [f]: [original(f)] } });
+    deps.storage.list = async function* () {
+      yield* [];
+      throw Object.assign(new Error(`denied ${preview(f, 1)}`), { name: 'AccessDenied' });
+    };
+    const result = await sweepOrphanObjects(deps, policy);
+    expect(result.families[0]).toMatchObject({ outcome: 'error', reason: 'AccessDenied' });
+    deps.repository.listFamilyIds = async () => {
+      throw Object.assign(new Error('connect'), { code: 'ECONNREFUSED' });
+    };
+    await expect(sweepOrphanObjects(deps, policy)).resolves.toMatchObject({
+      families: [],
+      listError: 'ECONNREFUSED',
+    });
+  });
+
+  it('TC-318: tín hiệu hủy (job hết hạn) dừng giữa các gia đình', async () => {
+    const [a, b] = [fam(1), fam(2)];
+    const controller = new AbortController();
+    const { deps, deleted } = createDeps({
+      objects: {
+        [a]: [stored(original(a)), stored(preview(a, 1))],
+        [b]: [stored(original(b)), stored(preview(b, 1))],
+      },
+      refs: { [a]: [original(a)], [b]: [original(b)] },
+    });
+    const remove = deps.storage.delete;
+    deps.storage.delete = async (key) => {
+      await remove(key);
+      controller.abort();
+    };
+    const result = await sweepOrphanObjects(deps, policy, controller.signal);
+    expect(deleted).toEqual([preview(a, 1)]);
+    expect(result).toMatchObject({ aborted: true, totals: { families: 1 } });
+  });
 });

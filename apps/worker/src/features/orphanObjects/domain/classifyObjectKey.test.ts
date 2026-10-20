@@ -19,6 +19,9 @@ it('TC-313: khóa sai dạng hoặc khác gia đình là unknown', () => {
   const other = '0199a000-0000-7000-8000-0000000000ff';
   for (const key of [
     `${base}/original.gif`,
+    `${base}/original.JPG`,
+    `${base}/Previews/${U}.webp`,
+    `${base}/previews/${U}.WEBP`,
     `${base}/original.jpg.bak`,
     `${base}/previews/x.webp`,
     `${base}/previews/${U}.png`,

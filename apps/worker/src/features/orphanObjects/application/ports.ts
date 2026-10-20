@@ -27,10 +27,13 @@ export interface FamilySweepReport {
   skipped: number;
   failed: number;
   outcome: 'swept' | 'empty_references' | 'error';
+  reason?: string;
 }
 export interface SweepResult {
   families: FamilySweepReport[];
   totals: { families: number; scanned: number; removed: number; skipped: number; failed: number };
   capped: boolean;
+  aborted: boolean;
   dryRun: boolean;
+  listError?: string;
 }

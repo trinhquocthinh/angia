@@ -35,7 +35,7 @@ function setup(maxDeletes = 500) {
   const policy: SweepPolicy = { graceHours: 24, maxDeletes, dryRun: false, now: () => NOW };
   const boss = { createQueue: vi.fn(), schedule: vi.fn(), work: vi.fn() };
   const logger = { info: vi.fn(), warn: vi.fn(), error: vi.fn() };
-  return { deps, policy, boss, logger, empty };
+  return { deps, policy, boss, logger, empty, signal: new AbortController().signal };
 }
 
 async function runJob(maxDeletes?: number) {
@@ -47,9 +47,9 @@ async function runJob(maxDeletes?: number) {
     ctx.logger as unknown as Logger,
   );
   const handler = ctx.boss.work.mock.calls[0]?.[2] as (
-    jobs: { id: string; data: unknown }[],
+    jobs: { id: string; data: unknown; signal: AbortSignal }[],
   ) => Promise<void>;
-  await handler([{ id: 'j1', data: null }]);
+  await handler([{ id: 'j1', data: null, signal: ctx.signal }]);
   return ctx;
 }
 
@@ -58,7 +58,7 @@ describe('Job sweep-orphan-objects (SPEC-032)', () => {
     const { boss, logger, empty } = await runJob();
     expect(boss.createQueue).toHaveBeenCalledWith(
       'sweep-orphan-objects',
-      expect.objectContaining({ policy: 'singleton' }),
+      expect.objectContaining({ policy: 'singleton', retryLimit: 0, expireInSeconds: 14_400 }),
     );
     expect(boss.schedule).toHaveBeenCalledWith('sweep-orphan-objects', '0 3 * * *', null, {
       tz: 'Asia/Ho_Chi_Minh',
@@ -75,6 +75,26 @@ describe('Job sweep-orphan-objects (SPEC-032)', () => {
     expect(logger.error).not.toHaveBeenCalled();
     const logged = JSON.stringify([logger.info.mock.calls, logger.warn.mock.calls, logger.error.mock.calls]);
     expect(logged).not.toContain('families/');
+  });
+
+  it('TC-322: job bị hủy khi hết hạn thì log warn kèm aborted', async () => {
+    const ctx = setup();
+    const controller = new AbortController();
+    controller.abort();
+    await registerSweepOrphanObjectsJob(
+      ctx.boss as unknown as PgBoss,
+      ctx.deps,
+      ctx.policy,
+      ctx.logger as unknown as Logger,
+    );
+    const handler = ctx.boss.work.mock.calls[0]?.[2] as (
+      jobs: { id: string; data: unknown; signal: AbortSignal }[],
+    ) => Promise<void>;
+    await handler([{ id: 'j2', data: null, signal: controller.signal }]);
+    expect(ctx.logger.warn).toHaveBeenCalledWith(
+      expect.objectContaining({ jobId: 'j2', aborted: true, families: 0 }),
+      expect.any(String),
+    );
   });
 
   it('TC-322: chạm trần thì log error kèm capped', async () => {

@@ -15,14 +15,31 @@ interface RunState {
 
 // BR-044/SPEC-032: dọn object S3 không còn được chứng từ tham chiếu, từng gia đình một.
 // Liệt kê trước rồi mới đọc tham chiếu: mọi tham chiếu đã COMMIT trước lúc đọc đều được tính.
-export async function sweepOrphanObjects(deps: SweepDependencies, policy: SweepPolicy): Promise<SweepResult> {
+// signal: pg-boss hủy khi job hết hạn — dừng trước gia đình kế tiếp. Không ném lỗi (SPEC-032 §4).
+export async function sweepOrphanObjects(
+  deps: SweepDependencies,
+  policy: SweepPolicy,
+  signal?: AbortSignal,
+): Promise<SweepResult> {
   const state: RunState = {
     cutoff: policy.now().getTime() - policy.graceHours * 3600_000,
     removed: 0,
     capped: false,
   };
   const families: FamilySweepReport[] = [];
-  for (const familyId of await deps.repository.listFamilyIds()) {
+  let familyIds: string[] = [];
+  let listError: string | undefined;
+  try {
+    familyIds = await deps.repository.listFamilyIds();
+  } catch (error) {
+    listError = errorReason(error);
+  }
+  let aborted = false;
+  for (const familyId of familyIds) {
+    if (signal?.aborted) {
+      aborted = true;
+      break;
+    }
     families.push(await sweepFamily(deps, policy, state, familyId));
     if (state.capped) break;
   }
@@ -38,8 +55,16 @@ export async function sweepOrphanObjects(deps: SweepDependencies, policy: SweepP
       failed: sum('failed'),
     },
     capped: state.capped,
+    aborted,
     dryRun: policy.dryRun,
+    ...(listError ? { listError } : {}),
   };
+}
+
+// Chỉ mã lỗi (S3 name như AccessDenied, mã pg như 42501) — thông điệp có thể chứa khóa object.
+function errorReason(error: unknown): string {
+  const { code, name } = (error ?? {}) as { code?: unknown; name?: unknown };
+  return String(code ?? name ?? 'unknown');
 }
 
 async function sweepFamily(
@@ -65,8 +90,8 @@ async function sweepFamily(
       else known.push(object);
     }
     references = await deps.repository.referencedKeys(familyId);
-  } catch {
-    return { ...report, outcome: 'error' };
+  } catch (error) {
+    return { ...report, outcome: 'error', reason: errorReason(error) };
   }
   // Truy vấn trả 0 dòng do scope/RLS sai trông giống "không có tham chiếu": không xóa gì của gia đình này.
   if (references.size === 0 && known.length > 0) return { ...report, outcome: 'empty_references' };
