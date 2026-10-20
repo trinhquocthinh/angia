@@ -11,6 +11,8 @@ import { feedMultipartBody, type BodyReadLimits } from './feedMultipartBody.js';
 const HEAD_BYTES = 4096;
 const MAX_FIELDS = 10;
 const MAX_FIELD_BYTES = 1024;
+/** Tiền tố thư mục tạm của mỗi lô; `sweepOrphanUploadDirs` dựa vào đây để dọn thư mục mồ côi. */
+export const UPLOAD_DIR_PREFIX = 'angia-upload-';
 
 export interface SpoolLimits extends BodyReadLimits {
   fieldName: string;
@@ -48,7 +50,7 @@ export async function spoolMultipartFiles(request: Request, limits: SpoolLimits)
   }
   const parser = createParser(request.headers.get('content-type'), limits);
   if (!request.body || !parser) return { ok: false, code: 'ERR_VALIDATION' };
-  const dir = await mkdtemp(join(tmpdir(), 'angia-upload-'));
+  const dir = await mkdtemp(join(tmpdir(), UPLOAD_DIR_PREFIX));
   const dispose = () => rm(dir, { recursive: true, force: true });
   try {
     const parsed = await parse(request.body, parser, dir, limits, request.signal);

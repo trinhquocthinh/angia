@@ -49,6 +49,15 @@ describe('Ngưỡng quota tài nguyên gia đình (SPEC-030, BR-043)', () => {
   });
 });
 
+describe('Ân hạn dọn thư mục tạm upload mồ côi (F08b, nợ #21)', () => {
+  it('mặc định 15 phút; chỉ nhận số nguyên dương', () => {
+    expect(loadApiConfig(env).UPLOAD_ORPHAN_GRACE_MINUTES).toBe(15);
+    expect(loadApiConfig({ ...env, UPLOAD_ORPHAN_GRACE_MINUTES: '30' }).UPLOAD_ORPHAN_GRACE_MINUTES).toBe(30);
+    for (const value of ['0', '-1', '1.5'])
+      expect(() => loadApiConfig({ ...env, UPLOAD_ORPHAN_GRACE_MINUTES: value })).toThrow();
+  });
+});
+
 describe('Trần AI theo gia đình (SPEC-031, BR-018)', () => {
   it('mặc định trần gia đình $0.50 và ước tính $0.02 (trùng worker); giá trị âm bị từ chối', () => {
     expect(loadApiConfig(env)).toMatchObject({

@@ -35,6 +35,8 @@ const apiEnvSchema = z.object({
   QUOTA_FAMILY_DAILY_UPLOADS: z.coerce.number().int().positive().default(100),
   QUOTA_FAMILY_PENDING_JOBS: z.coerce.number().int().positive().default(10),
   RATE_LIMIT_HEAVY_PER_MINUTE: z.coerce.number().int().positive().default(10),
+  // F08b (nợ #21): khi khởi động chỉ xóa thư mục angia-upload-* cũ hơn ngưỡng này (> timeout body 5 phút + ghi S3).
+  UPLOAD_ORPHAN_GRACE_MINUTES: z.coerce.number().int().positive().default(15),
 });
 
 export type ApiConfig = z.infer<typeof apiEnvSchema>;
