@@ -2,6 +2,11 @@ import { z } from 'zod';
 
 // Nguồn duy nhất đọc biến môi trường của worker (10-setup-and-ops-guide §3).
 // ntfy bổ sung ở v0.1b.
+
+// Biến để trống trong .env (chép từ .env.example) coi như chưa đặt.
+const unsetWhenEmpty = <T extends z.ZodType>(schema: T) =>
+  z.preprocess((value) => (value === '' ? undefined : value), schema.optional());
+
 const workerEnvSchema = z
   .object({
     STACK: z.enum(['dev', 'sit', 'prod']),
@@ -32,10 +37,31 @@ const workerEnvSchema = z
       .enum(['true', 'false'])
       .default('false')
       .transform((value) => value === 'true'),
+    // BR-045/SPEC-033: đồng bộ phiên với Authentik mỗi 5 phút. Bắt buộc ở sit/prod; dev không token = tắt job.
+    AUTHENTIK_URL: unsetWhenEmpty(z.string().url()),
+    AUTHENTIK_API_TOKEN: unsetWhenEmpty(z.string()),
+    IDP_ACCESS_GROUP_NAME: unsetWhenEmpty(z.string()),
+    // Trùng giá trị API (đồng bộ is_system_admin lúc đăng nhập).
+    ADMIN_GROUP_NAME: z.string().min(1).default('angia-admins'),
+    IDP_SYNC_MAX_REVOKES: z.coerce.number().int().min(1).default(10),
+    IDP_SYNC_DRY_RUN: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((value) => value === 'true'),
   })
   .refine((env) => env.AI_PROVIDER !== 'openrouter' || Boolean(env.OPENROUTER_API_KEY), {
     message: 'AI_PROVIDER=openrouter bắt buộc có OPENROUTER_API_KEY',
     path: ['OPENROUTER_API_KEY'],
+  })
+  .superRefine((env, ctx) => {
+    if (env.STACK === 'dev' && !env.AUTHENTIK_API_TOKEN) return;
+    for (const key of ['AUTHENTIK_URL', 'AUTHENTIK_API_TOKEN', 'IDP_ACCESS_GROUP_NAME'] as const)
+      if (!env[key])
+        ctx.addIssue({
+          code: 'custom',
+          message: `Đồng bộ phiên IdP (SPEC-033) bắt buộc có ${key}`,
+          path: [key],
+        });
   });
 
 export type WorkerConfig = z.infer<typeof workerEnvSchema>;
