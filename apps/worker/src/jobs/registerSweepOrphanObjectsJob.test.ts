@@ -2,10 +2,7 @@ import type { PgBoss } from 'pg-boss';
 import type { Logger } from 'pino';
 import { describe, expect, it, vi } from 'vitest';
 import type { SweepDependencies, SweepPolicy } from '@src/features/orphanObjects/application/ports.js';
-import {
-  registerSweepOrphanObjectsJob,
-  SWEEP_ORPHAN_OBJECTS_QUEUE,
-} from './registerSweepOrphanObjectsJob.js';
+import { registerSweepOrphanObjectsJob } from './registerSweepOrphanObjectsJob.js';
 
 const NOW = new Date('2026-10-20T20:00:00Z');
 const OLD = new Date(NOW.getTime() - 25 * 3600_000);
@@ -59,7 +56,6 @@ async function runJob(maxDeletes?: number) {
 describe('Job sweep-orphan-objects (SPEC-032)', () => {
   it('TC-322: đăng ký cron 03:00 giờ Việt Nam, queue singleton và ghi log không chứa khóa object', async () => {
     const { boss, logger, empty } = await runJob();
-    expect(SWEEP_ORPHAN_OBJECTS_QUEUE).toBe('sweep-orphan-objects');
     expect(boss.createQueue).toHaveBeenCalledWith(
       'sweep-orphan-objects',
       expect.objectContaining({ policy: 'singleton' }),

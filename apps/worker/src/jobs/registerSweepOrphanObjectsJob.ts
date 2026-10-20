@@ -4,7 +4,7 @@ import type { SweepDependencies, SweepPolicy } from '@src/features/orphanObjects
 import { handleSweepOrphanObjectsJob } from './handleSweepOrphanObjectsJob.js';
 
 // BR-044: 03:00 hằng ngày giờ Việt Nam (owner chốt 2026-10-20). API không gửi job này nên hằng nằm ở worker.
-export const SWEEP_ORPHAN_OBJECTS_QUEUE = 'sweep-orphan-objects';
+const SWEEP_ORPHAN_OBJECTS_QUEUE = 'sweep-orphan-objects';
 const DAILY_CRON = '0 3 * * *';
 
 // singleton: mỗi lúc một lần quét; retryLimit 0 vì use case không ném lỗi, lần chạy hôm sau làm lại.
