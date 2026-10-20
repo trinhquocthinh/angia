@@ -14,7 +14,7 @@ export interface IdpDirectory {
   fetchGroupMembers(groupName: string): Promise<DirectoryMember[]>;
 }
 
-export interface IdpSyncChange {
+interface IdpSyncChange {
   revoke: string[];
   adminOn: string[];
   adminOff: string[];

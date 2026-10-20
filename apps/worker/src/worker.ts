@@ -27,13 +27,16 @@ import { registerRequeueAwaitingBudgetJob } from '@src/jobs/registerRequeueAwait
 import { registerSweepOrphanObjectsJob } from '@src/jobs/registerSweepOrphanObjectsJob.js';
 import { createOrphanRepository } from '@src/features/orphanObjects/infrastructure/createOrphanRepository.js';
 import { createOrphanStorage } from '@src/features/orphanObjects/infrastructure/createOrphanStorage.js';
+import { createAccountSessionStore } from '@src/features/idpSessionSync/infrastructure/createAccountSessionStore.js';
+import { createAuthentikDirectory } from '@src/features/idpSessionSync/infrastructure/createAuthentikDirectory.js';
+import { registerSyncIdpSessionsJob } from '@src/jobs/registerSyncIdpSessionsJob.js';
 import { loadWorkerConfig, type WorkerConfig } from '@src/shared/config/loadWorkerConfig.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { createS3Client } from '@src/shared/storage/createS3Client.js';
 
 // Composition root của worker: pg-boss (role app, migrate:false) + job extract-document (SPEC-009),
 // dead-letter phục hồi chứng từ kẹt, job đầu tháng đưa awaiting_budget vào lại hàng đợi (BR-018)
-// và job hằng ngày dọn object S3 mồ côi (BR-044).
+// job hằng ngày dọn object S3 mồ côi (BR-044) và job 5 phút đồng bộ phiên với Authentik (BR-045).
 const config = loadWorkerConfig(process.env);
 const logger = pino({ level: config.LOG_LEVEL, base: { service: 'angia-worker', stack: config.STACK } });
 
@@ -48,6 +51,31 @@ function createExtractor(workerConfig: WorkerConfig) {
   return createFallbackExtractor(
     openRouter(workerConfig.AI_PRIMARY_MODEL),
     openRouter(workerConfig.AI_FALLBACK_MODEL),
+  );
+}
+
+// BR-045/SPEC-033: config bắt buộc đủ ba biến ở sit/prod; dev không có token thì tắt job.
+async function registerIdpSessionSync(workerConfig: WorkerConfig, pool: pg.Pool) {
+  const {
+    AUTHENTIK_URL: baseUrl,
+    AUTHENTIK_API_TOKEN: token,
+    IDP_ACCESS_GROUP_NAME: accessGroupName,
+  } = workerConfig;
+  if (!baseUrl || !token || !accessGroupName) {
+    logger.info('Chưa cấu hình AUTHENTIK_API_TOKEN — tắt đồng bộ phiên với IdP');
+    return;
+  }
+  await registerSyncIdpSessionsJob(
+    boss,
+    { directory: createAuthentikDirectory({ baseUrl, token }), store: createAccountSessionStore(pool) },
+    {
+      accessGroupName,
+      adminGroupName: workerConfig.ADMIN_GROUP_NAME,
+      maxRevokes: workerConfig.IDP_SYNC_MAX_REVOKES,
+      dryRun: workerConfig.IDP_SYNC_DRY_RUN,
+      now: () => new Date(),
+    },
+    logger,
   );
 }
 
@@ -117,9 +145,10 @@ try {
     },
     logger,
   );
+  await registerIdpSessionSync(config, pool);
   logger.info(
     { aiProvider: config.AI_PROVIDER },
-    'Worker sẵn sàng — đã đăng ký job convert-heic, prepare-ocr-image, extract-document, ngân sách AI và dọn object mồ côi',
+    'Worker sẵn sàng — đã đăng ký job convert-heic, prepare-ocr-image, extract-document, ngân sách AI, dọn object mồ côi và đồng bộ phiên IdP',
   );
 } catch (error) {
   logger.error({ reason: (error as Error).message }, 'Worker không khởi động được');
