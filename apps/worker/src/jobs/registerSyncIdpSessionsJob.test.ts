@@ -8,9 +8,11 @@ import type {
   IdpSyncPolicy,
 } from '@src/features/idpSessionSync/application/ports.js';
 import type { LocalAccount } from '@src/features/idpSessionSync/domain/planIdpSync.js';
-import { registerSyncIdpSessionsJob } from './registerSyncIdpSessionsJob.js';
+import { createAuthentikDirectory } from '@src/features/idpSessionSync/infrastructure/createAuthentikDirectory.js';
+import { registerSyncIdpSessionsJob, unregisterSyncIdpSessionsJob } from './registerSyncIdpSessionsJob.js';
 
 const SECRET_UID = 'uid-secret';
+const SECRET_TOKEN = 'tok-secret-123';
 const policy: IdpSyncPolicy = {
   accessGroupName: 'angia-sit-users',
   adminGroupName: 'angia-admins',
@@ -37,7 +39,7 @@ async function runJob(directory: IdpDirectory, accountList = accounts, maxRevoke
     directory,
     store: { listAccounts: async () => accountList, apply: async () => undefined },
   };
-  const boss = { createQueue: vi.fn(), schedule: vi.fn(), work: vi.fn() };
+  const boss = { createQueue: vi.fn(), schedule: vi.fn(), work: vi.fn(), unschedule: vi.fn() };
   const logger = { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() };
   await registerSyncIdpSessionsJob(
     boss as unknown as PgBoss,
@@ -113,5 +115,40 @@ describe('Job sync-idp-sessions (SPEC-033)', () => {
     );
     expect(quiet.logger.warn).not.toHaveBeenCalled();
     expect(quiet.logger.error).not.toHaveBeenCalled();
+  });
+
+  it('TC-333: log không chứa token Authentik kể cả khi lỗi mạng mang token trong thông điệp', async () => {
+    const authentik = (fetch: typeof globalThis.fetch) =>
+      createAuthentikDirectory({ baseUrl: 'https://auth.example.test', token: SECRET_TOKEN, fetch });
+    const ok = await runJob(
+      authentik(async () => new Response(JSON.stringify({ results: [{ name: 'x', users_obj: [] }] }))),
+    );
+    const leaky = await runJob(
+      authentik(async () => {
+        throw new TypeError(`fetch failed: Bearer ${SECRET_TOKEN}`);
+      }),
+    );
+    expect(leaky.logger.error).toHaveBeenCalledWith(
+      expect.objectContaining({ outcome: 'error', reason: 'idp_unreachable' }),
+      expect.any(String),
+    );
+    for (const { logged } of [ok, leaky]) expect(logged).not.toContain(SECRET_TOKEN);
+  });
+
+  it('TC-352: lúc đăng ký log một lần tên hai nhóm; hủy đăng ký gỡ lịch cron của queue', async () => {
+    const { logger } = await runJob(healthy);
+    expect(logger.info).toHaveBeenCalledTimes(1);
+    expect(logger.info).toHaveBeenCalledWith(
+      expect.objectContaining({
+        accessGroupName: 'angia-sit-users',
+        adminGroupName: 'angia-admins',
+        dryRun: false,
+      }),
+      expect.any(String),
+    );
+
+    const boss = { unschedule: vi.fn() };
+    await unregisterSyncIdpSessionsJob(boss as unknown as PgBoss);
+    expect(boss.unschedule).toHaveBeenCalledWith('sync-idp-sessions');
   });
 });

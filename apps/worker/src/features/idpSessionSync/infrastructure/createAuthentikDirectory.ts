@@ -19,6 +19,18 @@ const groupsResponse = z.object({
   ),
 });
 
+const isTimeout = (error: unknown) => error instanceof Error && error.name === 'TimeoutError';
+
+// Timeout có thể nổ khi đang đọc body (cùng AbortSignal) → idp_timeout; JSON hỏng → undefined để zod báo bad_response.
+async function readJson(response: Response): Promise<unknown> {
+  try {
+    return await response.json();
+  } catch (error) {
+    if (isTimeout(error)) throw new IdpDirectoryError('idp_timeout');
+    return undefined;
+  }
+}
+
 function httpFailure(status: number): IdpDirectoryError {
   if (status === 401) return new IdpDirectoryError('idp_http_401');
   if (status === 403) return new IdpDirectoryError('idp_http_403');
@@ -37,16 +49,17 @@ export function createAuthentikDirectory(settings: AuthentikDirectorySettings): 
       url.searchParams.set('include_users', 'true');
       let response: Response;
       try {
+        // redirect 'error': không mang Bearer token sang host khác nếu Authentik/proxy chuyển hướng.
         response = await doFetch(url, {
+          redirect: 'error',
           headers: { Authorization: `Bearer ${settings.token}`, Accept: 'application/json' },
           signal: AbortSignal.timeout(settings.timeoutMs ?? 10_000),
         });
       } catch (error) {
-        const timedOut = error instanceof Error && error.name === 'TimeoutError';
-        throw new IdpDirectoryError(timedOut ? 'idp_timeout' : 'idp_unreachable');
+        throw new IdpDirectoryError(isTimeout(error) ? 'idp_timeout' : 'idp_unreachable');
       }
       if (!response.ok) throw httpFailure(response.status);
-      const parsed = groupsResponse.safeParse(await response.json().catch(() => undefined));
+      const parsed = groupsResponse.safeParse(await readJson(response));
       if (!parsed.success) throw new IdpDirectoryError('idp_bad_response');
       const matches = parsed.data.results.filter((group) => group.name === groupName);
       const [group] = matches;

@@ -73,6 +73,22 @@ describe('Adapter Authentik Admin API (SPEC-033)', () => {
     expect(await mixed.dir.fetchGroupMembers(GROUP)).toEqual([]);
   });
 
+  it('TC-337: không theo chuyển hướng (token không bị gửi sang host khác)', async () => {
+    const { fetch, dir } = directory(async () => json({ results: [{ name: GROUP, users_obj: [] }] }));
+    await dir.fetchGroupMembers(GROUP);
+    expect(fetch.mock.calls[0]?.[1]?.redirect).toBe('error');
+  });
+
+  it('TC-337: timeout khi đang đọc body → idp_timeout, không phải idp_bad_response', async () => {
+    const timeout = Object.assign(new Error('timed out'), { name: 'TimeoutError' });
+    const slowBody = Object.assign(new Response(null, { status: 200 }), {
+      json: () => Promise.reject(timeout),
+    });
+    await expect(directory(async () => slowBody).dir.fetchGroupMembers(GROUP)).rejects.toMatchObject({
+      reason: 'idp_timeout',
+    });
+  });
+
   it('TC-331: lỗi không chứa phản hồi gốc của Authentik', async () => {
     const { dir } = directory(async () => new Response('secret-detail x@example.test', { status: 500 }));
     const error = await dir.fetchGroupMembers(GROUP).catch((caught: unknown) => caught);

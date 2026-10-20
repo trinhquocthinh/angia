@@ -67,6 +67,7 @@ describe('Cấu hình worker', () => {
       AUTHENTIK_URL: 'https://auth.example.test',
       AUTHENTIK_API_TOKEN: 't',
       IDP_ACCESS_GROUP_NAME: 'angia-sit-users',
+      ADMIN_GROUP_NAME: 'angia-admins',
     };
     expect(() => loadWorkerConfig({ ...base, STACK: 'sit' })).toThrow('AUTHENTIK_API_TOKEN');
     expect(() =>
@@ -85,6 +86,30 @@ describe('Cấu hình worker', () => {
       { AUTHENTIK_URL: 'not-a-url' },
     ])
       expect(() => loadWorkerConfig({ ...base, ...invalid })).toThrow();
+  });
+
+  it('TC-351: biến IdP được trim; chuỗi chỉ khoảng trắng bị từ chối; ADMIN_GROUP_NAME bắt buộc ở sit/prod', () => {
+    const idp = {
+      AUTHENTIK_URL: 'https://auth.example.test',
+      AUTHENTIK_API_TOKEN: ' t \n',
+      IDP_ACCESS_GROUP_NAME: ' angia-sit-users ',
+      ADMIN_GROUP_NAME: ' angia-admins ',
+    };
+    expect(loadWorkerConfig({ ...base, STACK: 'sit', ...idp })).toMatchObject({
+      AUTHENTIK_API_TOKEN: 't',
+      IDP_ACCESS_GROUP_NAME: 'angia-sit-users',
+      ADMIN_GROUP_NAME: 'angia-admins',
+    });
+    for (const key of ['AUTHENTIK_API_TOKEN', 'IDP_ACCESS_GROUP_NAME', 'ADMIN_GROUP_NAME'] as const) {
+      expect(() => loadWorkerConfig({ ...base, STACK: 'sit', ...idp, [key]: '   ' })).toThrow(key);
+      expect(() => loadWorkerConfig({ ...base, ...idp, [key]: ' \t' })).toThrow(key);
+    }
+    // API không có mặc định cho ADMIN_GROUP_NAME: sit/prod thiếu thì dừng, dev giữ mặc định.
+    for (const ADMIN_GROUP_NAME of [undefined, ''])
+      expect(() => loadWorkerConfig({ ...base, STACK: 'prod', ...idp, ADMIN_GROUP_NAME })).toThrow(
+        'ADMIN_GROUP_NAME',
+      );
+    expect(loadWorkerConfig({ ...base, ADMIN_GROUP_NAME: '' }).ADMIN_GROUP_NAME).toBe('angia-admins');
   });
 
   it('TC-321: biến dọn object mồ côi có mặc định 24/500/false và từ chối giá trị không hợp lệ', () => {

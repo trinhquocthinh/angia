@@ -73,6 +73,38 @@ describe('Đồng bộ phiên với IdP (SPEC-033)', () => {
     expect(await syncIdpSessions(deps, policy)).toMatchObject({ outcome: 'error', reason: 'db_error' });
   });
 
+  it('TC-350: lỗi lạ và db_error kèm mã chẩn đoán (tên lỗi, mã pg) nhưng không kèm thông điệp gốc', async () => {
+    const network = setup(async () => {
+      throw Object.assign(new TypeError('fetch failed x@example.test'), { code: 'ECONNREFUSED' });
+    });
+    const unreachable = await syncIdpSessions(network.deps, policy);
+    expect(unreachable).toMatchObject({
+      outcome: 'error',
+      reason: 'idp_unreachable',
+      errorName: 'TypeError',
+      errorCode: 'ECONNREFUSED',
+    });
+
+    const { deps, store } = setup();
+    store.apply.mockRejectedValueOnce(
+      Object.assign(new Error('duplicate key (oidc_subject)=(s1)'), { name: 'DatabaseError', code: '23505' }),
+    );
+    const failed = await syncIdpSessions(deps, policy);
+    expect(failed).toMatchObject({ reason: 'db_error', errorName: 'DatabaseError', errorCode: '23505' });
+    expect(JSON.stringify([unreachable, failed])).not.toMatch(/example\.test|s1\)/);
+
+    // Giá trị ném ra không phải Error, hoặc name/code bất thường → không ghi chẩn đoán đó.
+    const odd = setup(async () => {
+      throw Object.assign(new Error('x'), { name: 'Có dấu x@example.test', code: 'mã lạ' });
+    });
+    const oddResult = await syncIdpSessions(odd.deps, policy);
+    expect(oddResult).not.toHaveProperty('errorName');
+    expect(oddResult).not.toHaveProperty('errorCode');
+    const thrown = setup();
+    thrown.store.listAccounts.mockRejectedValueOnce('boom');
+    expect(await syncIdpSessions(thrown.deps, policy)).not.toHaveProperty('errorName');
+  });
+
   it('TC-329: có thay đổi → apply nhận đúng thay đổi; nhóm truy cập rỗng → skipped, không ghi', async () => {
     const { deps, store } = setup();
     const result = await syncIdpSessions(deps, policy);
