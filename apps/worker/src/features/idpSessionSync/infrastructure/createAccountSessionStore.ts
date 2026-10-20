@@ -25,11 +25,14 @@ export function createAccountSessionStore(pool: pg.Pool): AccountSessionStore {
     },
 
     // Thu hồi phiên và đổi cờ admin trong một transaction: lỗi giữa chừng không để lại trạng thái nửa vời.
-    async apply(change) {
+    async apply(change, createdBefore) {
       const client = await pool.connect();
       try {
         await client.query('BEGIN');
-        await client.query('DELETE FROM sessions WHERE account_id = ANY($1::uuid[])', [change.revoke]);
+        await client.query('DELETE FROM sessions WHERE account_id = ANY($1::uuid[]) AND created_at < $2', [
+          change.revoke,
+          createdBefore,
+        ]);
         await client.query('UPDATE accounts SET is_system_admin = true WHERE id = ANY($1::uuid[])', [
           change.adminOn,
         ]);

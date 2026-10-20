@@ -21,7 +21,7 @@ export function handleSyncIdpSessionsJob(deps: IdpSyncDependencies, policy: IdpS
         'Đồng bộ phiên với IdP không áp dụng: lỗi đọc Authentik/DB hoặc vượt trần thu hồi',
       );
     else if (result.outcome === 'skipped')
-      logger.error(summary, 'Đồng bộ phiên với IdP bỏ qua: nhóm truy cập rỗng');
+      logger.error(summary, 'Đồng bộ phiên với IdP bỏ qua: nhóm truy cập rỗng hoặc không khớp tài khoản nào');
     else if (revoke.length + adminOn.length + adminOff.length > 0)
       logger.warn(
         {

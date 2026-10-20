@@ -10,6 +10,7 @@ export async function syncIdpSessions(
   policy: IdpSyncPolicy,
 ): Promise<IdpSyncResult> {
   const { dryRun } = policy;
+  const snapshotAt = policy.now();
   let access, admins;
   try {
     [access, admins] = await Promise.all([
@@ -23,12 +24,12 @@ export async function syncIdpSessions(
     return { ...NO_CHANGE, outcome: 'error', reason: error.reason, ...status, dryRun };
   }
   try {
-    const accounts = await deps.store.listAccounts(policy.now());
+    const accounts = await deps.store.listAccounts(snapshotAt);
     const { skipReason, ...plan } = planIdpSync({ accounts, access, admins, maxRevokes: policy.maxRevokes });
     if (skipReason) return { ...plan, outcome: 'skipped', reason: skipReason, dryRun };
     const { revoke, adminOn, adminOff } = plan;
     if (!dryRun && revoke.length + adminOn.length + adminOff.length > 0)
-      await deps.store.apply({ revoke, adminOn, adminOff });
+      await deps.store.apply({ revoke, adminOn, adminOff }, snapshotAt);
     return { ...plan, outcome: 'applied', dryRun };
   } catch {
     return { ...NO_CHANGE, outcome: 'error', reason: 'db_error', dryRun };

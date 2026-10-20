@@ -17,23 +17,27 @@ export interface IdpSyncPlan {
   adminOn: string[];
   adminOff: string[];
   capped: boolean;
-  skipReason?: 'access_group_empty';
+  skipReason?: 'access_group_empty' | 'access_group_no_match';
 }
+
+const SKIP = { revoke: [], adminOn: [], adminOff: [], capped: false };
 
 const activeUids = (members: DirectoryMember[]) =>
   new Set(members.filter((member) => member.isActive).map((member) => member.uid));
 
 // BR-045: thu hồi phiên của tài khoản không còn active ∧ thuộc nhóm truy cập; is_system_admin bám nhóm admin.
-// Nhóm truy cập rỗng → không đổi gì (chống đăng xuất hàng loạt khi cấu hình sai); vượt trần → không thu hồi ai.
+// Chống đăng xuất hàng loạt khi cấu hình sai (sai tên nhóm, sai subject mode): nhóm truy cập rỗng hoặc không
+// tài khoản nào (kể cả không có phiên) khớp thành viên active → không đổi gì; vượt trần → không thu hồi ai.
 export function planIdpSync(input: {
   accounts: LocalAccount[];
   access: DirectoryMember[];
   admins: DirectoryMember[];
   maxRevokes: number;
 }): IdpSyncPlan {
-  if (input.access.length === 0)
-    return { revoke: [], adminOn: [], adminOff: [], capped: false, skipReason: 'access_group_empty' };
+  if (input.access.length === 0) return { ...SKIP, skipReason: 'access_group_empty' };
   const allowed = activeUids(input.access);
+  if (input.accounts.length > 0 && !input.accounts.some((account) => allowed.has(account.oidcSubject)))
+    return { ...SKIP, skipReason: 'access_group_no_match' };
   const admins = activeUids(input.admins);
   const revoke = input.accounts
     .filter((account) => account.hasSession && !allowed.has(account.oidcSubject))

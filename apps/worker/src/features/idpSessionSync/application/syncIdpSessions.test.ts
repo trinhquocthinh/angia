@@ -83,7 +83,7 @@ describe('Đồng bộ phiên với IdP (SPEC-033)', () => {
       dryRun: false,
     });
     expect(store.listAccounts).toHaveBeenCalledWith(NOW);
-    expect(store.apply).toHaveBeenCalledWith({ revoke: ['locked'], adminOn: [], adminOff: ['locked'] });
+    expect(store.apply).toHaveBeenCalledWith({ revoke: ['locked'], adminOn: [], adminOff: ['locked'] }, NOW);
 
     const empty = setup(async () => []);
     expect(await syncIdpSessions(empty.deps, policy)).toMatchObject({

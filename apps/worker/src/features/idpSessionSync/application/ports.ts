@@ -23,8 +23,9 @@ interface IdpSyncChange {
 export interface AccountSessionStore {
   // hasSession = có phiên expires_at > now.
   listAccounts(now: Date): Promise<LocalAccount[]>;
-  // Xóa phiên + cập nhật is_system_admin trong một transaction.
-  apply(change: IdpSyncChange): Promise<void>;
+  // Xóa phiên tạo trước createdBefore + cập nhật is_system_admin trong một transaction.
+  // createdBefore = mốc trước khi đọc Authentik: phiên đăng nhập giữa lượt không bị xóa theo ảnh chụp cũ.
+  apply(change: IdpSyncChange, createdBefore: Date): Promise<void>;
 }
 
 export interface IdpSyncDependencies {
@@ -42,7 +43,7 @@ export interface IdpSyncPolicy {
 
 export interface IdpSyncResult extends IdpSyncChange {
   outcome: 'applied' | 'skipped' | 'error';
-  reason?: IdpFailureReason | 'access_group_empty' | 'db_error';
+  reason?: IdpFailureReason | 'access_group_empty' | 'access_group_no_match' | 'db_error';
   // Chỉ khi reason = idp_http_error.
   status?: number;
   capped: boolean;

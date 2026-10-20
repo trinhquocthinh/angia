@@ -57,6 +57,22 @@ describe('Lập kế hoạch đồng bộ phiên với IdP (BR-045)', () => {
     });
   });
 
+  it('TC-335: không tài khoản nào khớp thành viên active của nhóm truy cập (sai nhóm/sai subject mode) → bỏ qua', () => {
+    const accounts = [acc('a1', 's1', { admin: true }), acc('a2', 's2', { session: false })];
+    expect(plan(accounts, [mem('other-1'), mem('other-2')], [mem('s1')])).toEqual({
+      revoke: [],
+      adminOn: [],
+      adminOff: [],
+      capped: false,
+      skipReason: 'access_group_no_match',
+    });
+    // tài khoản không có phiên vẫn được tính khớp: khóa người duy nhất đang có phiên vẫn thu hồi được
+    expect(plan(accounts, [mem('s1', false), mem('s2')], [])).toMatchObject({
+      revoke: ['a1'],
+      adminOff: ['a1'],
+    });
+  });
+
   it('TC-328: số cần thu hồi vượt trần → capped, không thu hồi, admin vẫn đồng bộ; đúng bằng trần thì thu hồi', () => {
     const accounts = [acc('a1', 's1'), acc('a2', 's2'), acc('a3', 's3', { admin: true })];
     const over = plan(accounts, [mem('s3')], [], 1);

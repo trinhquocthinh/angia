@@ -41,11 +41,15 @@ describe('Đồng bộ phiên với IdP trên PostgreSQL thật, role app NOBYPA
     );
     return { id: rows[0]!.id, subject };
   };
-  const seedSession = async (accountId: string, expiresAt = new Date(NOW.getTime() + HOUR)) =>
+  const seedSession = async (
+    accountId: string,
+    expiresAt = new Date(NOW.getTime() + HOUR),
+    createdAt = new Date(NOW.getTime() - HOUR),
+  ) =>
     (
       await fx.owner.query<{ id: string }>(
-        `INSERT INTO sessions(id, account_id, csrf_token, expires_at) VALUES ($3, $1, 'csrf', $2) RETURNING id`,
-        [accountId, expiresAt, randomUUID()],
+        `INSERT INTO sessions(id, account_id, csrf_token, expires_at, created_at) VALUES ($3, $1, 'csrf', $2, $4) RETURNING id`,
+        [accountId, expiresAt, randomUUID(), createdAt],
       )
     ).rows[0]!.id;
   const sessionCount = async (accountId: string) =>
@@ -100,6 +104,20 @@ describe('Đồng bộ phiên với IdP trên PostgreSQL thật, role app NOBYPA
     expect(await syncIdpSessions({ directory: failing, store }, policy)).toMatchObject({ outcome: 'error' });
     expect(await sessionCount(a.id)).toBe(1);
     expect(await isAdmin(admin.id)).toBe(true);
+  });
+
+  it('TC-336: phiên tạo sau mốc chụp danh sách Authentik (đăng nhập giữa lượt) không bị xóa', async () => {
+    const [keeper, relogged] = [await seedAccount(), await seedAccount()];
+    const stale = await seedSession(relogged.id);
+    const fresh = await seedSession(relogged.id, undefined, new Date(NOW.getTime() + 60_000));
+    // Ảnh chụp cũ: relogged chưa thuộc nhóm; được thêm vào và đăng nhập ngay sau khi job đọc Authentik.
+    const directory = directoryOf({ 'angia-sit-users': [{ uid: keeper.subject, isActive: true }] });
+
+    const result = await syncIdpSessions({ directory, store: createAccountSessionStore(fx.pool) }, policy);
+
+    expect(result).toMatchObject({ outcome: 'applied', revoke: [relogged.id] });
+    expect(await findActive(stale)).toBe(0);
+    expect(await findActive(fresh)).toBe(1);
   });
 
   it('TC-334a: tài khoản chỉ có phiên hết hạn không tính là có phiên, không vào revoke và không chạm trần', async () => {

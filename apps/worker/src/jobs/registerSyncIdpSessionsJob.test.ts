@@ -92,11 +92,17 @@ describe('Job sync-idp-sessions (SPEC-033)', () => {
       {
         fetchGroupMembers: async (name) => (name === 'angia-sit-users' ? [{ uid: 'x', isActive: true }] : []),
       },
-      accounts,
+      [...accounts, { id: 'acc-x', oidcSubject: 'x', isSystemAdmin: false, hasSession: false }],
       1,
     );
     expect(over.logger.error).toHaveBeenCalledWith(
       expect.objectContaining({ capped: true, revoked: 0 }),
+      expect.any(String),
+    );
+
+    const noMatch = await runJob({ fetchGroupMembers: async () => [{ uid: 'stranger', isActive: true }] });
+    expect(noMatch.logger.error).toHaveBeenCalledWith(
+      expect.objectContaining({ outcome: 'skipped', reason: 'access_group_no_match', revoked: 0 }),
       expect.any(String),
     );
 
