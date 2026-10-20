@@ -1,4 +1,5 @@
 import { planIdpSync } from '../domain/planIdpSync.js';
+import { errorDiagnostics } from './errorDiagnostics.js';
 import { IdpDirectoryError } from './IdpDirectoryError.js';
 import type { IdpSyncDependencies, IdpSyncPolicy, IdpSyncResult } from './ports.js';
 
@@ -19,7 +20,13 @@ export async function syncIdpSessions(
     ]);
   } catch (error) {
     if (!(error instanceof IdpDirectoryError))
-      return { ...NO_CHANGE, outcome: 'error', reason: 'idp_unreachable', dryRun };
+      return {
+        ...NO_CHANGE,
+        outcome: 'error',
+        reason: 'idp_unreachable',
+        ...errorDiagnostics(error),
+        dryRun,
+      };
     const status = error.status === undefined ? {} : { status: error.status };
     return { ...NO_CHANGE, outcome: 'error', reason: error.reason, ...status, dryRun };
   }
@@ -31,7 +38,7 @@ export async function syncIdpSessions(
     if (!dryRun && revoke.length + adminOn.length + adminOff.length > 0)
       await deps.store.apply({ revoke, adminOn, adminOff }, snapshotAt);
     return { ...plan, outcome: 'applied', dryRun };
-  } catch {
-    return { ...NO_CHANGE, outcome: 'error', reason: 'db_error', dryRun };
+  } catch (error) {
+    return { ...NO_CHANGE, outcome: 'error', reason: 'db_error', ...errorDiagnostics(error), dryRun };
   }
 }
