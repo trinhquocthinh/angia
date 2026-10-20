@@ -50,4 +50,22 @@ describe('Cấu hình worker', () => {
     expect(loadWorkerConfig(base)).toMatchObject({ AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: 0.5 });
     expect(() => loadWorkerConfig({ ...base, AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: '-0.1' })).toThrow();
   });
+
+  it('TC-321: biến dọn object mồ côi có mặc định 24/500/false và từ chối giá trị không hợp lệ', () => {
+    expect(loadWorkerConfig(base)).toMatchObject({
+      ORPHAN_OBJECT_GRACE_HOURS: 24,
+      ORPHAN_OBJECT_MAX_DELETES: 500,
+      ORPHAN_OBJECT_DRY_RUN: false,
+    });
+    expect(loadWorkerConfig({ ...base, ORPHAN_OBJECT_DRY_RUN: 'true' })).toMatchObject({
+      ORPHAN_OBJECT_DRY_RUN: true,
+    });
+    for (const invalid of [
+      { ORPHAN_OBJECT_GRACE_HOURS: '0' },
+      { ORPHAN_OBJECT_GRACE_HOURS: '1.5' },
+      { ORPHAN_OBJECT_MAX_DELETES: '0' },
+      { ORPHAN_OBJECT_DRY_RUN: 'yes' },
+    ])
+      expect(() => loadWorkerConfig({ ...base, ...invalid })).toThrow();
+  });
 });
