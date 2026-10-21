@@ -1,4 +1,4 @@
-import { index, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { index, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
 import { createdAtColumn, idColumn } from './columns.js';
 
@@ -15,6 +15,7 @@ export const sessions = pgTable(
     createdAt: createdAtColumn(),
   },
   (table) => [
+    unique('sessions_id_account_unique').on(table.id, table.accountId),
     index('sessions_account_id_idx').on(table.accountId),
     index('sessions_expires_at_idx').on(table.expiresAt),
   ],

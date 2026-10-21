@@ -20,6 +20,14 @@ export function ProfileAccountFooter({
         </p>
       </div>
       <div className="flex flex-wrap gap-2 lg:flex-col">
+        {session.family && (
+          <Link
+            to="/notifications"
+            className="flex min-h-11 items-center rounded-xl px-3 py-2 text-sm font-medium"
+          >
+            Thông báo
+          </Link>
+        )}
         {session.account.isSystemAdmin && (
           <Link
             to="/admin"

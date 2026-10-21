@@ -41,7 +41,10 @@ import { createFakeFamilyAdminRepository } from './createFakeFamilyAdminReposito
 import { seedAccount, seedSession, TEST_COOKIE_SECRET, type SeededSession } from './seedAuthFixtures.js';
 import { startTestDatabase } from './startTestDatabase.js';
 
+import type { PushDependencies } from '@src/features/pushSubscriptions/application/ports.js';
+
 export interface ProfileTestOptions {
+  push?: (db: Database) => PushDependencies;
   quota?: Partial<QuotaLimits>;
   heavyRateLimit?: { perMinute: number; now(): number };
 }
@@ -57,6 +60,7 @@ function buildApp(
   const stub = createStubAuthDeps();
   const privacyQueue = createPrivacyQueue(boss);
   return createApp({
+    ...(options.push ? { push: options.push(database) } : {}),
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
     auth: {
       ...stub,

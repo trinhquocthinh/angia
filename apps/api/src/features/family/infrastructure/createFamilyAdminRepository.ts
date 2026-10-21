@@ -1,10 +1,11 @@
+import { revokeAccountPushSubscriptions } from './revokeAccountPushSubscriptions.js';
 import { asc, eq, sql } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { accounts, families } from '@src/shared/db/schema/index.js';
 import type { FamilyAdminRepository, MembershipStore } from '../application/ports.js';
 import type { MemberAccount } from '../domain/Membership.js';
 
-type Executor = Pick<Database, 'select' | 'update'>;
+type Executor = Pick<Database, 'select' | 'update' | 'transaction'>;
 
 const memberAccountColumns = {
   id: accounts.id,
@@ -62,8 +63,11 @@ function createMembershipStore(tx: Executor): MembershipStore {
 
     assign: (accountId, familyId, role) => updateAccount(tx, accountId, { familyId, familyRole: role }),
     changeRole: (accountId, role) => updateAccount(tx, accountId, { familyRole: role }),
-    remove: (accountId) =>
-      updateAccount(tx, accountId, { familyId: null, familyRole: null, healthProfileId: null }),
+    remove: async (accountId) => {
+      // BR-046: gỡ push trước khi thay family; giữ phiên về màn chờ như hành vi hiện tại.
+      await revokeAccountPushSubscriptions(tx, accountId);
+      return updateAccount(tx, accountId, { familyId: null, familyRole: null, healthProfileId: null });
+    },
   };
 }
 

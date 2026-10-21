@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { type AnyPgColumn, boolean, check, index, pgTable, text, uuid } from 'drizzle-orm/pg-core';
+import { type AnyPgColumn, boolean, check, index, pgTable, text, unique, uuid } from 'drizzle-orm/pg-core';
 import { createdAtColumn, idColumn } from './columns.js';
 import { families } from './families.js';
 import { healthProfiles } from './healthProfiles.js';
@@ -21,6 +21,7 @@ export const accounts = pgTable(
     createdAt: createdAtColumn(),
   },
   (table) => [
+    unique('accounts_id_family_unique').on(table.id, table.familyId),
     index('accounts_family_id_idx').on(table.familyId),
     check('accounts_family_role_valid', sql`${table.familyRole} IN ('main', 'member')`),
   ],

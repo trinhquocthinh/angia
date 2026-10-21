@@ -183,3 +183,5 @@ export type {
 } from './medications/reusePrescriptionSchemas.js';
 export { visitSummaryQuerySchema, visitSummarySchema } from './visitSummary/visitSummarySchemas.js';
 export type { VisitSummary } from './visitSummary/visitSummarySchemas.js';
+
+export { pushSubscriptionSchema, pushConfigSchema } from './push/pushSchemas.js';

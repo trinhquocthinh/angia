@@ -7,11 +7,14 @@ import { createStubInvitationDeps } from './createStubInvitationDeps.js';
 import { createStubProfileRepository } from './createStubProfileRepository.js';
 import { createStubReviewDeps } from './createStubReviewDeps.js';
 
+import { createStubPushDeps } from './createStubPushDeps.js';
+
 const noopProbe = () => Promise.resolve();
 
 // App đủ mọi route nhưng hạ tầng giả: chỉ dùng để đọc cấu trúc route (OpenAPI, kiểm kê NFR-4).
 export function createStubApp() {
   return createApp({
+    push: createStubPushDeps(),
     consentInvitations: createStubInvitationDeps(),
     documents: createStubDocumentDeps(),
     ...createStubReviewDeps(),

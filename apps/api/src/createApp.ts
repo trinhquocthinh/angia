@@ -46,7 +46,11 @@ import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { createSlidingWindowLimiter } from '@src/shared/http/createSlidingWindowLimiter.js';
 import { errorResponse } from '@src/shared/http/errorResponse.js';
 
+import type { PushDependencies } from '@src/features/pushSubscriptions/application/ports.js';
+import { registerPushRoutes } from '@src/features/pushSubscriptions/presentation/registerPushRoutes.js';
+
 export type AppDependencies = {
+  push?: PushDependencies;
   healthProbes: HealthProbes;
   auth: AuthRouteDeps;
   familyAdmin: FamilyAdminRepository;
@@ -100,6 +104,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth);
   registerMeRoute(app);
+  if (deps.push) registerPushRoutes(app, deps.push);
   registerAdminRoutes(app, deps.familyAdmin);
   registerAiBudgetRoutes(app, deps.aiBudget);
   registerFamilyUsageRoute(app, deps.familyUsage);

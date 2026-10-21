@@ -1,8 +1,11 @@
 import { z } from 'zod';
 
 // Nguồn duy nhất đọc biến môi trường của API (10-setup-and-ops-guide §3).
-// Chỉ khai báo biến đang dùng; ntfy bổ sung tại Epic tương ứng.
+// Web Push E8: để trống cả bộ VAPID thì tắt; khai báo thiếu bộ thì từ chối khởi động.
 const apiEnvSchema = z.object({
+  WEB_PUSH_PUBLIC_KEY: z.string().default(''),
+  WEB_PUSH_PRIVATE_KEY: z.string().default(''),
+  WEB_PUSH_SUBJECT: z.string().default(''),
   STACK: z.enum(['dev', 'sit', 'prod']),
   PORT: z.coerce.number().int().positive().default(3000),
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
@@ -42,5 +45,16 @@ const apiEnvSchema = z.object({
 export type ApiConfig = z.infer<typeof apiEnvSchema>;
 
 export function loadApiConfig(env: NodeJS.ProcessEnv): ApiConfig {
-  return apiEnvSchema.parse(env);
+  const config = apiEnvSchema.parse(env);
+  const { WEB_PUSH_PUBLIC_KEY: pub, WEB_PUSH_PRIVATE_KEY: key, WEB_PUSH_SUBJECT: subject } = config;
+  if (pub || key || subject) {
+    if (
+      !/^[A-Za-z0-9_-]{87}$/.test(pub) ||
+      !/^[A-Za-z0-9_-]{43}$/.test(key) ||
+      !/^(mailto:[^\s@]+@[^\s@]+\.[^\s@]+|https:\/\/[^\s]+)$/.test(subject)
+    ) {
+      throw new Error('Cần khai báo đầy đủ bộ WEB_PUSH_PUBLIC_KEY/PRIVATE_KEY/SUBJECT hợp lệ.');
+    }
+  }
+  return config;
 }
