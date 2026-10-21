@@ -19,6 +19,7 @@ const SKELETON_TABLES = [
   'medication_courses',
   'prescription_items',
   'prescriptions',
+  'push_subscriptions',
   'sessions',
   'source_documents',
   'upload_batches',
@@ -38,6 +39,7 @@ const RLS_TABLES = [
   'medication_courses',
   'prescription_items',
   'prescriptions',
+  'push_subscriptions',
   'source_documents',
   'upload_batches',
 ];
