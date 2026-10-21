@@ -8,7 +8,7 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{
 // Bọc mọi truy vấn dữ liệu sức khỏe (SPEC-006, Tech Spec §3): gán app.family_id cục bộ trong
 // transaction để RLS lọc theo nhóm. set_config(..., true) tương đương SET LOCAL nhưng nhận tham số.
 export async function withFamilyScope<T>(
-  db: Database,
+  db: Pick<Database, 'transaction'>,
   familyId: string,
   work: (tx: FamilyScopedTx) => Promise<T>,
 ): Promise<T> {

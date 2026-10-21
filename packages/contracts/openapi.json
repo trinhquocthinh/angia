@@ -142,6 +142,61 @@
           "csrfToken"
         ]
       },
+      "PushConfig": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "publicKey": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "registered": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled",
+          "publicKey",
+          "registered"
+        ]
+      },
+      "PushSubscriptionRequest": {
+        "type": "object",
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "maxLength": 2048,
+            "format": "uri"
+          },
+          "keys": {
+            "type": "object",
+            "properties": {
+              "p256dh": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "auth": {
+                "type": "string",
+                "maxLength": 30
+              }
+            },
+            "required": [
+              "p256dh",
+              "auth"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "endpoint",
+          "keys"
+        ],
+        "additionalProperties": false
+      },
       "Family": {
         "type": "object",
         "properties": {
@@ -3219,6 +3274,349 @@
           },
           "401": {
             "description": "ERR_UNAUTHENTICATED: thiếu phiên, phiên hết hạn hoặc cookie không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/push-config": {
+      "get": {
+        "tags": [
+          "push"
+        ],
+        "responses": {
+          "200": {
+            "description": "Cấu hình của phiên hiện hành",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PushConfig"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/push-subscription": {
+      "put": {
+        "tags": [
+          "push"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushSubscriptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Thao tác thành công"
+          },
+          "401": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "push"
+        ],
+        "responses": {
+          "204": {
+            "description": "Thao tác thành công"
+          },
+          "401": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/push-test": {
+      "post": {
+        "tags": [
+          "push"
+        ],
+        "responses": {
+          "204": {
+            "description": "Thao tác thành công"
+          },
+          "401": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
             "content": {
               "application/json": {
                 "schema": {

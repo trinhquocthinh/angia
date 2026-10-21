@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // Nguồn duy nhất đọc biến môi trường của worker (10-setup-and-ops-guide §3).
-// ntfy bổ sung ở v0.1b.
+// Web Push cho lịch nhắc bổ sung tại E9; E8 chỉ dùng cấu hình ở API gửi thử.
 
 // Biến để trống trong .env (chép từ .env.example) coi như chưa đặt.
 const unsetWhenEmpty = <T extends z.ZodType>(schema: T) =>

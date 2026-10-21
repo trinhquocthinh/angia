@@ -46,6 +46,8 @@ import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { createS3Client } from '@src/shared/storage/createS3Client.js';
 import { sweepOrphanUploadDirs } from '@src/shared/http/sweepOrphanUploadDirs.js';
 
+import { createPushDependencies } from '@src/features/pushSubscriptions/infrastructure/createPushDependencies.js';
+
 // Composition root: đọc config, khởi tạo adapter hạ tầng và tiêm vào app.
 const config = loadApiConfig(process.env);
 const logger = pino({ level: config.LOG_LEVEL, base: { service: 'angia-api', stack: config.STACK } });
@@ -80,6 +82,7 @@ const aiPolicy = {
   now: () => new Date(),
 };
 const app = createApp({
+  push: createPushDependencies(db, config),
   healthProbes: {
     db: createPostgresProbe(pool),
     storage: createS3BucketProbe(s3, config.S3_BUCKET),

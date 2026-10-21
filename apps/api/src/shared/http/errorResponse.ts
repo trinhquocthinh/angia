@@ -3,6 +3,17 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_PUSH_DISABLED: { status: 503, message: 'Tính năng thông báo chưa được bật trên máy chủ.' },
+  ERR_PUSH_CONFLICT: {
+    status: 409,
+    message: 'Đăng ký thông báo đã thuộc phiên khác. Vui lòng gỡ rồi bật lại.',
+  },
+  ERR_PUSH_DEVICE_LIMIT: { status: 409, message: 'Tài khoản đã bật thông báo trên 10 thiết bị.' },
+  ERR_PUSH_NOT_REGISTERED: {
+    status: 409,
+    message: 'Thiết bị chưa đăng ký hoặc đăng ký đã hết hiệu lực. Vui lòng bật lại thông báo.',
+  },
+  ERR_PUSH_UNAVAILABLE: { status: 503, message: 'Chưa gửi được thông báo thử. Vui lòng thử lại.' },
   ERR_UNAUTHENTICATED: {
     status: 401,
     message: 'Phiên làm việc đã kết thúc hoặc không hợp lệ. Vui lòng đăng nhập lại.',

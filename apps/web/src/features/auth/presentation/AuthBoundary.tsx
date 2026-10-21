@@ -10,6 +10,15 @@ export function AuthBoundary({ children }: { children: ReactNode }) {
   const session = useCurrentSession(fetchCurrentSession);
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const pushCsrf = session.data?.family ? session.data.csrfToken : null;
+  useEffect(() => {
+    const controller = new AbortController();
+    if (pushCsrf)
+      void import('@src/features/pushSubscriptions/infrastructure/syncBrowserPush')
+        .then(({ syncBrowserPush }) => syncBrowserPush(pushCsrf, controller.signal))
+        .catch(() => undefined);
+    return () => controller.abort();
+  }, [pushCsrf]);
   const destination = session.isSuccess ? resolveSessionRedirect(session.data, pathname) : null;
 
   useEffect(() => {
