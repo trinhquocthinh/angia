@@ -1,4 +1,5 @@
 import type { DirectoryMember, LocalAccount } from '../domain/planIdpSync.js';
+import type { ErrorDiagnostics } from './errorDiagnostics.js';
 
 export type IdpFailureReason =
   | 'idp_unreachable'
@@ -41,7 +42,8 @@ export interface IdpSyncPolicy {
   now(): Date;
 }
 
-export interface IdpSyncResult extends IdpSyncChange {
+// errorName/errorCode chỉ khi lỗi lạ (idp_unreachable không từ adapter) hoặc db_error.
+export interface IdpSyncResult extends IdpSyncChange, ErrorDiagnostics {
   outcome: 'applied' | 'skipped' | 'error';
   reason?: IdpFailureReason | 'access_group_empty' | 'access_group_no_match' | 'db_error';
   // Chỉ khi reason = idp_http_error.

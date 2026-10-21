@@ -6,6 +6,11 @@ import { z } from 'zod';
 // Biến để trống trong .env (chép từ .env.example) coi như chưa đặt.
 const unsetWhenEmpty = <T extends z.ZodType>(schema: T) =>
   z.preprocess((value) => (value === '' ? undefined : value), schema.optional());
+// Bỏ khoảng trắng/xuống dòng thừa khi dán token, tên nhóm; chuỗi chỉ toàn khoảng trắng bị từ chối (không coi là chưa đặt).
+const trimmedText = z.preprocess(
+  (value) => (typeof value === 'string' ? value.trim() : value),
+  z.string().min(1, 'không được chỉ có khoảng trắng'),
+);
 
 const workerEnvSchema = z
   .object({
@@ -39,10 +44,11 @@ const workerEnvSchema = z
       .transform((value) => value === 'true'),
     // BR-045/SPEC-033: đồng bộ phiên với Authentik mỗi 5 phút. Bắt buộc ở sit/prod; dev không token = tắt job.
     AUTHENTIK_URL: unsetWhenEmpty(z.string().url()),
-    AUTHENTIK_API_TOKEN: unsetWhenEmpty(z.string()),
-    IDP_ACCESS_GROUP_NAME: unsetWhenEmpty(z.string()),
-    // Trùng giá trị API (đồng bộ is_system_admin lúc đăng nhập).
-    ADMIN_GROUP_NAME: z.string().min(1).default('angia-admins'),
+    AUTHENTIK_API_TOKEN: unsetWhenEmpty(trimmedText),
+    IDP_ACCESS_GROUP_NAME: unsetWhenEmpty(trimmedText),
+    // Trùng giá trị API (đồng bộ is_system_admin lúc đăng nhập). API không có mặc định nên sit/prod bắt buộc;
+    // dev thiếu thì dùng `angia-admins`.
+    ADMIN_GROUP_NAME: unsetWhenEmpty(trimmedText),
     IDP_SYNC_MAX_REVOKES: z.coerce.number().int().min(1).default(10),
     IDP_SYNC_DRY_RUN: z
       .enum(['true', 'false'])
@@ -55,14 +61,16 @@ const workerEnvSchema = z
   })
   .superRefine((env, ctx) => {
     if (env.STACK === 'dev' && !env.AUTHENTIK_API_TOKEN) return;
-    for (const key of ['AUTHENTIK_URL', 'AUTHENTIK_API_TOKEN', 'IDP_ACCESS_GROUP_NAME'] as const)
+    const required = ['AUTHENTIK_URL', 'AUTHENTIK_API_TOKEN', 'IDP_ACCESS_GROUP_NAME'] as const;
+    for (const key of env.STACK === 'dev' ? required : [...required, 'ADMIN_GROUP_NAME' as const])
       if (!env[key])
         ctx.addIssue({
           code: 'custom',
           message: `Đồng bộ phiên IdP (SPEC-033) bắt buộc có ${key}`,
           path: [key],
         });
-  });
+  })
+  .transform((env) => ({ ...env, ADMIN_GROUP_NAME: env.ADMIN_GROUP_NAME ?? 'angia-admins' }));
 
 export type WorkerConfig = z.infer<typeof workerEnvSchema>;
 

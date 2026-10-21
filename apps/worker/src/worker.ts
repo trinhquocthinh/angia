@@ -29,7 +29,10 @@ import { createOrphanRepository } from '@src/features/orphanObjects/infrastructu
 import { createOrphanStorage } from '@src/features/orphanObjects/infrastructure/createOrphanStorage.js';
 import { createAccountSessionStore } from '@src/features/idpSessionSync/infrastructure/createAccountSessionStore.js';
 import { createAuthentikDirectory } from '@src/features/idpSessionSync/infrastructure/createAuthentikDirectory.js';
-import { registerSyncIdpSessionsJob } from '@src/jobs/registerSyncIdpSessionsJob.js';
+import {
+  registerSyncIdpSessionsJob,
+  unregisterSyncIdpSessionsJob,
+} from '@src/jobs/registerSyncIdpSessionsJob.js';
 import { loadWorkerConfig, type WorkerConfig } from '@src/shared/config/loadWorkerConfig.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { createS3Client } from '@src/shared/storage/createS3Client.js';
@@ -54,16 +57,18 @@ function createExtractor(workerConfig: WorkerConfig) {
   );
 }
 
-// BR-045/SPEC-033: config bắt buộc đủ ba biến ở sit/prod; dev không có token thì tắt job.
-async function registerIdpSessionSync(workerConfig: WorkerConfig, pool: pg.Pool) {
+// BR-045/SPEC-033: config bắt buộc đủ biến ở sit/prod; dev không có token thì tắt job và gỡ lịch cũ.
+// Trả về job có được bật hay không.
+async function registerIdpSessionSync(workerConfig: WorkerConfig, pool: pg.Pool): Promise<boolean> {
   const {
     AUTHENTIK_URL: baseUrl,
     AUTHENTIK_API_TOKEN: token,
     IDP_ACCESS_GROUP_NAME: accessGroupName,
   } = workerConfig;
   if (!baseUrl || !token || !accessGroupName) {
+    await unregisterSyncIdpSessionsJob(boss);
     logger.info('Chưa cấu hình AUTHENTIK_API_TOKEN — tắt đồng bộ phiên với IdP');
-    return;
+    return false;
   }
   await registerSyncIdpSessionsJob(
     boss,
@@ -77,6 +82,7 @@ async function registerIdpSessionSync(workerConfig: WorkerConfig, pool: pg.Pool)
     },
     logger,
   );
+  return true;
 }
 
 const pool = new pg.Pool({ connectionString: config.DATABASE_URL, max: 4, connectionTimeoutMillis: 5_000 });
@@ -145,10 +151,10 @@ try {
     },
     logger,
   );
-  await registerIdpSessionSync(config, pool);
+  const idpSyncEnabled = await registerIdpSessionSync(config, pool);
   logger.info(
-    { aiProvider: config.AI_PROVIDER },
-    'Worker sẵn sàng — đã đăng ký job convert-heic, prepare-ocr-image, extract-document, ngân sách AI, dọn object mồ côi và đồng bộ phiên IdP',
+    { aiProvider: config.AI_PROVIDER, idpSyncEnabled },
+    `Worker sẵn sàng — đã đăng ký job convert-heic, prepare-ocr-image, extract-document, ngân sách AI, dọn object mồ côi${idpSyncEnabled ? ' và đồng bộ phiên IdP' : ''}`,
   );
 } catch (error) {
   logger.error({ reason: (error as Error).message }, 'Worker không khởi động được');
