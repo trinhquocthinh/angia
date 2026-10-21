@@ -1,3 +1,4 @@
+import { withClientFamilyScope } from './withClientFamilyScope.js';
 import type pg from 'pg';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -5,11 +6,12 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{
 // Bản worker của withFamilyScope API (Tech Spec §3): transaction + set_config('app.family_id', ..., true)
 // để RLS lọc theo nhóm. familyId đến từ payload job do API ghi từ phiên của người tải lên.
 export async function withFamilyScope<T>(
-  pool: pg.Pool,
+  pool: pg.Pool | pg.PoolClient,
   familyId: string,
   work: (client: pg.PoolClient) => Promise<T>,
 ): Promise<T> {
   if (!UUID_PATTERN.test(familyId)) throw new Error('withFamilyScope: familyId phải là UUID');
+  if ('release' in pool) return withClientFamilyScope(pool, familyId, work);
   const client = await pool.connect();
   try {
     await client.query('BEGIN');

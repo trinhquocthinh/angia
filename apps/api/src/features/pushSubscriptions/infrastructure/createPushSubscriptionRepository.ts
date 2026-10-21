@@ -1,61 +1,27 @@
-import { createHash } from 'node:crypto';
 import { sql } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { withFamilyScope, type FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
-import type { PushActor, PushSubscriptionRepository } from '../application/ports.js';
-import { newId } from '@src/shared/db/schema/newId.js';
+import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
+import type { PushSubscriptionRepository } from '../application/ports.js';
+import { lockPushAccount } from './lockPushAccount.js';
+import { savePushDevice } from './savePushDevice.js';
 
-async function lockAccount(tx: FamilyScopedTx, actor: PushActor) {
-  await tx.execute(
-    sql`SELECT pg_advisory_xact_lock(hashtextextended(${`angia:push:${actor.accountId}`}, 0))`,
-  );
-}
-async function activeSession(tx: FamilyScopedTx, a: PushActor, now: Date) {
-  const rows = await tx.execute(sql`SELECT s.id FROM sessions s JOIN accounts a ON a.id=s.account_id
-    WHERE s.id=${a.sessionId} AND s.account_id=${a.accountId} AND a.family_id=${a.familyId}
-    AND s.expires_at>${now.toISOString()}::timestamptz FOR KEY SHARE OF s, a`);
-  return rows.rows.length > 0;
-}
 export function createPushSubscriptionRepository(db: Database): PushSubscriptionRepository {
   return {
-    async save(a, value, now) {
+    async save(a, value, now, intent = 'enable') {
       try {
-        return await withFamilyScope(db, a.familyId, async (tx) => {
-          await lockAccount(tx, a);
-          if (!(await activeSession(tx, a, now))) return 'expired';
-          await tx.execute(sql`DELETE FROM push_subscriptions p WHERE p.account_id=${a.accountId}
-            AND NOT EXISTS(SELECT 1 FROM sessions s WHERE s.id=p.session_id AND s.expires_at>${now.toISOString()}::timestamptz)`);
-          const hash = createHash('sha256').update(value.endpoint).digest('hex');
-          const existing = await tx.execute(
-            sql`SELECT session_id,account_id FROM push_subscriptions WHERE endpoint_hash=${hash}`,
-          );
-          if (existing.rows.some((row) => row.account_id !== a.accountId)) return 'conflict';
-          const count =
-            await tx.execute(sql`SELECT count(*)::int AS n FROM push_subscriptions WHERE account_id=${a.accountId}
-            AND session_id<>${a.sessionId} AND endpoint_hash<>${hash}`);
-          if (Number(count.rows[0]?.n) >= 10) return 'quota';
-          await tx.execute(sql`DELETE FROM push_subscriptions WHERE account_id=${a.accountId}
-            AND (session_id=${a.sessionId} OR endpoint_hash=${hash})`);
-          await tx.execute(sql`INSERT INTO push_subscriptions(id,family_id,account_id,session_id,endpoint,endpoint_hash,p256dh,auth)
-            VALUES(${newId()},${a.familyId},${a.accountId},${a.sessionId},${value.endpoint},${hash},${value.keys.p256dh},${value.keys.auth})`);
-          return 'saved';
-        });
+        return await withFamilyScope(db, a.familyId, (tx) => savePushDevice(tx, a, value, now, intent));
       } catch (error) {
-        // Không ghi exception DB vì DETAIL có thể chứa endpoint/khóa.
-        if (
-          (error as { cause?: { code?: string }; code?: string }).code === '23505' ||
-          (error as { cause?: { code?: string } }).cause?.code === '23505'
-        )
-          return 'conflict';
+        const value = error as { code?: string; cause?: { code?: string } };
+        if (value.code === '23505' || value.cause?.code === '23505') return 'conflict';
         throw new Error('Không lưu được đăng ký thông báo.');
       }
     },
-    read(a, now) {
+    read(a) {
+      if (!a.deviceId) return Promise.resolve(null);
       return withFamilyScope(db, a.familyId, async (tx) => {
         const result = await tx.execute(sql`SELECT p.endpoint,p.p256dh,p.auth FROM push_subscriptions p
-          JOIN sessions s ON s.id=p.session_id JOIN accounts a ON a.id=p.account_id
-          WHERE p.account_id=${a.accountId} AND p.session_id=${a.sessionId} AND a.family_id=${a.familyId}
-          AND s.expires_at>${now.toISOString()}::timestamptz LIMIT 1`);
+          JOIN accounts a ON a.id=p.account_id AND a.family_id=p.family_id
+          WHERE p.id=${a.deviceId} AND p.account_id=${a.accountId} AND p.family_id=${a.familyId} LIMIT 1`);
         const row = result.rows[0];
         return row
           ? { endpoint: String(row.endpoint), keys: { p256dh: String(row.p256dh), auth: String(row.auth) } }
@@ -63,10 +29,11 @@ export function createPushSubscriptionRepository(db: Database): PushSubscription
       });
     },
     async remove(a, endpoint) {
+      if (!a.deviceId) return;
       await withFamilyScope(db, a.familyId, async (tx) => {
-        await lockAccount(tx, a);
-        await tx.execute(sql`DELETE FROM push_subscriptions WHERE account_id=${a.accountId} AND session_id=${a.sessionId}
-          ${endpoint ? sql`AND endpoint=${endpoint}` : sql``}`);
+        await lockPushAccount(tx, a);
+        await tx.execute(sql`DELETE FROM push_subscriptions WHERE id=${a.deviceId}
+          AND account_id=${a.accountId} ${endpoint ? sql`AND endpoint=${endpoint}` : sql``}`);
       });
     },
   };

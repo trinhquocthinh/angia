@@ -41,7 +41,7 @@ export interface SessionRepository {
   // Phiên có expires_at > now kèm tài khoản và nhóm; hết hạn hoặc không tồn tại trả null.
   findActive(sessionId: string, now: Date): Promise<SessionContext | null>;
   extend(sessionId: string, expiresAt: Date): Promise<void>;
-  delete(sessionId: string): Promise<void>;
+  delete(sessionId: string, deviceId?: string | null): Promise<void>;
 }
 
 export interface CompleteLoginDeps {

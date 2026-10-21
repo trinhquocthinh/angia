@@ -134,6 +134,13 @@
       "when": 1792512933584,
       "tag": "0018_push_subscriptions",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1792597038417,
+      "tag": "0019_push_device_lifetime",
+      "breakpoints": true
     }
   ]
 }

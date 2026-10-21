@@ -13,11 +13,15 @@ export function createPushApi(): PushApi {
       if (!data) throw failure(error);
       return data;
     },
-    async register(value, csrf, signal) {
+    async register(value, csrf, intent, signal) {
       if (!value.endpoint || !value.keys?.p256dh || !value.keys.auth)
         throw new Error('Đăng ký thiết bị chưa đủ thông tin.');
       const { error, response } = await apiClient.PUT('/api/me/push-subscription', {
-        body: { endpoint: value.endpoint, keys: { p256dh: value.keys.p256dh, auth: value.keys.auth } },
+        body: {
+          intent,
+          endpoint: value.endpoint,
+          keys: { p256dh: value.keys.p256dh, auth: value.keys.auth },
+        },
         headers: { 'X-CSRF-Token': csrf },
         ...(signal ? { signal } : {}),
       });

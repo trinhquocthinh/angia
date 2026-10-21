@@ -36,7 +36,7 @@ export function PushSettingsPanel({ csrf }: { csrf: string }) {
         </p>
       )}
       {data && !data.enabled && <p>Tính năng thông báo chưa được bật trên máy chủ.</p>}
-      {data?.registered && <p>Thiết bị đã đăng ký nhận thông báo cho phiên hiện tại.</p>}
+      {data?.registered && <p>Thiết bị đã bật nhận thông báo.</p>}
       <PushActionButtons
         busy={action.isPending}
         supported={!support}
@@ -58,8 +58,8 @@ export function PushSettingsPanel({ csrf }: { csrf: string }) {
         {action.isPending ? 'Đang xử lý…' : (action.error?.message ?? action.data ?? '')}
       </p>
       <p className="text-sm">
-        Đăng xuất hoặc hết hạn phiên sẽ ngừng gửi mới. Nhận thông báo không tự kéo dài phiên đăng nhập. Tin đã
-        được gửi có thể đến muộn.
+        Đóng ứng dụng hoặc hết phiên đăng nhập không tự tắt thông báo. Đăng xuất hoặc chọn “Tắt thông báo” sẽ
+        ngừng gửi mới trên thiết bị này. Thông báo đã gửi có thể đến muộn.
       </p>
     </section>
   );

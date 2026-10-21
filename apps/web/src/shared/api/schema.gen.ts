@@ -3772,6 +3772,8 @@ export interface components {
       registered: boolean;
     };
     PushSubscriptionRequest: {
+      /** @enum {string} */
+      intent: 'enable' | 'sync';
       /** Format: uri */
       endpoint: string;
       keys: {

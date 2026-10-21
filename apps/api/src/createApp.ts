@@ -104,7 +104,8 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth);
   registerMeRoute(app);
-  if (deps.push) registerPushRoutes(app, deps.push);
+  if (deps.push)
+    registerPushRoutes(app, deps.push, { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies });
   registerAdminRoutes(app, deps.familyAdmin);
   registerAiBudgetRoutes(app, deps.aiBudget);
   registerFamilyUsageRoute(app, deps.familyUsage);

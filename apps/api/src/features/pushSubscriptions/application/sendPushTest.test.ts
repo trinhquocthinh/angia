@@ -16,7 +16,7 @@ function setup(result: 'accepted' | 'gone' | 'failed' = 'accepted') {
       read: async () => value,
       save: async () => {
         calls.push('save');
-        return 'saved';
+        return { deviceId: 'device' };
       },
       remove: async () => {
         calls.push('remove');
@@ -37,7 +37,7 @@ describe('Web Push cá nhân', () => {
     expect(await sendPushTest(deps, actor)).toBe('accepted');
     expect(calls).toEqual([value.endpoint]);
   });
-  it('TC-342: đăng ký thiếu/hết phiên không gửi', async () => {
+  it('TC-342: đăng ký đã thu hồi không gửi', async () => {
     const { deps, calls } = setup();
     deps.repository.read = async () => null;
     expect(await sendPushTest(deps, actor)).toBe('missing');
@@ -60,6 +60,6 @@ describe('Web Push cá nhân', () => {
       'invalid',
     );
     expect(calls).toEqual([]);
-    expect(await registerPushSubscription(deps, actor, value)).toBe('saved');
+    expect(await registerPushSubscription(deps, actor, value)).toEqual({ deviceId: 'device' });
   });
 });

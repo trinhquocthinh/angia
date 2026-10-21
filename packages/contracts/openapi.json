@@ -167,6 +167,13 @@
       "PushSubscriptionRequest": {
         "type": "object",
         "properties": {
+          "intent": {
+            "type": "string",
+            "enum": [
+              "enable",
+              "sync"
+            ]
+          },
           "endpoint": {
             "type": "string",
             "maxLength": 2048,
@@ -192,6 +199,7 @@
           }
         },
         "required": [
+          "intent",
           "endpoint",
           "keys"
         ],
