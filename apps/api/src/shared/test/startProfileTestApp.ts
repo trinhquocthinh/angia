@@ -40,6 +40,7 @@ import { createStubAuthDeps } from './createStubAuthDeps.js';
 import { createFakeFamilyAdminRepository } from './createFakeFamilyAdminRepository.js';
 import { seedAccount, seedSession, TEST_COOKIE_SECRET, type SeededSession } from './seedAuthFixtures.js';
 import { startTestDatabase } from './startTestDatabase.js';
+import { trackPoolClientClosures } from './trackPoolClientClosures.js';
 
 import type { PushDependencies } from '@src/features/pushSubscriptions/application/ports.js';
 
@@ -119,6 +120,7 @@ export async function startProfileTestApp(
   const owner = new pg.Client({ connectionString: db.ownerUrl });
   await owner.connect();
   const pool = new pg.Pool({ connectionString: db.appUrl });
+  const waitForClientClosures = trackPoolClientClosures(pool);
   const database = createDatabase(pool);
   const memory = createMemoryObjectStorage();
   // pg-boss thật trên role app (migrate:false) như server.ts; job chỉ được gửi, không có worker xử lý.
@@ -148,6 +150,7 @@ export async function startProfileTestApp(
   const stop = async () => {
     await boss.stop({ graceful: false });
     await pool.end();
+    await waitForClientClosures();
     await owner.end();
     await db.container.stop();
   };
