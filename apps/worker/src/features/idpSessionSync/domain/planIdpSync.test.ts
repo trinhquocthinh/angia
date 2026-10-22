@@ -81,3 +81,8 @@ describe('Lập kế hoạch đồng bộ phiên với IdP (BR-045)', () => {
     expect(equal).toMatchObject({ revoke: ['a1'], capped: false });
   });
 });
+
+it('TC-357: tài khoản chỉ còn push vẫn bị thu hồi khi mất quyền IdP', () => {
+  const pushOnly = { ...acc('a1', 's1', { session: false }), hasPush: true };
+  expect(plan([pushOnly, acc('a2', 's2')], [mem('s2')]).revoke).toEqual(['a1']);
+});

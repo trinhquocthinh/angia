@@ -1,3 +1,4 @@
+import { readPushDevice, clearPushDevice } from './pushDeviceCookie.js';
 import { createRoute, type OpenAPIHono } from '@hono/zod-openapi';
 import { errorResponseSchema } from '@angia/contracts';
 import type { Logger } from 'pino';
@@ -88,7 +89,8 @@ export function registerAuthRoutes(app: OpenAPIHono<AppEnv>, deps: AuthRouteDeps
 
   // Phiên + CSRF đã qua requireSession (login/callback là route công khai, logout thì không).
   app.openapi(logoutRoute, async (c) => {
-    await deps.login.sessions.delete(currentSession(c).sessionId);
+    await deps.login.sessions.delete(currentSession(c).sessionId, await readPushDevice(c, cookies));
+    clearPushDevice(c, cookies);
     clearSessionCookie(c, cookies);
     c.header('Cache-Control', 'no-store');
     return c.body(null, 204);

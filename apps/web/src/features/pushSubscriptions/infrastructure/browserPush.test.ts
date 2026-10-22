@@ -5,6 +5,7 @@ import type { PushApi } from '../application/ports';
 afterEach(() => vi.unstubAllGlobals());
 function setup() {
   const events: string[] = [];
+  const intents: string[] = [];
   const sub = {
     toJSON: () => ({ endpoint: 'https://web.push.apple.com/a', keys: { auth: 'a', p256dh: 'b' } }),
     unsubscribe: async () => {
@@ -29,7 +30,8 @@ function setup() {
   });
   const api: PushApi = {
     config: async () => ({ enabled: true, publicKey: 'key', registered: false }),
-    register: async () => {
+    register: async (_value, _csrf, intent) => {
+      intents.push(intent);
       events.push('register');
     },
     remove: async () => {
@@ -37,13 +39,14 @@ function setup() {
     },
     sendTest: async () => undefined,
   };
-  return { api, events };
+  return { api, events, intents };
 }
 describe('Bật/tắt Web Push trên trình duyệt', () => {
   it('TC-348: xin quyền trước, tự gửi đăng ký về AN GIA', async () => {
-    const { api, events } = setup();
+    const { api, events, intents } = setup();
     await enableBrowserPush(api, 'public', 'csrf');
     expect(events).toEqual(['permission', 'register']);
+    expect(intents).toEqual(['enable']);
   });
   it('TC-349: xung đột chủ sở hữu gỡ đăng ký browser thay vì chuyển quyền', async () => {
     const { api, events } = setup();

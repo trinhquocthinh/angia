@@ -5,7 +5,12 @@ interface PushConfiguration {
 }
 export interface PushApi {
   config(signal?: AbortSignal): Promise<PushConfiguration>;
-  register(value: PushSubscriptionJSON, csrf: string, signal?: AbortSignal): Promise<void>;
+  register(
+    value: PushSubscriptionJSON,
+    csrf: string,
+    intent: 'enable' | 'sync',
+    signal?: AbortSignal,
+  ): Promise<void>;
   remove(csrf: string): Promise<void>;
   sendTest(csrf: string): Promise<void>;
 }

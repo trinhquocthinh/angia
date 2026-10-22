@@ -10,6 +10,7 @@ export interface LocalAccount {
   isSystemAdmin: boolean;
   // Có ít nhất một phiên còn hạn.
   hasSession: boolean;
+  hasPush?: boolean;
 }
 
 export interface IdpSyncPlan {
@@ -40,7 +41,7 @@ export function planIdpSync(input: {
     return { ...SKIP, skipReason: 'access_group_no_match' };
   const admins = activeUids(input.admins);
   const revoke = input.accounts
-    .filter((account) => account.hasSession && !allowed.has(account.oidcSubject))
+    .filter((account) => (account.hasSession || account.hasPush) && !allowed.has(account.oidcSubject))
     .map((account) => account.id);
   const adminOn: string[] = [];
   const adminOff: string[] = [];

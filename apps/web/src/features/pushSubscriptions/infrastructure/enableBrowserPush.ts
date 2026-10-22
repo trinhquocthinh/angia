@@ -18,7 +18,7 @@ export async function enableBrowserPush(api: PushApi, publicKey: string, csrf: s
       applicationServerKey: bytes(publicKey),
     }));
   try {
-    await api.register(sub.toJSON(), csrf);
+    await api.register(sub.toJSON(), csrf, 'enable');
   } catch (error) {
     if ((error as { code?: string }).code === 'ERR_PUSH_CONFLICT') await sub.unsubscribe();
     throw error;

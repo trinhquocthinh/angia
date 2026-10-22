@@ -1,3 +1,6 @@
+import { pushRouteActor } from './pushRouteActor.js';
+import type { CookieSettings } from '@src/shared/auth/presentation/pendingLoginCookie.js';
+import { writePushDevice, clearPushDevice } from '@src/shared/auth/presentation/pushDeviceCookie.js';
 import type { OpenAPIHono } from '@hono/zod-openapi';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { errorResponse } from '@src/shared/http/errorResponse.js';
@@ -12,7 +15,20 @@ import {
   pushDeleteRoute,
   pushTestRoute,
 } from './pushRouteDefinitions.js';
-export function registerPushRoutes(app: OpenAPIHono<AppEnv>, deps: PushDependencies): void {
+const codes = {
+  disabled: 'ERR_PUSH_DISABLED',
+  invalid: 'ERR_VALIDATION',
+  conflict: 'ERR_PUSH_CONFLICT',
+  quota: 'ERR_PUSH_DEVICE_LIMIT',
+  expired: 'ERR_UNAUTHENTICATED',
+  missing: 'ERR_PUSH_NOT_REGISTERED',
+} as const;
+
+export function registerPushRoutes(
+  app: OpenAPIHono<AppEnv>,
+  deps: PushDependencies,
+  cookies: CookieSettings,
+): void {
   const limiter = createSlidingWindowLimiter({ limit: 3, windowMs: 60_000, now: () => deps.now().getTime() });
   app.use('/api/me/*', async (c, next) => {
     c.header('Cache-Control', 'no-store');
@@ -20,34 +36,28 @@ export function registerPushRoutes(app: OpenAPIHono<AppEnv>, deps: PushDependenc
     if (!session.family) return errorResponse(c, 'ERR_FORBIDDEN');
     await next();
   });
-  const actor = (c: Parameters<typeof currentSession>[0]) => {
-    const s = currentSession(c);
-    return { familyId: s.family!.id, accountId: s.account.id, sessionId: s.sessionId };
-  };
   app.openapi(pushConfigRoute, async (c) =>
     c.json(
       {
         enabled: Boolean(deps.publicKey),
         publicKey: deps.publicKey,
-        registered: Boolean(await deps.repository.read(actor(c), deps.now())),
+        registered: Boolean(await deps.repository.read(await pushRouteActor(c, cookies), deps.now())),
       },
       200,
     ),
   );
   app.openapi(pushRegisterRoute, async (c) => {
-    const result = await registerPushSubscription(deps, actor(c), c.req.valid('json'));
-    if (result === 'saved') return c.body(null, 204);
-    const codes = {
-      disabled: 'ERR_PUSH_DISABLED',
-      invalid: 'ERR_VALIDATION',
-      conflict: 'ERR_PUSH_CONFLICT',
-      quota: 'ERR_PUSH_DEVICE_LIMIT',
-      expired: 'ERR_UNAUTHENTICATED',
-    } as const;
+    const body = c.req.valid('json');
+    const result = await registerPushSubscription(deps, await pushRouteActor(c, cookies), body, body.intent);
+    if (typeof result !== 'string') {
+      await writePushDevice(c, result.deviceId, cookies);
+      return c.body(null, 204);
+    }
     return errorResponse(c, codes[result]);
   });
   app.openapi(pushDeleteRoute, async (c) => {
-    await deps.repository.remove(actor(c));
+    await deps.repository.remove(await pushRouteActor(c, cookies));
+    clearPushDevice(c, cookies);
     return c.body(null, 204);
   });
   app.openapi(pushTestRoute, async (c) => {
@@ -56,7 +66,7 @@ export function registerPushRoutes(app: OpenAPIHono<AppEnv>, deps: PushDependenc
       c.header('Retry-After', String(hit.retryAfterSeconds));
       return errorResponse(c, 'ERR_RATE_LIMITED');
     }
-    const result = await sendPushTest(deps, actor(c));
+    const result = await sendPushTest(deps, await pushRouteActor(c, cookies));
     if (result === 'accepted') return c.body(null, 204);
     return errorResponse(
       c,

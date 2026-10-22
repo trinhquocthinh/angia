@@ -1,3 +1,4 @@
+import { deleteSessionAndPushDevice } from './deleteSessionAndPushDevice.js';
 import { and, eq, gt } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { accounts, families, sessions } from '@src/shared/db/schema/index.js';
@@ -48,8 +49,6 @@ export function createSessionRepository(db: Database): SessionRepository {
       await db.update(sessions).set({ expiresAt }).where(eq(sessions.id, sessionId));
     },
 
-    async delete(sessionId) {
-      await db.delete(sessions).where(eq(sessions.id, sessionId));
-    },
+    delete: (sessionId, deviceId) => deleteSessionAndPushDevice(db, sessionId, deviceId),
   };
 }

@@ -9,8 +9,9 @@ export async function syncBrowserPush(csrf: string, signal: AbortSignal): Promis
   const api = createPushApi();
   if (!(await api.config(signal)).enabled || signal.aborted) return;
   try {
-    await api.register(sub.toJSON(), csrf, signal);
+    await api.register(sub.toJSON(), csrf, 'sync', signal);
   } catch (error) {
+    if ((error as { code?: string }).code === 'ERR_PUSH_NOT_REGISTERED') return;
     if (!signal.aborted && (error as { code?: string }).code === 'ERR_PUSH_CONFLICT') await sub.unsubscribe();
     throw error;
   }
