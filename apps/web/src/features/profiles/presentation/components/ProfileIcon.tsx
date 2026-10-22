@@ -5,6 +5,8 @@ const paths = {
   search: 'M21 21l-5-5 M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0',
   upload: 'M3 7h5l2-3h4l2 3h5v14H3Z M16 14a4 4 0 1 1-8 0 4 4 0 0 1 8 0',
   review: 'M8 4H4v18h16V4h-4 M8 2h8v4H8Z M8 12h8 M8 16h5',
+  logout: 'M10 4H5v16h5 M16 16l4-4-4-4 M20 12H10',
+  shield: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z M9 12l2 2 4-4',
 } as const;
 export function ProfileIcon({ name, size = 20 }: { name: keyof typeof paths; size?: number }) {
   return (

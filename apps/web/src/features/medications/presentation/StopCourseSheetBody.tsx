@@ -22,15 +22,15 @@ export function StopCourseSheetBody({ profile, courses, state, onClose }: Props)
   return (
     <SidePanel
       titleId="stop-course-title"
-      title={`Ghi nhận dừng thuốc cho ${profile.displayName}`}
-      subtitle="Chọn đợt thuốc và ngày bắt đầu dừng; lịch sử trước đó được giữ nguyên."
-      closeLabel="Đóng ghi nhận dừng thuốc"
+      title={`Dừng uống thuốc cho ${profile.displayName}`}
+      subtitle="Chọn đợt thuốc và ngày bắt đầu dừng; lịch sử trước đó vẫn được lưu lại nguyên vẹn."
+      closeLabel="Đóng dừng uống thuốc"
       pending={state.pending}
       onClose={onClose}
     >
       {state.saved ? (
         <p role="status" className="mx-6 mt-5 rounded-xl bg-[#e4f0ef] p-4 text-sm leading-6">
-          Đã ghi nhận dừng {state.saved.name}. Ngày hiệu lực cuối:{' '}
+          Đã đánh dấu dừng {state.saved.name}. Ngày hiệu lực cuối:{' '}
           {state.saved.endDate ? formatDay(state.saved.endDate) : '—'}.
         </p>
       ) : !consented ? (
@@ -59,8 +59,8 @@ export function StopCourseSheetBody({ profile, courses, state, onClose }: Props)
         />
       ) : (
         <SidePanelFooter
-          submitLabel={state.saved || !consented ? null : 'Xác nhận dừng đợt thuốc'}
-          cancelLabel={state.saved || !consented ? 'Đóng' : 'Hủy bỏ & Giữ nguyên đợt thuốc'}
+          submitLabel={state.saved || !consented ? null : 'Xác nhận dừng uống thuốc'}
+          cancelLabel={state.saved || !consented ? 'Đóng' : 'Bỏ qua, vẫn tiếp tục uống'}
           disabled={true}
           submit={false}
           cancelDisabled={state.pending}

@@ -39,7 +39,7 @@ export function PrivacyInspector({ workspace, preview, inputPending, fields, chi
           className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#e4f0f0] px-3 py-2.5 text-sm font-semibold text-[#286958] disabled:opacity-40"
         >
           <PrivacyToolIcon name="keyboard" />
-          Chọn nhập tay (Không gửi AI)
+          Chọn nhập tay (Không gửi tự động nhận diện)
         </button>
         {children}
         <p className="flex items-start gap-2 text-[11px] leading-4 text-[#707975]">

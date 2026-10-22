@@ -98,10 +98,10 @@ describe('TC-285 tab Hồ sơ & Giấy tờ khám', () => {
         <DocumentEntryPanel entry={value} canReuse onReuse={() => undefined} onClose={() => undefined} />,
       );
     const masked = panel(entry({ hasOcrImage: true }));
-    expect(masked).toContain('Bản đã gửi AI');
+    expect(masked).toContain('Bản tự động nhận diện');
     expect(masked).not.toContain('Dùng lại đơn này');
     const plain = panel(entry());
-    expect(plain).not.toContain('Bản đã gửi AI');
+    expect(plain).not.toContain('Bản tự động nhận diện');
     // Ảnh gốc HEIC trình duyệt không hiển thị được: dùng bản xem trước WebP như màn duyệt.
     expect(plain).toContain('variant=preview');
     expect(plain).not.toContain('variant=original');

@@ -42,7 +42,7 @@ describe('TC-106 — thiết kế Stitch lời mời đồng thuận', () => {
       />,
     );
     expect(html).toContain('Xác nhận quyền riêng tư');
-    expect(html).toContain('AI ở nước ngoài');
+    expect(html).toContain('tự động nhận diện ở nước ngoài');
     expect(html).toContain('chưa được xác minh');
     expect(html).not.toContain('Người gửi lời mời');
     expect(html).not.toContain('AN GIA Care');

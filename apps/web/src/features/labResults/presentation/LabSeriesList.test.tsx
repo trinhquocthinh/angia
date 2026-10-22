@@ -44,7 +44,7 @@ describe('Kết quả cận lâm sàng (Design §6, E5-S2-T1)', () => {
   });
 
   it('rỗng, đang tải và lỗi tải', () => {
-    expect(render({ data: [] })).toContain('Chưa có kết quả cận lâm sàng.');
+    expect(render({ data: [] })).toContain('Chưa có kết quả xét nghiệm nào.');
     expect(render({ loading: true })).toContain('Đang tải kết quả xét nghiệm');
     expect(render({ error: true })).toContain('Không tải được kết quả xét nghiệm.');
   });

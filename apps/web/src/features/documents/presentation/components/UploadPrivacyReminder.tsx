@@ -36,7 +36,7 @@ export function UploadPrivacyReminder({ onClose }: Props) {
         </h2>
         <p className="text-[15px] leading-6 text-[#404945]">
           Chỉ chụp phần <strong>thuốc, chỉ số và ngày</strong>. Không để thông tin cá nhân trong ảnh, vì ảnh
-          sẽ được gửi tới dịch vụ AI để đọc chữ.
+          sẽ được gửi tới dịch vụ tự động nhận diện để đọc chữ.
         </p>
         <PrivacyExampleIllustration />
         <div>
@@ -48,7 +48,7 @@ export function UploadPrivacyReminder({ onClose }: Props) {
           </ul>
         </div>
         <p className="rounded-xl bg-[#e4f0f0] p-3 text-sm leading-6 text-[#20594b]">
-          Lỡ chụp? Bạn vẫn cắt hoặc che được ở bước kiểm tra trước khi gửi AI.
+          Lỡ chụp? Bạn vẫn cắt hoặc che được ở bước kiểm tra trước khi gửi tự động nhận diện.
         </p>
         <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm font-medium text-[#404945]">
           <input

@@ -38,7 +38,7 @@ export function InvitationSummary({ view }: { view: InvitationView }) {
         </span>
         <p className="text-[13px] leading-6">
           Bạn được mời chia sẻ và lưu trữ dữ liệu sức khỏe trong nhóm gia đình. Ảnh chứng từ có thể được gửi
-          tới dịch vụ AI ở nước ngoài để trích xuất thông tin. Bạn có thể đồng ý hoặc từ chối.
+          tới dịch vụ tự động nhận diện ở nước ngoài để trích xuất thông tin. Bạn có thể đồng ý hoặc từ chối.
         </p>
       </div>
     </>

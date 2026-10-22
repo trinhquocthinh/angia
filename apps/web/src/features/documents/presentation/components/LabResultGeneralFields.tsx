@@ -16,7 +16,7 @@ export function LabResultGeneralFields({ form, aiDate }: GeneralFieldsProps) {
           label="Ngày trả kết quả *"
           type="date"
           error={errors.resultDate?.message}
-          hint={aiDate ? undefined : 'AI không đọc được ngày, vui lòng nhập theo phiếu.'}
+          hint={aiDate ? undefined : 'Chưa tự động nhận diện được ngày, vui lòng nhập theo phiếu.'}
           {...form.register('resultDate')}
         />
         <ReadingField

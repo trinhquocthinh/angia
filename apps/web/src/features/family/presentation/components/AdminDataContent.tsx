@@ -17,6 +17,8 @@ export function AdminDataContent({
   aiBudget,
   familyCaps,
   onTask,
+  accountQuery,
+  onAccountQuery,
   currentFamilyId,
   onSubmit,
   inlineError,
@@ -25,6 +27,8 @@ export function AdminDataContent({
   aiBudget: ReturnType<typeof useAiBudget>;
   familyCaps: ReturnType<typeof useFamilyCaps>;
   onTask: (task: AdminTask) => void;
+  accountQuery: string;
+  onAccountQuery: (query: string) => void;
   currentFamilyId: string | null;
   onSubmit: (command: AdminCommand) => void;
   inlineError: Error | null;
@@ -41,6 +45,8 @@ export function AdminDataContent({
           families={families.data}
           pending={action.isPending}
           onTask={onTask}
+          search={accountQuery}
+          onSearch={onAccountQuery}
         />
         <FamilyCards families={families.data} accounts={accounts.data} currentFamilyId={currentFamilyId} />
       </div>

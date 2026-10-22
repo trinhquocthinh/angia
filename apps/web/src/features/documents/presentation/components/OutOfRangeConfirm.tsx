@@ -24,7 +24,7 @@ export function OutOfRangeConfirm({ fields, confirmed, onConfirm }: OutOfRangeCo
       <div className="flex flex-col gap-3 text-sm leading-6">
         <p>
           Số <strong>{names}</strong> nằm ngoài khoảng giá trị máy đo thường ghi nhận. Vui lòng đối chiếu lại
-          với ảnh — có thể do gõ nhầm hoặc AI đọc sai chữ số.
+          với ảnh — có thể do gõ nhầm hoặc hệ thống tự động nhận diện nhầm chữ số.
         </p>
         <label className="flex min-h-11 cursor-pointer items-center gap-3 font-medium">
           <input

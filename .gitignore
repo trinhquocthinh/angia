@@ -34,7 +34,8 @@ fixtures/golden/*
 fixtures/heic/*
 !fixtures/heic/README.md
 
-.codex
-
 # Cấu hình chạy dev server cho Browser pane của Claude Code (cục bộ từng máy)
 .claude/launch.json
+.codex
+._*
+

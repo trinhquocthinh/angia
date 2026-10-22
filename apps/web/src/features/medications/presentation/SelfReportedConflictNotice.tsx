@@ -57,7 +57,7 @@ export function SelfReportedConflictNotice({ request, conflicts, pending, onSubm
         onClick={onCancel}
         className="min-h-11 rounded-xl border border-[#602900] px-4 font-semibold"
       >
-        Sửa lại khai báo
+        Sửa lại thông tin
       </button>
     </section>
   );

@@ -54,7 +54,7 @@ describe('Danh mục thuốc theo buổi (Design §6, E4-S4-T1)', () => {
   });
   it('TC-240: trạng thái rỗng chuẩn với đúng một hành động', () => {
     const html = render({ data: { today: '2026-10-13', courses: [] } });
-    expect(html).toContain('Chưa có thuốc. Hãy tải đơn thuốc hoặc khai báo thuốc bổ.');
+    expect(html).toContain('Chưa có thuốc. Hãy tải đơn thuốc hoặc thêm thuốc bổ, vitamin.');
     expect(html).toContain('Tải ảnh đơn thuốc');
   });
   it('TC-240: khung xương khi tải và thẻ lỗi có Thử lại', () => {

@@ -14,7 +14,7 @@ export function PrivacyDraftReview({ state, busy, dispatch, onApprove, aiExhaust
   if (draft.state === 'pending')
     return (
       <p role="status" className="text-sm text-[#55615f]">
-        Đang tạo bản kiểm tra. Ảnh chưa được gửi tới AI.
+        Đang tạo bản kiểm tra. Ảnh chưa được gửi để tự động nhận diện.
       </p>
     );
   if (draft.state === 'failed')
@@ -24,7 +24,9 @@ export function PrivacyDraftReview({ state, busy, dispatch, onApprove, aiExhaust
       </p>
     );
   if (draft.state !== 'ready')
-    return <p className="text-sm text-[#55615f]">Tạo bản kiểm tra để xem đúng ảnh sẽ gửi tới AI.</p>;
+    return (
+      <p className="text-sm text-[#55615f]">Tạo bản kiểm tra để xem đúng ảnh sẽ gửi để tự động nhận diện.</p>
+    );
   if (state.candidateRevision !== state.revision)
     return (
       <p role="status" className="text-sm text-[#55615f]">
@@ -34,10 +36,10 @@ export function PrivacyDraftReview({ state, busy, dispatch, onApprove, aiExhaust
   const loaded = state.loaded === `${draft.draftId}:${draft.sha256}`;
   return (
     <section
-      aria-label="Bản kiểm tra trước khi gửi AI"
+      aria-label="Bản kiểm tra trước khi gửi tự động nhận diện"
       className="flex flex-col gap-3 rounded-2xl border border-[#d6e5df] bg-white p-4"
     >
-      <h3 className="font-semibold text-[#004135]">Kiểm tra ảnh sẽ gửi tới AI</h3>
+      <h3 className="font-semibold text-[#004135]">Kiểm tra ảnh trước khi gửi tự động nhận diện</h3>
       <p className="text-sm text-[#55615f]">
         Đọc lại ảnh bên dưới, kiểm tra họ tên, địa chỉ và các thông tin định danh đã được che.
       </p>

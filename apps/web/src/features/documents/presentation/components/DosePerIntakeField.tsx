@@ -10,7 +10,7 @@ export function DosePerIntakeField({ form, index, optional }: Props) {
   const hint = optional
     ? 'Để trống nếu đơn không ghi số lượng mỗi lần.'
     : fromAi
-      ? 'AI đọc — đối chiếu số lượng với ảnh.'
+      ? 'Tự động nhận diện — đối chiếu số lượng với ảnh.'
       : undefined;
   return (
     <ReadingField

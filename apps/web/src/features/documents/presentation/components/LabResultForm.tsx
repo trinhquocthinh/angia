@@ -50,7 +50,7 @@ export function LabResultForm({ payload, manual = false, pending, error, onSubmi
           Danh sách chỉ số ({items.fields.length} chỉ số)
         </h2>
         {payload === null && !manual && (
-          <p className="text-sm text-[#55615f]">Chưa có dữ liệu AI trích xuất, vui lòng nhập theo ảnh.</p>
+          <p className="text-sm text-[#55615f]">Chưa có dữ liệu tự động nhận diện, vui lòng nhập theo ảnh.</p>
         )}
         <ol className="flex flex-col gap-4">
           {items.fields.map((field, index) => (

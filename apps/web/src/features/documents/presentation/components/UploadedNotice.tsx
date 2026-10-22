@@ -10,8 +10,8 @@ export function UploadedNotice() {
   return (
     <div role="status" className="mb-6 flex items-start justify-between gap-3 rounded-xl bg-[#aef0da]/50 p-4">
       <p className="flex items-center gap-2 text-sm font-semibold text-[#004135]">
-        <DocumentIcon name="check" /> Đã gửi {count} ảnh chứng từ. AI đang đọc ảnh, thường dưới 15 giây —
-        chứng từ sẽ tự hiện trong danh sách khi đọc xong.
+        <DocumentIcon name="check" /> Đã gửi {count} ảnh chứng từ. Đang tự động nhận diện ảnh, thường dưới 15
+        giây — chứng từ sẽ tự hiện trong danh sách khi đọc xong.
       </p>
       <button
         type="button"

@@ -34,7 +34,7 @@ export function AdherenceSheet({ profile, session, repository, onClose, onSaved 
     <SidePanel
       titleId="adherence-title"
       title={`Thực tế dùng thuốc của ${profile.displayName}`}
-      subtitle="Ghi nhận người bệnh thực tế đang dùng hay đã ngưng một thuốc từ ngày nào, để đối chiếu trên biểu đồ. Không thay đổi danh mục thuốc điều trị."
+      subtitle="Ghi lại người thân thực tế đang uống hay đã tạm ngưng thuốc nào từ ngày nào để theo dõi cùng biểu đồ. Không thay đổi danh mục thuốc điều trị."
       closeLabel="Đóng ghi nhận thực tế dùng thuốc"
       pending={record.pending}
       onClose={onClose}

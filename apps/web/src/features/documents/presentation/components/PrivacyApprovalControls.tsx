@@ -36,7 +36,7 @@ export function PrivacyApprovalControls(props: Props) {
           }}
           className="mt-1 h-5 w-5 shrink-0 accent-[#286958]"
         />
-        Tôi đã kiểm tra ảnh này và che các thông tin định danh trước khi gửi tới AI.
+        Tôi đã kiểm tra ảnh này và che các thông tin định danh trước khi gửi để tự động nhận diện.
       </label>
       {asking && state.checked ? (
         <NoMaskWarning busy={busy} onBack={() => setAsking(false)} onSendAnyway={() => submit(true)} />

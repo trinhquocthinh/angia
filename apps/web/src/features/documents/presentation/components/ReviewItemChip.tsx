@@ -10,14 +10,18 @@ const CHIPS: Record<ReviewItemState, { label: string; className: string; dot: st
   },
   privacy: { label: 'Chờ kiểm tra riêng tư', className: 'bg-[#e4f0f0] text-[#404945]', dot: 'bg-[#707975]' },
   reading: {
-    label: 'AI đang đọc…',
+    label: 'Đang tự động nhận diện…',
     className: 'bg-[#d9e5e4] text-[#404945]',
     dot: 'bg-[#707975]',
     busy: true,
   },
   ready: { label: 'Đã đọc xong', className: 'bg-[#aef0da] text-[#2f6f5e]', dot: 'bg-[#286958]' },
   manual: { label: 'Cần nhập tay', className: 'bg-[#ffdbc9] text-[#753400]', dot: 'bg-[#602900]' },
-  budget: { label: 'Chờ ngân sách AI', className: 'bg-[#ffdbc9] text-[#753400]', dot: 'bg-[#602900]' },
+  budget: {
+    label: 'Chờ lượt tự động nhận diện',
+    className: 'bg-[#ffdbc9] text-[#753400]',
+    dot: 'bg-[#602900]',
+  },
 };
 
 export function ReviewItemChip({ state }: { state: ReviewItemState }) {

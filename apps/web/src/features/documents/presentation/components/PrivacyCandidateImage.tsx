@@ -27,7 +27,7 @@ export function PrivacyCandidateImage({ draft, loaded, dispatch }: Props) {
       <div className="max-h-[70vh] overflow-auto rounded-lg bg-[#eaf6f5]">
         <img
           src={draft.imageUrl}
-          alt="Bản kiểm tra chính xác sẽ gửi tới AI"
+          alt="Bản kiểm tra chính xác sẽ gửi để tự động nhận diện"
           className="block max-w-none"
           style={{ width: `${zoom * 100}%` }}
           onLoad={() => {

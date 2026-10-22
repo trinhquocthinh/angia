@@ -50,7 +50,9 @@ export function ReadingForm({ payload, manual = false, pending, error, onSubmit 
             type="date"
             error={errors.measuredAt?.message}
             hint={
-              manual || payload?.measuredAt ? undefined : 'AI không đọc được ngày, vui lòng nhập theo máy.'
+              manual || payload?.measuredAt
+                ? undefined
+                : 'Chưa tự động nhận diện được ngày, vui lòng nhập theo máy.'
             }
             {...form.register('measuredAt')}
           />
@@ -59,7 +61,7 @@ export function ReadingForm({ payload, manual = false, pending, error, onSubmit 
         <ReadingKindPicker register={form.register('kind')} />
         <ReadingValueFields kind={kind} register={form.register} errors={errors} flagged={outOfRange} />
         {payload === null && !manual && (
-          <p className="text-sm text-[#55615f]">Chưa có dữ liệu AI trích xuất, vui lòng nhập theo ảnh.</p>
+          <p className="text-sm text-[#55615f]">Chưa có dữ liệu tự động nhận diện, vui lòng nhập theo ảnh.</p>
         )}
       </section>
       {outOfRange.length > 0 && (

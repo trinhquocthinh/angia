@@ -16,7 +16,7 @@ export function LogoutButton({ csrfToken }: { csrfToken: string }) {
     <>
       <button
         type="button"
-        className="admin-nav-link flex items-center gap-2 min-h-10 p-2 border-0 rounded-[12px] bg-transparent text-[#404945] no-underline text-[14px] font-medium text-left transition-[background-color,color] duration-[160ms] ease-[ease] cursor-pointer [&:hover]:bg-[#e4f0f0] [&:hover]:text-[#131d1d] [&:disabled]:opacity-65 [&:disabled]:cursor-default max-[900px]:shrink-0 admin-logout"
+        className="admin-nav-link flex items-center gap-2.5 min-h-10 p-2 border-0 rounded-[12px] bg-transparent text-[#404945] no-underline text-[14px] font-medium text-left transition-[background-color,color] duration-[160ms] ease-[ease] cursor-pointer [&:hover]:bg-[#e4f0f0] [&:hover]:text-[#131d1d] [&:disabled]:opacity-65 [&:disabled]:cursor-default max-[900px]:shrink-0 admin-logout"
         aria-label="Đăng xuất"
         disabled={logout.isPending}
         onClick={() => logout.mutate()}

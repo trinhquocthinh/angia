@@ -16,7 +16,8 @@ export function NoMaskWarning({ busy, onBack, onSendAnyway }: NoMaskWarningProps
       <div className="flex min-w-0 flex-1 flex-col gap-3 text-sm leading-6">
         <p>
           <strong className="font-semibold">Ảnh chưa có vùng che nào.</strong> Nếu trên ảnh còn họ tên, ngày
-          sinh, địa chỉ, số điện thoại, mã bệnh nhân hoặc số bảo hiểm y tế, hãy che trước khi gửi tới AI.
+          sinh, địa chỉ, số điện thoại, mã bệnh nhân hoặc số bảo hiểm y tế, hãy che trước khi gửi để tự động
+          nhận diện.
         </p>
         <div className="flex flex-wrap gap-2">
           <button
