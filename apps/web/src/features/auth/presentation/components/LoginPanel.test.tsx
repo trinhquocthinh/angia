@@ -2,12 +2,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { LoginPanel } from './LoginPanel';
 
-describe('Các trạng thái màn đăng nhập Authentik', () => {
-  it('mặc định: một hành động đăng nhập Authentik, không thu mật khẩu tại web', () => {
+describe('Các trạng thái màn đăng nhập an toàn', () => {
+  it('mặc định: một hành động đăng nhập an toàn, không thu mật khẩu tại web', () => {
     const html = renderToStaticMarkup(
       <LoginPanel hasAuthError={false} isSubmitting={false} onLogin={() => undefined} />,
     );
-    expect(html).toContain('Đăng nhập Authentik');
+    expect(html).toContain('Đăng nhập an toàn');
     expect(html.match(/<button/g)).toHaveLength(1);
     expect(html).not.toContain('<input');
   });

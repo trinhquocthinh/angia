@@ -23,7 +23,7 @@ export function PrivacyCanvas({ documentId, edits, mode, disabled, onBegin, onRe
     <div className="overflow-hidden rounded-2xl bg-[#131d1d] text-[#e7f3f3]">
       {failed && (
         <p role="alert" className="p-4 text-sm text-[#9b472c]">
-          Không tải được ảnh xem trước. Tải lại chứng từ hoặc chọn nhập tay.
+          Không tải được ảnh xem trước. Tải lại ảnh giấy tờ hoặc chọn nhập tay.
         </p>
       )}
       <div className="flex h-[clamp(320px,52dvh,520px)] items-center justify-center">

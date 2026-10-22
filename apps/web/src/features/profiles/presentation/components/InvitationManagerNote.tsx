@@ -3,8 +3,8 @@ export function InvitationManagerNote() {
   return (
     <>
       <p id="invitation-description" className="mt-6 text-sm leading-6 text-[#404945]">
-        Gửi link cho đối tượng của hồ sơ hoặc người giám hộ hợp pháp. Người nhận không cần tài khoản hay OTP
-        và tự chọn đồng ý hoặc từ chối.
+        Gửi link cho người thân có tên trong hồ sơ (hoặc người đại diện/chăm sóc). Người nhận không cần tài
+        khoản hay mật khẩu và tự chọn đồng ý hoặc từ chối.
       </p>
       <div className="mt-4 flex items-start gap-2.5 rounded-xl bg-[#eaf6f5] p-4 text-[#404945]">
         <span className="mt-0.5 text-[#286958]">

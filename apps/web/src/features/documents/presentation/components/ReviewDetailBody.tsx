@@ -9,7 +9,7 @@ import { PrescriptionForm } from './PrescriptionForm';
 import { ReadingForm } from './ReadingForm';
 import { ReviewNotice } from './ReviewNotice';
 const MANUAL_INTRO =
-  'Chứng từ này cần nhập tay. Chọn loại dữ liệu rồi nhập theo ảnh; ảnh không dùng được thì có thể loại bỏ.';
+  'Giấy tờ này cần nhập tay. Chọn loại dữ liệu rồi nhập theo ảnh; ảnh không dùng được thì có thể loại bỏ.';
 // BR-018: hết ngân sách AI tháng này — AI sẽ đọc lại khi có ngân sách, hoặc nhập tay ngay không cần chờ.
 const BUDGET_INTRO =
   'Đã hết lượt tự động nhận diện tháng này nên ảnh đang chờ để được đọc khi có lượt mới. Bạn có thể nhập tay ngay theo ảnh mà không cần chờ.';
@@ -43,7 +43,7 @@ export function ReviewDetailBody({ document, extraction, pending, error, onSubmi
       />
     );
   if (document.status !== 'pending_review')
-    return <ReviewNotice title="Chứng từ không còn chờ duyệt" body="Chứng từ này đã được xử lý trước đó." />;
+    return <ReviewNotice title="Giấy tờ không còn chờ kiểm tra" body="Giấy tờ này đã được xử lý trước đó." />;
   if (document.type === 'prescription')
     return (
       <PrescriptionForm

@@ -16,7 +16,7 @@ describe('Form tạo hồ sơ và lựa chọn đồng thuận rõ ràng', () =>
     );
     expect(html).toContain('Không liên kết tài khoản');
     expect(html).toContain('An');
-    expect(html).toContain('Hồ sơ mới chưa có đồng thuận');
+    expect(html).toContain('Hồ sơ mới chưa có xác nhận từ người thân');
   });
   it('khóa form và hiển thị đang lưu trong lúc gửi', () => {
     const html = renderToStaticMarkup(
@@ -37,8 +37,8 @@ describe('Form tạo hồ sơ và lựa chọn đồng thuận rõ ràng', () =>
       <InvitationResponseForm pending={false} onRespond={async () => undefined} />,
     );
     expect(html).toContain('Tư cách của bạn');
-    expect(html).toContain('Tôi là người có hồ sơ');
-    expect(html).toContain('Tôi là người giám hộ hợp pháp');
+    expect(html).toContain('Đây là hồ sơ của tôi');
+    expect(html).toContain('Tôi là người thân / người chăm sóc');
     expect(html).not.toContain('checked=""');
     expect(html.match(/type="radio"/g)).toHaveLength(2);
   });

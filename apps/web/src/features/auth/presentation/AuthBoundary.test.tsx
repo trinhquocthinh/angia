@@ -35,7 +35,7 @@ function renderBoundary(data?: unknown) {
 describe('Chặn nội dung trước khi kiểm tra phiên', () => {
   it('đang kiểm tra: chỉ hiện loading, chưa hiển thị trang chủ', () => {
     const html = renderBoundary();
-    expect(html).toContain('Đang kiểm tra phiên');
+    expect(html).toContain('Đang kiểm tra trạng thái đăng nhập');
     expect(html).not.toContain('Nội dung gia đình');
   });
   it('chưa có phiên: che nội dung trong lúc chuyển tới /login', () => {

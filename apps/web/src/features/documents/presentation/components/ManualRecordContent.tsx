@@ -36,7 +36,7 @@ export function ManualRecordContent({
     return (
       <ReviewNotice
         title="Hồ sơ chưa được đồng ý lưu dữ liệu"
-        body="Gửi link mời để người có hồ sơ hoặc người giám hộ đồng ý trước khi nhập dữ liệu sức khỏe."
+        body="Gửi link mời để người thân hoặc người chăm sóc xác nhận trước khi nhập dữ liệu sức khỏe."
       />
     );
   if (saved)
@@ -44,7 +44,7 @@ export function ManualRecordContent({
       <section className="flex flex-col gap-4 rounded-[20px] bg-white p-6" role="status">
         <h2 className="text-lg font-semibold text-[#004135]">Đã lưu vào sổ</h2>
         <p className="text-sm leading-6 text-[#55615f]">
-          Dữ liệu của {profile.displayName} được ghi là nhập tay, không kèm chứng từ gốc.
+          Dữ liệu của {profile.displayName} được ghi là nhập tay, không kèm ảnh giấy tờ gốc.
         </p>
         <div className="flex flex-wrap gap-3">
           <button type="button" onClick={onAgain} className={`${buttonClass} bg-[#004135] text-white`}>
@@ -64,7 +64,7 @@ export function ManualRecordContent({
       <fieldset disabled={formDisabled} className="min-w-0 border-0 p-0">
         <ManualEntryForm
           initialType={null}
-          intro="Dữ liệu được ghi là nhập tay, không kèm chứng từ gốc. Nhập đúng như trên giấy tờ hoặc màn hình máy đo."
+          intro="Dữ liệu được ghi là nhập tay, không kèm ảnh giấy tờ gốc. Nhập đúng như trên giấy tờ hoặc màn hình máy đo."
           {...form}
         />
       </fieldset>

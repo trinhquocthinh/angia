@@ -7,10 +7,11 @@ export interface AiBudgetSnapshot {
 }
 
 // Gia đình chỉ thấy phần trăm theo trần riêng; "hết" khi lời gọi kế tiếp vượt trần gia đình hoặc trần tổng.
+// anyUsed: đã có chi tiêu > 0 — phần trăm làm tròn xuống 0 vẫn hiện "dưới 1%" thay vì 0%.
 export function evaluateAiBudget(
   budget: AiBudgetSnapshot,
   estimatedCostUsd: number,
-): { usedPercent: number; exhausted: boolean } {
+): { usedPercent: number; anyUsed: boolean; exhausted: boolean } {
   const usedPercent =
     budget.familyCapUsd <= 0
       ? 100
@@ -18,5 +19,5 @@ export function evaluateAiBudget(
   const exhausted =
     budget.familySpentUsd + estimatedCostUsd > budget.familyCapUsd + 1e-9 ||
     budget.globalSpentUsd + estimatedCostUsd > budget.globalCapUsd + 1e-9;
-  return { usedPercent, exhausted };
+  return { usedPercent, anyUsed: budget.familySpentUsd > 0, exhausted };
 }

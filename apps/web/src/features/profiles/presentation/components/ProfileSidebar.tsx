@@ -42,10 +42,10 @@ export function ProfileSidebar({
           activeProps={active}
           inactiveProps={idle}
         >
-          <ProfileIcon name="home" /> Nhà (Gia đình)
+          <ProfileIcon name="home" /> Trang chủ
         </Link>
         <Link to="/upload" className={navItem} activeProps={active} inactiveProps={idle}>
-          <ProfileIcon name="upload" /> Thêm (Tải ảnh)
+          <ProfileIcon name="upload" /> Tải giấy tờ
         </Link>
         <Link to="/review" className={navItem} activeProps={active} inactiveProps={idle}>
           <ProfileIcon name="review" /> Chờ duyệt
@@ -53,7 +53,7 @@ export function ProfileSidebar({
             <span className="ml-auto rounded-full bg-[#b3eddf] px-2 py-0.5 text-xs font-semibold text-[#004135]">
               <span className="sr-only">, </span>
               {pendingCount}
-              <span className="sr-only"> chứng từ</span>
+              <span className="sr-only"> giấy tờ</span>
             </span>
           ) : null}
         </Link>

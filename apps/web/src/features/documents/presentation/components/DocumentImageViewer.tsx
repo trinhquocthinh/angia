@@ -34,7 +34,7 @@ export function DocumentImageViewer({ src, turns, onError }: DocumentImageViewer
         >
           <img
             src={src}
-            alt="Ảnh chứng từ đang duyệt"
+            alt="Hình chụp giấy tờ đang kiểm tra"
             draggable={false}
             onLoad={(event) => onLoad(event.currentTarget)}
             onError={onError}

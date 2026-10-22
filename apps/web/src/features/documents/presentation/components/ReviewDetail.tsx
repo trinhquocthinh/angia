@@ -45,10 +45,7 @@ export function ReviewDetail({
   if (review.isPending) return <ReviewLoading />;
   if (review.isError)
     return (
-      <ReviewNotice
-        title="Không mở được chứng từ"
-        body="Chứng từ không tồn tại hoặc bạn không có quyền xem."
-      />
+      <ReviewNotice title="Không mở được giấy tờ" body="Giấy tờ không tồn tại hoặc bạn không có quyền xem." />
     );
   const { document, extraction } = review.data;
   const profileName = profileNames.get(document.healthProfileId) ?? 'Hồ sơ';

@@ -1,11 +1,19 @@
 import type { FamilyUsage } from '@angia/contracts';
 
+const MIB = 1024 ** 2;
 const GIB = 1024 ** 3;
-const gibibytes = new Intl.NumberFormat('vi-VN', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const oneDecimal = new Intl.NumberFormat('vi-VN', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
-const formatGibibytes = (bytes: number) => `${gibibytes.format(bytes / GIB)} GiB`;
+const formatGibibytes = (bytes: number) => `${oneDecimal.format(bytes / GIB)} GiB`;
+// Dưới 1 GiB hiện theo MB để mức dùng nhỏ (vài ảnh) không bị làm tròn thành "0,0".
 export const formatStorageUsage = (used: number, limit: number) =>
-  `${gibibytes.format(used / GIB)} / ${formatGibibytes(limit)}`;
+  used < GIB
+    ? `${oneDecimal.format(used / MIB)} MB / ${formatGibibytes(limit)}`
+    : `${oneDecimal.format(used / GIB)} / ${formatGibibytes(limit)}`;
+
+// SPEC-031: đã chi > 0 nhưng phần trăm làm tròn xuống 0 → "dưới 1%".
+export const formatAiUsage = (aiOcr: FamilyUsage['aiOcr']) =>
+  aiOcr.anyUsed && aiOcr.usedPercent === 0 ? 'dưới 1%' : `${aiOcr.usedPercent}%`;
 
 // SPEC-030: lý do khóa chọn ảnh, cùng thứ tự kiểm của máy chủ (dung lượng → ảnh/ngày → chờ xử lý).
 export function usageBlockReason(usage: FamilyUsage): string | null {

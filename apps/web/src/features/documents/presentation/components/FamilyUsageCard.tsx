@@ -1,5 +1,5 @@
 import type { FamilyUsage } from '@angia/contracts';
-import { formatStorageUsage, usageBlockReason } from '../../application/familyUsageState';
+import { formatAiUsage, formatStorageUsage, usageBlockReason } from '../../application/familyUsageState';
 
 function UsageBar({ label, used, limit }: { label: string; used: number; limit: number }) {
   const percent = Math.min(100, Math.round((used / limit) * 100));
@@ -53,7 +53,7 @@ export function FamilyUsageCard({ usage }: { usage: FamilyUsage }) {
           limit={pendingJobs.limit}
         />
         <UsageBar
-          label={`Đọc chữ tự động tháng này: đã dùng ${usage.aiOcr.usedPercent}%`}
+          label={`Đọc chữ tự động tháng này: đã dùng ${formatAiUsage(usage.aiOcr)}`}
           used={usage.aiOcr.usedPercent}
           limit={100}
         />

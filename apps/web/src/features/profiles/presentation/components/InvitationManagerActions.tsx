@@ -22,8 +22,8 @@ export function InvitationManagerActions({
         {pending
           ? 'Đang xử lý…'
           : invitationState === 'active'
-            ? 'Tạo lại link đồng thuận'
-            : 'Tạo link đồng thuận'}
+            ? 'Tạo lại link xác nhận'
+            : 'Tạo link xác nhận'}
       </button>
       {invitationState !== 'none' && (
         <button

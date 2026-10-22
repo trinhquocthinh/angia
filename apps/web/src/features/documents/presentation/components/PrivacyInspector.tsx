@@ -12,13 +12,13 @@ export function PrivacyInspector({ workspace, preview, inputPending, fields, chi
   const { state, busy, query } = workspace;
   const creating = state.candidate.state === 'pending' || query.data?.draft.state === 'pending';
   return (
-    <aside aria-label="Thông số điều khiển ảnh" className="flex min-w-0 flex-col gap-4 self-start">
+    <aside aria-label="Công cụ chỉnh sửa ảnh" className="flex min-w-0 flex-col gap-4 self-start">
       <div className="flex flex-col gap-4 rounded-2xl bg-white p-4 shadow-sm">
-        <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#707975]">Thông số điều khiển</h3>
+        <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#707975]">Công cụ điều chỉnh</h3>
         {fields}
         {inputPending && (
           <p role="status" className="text-xs leading-5 text-[#9b472c]">
-            Hoàn tất tọa độ hợp lệ hoặc nhấn Esc trước khi tạo bản kiểm tra.
+            Hoàn tất vị trí vùng chọn hoặc nhấn Esc trước khi tạo bản kiểm tra.
           </p>
         )}
         <button

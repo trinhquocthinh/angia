@@ -4,7 +4,7 @@ export function InvitationManagerHeader({ name, onClose }: { name: string; onClo
     <div className="flex items-start justify-between gap-4">
       <div className="min-w-0">
         <h2 id="invitation-title" className="auth-heading text-2xl font-semibold leading-8 text-[#004135]">
-          Link mời đồng thuận
+          Link mời người thân xác nhận
         </h2>
         <div className="mt-2 flex items-center gap-2">
           <span

@@ -442,6 +442,9 @@
                 "minimum": 0,
                 "maximum": 100
               },
+              "anyUsed": {
+                "type": "boolean"
+              },
               "exhausted": {
                 "type": "boolean"
               }
@@ -449,6 +452,7 @@
             "required": [
               "month",
               "usedPercent",
+              "anyUsed",
               "exhausted"
             ]
           }

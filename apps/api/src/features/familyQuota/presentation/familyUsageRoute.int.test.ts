@@ -44,7 +44,7 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
       storage: { usedBytes: 6 * MiB, limitBytes: 2 * 1024 * MiB },
       dailyUploads: { used: 2, limit: 100, resetsAt: `${resetsAt}T00:00:00+07:00` },
       pendingJobs: { used: 2, limit: 10 },
-      aiOcr: { month: budgetMonth(new Date()), usedPercent: 0, exhausted: false },
+      aiOcr: { month: budgetMonth(new Date()), usedPercent: 0, anyUsed: false, exhausted: false },
     });
     const other = (await (await t.call(owners.b.main, 'GET', '/api/family/usage')).json()) as FamilyUsage;
     expect(other.storage.usedBytes).toBe(7 * MiB);
@@ -75,7 +75,12 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
   it('TC-306: aiOcr theo trần gia đình tháng hiện tại; chưa có dòng chi tiêu thì 0% và không ghi DB', async () => {
     const month = budgetMonth(new Date());
     const before = await (await t.call(owners.b.main, 'GET', '/api/family/usage')).json();
-    expect((before as FamilyUsage).aiOcr).toEqual({ month, usedPercent: 0, exhausted: false });
+    expect((before as FamilyUsage).aiOcr).toEqual({
+      month,
+      usedPercent: 0,
+      anyUsed: false,
+      exhausted: false,
+    });
     const rows = await t.owner.query(
       'SELECT count(*)::int AS n FROM family_extraction_spend WHERE family_id=$1',
       [owners.b.familyId],
@@ -90,7 +95,7 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
       [owners.a.familyId, month],
     );
     const usage = (await (await t.call(owners.a.main, 'GET', '/api/family/usage')).json()) as FamilyUsage;
-    expect(usage.aiOcr).toEqual({ month, usedPercent: 98, exhausted: true });
+    expect(usage.aiOcr).toEqual({ month, usedPercent: 98, anyUsed: true, exhausted: true });
   });
 
   it('TC-301: tài khoản không phải người chăm sóc chính → 403; không phiên → 401', async () => {

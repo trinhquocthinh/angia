@@ -18,7 +18,7 @@ describe('Nhập trực tiếp không kèm ảnh (SPEC-011, BR-014)', () => {
   it('hồ sơ đã đồng thuận → form chọn loại, ghi rõ dữ liệu là nhập tay không kèm chứng từ gốc', () => {
     const html = renderToStaticMarkup(<ManualRecordContent {...props} profile={profile('confirmed')} />);
     expect(html).toContain('Nhập tay cho Mẹ');
-    expect(html).toContain('không kèm chứng từ gốc');
+    expect(html).toContain('không kèm ảnh giấy tờ gốc');
     expect(html).toContain('Loại dữ liệu');
   });
 

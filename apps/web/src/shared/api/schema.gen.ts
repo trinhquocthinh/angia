@@ -3843,6 +3843,7 @@ export interface components {
       aiOcr: {
         month: string;
         usedPercent: number;
+        anyUsed: boolean;
         exhausted: boolean;
       };
     };

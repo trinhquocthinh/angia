@@ -13,7 +13,9 @@ export function StopCourseAction({ profile, session }: { profile: HealthProfile;
         disabled={profile.consentStatus !== 'confirmed'}
         onClick={() => setOpen(true)}
         title={
-          profile.consentStatus !== 'confirmed' ? 'Cần đồng thuận trước khi đánh dấu dừng thuốc' : undefined
+          profile.consentStatus !== 'confirmed'
+            ? 'Cần người thân xác nhận trước khi đánh dấu dừng thuốc'
+            : undefined
         }
         className="min-h-11 rounded-xl bg-[#e4f0f0] px-4 text-sm font-semibold text-[#404945] transition-colors hover:bg-[#deebea] hover:text-[#131d1d] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
       >
