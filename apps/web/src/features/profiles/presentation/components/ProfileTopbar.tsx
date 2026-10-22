@@ -8,13 +8,13 @@ import { ProfileIcon } from './ProfileIcon';
 export function ProfileTopbar({ profiles, hasFamily }: { profiles: HealthProfile[]; hasFamily: boolean }) {
   const navigate = useNavigate();
   return (
-    <header className="flex min-h-16 items-center justify-between gap-3 border-b border-[#e4f0ef] px-4 py-3 lg:px-8">
+    <header className="hidden min-h-16 items-center justify-between gap-3 border-b border-[#e4f0ef] px-8 py-3 lg:flex">
       <a href="/" className="shrink-0 text-sm font-semibold text-[#004135]">
         Hồ Sơ Sức Khỏe Gia Đình
       </a>
       <div className="flex min-w-0 items-center gap-2">
         <HeaderSearch
-          className="hidden w-72 sm:block"
+          className="w-72"
           label="Tìm hồ sơ thành viên"
           placeholder="Tìm hồ sơ thành viên…"
           emptyText="Không có hồ sơ trùng tên."

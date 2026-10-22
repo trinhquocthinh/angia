@@ -1,7 +1,7 @@
-// Thanh "Lưu vào sổ": dính đáy màn hình trên di động, nằm cuối form trên desktop (Enter cũng lưu).
+// Thanh "Lưu vào sổ": dính ngay trên thanh điều hướng đáy trên di động, nằm cuối form trên desktop (Enter cũng lưu).
 export function ReviewSubmitBar({ pending, disabled }: { pending: boolean; disabled: boolean }) {
   return (
-    <div className="sticky bottom-0 -mx-4 flex flex-col gap-2 bg-[#f0fcfb]/95 px-4 py-3 backdrop-blur lg:static lg:mx-0 lg:bg-transparent lg:p-0">
+    <div className="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] -mx-4 flex flex-col gap-2 bg-[#f0fcfb]/95 px-4 py-3 backdrop-blur lg:static lg:mx-0 lg:bg-transparent lg:p-0">
       <button
         type="submit"
         disabled={pending || disabled}
