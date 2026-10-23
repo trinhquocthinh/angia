@@ -1,8 +1,7 @@
-import { useState } from 'react';
 import type { ApproveDocumentRequest } from '@src/features/documents/application/reviewPorts';
 import type { CourseConflictPrompt } from '../application/courseConflictPrompt';
-import { resolveCoursePrompt, type CourseChoices } from '../application/resolveCoursePrompt';
-import { CourseConflictGroup } from './CourseConflictGroup';
+import { resolveCoursePrompt } from '../application/resolveCoursePrompt';
+import { CourseConflictDialog } from './CourseConflictDialog';
 
 type Props = {
   prompt: CourseConflictPrompt;
@@ -12,50 +11,21 @@ type Props = {
 };
 
 export function CourseConflictNotice({ prompt, pending, onSubmit, onCancel }: Props) {
-  const [choices, setChoices] = useState<CourseChoices>({});
-  const request = resolveCoursePrompt(prompt, choices);
   return (
-    <section
-      aria-labelledby="course-conflict-title"
-      className="flex flex-col gap-4 rounded-xl bg-[#ffdbc9] p-4 text-sm leading-6 text-[#321200]"
-    >
-      <h2 id="course-conflict-title" className="font-semibold" role="alert">
-        Cần chọn cách xử lý thuốc trùng tên
-      </h2>
-      <p>
-        Đây là bản đối soát bạn vừa gửi. Chọn rõ cách xử lý cho từng nhóm thuốc; muốn đổi nội dung đơn, chọn
-        Sửa lại đơn.
-      </p>
-      {prompt.conflicts.map((conflict) => (
-        <CourseConflictGroup
-          key={conflict.nameNormalized}
-          conflict={conflict}
-          request={prompt.request}
-          pending={pending}
-          choice={choices[conflict.nameNormalized]}
-          onChange={(value) => setChoices((current) => ({ ...current, [conflict.nameNormalized]: value }))}
-        />
-      ))}
-      <div className="flex flex-wrap gap-3">
-        <button
-          type="button"
-          disabled={pending || !request}
-          onClick={() => {
-            if (request) onSubmit(request);
-          }}
-          className="min-h-11 rounded-xl bg-[#004135] px-4 font-semibold text-white disabled:opacity-55"
-        >
-          {pending ? 'Đang lưu…' : 'Lưu với lựa chọn này'}
-        </button>
-        <button
-          type="button"
-          disabled={pending}
-          onClick={onCancel}
-          className="min-h-11 rounded-xl border border-[#602900] px-4 font-semibold disabled:opacity-55"
-        >
-          Sửa lại đơn
-        </button>
-      </div>
-    </section>
+    <CourseConflictDialog
+      intro={
+        <>
+          Đây là bản đối soát bạn vừa gửi. Chọn rõ cách xử lý cho từng nhóm thuốc; muốn đổi nội dung đơn, chọn{' '}
+          <strong>Sửa lại đơn</strong>.
+        </>
+      }
+      conflicts={prompt.conflicts}
+      comparison={prompt.request}
+      resolve={(choices) => resolveCoursePrompt(prompt, choices)}
+      pending={pending}
+      cancelLabel="Sửa lại đơn"
+      onSubmit={onSubmit}
+      onCancel={onCancel}
+    />
   );
 }

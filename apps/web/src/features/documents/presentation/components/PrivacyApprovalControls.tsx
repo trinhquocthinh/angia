@@ -38,9 +38,10 @@ export function PrivacyApprovalControls(props: Props) {
         />
         Tôi đã kiểm tra ảnh này và che các thông tin định danh trước khi gửi để tự động nhận diện.
       </label>
-      {asking && state.checked ? (
+      {asking && state.checked && (
         <NoMaskWarning busy={busy} onBack={() => setAsking(false)} onSendAnyway={() => submit(true)} />
-      ) : aiExhausted ? (
+      )}
+      {aiExhausted ? (
         // Xếp hàng vẫn là xác nhận ảnh: ảnh chưa có vùng che phải qua câu hỏi lại BR-041 như nút gửi thường.
         <AiBudgetSpentNotice
           busy={busy}

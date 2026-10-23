@@ -1,4 +1,5 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { useModalDialog } from './useModalDialog';
 
 type Props = {
   titleId: string;
@@ -13,16 +14,7 @@ type Props = {
 // Side panel thuốc theo Stitch f29c92d0: phải màn hình ở desktop, đáy màn hình ở mobile; đầu cố định,
 // thân cuộn riêng. Trả focus về nút mở khi đóng; chặn Escape/đóng khi đang lưu.
 export function SidePanel({ titleId, title, subtitle, closeLabel, pending, onClose, children }: Props) {
-  const ref = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const previous = document.activeElement;
-    const dialog = ref.current;
-    dialog?.showModal();
-    return () => {
-      dialog?.close();
-      if (previous instanceof HTMLElement) previous.focus();
-    };
-  }, []);
+  const ref = useModalDialog();
   return (
     <dialog
       ref={ref}
