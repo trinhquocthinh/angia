@@ -19,3 +19,4 @@ export { adherencePeriods } from './adherencePeriods.js';
 export { pushSubscriptions } from './pushSubscriptions.js';
 export { doseSlots } from './doseSlots.js';
 export { reminderRecipients } from './reminderRecipients.js';
+export { reminders } from './reminders.js';
