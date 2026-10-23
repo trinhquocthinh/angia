@@ -23,7 +23,7 @@ export function LoginPanel({ hasAuthError, isSubmitting, onLogin }: Props) {
         className="flex min-h-[52px] w-full items-center justify-center gap-3 rounded-xl bg-accent px-4 py-3 text-base font-semibold text-on-accent hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent disabled:cursor-wait"
       >
         {isSubmitting && <AuthSpinner />}
-        {isSubmitting ? 'Đang chuyển hướng…' : hasAuthError ? 'Thử lại' : 'Đăng nhập Authentik'}
+        {isSubmitting ? 'Đang chuyển hướng…' : hasAuthError ? 'Thử lại' : 'Đăng nhập an toàn'}
       </button>
     </div>
   );

@@ -30,7 +30,7 @@ export function ProfileCard({
           className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-[#004135] px-5 py-3 text-center text-sm font-semibold text-white cursor-pointer disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958] mt-5"
           onClick={() => onConsent(profile)}
         >
-          {profile.consentStatus === 'invited' ? 'Quản lý link đồng thuận' : 'Tạo link đồng thuận'}
+          {profile.consentStatus === 'invited' ? 'Quản lý link xác nhận' : 'Tạo link mời người thân'}
         </button>
       )}
     </article>

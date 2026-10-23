@@ -15,7 +15,7 @@ export function InvitationIdentityFields({ name, basis, setName, setBasis, error
           htmlFor="respondent-name"
           className="flex items-center justify-between gap-2 text-[13px] font-medium"
         >
-          Tên của bạn<span className="text-[11px] font-normal text-[#286958]">Tự khai</span>
+          Tên của bạn<span className="text-[11px] font-normal text-[#286958]">Tự nhập</span>
         </label>
         <div className="relative mt-2">
           <input

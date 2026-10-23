@@ -1,7 +1,10 @@
 import type { CourseConflict } from '@angia/contracts';
 import type { CourseChoices } from '../application/resolveCoursePrompt';
 import { doseSlotLabel } from '@src/features/documents/application/doseSlots';
+import { revealStyle } from '@src/shared/ui/revealStyle';
 import { doseLabel } from '../application/doseLabel';
+import { ActiveCoursesCard } from './ActiveCoursesCard';
+import { CourseResolutionOption } from './CourseResolutionOption';
 
 type Props = {
   conflict: CourseConflict;
@@ -19,64 +22,54 @@ type Props = {
   };
   choice: CourseChoices[string];
   pending: boolean;
+  index: number;
   onChange: (value: 'replace' | 'parallel') => void;
 };
 
-export function CourseConflictGroup({ conflict, request, choice, pending, onChange }: Props) {
+// Một nhóm trùng tên: thẻ "Đợt mới" cạnh thẻ "Các đợt đang có hiệu lực" (liệt kê đủ), rồi hai lựa chọn.
+export function CourseConflictGroup({ conflict, request, choice, pending, index, onChange }: Props) {
   return (
-    <fieldset disabled={pending} className="min-w-0 rounded-xl border border-[#ffb68c] p-4">
-      <legend className="px-1 font-semibold">
+    <fieldset
+      disabled={pending}
+      className="angia-modal-reveal min-w-0 rounded-2xl bg-white p-4 shadow-[0_2px_12px_#0041350f] ring-1 ring-[#e4f0f0]"
+      style={revealStyle(index)}
+    >
+      <legend className="float-left mb-3 flex w-full items-center gap-2 text-base font-semibold text-[#131d1d]">
+        <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-[#20594b]" />
         Dòng {conflict.itemIndexes.map((i) => i + 1).join(', ')} ·{' '}
         {request.data.items[conflict.itemIndexes[0]!]!.name}
       </legend>
-      <p className="mb-2">Đợt mới từ {request.data.issuedDate}:</p>
-      <ul className="mb-3 list-inside list-disc">
-        {conflict.itemIndexes.map((index) => {
-          const item = request.data.items[index]!;
-          return (
-            <li key={index}>
-              Dòng {index + 1}: {item.name} {item.strength} · {doseLabel(item.quantityPerDose, item.doseUnit)}{' '}
-              · {item.slots.map(doseSlotLabel).join(', ')}
-            </li>
-          );
-        })}
-      </ul>
-      <p className="font-semibold">
-        {conflict.courses.length > 0
-          ? 'Các đợt đang có hiệu lực:'
-          : 'Danh sách đã thay đổi: hiện không còn đợt trùng tên có hiệu lực.'}
-      </p>
-      <ul className="my-2 flex flex-col gap-2">
-        {conflict.courses.map((course) => (
-          <li key={course.id} className="rounded-lg bg-white/70 p-3">
-            <strong>
-              {course.name} {course.strength}
-            </strong>{' '}
-            · {doseLabel(course.quantityPerDose, course.doseUnit)} ·{' '}
-            {course.slots.map(doseSlotLabel).join(', ')}
-            <div>
-              Từ {course.startDate} · {course.endDate ? `đến ${course.endDate}` : 'Dài hạn'}
-            </div>
-          </li>
-        ))}
-      </ul>
-      <p className="mb-3 text-xs leading-5">
-        Thay thế đóng tất cả đợt trên vào ngày trước đợt mới. Dùng song song giữ nguyên tất cả đợt trên.
-      </p>
-      <div className="flex flex-wrap gap-3">
+      <div className="clear-both grid gap-3 md:grid-cols-2">
+        <div className="rounded-xl bg-[#e3efea] p-3.5">
+          <p className="text-xs font-semibold text-[#20594b]">Đợt mới từ {request.data.issuedDate}</p>
+          <ul className="mt-1.5 flex flex-col gap-1.5">
+            {conflict.itemIndexes.map((itemIndex) => {
+              const item = request.data.items[itemIndex]!;
+              return (
+                <li key={itemIndex}>
+                  <strong className="font-semibold">
+                    Dòng {itemIndex + 1}: {item.name} {item.strength}
+                  </strong>
+                  <span className="block text-[13px] text-[#404945]">
+                    {doseLabel(item.quantityPerDose, item.doseUnit)} ·{' '}
+                    {item.slots.map(doseSlotLabel).join(', ')}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <ActiveCoursesCard courses={conflict.courses} />
+      </div>
+      <div className="mt-3 grid gap-2.5">
         {(['replace', 'parallel'] as const).map((value) => (
-          <label
+          <CourseResolutionOption
             key={value}
-            className="flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-[#602900] bg-white/70 px-3"
-          >
-            <input
-              type="radio"
-              name={`course-resolution-${conflict.nameNormalized}`}
-              checked={choice === value}
-              onChange={() => onChange(value)}
-            />
-            {value === 'replace' ? 'Thay thế' : 'Dùng song song'}
-          </label>
+            name={`course-resolution-${conflict.nameNormalized}`}
+            value={value}
+            checked={choice === value}
+            onChange={() => onChange(value)}
+          />
         ))}
       </div>
     </fieldset>

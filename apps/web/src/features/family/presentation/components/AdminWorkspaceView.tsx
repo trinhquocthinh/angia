@@ -19,6 +19,11 @@ type AdminWorkspaceViewProps = {
 export function AdminWorkspaceView({ session, workspace, aiBudget, familyCaps }: AdminWorkspaceViewProps) {
   const { families, accounts, action } = workspace;
   const [task, setTask] = useState<AdminTask | null>(null);
+  const [accountQuery, setAccountQuery] = useState('');
+  const findAccount = (name: string) => {
+    setAccountQuery(name);
+    document.getElementById('accounts-title')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
   const openTask = (next: AdminTask) => {
     action.reset();
     setTask(next);
@@ -26,7 +31,7 @@ export function AdminWorkspaceView({ session, workspace, aiBudget, familyCaps }:
   const unavailable =
     action.isPending || families.isPending || accounts.isPending || families.isError || accounts.isError;
   return (
-    <AdminFrame session={session} accounts={accounts.data ?? []}>
+    <AdminFrame session={session} accounts={accounts.data ?? []} onFindAccount={findAccount}>
       <AdminHeading
         families={families.data?.length ?? 0}
         accounts={accounts.data?.length ?? 0}
@@ -46,6 +51,8 @@ export function AdminWorkspaceView({ session, workspace, aiBudget, familyCaps }:
         aiBudget={aiBudget}
         familyCaps={familyCaps}
         onTask={openTask}
+        accountQuery={accountQuery}
+        onAccountQuery={setAccountQuery}
         currentFamilyId={session.family?.id ?? null}
         inlineError={task ? null : action.error}
         onSubmit={(command) => {

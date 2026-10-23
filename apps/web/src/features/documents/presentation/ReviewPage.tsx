@@ -61,8 +61,8 @@ export function ReviewPage({ documentId = null }: { documentId?: string | null }
               />
             ) : (
               <ReviewNotice
-                title={documents.length ? 'Chọn một chứng từ để duyệt' : 'Không còn chứng từ chờ duyệt'}
-                body="Ảnh chứng từ hiện bên trái, thông tin AI đọc được hiện bên phải để bạn đối chiếu."
+                title={documents.length ? 'Chọn một giấy tờ để kiểm tra' : 'Không còn giấy tờ chờ kiểm tra'}
+                body="Hình chụp hiện bên trái, thông tin tự động nhận diện hiện bên phải để bạn đối chiếu."
               />
             )}
           </div>

@@ -1,6 +1,11 @@
 import type { FamilyUsage } from '@angia/contracts';
 import { describe, expect, it } from 'vitest';
-import { formatStorageUsage, remainingUploadSlots, usageBlockReason } from './familyUsageState';
+import {
+  formatAiUsage,
+  formatStorageUsage,
+  remainingUploadSlots,
+  usageBlockReason,
+} from './familyUsageState';
 
 const usage = (
   overrides: Partial<{ storage: number; daily: number; pending: number }> = {},
@@ -8,7 +13,7 @@ const usage = (
   storage: { usedBytes: overrides.storage ?? 0, limitBytes: 2 * 1024 ** 3 },
   dailyUploads: { used: overrides.daily ?? 0, limit: 100, resetsAt: '2026-10-20T00:00:00+07:00' },
   pendingJobs: { used: overrides.pending ?? 0, limit: 10 },
-  aiOcr: { month: '2026-10', usedPercent: 0, exhausted: false },
+  aiOcr: { month: '2026-10', usedPercent: 0, anyUsed: false, exhausted: false },
 });
 
 describe('TC-302 — trạng thái mức sử dụng của gia đình trên trang tải ảnh (SPEC-030)', () => {
@@ -35,6 +40,24 @@ describe('TC-302 — trạng thái mức sử dụng của gia đình trên tran
 
   it('định dạng dung lượng GiB kiểu Việt Nam, một chữ số thập phân', () => {
     expect(formatStorageUsage(1288490188, 2 * 1024 ** 3)).toBe('1,2 / 2,0 GiB');
-    expect(formatStorageUsage(0, 5 * 1024 ** 3)).toBe('0,0 / 5,0 GiB');
+    expect(formatStorageUsage(1024 ** 3, 2 * 1024 ** 3)).toBe('1,0 / 2,0 GiB');
+  });
+
+  it('đã dùng dưới 1 GiB thì hiện theo MB để mức dùng nhỏ không thành 0,0', () => {
+    expect(formatStorageUsage(3355443, 1024 ** 3)).toBe('3,2 MB / 1,0 GiB');
+    expect(formatStorageUsage(1024 ** 3 - 1, 2 * 1024 ** 3)).toBe('1.024,0 MB / 2,0 GiB');
+    expect(formatStorageUsage(0, 5 * 1024 ** 3)).toBe('0,0 MB / 5,0 GiB');
+  });
+
+  it('phần trăm đọc chữ tự động: đã dùng > 0 nhưng chưa tới 1% → "dưới 1%"', () => {
+    const ai = (usedPercent: number, anyUsed: boolean) => ({
+      month: '2026-10',
+      usedPercent,
+      anyUsed,
+      exhausted: false,
+    });
+    expect(formatAiUsage(ai(0, true))).toBe('dưới 1%');
+    expect(formatAiUsage(ai(0, false))).toBe('0%');
+    expect(formatAiUsage(ai(42, true))).toBe('42%');
   });
 });

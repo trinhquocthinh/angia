@@ -45,17 +45,17 @@ describe('Form duyệt đơn thuốc (SPEC-010, BR-025)', () => {
     expect(html).toMatch(/id="items-0-durationDays"[^>]*readOnly=""/);
   });
 
-  it('nhắc đối chiếu liều mỗi lần do AI điền (carry-over E1)', () => {
+  it('nhắc đối chiếu liều mỗi lần do tự động nhận diện điền (carry-over E1)', () => {
     const html = renderToStaticMarkup(<PrescriptionForm {...props} payload={payload} />);
-    expect(html).toContain('AI đọc — đối chiếu số lượng với ảnh.');
+    expect(html).toContain('Tự động nhận diện — đối chiếu số lượng với ảnh.');
   });
 
   it('chưa có bản trích xuất thì mở một dòng trống, không có nút xóa dòng cuối cùng', () => {
     const html = renderToStaticMarkup(<PrescriptionForm {...props} payload={null} />);
-    expect(html).toContain('Chưa có dữ liệu AI trích xuất, vui lòng nhập theo ảnh.');
+    expect(html).toContain('Chưa có dữ liệu tự động nhận diện, vui lòng nhập theo ảnh.');
     expect(html).toContain('id="rx-item-0"');
     expect(html).not.toContain('Xóa dòng 1');
-    expect(html).not.toContain('AI đọc — đối chiếu');
+    expect(html).not.toContain('Tự động nhận diện — đối chiếu');
   });
 
   it('BR-025: gợi ý số ngày từ tổng số lượng chỉ hiện nút Áp dụng, không tự điền ô số ngày', () => {

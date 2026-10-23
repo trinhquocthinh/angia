@@ -1,7 +1,4 @@
-import {
-  isAllowedPushSubscription,
-  type PushSubscriptionValue,
-} from '../domain/isAllowedPushSubscription.js';
+import { isAllowedPushSubscription, type PushSubscriptionValue } from '@angia/web-push';
 import type { PushActor, PushDependencies, PushIntent } from './ports.js';
 export async function registerPushSubscription(
   deps: PushDependencies,

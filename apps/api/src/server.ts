@@ -1,4 +1,7 @@
 import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
+import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
+import { createMyReminderRepository } from '@src/features/myReminders/infrastructure/createMyReminderRepository.js';
+import { createReminderRecipientRepository } from '@src/features/reminders/infrastructure/createReminderRecipientRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
 import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
 import { createPrivacyQueue } from '@src/features/documentPrivacy/infrastructure/createPrivacyQueue.js';
@@ -142,6 +145,9 @@ const app = createApp({
   documentEntries: createDocumentEntryRepository(db),
   medications: createMedicationRepository(db),
   adherence: createAdherenceRepository(db),
+  doseSlots: createDoseSlotRepository(db),
+  reminderRecipients: createReminderRecipientRepository(db),
+  myReminders: createMyReminderRepository(db),
   visitSummary: createVisitSummaryRepository(db),
   familyUsage: { repository: createFamilyUsageRepository(db), quota: quotaPolicy, ai: aiPolicy },
   familyCaps: {

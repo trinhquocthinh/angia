@@ -6,10 +6,13 @@ import { UploadPrivacyReminder } from './UploadPrivacyReminder';
 const noop = () => undefined;
 
 describe('Nhắc che định danh (BR-041 bổ sung 2026-10-12)', () => {
-  it('TC-245: cảnh báo không có vùng che có hai lựa chọn, không tuyên bố tự phát hiện định danh', () => {
+  it('TC-245: cảnh báo không có vùng che là hộp thoại có hai lựa chọn, không tuyên bố tự phát hiện định danh', () => {
     const html = renderToStaticMarkup(<NoMaskWarning busy={false} onBack={noop} onSendAnyway={noop} />);
-    expect(html).toContain('role="alert"');
-    expect(html).toContain('Ảnh chưa có vùng che nào.');
+    expect(html).toContain('<dialog');
+    expect(html).toContain('role="alertdialog"');
+    expect(html).toContain('aria-labelledby="no-mask-title"');
+    expect(html).toContain('Ảnh chưa có vùng che nào');
+    expect(html).toContain('Đóng và quay lại che thông tin');
     expect(html).toContain('Quay lại che thông tin');
     expect(html).toContain('Ảnh không có thông tin cá nhân — vẫn gửi');
     expect(html).not.toMatch(/tự (phát hiện|che)/);

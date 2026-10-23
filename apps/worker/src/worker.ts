@@ -27,6 +27,12 @@ import { registerRequeueAwaitingBudgetJob } from '@src/jobs/registerRequeueAwait
 import { registerSweepOrphanObjectsJob } from '@src/jobs/registerSweepOrphanObjectsJob.js';
 import { createOrphanRepository } from '@src/features/orphanObjects/infrastructure/createOrphanRepository.js';
 import { createOrphanStorage } from '@src/features/orphanObjects/infrastructure/createOrphanStorage.js';
+import { createReminderRepository } from '@src/features/reminderGeneration/infrastructure/createReminderRepository.js';
+import { createWebPushSender } from '@angia/web-push';
+import { createDeliveryRepository } from '@src/features/reminderDelivery/infrastructure/createDeliveryRepository.js';
+import { createReminderNotifier } from '@src/features/reminderDelivery/infrastructure/createReminderNotifier.js';
+import { registerSendRemindersJob } from '@src/jobs/registerSendRemindersJob.js';
+import { registerGenerateRemindersJob } from '@src/jobs/registerGenerateRemindersJob.js';
 import { createAccountSessionStore } from '@src/features/idpSessionSync/infrastructure/createAccountSessionStore.js';
 import { createAuthentikDirectory } from '@src/features/idpSessionSync/infrastructure/createAuthentikDirectory.js';
 import {
@@ -39,7 +45,7 @@ import { createS3Client } from '@src/shared/storage/createS3Client.js';
 
 // Composition root của worker: pg-boss (role app, migrate:false) + job extract-document (SPEC-009),
 // dead-letter phục hồi chứng từ kẹt, job đầu tháng đưa awaiting_budget vào lại hàng đợi (BR-018)
-// job hằng ngày dọn object S3 mồ côi (BR-044) và job 5 phút đồng bộ phiên với Authentik (BR-045).
+// job hằng ngày dọn object S3 mồ côi (BR-044), job 00:05 sinh lời nhắc thuốc, job mỗi phút gửi lời nhắc qua Web Push (SPEC-027; tắt nếu thiếu WEB_PUSH_*) và job 5 phút đồng bộ phiên với Authentik (BR-045).
 const config = loadWorkerConfig(process.env);
 const logger = pino({ level: config.LOG_LEVEL, base: { service: 'angia-worker', stack: config.STACK } });
 
@@ -151,10 +157,25 @@ try {
     },
     logger,
   );
+  await registerGenerateRemindersJob(
+    boss,
+    createReminderRepository(pool, newId),
+    { now: () => new Date() },
+    logger,
+  );
+  if (config.webPush)
+    await registerSendRemindersJob(
+      boss,
+      createDeliveryRepository(pool, newId),
+      createReminderNotifier(createWebPushSender(config.webPush)),
+      { now: () => new Date() },
+      logger,
+    );
+  else logger.warn('Chưa cấu hình WEB_PUSH_*, không gửi lời nhắc');
   const idpSyncEnabled = await registerIdpSessionSync(config, pool);
   logger.info(
     { aiProvider: config.AI_PROVIDER, idpSyncEnabled },
-    `Worker sẵn sàng — đã đăng ký job convert-heic, prepare-ocr-image, extract-document, ngân sách AI, dọn object mồ côi${idpSyncEnabled ? ' và đồng bộ phiên IdP' : ''}`,
+    `Worker sẵn sàng — đã đăng ký job convert-heic, prepare-ocr-image, extract-document, ngân sách AI, dọn object mồ côi, sinh lời nhắc${idpSyncEnabled ? ' và đồng bộ phiên IdP' : ''}`,
   );
 } catch (error) {
   logger.error({ reason: (error as Error).message }, 'Worker không khởi động được');

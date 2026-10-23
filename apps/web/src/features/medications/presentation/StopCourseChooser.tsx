@@ -34,7 +34,7 @@ export function StopCourseChooser({ courses, list, selected, selectedId, pending
           {error}
         </p>
       )}
-      {list?.length === 0 && <EmptyBox title="Không có đợt thuốc có thể ghi nhận dừng." />}
+      {list?.length === 0 && <EmptyBox title="Không có đợt thuốc nào có thể đánh dấu dừng." />}
       {Boolean(list?.length) && (
         <StopCourseSelector courses={list!} selectedId={selectedId} pending={pending} onSelect={onSelect} />
       )}

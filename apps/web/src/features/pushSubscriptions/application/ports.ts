@@ -1,4 +1,4 @@
-interface PushConfiguration {
+export interface PushConfiguration {
   enabled: boolean;
   publicKey: string | null;
   registered: boolean;

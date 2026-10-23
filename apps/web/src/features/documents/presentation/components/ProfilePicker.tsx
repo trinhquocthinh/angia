@@ -46,13 +46,13 @@ export function ProfilePicker({
               <span className="h-2 w-2 rounded-full bg-[#bfc9c4]" aria-hidden="true" />
             )}
             <span className="break-words">{profile.displayName}</span>
-            {!ready && <span className="font-normal">· chưa đồng thuận</span>}
+            {!ready && <span className="font-normal">· chưa xác nhận</span>}
           </ChoiceChip>
         );
       })}
       {waiting.length > 0 && (
         <p className="w-full text-xs leading-5 text-[#55615f]">
-          Hồ sơ chưa đồng thuận cần gửi link mời ở{' '}
+          Hồ sơ chưa có xác nhận cần gửi link mời ở{' '}
           <Link to="/" className="font-semibold text-[#286958] underline">
             Trang chủ
           </Link>{' '}

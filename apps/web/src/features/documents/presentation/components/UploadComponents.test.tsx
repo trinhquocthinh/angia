@@ -56,7 +56,7 @@ describe('Giao diện /upload theo Stitch a48f7111', () => {
       />,
     );
     expect(text).toMatch(/aria-pressed="true"[^>]*>.*Mẹ/);
-    expect(text).toMatch(/disabled=""[^>]*>.*Ba.*chưa đồng thuận/);
+    expect(text).toMatch(/disabled=""[^>]*>.*Ba.*chưa xác nhận/);
     expect(text).toContain('gửi link mời');
   });
   it('vùng thả ảnh chỉ khóa khi đang gửi; ảnh gốc tới 30 MB được nén trước khi gửi (E3-S1-T2)', () => {

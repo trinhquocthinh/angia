@@ -19,12 +19,12 @@ export function InvitationBasisOption({
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-[13px] font-semibold leading-5 text-[#004135]">
-          {value === 'self' ? 'Tôi là người có hồ sơ' : 'Tôi là người giám hộ hợp pháp'}
+          {value === 'self' ? 'Đây là hồ sơ của tôi' : 'Tôi là người thân / người chăm sóc'}
         </span>
         <span className="mt-1 block text-xs leading-5 text-[#404945]">
           {value === 'self'
-            ? 'Trực tiếp quyết định chia sẻ dữ liệu cá nhân'
-            : 'Theo tư cách giám hộ hợp pháp của bạn'}
+            ? 'Tôi tự quyết định chia sẻ thông tin sức khỏe của mình'
+            : 'Đại diện xác nhận cho người thân (cha mẹ, con nhỏ, người được chăm sóc)'}
         </span>
       </span>
       <input

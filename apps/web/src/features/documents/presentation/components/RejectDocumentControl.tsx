@@ -29,7 +29,7 @@ export function RejectDocumentControl({
         onClick={() => setConfirming(true)}
         className="self-start min-h-11 rounded-xl px-4 text-sm font-semibold text-[#b42318] hover:bg-[#fdecea] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
       >
-        Loại bỏ chứng từ
+        Bỏ qua giấy tờ này
       </button>
     );
   return (
@@ -39,7 +39,8 @@ export function RejectDocumentControl({
       className="flex flex-col gap-3 rounded-2xl bg-[#fdecea] p-4"
     >
       <p id="reject-title" className="text-sm text-[#5c1a12]">
-        Loại bỏ chứng từ này? Chứng từ sẽ rời hàng đợi và không đưa dữ liệu nào vào sổ. Ảnh gốc vẫn được giữ.
+        Bỏ qua giấy tờ này? Giấy tờ sẽ rời khỏi danh sách chờ và không thêm dữ liệu vào sổ. Hình chụp gốc vẫn
+        được lưu lại.
       </p>
       {error && (
         <p role="alert" className="text-sm font-medium text-[#b42318]">

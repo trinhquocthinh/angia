@@ -41,8 +41,8 @@ describe('Form duyệt kết quả xét nghiệm (SPEC-010, BR-022)', () => {
 
   it('chưa có bản trích xuất thì mở một dòng trống, không có nút xóa dòng cuối cùng', () => {
     const html = renderToStaticMarkup(<LabResultForm {...props} payload={null} />);
-    expect(html).toContain('Chưa có dữ liệu AI trích xuất, vui lòng nhập theo ảnh.');
-    expect(html).toContain('AI không đọc được ngày, vui lòng nhập theo phiếu.');
+    expect(html).toContain('Chưa có dữ liệu tự động nhận diện, vui lòng nhập theo ảnh.');
+    expect(html).toContain('Chưa tự động nhận diện được ngày, vui lòng nhập theo phiếu.');
     expect(html).toContain('id="lab-item-0"');
     expect(html).not.toContain('Xóa dòng 1');
   });

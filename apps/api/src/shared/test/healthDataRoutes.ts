@@ -35,10 +35,22 @@ export const HEALTH_DATA_ROUTES = {
   'POST /api/health-profiles/:id/prescriptions/:prescriptionId/reuse': 'scoped',
   'GET /api/health-profiles/:id/adherence-periods': 'scoped',
   'POST /api/health-profiles/:id/adherence-periods': 'scoped',
+  'GET /api/health-profiles/:id/dose-slots': 'scoped',
+  'PUT /api/health-profiles/:id/dose-slots': 'scoped',
+  'GET /api/health-profiles/:id/reminder-recipients': 'scoped',
+  'PUT /api/health-profiles/:id/reminder-recipients': 'scoped',
   'GET /api/health-profiles/:id/visit-summary': 'scoped',
+  // SPEC-035: người nhận hợp lệ (gồm member liên kết hồ sơ) đọc lời nhắc của mình.
+  'GET /api/me/reminders/:reminderId': 'scoped',
 } as const;
 
 type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;
+
+// TC-016: route dùng phiên phải chặn member 403. Loại trừ route dùng token mời và /api/me/reminders
+// (SPEC-035: người nhận hợp lệ kể cả member đọc được lời nhắc của mình — TC-344/TC-345 kiểm riêng).
+export const MEMBER_BLOCKED_SESSION_ROUTES = Object.keys(HEALTH_DATA_ROUTES).filter(
+  (route) => !route.includes('/consent-invitations/') && !route.startsWith('GET /api/me/reminders/'),
+);
 // Record<RouteOfKind<'scoped'>, …> buộc test liệt kê đủ route của nhóm ngay lúc typecheck.
 export type RouteOfKind<Kind extends string> = {
   [K in HealthDataRoute]: (typeof HEALTH_DATA_ROUTES)[K] extends Kind ? K : never;

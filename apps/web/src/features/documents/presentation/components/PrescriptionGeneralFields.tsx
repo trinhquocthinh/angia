@@ -16,7 +16,7 @@ export function PrescriptionGeneralFields({ form, aiDate }: GeneralFieldsProps) 
           label="Ngày kê đơn *"
           type="date"
           error={errors.issuedDate?.message}
-          hint={aiDate ? undefined : 'AI không đọc được ngày, vui lòng nhập theo đơn.'}
+          hint={aiDate ? undefined : 'Chưa tự động nhận diện được ngày, vui lòng nhập theo đơn.'}
           {...form.register('issuedDate')}
         />
         <ReadingField

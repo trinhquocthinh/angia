@@ -35,7 +35,8 @@ export function NewProfileForm({
           retry={retry}
         />
         <p className="text-sm leading-6 text-[#55615f]">
-          Hồ sơ mới chưa có đồng thuận. Bạn có thể tạo link để người nhận phản hồi trên trang Nhà sau khi tạo.
+          Hồ sơ mới chưa có xác nhận từ người thân. Bạn có thể tạo link gửi người thân xác nhận trên Trang chủ
+          sau khi tạo.
         </p>
         {error && (
           <p role="alert" className="text-sm text-[#b42318]">

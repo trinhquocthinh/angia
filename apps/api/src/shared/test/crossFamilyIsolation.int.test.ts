@@ -3,10 +3,11 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
 import { acceptConsentInvitation } from './acceptConsentInvitation.js';
 import { expectCrossFamilyDenied } from './expectCrossFamilyDenied.js';
-import { HEALTH_DATA_ROUTES, type RouteOfKind } from './healthDataRoutes.js';
+import { MEMBER_BLOCKED_SESSION_ROUTES, type RouteOfKind } from './healthDataRoutes.js';
 import type { SeededSession } from './seedAuthFixtures.js';
 import type { Target, Probe } from './CrossFamilyTarget.js';
 import { seedPendingDocument } from './seedPendingDocument.js';
+import { seedReminder } from './seedReminder.js';
 import { snapshotHealthTables } from './snapshotHealthTables.js';
 import { manualPrescription as prescription, manualReading as reading } from './healthDataFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from './startProfileTestApp.js';
@@ -14,6 +15,13 @@ import { startProfileTestApp, type ProfileTestApp } from './startProfileTestApp.
 const respondBody = { decision: 'accepted', basis: 'self', respondentName: 'Lén' };
 const profiles = '/api/health-profiles';
 const documents = '/api/source-documents';
+const course = {
+  name: 'Canxi',
+  quantityPerDose: 1,
+  doseUnit: 'viên',
+  slots: ['morning'],
+  startDate: '2026-10-01',
+};
 const adherence = { medicationName: 'Canxi', status: 'taking', fromDate: '2026-10-01' };
 const seriesQuery = 'kind=blood_pressure&from=2026-10-01&to=2026-10-31';
 
@@ -89,13 +97,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     'GET /api/health-profiles/:id/document-entries': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/document-entries`),
     'POST /api/health-profiles/:id/medication-courses': (u, x) =>
-      t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses`, {
-        name: 'Canxi',
-        quantityPerDose: 1,
-        doseUnit: 'viên',
-        slots: ['morning'],
-        startDate: '2026-10-01',
-      }),
+      t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses`, course),
     'GET /api/health-profiles/:id/medication-courses/stoppable': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/medication-courses/stoppable`),
     'GET /api/health-profiles/:id/medication-courses/current': (u, x) =>
@@ -113,8 +115,19 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'GET', `${profiles}/${x.profileId}/adherence-periods`),
     'POST /api/health-profiles/:id/adherence-periods': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/adherence-periods`, { ...adherence, status: 'stopped' }),
+    'GET /api/health-profiles/:id/dose-slots': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/dose-slots`),
+    'PUT /api/health-profiles/:id/dose-slots': (u, x) =>
+      t.call(u, 'PUT', `${profiles}/${x.profileId}/dose-slots`, { slots: { noon: '12:00' } }),
+    'GET /api/health-profiles/:id/reminder-recipients': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/reminder-recipients`),
+    'PUT /api/health-profiles/:id/reminder-recipients': (u, x) =>
+      t.call(u, 'PUT', `${profiles}/${x.profileId}/reminder-recipients`, {
+        recipientAccountIds: [x.accountId],
+      }),
     'GET /api/health-profiles/:id/visit-summary': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/visit-summary`),
+    'GET /api/me/reminders/:reminderId': (u, x) => t.call(u, 'GET', `/api/me/reminders/${x.reminderId}`),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
         type: 'device_reading',
@@ -131,20 +144,14 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const token = await acceptConsentInvitation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const { documentId } = await seedPendingDocument(t, owner, reading);
-    const course = (await (
-      await t.call(main, 'POST', `${profiles}/${profile.id}/medication-courses`, {
-        name: 'Canxi',
-        quantityPerDose: 1,
-        doseUnit: 'viên',
-        slots: ['morning'],
-        startDate: '2026-10-01',
-      })
-    ).json()) as { id: string };
+    const started = await t.call(main, 'POST', `${profiles}/${profile.id}/medication-courses`, course);
+    const { id: courseId } = (await started.json()) as { id: string };
     await t.call(main, 'POST', `${profiles}/${profile.id}/adherence-periods`, adherence);
     const body = { type: 'prescription', data: prescription };
     const saved = await t.call(main, 'POST', `${profiles}/${profile.id}/manual-records`, body);
     const { id: prescriptionId } = ((await saved.json()) as { prescription: { id: string } }).prescription;
-    return { familyId, main, profile, documentId, token, courseId: course.id, prescriptionId };
+    const reminderId = await seedReminder(t.owner, familyId, profile.id, main.accountId);
+    return { familyId, main, profile, documentId, token, courseId, prescriptionId, reminderId };
   };
   const attackers = async () => {
     const familyId = await t.family();
@@ -163,6 +170,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       accountId: victim.main.accountId,
       courseId: victim.courseId,
       prescriptionId: victim.prescriptionId,
+      reminderId: victim.reminderId,
       token: t.codec.issue({ ...t.codec.verify(victim.token)!, familyId }),
     };
     const missing: Target = {
@@ -171,6 +179,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       accountId: randomUUID(),
       courseId: randomUUID(),
       prescriptionId: randomUUID(),
+      reminderId: randomUUID(),
       token: 'bogus',
     };
     const before = await snapshot();
@@ -236,8 +245,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
   it('TC-016: member bị từ chối 403 ở mọi route dữ liệu sức khỏe dùng phiên', async () => {
     const victim = await victimFixture();
     const member = await t.session(victim.familyId, 'member', 'Thành viên');
-    const sessionRoutes = Object.keys(HEALTH_DATA_ROUTES).filter((r) => !r.includes('/consent-invitations/'));
-    for (const route of sessionRoutes) {
+    for (const route of MEMBER_BLOCKED_SESSION_ROUTES) {
       const [method, pattern] = route.split(' ') as [string, string];
       const path = pattern.replace(
         ':id',

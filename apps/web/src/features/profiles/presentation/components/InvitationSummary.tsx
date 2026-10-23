@@ -8,7 +8,7 @@ export function InvitationSummary({ view }: { view: InvitationView }) {
         Xác nhận quyền riêng tư
       </span>
       <h1 className="auth-heading mt-3 text-2xl font-semibold leading-8 text-[#004135]">
-        Lời mời chia sẻ dữ liệu sức khỏe
+        Lời mời chia sẻ sổ sức khỏe gia đình
       </h1>
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-[#eaf6f5] p-3.5">
         <div className="flex min-w-0 items-center gap-2">
@@ -37,8 +37,9 @@ export function InvitationSummary({ view }: { view: InvitationView }) {
           <InvitationIcon name="shield" />
         </span>
         <p className="text-[13px] leading-6">
-          Bạn được mời chia sẻ và lưu trữ dữ liệu sức khỏe trong nhóm gia đình. Ảnh chứng từ có thể được gửi
-          tới dịch vụ AI ở nước ngoài để trích xuất thông tin. Bạn có thể đồng ý hoặc từ chối.
+          Bạn được mời cùng lưu trữ và theo dõi thông tin sức khỏe trong gia đình. Ảnh giấy tờ khám có thể
+          được gửi tới dịch vụ tự động nhận diện ở nước ngoài để trích xuất thông tin. Bạn có thể đồng ý hoặc
+          từ chối.
         </p>
       </div>
     </>

@@ -5,7 +5,7 @@ export function ReviewDetailHeading({ profileName }: { profileName: string }) {
       <Link to="/review" className="min-h-11 content-center text-sm font-medium text-[#286958] lg:hidden">
         ← Chờ duyệt
       </Link>
-      <h2 className="text-xl font-semibold text-[#004135]">Chứng từ của {profileName}</h2>
+      <h2 className="text-xl font-semibold text-[#004135]">Giấy tờ của {profileName}</h2>
     </div>
   );
 }

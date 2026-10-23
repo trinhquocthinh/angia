@@ -18,7 +18,7 @@ export function InvitationTerminal({
           : 'Phản hồi đã được ghi nhận. Lời mời này không nhận thêm quyết định.'}
       </p>
       <p className="mt-3 text-sm leading-6 text-[#55615f]">
-        Danh tính và tư cách người phản hồi là tự khai, chưa được xác minh.
+        Thông tin người phản hồi do người thân tự nhập và chưa được xác minh.
       </p>
     </section>
   );

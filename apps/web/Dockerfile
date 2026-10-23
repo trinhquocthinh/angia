@@ -17,6 +17,7 @@ COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 COPY apps/worker/package.json apps/worker/
 COPY packages/contracts/package.json packages/contracts/
+COPY packages/web-push/package.json packages/web-push/
 RUN yarn workspaces focus @angia/web
 
 COPY tsconfig.base.json ./

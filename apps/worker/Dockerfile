@@ -16,12 +16,14 @@ COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 COPY apps/worker/package.json apps/worker/
 COPY packages/contracts/package.json packages/contracts/
+COPY packages/web-push/package.json packages/web-push/
 RUN yarn workspaces focus @angia/worker
 
 COPY tsconfig.base.json ./
 COPY packages/contracts packages/contracts
+COPY packages/web-push packages/web-push
 COPY apps/worker apps/worker
-RUN yarn workspace @angia/contracts build && yarn workspace @angia/worker build
+RUN yarn workspace @angia/contracts build && yarn workspace @angia/web-push build && yarn workspace @angia/worker build
 
 # ---------------------------------------------------------------------------
 # Stage 2: runtime chỉ chứa dependencies production + mã đã biên dịch
@@ -42,12 +44,15 @@ COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 COPY apps/worker/package.json apps/worker/
 COPY packages/contracts/package.json packages/contracts/
+COPY packages/web-push/package.json packages/web-push/
 # sharp tải binary libvips theo nền tảng build (linux glibc) qua optionalDependencies.
 RUN yarn workspaces focus @angia/worker --production && yarn cache clean --all && rm -rf /root/.cache
 
 COPY --from=build /app/packages/contracts/dist packages/contracts/dist
+COPY --from=build /app/packages/web-push/dist packages/web-push/dist
 COPY --from=build /app/apps/worker/dist apps/worker/dist
 
 USER 10001:10001
-# Không mở cổng: worker chỉ kết nối ra PostgreSQL, Garage S3 và OpenRouter.
+# Không mở cổng: worker chỉ kết nối ra PostgreSQL, Garage S3, OpenRouter và push service của trình duyệt
+# (HTTPS ra ngoài tới endpoint Web Push — E9-S2-T2 send-reminders).
 CMD ["node", "apps/worker/dist/worker.js"]

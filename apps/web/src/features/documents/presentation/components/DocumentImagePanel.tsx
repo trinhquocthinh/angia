@@ -22,11 +22,11 @@ export function DocumentImagePanel({ document }: { document: SourceDocument }) {
   const original = documentImageUrl(document.id, 'original');
   return (
     <section
-      aria-label="Ảnh chứng từ"
+      aria-label="Hình chụp giấy tờ"
       className="flex h-[65vh] flex-col gap-3 rounded-[20px] bg-[#eaf6f5] p-3 xl:sticky xl:top-4 xl:h-[calc(100dvh-2rem)] xl:self-start"
     >
       <div className="flex items-center justify-between gap-2 px-1 text-xs font-semibold uppercase tracking-wider text-[#286958]">
-        <span>Ảnh chứng từ</span>
+        <span>Hình chụp giấy tờ</span>
         <span className="rounded-md bg-white px-2 py-1 font-mono text-[11px] text-[#55615f]">
           Tệp gốc: {FORMAT[document.mimeType] ?? 'ẢNH'} · {sizeLabel(document.sizeBytes)}
         </span>

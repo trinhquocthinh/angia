@@ -21,7 +21,7 @@ type ReviewQueueItemProps = { document: SourceDocument; profileName: string; act
 // Hiện ngay khi ảnh vừa lên (AI đang đọc); đơn thuốc/xét nghiệm và nhập tay vẫn hiện để không bị "mất".
 // Bố cục Stitch 626ca318: avatar nhỏ + tiêu đề/hồ sơ, chip trạng thái bên phải, dòng phụ loại + giờ.
 export function ReviewQueueItem({ document, profileName, active }: ReviewQueueItemProps) {
-  const type = TYPES[document.type ?? ''] ?? { title: 'Ảnh chứng từ', icon: 'file' as const };
+  const type = TYPES[document.type ?? ''] ?? { title: 'Hình chụp giấy tờ', icon: 'file' as const };
   return (
     <Link
       to="/review/$documentId"

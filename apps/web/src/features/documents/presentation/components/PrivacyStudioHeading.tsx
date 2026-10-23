@@ -9,7 +9,7 @@ export function PrivacyStudioHeading() {
         </h3>
         <p className="mt-1 text-[13px] leading-5 text-[#404945]">
           Chỉ giữ nội dung cần đọc. Che họ tên, số điện thoại và địa chỉ bằng vùng đen đặc. Ảnh chưa được gửi
-          tới AI.
+          để tự động nhận diện.
         </p>
       </div>
       <span className="flex shrink-0 items-center gap-1 self-start rounded-full bg-[#deebea] px-2.5 py-1 text-[11px] font-semibold text-[#286958]">

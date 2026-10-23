@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "yarn build:contracts && concurrently -n contracts,api,worker,web \"yarn workspace @angia/contracts dev\" \"yarn workspace @angia/api dev\" \"yarn workspace @angia/worker dev\" \"yarn workspace @angia/web dev\"",
     "build": "yarn workspaces foreach -At --exclude angia run build",
-    "build:contracts": "yarn workspace @angia/contracts build",
+    "build:contracts": "yarn workspace @angia/contracts build && yarn workspace @angia/web-push build",
     "typecheck": "yarn build:contracts && yarn workspaces foreach -A --exclude angia run typecheck && tsc -p tsconfig.tooling.json",
     "lint": "eslint --cache --cache-location node_modules/.cache/eslint .",
     "format": "prettier --write .",

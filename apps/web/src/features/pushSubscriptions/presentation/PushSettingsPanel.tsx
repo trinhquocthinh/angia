@@ -1,10 +1,18 @@
-import { Link } from '@tanstack/react-router';
 import { createPushApi } from '../infrastructure/createPushApi';
 import { getPushSupport } from '../infrastructure/getPushSupport';
+import { getNotificationPermission } from '../infrastructure/getNotificationPermission';
 import { enableBrowserPush } from '../infrastructure/enableBrowserPush';
 import { disableBrowserPush } from '../infrastructure/disableBrowserPush';
 import { usePushSettings } from '../application/usePushSettings';
+import { describePushState } from '../application/describePushState';
 import { PushActionButtons } from './PushActionButtons';
+import { PushHero } from './PushHero';
+import { PushStatusCard } from './PushStatusCard';
+import { PushDeviceCard } from './PushDeviceCard';
+import { LockScreenPreview } from './LockScreenPreview';
+import { PushDeviceDetails } from './PushDeviceDetails';
+import { PushFeedback } from './PushFeedback';
+import { PushNotes } from './PushNotes';
 const api = createPushApi();
 export function PushSettingsPanel({ csrf }: { csrf: string }) {
   const { config, action } = usePushSettings(api, csrf);
@@ -15,52 +23,54 @@ export function PushSettingsPanel({ csrf }: { csrf: string }) {
     action.mutate({ task, success });
   };
   const data = config.data;
+  const state = describePushState({ data, error: config.isError, support });
+  const enabled = Boolean(data?.enabled && data.publicKey);
+  const registered = Boolean(data?.registered);
+  const enable = () =>
+    run(() => enableBrowserPush(api, data!.publicKey!, csrf), 'Đã bật thông báo trên thiết bị này.');
+  const disable = () => run(() => disableBrowserPush(api, csrf), 'Đã tắt thông báo trên thiết bị này.');
   return (
-    <section className="mx-auto max-w-xl space-y-5 px-5 py-8 text-[#183d32]">
-      <Link to="/" className="underline">
-        ← Về AN GIA
-      </Link>
-      <h1 className="text-3xl font-semibold">Thông báo trên thiết bị này</h1>
-      <p>
-        Bật nhận thông báo từ AN GIA. Màn hình khóa chỉ hiện “Đến giờ dùng thuốc”. Chi tiết được xem sau khi
-        đăng nhập và kiểm tra quyền.
-      </p>
-      {support && <p className="rounded-xl bg-[#eaf6f5] p-4">{support}</p>}
-      {config.isPending && <p>Đang kiểm tra đăng ký…</p>}
-      {config.isError && (
-        <p role="alert">
-          Chưa đọc được cấu hình.{' '}
-          <button className="underline" onClick={() => void config.refetch()}>
-            Thử lại
-          </button>
-        </p>
-      )}
-      {data && !data.enabled && <p>Tính năng thông báo chưa được bật trên máy chủ.</p>}
-      {data?.registered && <p>Thiết bị đã bật nhận thông báo.</p>}
-      <PushActionButtons
-        busy={action.isPending}
-        supported={!support}
-        loaded={Boolean(data)}
-        enabled={Boolean(data?.enabled && data.publicKey)}
-        registered={Boolean(data?.registered)}
-        onEnable={() =>
-          run(() => enableBrowserPush(api, data!.publicKey!, csrf), 'Đã bật thông báo trên thiết bị này.')
-        }
-        onTest={() =>
-          run(
-            () => api.sendTest(csrf),
-            'Dịch vụ push đã tiếp nhận tin thử. Kiểm tra thông báo trên thiết bị.',
-          )
-        }
-        onDisable={() => run(() => disableBrowserPush(api, csrf), 'Đã tắt thông báo trên thiết bị này.')}
-      />
-      <p role="status" aria-live="polite">
-        {action.isPending ? 'Đang xử lý…' : (action.error?.message ?? action.data ?? '')}
-      </p>
-      <p className="text-sm">
-        Đóng ứng dụng hoặc hết phiên đăng nhập không tự tắt thông báo. Đăng xuất hoặc chọn “Tắt thông báo” sẽ
-        ngừng gửi mới trên thiết bị này. Thông báo đã gửi có thể đến muộn.
-      </p>
-    </section>
+    <div className="mx-auto grid max-w-2xl gap-4 lg:max-w-6xl text-[#131d1d] lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-8">
+      <section className="flex min-w-0 flex-col gap-4 lg:gap-6">
+        <PushHero />
+        <PushDeviceCard
+          state={state}
+          registered={registered}
+          canToggle={!action.isPending && !support && Boolean(data) && (registered || enabled)}
+          onToggle={registered ? disable : enable}
+        />
+        <div className="hidden lg:block">
+          <PushStatusCard
+            state={state}
+            refreshing={config.isFetching}
+            onRefresh={() => void config.refetch()}
+          />
+        </div>
+        <div className="lg:hidden">
+          <LockScreenPreview />
+        </div>
+        <PushFeedback config={config} action={action} />
+        <PushActionButtons
+          busy={action.isPending}
+          supported={!support}
+          loaded={Boolean(data)}
+          enabled={enabled}
+          registered={registered}
+          onEnable={enable}
+          onTest={() =>
+            run(
+              () => api.sendTest(csrf),
+              'Dịch vụ push đã tiếp nhận tin thử. Kiểm tra thông báo trên thiết bị.',
+            )
+          }
+          onDisable={disable}
+        />
+        <PushNotes />
+      </section>
+      <aside className="hidden flex-col gap-6 lg:flex">
+        <LockScreenPreview />
+        <PushDeviceDetails supported={!support} permission={getNotificationPermission()} data={data} />
+      </aside>
+    </div>
   );
 }

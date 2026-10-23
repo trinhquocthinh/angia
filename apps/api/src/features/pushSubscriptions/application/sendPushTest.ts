@@ -1,4 +1,4 @@
-import { isAllowedPushSubscription } from '../domain/isAllowedPushSubscription.js';
+import { isAllowedPushSubscription } from '@angia/web-push';
 import type { PushActor, PushDependencies } from './ports.js';
 export async function sendPushTest(deps: PushDependencies, actor: PushActor) {
   if (!deps.publicKey) return 'disabled' as const;

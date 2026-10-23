@@ -1,4 +1,7 @@
 import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
+import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
+import { createMyReminderRepository } from '@src/features/myReminders/infrastructure/createMyReminderRepository.js';
+import { createReminderRecipientRepository } from '@src/features/reminders/infrastructure/createReminderRecipientRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
 import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
 import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
@@ -50,6 +53,19 @@ export interface ProfileTestOptions {
   heavyRateLimit?: { perMinute: number; now(): number };
 }
 
+// Repository dữ liệu sức khỏe theo hồ sơ, đều chạy trên PostgreSQL thật qua withFamilyScope.
+const healthDataRepositories = (database: Database) => ({
+  measurements: createMeasurementRepository(database),
+  labResults: createLabResultRepository(database),
+  documentEntries: createDocumentEntryRepository(database),
+  medications: createMedicationRepository(database),
+  adherence: createAdherenceRepository(database),
+  doseSlots: createDoseSlotRepository(database),
+  reminderRecipients: createReminderRecipientRepository(database),
+  myReminders: createMyReminderRepository(database),
+  visitSummary: createVisitSummaryRepository(database),
+});
+
 function buildApp(
   database: Database,
   appBaseUrl: string,
@@ -95,12 +111,7 @@ function buildApp(
       quota,
       ai: TEST_AI_POLICY,
     },
-    measurements: createMeasurementRepository(database),
-    labResults: createLabResultRepository(database),
-    documentEntries: createDocumentEntryRepository(database),
-    medications: createMedicationRepository(database),
-    adherence: createAdherenceRepository(database),
-    visitSummary: createVisitSummaryRepository(database),
+    ...healthDataRepositories(database),
     familyUsage: { repository: createFamilyUsageRepository(database), quota, ai: TEST_AI_POLICY },
     heavyRateLimit: options.heavyRateLimit ?? TEST_HEAVY_RATE_LIMIT,
     familyCaps: {

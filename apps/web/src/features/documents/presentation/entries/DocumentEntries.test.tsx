@@ -92,16 +92,21 @@ describe('TC-285 tab Hồ sơ & Giấy tờ khám', () => {
     expect(list({ error: true })).toContain('Không tải được giấy tờ khám.');
   });
 
-  it('ngăn chi tiết: công tắc ảnh chỉ khi có bản che; nút Dùng lại chỉ với đơn đã lưu', () => {
+  it('ngăn chi tiết: ảnh gốc mặc định kèm chú thích lưu riêng; bản đã che nằm trong mục mở rộng', () => {
     const panel = (value: DocumentEntry) =>
       renderToStaticMarkup(
         <DocumentEntryPanel entry={value} canReuse onReuse={() => undefined} onClose={() => undefined} />,
       );
     const masked = panel(entry({ hasOcrImage: true }));
-    expect(masked).toContain('Bản đã gửi AI');
+    expect(masked).toContain('chỉ lưu trong kho riêng của gia đình');
+    expect(masked).toMatch(/<details[^>]*><summary[^>]*>Xem bản đã che gửi tự động nhận diện/);
+    expect(masked).not.toMatch(/<details[^>]*open/);
+    expect(masked).toContain('variant=ocr');
+    expect(masked).not.toContain('aria-pressed');
     expect(masked).not.toContain('Dùng lại đơn này');
     const plain = panel(entry());
-    expect(plain).not.toContain('Bản đã gửi AI');
+    expect(plain).toContain('chỉ lưu trong kho riêng của gia đình');
+    expect(plain).not.toContain('<details');
     // Ảnh gốc HEIC trình duyệt không hiển thị được: dùng bản xem trước WebP như màn duyệt.
     expect(plain).toContain('variant=preview');
     expect(plain).not.toContain('variant=original');

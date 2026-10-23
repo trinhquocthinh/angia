@@ -14,6 +14,9 @@ describe('Giao diện kiểm tra riêng tư', () => {
     const text = renderToStaticMarkup(
       <PrivacyDraftReview state={state()} busy={false} dispatch={noop} onApprove={noop} />,
     );
+    expect(text).toContain('<dialog');
+    expect(text).toContain('aria-labelledby="privacy-review-title"');
+    expect(text).toContain('Đóng để chỉnh lại ảnh');
     expect(text).toContain('src="/api/image.png"');
     expect(text).toMatch(/<button[^>]*disabled=""[^>]*>Xác nhận và OCR/);
     expect(text).not.toContain('checked=""');

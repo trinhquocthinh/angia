@@ -27,8 +27,8 @@ describe('Đồng thuận bằng lời mời, không suy diễn từ metadata c�
         onConsent={() => undefined}
       />,
     );
-    expect(html).toContain('Tạo link đồng thuận');
-    expect(html).not.toContain('Đã đồng thuận');
+    expect(html).toContain('Tạo link mời người thân');
+    expect(html).not.toContain('Đã đồng ý chia sẻ');
     expect(html).toContain('Xác nhận cũ');
     expect(html).toContain('Năm sinh 1954');
     expect(html).not.toContain('tuổi');
@@ -37,7 +37,7 @@ describe('Đồng thuận bằng lời mời, không suy diễn từ metadata c�
     const html = renderToStaticMarkup(
       <ProfileCard profile={{ ...profile, consentStatus: status }} onConsent={() => undefined} />,
     );
-    expect(html).toContain(status === 'invited' ? 'Quản lý link đồng thuận' : 'Tạo link đồng thuận');
+    expect(html).toContain(status === 'invited' ? 'Quản lý link xác nhận' : 'Tạo link mời người thân');
   });
   it('đã đồng thuận ghi tên tự khai và giới hạn xác minh; không có main xác nhận thay', () => {
     const html = renderToStaticMarkup(
@@ -51,7 +51,7 @@ describe('Đồng thuận bằng lời mời, không suy diễn từ metadata c�
         onConsent={() => undefined}
       />,
     );
-    expect(html).toContain('Đã đồng thuận');
+    expect(html).toContain('Đã đồng ý chia sẻ');
     expect(html).toContain('An');
     expect(html).toContain('chưa được xác minh');
     expect(html).not.toContain('<button');

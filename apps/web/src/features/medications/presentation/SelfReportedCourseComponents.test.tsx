@@ -76,11 +76,11 @@ describe('Sheet khai báo thuốc bổ', () => {
     expect(html).toContain('500mg');
     expect(html).not.toContain('checked=""');
     expect(html).toMatch(/<button[^>]*disabled=""[^>]*>Lưu với lựa chọn này/);
-    expect(html).toContain('Sửa lại khai báo');
+    expect(html).toContain('Sửa lại thông tin');
   });
   it('TC-049: đang lưu khóa cả đóng sheet và form', () => {
     const html = render({ pending: true });
-    expect(html).toMatch(/<button[^>]*disabled=""[^>]*aria-label="Đóng khai báo thuốc bổ"/);
+    expect(html).toMatch(/<button[^>]*disabled=""[^>]*aria-label="Đóng thêm thuốc bổ, vitamin"/);
     expect(html).toMatch(/<fieldset disabled=""/);
     expect(html).toContain('Đang lưu…');
   });

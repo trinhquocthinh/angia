@@ -3383,6 +3383,361 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/health-profiles/{id}/dose-slots': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc khung giờ buổi của hồ sơ (SPEC-025) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Khung giờ đã lưu theo thứ tự Sáng → Tối; rỗng khi chưa thiết lập */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['DoseSlotList'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    /** Thiết lập khung giờ buổi (SPEC-025); buổi không gửi bị bỏ khung giờ */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['SetDoseSlotsRequest'];
+        };
+      };
+      responses: {
+        /** @description Khung giờ đã lưu theo thứ tự Sáng → Tối; rỗng khi chưa thiết lập */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['DoseSlotList'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: sai định dạng giờ hoặc các buổi không tăng dần Sáng < Trưa < Chiều < Tối */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/reminder-recipients': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc người nhận nhắc thuốc của hồ sơ (SPEC-026) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Người nhận hiện hành và tài khoản main có thể chỉ định */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ReminderRecipients'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    /** Chỉ định người nhận nhắc cho hồ sơ không liên kết tài khoản (SPEC-026) */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['SetReminderRecipientsRequest'];
+        };
+      };
+      responses: {
+        /** @description Người nhận hiện hành và tài khoản main có thể chỉ định */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ReminderRecipients'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: danh sách rỗng, tài khoản không phải main cùng gia đình, hoặc hồ sơ đã liên kết tài khoản */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/me/reminders/{reminderId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc lời nhắc mà tài khoản phiên là người nhận hiện hành (SPEC-035) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          reminderId: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Lời nhắc của buổi kèm thuốc cần dùng */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['MyReminder'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: tài khoản chưa thuộc gia đình */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: không có lời nhắc hoặc tài khoản không phải người nhận hợp lệ */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/visit-summary': {
     parameters: {
       query?: never;
@@ -3843,6 +4198,7 @@ export interface components {
       aiOcr: {
         month: string;
         usedPercent: number;
+        anyUsed: boolean;
         exhausted: boolean;
       };
     };
@@ -4402,6 +4758,58 @@ export interface components {
       status: components['schemas']['AdherenceStatus'];
       /** Format: date */
       fromDate: string;
+    };
+    DoseSlotList: components['schemas']['DoseSlot'][];
+    DoseSlot: {
+      /** @enum {string} */
+      slot: 'morning' | 'noon' | 'afternoon' | 'evening';
+      time: components['schemas']['TimeOfDay'];
+    };
+    /** @description Giờ:phút 24 giờ theo giờ Việt Nam, dạng HH:mm */
+    TimeOfDay: string;
+    SetDoseSlotsRequest: {
+      slots: {
+        morning?: components['schemas']['TimeOfDay'];
+        noon?: components['schemas']['TimeOfDay'];
+        afternoon?: components['schemas']['TimeOfDay'];
+        evening?: components['schemas']['TimeOfDay'];
+      };
+    };
+    ReminderRecipients: {
+      /**
+       * @description linked: hồ sơ liên kết tài khoản, người nhận cố định; assigned: main được chỉ định
+       * @enum {string}
+       */
+      mode: 'linked' | 'assigned';
+      recipients: components['schemas']['ReminderRecipientAccount'][];
+      /** @description Tài khoản main có thể chỉ định */
+      candidates: components['schemas']['ReminderRecipientAccount'][];
+    };
+    ReminderRecipientAccount: {
+      /** Format: uuid */
+      accountId: string;
+      displayName: string;
+    };
+    SetReminderRecipientsRequest: {
+      recipientAccountIds: string[];
+    };
+    MyReminder: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date */
+      date: string;
+      /** @enum {string} */
+      slot: 'morning' | 'noon' | 'afternoon' | 'evening';
+      /** Format: date-time */
+      scheduledAt: string;
+      profileName: string;
+      medications: components['schemas']['MyReminderMedication'][];
+    };
+    MyReminderMedication: {
+      name: string;
+      strength: string | null;
+      quantityPerDose: string | null;
+      doseUnit: string | null;
     };
     VisitSummary: {
       profile: {

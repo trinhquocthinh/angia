@@ -8,12 +8,12 @@ export function SessionStatus(props: Props) {
     <AuthLayout>
       {props.state === 'loading' ? (
         <p role="status" className="flex items-center justify-center gap-3 text-base text-text-secondary">
-          <AuthSpinner /> Đang kiểm tra phiên…
+          <AuthSpinner /> Đang kiểm tra trạng thái đăng nhập…
         </p>
       ) : (
         <div className="flex flex-col gap-6 text-center">
           <p role="alert" className="text-base leading-7 text-danger">
-            Không thể kiểm tra phiên. Vui lòng thử lại.
+            Không thể kết nối. Vui lòng thử lại.
           </p>
           <button
             type="button"

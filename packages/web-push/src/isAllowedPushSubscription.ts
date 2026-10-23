@@ -1,7 +1,5 @@
-export interface PushSubscriptionValue {
-  endpoint: string;
-  keys: { p256dh: string; auth: string };
-}
+import type { PushSubscriptionValue } from './PushSendResult.js';
+
 const HOSTS = new Set(['web.push.apple.com', 'fcm.googleapis.com', 'updates.push.services.mozilla.com']);
 export function isAllowedPushSubscription(value: PushSubscriptionValue): boolean {
   try {

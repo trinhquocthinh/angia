@@ -10,9 +10,9 @@ export function SelfReportedCourseSheetBody({ profile, state, onClose }: Props) 
   return (
     <SidePanel
       titleId="supplement-title"
-      title={`Khai báo thuốc bổ cho ${profile.displayName}`}
-      subtitle="Thuốc bổ, vitamin hoặc thực phẩm chức năng không qua đơn thuốc."
-      closeLabel="Đóng khai báo thuốc bổ"
+      title={`Thêm thuốc bổ, vitamin cho ${profile.displayName}`}
+      subtitle="Thuốc bổ, vitamin hoặc thực phẩm bảo vệ sức khỏe uống ngoài đơn thuốc."
+      closeLabel="Đóng thêm thuốc bổ, vitamin"
       pending={state.pending}
       onClose={onClose}
     >

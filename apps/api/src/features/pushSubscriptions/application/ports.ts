@@ -1,4 +1,4 @@
-import type { PushSubscriptionValue } from '../domain/isAllowedPushSubscription.js';
+import type { PushSubscriptionValue } from '@angia/web-push';
 export interface PushActor {
   familyId: string;
   accountId: string;

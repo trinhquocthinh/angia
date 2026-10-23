@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type { Account, Family } from '../../application/ports';
 import type { AdminTask } from '../AdminTask';
 import { AccountsTable } from './AccountsTable';
@@ -9,13 +8,16 @@ export function AccountsPanel({
   families,
   pending,
   onTask,
+  search,
+  onSearch,
 }: {
   accounts: Account[];
   families: Family[];
   pending: boolean;
   onTask: (task: AdminTask) => void;
+  search: string;
+  onSearch: (search: string) => void;
 }) {
-  const [search, setSearch] = useState('');
   const visible = accounts.filter((account) =>
     account.displayName.toLocaleLowerCase('vi').includes(search.trim().toLocaleLowerCase('vi')),
   );
@@ -40,7 +42,7 @@ export function AccountsPanel({
           <input
             type="search"
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => onSearch(event.target.value)}
             placeholder="Tìm thành viên..."
           />
         </label>

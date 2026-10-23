@@ -17,3 +17,7 @@ export { familyExtractionSpend } from './familyExtractionSpend.js';
 export { medicationCourses } from './medicationCourses.js';
 export { adherencePeriods } from './adherencePeriods.js';
 export { pushSubscriptions } from './pushSubscriptions.js';
+export { doseSlots } from './doseSlots.js';
+export { reminderRecipients } from './reminderRecipients.js';
+export { reminders } from './reminders.js';
+export { reminderDeliveries } from './reminderDeliveries.js';

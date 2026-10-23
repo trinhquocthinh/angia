@@ -35,7 +35,7 @@ export function LabSeriesList({ data, loading, error, retry }: Props) {
   if (data.length === 0)
     return (
       <div className="flex flex-col items-center gap-3 rounded-[20px] border-2 border-dashed border-[#d9e5e4] bg-white px-6 py-12 text-center">
-        <p className="text-sm font-semibold text-[#131d1d]">Chưa có kết quả cận lâm sàng.</p>
+        <p className="text-sm font-semibold text-[#131d1d]">Chưa có kết quả xét nghiệm nào.</p>
         <Link
           to="/upload"
           className="min-h-11 content-center rounded-full bg-[#004135] px-5 text-sm font-semibold text-white"

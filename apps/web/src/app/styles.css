@@ -23,6 +23,19 @@ body {
   font-family: var(--font-sans);
 }
 
+/* Mở như ứng dụng (PWA): nền khớp thanh trạng thái, không kéo nảy cả trang, không viền xám khi chạm. */
+@media (display-mode: standalone) {
+  html,
+  body {
+    background-color: #f0fcfb;
+    overscroll-behavior-y: none;
+  }
+  body {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+}
+
 /* Mọi dropdown dùng chung mũi tên riêng, cách mép phải 12px; để ngoài @layer nên thắng tiện ích px-* của Tailwind. */
 select:not([multiple]):not([size]) {
   appearance: none;

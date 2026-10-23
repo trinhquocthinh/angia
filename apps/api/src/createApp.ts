@@ -1,5 +1,11 @@
 import type { AdherenceRepository } from '@src/features/adherence/application/ports.js';
 import { registerAdherenceRoutes } from '@src/features/adherence/presentation/registerAdherenceRoutes.js';
+import type { DoseSlotRepository } from '@src/features/reminders/application/ports.js';
+import { registerDoseSlotRoutes } from '@src/features/reminders/presentation/registerDoseSlotRoutes.js';
+import type { MyReminderRepository } from '@src/features/myReminders/application/ports.js';
+import { registerMyReminderRoutes } from '@src/features/myReminders/presentation/registerMyReminderRoutes.js';
+import type { ReminderRecipientRepository } from '@src/features/reminders/application/recipientPorts.js';
+import { registerReminderRecipientRoutes } from '@src/features/reminders/presentation/registerReminderRecipientRoutes.js';
 import type { MedicationManagementRepository } from '@src/features/medications/application/managementPorts.js';
 import { registerMedicationRoutes } from '@src/features/medications/presentation/registerMedicationRoutes.js';
 import { registerPrivacyHeaders } from '@src/features/documentPrivacy/presentation/registerPrivacyHeaders.js';
@@ -65,6 +71,9 @@ export type AppDependencies = {
   documentEntries: DocumentEntryRepository;
   medications: MedicationManagementRepository;
   adherence: AdherenceRepository;
+  doseSlots: DoseSlotRepository;
+  reminderRecipients: ReminderRecipientRepository;
+  myReminders: MyReminderRepository;
   visitSummary: VisitSummaryRepository;
   familyUsage: FamilyUsageDependencies;
   familyCaps: FamilyCapDependencies;
@@ -126,6 +135,9 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerDocumentEntryRoutes(app, deps.documentEntries);
   registerMedicationRoutes(app, deps.medications, deps.auth.login.now);
   registerAdherenceRoutes(app, deps.adherence, deps.auth.login.now);
+  registerDoseSlotRoutes(app, deps.doseSlots);
+  registerReminderRecipientRoutes(app, deps.reminderRecipients);
+  registerMyReminderRoutes(app, deps.myReminders);
   registerVisitSummaryRoute(app, deps.visitSummary, deps.auth.login.now);
   registerInvitationRoutes(app, deps.consentInvitations);
   return app;

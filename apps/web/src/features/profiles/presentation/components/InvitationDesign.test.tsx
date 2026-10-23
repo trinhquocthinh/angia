@@ -16,8 +16,8 @@ describe('TC-106 — thiết kế Stitch lời mời đồng thuận', () => {
     );
     expect(html.match(/type="radio"/g)).toHaveLength(2);
     expect(html).not.toContain('checked=""');
-    expect(html).toContain('Tự khai');
-    expect(html).toContain('Theo tư cách giám hộ hợp pháp của bạn');
+    expect(html).toContain('Tự nhập');
+    expect(html).toContain('Đại diện xác nhận cho người thân (cha mẹ, con nhỏ, người được chăm sóc)');
     expect(html).not.toContain('người cao tuổi');
   });
   it('trang nhận không lộ tên gia đình hoặc giả định AI an toàn hay được hủy bất cứ lúc nào', () => {
@@ -42,7 +42,7 @@ describe('TC-106 — thiết kế Stitch lời mời đồng thuận', () => {
       />,
     );
     expect(html).toContain('Xác nhận quyền riêng tư');
-    expect(html).toContain('AI ở nước ngoài');
+    expect(html).toContain('tự động nhận diện ở nước ngoài');
     expect(html).toContain('chưa được xác minh');
     expect(html).not.toContain('Người gửi lời mời');
     expect(html).not.toContain('AN GIA Care');

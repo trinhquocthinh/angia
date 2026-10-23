@@ -37,7 +37,7 @@ export function ReviewQueue(props: ReviewQueueProps) {
           {!loading && !error && (
             <span className="whitespace-nowrap rounded-full bg-[#aef0da] px-2 py-0.5 text-xs font-bold text-[#2f6f5e]">
               {documents.length}
-              {more ? '+' : ''} chứng từ
+              {more ? '+' : ''} giấy tờ
             </span>
           )}
         </div>
@@ -63,7 +63,7 @@ function QueueBody({ documents, profileNames, activeId, loading, error, retry }:
   if (error)
     return (
       <div role="alert" className="flex flex-col items-start gap-3 rounded-xl bg-[#fdecea] p-4 text-sm">
-        <p>Không tải được danh sách chờ duyệt.</p>
+        <p>Không tải được danh sách chờ kiểm tra.</p>
         <button
           type="button"
           onClick={retry}
@@ -76,7 +76,7 @@ function QueueBody({ documents, profileNames, activeId, loading, error, retry }:
   if (documents.length === 0)
     return (
       <p className="rounded-xl bg-[#eaf6f5] p-6 text-center text-sm text-[#55615f]">
-        Không còn chứng từ chờ duyệt.
+        Không còn giấy tờ nào chờ kiểm tra.
       </p>
     );
   return (

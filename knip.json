@@ -26,6 +26,10 @@
     },
     "packages/contracts": {
       "project": ["src/**/*.ts!"]
+    },
+    "packages/web-push": {
+      "project": ["src/**/*.ts!"],
+      "ignoreDependencies": ["web-push"]
     }
   }
 }

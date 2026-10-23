@@ -38,7 +38,7 @@ export function MedicationCatalog({ data, loading, error, retry }: Props) {
     return (
       <div className="flex flex-col items-center gap-3 rounded-[20px] border-2 border-dashed border-[#d9e5e4] bg-white px-6 py-12 text-center">
         <p className="text-sm font-semibold text-[#131d1d]">
-          Chưa có thuốc. Hãy tải đơn thuốc hoặc khai báo thuốc bổ.
+          Chưa có thuốc. Hãy tải đơn thuốc hoặc thêm thuốc bổ, vitamin.
         </p>
         <Link
           to="/upload"

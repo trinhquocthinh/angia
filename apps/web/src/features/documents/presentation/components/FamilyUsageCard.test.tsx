@@ -7,7 +7,7 @@ const usage: FamilyUsage = {
   storage: { usedBytes: 1288490188, limitBytes: 2 * 1024 ** 3 },
   dailyUploads: { used: 37, limit: 100, resetsAt: '2026-10-20T00:00:00+07:00' },
   pendingJobs: { used: 2, limit: 10 },
-  aiOcr: { month: '2026-10', usedPercent: 0, exhausted: false },
+  aiOcr: { month: '2026-10', usedPercent: 0, anyUsed: false, exhausted: false },
 };
 
 describe('TC-302 — thẻ "Mức sử dụng của gia đình" (SPEC-030)', () => {
@@ -32,12 +32,21 @@ describe('TC-302 — thẻ "Mức sử dụng của gia đình" (SPEC-030)', () 
   it('TC-309: thêm thanh phần trăm đọc chữ tự động tháng này, không hiện số tiền', () => {
     const html = renderToStaticMarkup(
       <FamilyUsageCard
-        usage={{ ...usage, aiOcr: { month: '2026-10', usedPercent: 42, exhausted: false } }}
+        usage={{ ...usage, aiOcr: { month: '2026-10', usedPercent: 42, anyUsed: true, exhausted: false } }}
       />,
     );
     expect(html).toContain('Đọc chữ tự động tháng này: đã dùng 42%');
     expect(html).toContain('aria-valuenow="42"');
     expect(html).not.toContain('$');
     expect(html).not.toContain('USD');
+  });
+
+  it('đọc chữ tự động đã dùng > 0 nhưng chưa tới 1% thì hiện "dưới 1%"', () => {
+    const html = renderToStaticMarkup(
+      <FamilyUsageCard
+        usage={{ ...usage, aiOcr: { month: '2026-10', usedPercent: 0, anyUsed: true, exhausted: false } }}
+      />,
+    );
+    expect(html).toContain('Đọc chữ tự động tháng này: đã dùng dưới 1%');
   });
 });

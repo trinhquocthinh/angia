@@ -37,7 +37,7 @@ export function StopCourseDetails({ course }: { course: MedicationCourse }) {
         <div className="col-span-2">
           <dt className="text-[11px] text-[#55615f]">Nguồn:</dt>
           <dd className="font-medium">
-            {course.source === 'prescription' ? 'Theo đơn thuốc' : 'Tự khai báo'}
+            {course.source === 'prescription' ? 'Theo đơn thuốc' : 'Thuốc tự thêm ngoài đơn'}
           </dd>
         </div>
       </dl>

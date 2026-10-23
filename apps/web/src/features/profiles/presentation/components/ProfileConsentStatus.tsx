@@ -1,9 +1,9 @@
 import type { HealthProfile } from '../../application/ports';
 const labels = {
-  pending: 'Chưa có đồng thuận',
-  invited: 'Đang chờ phản hồi lời mời',
+  pending: 'Chưa có xác nhận của người thân',
+  invited: 'Đang chờ người thân xác nhận',
   declined: 'Lời mời đã bị từ chối',
-  confirmed: 'Đã đồng thuận',
+  confirmed: 'Đã đồng ý chia sẻ',
 };
 export function ProfileConsentStatus({ profile }: { profile: HealthProfile }) {
   const confirmed = profile.consentStatus === 'confirmed' && profile.consentSource === 'invitation';
@@ -18,13 +18,13 @@ export function ProfileConsentStatus({ profile }: { profile: HealthProfile }) {
       </p>
       {confirmed ? (
         <p className="mt-2 break-words text-sm leading-6 text-[#55615f]">
-          Tên tự khai: {profile.consentRespondentName}. Danh tính và tư cách chưa được xác minh.
+          Người xác nhận: {profile.consentRespondentName} (thông tin tự nhập, chưa được xác minh).
         </p>
       ) : (
         <p className="mt-2 text-sm leading-6 text-[#55615f]">
           {profile.consentSource === 'legacy_attestation'
-            ? 'Xác nhận cũ cần được thay bằng phản hồi qua link đồng thuận.'
-            : 'Gửi link để đối tượng hoặc người giám hộ hợp pháp tự phản hồi.'}
+            ? 'Xác nhận cũ cần được thay bằng liên kết gửi người thân xác nhận lại.'
+            : 'Gửi liên kết để người thân (hoặc người đại diện) xác nhận đồng ý.'}
         </p>
       )}
     </div>

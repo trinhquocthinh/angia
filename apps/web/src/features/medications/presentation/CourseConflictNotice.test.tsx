@@ -66,6 +66,9 @@ describe('Xác nhận thuốc trùng tên', () => {
         onCancel={() => undefined}
       />,
     );
+    expect(html).toContain('<dialog');
+    expect(html).toContain('aria-labelledby="course-conflict-title"');
+    expect(html).not.toMatch(/Khuyên dùng|Cân nhắc/);
     expect(html).toContain('5mg');
     expect(html).toContain('2,5mg');
     expect(html).toContain('2026-09-01');
