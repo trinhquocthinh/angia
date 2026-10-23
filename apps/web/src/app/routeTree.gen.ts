@@ -18,6 +18,7 @@ import { Route as UploadRouteImport } from './routes/upload'
 import { Route as WaitingRouteImport } from './routes/waiting'
 import { Route as ProfilesProfileIdRouteImport } from './routes/profiles.$profileId'
 import { Route as ProfilesNewRouteImport } from './routes/profiles.new'
+import { Route as RemindersReminderIdRouteImport } from './routes/reminders.$reminderId'
 import { Route as ReviewIndexRouteImport } from './routes/review.index'
 import { Route as ReviewDocumentIdRouteImport } from './routes/review.$documentId'
 import { Route as ProfilesProfileIdDocumentsRouteImport } from './routes/profiles.$profileId_.documents'
@@ -70,6 +71,11 @@ const ProfilesProfileIdRoute = ProfilesProfileIdRouteImport.update({
 const ProfilesNewRoute = ProfilesNewRouteImport.update({
   id: '/profiles/new',
   path: '/profiles/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RemindersReminderIdRoute = RemindersReminderIdRouteImport.update({
+  id: '/reminders/$reminderId',
+  path: '/reminders/$reminderId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReviewIndexRoute = ReviewIndexRouteImport.update({
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/waiting': typeof WaitingRoute
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
+  '/reminders/$reminderId': typeof RemindersReminderIdRoute
   '/review/$documentId': typeof ReviewDocumentIdRoute
   '/review/': typeof ReviewIndexRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/waiting': typeof WaitingRoute
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
+  '/reminders/$reminderId': typeof RemindersReminderIdRoute
   '/review/$documentId': typeof ReviewDocumentIdRoute
   '/review': typeof ReviewIndexRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
@@ -167,6 +175,7 @@ export interface FileRoutesById {
   '/waiting': typeof WaitingRoute
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
+  '/reminders/$reminderId': typeof RemindersReminderIdRoute
   '/review/$documentId': typeof ReviewDocumentIdRoute
   '/review/': typeof ReviewIndexRoute
   '/profiles/$profileId_/documents': typeof ProfilesProfileIdDocumentsRoute
@@ -188,6 +197,7 @@ export interface FileRouteTypes {
     | '/waiting'
     | '/profiles/$profileId'
     | '/profiles/new'
+    | '/reminders/$reminderId'
     | '/review/$documentId'
     | '/review/'
     | '/profiles/$profileId/documents'
@@ -207,6 +217,7 @@ export interface FileRouteTypes {
     | '/waiting'
     | '/profiles/$profileId'
     | '/profiles/new'
+    | '/reminders/$reminderId'
     | '/review/$documentId'
     | '/review'
     | '/profiles/$profileId/documents'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/waiting'
     | '/profiles/$profileId'
     | '/profiles/new'
+    | '/reminders/$reminderId'
     | '/review/$documentId'
     | '/review/'
     | '/profiles/$profileId_/documents'
@@ -246,6 +258,7 @@ export interface RootRouteChildren {
   WaitingRoute: typeof WaitingRoute
   ProfilesProfileIdRoute: typeof ProfilesProfileIdRoute
   ProfilesNewRoute: typeof ProfilesNewRoute
+  RemindersReminderIdRoute: typeof RemindersReminderIdRoute
   ReviewDocumentIdRoute: typeof ReviewDocumentIdRoute
   ReviewIndexRoute: typeof ReviewIndexRoute
   ProfilesProfileIdDocumentsRoute: typeof ProfilesProfileIdDocumentsRoute
@@ -321,6 +334,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfilesNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reminders/$reminderId': {
+      id: '/reminders/$reminderId'
+      path: '/reminders/$reminderId'
+      fullPath: '/reminders/$reminderId'
+      preLoaderRoute: typeof RemindersReminderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/review/': {
       id: '/review/'
       path: '/review'
@@ -390,6 +410,7 @@ const rootRouteChildren: RootRouteChildren = {
   WaitingRoute: WaitingRoute,
   ProfilesProfileIdRoute: ProfilesProfileIdRoute,
   ProfilesNewRoute: ProfilesNewRoute,
+  RemindersReminderIdRoute: RemindersReminderIdRoute,
   ReviewDocumentIdRoute: ReviewDocumentIdRoute,
   ReviewIndexRoute: ReviewIndexRoute,
   ProfilesProfileIdDocumentsRoute: ProfilesProfileIdDocumentsRoute,

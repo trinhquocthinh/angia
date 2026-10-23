@@ -39,6 +39,29 @@ describe('Service worker AN GIA', () => {
     expect(h.notices[0]?.[1]).toMatchObject({ body: 'Đến giờ dùng thuốc' });
     expect(h.handlers.has('fetch')).toBe(false);
   });
+  it('TC-346: payload lời nhắc hợp lệ → tag theo lời nhắc, bấm mở /reminders/<uuid> cùng origin', async () => {
+    const id = '3f2b8c1e-9a4d-4e6f-8b7a-1c2d3e4f5a6b';
+    const h = harness();
+    let shown: unknown;
+    h.handlers.get('push')!({
+      data: { json: () => ({ type: 'medication-reminder', reminderId: id }) },
+      waitUntil: (p: unknown) => {
+        shown = p;
+      },
+    });
+    await shown;
+    const options = h.notices[0]?.[1] as { tag: string; body: string; data: unknown };
+    expect(options).toMatchObject({ tag: `angia-reminder-${id}`, body: 'Đến giờ dùng thuốc' });
+    let opened: unknown;
+    h.handlers.get('notificationclick')!({
+      notification: { close: () => undefined, data: options.data },
+      waitUntil: (p: unknown) => {
+        opened = p;
+      },
+    });
+    await opened;
+    expect(h.opened).toEqual([`https://angia.test/reminders/${id}`]);
+  });
   it('TC-346: bấm payload không hợp lệ chỉ về trang thông báo cùng origin', async () => {
     const h = harness();
     let work: unknown;
