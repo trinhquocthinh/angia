@@ -53,6 +53,9 @@ export type SendRemindersTotals = Record<SendRemindersTotalKey, number>;
 
 export interface SendRemindersResult {
   totals: SendRemindersTotals;
+  /** Chỉ mã lỗi (mã pg hoặc error.name), không bao giờ kèm thông điệp. */
+  failures: { familyId: string; code: string }[];
+  expiredBeforeFanoutReminderIds: string[];
   failedFamilies: number;
   aborted: boolean;
 }

@@ -75,12 +75,34 @@ describe('sendReminders (SPEC-027 §5)', () => {
     expect(data.deliveries).toHaveLength(2);
   });
 
+  it('Fan-out lọc chỉ định theo từng hồ sơ: mỗi lời nhắc chỉ tới thiết bị của người được chỉ định', async () => {
+    const OTHER_PROFILE = id(11);
+    const OTHER_REMINDER = id(21);
+    const data = family({
+      profiles: [
+        { profileId: PROFILE, consentConfirmed: true, assignedAccountIds: [MAIN_A.id] },
+        { profileId: OTHER_PROFILE, consentConfirmed: true, assignedAccountIds: [MAIN_B.id] },
+      ],
+      reminders: [
+        { reminderId: REMINDER, profileId: PROFILE, scheduledAt: SCHEDULED, sentAt: null },
+        { reminderId: OTHER_REMINDER, profileId: OTHER_PROFILE, scheduledAt: SCHEDULED, sentAt: null },
+      ],
+    });
+    const repository = createMemoryDeliveryRepository({ [fam(1)]: data });
+    await sendReminders(repository, fakeNotifier().notifier, { now: () => NOW });
+    expect(repository.fanOutCalls()).toEqual([
+      [REMINDER, [id(31)], NOW],
+      [OTHER_REMINDER, [id(32)], NOW],
+    ]);
+  });
+
   it('Quá 60′ trước fan-out → không đích, expiredBeforeFanout 1, vẫn đánh dấu đã fan-out', async () => {
     const repository = createMemoryDeliveryRepository({ [fam(1)]: family() });
     const { notifier, calls } = fakeNotifier();
     const late = plus(61, SCHEDULED);
     const result = await sendReminders(repository, notifier, { now: () => late });
     expect(result.totals).toMatchObject({ fannedOut: 0, expiredBeforeFanout: 1 });
+    expect(result.expiredBeforeFanoutReminderIds).toEqual([REMINDER]);
     expect(repository.fanOutCalls()).toEqual([[REMINDER, [], late]]);
     expect(calls).toHaveLength(0);
   });
@@ -153,6 +175,31 @@ describe('sendReminders (SPEC-027 §5)', () => {
     expect(data.deliveries[0]?.lastError).toBeUndefined();
   });
 
+  it('Vừa ngoài cửa sổ vừa mất đồng thuận → expired (cửa sổ kiểm trước), không lastError', async () => {
+    const data = family({
+      devices: [device(1, MAIN_A.id)],
+      deliveries: [
+        {
+          id: id(40),
+          reminderId: REMINDER,
+          deviceId: id(31),
+          status: 'pending',
+          attempts: 1,
+          nextAttemptAt: SCHEDULED,
+        },
+      ],
+    });
+    data.reminders[0]!.sentAt = SCHEDULED;
+    data.profiles[0]!.consentConfirmed = false;
+    const repository = createMemoryDeliveryRepository({ [fam(1)]: data });
+    const { notifier, calls } = fakeNotifier();
+    const result = await sendReminders(repository, notifier, { now: () => plus(61, SCHEDULED) });
+    expect(calls).toHaveLength(0);
+    expect(result.totals).toMatchObject({ expired: 1, revoked: 0 });
+    expect(data.deliveries[0]).toMatchObject({ status: 'expired', attempts: 1 });
+    expect(data.deliveries[0]?.lastError).toBeUndefined();
+  });
+
   it('withFanOut của gia đình 1 lỗi → gia đình 2 vẫn xử lý; hàm không ném', async () => {
     const repository = createMemoryDeliveryRepository(
       { [fam(1)]: family(), [fam(2)]: family() },
@@ -160,6 +207,7 @@ describe('sendReminders (SPEC-027 §5)', () => {
     );
     const result = await sendReminders(repository, fakeNotifier().notifier, { now: () => NOW });
     expect(result.failedFamilies).toBe(1);
+    expect(result.failures).toEqual([{ familyId: fam(1), code: '42501' }]);
     expect(result.totals).toMatchObject({ fannedOut: 1, accepted: 2 });
     expect(result.aborted).toBe(false);
   });
@@ -169,6 +217,7 @@ describe('sendReminders (SPEC-027 §5)', () => {
     const result = await sendReminders(repository, fakeNotifier().notifier, { now: () => NOW });
     expect(result.aborted).toBe(true);
     expect(result.failedFamilies).toBe(0);
+    expect(result.failures).toEqual([]);
   });
 
   it('Dừng sau maxDeliveries đích trên toàn lượt (mọi gia đình)', async () => {
@@ -177,5 +226,17 @@ describe('sendReminders (SPEC-027 §5)', () => {
     const result = await sendReminders(repository, notifier, { now: () => NOW, maxDeliveries: 3 });
     expect(calls).toHaveLength(3);
     expect(result.totals.accepted).toBe(3);
+  });
+
+  it('Gia đình lỗi giữa lúc gửi vẫn bị trừ ngân sách cho các đích đã xử lý', async () => {
+    const repository = createMemoryDeliveryRepository(
+      { [fam(1)]: family(), [fam(2)]: family() },
+      { failDeliveryAfter: { familyId: fam(1), processed: 1 } },
+    );
+    const { notifier, calls } = fakeNotifier();
+    const result = await sendReminders(repository, notifier, { now: () => NOW, maxDeliveries: 2 });
+    expect(calls).toHaveLength(2);
+    expect(result.totals.accepted).toBe(2);
+    expect(result.failures).toEqual([{ familyId: fam(1), code: '57P01' }]);
   });
 });

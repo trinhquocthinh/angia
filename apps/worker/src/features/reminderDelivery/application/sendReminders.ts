@@ -15,6 +15,12 @@ export interface SendRemindersDeps {
   maxDeliveries?: number;
 }
 
+// Chỉ mã lỗi (mã pg như 42501 hoặc error.name) — thông điệp có thể chứa dữ liệu dòng.
+function errorCode(error: unknown): string {
+  const { code, name } = (error ?? {}) as { code?: unknown; name?: unknown };
+  return String(code ?? name ?? 'unknown');
+}
+
 const emptyTotals = (): SendRemindersTotals => ({
   fannedOut: 0,
   expiredBeforeFanout: 0,
@@ -34,25 +40,33 @@ export async function sendReminders(
   deps: SendRemindersDeps,
 ): Promise<SendRemindersResult> {
   const totals = emptyTotals();
+  const failures: SendRemindersResult['failures'] = [];
+  const expiredIds: string[] = [];
+  const result = (aborted: boolean): SendRemindersResult => ({
+    totals,
+    failures,
+    expiredBeforeFanoutReminderIds: expiredIds,
+    failedFamilies: failures.length,
+    aborted,
+  });
   let familyIds: string[];
   try {
     familyIds = await repository.listFamilyIds();
   } catch {
-    return { totals, failedFamilies: 0, aborted: true };
+    return result(true);
   }
   const now = deps.now();
-  let remaining = deps.maxDeliveries ?? DEFAULT_MAX_DELIVERIES;
-  let failedFamilies = 0;
+  const budget = { remaining: deps.maxDeliveries ?? DEFAULT_MAX_DELIVERIES };
   for (const familyId of familyIds) {
     try {
       const counts = await repository.withFanOut(familyId, (store) => fanOutFamily(store, now));
       totals.fannedOut += counts.fannedOut;
-      totals.expiredBeforeFanout += counts.expiredBeforeFanout;
-      if (remaining > 0)
-        remaining -= await deliverFamily(repository, notifier, familyId, now, remaining, totals);
-    } catch {
-      failedFamilies += 1;
+      totals.expiredBeforeFanout += counts.expiredReminderIds.length;
+      expiredIds.push(...counts.expiredReminderIds);
+      await deliverFamily(repository, notifier, familyId, now, budget, totals);
+    } catch (error) {
+      failures.push({ familyId, code: errorCode(error) });
     }
   }
-  return { totals, failedFamilies, aborted: false };
+  return result(false);
 }

@@ -5,7 +5,7 @@ import { resolveRecipientAccountIds } from '@src/shared/domain/resolveRecipientA
 
 export interface FanOutCounts {
   fannedOut: number;
-  expiredBeforeFanout: number;
+  expiredReminderIds: string[];
 }
 
 type Assignment = { profileId: string; accountId: string };
@@ -25,7 +25,7 @@ async function deviceIdsFor(
 // SPEC-027 §5.1: tạo đích pending cho lời nhắc đến hạn chưa fan-out; luôn đặt sent_at kể cả khi 0 đích.
 // Quá cửa sổ 60′ → không tạo đích (expired_before_fanout). Người nhận theo BR-039, hồ sơ phải đồng thuận.
 export async function fanOutFamily(store: FanOutStore, now: Date): Promise<FanOutCounts> {
-  const counts: FanOutCounts = { fannedOut: 0, expiredBeforeFanout: 0 };
+  const counts: FanOutCounts = { fannedOut: 0, expiredReminderIds: [] };
   const due = await store.listUnsentDue(now);
   if (due.length === 0) return counts;
   const accounts = await store.listFamilyAccounts();
@@ -33,7 +33,7 @@ export async function fanOutFamily(store: FanOutStore, now: Date): Promise<FanOu
   for (const reminder of due) {
     if (!isWithinSendWindow(reminder.scheduledAt, now)) {
       await store.markFannedOut(reminder.reminderId, [], now);
-      counts.expiredBeforeFanout += 1;
+      counts.expiredReminderIds.push(reminder.reminderId);
       continue;
     }
     const deviceIds = await deviceIdsFor(store, reminder, accounts, assignments);

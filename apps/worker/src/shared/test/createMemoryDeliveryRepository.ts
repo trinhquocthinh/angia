@@ -45,6 +45,8 @@ export interface MemoryDeliveryFamily {
 interface Faults {
   failingFanOutFamilyId?: string;
   listFails?: boolean;
+  /** processNextDelivery của gia đình này ném lỗi sau `processed` đích đã xử lý. */
+  failDeliveryAfter?: { familyId: string; processed: number };
 }
 
 function createFanOutStore(data: MemoryDeliveryFamily, calls: unknown[][]): FanOutStore {
@@ -107,6 +109,7 @@ export function createMemoryDeliveryRepository(
   faults: Faults = {},
 ) {
   const fanOutCalls: unknown[][] = [];
+  const processedByFamily = new Map<string, number>();
   const repository: DeliveryRepository = {
     listFamilyIds: async () => {
       if (faults.listFails) throw Object.assign(new Error('down'), { code: 'ECONNREFUSED' });
@@ -119,6 +122,11 @@ export function createMemoryDeliveryRepository(
     },
     processNextDelivery: async (familyId, now, decide) => {
       const data = families[familyId]!;
+      const processed = processedByFamily.get(familyId) ?? 0;
+      const fault = faults.failDeliveryAfter;
+      if (fault?.familyId === familyId && processed >= fault.processed)
+        throw Object.assign(new Error('lost'), { code: '57P01' });
+      processedByFamily.set(familyId, processed + 1);
       const row = data.deliveries.find(
         (d) => d.status === 'pending' && d.nextAttemptAt.getTime() <= now.getTime(),
       );
