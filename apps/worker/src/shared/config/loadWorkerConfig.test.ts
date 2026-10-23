@@ -147,7 +147,7 @@ describe('Cấu hình worker', () => {
       expect(() => loadWorkerConfig({ ...base, ...invalid })).toThrow();
   });
 
-  it('TC-340: Web Push — dev thiếu cả bộ thì null, đủ thì object, thiếu một phần thì dừng; sit/prod bắt buộc đủ', () => {
+  it('Web Push — dev thiếu cả bộ thì null, đủ thì object, thiếu một phần thì dừng; sit/prod bắt buộc đủ', () => {
     const push = {
       WEB_PUSH_PUBLIC_KEY: 'pub',
       WEB_PUSH_PRIVATE_KEY: 'priv',

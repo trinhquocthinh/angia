@@ -53,5 +53,6 @@ COPY --from=build /app/packages/web-push/dist packages/web-push/dist
 COPY --from=build /app/apps/worker/dist apps/worker/dist
 
 USER 10001:10001
-# Không mở cổng: worker chỉ kết nối ra PostgreSQL, Garage S3 và OpenRouter.
+# Không mở cổng: worker chỉ kết nối ra PostgreSQL, Garage S3, OpenRouter và push service của trình duyệt
+# (HTTPS ra ngoài tới endpoint Web Push — E9-S2-T2 send-reminders).
 CMD ["node", "apps/worker/dist/worker.js"]
