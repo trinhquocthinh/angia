@@ -1,51 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import type { PushSubscriptionShape, SendOutcome } from '../domain/DeliveryTypes.js';
-import type { ReminderNotifier } from './ports.js';
-import type { FamilyAccount } from '@src/shared/domain/FamilyAccount.js';
-import {
-  createMemoryDeliveryRepository,
-  type MemoryDeliveryFamily,
-  type MemoryDevice,
-} from '@src/shared/test/createMemoryDeliveryRepository.js';
+import { createMemoryDeliveryRepository } from '@src/shared/test/createMemoryDeliveryRepository.js';
 import { sendReminders } from './sendReminders.js';
-
-const fam = (n: number) => `0199a000-0000-7000-8000-${String(n).padStart(12, '0')}`;
-const id = (n: number) => `0199b000-0000-7000-8000-${String(n).padStart(12, '0')}`;
-const NOW = new Date('2026-10-23T00:05:00.000Z');
-const SCHEDULED = new Date('2026-10-23T00:00:00.000Z');
-const plus = (minutes: number, base = NOW) => new Date(base.getTime() + minutes * 60_000);
-const MAIN_A: FamilyAccount = { id: id(1), role: 'main', healthProfileId: null };
-const MAIN_B: FamilyAccount = { id: id(2), role: 'main', healthProfileId: null };
-const PROFILE = id(10);
-const REMINDER = id(20);
-
-const device = (n: number, accountId: string): MemoryDevice => ({
-  id: id(30 + n),
-  accountId,
-  subscription: { endpoint: `https://push.example/${n}`, keys: { p256dh: 'p', auth: 'a' } },
-});
-
-function family(overrides: Partial<MemoryDeliveryFamily> = {}): MemoryDeliveryFamily {
-  return {
-    accounts: [MAIN_A, MAIN_B],
-    profiles: [{ profileId: PROFILE, consentConfirmed: true, assignedAccountIds: [MAIN_A.id, MAIN_B.id] }],
-    reminders: [{ reminderId: REMINDER, profileId: PROFILE, scheduledAt: SCHEDULED, sentAt: null }],
-    devices: [device(1, MAIN_A.id), device(2, MAIN_B.id)],
-    deliveries: [],
-    ...overrides,
-  };
-}
-
-function fakeNotifier(outcomeFor: (endpoint: string) => SendOutcome = () => ({ kind: 'accepted' })) {
-  const calls: { subscription: PushSubscriptionShape; reminderId: string; ttlSeconds: number }[] = [];
-  const notifier: ReminderNotifier = {
-    send: async (subscription, reminderId, ttlSeconds) => {
-      calls.push({ subscription, reminderId, ttlSeconds });
-      return outcomeFor(subscription.endpoint);
-    },
-  };
-  return { notifier, calls };
-}
+import {
+  device,
+  fakeNotifier,
+  fam,
+  family,
+  id,
+  MAIN_A,
+  MAIN_B,
+  NOW,
+  plus,
+  PROFILE,
+  REMINDER,
+  SCHEDULED,
+} from './sendReminders.test-helper.js';
 
 describe('sendReminders (SPEC-027 §5)', () => {
   it('TC-091: A accepted, B retry → lượt 2 tại +1′ chỉ gửi lại cho B', async () => {

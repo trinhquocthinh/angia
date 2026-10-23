@@ -24,7 +24,7 @@ const ZERO = {
   revoked: 0,
 };
 
-function run(result: SendRemindersResult) {
+function run(result: SendRemindersResult, signal?: AbortSignal) {
   sendRemindersMock.mockResolvedValue(result);
   const logger = { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() };
   const handle = handleSendRemindersJob(
@@ -33,7 +33,7 @@ function run(result: SendRemindersResult) {
     { now: () => new Date('2026-10-23T01:00:00Z') },
     logger as unknown as Logger,
   );
-  return { logger, done: handle({ id: 'j1', data: null }) };
+  return { logger, done: handle(signal ? { id: 'j1', data: null, signal } : { id: 'j1', data: null }) };
 }
 
 const base: SendRemindersResult = {
@@ -42,6 +42,7 @@ const base: SendRemindersResult = {
   expiredBeforeFanoutReminderIds: [],
   failedFamilies: 0,
   aborted: false,
+  failedByCode: {},
 };
 
 describe('handleSendRemindersJob (SPEC-027)', () => {
@@ -51,11 +52,15 @@ describe('handleSendRemindersJob (SPEC-027)', () => {
       ...base,
       totals,
       expiredBeforeFanoutReminderIds: ['r1'],
+      failedByCode: { http_4xx: 1 },
     });
     await done;
     expect(logger.info).toHaveBeenCalledWith({ totals, failedFamilies: 0 }, expect.any(String));
     expect(logger.warn).toHaveBeenCalledWith({ reminderIds: ['r1'] }, expect.any(String));
-    expect(logger.warn).toHaveBeenCalledWith({ failed: 1, expired: 3 }, expect.any(String));
+    expect(logger.warn).toHaveBeenCalledWith(
+      { failed: 1, expired: 3, failedByCode: { http_4xx: 1 } },
+      expect.any(String),
+    );
     expect(logger.debug).not.toHaveBeenCalled();
   });
 
@@ -66,9 +71,18 @@ describe('handleSendRemindersJob (SPEC-027)', () => {
       failures: [{ familyId: 'f1', code: '42501' }],
       failedFamilies: 1,
       aborted: true,
+      failedByCode: { http_4xx: 1 },
     });
-    await expect(done).resolves.toBeUndefined();
-    const allowed = new Set(['totals', 'failedFamilies', 'reminderIds', 'failures', 'failed', 'expired']);
+    await done;
+    const allowed = new Set([
+      'totals',
+      'failedFamilies',
+      'reminderIds',
+      'failures',
+      'failed',
+      'expired',
+      'failedByCode',
+    ]);
     const calls = [logger.info, logger.warn, logger.error, logger.debug].flatMap((fn) => fn.mock.calls);
     for (const [payload] of calls)
       for (const key of Object.keys(payload as object)) expect(allowed.has(key)).toBe(true);
@@ -76,5 +90,17 @@ describe('handleSendRemindersJob (SPEC-027)', () => {
     const text = JSON.stringify(calls);
     expect(text).not.toContain('Metformin');
     expect(text).not.toContain('https://');
+  });
+
+  it('trả về totals làm output job (spec §5.2) và chuyển job.signal vào use case', async () => {
+    const totals = { ...ZERO, fannedOut: 1, accepted: 1 };
+    const signal = new AbortController().signal;
+    const { done } = run({ ...base, totals }, signal);
+    await expect(done).resolves.toEqual(totals);
+    expect(sendRemindersMock).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.objectContaining({ signal }),
+    );
   });
 });

@@ -56,7 +56,7 @@ async function register(deps: ReturnType<typeof setup>) {
     deps.logger as unknown as Logger,
   );
   const handler = deps.boss.work.mock.calls[0]?.[2] as Handler;
-  return () => handler([{ id: 'j1', data: null, signal: new AbortController().signal }]);
+  return (signal = new AbortController().signal) => handler([{ id: 'j1', data: null, signal }]);
 }
 
 describe('Job send-reminders (SPEC-027)', () => {
@@ -109,5 +109,15 @@ describe('Job send-reminders (SPEC-027)', () => {
       expect.any(String),
     );
     expect(JSON.stringify(deps.logger.warn.mock.calls)).not.toContain('Metformin');
+  });
+
+  it('job.signal đã hủy (job hết hạn) → không fan-out, không gửi; output là totals', async () => {
+    const deps = setup([FAMILY]);
+    const controller = new AbortController();
+    controller.abort();
+    const output = await (await register(deps))(controller.signal);
+    expect(deps.repository.withFanOut).not.toHaveBeenCalled();
+    expect(deps.repository.processNextDelivery).not.toHaveBeenCalled();
+    expect(output).toEqual(ZERO);
   });
 });

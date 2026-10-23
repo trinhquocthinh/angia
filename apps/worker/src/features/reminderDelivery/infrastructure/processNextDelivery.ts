@@ -103,14 +103,14 @@ async function applyUpdate(
 export function processNextDelivery(
   pool: pg.Pool,
   familyId: string,
-  now: Date,
+  clock: () => Date,
   decide: (candidate: DeliveryCandidate) => Promise<DeliveryUpdate>,
 ): Promise<DeliveryUpdate | null> {
   return withFamilyScope(pool, familyId, async (client) => {
-    const row = await lockNextDue(client, familyId, now);
+    const row = await lockNextDue(client, familyId, clock());
     if (!row) return null;
     const update = await decide(await toCandidate(client, familyId, row));
-    await applyUpdate(client, row, update, now);
+    await applyUpdate(client, row, update, clock());
     return update;
   });
 }

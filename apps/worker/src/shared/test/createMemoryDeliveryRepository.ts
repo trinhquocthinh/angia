@@ -120,13 +120,14 @@ export function createMemoryDeliveryRepository(
         throw Object.assign(new Error('denied'), { code: '42501' });
       return work(createFanOutStore(families[familyId]!, fanOutCalls));
     },
-    processNextDelivery: async (familyId, now, decide) => {
+    processNextDelivery: async (familyId, clock, decide) => {
       const data = families[familyId]!;
       const processed = processedByFamily.get(familyId) ?? 0;
       const fault = faults.failDeliveryAfter;
       if (fault?.familyId === familyId && processed >= fault.processed)
         throw Object.assign(new Error('lost'), { code: '57P01' });
       processedByFamily.set(familyId, processed + 1);
+      const now = clock();
       const row = data.deliveries.find(
         (d) => d.status === 'pending' && d.nextAttemptAt.getTime() <= now.getTime(),
       );

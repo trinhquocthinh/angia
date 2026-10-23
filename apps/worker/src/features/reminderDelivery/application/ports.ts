@@ -34,10 +34,13 @@ export interface DeliveryCandidate {
 export interface DeliveryRepository {
   listFamilyIds(): Promise<string[]>;
   withFanOut<T>(familyId: string, work: (store: FanOutStore) => Promise<T>): Promise<T>;
-  /** Transaction riêng: khóa một đích pending đến hạn, gọi decide, ghi DeliveryUpdate, COMMIT. null khi hết. */
+  /**
+   * Transaction riêng: khóa một đích pending đến hạn, gọi decide, ghi DeliveryUpdate, COMMIT. null khi hết.
+   * `clock` đọc lại lúc khóa và lúc ghi (updated_at) vì lần gửi HTTP giữa hai mốc có thể kéo dài.
+   */
   processNextDelivery(
     familyId: string,
-    now: Date,
+    clock: () => Date,
     decide: (candidate: DeliveryCandidate) => Promise<DeliveryUpdate>,
   ): Promise<DeliveryUpdate | null>;
 }
@@ -57,5 +60,8 @@ export interface SendRemindersResult {
   failures: { familyId: string; code: string }[];
   expiredBeforeFanoutReminderIds: string[];
   failedFamilies: number;
+  /** listFamilyIds lỗi hoặc tín hiệu hủy (job hết hạn) bật giữa lượt. */
   aborted: boolean;
+  /** Số đích failed theo last_error (chỉ mã như http_4xx, timeout). */
+  failedByCode: Record<string, number>;
 }

@@ -216,10 +216,14 @@ describe('Gửi lời nhắc theo thiết bị trên PostgreSQL thật, role app
     }
     const unscoped = await fx.pool.query('SELECT 1 FROM reminder_deliveries');
     expect(unscoped.rowCount).toBe(0);
-    const pending = await repository.processNextDelivery(one.familyId, plus(later, 1), async (candidate) => {
-      expect(candidate.profileId).toBe(one.profileId);
-      return { status: 'revoked', attempts: candidate.attempts, lastError: 'revoked_device' };
-    });
+    const pending = await repository.processNextDelivery(
+      one.familyId,
+      () => plus(later, 1),
+      async (candidate) => {
+        expect(candidate.profileId).toBe(one.profileId);
+        return { status: 'revoked', attempts: candidate.attempts, lastError: 'revoked_device' };
+      },
+    );
     expect(pending).not.toBeNull();
   });
 });

@@ -79,6 +79,6 @@ export function createDeliveryRepository(pool: pg.Pool, newId: () => string): De
       (await pool.query<{ id: string }>('SELECT id FROM families ORDER BY id')).rows.map((row) => row.id),
     withFanOut: (familyId, work) =>
       withFamilyScope(pool, familyId, (client) => work(createFanOutStore(client, familyId, newId))),
-    processNextDelivery: (familyId, now, decide) => processNextDelivery(pool, familyId, now, decide),
+    processNextDelivery: (familyId, clock, decide) => processNextDelivery(pool, familyId, clock, decide),
   };
 }
