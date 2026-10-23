@@ -13,6 +13,19 @@ const base = {
   AI_PROVIDER: 'fake',
 };
 
+const pushVars = {
+  WEB_PUSH_PUBLIC_KEY: 'pub',
+  WEB_PUSH_PRIVATE_KEY: 'priv',
+  WEB_PUSH_SUBJECT: 'mailto:a@b.vn',
+};
+
+const sitIdp = {
+  AUTHENTIK_URL: 'https://idp.example.vn',
+  AUTHENTIK_API_TOKEN: 't',
+  IDP_ACCESS_GROUP_NAME: 'angia-users',
+  ADMIN_GROUP_NAME: 'angia-admins',
+};
+
 describe('Cấu hình worker', () => {
   it('AI_PROVIDER=fake không cần key; model và URL OpenRouter có mặc định', () => {
     expect(loadWorkerConfig(base)).toMatchObject({
@@ -71,11 +84,13 @@ describe('Cấu hình worker', () => {
     };
     expect(() => loadWorkerConfig({ ...base, STACK: 'sit' })).toThrow('AUTHENTIK_API_TOKEN');
     expect(() =>
-      loadWorkerConfig({ ...base, STACK: 'prod', ...idp, IDP_ACCESS_GROUP_NAME: undefined }),
+      loadWorkerConfig({ ...base, STACK: 'prod', ...pushVars, ...idp, IDP_ACCESS_GROUP_NAME: undefined }),
     ).toThrow('IDP_ACCESS_GROUP_NAME');
     // dev có token thì phải đủ bộ biến
     expect(() => loadWorkerConfig({ ...base, AUTHENTIK_API_TOKEN: 't' })).toThrow('AUTHENTIK_URL');
-    expect(loadWorkerConfig({ ...base, STACK: 'sit', ...idp, IDP_SYNC_DRY_RUN: 'true' })).toMatchObject({
+    expect(
+      loadWorkerConfig({ ...base, STACK: 'sit', ...pushVars, ...idp, IDP_SYNC_DRY_RUN: 'true' }),
+    ).toMatchObject({
       IDP_SYNC_DRY_RUN: true,
       IDP_ACCESS_GROUP_NAME: 'angia-sit-users',
     });
@@ -95,20 +110,22 @@ describe('Cấu hình worker', () => {
       IDP_ACCESS_GROUP_NAME: ' angia-sit-users ',
       ADMIN_GROUP_NAME: ' angia-admins ',
     };
-    expect(loadWorkerConfig({ ...base, STACK: 'sit', ...idp })).toMatchObject({
+    expect(loadWorkerConfig({ ...base, STACK: 'sit', ...pushVars, ...idp })).toMatchObject({
       AUTHENTIK_API_TOKEN: 't',
       IDP_ACCESS_GROUP_NAME: 'angia-sit-users',
       ADMIN_GROUP_NAME: 'angia-admins',
     });
     for (const key of ['AUTHENTIK_API_TOKEN', 'IDP_ACCESS_GROUP_NAME', 'ADMIN_GROUP_NAME'] as const) {
-      expect(() => loadWorkerConfig({ ...base, STACK: 'sit', ...idp, [key]: '   ' })).toThrow(key);
+      expect(() => loadWorkerConfig({ ...base, STACK: 'sit', ...pushVars, ...idp, [key]: '   ' })).toThrow(
+        key,
+      );
       expect(() => loadWorkerConfig({ ...base, ...idp, [key]: ' \t' })).toThrow(key);
     }
     // API không có mặc định cho ADMIN_GROUP_NAME: sit/prod thiếu thì dừng, dev giữ mặc định.
     for (const ADMIN_GROUP_NAME of [undefined, ''])
-      expect(() => loadWorkerConfig({ ...base, STACK: 'prod', ...idp, ADMIN_GROUP_NAME })).toThrow(
-        'ADMIN_GROUP_NAME',
-      );
+      expect(() =>
+        loadWorkerConfig({ ...base, STACK: 'prod', ...pushVars, ...idp, ADMIN_GROUP_NAME }),
+      ).toThrow('ADMIN_GROUP_NAME');
     expect(loadWorkerConfig({ ...base, ADMIN_GROUP_NAME: '' }).ADMIN_GROUP_NAME).toBe('angia-admins');
   });
 
@@ -128,5 +145,30 @@ describe('Cấu hình worker', () => {
       { ORPHAN_OBJECT_DRY_RUN: 'yes' },
     ])
       expect(() => loadWorkerConfig({ ...base, ...invalid })).toThrow();
+  });
+
+  it('TC-340: Web Push — dev thiếu cả bộ thì null, đủ thì object, thiếu một phần thì dừng; sit/prod bắt buộc đủ', () => {
+    const push = {
+      WEB_PUSH_PUBLIC_KEY: 'pub',
+      WEB_PUSH_PRIVATE_KEY: 'priv',
+      WEB_PUSH_SUBJECT: 'mailto:a@b.vn',
+    };
+    expect(loadWorkerConfig(base).webPush).toBeNull();
+    expect(
+      loadWorkerConfig({ ...base, WEB_PUSH_PUBLIC_KEY: '', WEB_PUSH_PRIVATE_KEY: '' }).webPush,
+    ).toBeNull();
+    expect(loadWorkerConfig({ ...base, ...push }).webPush).toEqual({
+      publicKey: 'pub',
+      privateKey: 'priv',
+      subject: 'mailto:a@b.vn',
+    });
+    for (const key of Object.keys(push)) {
+      const partial = { ...push, [key]: undefined };
+      expect(() => loadWorkerConfig({ ...base, ...partial })).toThrow(key);
+      expect(() => loadWorkerConfig({ ...base, ...partial, [key]: '' })).toThrow(key);
+      expect(() => loadWorkerConfig({ ...base, ...sitIdp, ...partial, STACK: 'prod' })).toThrow(key);
+    }
+    expect(loadWorkerConfig({ ...base, ...sitIdp, ...push, STACK: 'sit' }).webPush).not.toBeNull();
+    expect(() => loadWorkerConfig({ ...base, ...sitIdp, STACK: 'sit' })).toThrow('WEB_PUSH_PUBLIC_KEY');
   });
 });
