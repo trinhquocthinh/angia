@@ -181,6 +181,8 @@ export type {
   ReminderRecipients,
   SetReminderRecipientsRequest,
 } from './reminders/reminderRecipientSchemas.js';
+export { myReminderSchema } from './reminders/myReminderSchemas.js';
+export type { MyReminder } from './reminders/myReminderSchemas.js';
 export {
   documentEntryPageSchema,
   documentEntryQuerySchema,

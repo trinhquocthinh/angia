@@ -3,10 +3,11 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
 import { acceptConsentInvitation } from './acceptConsentInvitation.js';
 import { expectCrossFamilyDenied } from './expectCrossFamilyDenied.js';
-import { HEALTH_DATA_ROUTES, type RouteOfKind } from './healthDataRoutes.js';
+import { MEMBER_BLOCKED_SESSION_ROUTES, type RouteOfKind } from './healthDataRoutes.js';
 import type { SeededSession } from './seedAuthFixtures.js';
 import type { Target, Probe } from './CrossFamilyTarget.js';
 import { seedPendingDocument } from './seedPendingDocument.js';
+import { seedReminder } from './seedReminder.js';
 import { snapshotHealthTables } from './snapshotHealthTables.js';
 import { manualPrescription as prescription, manualReading as reading } from './healthDataFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from './startProfileTestApp.js';
@@ -126,6 +127,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       }),
     'GET /api/health-profiles/:id/visit-summary': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/visit-summary`),
+    'GET /api/me/reminders/:reminderId': (u, x) => t.call(u, 'GET', `/api/me/reminders/${x.reminderId}`),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
         type: 'device_reading',
@@ -148,7 +150,8 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const body = { type: 'prescription', data: prescription };
     const saved = await t.call(main, 'POST', `${profiles}/${profile.id}/manual-records`, body);
     const { id: prescriptionId } = ((await saved.json()) as { prescription: { id: string } }).prescription;
-    return { familyId, main, profile, documentId, token, courseId, prescriptionId };
+    const reminderId = await seedReminder(t.owner, familyId, profile.id, main.accountId);
+    return { familyId, main, profile, documentId, token, courseId, prescriptionId, reminderId };
   };
   const attackers = async () => {
     const familyId = await t.family();
@@ -167,6 +170,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       accountId: victim.main.accountId,
       courseId: victim.courseId,
       prescriptionId: victim.prescriptionId,
+      reminderId: victim.reminderId,
       token: t.codec.issue({ ...t.codec.verify(victim.token)!, familyId }),
     };
     const missing: Target = {
@@ -175,6 +179,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       accountId: randomUUID(),
       courseId: randomUUID(),
       prescriptionId: randomUUID(),
+      reminderId: randomUUID(),
       token: 'bogus',
     };
     const before = await snapshot();
@@ -240,8 +245,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
   it('TC-016: member bị từ chối 403 ở mọi route dữ liệu sức khỏe dùng phiên', async () => {
     const victim = await victimFixture();
     const member = await t.session(victim.familyId, 'member', 'Thành viên');
-    const sessionRoutes = Object.keys(HEALTH_DATA_ROUTES).filter((r) => !r.includes('/consent-invitations/'));
-    for (const route of sessionRoutes) {
+    for (const route of MEMBER_BLOCKED_SESSION_ROUTES) {
       const [method, pattern] = route.split(' ') as [string, string];
       const path = pattern.replace(
         ':id',

@@ -3673,6 +3673,71 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/me/reminders/{reminderId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc lời nhắc mà tài khoản phiên là người nhận hiện hành (SPEC-035) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          reminderId: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Lời nhắc của buổi kèm thuốc cần dùng */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['MyReminder'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: tài khoản chưa thuộc gia đình */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: không có lời nhắc hoặc tài khoản không phải người nhận hợp lệ */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/visit-summary': {
     parameters: {
       query?: never;
@@ -4727,6 +4792,24 @@ export interface components {
     };
     SetReminderRecipientsRequest: {
       recipientAccountIds: string[];
+    };
+    MyReminder: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date */
+      date: string;
+      /** @enum {string} */
+      slot: 'morning' | 'noon' | 'afternoon' | 'evening';
+      /** Format: date-time */
+      scheduledAt: string;
+      profileName: string;
+      medications: components['schemas']['MyReminderMedication'][];
+    };
+    MyReminderMedication: {
+      name: string;
+      strength: string | null;
+      quantityPerDose: string | null;
+      doseUnit: string | null;
     };
     VisitSummary: {
       profile: {

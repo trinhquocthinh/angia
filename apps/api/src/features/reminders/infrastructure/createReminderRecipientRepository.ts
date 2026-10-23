@@ -1,8 +1,9 @@
-import { and, asc, eq, isNotNull } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { accounts, healthProfiles, reminderRecipients } from '@src/shared/db/schema/index.js';
+import { healthProfiles, reminderRecipients } from '@src/shared/db/schema/index.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { ReminderRecipientRepository } from '../application/recipientPorts.js';
+import { listFamilyAccounts } from './listFamilyAccounts.js';
 
 // RLS qua withFamilyScope cho hồ sơ và người nhận; bảng accounts không RLS nên luôn lọc family_id tường
 // minh. Khóa dòng hồ sơ (FOR UPDATE) tuần tự hóa hai lệnh lưu đồng thời.
@@ -21,19 +22,7 @@ export function createReminderRecipientRepository(db: Database): ReminderRecipie
                 .where(and(eq(healthProfiles.id, id), eq(healthProfiles.familyId, familyId)))
                 .for('update')
             )[0] ?? null,
-          listFamilyAccounts: async () =>
-            (
-              await tx
-                .select({
-                  id: accounts.id,
-                  displayName: accounts.displayName,
-                  role: accounts.familyRole,
-                  healthProfileId: accounts.healthProfileId,
-                })
-                .from(accounts)
-                .where(and(eq(accounts.familyId, familyId), isNotNull(accounts.familyRole)))
-                .orderBy(asc(accounts.createdAt), asc(accounts.id))
-            ).map((a) => ({ ...a, role: a.role! })),
+          listFamilyAccounts: () => listFamilyAccounts(tx, familyId),
           listRecipientIds: async (profileId) =>
             (
               await tx

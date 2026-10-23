@@ -1,5 +1,6 @@
 import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
 import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
+import { createMyReminderRepository } from '@src/features/myReminders/infrastructure/createMyReminderRepository.js';
 import { createReminderRecipientRepository } from '@src/features/reminders/infrastructure/createReminderRecipientRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
 import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
@@ -61,6 +62,7 @@ const healthDataRepositories = (database: Database) => ({
   adherence: createAdherenceRepository(database),
   doseSlots: createDoseSlotRepository(database),
   reminderRecipients: createReminderRecipientRepository(database),
+  myReminders: createMyReminderRepository(database),
   visitSummary: createVisitSummaryRepository(database),
 });
 

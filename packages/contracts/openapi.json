@@ -3085,6 +3085,82 @@
         ],
         "additionalProperties": false
       },
+      "MyReminder": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "slot": {
+            "type": "string",
+            "enum": [
+              "morning",
+              "noon",
+              "afternoon",
+              "evening"
+            ]
+          },
+          "scheduledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "profileName": {
+            "type": "string"
+          },
+          "medications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyReminderMedication"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "slot",
+          "scheduledAt",
+          "profileName",
+          "medications"
+        ]
+      },
+      "MyReminderMedication": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "strength": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quantityPerDose": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "doseUnit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "strength",
+          "quantityPerDose",
+          "doseUnit"
+        ]
+      },
       "VisitSummary": {
         "type": "object",
         "properties": {
@@ -7062,6 +7138,66 @@
           },
           "422": {
             "description": "ERR_VALIDATION: danh sách rỗng, tài khoản không phải main cùng gia đình, hoặc hồ sơ đã liên kết tài khoản",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/reminders/{reminderId}": {
+      "get": {
+        "tags": [
+          "reminders"
+        ],
+        "summary": "Đọc lời nhắc mà tài khoản phiên là người nhận hiện hành (SPEC-035)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "reminderId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lời nhắc của buổi kèm thuốc cần dùng",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyReminder"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: không có lời nhắc hoặc tài khoản không phải người nhận hợp lệ",
             "content": {
               "application/json": {
                 "schema": {
