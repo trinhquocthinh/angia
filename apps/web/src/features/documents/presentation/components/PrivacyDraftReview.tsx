@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import type { PrivacyEditorAction, PrivacyEditorState } from '../../application/privacyEditorState';
 import { PrivacyCandidateImage } from './PrivacyCandidateImage';
 import { PrivacyApprovalControls } from './PrivacyApprovalControls';
+import { PrivacyReviewDialog } from './PrivacyReviewDialog';
+import { PrivacyReviewReopen } from './PrivacyReviewReopen';
 type Props = {
   state: PrivacyEditorState;
   busy: boolean;
@@ -9,7 +12,9 @@ type Props = {
   aiExhausted?: boolean;
   onManual?: () => void;
 };
+// Được gắn key theo bản kiểm tra nên bản mới luôn tự mở hộp thoại.
 export function PrivacyDraftReview({ state, busy, dispatch, onApprove, aiExhausted, onManual }: Props) {
+  const [open, setOpen] = useState(true);
   const draft = state.candidate;
   if (draft.state === 'pending')
     return (
@@ -34,30 +39,30 @@ export function PrivacyDraftReview({ state, busy, dispatch, onApprove, aiExhaust
       </p>
     );
   const loaded = state.loaded === `${draft.draftId}:${draft.sha256}`;
+  if (!open) return <PrivacyReviewReopen onOpen={() => setOpen(true)} />;
   return (
-    <section
-      aria-label="Bản kiểm tra trước khi gửi tự động nhận diện"
-      className="flex flex-col gap-3 rounded-2xl border border-[#d6e5df] bg-white p-4"
-    >
-      <h3 className="font-semibold text-[#004135]">Kiểm tra ảnh trước khi gửi tự động nhận diện</h3>
-      <p className="text-sm text-[#55615f]">
-        Đọc lại ảnh bên dưới, kiểm tra họ tên, địa chỉ và các thông tin định danh đã được che.
-      </p>
-      <PrivacyCandidateImage
-        key={`${draft.draftId}:${draft.sha256}`}
-        draft={draft}
-        loaded={loaded}
-        dispatch={dispatch}
-      />
-      <PrivacyApprovalControls
-        state={state}
-        loaded={loaded}
-        busy={busy}
-        dispatch={dispatch}
-        onApprove={onApprove}
-        aiExhausted={aiExhausted ?? false}
-        onManual={onManual ?? (() => undefined)}
-      />
-    </section>
+    <PrivacyReviewDialog
+      busy={busy}
+      onClose={() => setOpen(false)}
+      image={
+        <PrivacyCandidateImage
+          key={`${draft.draftId}:${draft.sha256}`}
+          draft={draft}
+          loaded={loaded}
+          dispatch={dispatch}
+        />
+      }
+      controls={
+        <PrivacyApprovalControls
+          state={state}
+          loaded={loaded}
+          busy={busy}
+          dispatch={dispatch}
+          onApprove={onApprove}
+          aiExhausted={aiExhausted ?? false}
+          onManual={onManual ?? (() => undefined)}
+        />
+      }
+    />
   );
 }

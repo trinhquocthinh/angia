@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { IosInstallGuide } from './IosInstallGuide';
 import { LockScreenPreview } from './LockScreenPreview';
 import { PushDeviceCard } from './PushDeviceCard';
 import { PushDeviceDetails } from './PushDeviceDetails';
@@ -30,6 +31,13 @@ describe('Giao diện thông báo trên thiết bị', () => {
     expect(html).toContain('Đã chặn');
     expect(html).toContain('Đã đăng ký');
     expect(html).toContain('Đang bật');
+  });
+  it('hướng dẫn iPhone liệt kê đủ bước Chia sẻ → Thêm vào Màn hình chính → mở từ biểu tượng', () => {
+    const html = renderToStaticMarkup(<IosInstallGuide />);
+    expect(html).toContain('<ol');
+    expect(html.match(/<li/g)).toHaveLength(4);
+    for (const text of ['Chia sẻ', 'Thêm vào Màn hình chính', 'Thêm', 'biểu tượng AN GIA', 'iOS 16.4'])
+      expect(html).toContain(text);
   });
   it('chưa có cấu hình → không khẳng định trạng thái máy chủ', () => {
     const html = renderToStaticMarkup(

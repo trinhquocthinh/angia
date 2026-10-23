@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { isConsentInvitationRoute } from '@src/features/auth/application/isConsentInvitationRoute';
 import { prefetchCurrentSession } from '@src/features/auth/application/prefetchCurrentSession';
 import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
+import { hideSplash } from './hideSplash';
 import { routeTree } from './routeTree.gen';
 import './styles.css';
 
@@ -35,3 +36,4 @@ createRoot(rootElement).render(
     </QueryClientProvider>
   </StrictMode>,
 );
+hideSplash();

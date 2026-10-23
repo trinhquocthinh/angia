@@ -12,6 +12,9 @@ const paths = {
   server: 'M4 4h16v6H4Z M4 14h16v6H4Z M8 7h.01 M8 17h.01',
   pill: 'M5 5h14v14H5Z M12 8v8 M8 12h8',
   back: 'M15 5l-7 7 7 7',
+  share: 'M12 3v12 M8 7l4-4 4 4 M7 10H5v11h14V10h-2',
+  addSquare: 'M4 4h16v16H4Z M12 8v8 M8 12h8',
+  check: 'M5 12l5 5L20 7',
 } as const;
 export type PushIconName = keyof typeof paths;
 export function PushIcon({ name, size = 20 }: { name: PushIconName; size?: number }) {

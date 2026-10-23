@@ -8,11 +8,15 @@ type Props = {
   /** Escape gọi hàm này; khi đang lưu thì không đóng. */
   onCancel: () => void;
   pending: boolean;
-  width: 'md' | 'lg';
+  width: 'md' | 'lg' | 'xl';
   children: ReactNode;
 };
 
-const WIDTHS = { md: 'md:w-[min(540px,calc(100vw-32px))]', lg: 'md:w-[min(640px,calc(100vw-32px))]' };
+const WIDTHS = {
+  md: 'md:w-[min(540px,calc(100vw-32px))]',
+  lg: 'md:w-[min(640px,calc(100vw-32px))]',
+  xl: 'md:w-[min(880px,calc(100vw-32px))]',
+};
 
 // Hộp thoại theo Stitch 369b16ad/6ea48325: giữa màn hình ở desktop, bottom sheet ở mobile (Stitch 4f573bdf/bf67ecac).
 // Trả focus về phần tử đã mở khi đóng.

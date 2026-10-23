@@ -1,5 +1,7 @@
 import type { usePushSettings } from '../application/usePushSettings';
+import { detectIosBrowser } from '../infrastructure/detectIosBrowser';
 import { getPushSupport } from '../infrastructure/getPushSupport';
+import { IosInstallGuide } from './IosInstallGuide';
 
 type Settings = ReturnType<typeof usePushSettings>;
 
@@ -9,8 +11,12 @@ export function PushFeedback({ config, action }: Settings) {
   const message = action.isPending ? 'Đang xử lý…' : (action.error?.message ?? action.data ?? '');
   return (
     <>
-      {support && (
-        <p className="rounded-xl bg-[#eaf6f5] p-4 text-sm leading-relaxed text-[#183d32]">{support}</p>
+      {detectIosBrowser() ? (
+        <IosInstallGuide />
+      ) : (
+        support && (
+          <p className="rounded-xl bg-[#eaf6f5] p-4 text-sm leading-relaxed text-[#183d32]">{support}</p>
+        )
       )}
       {config.isError && (
         <p role="alert" className="rounded-xl bg-[#ffdad6] p-4 text-sm text-[#93000a]">
