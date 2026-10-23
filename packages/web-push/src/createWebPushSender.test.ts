@@ -38,6 +38,7 @@ describe('Bộ gửi Web Push dùng chung', () => {
     for (const code of ['ETIMEDOUT', 'ESOCKETTIMEDOUT']) {
       expect(await outcome({ code })).toEqual({ kind: 'retry', code: 'timeout' });
     }
+    expect(await outcome(new Error('Socket timeout'))).toEqual({ kind: 'retry', code: 'timeout' });
     for (const code of ['ECONNRESET', 'ENOTFOUND']) {
       expect(await outcome({ code })).toEqual({ kind: 'retry', code: 'network' });
     }

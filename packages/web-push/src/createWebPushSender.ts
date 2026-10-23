@@ -25,6 +25,7 @@ interface SendOptions {
 interface PushError {
   statusCode?: number;
   code?: string;
+  message?: string;
   headers?: Record<string, string | undefined>;
 }
 
@@ -41,7 +42,9 @@ function classify(error: PushError): PushSendResult {
   }
   if (status >= 500) return { kind: 'retry', code: 'http_5xx' };
   if (status >= 400) return { kind: 'rejected', code: 'http_4xx' };
-  return { kind: 'retry', code: TIMEOUT_CODES.has(String(error.code)) ? 'timeout' : 'network' };
+  // web-push 3.6.7 hủy request bằng Error('Socket timeout') không có code.
+  const timedOut = TIMEOUT_CODES.has(String(error.code)) || /timeout/i.test(String(error.message ?? ''));
+  return { kind: 'retry', code: timedOut ? 'timeout' : 'network' };
 }
 
 export function createWebPushSender(vapid: VapidDetails | null, library?: WebPushLibrary) {
