@@ -174,6 +174,14 @@ export {
 } from './reminders/doseSlotSchemas.js';
 export type { DoseSlotList, DoseSlotTime, SetDoseSlotsRequest } from './reminders/doseSlotSchemas.js';
 export {
+  reminderRecipientsSchema,
+  setReminderRecipientsRequestSchema,
+} from './reminders/reminderRecipientSchemas.js';
+export type {
+  ReminderRecipients,
+  SetReminderRecipientsRequest,
+} from './reminders/reminderRecipientSchemas.js';
+export {
   documentEntryPageSchema,
   documentEntryQuerySchema,
   documentEntrySchema,

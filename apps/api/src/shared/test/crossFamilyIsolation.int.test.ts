@@ -14,6 +14,13 @@ import { startProfileTestApp, type ProfileTestApp } from './startProfileTestApp.
 const respondBody = { decision: 'accepted', basis: 'self', respondentName: 'Lén' };
 const profiles = '/api/health-profiles';
 const documents = '/api/source-documents';
+const course = {
+  name: 'Canxi',
+  quantityPerDose: 1,
+  doseUnit: 'viên',
+  slots: ['morning'],
+  startDate: '2026-10-01',
+};
 const adherence = { medicationName: 'Canxi', status: 'taking', fromDate: '2026-10-01' };
 const seriesQuery = 'kind=blood_pressure&from=2026-10-01&to=2026-10-31';
 
@@ -89,13 +96,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     'GET /api/health-profiles/:id/document-entries': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/document-entries`),
     'POST /api/health-profiles/:id/medication-courses': (u, x) =>
-      t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses`, {
-        name: 'Canxi',
-        quantityPerDose: 1,
-        doseUnit: 'viên',
-        slots: ['morning'],
-        startDate: '2026-10-01',
-      }),
+      t.call(u, 'POST', `${profiles}/${x.profileId}/medication-courses`, course),
     'GET /api/health-profiles/:id/medication-courses/stoppable': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/medication-courses/stoppable`),
     'GET /api/health-profiles/:id/medication-courses/current': (u, x) =>
@@ -117,6 +118,12 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'GET', `${profiles}/${x.profileId}/dose-slots`),
     'PUT /api/health-profiles/:id/dose-slots': (u, x) =>
       t.call(u, 'PUT', `${profiles}/${x.profileId}/dose-slots`, { slots: { noon: '12:00' } }),
+    'GET /api/health-profiles/:id/reminder-recipients': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/reminder-recipients`),
+    'PUT /api/health-profiles/:id/reminder-recipients': (u, x) =>
+      t.call(u, 'PUT', `${profiles}/${x.profileId}/reminder-recipients`, {
+        recipientAccountIds: [x.accountId],
+      }),
     'GET /api/health-profiles/:id/visit-summary': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/visit-summary`),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
@@ -135,20 +142,13 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const token = await acceptConsentInvitation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const { documentId } = await seedPendingDocument(t, owner, reading);
-    const course = (await (
-      await t.call(main, 'POST', `${profiles}/${profile.id}/medication-courses`, {
-        name: 'Canxi',
-        quantityPerDose: 1,
-        doseUnit: 'viên',
-        slots: ['morning'],
-        startDate: '2026-10-01',
-      })
-    ).json()) as { id: string };
+    const started = await t.call(main, 'POST', `${profiles}/${profile.id}/medication-courses`, course);
+    const { id: courseId } = (await started.json()) as { id: string };
     await t.call(main, 'POST', `${profiles}/${profile.id}/adherence-periods`, adherence);
     const body = { type: 'prescription', data: prescription };
     const saved = await t.call(main, 'POST', `${profiles}/${profile.id}/manual-records`, body);
     const { id: prescriptionId } = ((await saved.json()) as { prescription: { id: string } }).prescription;
-    return { familyId, main, profile, documentId, token, courseId: course.id, prescriptionId };
+    return { familyId, main, profile, documentId, token, courseId, prescriptionId };
   };
   const attackers = async () => {
     const familyId = await t.family();

@@ -2,6 +2,8 @@ import type { AdherenceRepository } from '@src/features/adherence/application/po
 import { registerAdherenceRoutes } from '@src/features/adherence/presentation/registerAdherenceRoutes.js';
 import type { DoseSlotRepository } from '@src/features/reminders/application/ports.js';
 import { registerDoseSlotRoutes } from '@src/features/reminders/presentation/registerDoseSlotRoutes.js';
+import type { ReminderRecipientRepository } from '@src/features/reminders/application/recipientPorts.js';
+import { registerReminderRecipientRoutes } from '@src/features/reminders/presentation/registerReminderRecipientRoutes.js';
 import type { MedicationManagementRepository } from '@src/features/medications/application/managementPorts.js';
 import { registerMedicationRoutes } from '@src/features/medications/presentation/registerMedicationRoutes.js';
 import { registerPrivacyHeaders } from '@src/features/documentPrivacy/presentation/registerPrivacyHeaders.js';
@@ -68,6 +70,7 @@ export type AppDependencies = {
   medications: MedicationManagementRepository;
   adherence: AdherenceRepository;
   doseSlots: DoseSlotRepository;
+  reminderRecipients: ReminderRecipientRepository;
   visitSummary: VisitSummaryRepository;
   familyUsage: FamilyUsageDependencies;
   familyCaps: FamilyCapDependencies;
@@ -130,6 +133,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerMedicationRoutes(app, deps.medications, deps.auth.login.now);
   registerAdherenceRoutes(app, deps.adherence, deps.auth.login.now);
   registerDoseSlotRoutes(app, deps.doseSlots);
+  registerReminderRecipientRoutes(app, deps.reminderRecipients);
   registerVisitSummaryRoute(app, deps.visitSummary, deps.auth.login.now);
   registerInvitationRoutes(app, deps.consentInvitations);
   return app;

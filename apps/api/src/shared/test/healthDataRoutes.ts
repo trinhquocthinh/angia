@@ -37,6 +37,8 @@ export const HEALTH_DATA_ROUTES = {
   'POST /api/health-profiles/:id/adherence-periods': 'scoped',
   'GET /api/health-profiles/:id/dose-slots': 'scoped',
   'PUT /api/health-profiles/:id/dose-slots': 'scoped',
+  'GET /api/health-profiles/:id/reminder-recipients': 'scoped',
+  'PUT /api/health-profiles/:id/reminder-recipients': 'scoped',
   'GET /api/health-profiles/:id/visit-summary': 'scoped',
 } as const;
 

@@ -15,6 +15,7 @@ export function createStubReviewDeps(): Pick<
   | 'medications'
   | 'adherence'
   | 'doseSlots'
+  | 'reminderRecipients'
   | 'visitSummary'
   | 'familyUsage'
   | 'familyCaps'
@@ -26,6 +27,7 @@ export function createStubReviewDeps(): Pick<
     medications: { withFamily: notConfigured },
     adherence: { withFamily: notConfigured },
     doseSlots: { withFamily: notConfigured },
+    reminderRecipients: { withFamily: notConfigured },
     visitSummary: { withFamily: notConfigured },
     measurements: { withFamily: notConfigured },
     labResults: { withFamily: notConfigured },
