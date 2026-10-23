@@ -1,5 +1,6 @@
 import { ProfileHealthHeader } from '@src/features/measurements/presentation/components/ProfileHealthHeader';
 import { ProfileSectionPage } from '@src/features/profiles/presentation/components/ProfileSectionPage';
+import { DoseSlotsLink } from '@src/features/reminders/presentation/DoseSlotsLink';
 import { useCurrentMedications } from '../application/useCurrentMedications';
 import { createMedicationCatalogRepository } from '../infrastructure/createMedicationCatalogRepository';
 import { MedicationCatalog } from './MedicationCatalog';
@@ -31,6 +32,7 @@ function MedicationsContent({
           <>
             <SelfReportedCourseAction profile={profile} session={session} />
             <StopCourseAction profile={profile} session={session} />
+            <DoseSlotsLink profileId={profile.id} />
           </>
         }
       />

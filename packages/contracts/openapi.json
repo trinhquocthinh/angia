@@ -2961,6 +2961,65 @@
         ],
         "additionalProperties": false
       },
+      "DoseSlotList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/DoseSlot"
+        }
+      },
+      "DoseSlot": {
+        "type": "object",
+        "properties": {
+          "slot": {
+            "type": "string",
+            "enum": [
+              "morning",
+              "noon",
+              "afternoon",
+              "evening"
+            ]
+          },
+          "time": {
+            "$ref": "#/components/schemas/TimeOfDay"
+          }
+        },
+        "required": [
+          "slot",
+          "time"
+        ]
+      },
+      "TimeOfDay": {
+        "type": "string",
+        "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+        "description": "Giờ:phút 24 giờ theo giờ Việt Nam, dạng HH:mm"
+      },
+      "SetDoseSlotsRequest": {
+        "type": "object",
+        "properties": {
+          "slots": {
+            "type": "object",
+            "properties": {
+              "morning": {
+                "$ref": "#/components/schemas/TimeOfDay"
+              },
+              "noon": {
+                "$ref": "#/components/schemas/TimeOfDay"
+              },
+              "afternoon": {
+                "$ref": "#/components/schemas/TimeOfDay"
+              },
+              "evening": {
+                "$ref": "#/components/schemas/TimeOfDay"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "slots"
+        ],
+        "additionalProperties": false
+      },
       "VisitSummary": {
         "type": "object",
         "properties": {
@@ -6618,6 +6677,166 @@
           },
           "422": {
             "description": "ERR_VALIDATION: mốc không sau giai đoạn trước, ở tương lai hoặc trùng trạng thái",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/dose-slots": {
+      "get": {
+        "tags": [
+          "reminders"
+        ],
+        "summary": "Đọc khung giờ buổi của hồ sơ (SPEC-025)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Khung giờ đã lưu theo thứ tự Sáng → Tối; rỗng khi chưa thiết lập",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoseSlotList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "reminders"
+        ],
+        "summary": "Thiết lập khung giờ buổi (SPEC-025); buổi không gửi bị bỏ khung giờ",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetDoseSlotsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Khung giờ đã lưu theo thứ tự Sáng → Tối; rỗng khi chưa thiết lập",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoseSlotList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: sai định dạng giờ hoặc các buổi không tăng dần Sáng < Trưa < Chiều < Tối",
             "content": {
               "application/json": {
                 "schema": {

@@ -14,6 +14,7 @@ export function createStubReviewDeps(): Pick<
   | 'privacy'
   | 'medications'
   | 'adherence'
+  | 'doseSlots'
   | 'visitSummary'
   | 'familyUsage'
   | 'familyCaps'
@@ -24,6 +25,7 @@ export function createStubReviewDeps(): Pick<
     review: { repository: { withFamily: notConfigured }, reader: { get: notConfigured } },
     medications: { withFamily: notConfigured },
     adherence: { withFamily: notConfigured },
+    doseSlots: { withFamily: notConfigured },
     visitSummary: { withFamily: notConfigured },
     measurements: { withFamily: notConfigured },
     labResults: { withFamily: notConfigured },

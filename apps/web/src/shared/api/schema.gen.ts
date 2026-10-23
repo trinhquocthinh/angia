@@ -3383,6 +3383,151 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/health-profiles/{id}/dose-slots': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc khung giờ buổi của hồ sơ (SPEC-025) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Khung giờ đã lưu theo thứ tự Sáng → Tối; rỗng khi chưa thiết lập */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['DoseSlotList'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    /** Thiết lập khung giờ buổi (SPEC-025); buổi không gửi bị bỏ khung giờ */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['SetDoseSlotsRequest'];
+        };
+      };
+      responses: {
+        /** @description Khung giờ đã lưu theo thứ tự Sáng → Tối; rỗng khi chưa thiết lập */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['DoseSlotList'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: sai định dạng giờ hoặc các buổi không tăng dần Sáng < Trưa < Chiều < Tối */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/visit-summary': {
     parameters: {
       query?: never;
@@ -4403,6 +4548,22 @@ export interface components {
       status: components['schemas']['AdherenceStatus'];
       /** Format: date */
       fromDate: string;
+    };
+    DoseSlotList: components['schemas']['DoseSlot'][];
+    DoseSlot: {
+      /** @enum {string} */
+      slot: 'morning' | 'noon' | 'afternoon' | 'evening';
+      time: components['schemas']['TimeOfDay'];
+    };
+    /** @description Giờ:phút 24 giờ theo giờ Việt Nam, dạng HH:mm */
+    TimeOfDay: string;
+    SetDoseSlotsRequest: {
+      slots: {
+        morning?: components['schemas']['TimeOfDay'];
+        noon?: components['schemas']['TimeOfDay'];
+        afternoon?: components['schemas']['TimeOfDay'];
+        evening?: components['schemas']['TimeOfDay'];
+      };
     };
     VisitSummary: {
       profile: {

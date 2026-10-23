@@ -168,6 +168,12 @@ export type {
   RecordAdherencePeriodRequest,
 } from './adherence/adherencePeriodSchemas.js';
 export {
+  doseSlotListSchema,
+  doseSlotTimeSchema,
+  setDoseSlotsRequestSchema,
+} from './reminders/doseSlotSchemas.js';
+export type { DoseSlotList, DoseSlotTime, SetDoseSlotsRequest } from './reminders/doseSlotSchemas.js';
+export {
   documentEntryPageSchema,
   documentEntryQuerySchema,
   documentEntrySchema,

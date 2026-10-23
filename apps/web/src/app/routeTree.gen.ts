@@ -24,6 +24,7 @@ import { Route as ProfilesProfileIdDocumentsRouteImport } from './routes/profile
 import { Route as ProfilesProfileIdLabResultsRouteImport } from './routes/profiles.$profileId_.lab-results'
 import { Route as ProfilesProfileIdManualRouteImport } from './routes/profiles.$profileId_.manual'
 import { Route as ProfilesProfileIdMedicationsRouteImport } from './routes/profiles.$profileId_.medications'
+import { Route as ProfilesProfileIdRemindersRouteImport } from './routes/profiles.$profileId_.reminders'
 import { Route as ProfilesProfileIdSummaryRouteImport } from './routes/profiles.$profileId_.summary'
 
 const IndexRoute = IndexRouteImport.update({
@@ -104,6 +105,12 @@ const ProfilesProfileIdMedicationsRoute =
     path: '/profiles/$profileId/medications',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ProfilesProfileIdRemindersRoute =
+  ProfilesProfileIdRemindersRouteImport.update({
+    id: '/profiles/$profileId_/reminders',
+    path: '/profiles/$profileId/reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProfilesProfileIdSummaryRoute =
   ProfilesProfileIdSummaryRouteImport.update({
     id: '/profiles/$profileId_/summary',
@@ -127,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/profiles/$profileId/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId/medications': typeof ProfilesProfileIdMedicationsRoute
+  '/profiles/$profileId/reminders': typeof ProfilesProfileIdRemindersRoute
   '/profiles/$profileId/summary': typeof ProfilesProfileIdSummaryRoute
 }
 export interface FileRoutesByTo {
@@ -145,6 +153,7 @@ export interface FileRoutesByTo {
   '/profiles/$profileId/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId/medications': typeof ProfilesProfileIdMedicationsRoute
+  '/profiles/$profileId/reminders': typeof ProfilesProfileIdRemindersRoute
   '/profiles/$profileId/summary': typeof ProfilesProfileIdSummaryRoute
 }
 export interface FileRoutesById {
@@ -164,6 +173,7 @@ export interface FileRoutesById {
   '/profiles/$profileId_/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId_/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId_/medications': typeof ProfilesProfileIdMedicationsRoute
+  '/profiles/$profileId_/reminders': typeof ProfilesProfileIdRemindersRoute
   '/profiles/$profileId_/summary': typeof ProfilesProfileIdSummaryRoute
 }
 export interface FileRouteTypes {
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/profiles/$profileId/lab-results'
     | '/profiles/$profileId/manual'
     | '/profiles/$profileId/medications'
+    | '/profiles/$profileId/reminders'
     | '/profiles/$profileId/summary'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -202,6 +213,7 @@ export interface FileRouteTypes {
     | '/profiles/$profileId/lab-results'
     | '/profiles/$profileId/manual'
     | '/profiles/$profileId/medications'
+    | '/profiles/$profileId/reminders'
     | '/profiles/$profileId/summary'
   id:
     | '__root__'
@@ -220,6 +232,7 @@ export interface FileRouteTypes {
     | '/profiles/$profileId_/lab-results'
     | '/profiles/$profileId_/manual'
     | '/profiles/$profileId_/medications'
+    | '/profiles/$profileId_/reminders'
     | '/profiles/$profileId_/summary'
   fileRoutesById: FileRoutesById
 }
@@ -239,6 +252,7 @@ export interface RootRouteChildren {
   ProfilesProfileIdLabResultsRoute: typeof ProfilesProfileIdLabResultsRoute
   ProfilesProfileIdManualRoute: typeof ProfilesProfileIdManualRoute
   ProfilesProfileIdMedicationsRoute: typeof ProfilesProfileIdMedicationsRoute
+  ProfilesProfileIdRemindersRoute: typeof ProfilesProfileIdRemindersRoute
   ProfilesProfileIdSummaryRoute: typeof ProfilesProfileIdSummaryRoute
 }
 
@@ -349,6 +363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfilesProfileIdMedicationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profiles/$profileId_/reminders': {
+      id: '/profiles/$profileId_/reminders'
+      path: '/profiles/$profileId/reminders'
+      fullPath: '/profiles/$profileId/reminders'
+      preLoaderRoute: typeof ProfilesProfileIdRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profiles/$profileId_/summary': {
       id: '/profiles/$profileId_/summary'
       path: '/profiles/$profileId/summary'
@@ -375,6 +396,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfilesProfileIdLabResultsRoute: ProfilesProfileIdLabResultsRoute,
   ProfilesProfileIdManualRoute: ProfilesProfileIdManualRoute,
   ProfilesProfileIdMedicationsRoute: ProfilesProfileIdMedicationsRoute,
+  ProfilesProfileIdRemindersRoute: ProfilesProfileIdRemindersRoute,
   ProfilesProfileIdSummaryRoute: ProfilesProfileIdSummaryRoute,
 }
 export const routeTree = rootRouteImport
