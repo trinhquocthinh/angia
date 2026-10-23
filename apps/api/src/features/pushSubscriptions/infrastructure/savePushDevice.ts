@@ -3,7 +3,7 @@ import { sql } from 'drizzle-orm';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import { newId } from '@src/shared/db/schema/newId.js';
 import type { PushActor, PushIntent } from '../application/ports.js';
-import type { PushSubscriptionValue } from '../domain/isAllowedPushSubscription.js';
+import type { PushSubscriptionValue } from '@angia/web-push';
 import { lockPushAccount } from './lockPushAccount.js';
 
 export async function savePushDevice(

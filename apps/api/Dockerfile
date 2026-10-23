@@ -16,12 +16,14 @@ COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 COPY apps/worker/package.json apps/worker/
 COPY packages/contracts/package.json packages/contracts/
+COPY packages/web-push/package.json packages/web-push/
 RUN yarn workspaces focus @angia/api
 
 COPY tsconfig.base.json ./
 COPY packages/contracts packages/contracts
+COPY packages/web-push packages/web-push
 COPY apps/api apps/api
-RUN yarn workspace @angia/contracts build && yarn workspace @angia/api build
+RUN yarn workspace @angia/contracts build && yarn workspace @angia/web-push build && yarn workspace @angia/api build
 
 # ---------------------------------------------------------------------------
 # Stage 2: runtime chỉ chứa dependencies production + mã đã biên dịch
@@ -42,9 +44,11 @@ COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 COPY apps/worker/package.json apps/worker/
 COPY packages/contracts/package.json packages/contracts/
+COPY packages/web-push/package.json packages/web-push/
 RUN yarn workspaces focus @angia/api --production && yarn cache clean --all && rm -rf /root/.cache
 
 COPY --from=build /app/packages/contracts/dist packages/contracts/dist
+COPY --from=build /app/packages/web-push/dist packages/web-push/dist
 COPY --from=build /app/apps/api/dist apps/api/dist
 # Migration SQL cho container angia-migrate: node apps/api/dist/shared/db/migrate.js (DATABASE_OWNER_URL).
 COPY apps/api/drizzle apps/api/drizzle

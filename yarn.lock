@@ -10,6 +10,7 @@ __metadata:
   resolution: "@angia/api@workspace:apps/api"
   dependencies:
     "@angia/contracts": "workspace:*"
+    "@angia/web-push": "workspace:*"
     "@aws-sdk/client-s3": "npm:3.1139.0"
     "@hono/node-server": "npm:2.1.1"
     "@hono/zod-openapi": "npm:1.6.3"
@@ -30,7 +31,6 @@ __metadata:
     tsx: "npm:4.23.15"
     typescript: "npm:5.9.3"
     uuid: "npm:14.0.2"
-    web-push: "npm:3.6.7"
     zod: "npm:4.6.5"
   languageName: unknown
   linkType: soft
@@ -41,6 +41,16 @@ __metadata:
   dependencies:
     typescript: "npm:5.9.3"
     zod: "npm:4.6.5"
+  languageName: unknown
+  linkType: soft
+
+"@angia/web-push@workspace:*, @angia/web-push@workspace:packages/web-push":
+  version: 0.0.0-use.local
+  resolution: "@angia/web-push@workspace:packages/web-push"
+  dependencies:
+    "@types/node": "npm:22.20.4"
+    typescript: "npm:5.9.3"
+    web-push: "npm:3.6.7"
   languageName: unknown
   linkType: soft
 
@@ -81,6 +91,7 @@ __metadata:
   resolution: "@angia/worker@workspace:apps/worker"
   dependencies:
     "@angia/contracts": "workspace:*"
+    "@angia/web-push": "workspace:*"
     "@aws-sdk/client-s3": "npm:3.1139.0"
     "@opentelemetry/api": "npm:1.9.1"
     "@testcontainers/postgresql": "npm:12.1.0"
