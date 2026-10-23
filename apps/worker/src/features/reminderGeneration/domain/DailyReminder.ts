@@ -13,11 +13,6 @@ export interface CourseSnapshot {
   startDate: string;
   endDate: string | null;
 }
-export interface FamilyAccount {
-  id: string;
-  role: 'main' | 'member';
-  healthProfileId: string | null;
-}
 export interface ProfileSnapshot {
   profileId: string;
   consentConfirmed: boolean;

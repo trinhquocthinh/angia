@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { CourseSnapshot, FamilyAccount, ProfileSnapshot } from './DailyReminder.js';
+import type { CourseSnapshot, ProfileSnapshot } from './DailyReminder.js';
+import type { FamilyAccount } from '@src/shared/domain/FamilyAccount.js';
 import { planProfileReminders } from './planProfileReminders.js';
 
 const PROFILE = '0199a000-0000-7000-8000-000000000001';

@@ -1,4 +1,5 @@
-import type { DailyReminder, DailySlot, FamilyAccount, ProfileSnapshot } from '../domain/DailyReminder.js';
+import type { DailyReminder, DailySlot, ProfileSnapshot } from '../domain/DailyReminder.js';
+import type { FamilyAccount } from '@src/shared/domain/FamilyAccount.js';
 
 export interface ReminderFamilyStore {
   listFamilyAccounts(): Promise<FamilyAccount[]>;

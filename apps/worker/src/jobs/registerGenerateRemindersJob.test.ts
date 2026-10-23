@@ -1,10 +1,8 @@
 import type { PgBoss } from 'pg-boss';
 import type { Logger } from 'pino';
 import { describe, expect, it, vi } from 'vitest';
-import type {
-  FamilyAccount,
-  ProfileSnapshot,
-} from '@src/features/reminderGeneration/domain/DailyReminder.js';
+import type { ProfileSnapshot } from '@src/features/reminderGeneration/domain/DailyReminder.js';
+import type { FamilyAccount } from '@src/shared/domain/FamilyAccount.js';
 import { createMemoryReminderRepository } from '@src/shared/test/createMemoryReminderRepository.js';
 import { registerGenerateRemindersJob } from './registerGenerateRemindersJob.js';
 

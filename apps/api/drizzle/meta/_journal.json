@@ -162,6 +162,13 @@
       "when": 1792746242842,
       "tag": "0022_reminders",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1792752001273,
+      "tag": "0023_reminder_deliveries",
+      "breakpoints": true
     }
   ]
 }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { CourseSnapshot, FamilyAccount, ProfileSnapshot } from '../domain/DailyReminder.js';
+import type { CourseSnapshot, ProfileSnapshot } from '../domain/DailyReminder.js';
+import type { FamilyAccount } from '@src/shared/domain/FamilyAccount.js';
 import { createMemoryReminderRepository } from '@src/shared/test/createMemoryReminderRepository.js';
 import { generateReminders } from './generateReminders.js';
 

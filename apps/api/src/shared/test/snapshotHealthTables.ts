@@ -16,6 +16,7 @@ const SNAPSHOT_TABLES = [
   'dose_slots',
   'reminder_recipients',
   'reminders',
+  'reminder_deliveries',
 ];
 
 // Chụp toàn bộ dòng các bảng sức khỏe bằng role owner để chứng minh request bị từ chối không ghi gì.

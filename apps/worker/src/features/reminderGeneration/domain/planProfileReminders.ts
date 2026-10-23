@@ -3,12 +3,12 @@ import {
   type CourseSnapshot,
   type DailyReminder,
   type DailySlot,
-  type FamilyAccount,
   type ProfileReminderPlan,
   type ProfileSnapshot,
   type ReminderMedication,
 } from './DailyReminder.js';
-import { resolveRecipientAccountIds } from './resolveRecipientAccountIds.js';
+import type { FamilyAccount } from '@src/shared/domain/FamilyAccount.js';
+import { resolveRecipientAccountIds } from '@src/shared/domain/resolveRecipientAccountIds.js';
 
 // BR-030/BR-038: hiệu lực tại ngày D chỉ theo khoảng ngày; dừng đợt đã gán endDate = ngày dừng − 1.
 const isActiveOn = (course: CourseSnapshot, date: string) =>

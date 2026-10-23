@@ -1,4 +1,4 @@
-import type { FamilyAccount } from './DailyReminder.js';
+import type { FamilyAccount } from './FamilyAccount.js';
 
 // BR-039 (owner chốt 2026-10-23): hồ sơ liên kết → chính tài khoản đó, bỏ qua danh sách đã lưu.
 // Hồ sơ không liên kết → người đã chỉ định còn là `main` của gia đình (lọc khi đọc); không có mặc định.

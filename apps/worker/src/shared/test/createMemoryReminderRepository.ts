@@ -1,9 +1,9 @@
 import type { ReminderRepository } from '@src/features/reminderGeneration/application/ports.js';
 import type {
   DailyReminder,
-  FamilyAccount,
   ProfileSnapshot,
 } from '@src/features/reminderGeneration/domain/DailyReminder.js';
+import type { FamilyAccount } from '@src/shared/domain/FamilyAccount.js';
 
 interface FamilyData {
   accounts: FamilyAccount[];

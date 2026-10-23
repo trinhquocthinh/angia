@@ -33,6 +33,8 @@ export const reminders = pgTable(
   },
   (t) => [
     unique('reminders_profile_date_slot_unique').on(t.healthProfileId, t.date, t.slot),
+    // Đích của FK ghép từ reminder_deliveries (E9-S2-T2): ledger cùng gia đình với lời nhắc.
+    unique('reminders_id_family_unique').on(t.id, t.familyId),
     foreignKey({
       name: 'reminders_profile_family_fk',
       columns: [t.healthProfileId, t.familyId],
