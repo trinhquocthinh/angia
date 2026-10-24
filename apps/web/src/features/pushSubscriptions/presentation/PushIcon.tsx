@@ -15,6 +15,9 @@ const paths = {
   share: 'M12 3v12 M8 7l4-4 4 4 M7 10H5v11h14V10h-2',
   addSquare: 'M4 4h16v16H4Z M12 8v8 M8 12h8',
   check: 'M5 12l5 5L20 7',
+  menu: 'M12 5h.01 M12 12h.01 M12 19h.01',
+  external: 'M14 4h6v6 M20 4l-9 9 M18 14v6H4V6h6',
+  settings: 'M4 6h10 M18 6h2 M4 12h4 M12 12h8 M4 18h12 M20 18h0 M16 4v4 M10 10v4 M18 16v4',
 } as const;
 export type PushIconName = keyof typeof paths;
 export function PushIcon({ name, size = 20 }: { name: PushIconName; size?: number }) {
