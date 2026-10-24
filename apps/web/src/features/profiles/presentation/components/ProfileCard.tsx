@@ -3,9 +3,11 @@ import type { HealthProfile } from '../../application/ports';
 export function ProfileCard({
   profile,
   onConsent,
+  onDelete,
 }: {
   profile: HealthProfile;
   onConsent: (profile: HealthProfile) => void;
+  onDelete: (profile: HealthProfile) => void;
 }) {
   const confirmed = profile.consentStatus === 'confirmed' && profile.consentSource === 'invitation';
   return (
@@ -33,6 +35,12 @@ export function ProfileCard({
           {profile.consentStatus === 'invited' ? 'Quản lý link xác nhận' : 'Tạo link mời người thân'}
         </button>
       )}
+      <button
+        className="mt-auto self-start pt-5 text-sm font-semibold text-[#b42318] underline-offset-4 cursor-pointer hover:underline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
+        onClick={() => onDelete(profile)}
+      >
+        Xóa hồ sơ
+      </button>
     </article>
   );
 }

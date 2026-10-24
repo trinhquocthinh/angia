@@ -9,19 +9,16 @@ import type { Target, Probe } from './CrossFamilyTarget.js';
 import { seedPendingDocument } from './seedPendingDocument.js';
 import { seedReminder } from './seedReminder.js';
 import { snapshotHealthTables } from './snapshotHealthTables.js';
-import { manualPrescription as prescription, manualReading as reading } from './healthDataFixtures.js';
+import {
+  manualCourse as course,
+  manualPrescription as prescription,
+  manualReading as reading,
+} from './healthDataFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from './startProfileTestApp.js';
 
 const respondBody = { decision: 'accepted', basis: 'self', respondentName: 'Lén' };
 const profiles = '/api/health-profiles';
 const documents = '/api/source-documents';
-const course = {
-  name: 'Canxi',
-  quantityPerDose: 1,
-  doseUnit: 'viên',
-  slots: ['morning'],
-  startDate: '2026-10-01',
-};
 const adherence = { medicationName: 'Canxi', status: 'taking', fromDate: '2026-10-01' };
 const seriesQuery = 'kind=blood_pressure&from=2026-10-01&to=2026-10-31';
 
@@ -56,6 +53,8 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
   const probes: Record<RouteOfKind<'scoped'>, Probe> = {
     'POST /api/health-profiles': (u, x) =>
       t.call(u, 'POST', profiles, { displayName: 'Lén', linkedAccountId: x.accountId }),
+    'DELETE /api/health-profiles/:id': (u, x) =>
+      t.call(u, 'DELETE', `${profiles}/${x.profileId}`, { confirmName: 'Mẹ' }), // tên đúng của nạn nhân
     'POST /api/health-profiles/:id/consent-invitations': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/consent-invitations`),
     'DELETE /api/health-profiles/:id/consent-invitations': (u, x) =>

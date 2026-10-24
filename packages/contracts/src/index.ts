@@ -29,12 +29,28 @@ export {
   requeueAwaitingBudgetJobSchema,
 } from './jobs/requeueAwaitingBudgetJob.js';
 export type { RequeueAwaitingBudgetJob } from './jobs/requeueAwaitingBudgetJob.js';
+export {
+  PURGE_PROFILE_OBJECTS_QUEUE,
+  PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS,
+  PURGE_PROFILE_OBJECTS_DELAY_SECONDS,
+  purgeProfileObjectsJobSchema,
+  profileObjectPrefix,
+} from './jobs/purgeProfileObjectsJob.js';
+export type { PurgeProfileObjectsJob } from './jobs/purgeProfileObjectsJob.js';
 export { healthResponseSchema } from './health/healthResponseSchema.js';
 export type { HealthResponse } from './health/healthResponseSchema.js';
 export { healthProfileSchema } from './profiles/healthProfileSchema.js';
 export type { HealthProfile } from './profiles/healthProfileSchema.js';
-export { createHealthProfileRequestSchema, confirmConsentRequestSchema } from './profiles/profileRequests.js';
-export type { CreateHealthProfileRequest, ConfirmConsentRequest } from './profiles/profileRequests.js';
+export {
+  createHealthProfileRequestSchema,
+  confirmConsentRequestSchema,
+  deleteHealthProfileRequestSchema,
+} from './profiles/profileRequests.js';
+export type {
+  CreateHealthProfileRequest,
+  ConfirmConsentRequest,
+  DeleteHealthProfileRequest,
+} from './profiles/profileRequests.js';
 export { consentConfirmationResponseSchema } from './profiles/consentConfirmationResponseSchema.js';
 export type { ConsentConfirmationResponse } from './profiles/consentConfirmationResponseSchema.js';
 export { linkableAccountSchema } from './profiles/linkableAccountSchema.js';

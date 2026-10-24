@@ -10,5 +10,6 @@ export interface ProfilesRepository {
   create(body: ProfileRequest, csrfToken: string): Promise<HealthProfile>;
   createInvitation(id: string, csrfToken: string): Promise<InvitationCreated>;
   revokeInvitation(id: string, csrfToken: string): Promise<void>;
+  remove(id: string, confirmName: string, csrfToken: string): Promise<void>;
   logout(csrfToken: string): Promise<void>;
 }

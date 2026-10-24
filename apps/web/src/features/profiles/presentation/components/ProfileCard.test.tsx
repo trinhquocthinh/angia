@@ -25,6 +25,7 @@ describe('Đồng thuận bằng lời mời, không suy diễn từ metadata c�
           consentSource: 'legacy_attestation',
         }}
         onConsent={() => undefined}
+        onDelete={() => undefined}
       />,
     );
     expect(html).toContain('Tạo link mời người thân');
@@ -35,7 +36,11 @@ describe('Đồng thuận bằng lời mời, không suy diễn từ metadata c�
   });
   it.each(['invited', 'declined'] as const)('thể hiện trạng thái %s', (status) => {
     const html = renderToStaticMarkup(
-      <ProfileCard profile={{ ...profile, consentStatus: status }} onConsent={() => undefined} />,
+      <ProfileCard
+        profile={{ ...profile, consentStatus: status }}
+        onConsent={() => undefined}
+        onDelete={() => undefined}
+      />,
     );
     expect(html).toContain(status === 'invited' ? 'Quản lý link xác nhận' : 'Tạo link mời người thân');
   });
@@ -49,11 +54,20 @@ describe('Đồng thuận bằng lời mời, không suy diễn từ metadata c�
           consentRespondentName: 'An',
         }}
         onConsent={() => undefined}
+        onDelete={() => undefined}
       />,
     );
     expect(html).toContain('Đã đồng ý chia sẻ');
     expect(html).toContain('An');
     expect(html).toContain('chưa được xác minh');
-    expect(html).not.toContain('<button');
+    // Chỉ còn nút xóa hồ sơ; không có nút tạo/quản lý link hay xác nhận thay.
+    expect(html.match(/<button/g)).toHaveLength(1);
+    expect(html).not.toContain('link');
+  });
+  it('SPEC-007: thẻ hồ sơ có nút chữ "Xóa hồ sơ" ở cuối', () => {
+    const html = renderToStaticMarkup(
+      <ProfileCard profile={profile} onConsent={() => undefined} onDelete={() => undefined} />,
+    );
+    expect(html).toMatch(/Xóa hồ sơ<\/button><\/article>$/);
   });
 });

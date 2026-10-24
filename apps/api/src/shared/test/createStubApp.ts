@@ -4,7 +4,7 @@ import { createFakeFamilyAdminRepository } from './createFakeFamilyAdminReposito
 import { createStubAuthDeps } from './createStubAuthDeps.js';
 import { createStubDocumentDeps } from './createStubDocumentDeps.js';
 import { createStubInvitationDeps } from './createStubInvitationDeps.js';
-import { createStubProfileRepository } from './createStubProfileRepository.js';
+import { createStubProfileDeps } from './createStubProfileDeps.js';
 import { createStubReviewDeps } from './createStubReviewDeps.js';
 
 import { createStubPushDeps } from './createStubPushDeps.js';
@@ -20,7 +20,7 @@ export function createStubApp() {
     ...createStubReviewDeps(),
     healthProbes: { db: noopProbe, storage: noopProbe },
     auth: createStubAuthDeps(),
-    profiles: createStubProfileRepository(),
+    profiles: createStubProfileDeps(),
     familyAdmin: createFakeFamilyAdminRepository().repository,
     aiBudget: createStubAiBudgetDeps(),
   });

@@ -2,6 +2,7 @@ import { createRoute, z } from '@hono/zod-openapi';
 import {
   confirmConsentRequestSchema,
   createHealthProfileRequestSchema,
+  deleteHealthProfileRequestSchema,
   errorResponseSchema,
   healthProfileSchema,
   linkableAccountSchema,
@@ -63,5 +64,21 @@ export const confirmConsentRoute = createRoute({
     ...guards,
     404: error('ERR_NOT_FOUND'),
     422: error('ERR_VALIDATION'),
+  },
+});
+export const deleteProfileRoute = createRoute({
+  method: 'delete',
+  path: `${base}/{id}`,
+  tags: ['profiles'],
+  summary: 'Xóa triệt để hồ sơ và toàn bộ dữ liệu y tế (SPEC-007)',
+  request: {
+    params: z.object({ id: z.uuid() }),
+    body: { required: true, content: json(deleteHealthProfileRequestSchema) },
+  },
+  responses: {
+    204: { description: 'Đã xóa hồ sơ, dữ liệu phụ thuộc và ảnh' },
+    ...guards,
+    404: error('ERR_NOT_FOUND'),
+    422: error('ERR_CONFIRMATION_MISMATCH hoặc ERR_VALIDATION'),
   },
 });

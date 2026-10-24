@@ -1,5 +1,6 @@
 import type { ObjectStorage } from '@src/features/documents/application/ports.js';
 import type { ObjectReader } from '@src/features/documents/application/reviewPorts.js';
+import type { ProfileObjectStorage } from '@src/features/profiles/application/ports.js';
 
 // S3 giả trong bộ nhớ: test route/RLS trên PostgreSQL thật; adapter S3 kiểm chứng với Garage dev/SIT.
 export function createMemoryObjectStorage() {
@@ -44,5 +45,19 @@ export function createMemoryObjectStorage() {
       return object ? { body: new Blob([object.body]).stream(), contentType: object.contentType } : null;
     },
   };
-  return { storage, reader, objects, failNthPut, holdNextPut };
+  // Lần xóa theo tiền tố kế tiếp ném lỗi (giả lập S3 hỏng sau COMMIT xóa hồ sơ).
+  let failDeletePrefix = false;
+  const failNextDeletePrefix = () => (failDeletePrefix = true);
+  const profileStorage: ProfileObjectStorage = {
+    deletePrefix: async (prefix) => {
+      if (failDeletePrefix) {
+        failDeletePrefix = false;
+        throw new Error('S3 lỗi giả lập');
+      }
+      const keys = [...objects.keys()].filter((key) => key.startsWith(prefix));
+      keys.forEach((key) => objects.delete(key));
+      return keys.length;
+    },
+  };
+  return { storage, reader, profileStorage, objects, failNthPut, holdNextPut, failNextDeletePrefix };
 }

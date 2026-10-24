@@ -30,7 +30,7 @@ import type { MeasurementRepository } from '@src/features/measurements/applicati
 import { registerMeasurementRoutes } from '@src/features/measurements/presentation/registerMeasurementRoutes.js';
 import type { VisitSummaryRepository } from '@src/features/visitSummary/application/ports.js';
 import { registerVisitSummaryRoute } from '@src/features/visitSummary/presentation/registerVisitSummaryRoute.js';
-import type { ProfileRepository } from '@src/features/profiles/application/ports.js';
+import type { ProfileDependencies } from '@src/features/profiles/application/ports.js';
 import { registerProfileRoutes } from '@src/features/profiles/presentation/registerProfileRoutes.js';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { except } from 'hono/combine';
@@ -61,7 +61,7 @@ export type AppDependencies = {
   auth: AuthRouteDeps;
   familyAdmin: FamilyAdminRepository;
   aiBudget: AiBudgetDependencies;
-  profiles: ProfileRepository;
+  profiles: ProfileDependencies;
   consentInvitations: InvitationRouteDependencies;
   documents: DocumentDependencies;
   review: ReviewDependencies;
@@ -119,7 +119,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerAiBudgetRoutes(app, deps.aiBudget);
   registerFamilyUsageRoute(app, deps.familyUsage);
   registerFamilyCapRoutes(app, deps.familyCaps);
-  registerProfileRoutes(app, deps.profiles, deps.auth.login.now);
+  registerProfileRoutes(app, { ...deps.profiles, logger: deps.auth.logger }, deps.auth.login.now);
   // Một limiter dùng chung cho mọi thao tác nặng; khóa tách theo tài khoản + thao tác.
   const heavyLimiter = createSlidingWindowLimiter({
     limit: deps.heavyRateLimit.perMinute,

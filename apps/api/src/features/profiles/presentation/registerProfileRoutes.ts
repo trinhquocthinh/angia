@@ -3,22 +3,21 @@ import { requireMain } from '@src/shared/auth/presentation/requireMain.js';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { errorJson } from '@src/shared/http/errorResponse.js';
 import { createProfile } from '../application/createProfile.js';
+import { deleteProfile } from '../application/deleteProfile.js';
 import { listProfiles } from '../application/listProfiles.js';
 import { listLinkableAccounts } from '../application/listLinkableAccounts.js';
-import type { Clock, ProfileRepository } from '../application/ports.js';
+import type { Clock, ProfileDeletionDeps } from '../application/ports.js';
 import {
   listProfilesRoute,
   listLinkableAccountsRoute,
   createProfileRoute,
   confirmConsentRoute,
+  deleteProfileRoute,
 } from './profileRouteDefinitions.js';
 import { toProfileResponse } from './toProfileResponse.js';
 
-export function registerProfileRoutes(
-  app: OpenAPIHono<AppEnv>,
-  repository: ProfileRepository,
-  now: Clock,
-): void {
+export function registerProfileRoutes(app: OpenAPIHono<AppEnv>, deps: ProfileDeletionDeps, now: Clock): void {
+  const { repository } = deps;
   app.use('/api/health-profiles', requireMain());
   app.use('/api/health-profiles/*', requireMain());
   app.use('/api/health-profiles*', async (c, next) => {
@@ -37,5 +36,11 @@ export function registerProfileRoutes(
   });
   app.openapi(confirmConsentRoute, async (c) => {
     return c.json(...errorJson('ERR_CONSENT_INVITATION_REQUIRED'));
+  });
+  app.openapi(deleteProfileRoute, async (c) => {
+    const familyId = c.get('session')!.family!.id;
+    const { id } = c.req.valid('param');
+    const result = await deleteProfile(deps, familyId, id, c.req.valid('json').confirmName);
+    return result.ok ? c.body(null, 204) : c.json(...errorJson(result.code));
   });
 }

@@ -655,6 +655,19 @@
           "confirmedBy"
         ]
       },
+      "DeleteHealthProfileRequest": {
+        "type": "object",
+        "properties": {
+          "confirmName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          }
+        },
+        "required": [
+          "confirmName"
+        ]
+      },
       "UploadBatchResponse": {
         "type": "object",
         "properties": {
@@ -4660,6 +4673,80 @@
           },
           "422": {
             "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}": {
+      "delete": {
+        "tags": [
+          "profiles"
+        ],
+        "summary": "Xóa triệt để hồ sơ và toàn bộ dữ liệu y tế (SPEC-007)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteHealthProfileRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Đã xóa hồ sơ, dữ liệu phụ thuộc và ảnh"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần main cùng gia đình và CSRF cho request ghi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_CONFIRMATION_MISMATCH hoặc ERR_VALIDATION",
             "content": {
               "application/json": {
                 "schema": {

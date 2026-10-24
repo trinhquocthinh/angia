@@ -9,13 +9,14 @@ import type { HealthProfile } from '../application/ports';
 import { createProfilesRepository } from '../infrastructure/createProfilesRepository';
 import { ProfileFrame } from './components/ProfileFrame';
 import { ProfilesContent } from './components/ProfilesContent';
-import { InvitationManagerDialog } from './components/InvitationManagerDialog';
+import { ProfileDialogs } from './components/ProfileDialogs';
 import './profiles.css';
 const repository = createProfilesRepository();
 export function HomePage() {
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(repository, session.data);
   const [selected, setSelected] = useState<HealthProfile | null>(null);
+  const [deleting, setDeleting] = useState<HealthProfile | null>(null);
   useProfileSessionRecovery(workspace.profiles.error ?? workspace.accounts.error ?? workspace.create.error);
   if (!session.data) return null;
   const profiles = workspace.profiles.data ?? [];
@@ -52,17 +53,20 @@ export function HomePage() {
           error={workspace.profiles.isError}
           retry={() => void workspace.profiles.refetch()}
           onConsent={setSelected}
+          onDelete={setDeleting}
         />
       ) : (
         <RecipientNotice />
       )}
-      {selected && selected.familyId === session.data.family?.id && main && (
-        <InvitationManagerDialog
-          key={`${session.data.account.id}:${session.data.family.id}:${selected.id}`}
-          profile={profiles.find((profile) => profile.id === selected.id) ?? selected}
+      {main && (
+        <ProfileDialogs
           session={session.data}
           repository={repository}
-          onClose={() => setSelected(null)}
+          profiles={profiles}
+          consent={selected}
+          deleting={deleting}
+          closeConsent={() => setSelected(null)}
+          closeDelete={() => setDeleting(null)}
         />
       )}
     </ProfileFrame>

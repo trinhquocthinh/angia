@@ -15,6 +15,8 @@ import {
   CONVERT_HEIC_QUEUE_OPTIONS,
   PREPARE_OCR_IMAGE_QUEUE,
   PREPARE_OCR_IMAGE_QUEUE_OPTIONS,
+  PURGE_PROFILE_OBJECTS_QUEUE,
+  PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS,
   ensureExtractDocumentQueues,
 } from '@angia/contracts';
 import pg from 'pg';
@@ -86,7 +88,7 @@ function buildApp(
     },
     familyAdmin: createFakeFamilyAdminRepository().repository,
     aiBudget: createStubAiBudgetDeps(),
-    profiles: createProfileRepository(database),
+    profiles: { repository: createProfileRepository(database, boss), storage: memory.profileStorage },
     consentInvitations: {
       repository: createInvitationRepository(database),
       codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
@@ -140,6 +142,7 @@ export async function startProfileTestApp(
   await boss.createQueue(CONVERT_HEIC_QUEUE, CONVERT_HEIC_QUEUE_OPTIONS);
   await boss.createQueue(PREPARE_OCR_IMAGE_QUEUE, PREPARE_OCR_IMAGE_QUEUE_OPTIONS);
   await ensureExtractDocumentQueues(boss);
+  await boss.createQueue(PURGE_PROFILE_OBJECTS_QUEUE, PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS);
   const app = buildApp(database, appBaseUrl, memory, boss, options);
   const family = async () => {
     const id = randomUUID();
@@ -178,6 +181,7 @@ export async function startProfileTestApp(
     objects: memory.objects,
     failNthPut: memory.failNthPut,
     holdNextPut: memory.holdNextPut,
+    failNextDeletePrefix: memory.failNextDeletePrefix,
     codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
   };
 }

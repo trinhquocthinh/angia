@@ -25,6 +25,8 @@ import { registerExtractDocumentJob } from '@src/jobs/registerExtractDocumentJob
 import { registerRecoverDeadExtractionJob } from '@src/jobs/registerRecoverDeadExtractionJob.js';
 import { registerRequeueAwaitingBudgetJob } from '@src/jobs/registerRequeueAwaitingBudgetJob.js';
 import { registerSweepOrphanObjectsJob } from '@src/jobs/registerSweepOrphanObjectsJob.js';
+import { registerPurgeProfileObjectsJob } from '@src/jobs/registerPurgeProfileObjectsJob.js';
+import { createPurgeRepository } from '@src/features/purgeProfileObjects/infrastructure/createPurgeRepository.js';
 import { createOrphanRepository } from '@src/features/orphanObjects/infrastructure/createOrphanRepository.js';
 import { createOrphanStorage } from '@src/features/orphanObjects/infrastructure/createOrphanStorage.js';
 import { createReminderRepository } from '@src/features/reminderGeneration/infrastructure/createReminderRepository.js';
@@ -154,6 +156,15 @@ try {
       maxDeletes: config.ORPHAN_OBJECT_MAX_DELETES,
       dryRun: config.ORPHAN_OBJECT_DRY_RUN,
       now: () => new Date(),
+    },
+    logger,
+  );
+  // Cùng adapter list/delete của quét mồ côi; key worker đã có quyền đọc bucket (d22).
+  await registerPurgeProfileObjectsJob(
+    boss,
+    {
+      repository: createPurgeRepository(pool),
+      storage: createOrphanStorage(createS3Client(config), config.S3_BUCKET),
     },
     logger,
   );

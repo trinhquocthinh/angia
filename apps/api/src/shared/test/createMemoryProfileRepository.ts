@@ -41,6 +41,14 @@ export function createMemoryProfileRepository(accounts: Account[] = []): Profile
         linkAccount: async (id, profileId) => {
           findAccount(id)!.healthProfileId = profileId;
         },
+        lockProfile: async (id) => profiles.find((p) => p.id === id && p.familyId === familyId) ?? null,
+        deleteProfile: async (id) => {
+          profiles.splice(
+            profiles.findIndex((p) => p.id === id),
+            1,
+          );
+        },
+        enqueuePurge: async () => {},
       };
       return work(store);
     },

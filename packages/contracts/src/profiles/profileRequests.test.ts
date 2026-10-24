@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { createHealthProfileRequestSchema, confirmConsentRequestSchema } from './profileRequests.js';
+import {
+  createHealthProfileRequestSchema,
+  confirmConsentRequestSchema,
+  deleteHealthProfileRequestSchema,
+} from './profileRequests.js';
 
 describe('Hợp đồng tạo hồ sơ và đồng thuận', () => {
   it('TC-008: tên được trim, năm sinh và tài khoản tùy chọn', () => {
@@ -19,5 +23,14 @@ describe('Hợp đồng tạo hồ sơ và đồng thuận', () => {
   it('chỉ chấp nhận hai căn cứ đồng thuận đã quy định', () => {
     expect(confirmConsentRequestSchema.safeParse({ confirmedBy: 'guardian' }).success).toBe(true);
     expect(confirmConsentRequestSchema.safeParse({ confirmedBy: 'other' }).success).toBe(false);
+  });
+});
+
+describe('Hợp đồng xóa hồ sơ (SPEC-007)', () => {
+  it('giữ nguyên tên nhập lại, không trim để so chính xác', () => {
+    expect(deleteHealthProfileRequestSchema.parse({ confirmName: ' Mẹ ' })).toEqual({ confirmName: ' Mẹ ' });
+  });
+  it.each([{}, { confirmName: '' }, { confirmName: 'a'.repeat(61) }])('từ chối dữ liệu sai %j', (input) => {
+    expect(deleteHealthProfileRequestSchema.safeParse(input).success).toBe(false);
   });
 });

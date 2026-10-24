@@ -2,7 +2,7 @@ import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.
 import { createStubReviewDeps } from '@src/shared/test/createStubReviewDeps.js';
 import { createStubDocumentDeps } from '@src/shared/test/createStubDocumentDeps.js';
 import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
-import { createStubProfileRepository } from '@src/shared/test/createStubProfileRepository.js';
+import { createStubProfileDeps } from '@src/shared/test/createStubProfileDeps.js';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '@src/createApp.js';
@@ -77,7 +77,7 @@ describe('GET /api/auth/login + /api/auth/callback', () => {
         secureCookies: true,
         logger: createSilentLogger(),
       },
-      profiles: createStubProfileRepository(),
+      profiles: createStubProfileDeps(),
       familyAdmin: createFakeFamilyAdminRepository().repository,
       aiBudget: createStubAiBudgetDeps(),
     });
