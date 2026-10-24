@@ -27,6 +27,7 @@ export interface LinkableAccount {
 export interface LinkCandidate extends LinkableAccount {
   healthProfileId: string | null;
 }
-type ProfileError = 'ERR_NOT_FOUND' | 'ERR_PROFILE_ALREADY_LINKED' | 'ERR_VALIDATION';
+type ProfileError =
+  'ERR_NOT_FOUND' | 'ERR_PROFILE_ALREADY_LINKED' | 'ERR_VALIDATION' | 'ERR_CONFIRMATION_MISMATCH';
 export type ProfileOutcome<T, Code extends ProfileError = ProfileError> =
   { ok: true; value: T } | { ok: false; code: Code };
