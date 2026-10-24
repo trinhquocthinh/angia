@@ -14,3 +14,9 @@ export const confirmConsentRequestSchema = z
   .object({ confirmedBy: z.enum(['self', 'guardian']) })
   .meta({ id: 'ConfirmConsentRequest' });
 export type ConfirmConsentRequest = z.infer<typeof confirmConsentRequestSchema>;
+
+// SPEC-007: không trim — server so chính xác (sau NFC) với tên hồ sơ.
+export const deleteHealthProfileRequestSchema = z
+  .object({ confirmName: z.string().min(1).max(60) })
+  .meta({ id: 'DeleteHealthProfileRequest' });
+export type DeleteHealthProfileRequest = z.infer<typeof deleteHealthProfileRequestSchema>;
