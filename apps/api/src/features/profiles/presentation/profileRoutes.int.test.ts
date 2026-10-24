@@ -30,9 +30,10 @@ describe('Hồ sơ: route thật, transaction và RLS', () => {
       consentConfirmedBy: null,
       consentBasis: null,
     });
-    const read = () => t.call(other, 'POST', `${base}/${profile.id}/consent-invitations`);
+    const read = () =>
+      t.call(other, 'POST', `${base}/${profile.id}/consent-invitations`, { attestation: true });
     await expectCrossFamilyDenied(read, () =>
-      t.call(other, 'POST', `${base}/${randomUUID()}/consent-invitations`),
+      t.call(other, 'POST', `${base}/${randomUUID()}/consent-invitations`, { attestation: true }),
     );
     expect(await (await t.call(main, 'GET', base)).json()).toEqual([profile]);
     expect(await (await t.call(other, 'GET', base)).json()).toEqual([]);

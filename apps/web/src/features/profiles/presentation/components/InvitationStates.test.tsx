@@ -12,7 +12,7 @@ const receipt = {
   respondedAt: '2026-10-06T00:00:00Z',
 };
 describe('TC-106 — UI main và phản hồi người nhận', () => {
-  it('main không tự chọn tư cách hay xác nhận thay, mô tả 7 ngày/SIT/Tailscale', () => {
+  it('main không tự chọn tư cách hay xác nhận thay, mô tả 7 ngày, không còn SIT/Tailscale', () => {
     const html = renderToStaticMarkup(
       <InvitationManagerBody
         name="Mẹ"
@@ -27,7 +27,7 @@ describe('TC-106 — UI main và phản hồi người nhận', () => {
       />,
     );
     expect(html).toContain('7 ngày');
-    expect(html).toContain('SIT/Tailscale');
+    expect(html).not.toContain('SIT/Tailscale');
     expect(html).not.toContain('type="radio"');
     expect(html).not.toContain('Thu hồi link chờ');
     expect(html).not.toContain('Tạo lại link');

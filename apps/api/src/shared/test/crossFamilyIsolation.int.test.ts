@@ -56,7 +56,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     'DELETE /api/health-profiles/:id': (u, x) =>
       t.call(u, 'DELETE', `${profiles}/${x.profileId}`, { confirmName: 'Mẹ' }), // tên đúng của nạn nhân
     'POST /api/health-profiles/:id/consent-invitations': (u, x) =>
-      t.call(u, 'POST', `${profiles}/${x.profileId}/consent-invitations`),
+      t.call(u, 'POST', `${profiles}/${x.profileId}/consent-invitations`, { attestation: true }),
     'DELETE /api/health-profiles/:id/consent-invitations': (u, x) =>
       t.call(u, 'DELETE', `${profiles}/${x.profileId}/consent-invitations`),
     'GET /api/consent-invitations/view': (_u, x) => tokenCall('/api/consent-invitations/view', x.token),

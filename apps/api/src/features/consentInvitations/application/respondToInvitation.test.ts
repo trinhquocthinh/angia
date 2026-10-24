@@ -13,6 +13,7 @@ const invitation: Invitation = {
   invitedByAccountId: 'account',
   expiresAt: new Date('2026-10-13T00:00:00Z'),
   revokedAt: null,
+  inviterAttestedAt: null,
   decision: null,
   respondentName: null,
   basis: null,

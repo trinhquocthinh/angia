@@ -1,3 +1,4 @@
+import { HTTPException } from 'hono/http-exception';
 import type { AdherenceRepository } from '@src/features/adherence/application/ports.js';
 import { registerAdherenceRoutes } from '@src/features/adherence/presentation/registerAdherenceRoutes.js';
 import type { DoseSlotRepository } from '@src/features/reminders/application/ports.js';
@@ -98,6 +99,8 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   });
   const cookies = { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies };
   app.onError((error, c) => {
+    // Body JSON rỗng/hỏng do validator ném HTTPException 400: cùng nhóm 422 như dữ liệu sai định dạng.
+    if (error instanceof HTTPException && error.status === 400) return errorResponse(c, 'ERR_VALIDATION');
     deps.auth.logger.error({ reason: error.name }, 'Lỗi chưa xử lý');
     return errorResponse(c, 'ERR_INTERNAL');
   });

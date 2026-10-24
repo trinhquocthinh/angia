@@ -3918,7 +3918,11 @@ export interface paths {
         };
         cookie?: never;
       };
-      requestBody?: never;
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['ConsentInvitationCreateRequest'];
+        };
+      };
       responses: {
         /** @description Link mới, hết hạn sau 7 ngày */
         201: {
@@ -4914,6 +4918,10 @@ export interface components {
       token: string;
       /** Format: date-time */
       expiresAt: string;
+    };
+    ConsentInvitationCreateRequest: {
+      /** @enum {boolean} */
+      attestation: true;
     };
     ConsentInvitationRevoked: {
       /** @enum {string} */

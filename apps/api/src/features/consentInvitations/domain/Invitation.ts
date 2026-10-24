@@ -18,6 +18,7 @@ export interface Invitation extends InvitationResponseFields {
   invitedByAccountId: string | null;
   expiresAt: Date;
   revokedAt: Date | null;
+  inviterAttestedAt: Date | null;
 }
 interface InvitationResponseFields {
   decision: Decision | null;
