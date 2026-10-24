@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # Build context: gốc repo — docker build -f apps/worker/Dockerfile .
-ARG NODE_IMAGE=node:22-slim@sha256:43ac6c60b8f89723f746e8a92ce91abd5017e627ce1ddfe4238355d3a30b772c
+ARG NODE_IMAGE=node:22-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d
 
 # ---------------------------------------------------------------------------
 # Stage 1: cài dependencies và biên dịch TypeScript (tsc + tsc-alias)
