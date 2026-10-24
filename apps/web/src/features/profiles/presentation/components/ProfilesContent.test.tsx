@@ -15,6 +15,7 @@ const props = {
   error: false,
   retry: () => undefined,
   onConsent: () => undefined,
+  onDelete: () => undefined,
 };
 describe('Trang Nhà: rỗng, tải và lỗi', () => {
   it('rỗng có lời mời và liên kết tạo hồ sơ, không có dữ liệu y tế giả', () => {

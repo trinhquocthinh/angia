@@ -9,7 +9,7 @@ function harness(status = 200, body: unknown = []) {
     credentials: 'same-origin',
     fetch: async (request) => {
       requests.push(request);
-      return Response.json(body, { status });
+      return status === 204 ? new Response(null, { status }) : Response.json(body, { status });
     },
   });
   return { repository: createProfilesRepository(client), requests };
@@ -53,5 +53,20 @@ describe('Hồ sơ qua hợp đồng HTTP và bảo vệ phiên', () => {
     const { repository } = harness(status, { error: { code: 'ERR_INTERNAL', message: 'SQL secret' } });
     await expect(repository.create({ displayName: 'Mẹ' }, 'csrf')).rejects.toMatchObject({ status });
     if (status === 500) await expect(repository.list()).rejects.not.toThrow('SQL secret');
+  });
+  it('xóa hồ sơ gửi DELETE với tên nhập lại và CSRF; 422 trả mã không khớp', async () => {
+    const ok = harness(204, null);
+    ok.requests.length = 0;
+    await ok.repository.remove('p', 'Mẹ', 'csrf');
+    const request = ok.requests[0]!;
+    expect(request.method).toBe('DELETE');
+    expect(new URL(request.url).pathname).toBe('/api/health-profiles/p');
+    expect(await request.json()).toEqual({ confirmName: 'Mẹ' });
+    expect(request.headers.get('X-CSRF-Token')).toBe('csrf');
+    const mismatch = harness(422, { error: { code: 'ERR_CONFIRMATION_MISMATCH', message: 'Sai' } });
+    await expect(mismatch.repository.remove('p', 'me', 'csrf')).rejects.toMatchObject({
+      status: 422,
+      code: 'ERR_CONFIRMATION_MISMATCH',
+    });
   });
 });

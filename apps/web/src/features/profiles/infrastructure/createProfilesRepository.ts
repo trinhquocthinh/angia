@@ -29,6 +29,15 @@ export function createProfilesRepository(client = apiClient): ProfilesRepository
         }),
       );
     },
+    // 204 không có body: chỉ đọc lỗi khi response không ok.
+    remove: async (id, confirmName, csrfToken) => {
+      const result = await client.DELETE('/api/health-profiles/{id}', {
+        params: { path: { id } },
+        body: { confirmName },
+        headers: { 'X-CSRF-Token': csrfToken },
+      });
+      if (!result.response.ok) await readProfileResponse(result);
+    },
     logout: (csrfToken) => logoutSession(csrfToken, client),
   };
 }

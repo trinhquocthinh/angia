@@ -15,6 +15,7 @@ function repository(): ProfilesRepository {
     create: vi.fn(),
     createInvitation: vi.fn(async () => ({ token: 'v1.current', expiresAt: '2026-10-13T00:00:00Z' })),
     revokeInvitation: vi.fn(async () => undefined),
+    remove: vi.fn(async () => undefined),
     logout: vi.fn(),
   };
 }

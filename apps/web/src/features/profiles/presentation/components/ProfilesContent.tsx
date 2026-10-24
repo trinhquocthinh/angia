@@ -9,8 +9,16 @@ type ProfilesContentProps = {
   error: boolean;
   retry: () => void;
   onConsent: (profile: HealthProfile) => void;
+  onDelete: (profile: HealthProfile) => void;
 };
-export function ProfilesContent({ profiles, loading, error, retry, onConsent }: ProfilesContentProps) {
+export function ProfilesContent({
+  profiles,
+  loading,
+  error,
+  retry,
+  onConsent,
+  onDelete,
+}: ProfilesContentProps) {
   if (loading)
     return (
       <div role="status" aria-label="Đang tải hồ sơ" className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -53,7 +61,7 @@ export function ProfilesContent({ profiles, loading, error, retry, onConsent }: 
   return (
     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
       {profiles.map((profile) => (
-        <ProfileCard key={profile.id} profile={profile} onConsent={onConsent} />
+        <ProfileCard key={profile.id} profile={profile} onConsent={onConsent} onDelete={onDelete} />
       ))}
       <AddProfileTile />
     </div>
