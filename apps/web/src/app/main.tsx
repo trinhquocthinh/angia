@@ -5,6 +5,8 @@ import { createRoot } from 'react-dom/client';
 import { isConsentInvitationRoute } from '@src/features/auth/application/isConsentInvitationRoute';
 import { prefetchCurrentSession } from '@src/features/auth/application/prefetchCurrentSession';
 import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
+// Nạp sớm để bắt `beforeinstallprompt` của Android ngay khi trang tải, trước khi mở trang Thông báo.
+import '@src/features/pushSubscriptions/infrastructure/browserInstallPrompt';
 import { hideSplash } from './hideSplash';
 import { routeTree } from './routeTree.gen';
 import './styles.css';

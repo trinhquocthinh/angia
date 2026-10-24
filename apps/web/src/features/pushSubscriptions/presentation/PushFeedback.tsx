@@ -1,18 +1,22 @@
 import type { usePushSettings } from '../application/usePushSettings';
-import { detectIosBrowser } from '../infrastructure/detectIosBrowser';
+import { chooseDeviceGuide } from '../application/chooseDeviceGuide';
+import { browserInstallPrompt } from '../infrastructure/browserInstallPrompt';
+import { detectPlatform } from '../infrastructure/detectPlatform';
+import { getNotificationPermission } from '../infrastructure/getNotificationPermission';
 import { getPushSupport } from '../infrastructure/getPushSupport';
-import { IosInstallGuide } from './IosInstallGuide';
+import { DeviceGuide } from './DeviceGuide';
 
 type Settings = ReturnType<typeof usePushSettings>;
 
 // Hướng dẫn hỗ trợ, lỗi đọc cấu hình và kết quả thao tác gần nhất (vùng aria-live).
 export function PushFeedback({ config, action }: Settings) {
   const support = getPushSupport();
+  const guide = chooseDeviceGuide({ platform: detectPlatform(), permission: getNotificationPermission() });
   const message = action.isPending ? 'Đang xử lý…' : (action.error?.message ?? action.data ?? '');
   return (
     <>
-      {detectIosBrowser() ? (
-        <IosInstallGuide />
+      {guide !== 'none' ? (
+        <DeviceGuide guide={guide} installPrompt={browserInstallPrompt} />
       ) : (
         support && (
           <p className="rounded-xl bg-[#eaf6f5] p-4 text-sm leading-relaxed text-[#183d32]">{support}</p>
