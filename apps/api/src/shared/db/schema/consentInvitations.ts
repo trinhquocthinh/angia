@@ -17,6 +17,7 @@ export const consentInvitations = pgTable(
     decision: text('decision', { enum: ['accepted', 'declined'] }),
     respondentName: text('respondent_name'),
     basis: text('basis', { enum: ['self', 'guardian'] }),
+    inviterAttestedAt: timestamp('inviter_attested_at', { withTimezone: true }),
     respondedAt: timestamp('responded_at', { withTimezone: true }),
     createdAt: createdAtColumn(),
   },

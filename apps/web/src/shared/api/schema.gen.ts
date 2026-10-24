@@ -4304,7 +4304,7 @@ export interface components {
       /** @enum {string|null} */
       consentBasis: 'self' | 'guardian' | null;
       /** @enum {string} */
-      consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed';
+      consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed' | 'withdrawn';
       /** @enum {string|null} */
       consentSource: 'legacy_attestation' | 'invitation' | null;
       consentRespondentName: string | null;

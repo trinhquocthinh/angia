@@ -564,7 +564,8 @@
               "pending",
               "invited",
               "declined",
-              "confirmed"
+              "confirmed",
+              "withdrawn"
             ]
           },
           "consentSource": {

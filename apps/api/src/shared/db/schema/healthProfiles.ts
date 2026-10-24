@@ -27,18 +27,24 @@ export const healthProfiles = pgTable(
       onDelete: 'set null',
     }),
     consentBasis: text('consent_basis', { enum: ['self', 'guardian'] }),
-    consentStatus: text('consent_status', { enum: ['pending', 'invited', 'declined', 'confirmed'] })
+    consentStatus: text('consent_status', {
+      enum: ['pending', 'invited', 'declined', 'confirmed', 'withdrawn'],
+    })
       .notNull()
       .default('pending'),
     consentSource: text('consent_source', { enum: ['legacy_attestation', 'invitation'] }),
     consentRespondentName: text('consent_respondent_name'),
+    consentWithdrawnAt: timestamp('consent_withdrawn_at', { withTimezone: true }),
+    consentWithdrawnBy: uuid('consent_withdrawn_by').references((): AnyPgColumn => accounts.id, {
+      onDelete: 'set null',
+    }),
     createdAt: createdAtColumn(),
   },
   (table) => [
     unique('health_profiles_id_family_unique').on(table.id, table.familyId),
     check(
       'health_profiles_consent_status_valid',
-      sql`${table.consentStatus} IN ('pending', 'invited', 'declined', 'confirmed')`,
+      sql`${table.consentStatus} IN ('pending', 'invited', 'declined', 'confirmed', 'withdrawn')`,
     ),
     check(
       'health_profiles_consent_source_valid',
@@ -49,6 +55,10 @@ export const healthProfiles = pgTable(
     check(
       'health_profiles_confirmed_receipt_complete',
       sql`${table.consentStatus} <> 'confirmed' OR (${table.consentSource} IS NOT DISTINCT FROM 'invitation' AND ${table.consentConfirmedAt} IS NOT NULL AND ${table.consentConfirmedBy} IS NULL AND ${table.consentBasis} IS NOT NULL AND ${table.consentRespondentName} IS NOT NULL AND char_length(btrim(${table.consentRespondentName})) BETWEEN 1 AND 60 AND ${table.consentRespondentName} = btrim(${table.consentRespondentName}))`,
+    ),
+    check(
+      'health_profiles_withdrawn_receipt_complete',
+      sql`${table.consentStatus} <> 'withdrawn' OR ${table.consentWithdrawnAt} IS NOT NULL`,
     ),
     familyIsolationPolicy(),
   ],

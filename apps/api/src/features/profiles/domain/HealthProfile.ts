@@ -1,4 +1,5 @@
 type ConsentBasis = 'self' | 'guardian';
+export type ConsentStatus = 'pending' | 'invited' | 'declined' | 'confirmed' | 'withdrawn';
 
 export interface HealthProfile {
   id: string;
@@ -8,9 +9,11 @@ export interface HealthProfile {
   consentConfirmedAt: Date | null;
   consentConfirmedBy: string | null;
   consentBasis: ConsentBasis | null;
-  consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed';
+  consentStatus: ConsentStatus;
   consentSource: 'legacy_attestation' | 'invitation' | null;
   consentRespondentName: string | null;
+  consentWithdrawnAt: Date | null;
+  consentWithdrawnBy: string | null;
   createdAt: Date;
 }
 

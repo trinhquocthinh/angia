@@ -9,7 +9,7 @@ export const healthProfileSchema = z
     consentConfirmedAt: z.iso.datetime().nullable(),
     consentConfirmedBy: z.uuid().nullable(),
     consentBasis: z.enum(['self', 'guardian']).nullable(),
-    consentStatus: z.enum(['pending', 'invited', 'declined', 'confirmed']),
+    consentStatus: z.enum(['pending', 'invited', 'declined', 'confirmed', 'withdrawn']),
     consentSource: z.enum(['legacy_attestation', 'invitation']).nullable(),
     consentRespondentName: z.string().nullable(),
     createdAt: z.iso.datetime(),

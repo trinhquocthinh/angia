@@ -4,6 +4,7 @@ const labels = {
   invited: 'Đang chờ người thân xác nhận',
   declined: 'Lời mời đã bị từ chối',
   confirmed: 'Đã đồng ý chia sẻ',
+  withdrawn: 'Người thân đã rút đồng thuận',
 };
 export function ProfileConsentStatus({ profile }: { profile: HealthProfile }) {
   const confirmed = profile.consentStatus === 'confirmed' && profile.consentSource === 'invitation';
