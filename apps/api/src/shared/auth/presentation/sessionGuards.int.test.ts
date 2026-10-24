@@ -2,7 +2,7 @@ import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.
 import { createStubReviewDeps } from '@src/shared/test/createStubReviewDeps.js';
 import { createStubDocumentDeps } from '@src/shared/test/createStubDocumentDeps.js';
 import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
-import { createStubProfileRepository } from '@src/shared/test/createStubProfileRepository.js';
+import { createStubProfileDeps } from '@src/shared/test/createStubProfileDeps.js';
 import { randomUUID } from 'node:crypto';
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -65,7 +65,7 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
         login: { ...stub.login, sessions: createSessionRepository(createDatabase(pool)) },
         cookieSecret: TEST_COOKIE_SECRET,
       },
-      profiles: createStubProfileRepository(),
+      profiles: createStubProfileDeps(),
       familyAdmin: createFakeFamilyAdminRepository().repository,
       aiBudget: createStubAiBudgetDeps(),
     });

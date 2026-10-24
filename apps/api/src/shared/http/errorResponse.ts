@@ -37,6 +37,10 @@ const ERROR_CATALOG = {
     status: 409,
     message: 'Vui lòng tạo link mời để người nhận tự xác nhận đồng thuận.',
   },
+  ERR_CONFIRMATION_MISMATCH: {
+    status: 422,
+    message: 'Tên xác nhận nhập lại không trùng khớp, thao tác xóa đã bị hủy.',
+  },
   ERR_CONSENT_ALREADY_CONFIRMED: { status: 409, message: 'Hồ sơ này đã có đồng thuận từ người nhận.' },
   ERR_CONSENT_REQUIRED: {
     status: 409,

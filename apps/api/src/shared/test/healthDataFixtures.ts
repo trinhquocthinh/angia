@@ -30,3 +30,11 @@ export const manualPrescription = {
     },
   ],
 } as const;
+
+export const manualCourse = {
+  name: 'Canxi',
+  quantityPerDose: 1,
+  doseUnit: 'viên',
+  slots: ['morning'],
+  startDate: '2026-10-01',
+};

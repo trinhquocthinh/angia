@@ -7,6 +7,7 @@ export const HEALTH_DATA_ROUTES = {
   'GET /api/health-profiles': 'list',
   'GET /api/health-profiles/linkable-accounts': 'list',
   'POST /api/health-profiles': 'scoped',
+  'DELETE /api/health-profiles/:id': 'scoped',
   'POST /api/health-profiles/:id/consent': 'uniform',
   'POST /api/health-profiles/:id/consent-invitations': 'scoped',
   'DELETE /api/health-profiles/:id/consent-invitations': 'scoped',

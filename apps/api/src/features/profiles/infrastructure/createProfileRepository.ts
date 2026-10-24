@@ -1,11 +1,12 @@
+import type { PgBoss } from 'pg-boss';
 import type { ProfileRepository } from '../application/ports.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import { createProfileStore } from './createProfileStore.js';
 
-export function createProfileRepository(db: Database): ProfileRepository {
+export function createProfileRepository(db: Database, boss: PgBoss): ProfileRepository {
   return {
     withFamily: (familyId, work) =>
-      withFamilyScope(db, familyId, (tx) => work(createProfileStore(tx, familyId))),
+      withFamilyScope(db, familyId, (tx) => work(createProfileStore(tx, familyId, boss))),
   };
 }

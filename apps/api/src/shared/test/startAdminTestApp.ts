@@ -1,7 +1,7 @@
 import { createStubReviewDeps } from './createStubReviewDeps.js';
 import { createStubDocumentDeps } from './createStubDocumentDeps.js';
 import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
-import { createStubProfileRepository } from '@src/shared/test/createStubProfileRepository.js';
+import { createStubProfileDeps } from '@src/shared/test/createStubProfileDeps.js';
 import { randomUUID } from 'node:crypto';
 import { REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS } from '@angia/contracts';
 import pg from 'pg';
@@ -61,7 +61,7 @@ export async function startAdminTestApp() {
       login: { ...stub.login, sessions: createSessionRepository(database) },
       cookieSecret: TEST_COOKIE_SECRET,
     },
-    profiles: createStubProfileRepository(),
+    profiles: createStubProfileDeps(),
     familyAdmin: createFamilyAdminRepository(database),
     ...budgetAdminDeps(database, boss),
   });

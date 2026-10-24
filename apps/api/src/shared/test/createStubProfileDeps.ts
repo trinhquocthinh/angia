@@ -1,6 +1,7 @@
-import type { ProfileRepository } from '@src/features/profiles/application/ports.js';
+import type { ProfileDependencies } from '@src/features/profiles/application/ports.js';
 
 // Sinh OpenAPI hoặc test feature khác: không được gọi hạ tầng hồ sơ.
-export function createStubProfileRepository(): ProfileRepository {
-  return { withFamily: () => Promise.reject(new Error('Kho hồ sơ chưa cấu hình trong test này')) };
+export function createStubProfileDeps(): ProfileDependencies {
+  const fail = () => Promise.reject(new Error('Kho hồ sơ chưa cấu hình trong test này'));
+  return { repository: { withFamily: fail }, storage: { deletePrefix: fail } };
 }

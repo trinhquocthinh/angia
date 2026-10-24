@@ -18,6 +18,7 @@ import { createDocumentEntryRepository } from '@src/features/documents/infrastru
 import { createVisitSummaryRepository } from '@src/features/visitSummary/infrastructure/createVisitSummaryRepository.js';
 import { createMeasurementRepository } from '@src/features/measurements/infrastructure/createMeasurementRepository.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
+import { createProfileObjectStorage } from '@src/features/profiles/infrastructure/createProfileObjectStorage.js';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import {
@@ -27,6 +28,8 @@ import {
   PREPARE_OCR_IMAGE_QUEUE_OPTIONS,
   REQUEUE_AWAITING_BUDGET_QUEUE,
   REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS,
+  PURGE_PROFILE_OBJECTS_QUEUE,
+  PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS,
   ensureExtractDocumentQueues,
 } from '@angia/contracts';
 import { serve } from '@hono/node-server';
@@ -66,6 +69,7 @@ await boss.createQueue(CONVERT_HEIC_QUEUE, CONVERT_HEIC_QUEUE_OPTIONS);
 await boss.createQueue(PREPARE_OCR_IMAGE_QUEUE, PREPARE_OCR_IMAGE_QUEUE_OPTIONS);
 await ensureExtractDocumentQueues(boss);
 await boss.createQueue(REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS);
+await boss.createQueue(PURGE_PROFILE_OBJECTS_QUEUE, PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS);
 const privacyQueue = createPrivacyQueue(boss);
 
 // F03b (SPEC-030): ngưỡng quota dùng chung cho upload, bước riêng tư và route mức đã dùng.
@@ -115,7 +119,10 @@ const app = createApp({
     defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,
     now: () => new Date(),
   },
-  profiles: createProfileRepository(db),
+  profiles: {
+    repository: createProfileRepository(db, boss),
+    storage: createProfileObjectStorage(s3, config.S3_BUCKET),
+  },
   consentInvitations: {
     repository: createInvitationRepository(db),
     codec: createInvitationTokenCodec(config.SESSION_COOKIE_SECRET),
