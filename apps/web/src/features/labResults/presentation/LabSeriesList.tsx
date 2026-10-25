@@ -1,6 +1,8 @@
 import { Link } from '@tanstack/react-router';
 import type { LabSeries } from '@angia/contracts';
-import { LabSeriesCard } from './LabSeriesCard';
+import { groupLabSeries } from '../application/groupLabSeries';
+import { LabGroupChips } from './LabGroupChips';
+import { LabGroupSection } from './LabGroupSection';
 
 type Props = {
   data: LabSeries[] | undefined;
@@ -9,7 +11,7 @@ type Props = {
   retry: () => void;
 };
 
-// Design §6 "Kết quả cận lâm sàng": thẻ từng chỉ số, 2 cột ở desktop; khung xương, thẻ lỗi, trạng thái rỗng.
+// Design §6 "Kết quả cận lâm sàng" + LG-01: thẻ chỉ số gom theo nhóm cơ quan; khung xương, thẻ lỗi, trạng thái rỗng.
 export function LabSeriesList({ data, loading, error, retry }: Props) {
   if (loading)
     return (
@@ -44,11 +46,14 @@ export function LabSeriesList({ data, loading, error, retry }: Props) {
         </Link>
       </div>
     );
+  const groups = groupLabSeries(data);
   return (
-    <div className="grid items-start gap-4 md:grid-cols-2">
-      {data.map((series, index) => (
-        <LabSeriesCard key={series.results[0]!.id} series={series} index={index} />
+    <div className="flex flex-col gap-6">
+      {groups.length >= 2 && <LabGroupChips groups={groups} />}
+      {groups.map((group) => (
+        <LabGroupSection key={group.id} group={group} />
       ))}
+      <p className="text-xs text-[#707975]">Nhóm và ghi chú chỉ để tra cứu nhanh, không thay lời bác sĩ.</p>
     </div>
   );
 }
