@@ -19,7 +19,8 @@ type ManualReason =
   | 'schema_mismatch'
   | 'extractor_failed'
   | 'image_unusable'
-  | 'privacy_required';
+  | 'privacy_required'
+  | 'consent_required';
 export type ExtractionOutcome =
   | { status: 'skipped' }
   | { status: 'awaiting_budget' }
@@ -37,6 +38,11 @@ export async function extractDocument(
   const document = await deps.repository.withFamily(job.familyId, async (store) => {
     const found = await store.findDocument(job.documentId);
     if (!found || (found.status !== 'uploaded' && !canStartExtraction(found.status))) return null;
+    if (!found.profileConsentConfirmed) {
+      // F07: hồ sơ không còn đồng thuận → không giữ ngân sách, không đọc ảnh, không gọi AI.
+      await store.markManualEntry(found.id);
+      return 'consent_required' as const;
+    }
     if (
       found.status === 'uploaded' ||
       !found.ocrImageKey?.startsWith(`families/${job.familyId}/`) ||
@@ -55,6 +61,8 @@ export async function extractDocument(
     return found;
   });
   if (!document) return { status: 'skipped' };
+  if (document === 'consent_required')
+    return { status: 'manual_entry', reason: 'consent_required', costUsd: 0 };
   if (document === 'privacy_required')
     return { status: 'manual_entry', reason: 'privacy_required', costUsd: 0 };
   if (document === 'awaiting_budget') return { status: 'awaiting_budget' };

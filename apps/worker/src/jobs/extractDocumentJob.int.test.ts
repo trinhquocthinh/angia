@@ -138,6 +138,22 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
       extractions: 0,
     });
   });
+  it('TC-381: hồ sơ withdrawn → join trả false, chứng từ sang manual_entry, không Extraction, không giữ ngân sách', async () => {
+    const { familyId, documentId } = await seedDocument();
+    await owner.query(
+      `UPDATE health_profiles SET consent_status='withdrawn', consent_withdrawn_at=now() WHERE family_id=$1`,
+      [familyId],
+    );
+    const handler = handleExtractDocumentJob(deps(), logger);
+    const outcome = await handler({ id: 'j', data: { documentId, familyId }, retryCount: 0, retryLimit: 2 });
+    expect(outcome).toEqual({ status: 'manual_entry', reason: 'consent_required', costUsd: 0 });
+    expect(await documentState(documentId)).toMatchObject({ status: 'manual_entry', extractions: 0 });
+    const reservations = await owner.query(
+      'SELECT 1 FROM extraction_reservations WHERE source_document_id=$1',
+      [documentId],
+    );
+    expect(reservations.rowCount).toBe(0);
+  });
   const previewDeps = () => ({
     repository: createPreviewRepository(pool),
     newId: randomUUID,

@@ -26,6 +26,10 @@ describe('checkDeliveryEligibility — kiểm lại đích ngay trước khi g�
     expect(checkDeliveryEligibility({ ...base, consentConfirmed: false })).toBe('revoked_consent');
   });
 
+  it('TC-381: hồ sơ đã rút đồng thuận (consentConfirmed=false) → revoked_consent, không gửi nữa', () => {
+    expect(checkDeliveryEligibility({ ...base, consentConfirmed: false })).toBe('revoked_consent');
+  });
+
   it('hồ sơ đã liên kết với tài khoản khác → revoked_recipient', () => {
     const accounts: FamilyAccount[] = [mains[0]!, { id: OTHER, role: 'member', healthProfileId: PROFILE }];
     expect(checkDeliveryEligibility({ ...base, familyAccounts: accounts })).toBe('revoked_recipient');
