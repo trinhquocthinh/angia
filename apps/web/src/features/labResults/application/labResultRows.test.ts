@@ -27,6 +27,7 @@ describe('labResultRows — Design §6 "Kết quả cận lâm sàng"', () => {
       unit: '%',
       referenceRange: 'Khoảng tham chiếu trên phiếu: 4.0 - 6.0',
       source: 'BV Nhân dân Gia Định',
+      rangeFlag: 'above',
     });
   });
 
@@ -47,5 +48,11 @@ describe('labResultRows — Design §6 "Kết quả cận lâm sàng"', () => {
       source: 'Nhập tay',
     });
     expect(labResultRows([{ ...base, facility: null }])[0]!.source).toBe('Từ phiếu xét nghiệm');
+  });
+
+  it('TC-397 — đánh dấu khi giá trị ngoài khoảng in trên phiếu; phiếu không in khoảng thì không', () => {
+    expect(labResultRows([{ ...base, value: '7.3' }])[0]!.rangeFlag).toBe('above');
+    expect(labResultRows([{ ...base, value: '5.1' }])[0]!.rangeFlag).toBeNull();
+    expect(labResultRows([{ ...base, value: '7.3', referenceRange: null }])[0]!.rangeFlag).toBeNull();
   });
 });
