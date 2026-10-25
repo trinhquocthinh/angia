@@ -1,0 +1,135 @@
+import { checkUploadFile, type FileProblem } from './checkUploadFile';
+import type { DocumentType } from './ports';
+
+// SPEC-008: tối đa 10 tệp mỗi lần chọn và mỗi lô gửi (chủ dự án hạ 50 → 20 → 10, 2026-10-07).
+export const MAX_FILES_PER_PICK = 10;
+
+// preparing: đang nén trên trình duyệt. ready: chỉ nằm trên trình duyệt. Chỉ khi bấm "Xong" mới
+// thành queued và được gửi (không sinh rác server).
+type UploadStatus = 'preparing' | 'ready' | 'queued' | 'uploading' | 'done' | 'failed' | 'rejected';
+export interface UploadItem {
+  id: string;
+  // Tệp người dùng chọn (tên, dung lượng gốc, xem trước).
+  file: File;
+  // Bản sẽ gửi sau khi nén; null khi chưa chuẩn bị xong.
+  upload: File | null;
+  // Gắn lúc bấm "Xong" theo hồ sơ/loại đang chọn.
+  profileId: string | null;
+  declaredType: DocumentType | null;
+  status: UploadStatus;
+  // Tăng mỗi lần thử lại: khóa chống gửi trùng theo id + lượt.
+  attempt: number;
+  progress: number;
+  problem: FileProblem | null;
+  error: string | null;
+  // Object URL cục bộ cho ảnh xem trước; null với tệp bị loại.
+  previewUrl: string | null;
+  // ID chứng từ server trả về khi gửi xong, để mở thẳng màn duyệt.
+  documentId?: string | null;
+  // Lời nhắn khi máy chủ bận và ảnh đang chờ tự gửi lại (vẫn ở trạng thái uploading).
+  notice?: string | null;
+}
+export type UploadAction =
+  | { type: 'add'; items: UploadItem[] }
+  | { type: 'prepared'; id: string; upload: File }
+  | { type: 'reject'; id: string; problem: FileProblem }
+  | { type: 'submit'; profileId: string; declaredType: DocumentType | null }
+  | { type: 'start'; ids: string[] }
+  | { type: 'progress'; ids: string[]; percent: number }
+  | { type: 'done'; id: string; documentId: string | null }
+  | { type: 'wait'; ids: string[]; message: string }
+  | { type: 'fail'; ids: string[]; message: string }
+  | { type: 'retry' }
+  | { type: 'remove'; id: string }
+  | { type: 'dismissRejected' };
+
+export function planUpload(
+  files: File[],
+  newId: () => string,
+): { ok: true; items: UploadItem[] } | { ok: false; reason: 'too_many' } {
+  if (files.length > MAX_FILES_PER_PICK) return { ok: false, reason: 'too_many' };
+  const items = files.map((file): UploadItem => {
+    const problem = checkUploadFile(file);
+    return {
+      id: newId(),
+      file,
+      upload: null,
+      profileId: null,
+      declaredType: null,
+      status: problem ? 'rejected' : 'preparing',
+      attempt: 0,
+      progress: 0,
+      problem,
+      error: null,
+      previewUrl: null,
+    };
+  });
+  return { ok: true, items };
+}
+
+// Bỏ qua id không còn trong hàng đợi (vd. ảnh đã bỏ trước khi nén xong).
+const update = (state: UploadItem[], ids: string | string[], patch: Partial<UploadItem>) => {
+  const targets = new Set(typeof ids === 'string' ? [ids] : ids);
+  return state.map((item) => (targets.has(item.id) ? { ...item, ...patch } : item));
+};
+
+export function uploadQueueReducer(state: UploadItem[], action: UploadAction): UploadItem[] {
+  switch (action.type) {
+    case 'add':
+      return [...state, ...action.items];
+    case 'prepared':
+      return update(state, action.id, { status: 'ready', upload: action.upload });
+    case 'reject':
+      return update(state, action.id, { status: 'rejected', problem: action.problem });
+    case 'submit': {
+      const { profileId, declaredType } = action;
+      return state.map((item) =>
+        item.status === 'ready' ? { ...item, status: 'queued', profileId, declaredType } : item,
+      );
+    }
+    case 'start':
+      return update(state, action.ids, { status: 'uploading', progress: 0, error: null, notice: null });
+    case 'wait':
+      return update(state, action.ids, { status: 'uploading', progress: 0, notice: action.message });
+    case 'progress':
+      return update(state, action.ids, { progress: Math.min(100, Math.max(0, Math.round(action.percent))) });
+    case 'done':
+      return update(state, action.id, { status: 'done', progress: 100, documentId: action.documentId });
+    case 'fail':
+      return update(state, action.ids, { status: 'failed', error: action.message });
+    case 'retry':
+      return state.map((item) =>
+        item.status === 'failed'
+          ? { ...item, status: 'queued', attempt: item.attempt + 1, progress: 0, error: null }
+          : item,
+      );
+    case 'remove':
+      return state.filter((item) => item.id !== action.id);
+    case 'dismissRejected':
+      return state.filter((item) => item.status !== 'rejected');
+  }
+}
+
+// Mỗi lần một lô ≤ 10 ảnh (một request API lô); lô kế tiếp chỉ gửi khi lô trước xong.
+export function nextBatch(state: UploadItem[]): UploadItem[] {
+  if (state.some((item) => item.status === 'uploading')) return [];
+  return state.filter((item) => item.status === 'queued' && item.profileId).slice(0, MAX_FILES_PER_PICK);
+}
+
+// Nén lần lượt từng ảnh để không giữ nhiều ảnh đã giải mã trong bộ nhớ (điện thoại yếu).
+export const nextPreparing = (state: UploadItem[]) => state.find((item) => item.status === 'preparing');
+
+export function summarizeQueue(state: UploadItem[]) {
+  const count = (...statuses: UploadStatus[]) =>
+    state.filter((item) => statuses.includes(item.status)).length;
+  return {
+    preparing: count('preparing'),
+    ready: count('ready'),
+    total: count('preparing', 'ready', 'queued', 'uploading', 'done', 'failed'),
+    done: count('done'),
+    active: count('queued', 'uploading'),
+    failed: count('failed'),
+    rejected: count('rejected'),
+    firstDocumentId: state.find((item) => item.status === 'done' && item.documentId)?.documentId ?? null,
+  };
+}

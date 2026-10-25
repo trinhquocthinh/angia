@@ -1,0 +1,65 @@
+import type pg from 'pg';
+import { v7 as newId } from 'uuid';
+import type { ExtractionStore } from '../application/ports.js';
+import type { DocumentToExtract } from '../domain/ExtractionDocument.js';
+import { createBudgetLedger } from './createBudgetLedger.js';
+
+// Chạy trong transaction đã SET LOCAL app.family_id; điều kiện family_id bổ sung phòng thủ theo chiều sâu.
+// Chuyển trạng thái chỉ áp dụng từ `extracting` (FSM BR §3.1) để job trùng không ghi đè kết quả.
+export function createExtractionStore(client: pg.PoolClient, familyId: string): ExtractionStore {
+  const transition = async (id: string, status: string, from: string[]) => {
+    await client.query(
+      `UPDATE source_documents SET status = $1 WHERE id = $2 AND family_id = $3 AND status = ANY($4::text[])`,
+      [status, id, familyId, from],
+    );
+  };
+  return {
+    ...createBudgetLedger(client, familyId),
+    findDocument: async (id) => {
+      // Khóa chia sẻ hàng hồ sơ trước khi đọc đồng thuận (FOR SHARE không áp được lên phía LEFT JOIN),
+      // để tuần tự hóa với lệnh rút đồng thuận (FOR UPDATE hồ sơ).
+      await client.query(
+        `SELECT 1 FROM health_profiles WHERE family_id = $2
+           AND id = (SELECT health_profile_id FROM source_documents WHERE id = $1 AND family_id = $2) FOR SHARE`,
+        [id, familyId],
+      );
+      return (
+        (
+          await client.query<DocumentToExtract>(
+            `SELECT d.id, d.status, d.type AS "declaredType", d.original_key AS "originalKey", d.mime_type AS "mimeType",
+           d.preview_key AS "previewKey", d.ocr_image_key AS "ocrImageKey", d.ocr_image_sha256 AS "ocrImageSha256",
+           d.privacy_approved_by AS "privacyApprovedBy", d.privacy_approved_at AS "privacyApprovedAt",
+           COALESCE(p.consent_status = 'confirmed', false) AS "profileConsentConfirmed"
+           FROM source_documents d LEFT JOIN health_profiles p ON p.id = d.health_profile_id AND p.family_id = d.family_id
+           WHERE d.id = $1 AND d.family_id = $2 FOR UPDATE OF d`,
+            [id, familyId],
+          )
+        ).rows[0] ?? null
+      );
+    },
+    markExtracting: (id) => transition(id, 'extracting', ['extracting']),
+    markManualEntry: (id) => transition(id, 'manual_entry', ['uploaded', 'extracting']),
+    markAwaitingBudget: (id) => transition(id, 'awaiting_budget', ['extracting']),
+    savePendingReview: async (id, extraction) => {
+      const updated = await client.query(
+        `UPDATE source_documents SET status = 'pending_review', type = $1
+         WHERE id = $2 AND family_id = $3 AND status = 'extracting'`,
+        [extraction.type, id, familyId],
+      );
+      if (updated.rowCount !== 1) return;
+      await client.query(
+        `INSERT INTO extractions (id, family_id, source_document_id, provider, model, payload, cost_usd)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [
+          newId(),
+          familyId,
+          id,
+          extraction.provider,
+          extraction.model,
+          extraction.payload,
+          extraction.costUsd,
+        ],
+      );
+    },
+  };
+}

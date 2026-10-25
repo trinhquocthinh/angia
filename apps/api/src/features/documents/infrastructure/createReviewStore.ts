@@ -1,0 +1,78 @@
+import { and, desc, eq, inArray } from 'drizzle-orm';
+import { lockMedicationProfile } from '@src/features/medications/infrastructure/lockMedicationProfile.js';
+import { findMedicationCourses } from '@src/features/medications/infrastructure/findMedicationCourses.js';
+import { replaceMedicationCourses } from '@src/features/medications/infrastructure/replaceMedicationCourses.js';
+import { insertMedicationCourses } from '@src/features/medications/infrastructure/insertMedicationCourses.js';
+import { insertLabResults } from '@src/features/labResults/infrastructure/insertLabResults.js';
+import { findLabResultsOn } from '@src/features/labResults/infrastructure/findLabResultsOn.js';
+import { findMeasurementsOn } from '@src/features/measurements/infrastructure/findMeasurementsOn.js';
+import {
+  toMeasurement,
+  toMeasurementRow,
+} from '@src/features/measurements/infrastructure/measurementRows.js';
+import { findPrescriptionsOn } from '@src/features/prescriptions/infrastructure/findPrescriptionsOn.js';
+import { insertPrescription } from '@src/features/prescriptions/infrastructure/insertPrescription.js';
+import { extractions, healthProfiles, measurements, sourceDocuments } from '@src/shared/db/schema/index.js';
+import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
+import type { ReviewStore } from '../application/reviewPorts.js';
+import { findDocumentWithConsent } from './findDocumentWithConsent.js';
+import { listDocumentPage } from './listDocumentPage.js';
+
+// Chạy trong transaction đã SET LOCAL app.family_id; bộ lọc family_id bổ sung phòng thủ theo chiều sâu.
+export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewStore {
+  const owned = (id: string) => and(eq(sourceDocuments.id, id), eq(sourceDocuments.familyId, familyId));
+  return {
+    listDocuments: (filter) => listDocumentPage(tx, familyId, filter),
+    findDocument: (id, options) => findDocumentWithConsent(tx, familyId, id, options?.lock ?? false),
+    findLatestExtraction: async (documentId) =>
+      (
+        await tx
+          .select({ payload: extractions.payload })
+          .from(extractions)
+          .where(and(eq(extractions.sourceDocumentId, documentId), eq(extractions.familyId, familyId)))
+          .orderBy(desc(extractions.createdAt), desc(extractions.id))
+          .limit(1)
+      )[0]?.payload ?? null,
+    insertMeasurement: async (input) => {
+      const [row] = await tx.insert(measurements).values(toMeasurementRow(input, familyId)).returning();
+      if (!row) throw new Error('Không tạo được số đo');
+      return toMeasurement(row);
+    },
+    insertPrescription: (input) => insertPrescription(tx, familyId, input),
+    insertMedicationCourses: (inputs) => insertMedicationCourses(tx, familyId, inputs),
+    lockMedicationProfile: (profileId) => lockMedicationProfile(tx, familyId, profileId),
+    findMedicationCourses: (profileId) => findMedicationCourses(tx, familyId, profileId),
+    replaceMedicationCourses: (profileId, ids, endDate) =>
+      replaceMedicationCourses(tx, familyId, profileId, ids, endDate),
+    insertLabResults: (inputs) => insertLabResults(tx, familyId, inputs),
+    findPrescriptionsOn: (profileId, date) => findPrescriptionsOn(tx, familyId, profileId, date),
+    findLabResultsOn: (profileId, date) => findLabResultsOn(tx, familyId, profileId, date),
+    findMeasurementsOn: (profileId, kind, date) => findMeasurementsOn(tx, familyId, profileId, kind, date),
+    findProfile: async (id) =>
+      (
+        await tx
+          .select({ consentStatus: healthProfiles.consentStatus })
+          .from(healthProfiles)
+          .where(and(eq(healthProfiles.id, id), eq(healthProfiles.familyId, familyId)))
+          .for('share')
+      )[0] ?? null,
+    markApproved: async (id, changes, from) => {
+      const [row] = await tx
+        .update(sourceDocuments)
+        .set({ status: 'approved', ...changes })
+        .where(and(owned(id), inArray(sourceDocuments.status, [...from])))
+        .returning();
+      if (!row) throw new Error('Chứng từ không còn ở trạng thái được duyệt');
+      return row;
+    },
+    markRejected: async (id, from) => {
+      const [row] = await tx
+        .update(sourceDocuments)
+        .set({ status: 'rejected' })
+        .where(and(owned(id), inArray(sourceDocuments.status, [...from])))
+        .returning();
+      if (!row) throw new Error('Chứng từ không còn ở trạng thái được loại bỏ');
+      return row;
+    },
+  };
+}

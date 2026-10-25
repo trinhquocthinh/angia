@@ -1,0 +1,35 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignore": ["**/*.gen.ts"],
+  "workspaces": {
+    ".": {
+      "entry": ["tooling/**/*.test.ts", "scripts/**/*.test.ts", "scripts/heic-spike/measureOne.ts"],
+      "project": ["tooling/**/*.ts", "scripts/**/*.ts"]
+    },
+    "apps/api": {
+      "entry": ["src/server.ts!", "src/shared/db/migrate.ts!"],
+      "project": ["src/**/*.ts!", "!src/shared/test/**!", "scripts/**/*.ts"]
+    },
+    "apps/worker": {
+      "entry": [
+        "src/worker.ts!",
+        "src/features/extraction/infrastructure/heicConversionChild.ts!",
+        "src/features/extraction/infrastructure/documentPreviewChild.ts!",
+        "src/features/documentPrivacy/infrastructure/privacyPngChild.ts!"
+      ],
+      "project": ["src/**/*.ts!", "!src/shared/test/**!", "!src/**/*.test-helper.ts!"]
+    },
+    "apps/web": {
+      "entry": ["src/app/routes/**/*.tsx!"],
+      "project": ["src/**/*.{ts,tsx,css}!", "!src/**/*.test-helper.ts!"],
+      "ignoreDependencies": ["@fontsource/be-vietnam-pro", "@fontsource/newsreader"]
+    },
+    "packages/contracts": {
+      "project": ["src/**/*.ts!"]
+    },
+    "packages/web-push": {
+      "project": ["src/**/*.ts!"],
+      "ignoreDependencies": ["web-push"]
+    }
+  }
+}

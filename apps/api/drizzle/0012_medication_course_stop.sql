@@ -1,0 +1,2 @@
+ALTER TABLE "medication_courses" DROP CONSTRAINT "medication_courses_dates_valid";--> statement-breakpoint
+ALTER TABLE "medication_courses" ADD CONSTRAINT "medication_courses_dates_valid" CHECK ("medication_courses"."end_date" IS NULL OR "medication_courses"."end_date" >= "medication_courses"."start_date" OR ("medication_courses"."status" IN ('replaced', 'stopped') AND "medication_courses"."end_date" = "medication_courses"."start_date" - 1));
