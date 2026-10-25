@@ -27,6 +27,44 @@ const reader: ObjectReader = {
     key.startsWith('k/') ? { body: new Blob([key]).stream(), contentType: 'binary/octet-stream' } : null,
 };
 
+describe('TC-380: hồ sơ đã rút đồng thuận', () => {
+  const withdrawn = () =>
+    createMemoryReviewRepository([doc('a')], { a: { type: 'device_reading' } }, [
+      { id: 'me', familyId: 'family-a', consentStatus: 'withdrawn' },
+    ]);
+  it('đọc review và ảnh → ERR_CONSENT_REQUIRED, không đọc payload trích xuất hay ảnh', async () => {
+    const memory = withdrawn();
+    let extractionReads = 0;
+    const repository: typeof memory.repository = {
+      withFamily: (familyId, work) =>
+        memory.repository.withFamily(familyId, (store) =>
+          work({
+            ...store,
+            findLatestExtraction: async (id) => {
+              extractionReads += 1;
+              return store.findLatestExtraction(id);
+            },
+          }),
+        ),
+    };
+    let imageReads = 0;
+    const spyReader: ObjectReader = {
+      get: async (key) => {
+        imageReads += 1;
+        return reader.get(key);
+      },
+    };
+    const blocked = { ok: false, code: 'ERR_CONSENT_REQUIRED' };
+    expect(await getDocumentReview(repository, 'family-a', 'a')).toEqual(blocked);
+    for (const variant of ['preview', 'original', 'ocr'] as const)
+      expect(
+        await openDocumentImage(repository, spyReader, { familyId: 'family-a', documentId: 'a', variant }),
+      ).toEqual(blocked);
+    expect(extractionReads).toBe(0);
+    expect(imageReads).toBe(0);
+  });
+});
+
 describe('Đọc hàng đợi và chứng từ để duyệt (SPEC-006, SPEC-010)', () => {
   const memory = createMemoryReviewRepository(
     [doc('a'), doc('b', { status: 'approved' }), doc('c', { familyId: 'family-b' })],

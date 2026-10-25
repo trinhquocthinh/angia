@@ -52,6 +52,12 @@ describe('Quản lý và xem link đồng thuận', () => {
     );
     expect(store.setStatus).toHaveBeenCalledWith('profile', 'invited');
   });
+  it('TC-375 lưu cam kết người mời và cho phép tạo link với hồ sơ withdrawn', async () => {
+    const { deps, store } = fixture('withdrawn');
+    expect(await createInvitation(deps, 'family', 'profile', 'main')).toMatchObject({ ok: true });
+    expect(store.insertInvitation).toHaveBeenCalledWith(expect.objectContaining({ inviterAttestedAt: at }));
+    expect(store.setStatus).toHaveBeenCalledWith('profile', 'invited');
+  });
   it.each([null, 'confirmed'])(
     'không tồn tại hoặc đã confirmed thì create/revoke không ghi',
     async (status) => {

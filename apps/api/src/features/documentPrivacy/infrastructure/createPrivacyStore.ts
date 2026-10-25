@@ -1,6 +1,7 @@
 import { and, eq } from 'drizzle-orm';
 import { healthProfiles, sourceDocuments } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
+import { findDocumentWithConsent } from '@src/features/documents/infrastructure/findDocumentWithConsent.js';
 import type { PrivacyStore } from '../application/ports.js';
 import { lockFamilyQuota } from '@src/features/familyQuota/infrastructure/lockFamilyQuota.js';
 import { readAiBudget } from '@src/features/familyQuota/infrastructure/readAiBudget.js';
@@ -14,10 +15,7 @@ export function createPrivacyStore(tx: FamilyScopedTx, familyId: string, queue: 
       return readFamilyUsage(tx, familyId, dayStart);
     },
     readAiBudget: (month, policy) => readAiBudget(tx, familyId, month, policy),
-    findDocument: async (id, lock) => {
-      const query = tx.select().from(sourceDocuments).where(owned(id));
-      return (await (lock ? query.for('update') : query))[0] ?? null;
-    },
+    findDocument: (id, lock) => findDocumentWithConsent(tx, familyId, id, lock ?? false),
     consentConfirmed: async (profileId) => {
       const rows = await tx
         .select({ consent: healthProfiles.consentStatus })

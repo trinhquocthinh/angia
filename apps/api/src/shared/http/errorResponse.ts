@@ -46,6 +46,10 @@ const ERROR_CATALOG = {
     status: 409,
     message: 'Cần hoàn tất xác nhận đồng thuận lưu trữ dữ liệu cho hồ sơ này trước.',
   },
+  ERR_CONSENT_NOT_CONFIRMED: {
+    status: 409,
+    message: 'Hồ sơ chưa ở trạng thái đã đồng thuận nên không thể rút.',
+  },
   ERR_BATCH_TOO_LARGE: {
     status: 413,
     message: 'Quy mô lô tải lên vượt quá giới hạn tối đa (10 tệp/lần).',

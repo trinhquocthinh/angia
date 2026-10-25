@@ -27,7 +27,11 @@ export const getReminderRecipientsRoute = createRoute({
   tags: ['reminders'],
   summary: 'Đọc người nhận nhắc thuốc của hồ sơ (SPEC-026)',
   request: { params: z.object({ id: z.uuid() }) },
-  responses: { 200: recipients, ...common },
+  responses: {
+    200: recipients,
+    ...common,
+    409: error('ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận'),
+  },
 });
 
 export const setReminderRecipientsRoute = createRoute({

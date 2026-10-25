@@ -50,6 +50,7 @@ export const documentReviewRoute = createRoute({
     },
     ...guarded,
     404: error('ERR_NOT_FOUND'),
+    409: error('ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận'),
   },
 });
 
@@ -69,6 +70,7 @@ export const documentImageRoute = createRoute({
     },
     ...guarded,
     404: error('ERR_NOT_FOUND'),
+    409: error('ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận'),
   },
 });
 
@@ -90,7 +92,7 @@ export const approveDocumentRoute = createRoute({
     404: error('ERR_NOT_FOUND'),
     409: {
       ...error(
-        'ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts)',
+        'ERR_INVALID_STATE_TRANSITION, ERR_CONSENT_REQUIRED, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts)',
       ),
       content: {
         'application/json': { schema: z.union([errorResponseSchema, courseConflictErrorResponseSchema]) },

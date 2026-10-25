@@ -97,6 +97,38 @@ describe('Bản nháp và xác nhận ảnh', () => {
       await openPrivacyImage(f.deps.repository, f.deps.reader, { ...f.target, draftId: 'old' }),
     ).toMatchObject({ ok: false, code: 'ERR_NOT_FOUND' });
   });
+  it('TC-380: hồ sơ đã rút đồng thuận → xem bản nháp và ảnh trả ERR_CONSENT_REQUIRED, không đọc ảnh', async () => {
+    const f = privacyFixture();
+    f.ready();
+    f.consent = false;
+    let reads = 0;
+    f.onRead = () => {
+      reads += 1;
+    };
+    const blocked = { ok: false, code: 'ERR_CONSENT_REQUIRED' };
+    expect(await getPrivacyDraft(f.deps.repository, f.deps.queue, f.target)).toEqual(blocked);
+    expect(
+      await openPrivacyImage(f.deps.repository, f.deps.reader, { ...f.target, draftId: f.draftId }),
+    ).toEqual(blocked);
+    expect(reads).toBe(0);
+  });
+  it('TC-380: rút đồng thuận giữa hai transaction của getPrivacyDraft → không phục hồi failed, không ghi', async () => {
+    const f = privacyFixture();
+    f.doc.privacyDraftStatus = 'pending';
+    f.doc.privacyDraftId = f.draftId;
+    const queue = {
+      state: async () => {
+        f.consent = false;
+        return null;
+      },
+    };
+    expect(await getPrivacyDraft(f.deps.repository, queue, f.target)).toEqual({
+      ok: false,
+      code: 'ERR_CONSENT_REQUIRED',
+    });
+    expect(f.calls).not.toContain('update');
+    expect(f.doc.privacyDraftStatus).toBe('pending');
+  });
   it('TC-174: khác gia đình và không có chứng từ đều trả not found', async () => {
     const f = privacyFixture();
     f.missing = true;

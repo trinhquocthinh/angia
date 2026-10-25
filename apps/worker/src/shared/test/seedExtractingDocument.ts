@@ -23,10 +23,11 @@ export async function seedExtractingDocument(
     `INSERT INTO accounts(id, oidc_subject, display_name, family_id, family_role) VALUES ($1, $3, 'Main', $2, 'main')`,
     [accountId, familyId, `sub-${accountId}`],
   );
-  await owner.query(`INSERT INTO health_profiles(id, family_id, display_name) VALUES ($1, $2, 'Mẹ')`, [
-    profileId,
-    familyId,
-  ]);
+  await owner.query(
+    `INSERT INTO health_profiles(id, family_id, display_name, consent_status, consent_source, consent_confirmed_at,
+       consent_basis, consent_respondent_name) VALUES ($1, $2, 'Mẹ', 'confirmed', 'invitation', now(), 'guardian', 'Mẹ')`,
+    [profileId, familyId],
+  );
   await owner.query(
     `INSERT INTO upload_batches(id, family_id, health_profile_id, created_by) VALUES ($1, $2, $3, $4)`,
     [batchId, familyId, profileId, accountId],

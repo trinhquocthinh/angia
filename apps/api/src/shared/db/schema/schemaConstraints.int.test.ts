@@ -80,6 +80,23 @@ describe('Ràng buộc lược đồ Walking Skeleton', () => {
     ).rejects.toThrow(/accounts_health_profile_id_unique/);
   });
 
+  it('TC-374 (F07): rút đồng thuận bắt buộc có consent_withdrawn_at', async () => {
+    const id = randomUUID();
+    await owner.query(`INSERT INTO health_profiles (id, family_id, display_name) VALUES ($1, $2, 'Bố')`, [
+      id,
+      familyId,
+    ]);
+    await expect(
+      owner.query(`UPDATE health_profiles SET consent_status = 'withdrawn' WHERE id = $1`, [id]),
+    ).rejects.toThrow(/health_profiles_withdrawn_receipt_complete/);
+    await expect(
+      owner.query(
+        `UPDATE health_profiles SET consent_status = 'withdrawn', consent_withdrawn_at = now() WHERE id = $1`,
+        [id],
+      ),
+    ).resolves.toMatchObject({ rowCount: 1 });
+  });
+
   it('tài khoản chờ vào nhóm được phép chưa có family_id và family_role', async () => {
     await expect(
       owner.query(`INSERT INTO accounts (id, oidc_subject, display_name) VALUES ($1, 'sub-3', 'Chờ')`, [

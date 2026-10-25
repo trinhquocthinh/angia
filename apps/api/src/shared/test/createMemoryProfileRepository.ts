@@ -33,6 +33,8 @@ export function createMemoryProfileRepository(accounts: Account[] = []): Profile
             consentStatus: 'pending',
             consentSource: null,
             consentRespondentName: null,
+            consentWithdrawnAt: null,
+            consentWithdrawnBy: null,
             createdAt: new Date('2026-10-06T00:00:00Z'),
           };
           profiles.push(profile);

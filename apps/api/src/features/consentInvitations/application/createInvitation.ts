@@ -25,6 +25,7 @@ export async function createInvitation(
       expiresAt,
       tokenHash: deps.codec.hash(token),
       revokedAt: null,
+      inviterAttestedAt: at,
       decision: null,
       respondentName: null,
       basis: null,

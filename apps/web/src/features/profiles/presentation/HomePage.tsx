@@ -1,3 +1,5 @@
+import { MyConsentSection } from './components/MyConsentSection';
+import { createMyConsentRepository } from '../infrastructure/createMyConsentRepository';
 import { RecipientNotice } from './components/RecipientNotice';
 import { useProfileSessionRecovery } from '../application/useProfileSessionRecovery';
 import { useState } from 'react';
@@ -12,6 +14,7 @@ import { ProfilesContent } from './components/ProfilesContent';
 import { ProfileDialogs } from './components/ProfileDialogs';
 import './profiles.css';
 const repository = createProfilesRepository();
+const consentRepository = createMyConsentRepository();
 export function HomePage() {
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(repository, session.data);
@@ -21,8 +24,11 @@ export function HomePage() {
   if (!session.data) return null;
   const profiles = workspace.profiles.data ?? [];
   const main = session.data.role === 'main';
+  const subtitle =
+    main && workspace.profiles.isSuccess ? `${profiles.length} hồ sơ thành viên` : 'Sổ sức khỏe gia đình';
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
+      <MyConsentSection repository={consentRepository} session={session.data} />
       <div className="mb-8 flex flex-wrap items-center justify-between gap-5">
         <div>
           <div className="flex flex-wrap items-center gap-3">
@@ -31,11 +37,7 @@ export function HomePage() {
               {session.data.family?.name}
             </span>
           </div>
-          <p className="mt-3 text-sm text-[#55615f]">
-            {main && workspace.profiles.isSuccess
-              ? `${profiles.length} hồ sơ thành viên`
-              : 'Sổ sức khỏe gia đình'}
-          </p>
+          <p className="mt-3 text-sm text-[#55615f]">{subtitle}</p>
         </div>
         {main && (
           <Link

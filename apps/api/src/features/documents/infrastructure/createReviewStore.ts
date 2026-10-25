@@ -15,6 +15,7 @@ import { insertPrescription } from '@src/features/prescriptions/infrastructure/i
 import { extractions, healthProfiles, measurements, sourceDocuments } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import type { ReviewStore } from '../application/reviewPorts.js';
+import { findDocumentWithConsent } from './findDocumentWithConsent.js';
 import { listDocumentPage } from './listDocumentPage.js';
 
 // Chạy trong transaction đã SET LOCAL app.family_id; bộ lọc family_id bổ sung phòng thủ theo chiều sâu.
@@ -22,10 +23,7 @@ export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewS
   const owned = (id: string) => and(eq(sourceDocuments.id, id), eq(sourceDocuments.familyId, familyId));
   return {
     listDocuments: (filter) => listDocumentPage(tx, familyId, filter),
-    findDocument: async (id, options) => {
-      const query = tx.select().from(sourceDocuments).where(owned(id));
-      return (await (options?.lock ? query.for('update') : query))[0] ?? null;
-    },
+    findDocument: (id, options) => findDocumentWithConsent(tx, familyId, id, options?.lock ?? false),
     findLatestExtraction: async (documentId) =>
       (
         await tx

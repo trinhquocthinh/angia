@@ -69,6 +69,9 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'PUT /api/me/push-subscription',
   'DELETE /api/me/push-subscription',
   'POST /api/me/push-test',
+  // F07: tài khoản liên kết đọc/rút đồng thuận của hồ sơ mình; chỉ tên, trạng thái, không trả dữ liệu sức khỏe.
+  'GET /api/me/consent',
+  'POST /api/me/consent/withdraw',
   'GET /api/admin/families',
   'POST /api/admin/families',
   'GET /api/admin/accounts',

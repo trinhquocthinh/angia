@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { components } from '@src/shared/api/schema.gen';
+import type { HealthProfile } from '@src/features/profiles/application/ports';
 import type { MeasurementKind, MeasurementsRepository } from './ports';
 import { seriesRange, type WeekSpan } from './seriesRange';
 
@@ -12,6 +13,7 @@ export function useMeasurementSeries(
   profileId: string,
   kind: MeasurementKind,
   weeks: WeekSpan,
+  profile: HealthProfile | undefined,
 ) {
   const range = seriesRange(weeks);
   return {
@@ -27,7 +29,7 @@ export function useMeasurementSeries(
         range.from,
         range.to,
       ],
-      enabled: session?.role === 'main' && Boolean(session.family),
+      enabled: session?.role === 'main' && Boolean(session.family) && profile?.consentStatus === 'confirmed',
       retry: false,
       queryFn: ({ signal }) => repository.series(profileId, kind, range, signal),
     }),

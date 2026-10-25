@@ -7,6 +7,7 @@ import type {
   MeasurementPage,
   SourceDocumentPage,
 } from '@angia/contracts';
+import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { PENDING_JPEG, seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
@@ -38,6 +39,7 @@ describe('Duyệt số đo từ ảnh máy đo: route thật, transaction và RL
     const main = await t.session(familyId);
     const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Ba' });
     const profile = (await created.json()) as HealthProfile;
+    await acceptConsentInvitation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     return { familyId, main, profile, ...(await seedPendingDocument(t, owner, reading)) };
   };

@@ -3,6 +3,7 @@ import { sql, type SQL } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
+import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -24,6 +25,7 @@ describe('Dữ liệu xác nhận riêng tư: migration thật và role app NOBY
     const main = await t.session(familyId);
     const response = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Ba' });
     const profile = (await response.json()) as HealthProfile;
+    await acceptConsentInvitation(t, main, profile.id);
     const { documentId, key } = await seedPendingDocument(
       t,
       {

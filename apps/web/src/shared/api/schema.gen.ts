@@ -1794,6 +1794,15 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
       };
     };
     put?: never;
@@ -1854,6 +1863,15 @@ export interface paths {
         };
         /** @description ERR_NOT_FOUND */
         404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
+        409: {
           headers: {
             [name: string]: unknown;
           };
@@ -1932,7 +1950,7 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts) */
+        /** @description ERR_INVALID_STATE_TRANSITION, ERR_CONSENT_REQUIRED, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts) */
         409: {
           headers: {
             [name: string]: unknown;
@@ -2281,6 +2299,15 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
       };
     };
     put?: never;
@@ -2340,6 +2367,15 @@ export interface paths {
         };
         /** @description ERR_NOT_FOUND */
         404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
+        409: {
           headers: {
             [name: string]: unknown;
           };
@@ -2622,6 +2658,15 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
         /** @description ERR_VALIDATION */
         422: {
           headers: {
@@ -2694,6 +2739,15 @@ export interface paths {
         };
         /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
         404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
+        409: {
           headers: {
             [name: string]: unknown;
           };
@@ -2777,6 +2831,15 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
         /** @description ERR_VALIDATION */
         422: {
           headers: {
@@ -2848,6 +2911,15 @@ export interface paths {
         };
         /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
         404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
+        409: {
           headers: {
             [name: string]: unknown;
           };
@@ -3514,6 +3586,15 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
         /** @description ERR_VALIDATION */
         422: {
           headers: {
@@ -3652,6 +3733,15 @@ export interface paths {
         };
         /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
         404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
+        409: {
           headers: {
             [name: string]: unknown;
           };
@@ -3814,6 +3904,136 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/me/consent': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc trạng thái đồng thuận của hồ sơ gắn với tài khoản phiên (SPEC-036) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Hồ sơ liên kết (null khi tài khoản không liên kết hồ sơ) */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['MyConsent'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: tài khoản chưa thuộc gia đình */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/me/consent/withdraw': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Rút đồng thuận của hồ sơ gắn với tài khoản phiên (SPEC-036) */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': Record<string, never>;
+        };
+      };
+      responses: {
+        /** @description Đã rút đồng thuận */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['MyConsentWithdrawn'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: thiếu CSRF hoặc tài khoản chưa thuộc gia đình */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: tài khoản không liên kết hồ sơ */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_NOT_CONFIRMED: hồ sơ chưa ở trạng thái đã đồng thuận */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/visit-summary': {
     parameters: {
       query?: never;
@@ -3918,7 +4138,11 @@ export interface paths {
         };
         cookie?: never;
       };
-      requestBody?: never;
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['ConsentInvitationCreateRequest'];
+        };
+      };
       responses: {
         /** @description Link mới, hết hạn sau 7 ngày */
         201: {
@@ -4304,7 +4528,7 @@ export interface components {
       /** @enum {string|null} */
       consentBasis: 'self' | 'guardian' | null;
       /** @enum {string} */
-      consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed';
+      consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed' | 'withdrawn';
       /** @enum {string|null} */
       consentSource: 'legacy_attestation' | 'invitation' | null;
       consentRespondentName: string | null;
@@ -4890,6 +5114,23 @@ export interface components {
       quantityPerDose: string | null;
       doseUnit: string | null;
     };
+    MyConsent: {
+      profile: {
+        /** Format: uuid */
+        id: string;
+        displayName: string;
+        /** @enum {string} */
+        consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed' | 'withdrawn';
+        /** Format: date-time */
+        withdrawnAt: string | null;
+      } | null;
+    };
+    MyConsentWithdrawn: {
+      /** @enum {string} */
+      consentStatus: 'withdrawn';
+      /** Format: date-time */
+      withdrawnAt: string;
+    };
     VisitSummary: {
       profile: {
         /** Format: uuid */
@@ -4914,6 +5155,10 @@ export interface components {
       token: string;
       /** Format: date-time */
       expiresAt: string;
+    };
+    ConsentInvitationCreateRequest: {
+      /** @enum {boolean} */
+      attestation: true;
     };
     ConsentInvitationRevoked: {
       /** @enum {string} */

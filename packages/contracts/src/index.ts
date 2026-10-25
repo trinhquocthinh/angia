@@ -56,6 +56,7 @@ export type { ConsentConfirmationResponse } from './profiles/consentConfirmation
 export { linkableAccountSchema } from './profiles/linkableAccountSchema.js';
 export type { LinkableAccount } from './profiles/linkableAccountSchema.js';
 export {
+  consentInvitationCreateRequestSchema,
   consentInvitationCreatedSchema,
   consentInvitationRevokedSchema,
   consentInvitationViewSchema,
@@ -63,6 +64,7 @@ export {
   consentInvitationReceiptSchema,
 } from './profiles/consentInvitationSchemas.js';
 export type {
+  ConsentInvitationCreateRequest,
   ConsentInvitationCreated,
   ConsentInvitationView,
   ConsentInvitationRespondRequest,
@@ -217,3 +219,5 @@ export { visitSummaryQuerySchema, visitSummarySchema } from './visitSummary/visi
 export type { VisitSummary } from './visitSummary/visitSummarySchemas.js';
 
 export { pushSubscriptionSchema, pushConfigSchema } from './push/pushSchemas.js';
+export { myConsentSchema, myConsentWithdrawnSchema } from './profiles/myConsentSchemas.js';
+export type { MyConsent, MyConsentWithdrawn } from './profiles/myConsentSchemas.js';

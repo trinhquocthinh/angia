@@ -93,6 +93,20 @@ describe('Sinh lời nhắc trên PostgreSQL thật, role app NOBYPASSRLS (SPEC-
     ]);
   });
 
+  it('TC-381: hồ sơ withdrawn không sinh lời nhắc dù còn đợt thuốc đang dùng', async () => {
+    const a = await seedFamily(fx.owner);
+    await a.addCourse('Metformin', ['morning']);
+    await fx.owner.query(
+      `UPDATE health_profiles SET consent_status='withdrawn', consent_withdrawn_at=now() WHERE id=$1`,
+      [a.profileId],
+    );
+    const repository = createReminderRepository(fx.pool, randomUUID);
+    const profiles = await repository.withFamily(a.familyId, (store) => store.listProfiles(DATE));
+    expect(profiles).toMatchObject([{ profileId: a.profileId, consentConfirmed: false }]);
+    await generateReminders(repository, DATE);
+    expect(await rowsOf(a.profileId)).toHaveLength(0);
+  });
+
   it('NFR-4: ngoài withFamilyScope role app không đọc được lời nhắc; xóa hồ sơ xóa luôn lời nhắc', async () => {
     const a = await seedFamily(fx.owner);
     await a.addCourse('Metformin', ['morning']);

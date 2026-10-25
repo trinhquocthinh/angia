@@ -6,6 +6,8 @@ import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenie
 
 const base = '/api/health-profiles';
 const invitationPath = (id: string) => `${base}/${id}/consent-invitations`;
+const attest = { attestation: true };
+const bodyFor = (method: string) => (method === 'POST' ? attest : undefined);
 const responseBody = { decision: 'accepted', basis: 'guardian', respondentName: ' Nguyễn An ' };
 const origin = 'http://localhost:5173';
 
@@ -31,7 +33,7 @@ describe('Link đồng thuận: PostgreSQL thật và NOBYPASSRLS', () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
     const profile = (await (await t.call(main, 'POST', base, { displayName: 'Mẹ' })).json()) as HealthProfile;
-    const created = await t.call(main, 'POST', invitationPath(profile.id));
+    const created = await t.call(main, 'POST', invitationPath(profile.id), attest);
     expect(created.status).toBe(201);
     const invitation = (await created.json()) as ConsentInvitationCreated;
     return { familyId, main, profile, ...invitation };
@@ -77,8 +79,8 @@ describe('Link đồng thuận: PostgreSQL thật và NOBYPASSRLS', () => {
     const other = await t.session(otherFamily);
     for (const method of ['POST', 'DELETE']) {
       await expectCrossFamilyDenied(
-        () => t.call(other, method, invitationPath(f.profile.id)),
-        () => t.call(other, method, invitationPath(randomUUID())),
+        () => t.call(other, method, invitationPath(f.profile.id), bodyFor(method)),
+        () => t.call(other, method, invitationPath(randomUUID()), bodyFor(method)),
       );
     }
     const claims = t.codec.verify(f.token)!;
@@ -114,7 +116,7 @@ describe('Link đồng thuận: PostgreSQL thật và NOBYPASSRLS', () => {
   it('rotation, thu hồi, hết hạn và token sửa đổi đều 404; hết hạn vẫn chặn replay', async () => {
     const f = await fixture();
     const rotated = (await (
-      await t.call(f.main, 'POST', invitationPath(f.profile.id))
+      await t.call(f.main, 'POST', invitationPath(f.profile.id), attest)
     ).json()) as ConsentInvitationCreated;
     await expectCrossFamilyDenied(
       () => publicCall(f.token),
@@ -124,7 +126,7 @@ describe('Link đồng thuận: PostgreSQL thật và NOBYPASSRLS', () => {
     expect((await t.call(f.main, 'DELETE', invitationPath(f.profile.id))).status).toBe(200);
     expect((await publicCall(rotated.token, 'POST', responseBody)).status).toBe(404);
     const fresh = (await (
-      await t.call(f.main, 'POST', invitationPath(f.profile.id))
+      await t.call(f.main, 'POST', invitationPath(f.profile.id), attest)
     ).json()) as ConsentInvitationCreated;
     expect((await publicCall(fresh.token, 'POST', { ...responseBody, decision: 'declined' })).status).toBe(
       200,
@@ -156,7 +158,7 @@ describe('Link đồng thuận: PostgreSQL thật và NOBYPASSRLS', () => {
     );
     expect((await t.app.request(invitationPath(f.profile.id), { method: 'POST' })).status).toBe(401);
     const member = await t.session(f.familyId, 'member');
-    expect((await t.call(member, 'POST', invitationPath(f.profile.id))).status).toBe(403);
+    expect((await t.call(member, 'POST', invitationPath(f.profile.id), attest)).status).toBe(403);
     expect((await t.call(member, 'DELETE', invitationPath(f.profile.id))).status).toBe(403);
     expect(
       (
@@ -176,7 +178,7 @@ describe('Link đồng thuận: PostgreSQL thật và NOBYPASSRLS', () => {
     const newMain = await t.session(f.familyId);
     const profiles = (await (await t.call(newMain, 'GET', base)).json()) as HealthProfile[];
     expect(profiles[0]?.consentStatus).toBe('declined');
-    expect((await t.call(newMain, 'POST', invitationPath(f.profile.id))).status).toBe(201);
+    expect((await t.call(newMain, 'POST', invitationPath(f.profile.id), attest)).status).toBe(201);
   });
   it.each(['POST', 'DELETE'])(
     'acceptance đồng thời với %s giữ profile-first lock và không xóa quyết định',
@@ -184,7 +186,7 @@ describe('Link đồng thuận: PostgreSQL thật và NOBYPASSRLS', () => {
       const f = await fixture();
       const [accepted, managed] = await Promise.all([
         publicCall(f.token, 'POST', responseBody),
-        t.call(f.main, method, invitationPath(f.profile.id)),
+        t.call(f.main, method, invitationPath(f.profile.id), bodyFor(method)),
       ]);
       expect([accepted.status, managed.status]).toSatisfy(
         (statuses: number[]) =>
@@ -194,7 +196,9 @@ describe('Link đồng thuận: PostgreSQL thật và NOBYPASSRLS', () => {
       if (accepted.status === 200) {
         const before = await (await t.call(f.main, 'GET', base)).json();
         for (const action of ['POST', 'DELETE'])
-          expect((await t.call(f.main, action, invitationPath(f.profile.id))).status).toBe(409);
+          expect((await t.call(f.main, action, invitationPath(f.profile.id), bodyFor(action))).status).toBe(
+            409,
+          );
         expect(await (await t.call(f.main, 'GET', base)).json()).toEqual(before);
       }
     },

@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile, LabSeries } from '@angia/contracts';
+import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 
@@ -21,6 +22,7 @@ describe('API chuỗi xét nghiệm SPEC-021 (E5-S2-T1)', () => {
     const profile = (await (
       await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' })
     ).json()) as HealthProfile;
+    await acceptConsentInvitation(t, main, profile.id);
     return { familyId, main, profile, base: `/api/health-profiles/${profile.id}/lab-result-series` };
   };
   const insertResult = async (familyId: string, profileId: string, seed: Seed) => {

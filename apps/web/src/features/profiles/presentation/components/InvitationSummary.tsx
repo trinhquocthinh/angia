@@ -36,11 +36,20 @@ export function InvitationSummary({ view }: { view: InvitationView }) {
         <span className="mt-0.5 text-[#286958]">
           <InvitationIcon name="shield" />
         </span>
-        <p className="text-[13px] leading-6">
-          Bạn được mời cùng lưu trữ và theo dõi thông tin sức khỏe trong gia đình. Ảnh giấy tờ khám có thể
-          được gửi tới dịch vụ tự động nhận diện ở nước ngoài để trích xuất thông tin. Bạn có thể đồng ý hoặc
-          từ chối.
-        </p>
+        <div className="space-y-3 text-[13px] leading-6">
+          <p>
+            {view.inviterDisplayName ?? 'Người quản lý gia đình'} mời bạn đồng ý lưu thông tin sức khỏe của hồ
+            sơ <strong>{view.profileDisplayName}</strong> vào sổ sức khỏe gia đình AN GIA: đơn thuốc, kết quả
+            xét nghiệm, chỉ số đo và lịch nhắc uống thuốc. Ảnh giấy tờ khám có thể được gửi tới dịch vụ nhận
+            diện tự động ở nước ngoài để trích xuất chữ, sau khi người quản lý gia đình đã che thông tin định
+            danh trên ảnh.
+          </p>
+          <p>
+            <strong>Quyền của bạn:</strong> đây là thông tin sức khỏe của bạn (hoặc người bạn giám hộ). Bạn có
+            quyền từ chối; từ chối không ảnh hưởng gì khác. Nếu đồng ý, sau này bạn vẫn có thể rút lại (nếu
+            bạn có tài khoản AN GIA liên kết với hồ sơ) hoặc yêu cầu người mời xóa toàn bộ hồ sơ.
+          </p>
+        </div>
       </div>
     </>
   );

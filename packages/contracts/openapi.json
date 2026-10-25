@@ -564,7 +564,8 @@
               "pending",
               "invited",
               "declined",
-              "confirmed"
+              "confirmed",
+              "withdrawn"
             ]
           },
           "consentSource": {
@@ -3174,6 +3175,71 @@
           "doseUnit"
         ]
       },
+      "MyConsent": {
+        "type": "object",
+        "properties": {
+          "profile": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string"
+              },
+              "consentStatus": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "invited",
+                  "declined",
+                  "confirmed",
+                  "withdrawn"
+                ]
+              },
+              "withdrawnAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "id",
+              "displayName",
+              "consentStatus",
+              "withdrawnAt"
+            ]
+          }
+        },
+        "required": [
+          "profile"
+        ]
+      },
+      "MyConsentWithdrawn": {
+        "type": "object",
+        "properties": {
+          "consentStatus": {
+            "type": "string",
+            "enum": [
+              "withdrawn"
+            ]
+          },
+          "withdrawnAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "consentStatus",
+          "withdrawnAt"
+        ]
+      },
       "VisitSummary": {
         "type": "object",
         "properties": {
@@ -3270,6 +3336,21 @@
           "token",
           "expiresAt"
         ]
+      },
+      "ConsentInvitationCreateRequest": {
+        "type": "object",
+        "properties": {
+          "attestation": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "attestation"
+        ],
+        "additionalProperties": false
       },
       "ConsentInvitationRevoked": {
         "type": "object",
@@ -5074,6 +5155,16 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -5143,6 +5234,16 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
             "content": {
               "application/json": {
                 "schema": {
@@ -5223,7 +5324,7 @@
             }
           },
           "409": {
-            "description": "ERR_INVALID_STATE_TRANSITION, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts)",
+            "description": "ERR_INVALID_STATE_TRANSITION, ERR_CONSENT_REQUIRED, ERR_DUPLICATE_UNCONFIRMED (details.duplicateOf, recordDate, facility, savedAt), ERR_COURSE_CONFLICT_UNRESOLVED (details.conflicts)",
             "content": {
               "application/json": {
                 "schema": {
@@ -5589,6 +5690,16 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -5653,6 +5764,16 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
             "content": {
               "application/json": {
                 "schema": {
@@ -5966,6 +6087,16 @@
               }
             }
           },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION",
             "content": {
@@ -6080,6 +6211,16 @@
               }
             }
           },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION",
             "content": {
@@ -6153,6 +6294,16 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
             "content": {
               "application/json": {
                 "schema": {
@@ -6258,6 +6409,16 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
             "content": {
               "application/json": {
                 "schema": {
@@ -6974,6 +7135,16 @@
               }
             }
           },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION",
             "content": {
@@ -7126,6 +7297,16 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
             "content": {
               "application/json": {
                 "schema": {
@@ -7296,6 +7477,118 @@
         }
       }
     },
+    "/api/me/consent": {
+      "get": {
+        "tags": [
+          "consent"
+        ],
+        "summary": "Đọc trạng thái đồng thuận của hồ sơ gắn với tài khoản phiên (SPEC-036)",
+        "responses": {
+          "200": {
+            "description": "Hồ sơ liên kết (null khi tài khoản không liên kết hồ sơ)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyConsent"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/consent/withdraw": {
+      "post": {
+        "tags": [
+          "consent"
+        ],
+        "summary": "Rút đồng thuận của hồ sơ gắn với tài khoản phiên (SPEC-036)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đã rút đồng thuận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyConsentWithdrawn"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: thiếu CSRF hoặc tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: tài khoản không liên kết hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_NOT_CONFIRMED: hồ sơ chưa ở trạng thái đã đồng thuận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/health-profiles/{id}/visit-summary": {
       "get": {
         "tags": [
@@ -7411,6 +7704,16 @@
             "in": "path"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentInvitationCreateRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "Link mới, hết hạn sau 7 ngày",

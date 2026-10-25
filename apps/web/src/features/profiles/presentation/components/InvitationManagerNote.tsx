@@ -11,8 +11,8 @@ export function InvitationManagerNote() {
           <InvitationIcon name="shield" />
         </span>
         <p className="text-xs leading-5">
-          Link có hiệu lực <strong>7 ngày</strong> và chỉ mở được qua <strong>SIT/Tailscale</strong>. Tạo link
-          mới sẽ làm link trước mất hiệu lực. Bạn cần sao chép trước khi đóng; link không được lưu để đọc lại.
+          Link có hiệu lực <strong>7 ngày</strong>. Tạo link mới sẽ làm link trước mất hiệu lực. Bạn cần sao
+          chép trước khi đóng; link không được lưu để đọc lại.
         </p>
       </div>
     </>

@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+export const consentInvitationCreateRequestSchema = z
+  .object({ attestation: z.literal(true) })
+  .strict()
+  .meta({ id: 'ConsentInvitationCreateRequest' });
 export const consentInvitationCreatedSchema = z
   .object({ token: z.string(), expiresAt: z.iso.datetime() })
   .meta({ id: 'ConsentInvitationCreated' });
@@ -31,6 +35,7 @@ export const consentInvitationReceiptSchema = z
     respondedAt: z.iso.datetime(),
   })
   .meta({ id: 'ConsentInvitationReceipt' });
+export type ConsentInvitationCreateRequest = z.infer<typeof consentInvitationCreateRequestSchema>;
 export type ConsentInvitationCreated = z.infer<typeof consentInvitationCreatedSchema>;
 export type ConsentInvitationView = z.infer<typeof consentInvitationViewSchema>;
 export type ConsentInvitationRespondRequest = z.infer<typeof consentInvitationRespondRequestSchema>;

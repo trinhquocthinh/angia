@@ -189,6 +189,25 @@ describe('Gửi lời nhắc theo thiết bị trên PostgreSQL thật, role app
     expect(fake.calls).toHaveLength(0);
   });
 
+  it('TC-381: hồ sơ withdrawn → lượt chờ bị revoked_consent, không gọi notifier; nhắc mới không fan-out', async () => {
+    const f = await seedDeliveryFamily(fx.owner);
+    await f.addDevice();
+    const before = await f.addReminder(T0);
+    const fake = fakeNotifier();
+    await sendReminders(onlyFamily(f.familyId), fake.notifier, { now: () => T0, maxDeliveries: 0 });
+    await fx.owner.query(
+      `UPDATE health_profiles SET consent_status='withdrawn', consent_withdrawn_at=now() WHERE id=$1`,
+      [f.profileId],
+    );
+    const later = await f.addReminder(new Date(T0.getTime() + 1000), 'evening');
+    await run(f.familyId, fake.notifier, T0);
+    expect(await deliveriesOf(fx.owner, before)).toMatchObject([
+      { status: 'revoked', last_error: 'revoked_consent', attempts: 0 },
+    ]);
+    expect(await deliveriesOf(fx.owner, later)).toEqual([]);
+    expect(fake.calls).toHaveLength(0);
+  });
+
   it('NFR-4: RLS tách gia đình; kết quả job không chứa tên thuốc', async () => {
     const one = await seedDeliveryFamily(fx.owner);
     const two = await seedDeliveryFamily(fx.owner);

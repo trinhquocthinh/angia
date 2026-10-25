@@ -12,7 +12,10 @@ function createFixtureStore(f: Fixture): PrivacyStore {
       return f.usage;
     },
     readAiBudget: async () => f.aiBudget,
-    findDocument: async () => (f.missing ? null : structuredClone(f.doc)),
+    findDocument: async () =>
+      f.missing
+        ? null
+        : { ...structuredClone(f.doc), profileConsentStatus: f.consent ? 'confirmed' : 'withdrawn' },
     consentConfirmed: async () => f.consent,
     updateDocument: async (_id, u) => {
       f.calls.push('update');

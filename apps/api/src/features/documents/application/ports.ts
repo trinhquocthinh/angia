@@ -1,8 +1,9 @@
 import type { QuotaPolicy, ReadQuotaUsage } from '../../familyQuota/application/ports.js';
+import type { ConsentStatus } from '../../profiles/domain/HealthProfile.js';
 import type { NewSourceDocument, SourceDocument } from '../domain/SourceDocument.js';
 
 export interface ProfileConsent {
-  consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed';
+  consentStatus: ConsentStatus;
 }
 export interface DocumentStore {
   /** SPEC-030: mức dùng của gia đình trong transaction này; `lock` khóa quota theo gia đình trước khi đếm. */

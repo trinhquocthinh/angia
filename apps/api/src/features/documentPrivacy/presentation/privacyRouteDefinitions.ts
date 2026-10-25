@@ -48,7 +48,11 @@ export const getPrivacyDraftRoute = createRoute({
   tags: ['documents'],
   summary: 'Trạng thái bản ảnh kiểm tra hiện hành',
   request: { params },
-  responses: { 200: draft, ...guarded },
+  responses: {
+    200: draft,
+    ...guarded,
+    409: error('ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận'),
+  },
 });
 export const privacyImageRoute = createRoute({
   method: 'get',
@@ -62,6 +66,7 @@ export const privacyImageRoute = createRoute({
       content: { 'image/png': { schema: z.string().meta({ type: 'string', format: 'binary' }) } },
     },
     ...guarded,
+    409: error('ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận'),
   },
 });
 export const approvePrivacyRoute = createRoute({

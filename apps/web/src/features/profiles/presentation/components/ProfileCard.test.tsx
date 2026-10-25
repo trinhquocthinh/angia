@@ -64,6 +64,17 @@ describe('Đồng thuận bằng lời mời, không suy diễn từ metadata c�
     expect(html.match(/<button/g)).toHaveLength(1);
     expect(html).not.toContain('link');
   });
+  it('TC-387: hồ sơ withdrawn có nhãn rút đồng thuận và nút tạo link mời', () => {
+    const html = renderToStaticMarkup(
+      <ProfileCard
+        profile={{ ...profile, consentStatus: 'withdrawn' }}
+        onConsent={() => undefined}
+        onDelete={() => undefined}
+      />,
+    );
+    expect(html).toContain('Người thân đã rút đồng thuận');
+    expect(html).toContain('Tạo link mời người thân');
+  });
   it('SPEC-007: thẻ hồ sơ có nút chữ "Xóa hồ sơ" ở cuối', () => {
     const html = renderToStaticMarkup(
       <ProfileCard profile={profile} onConsent={() => undefined} onDelete={() => undefined} />,

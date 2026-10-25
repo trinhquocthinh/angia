@@ -47,7 +47,7 @@ describe('Hồ sơ qua hợp đồng HTTP và bảo vệ phiên', () => {
       ),
     ).toBe(true);
     expect(requests.every((request) => request.headers.get('X-CSRF-Token') === 'csrf')).toBe(true);
-    expect(requests[0]?.body).toBeNull();
+    expect(await requests[0]!.clone().text()).toBe('{"attestation":true}');
   });
   it.each([401, 403, 409, 500])('HTTP %s không giả lập lưu thành công', async (status) => {
     const { repository } = harness(status, { error: { code: 'ERR_INTERNAL', message: 'SQL secret' } });

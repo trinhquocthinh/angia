@@ -1,7 +1,8 @@
+import type { ConsentStatus } from '@src/features/profiles/domain/HealthProfile.js';
 import type { DoseSlotRepository } from '@src/features/reminders/application/ports.js';
 import { DAILY_SLOTS, type DoseSlotTime } from '@src/features/reminders/domain/DoseSlotConfig.js';
 
-type MemoryProfile = { id: string; familyId: string; consentStatus: string };
+type MemoryProfile = { id: string; familyId: string; consentStatus: ConsentStatus };
 type StoredSlot = DoseSlotTime & { familyId: string; profileId: string };
 
 // Mô phỏng giao dịch: ghi trên bản sao, chỉ thay dữ liệu đã commit khi work thành công.

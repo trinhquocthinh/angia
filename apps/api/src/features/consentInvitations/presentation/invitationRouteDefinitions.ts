@@ -1,5 +1,6 @@
 import { createRoute, z } from '@hono/zod-openapi';
 import {
+  consentInvitationCreateRequestSchema,
   consentInvitationCreatedSchema,
   consentInvitationRevokedSchema,
   consentInvitationViewSchema,
@@ -23,7 +24,7 @@ export const createInvitationRoute = createRoute({
   method: 'post',
   path: mainPath,
   tags: ['consent-invitations'],
-  request: { params },
+  request: { params, body: { required: true, content: json(consentInvitationCreateRequestSchema) } },
   responses: {
     201: { description: 'Link mới, hết hạn sau 7 ngày', content: json(consentInvitationCreatedSchema) },
     ...mainErrors,

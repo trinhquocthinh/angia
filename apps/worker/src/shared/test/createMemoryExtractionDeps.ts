@@ -23,6 +23,8 @@ interface Options {
   documentId?: string;
   familyId?: string;
   budget?: MemoryBudgetOptions;
+  /** Mặc định true; false mô phỏng hồ sơ đã rút đồng thuận. */
+  profileConsentConfirmed?: boolean;
 }
 
 /** Thời điểm cố định của unit test: 10:00 ngày 15/10/2026 giờ Việt Nam → tháng ngân sách 2026-10. */
@@ -130,6 +132,7 @@ function createDocumentFixture(options: Options, documentId: string, ownerFamily
     privacyApprovedBy: 'account-main',
     privacyApprovedAt: new Date('2026-10-08T00:00:00Z'),
     mimeType: options.mimeType ?? 'image/jpeg',
+    profileConsentConfirmed: options.profileConsentConfirmed ?? true,
   };
   return { document, originalBytes, approvedBytes, ocrKey };
 }

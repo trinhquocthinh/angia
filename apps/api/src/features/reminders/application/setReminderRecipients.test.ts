@@ -9,6 +9,36 @@ const parents = [
   { accountId: 'mom', displayName: 'Mẹ' },
 ];
 
+describe('TC-380: hồ sơ đã rút đồng thuận — đọc người nhận', () => {
+  it('getReminderRecipients → ERR_CONSENT_REQUIRED, không đọc tài khoản hay người nhận', async () => {
+    const m = createMemoryReminderRecipientRepository([
+      { id: 'an', familyId: 'family-a', consentStatus: 'withdrawn' },
+    ]);
+    let reads = 0;
+    const repository: typeof m.repository = {
+      withFamily: (familyId, work) =>
+        m.repository.withFamily(familyId, (store) =>
+          work({
+            ...store,
+            listFamilyAccounts: async () => {
+              reads += 1;
+              return store.listFamilyAccounts();
+            },
+            listRecipientIds: async (id) => {
+              reads += 1;
+              return store.listRecipientIds(id);
+            },
+          }),
+        ),
+    };
+    expect(await getReminderRecipients(repository, 'family-a', 'an')).toEqual({
+      ok: false,
+      code: 'ERR_CONSENT_REQUIRED',
+    });
+    expect(reads).toBe(0);
+  });
+});
+
 describe('Chỉ định người nhận nhắc thuốc (SPEC-026)', () => {
   it('TC-069: hồ sơ "Bé An" lưu thành công 02 người nhận là cha và mẹ', async () => {
     const m = createMemoryReminderRecipientRepository();

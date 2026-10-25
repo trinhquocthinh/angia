@@ -5,7 +5,9 @@ import type { ProfileTestApp } from './startProfileTestApp.js';
 
 // Đi đúng luồng thật: main tạo link mời, người nhận đồng ý. Trả token đã dùng (để giả mạo phạm vi).
 export async function acceptConsentInvitation(t: ProfileTestApp, main: SeededSession, profileId: string) {
-  const invitation = await t.call(main, 'POST', `/api/health-profiles/${profileId}/consent-invitations`);
+  const invitation = await t.call(main, 'POST', `/api/health-profiles/${profileId}/consent-invitations`, {
+    attestation: true,
+  });
   const { token } = (await invitation.json()) as ConsentInvitationCreated;
   const responded = await t.app.request('/api/consent-invitations/respond', {
     method: 'POST',

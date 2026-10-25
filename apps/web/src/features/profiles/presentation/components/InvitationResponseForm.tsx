@@ -40,8 +40,8 @@ export function InvitationResponseForm({
         <p className="mt-5 flex items-start gap-2.5 rounded-lg bg-[#eaf6f5]/70 p-3 text-xs leading-5 text-[#404945]">
           <InvitationIcon name="info" />
           <span>
-            Thông tin do bạn tự nhập và chưa được xác minh. Vui lòng chỉ xác nhận nếu đúng là hồ sơ của bạn
-            hoặc người bạn đang chăm sóc.
+            Chỉ xác nhận nếu bạn là người có tên trong hồ sơ hoặc người giám hộ hợp pháp. Nếu link này được
+            người khác chuyển cho bạn mà bạn không liên quan, hãy chọn <strong>Từ chối</strong>.
           </span>
         </p>
         <InvitationResponseActions

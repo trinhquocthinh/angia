@@ -1,22 +1,24 @@
-import { and, asc, desc, eq, inArray, type SQL, sql } from 'drizzle-orm';
-import { sourceDocuments } from '@src/shared/db/schema/index.js';
+import { and, asc, desc, eq, getTableColumns, inArray, type SQL, sql } from 'drizzle-orm';
+import { healthProfiles, sourceDocuments } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import type { DocumentFilter, DocumentPage } from '../application/reviewPorts.js';
 
 const d = sourceDocuments;
+const p = healthProfiles;
 
 // F09a: keyset (created_at, id) giảm dần, lấy dư 1 bản để biết còn trang sau.
 // Cursor thuộc gia đình khác bị RLS ẩn → so sánh với NULL → trang rỗng, không lộ dữ liệu.
+// F07: chỉ chứng từ của hồ sơ đang đồng thuận (join), hàng đợi toàn gia đình không có profileId để gate riêng.
 // Lọc theo lô (≤ 10 chứng từ) sắp theo ngày chứng từ, chưa rõ ngày ở cuối (US-006), trả cả lô.
 export async function listDocumentPage(
   tx: FamilyScopedTx,
   familyId: string,
   { statuses, profileId, batchId, limit, cursor }: DocumentFilter,
 ): Promise<DocumentPage> {
-  const conditions: SQL[] = [eq(d.familyId, familyId)];
+  const conditions: SQL[] = [eq(d.familyId, familyId), eq(p.consentStatus, 'confirmed')];
   if (statuses?.length) conditions.push(inArray(d.status, statuses));
   if (profileId) conditions.push(eq(d.healthProfileId, profileId));
-  const query = tx.select().from(d);
+  const query = tx.select(getTableColumns(d)).from(d).innerJoin(p, eq(p.id, d.healthProfileId));
   if (batchId) {
     conditions.push(eq(d.batchId, batchId));
     const items = await query

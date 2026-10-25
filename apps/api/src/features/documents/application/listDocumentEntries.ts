@@ -1,3 +1,4 @@
+import { consentGate } from '@src/features/profiles/domain/consentGate.js';
 import type { DocumentEntry } from '../domain/DocumentEntry.js';
 import { decodeEntryCursor, encodeEntryCursor } from '../domain/documentEntryCursor.js';
 import type { DocumentType } from '../domain/SourceDocument.js';
@@ -12,7 +13,7 @@ interface ListDocumentEntriesRequest {
 }
 type ListDocumentEntriesOutcome =
   | { ok: true; value: { items: DocumentEntry[]; nextCursor: string | null } }
-  | { ok: false; code: 'ERR_NOT_FOUND' | 'ERR_VALIDATION' };
+  | { ok: false; code: 'ERR_NOT_FOUND' | 'ERR_CONSENT_REQUIRED' | 'ERR_VALIDATION' };
 
 const EMPTY = { prescription: null, labResults: [], measurements: [] };
 
@@ -24,7 +25,8 @@ export function listDocumentEntries(
   const after = request.cursor === undefined ? undefined : decodeEntryCursor(request.cursor);
   if (after === null) return Promise.resolve({ ok: false, code: 'ERR_VALIDATION' });
   return repository.withFamily(request.familyId, async (store) => {
-    if (!(await store.profileExists(request.profileId))) return { ok: false, code: 'ERR_NOT_FOUND' };
+    const blocked = consentGate(await store.profileConsent(request.profileId));
+    if (blocked) return { ok: false, code: blocked };
     const heads = await store.listEntryHeads(request.profileId, {
       type: request.type,
       take: request.limit + 1,

@@ -14,8 +14,7 @@ import type { WeekSpan } from '../application/seriesRange';
 import { useMeasurementSeries } from '../application/useMeasurementSeries';
 import { useProfileMeasurements } from '../application/useProfileMeasurements';
 import { createMeasurementsRepository } from '../infrastructure/createMeasurementsRepository';
-import { MeasurementTableSection } from './components/MeasurementTableSection';
-import { MeasurementTrendSection } from './components/MeasurementTrendSection';
+import { ProfileHealthSections } from './components/ProfileHealthSections';
 import { HealthTrendToolbar } from './components/HealthTrendToolbar';
 import { ProfileHealthHeader } from './components/ProfileHealthHeader';
 
@@ -28,13 +27,13 @@ export function ProfileHealthPage({ profileId }: { profileId: string }) {
   const [kind, setKind] = useState<MeasurementKind>('blood_pressure');
   const [weeks, setWeeks] = useState<WeekSpan>(12);
   const [medication, setMedication] = useState<string | null>(null);
-  const measurements = useProfileMeasurements(measurementsRepository, session.data, profileId, kind);
-  const series = useMeasurementSeries(measurementsRepository, session.data, profileId, kind, weeks);
+  const profiles = workspace.profiles.data ?? [];
+  const profile = profiles.find((item) => item.id === profileId);
+  const measurements = useProfileMeasurements(measurementsRepository, session.data, profileId, kind, profile);
+  const series = useMeasurementSeries(measurementsRepository, session.data, profileId, kind, weeks, profile);
   useProfileSessionRecovery(workspace.profiles.error);
   if (!session.data) return null;
   const main = session.data.role === 'main';
-  const profiles = workspace.profiles.data ?? [];
-  const profile = profiles.find((item) => item.id === profileId);
   const rows = measurements.data?.pages.flatMap((page) => page.items) ?? [];
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
@@ -67,14 +66,15 @@ export function ProfileHealthPage({ profileId }: { profileId: string }) {
             session={session.data}
             onMedicationSaved={setMedication}
           />
-          <MeasurementTrendSection
+          <ProfileHealthSections
+            profile={profile}
             kind={kind}
             weeks={weeks}
             series={series}
+            measurements={measurements}
             medication={medication}
             onMedicationChange={setMedication}
           />
-          <MeasurementTableSection kind={kind} measurements={measurements} />
         </div>
       )}
     </ProfileFrame>

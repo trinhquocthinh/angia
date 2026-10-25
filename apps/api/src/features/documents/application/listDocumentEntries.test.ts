@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { ConsentStatus } from '@src/features/profiles/domain/HealthProfile.js';
 import type { DocumentEntryHead } from '../domain/DocumentEntry.js';
 import { decodeEntryCursor, encodeEntryCursor } from '../domain/documentEntryCursor.js';
 import type { DocumentEntryRepository, EntryHeadQuery } from './documentEntryPorts.js';
@@ -16,12 +17,12 @@ const head = (n: number): DocumentEntryHead => ({
   hasOcrImage: false,
 });
 
-function fixture(heads: DocumentEntryHead[], exists = true) {
+function fixture(heads: DocumentEntryHead[], consent: ConsentStatus | null = 'confirmed') {
   const queries: EntryHeadQuery[] = [];
   const repository: DocumentEntryRepository = {
     withFamily: (familyId, work) =>
       work({
-        profileExists: async (id) => exists && familyId === 'f' && id === 'p',
+        profileConsent: async (id) => (familyId === 'f' && id === 'p' ? consent : null),
         listEntryHeads: async (_p, query) => {
           queries.push(query);
           return heads.slice(0, query.take);
@@ -78,8 +79,17 @@ describe('listDocumentEntries — danh mục chứng từ của hồ sơ (SPEC-0
   });
 
   it('TC-274: hồ sơ không thuộc gia đình → ERR_NOT_FOUND, không đọc danh mục', async () => {
-    const f = fixture([head(1)], false);
+    const f = fixture([head(1)], null);
     expect(await listDocumentEntries(f.repository, request)).toEqual({ ok: false, code: 'ERR_NOT_FOUND' });
+    expect(f.queries).toEqual([]);
+  });
+
+  it('TC-380: hồ sơ đã rút đồng thuận → ERR_CONSENT_REQUIRED, không đọc danh mục', async () => {
+    const f = fixture([head(1)], 'withdrawn');
+    expect(await listDocumentEntries(f.repository, request)).toEqual({
+      ok: false,
+      code: 'ERR_CONSENT_REQUIRED',
+    });
     expect(f.queries).toEqual([]);
   });
 });

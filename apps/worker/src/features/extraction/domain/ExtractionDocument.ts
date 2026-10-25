@@ -18,6 +18,8 @@ export interface DocumentToExtract extends OcrImageApproval {
   originalKey: string;
   previewKey: string | null;
   mimeType: string;
+  /** Hồ sơ còn `confirmed`; false (vd. đã rút đồng thuận) thì không được gửi ảnh sang AI. */
+  profileConsentConfirmed: boolean;
 }
 
 // Hình dạng tối thiểu của payload SDD §2.1 mà domain cần đánh giá; hợp đồng đầy đủ nằm ở packages/contracts.

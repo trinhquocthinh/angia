@@ -15,6 +15,7 @@ import { pino } from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { ExtractionDependencies } from '@src/features/extraction/application/ports.js';
 import { createExtractionRepository } from '@src/features/extraction/infrastructure/createExtractionRepository.js';
+import { createExtractionStore } from '@src/features/extraction/infrastructure/createExtractionStore.js';
 import { createFakeExtractor } from '@src/features/extraction/infrastructure/createFakeExtractor.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { handleExtractDocumentJob } from './handleExtractDocumentJob.js';
@@ -137,6 +138,43 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
       type: 'lab_result',
       extractions: 0,
     });
+  });
+  it('TC-381: hồ sơ withdrawn → join trả false, chứng từ sang manual_entry, không Extraction, không giữ ngân sách', async () => {
+    const { familyId, documentId } = await seedDocument();
+    await owner.query(
+      `UPDATE health_profiles SET consent_status='withdrawn', consent_withdrawn_at=now() WHERE family_id=$1`,
+      [familyId],
+    );
+    const handler = handleExtractDocumentJob(deps(), logger);
+    const outcome = await handler({ id: 'j', data: { documentId, familyId }, retryCount: 0, retryLimit: 2 });
+    expect(outcome).toEqual({ status: 'manual_entry', reason: 'consent_required', costUsd: 0 });
+    expect(await documentState(documentId)).toMatchObject({ status: 'manual_entry', extractions: 0 });
+    const reservations = await owner.query(
+      'SELECT 1 FROM extraction_reservations WHERE source_document_id=$1',
+      [documentId],
+    );
+    expect(reservations.rowCount).toBe(0);
+  });
+  it('TC-391: findDocument chờ khóa hồ sơ đang giữ bởi lệnh rút đồng thuận (FOR SHARE hồ sơ)', async () => {
+    const { familyId, documentId } = await seedDocument();
+    await owner.query('BEGIN');
+    try {
+      await owner.query('SELECT 1 FROM health_profiles WHERE family_id=$1 FOR UPDATE', [familyId]);
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        await client.query(`SELECT set_config('app.family_id', $1, true)`, [familyId]);
+        await client.query(`SET LOCAL lock_timeout = '300ms'`);
+        await expect(createExtractionStore(client, familyId).findDocument(documentId)).rejects.toMatchObject({
+          code: '55P03',
+        });
+      } finally {
+        await client.query('ROLLBACK').catch(() => undefined);
+        client.release();
+      }
+    } finally {
+      await owner.query('ROLLBACK');
+    }
   });
   const previewDeps = () => ({
     repository: createPreviewRepository(pool),

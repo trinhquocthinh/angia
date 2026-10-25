@@ -23,6 +23,25 @@ describe('Trích xuất chứng từ bằng Vision-LLM (SPEC-009, E2-S5-T2)', ()
     ]);
   });
 
+  it('TC-381: hồ sơ không còn đồng thuận → manual_entry, không giữ ngân sách, không đọc ảnh, không gọi AI', async () => {
+    const memory = createMemoryExtractionDeps({
+      status: 'extracting',
+      profileConsentConfirmed: false,
+      result: { ok: true, content: prescription },
+    });
+    expect(await extractDocument(memory.deps, job)).toEqual({
+      status: 'manual_entry',
+      reason: 'consent_required',
+      costUsd: 0,
+    });
+    expect(memory.statusHistory).toEqual(['manual_entry']);
+    expect(memory.extractorCalls).toEqual([]);
+    expect(memory.extractions).toEqual([]);
+    expect(memory.ledger.hasReservation()).toBe(false);
+    expect(memory.ledger.spentUsd()).toBe(0);
+    expect(memory.objects.size).toBe(2);
+  });
+
   it('TC-029: AI trả về rỗng → manual_entry, không tạo Extraction', async () => {
     const memory = createMemoryExtractionDeps({
       result: { ok: true, content: { type: 'prescription', items: [] } },
