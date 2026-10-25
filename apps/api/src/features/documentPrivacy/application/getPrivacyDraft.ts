@@ -18,7 +18,9 @@ export async function getPrivacyDraft(
     return { ok: true, value: toPrivacyDraft(doc) };
   return repo.withFamily(input.familyId, async (store) => {
     const current = await store.findDocument(input.documentId, true);
-    if (!current) return { ok: false, code: 'ERR_NOT_FOUND' };
+    // Rút đồng thuận có thể commit giữa hai transaction: gate lại trước khi ghi.
+    const reblocked = consentGate(current?.profileConsentStatus ?? null);
+    if (reblocked || !current) return { ok: false, code: reblocked ?? 'ERR_NOT_FOUND' };
     if (
       current.status === 'awaiting_privacy' &&
       current.privacyDraftId === doc.privacyDraftId &&

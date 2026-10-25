@@ -110,3 +110,17 @@ describe('Phê duyệt số đo từ ảnh máy đo (SPEC-010, SPEC-019)', () =>
     });
   });
 });
+
+describe('TC-380: hồ sơ đã rút đồng thuận', () => {
+  it('duyệt → ERR_CONSENT_REQUIRED, không ghi số đo và chứng từ giữ nguyên trạng thái', async () => {
+    const memory = createMemoryReviewRepository([document()], {}, [
+      { id: 'me', familyId: 'family-a', consentStatus: 'withdrawn' },
+    ]);
+    expect(await approveDocument(memory.repository, request())).toEqual({
+      ok: false,
+      code: 'ERR_CONSENT_REQUIRED',
+    });
+    expect(memory.measurements).toEqual([]);
+    expect(memory.documents[0]?.status).toBe('pending_review');
+  });
+});

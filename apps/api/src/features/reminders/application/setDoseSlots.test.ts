@@ -5,6 +5,32 @@ import { setDoseSlots } from './setDoseSlots.js';
 
 const request = { familyId: 'family-a', profileId: 'me', slots: { morning: '07:00', evening: '19:00' } };
 
+describe('TC-380: hồ sơ đã rút đồng thuận — đọc khung giờ', () => {
+  it('getDoseSlots → ERR_CONSENT_REQUIRED, không đọc danh sách khung giờ', async () => {
+    const m = createMemoryDoseSlotRepository([
+      { id: 'me', familyId: 'family-a', consentStatus: 'withdrawn' },
+    ]);
+    let listed = 0;
+    const repository: typeof m.repository = {
+      withFamily: (familyId, work) =>
+        m.repository.withFamily(familyId, (store) =>
+          work({
+            ...store,
+            listSlots: async (id) => {
+              listed += 1;
+              return store.listSlots(id);
+            },
+          }),
+        ),
+    };
+    expect(await getDoseSlots(repository, 'family-a', 'me')).toEqual({
+      ok: false,
+      code: 'ERR_CONSENT_REQUIRED',
+    });
+    expect(listed).toBe(0);
+  });
+});
+
 describe('Cấu hình khung giờ buổi cho hồ sơ (SPEC-025)', () => {
   it('TC-067: hồ sơ "Mẹ" lưu thành công 02 khung giờ Sáng 07:00, Tối 19:00', async () => {
     const m = createMemoryDoseSlotRepository();

@@ -44,14 +44,20 @@ describe('Gate đồng thuận sau khi rút: đọc, ảnh, duyệt (F07 §4.4)'
       t.call(main, 'POST', `${base}/manual-records`, { type, data });
     expect((await records('device_reading', reading)).status).toBe(200);
     expect((await records('lab_result', lab)).status).toBe(200);
-    await t.call(main, 'PUT', `${base}/dose-slots`, { slots: { morning: '07:00' } });
-    await t.call(main, 'PUT', `${base}/reminder-recipients`, { recipientAccountIds: [grandma.accountId] });
+    expect((await t.call(main, 'PUT', `${base}/dose-slots`, { slots: { morning: '07:00' } })).status).toBe(
+      200,
+    );
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const pending = await seedPendingDocument(t, owner, reading);
     const controlOwner = { ...owner, profileId: control.id };
     const controlDoc = await seedPendingDocument(t, controlOwner, reading);
     const privacy = await seedPrivacyDocument(owner);
     const reminderId = await seedReminder(t.owner, familyId, profile.id, grandma.accountId);
+    // Người nhận seed bằng role owner (route PUT dành cho hồ sơ không liên kết); đảm bảo dữ liệu thật sự có để rò.
+    const recipients = await t.call(main, 'GET', `${base}/reminder-recipients`);
+    expect(await recipients.text()).toContain('Bà');
+    const slots = await t.call(main, 'GET', `${base}/dose-slots`);
+    expect(await slots.text()).toContain('07:00');
     return { familyId, main, grandma, profile, control, base, pending, controlDoc, privacy, reminderId };
   };
   const seedPrivacyDocument = async (owner: { familyId: string; profileId: string; accountId: string }) => {
@@ -72,7 +78,8 @@ describe('Gate đồng thuận sau khi rút: đọc, ảnh, duyệt (F07 §4.4)'
     const text = await response.text();
     expect(response.status).toBe(409);
     expect(JSON.parse(text)).toMatchObject({ error: { code: 'ERR_CONSENT_REQUIRED' } });
-    for (const secret of [String(SECRET_SYSTOLIC), 'HbA1c-Zeta', 'Canxi']) expect(text).not.toContain(secret);
+    for (const secret of [String(SECRET_SYSTOLIC), 'HbA1c-Zeta', 'Canxi', '07:00', 'Bà'])
+      expect(text).not.toContain(secret);
   };
 
   it('TC-380: hồ sơ đã rút đồng thuận → mọi route đọc, ảnh, duyệt của hồ sơ đó nhận ERR_CONSENT_REQUIRED', async () => {
