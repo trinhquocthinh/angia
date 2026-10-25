@@ -1,7 +1,13 @@
+import type { ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { ProfileCard } from './ProfileCard';
 import type { HealthProfile } from '../../application/ports';
+vi.mock('@tanstack/react-router', () => ({
+  Link: ({ to, params, children }: { to: string; params: { profileId: string }; children: ReactNode }) => (
+    <a href={to.replace('$profileId', params.profileId)}>{children}</a>
+  ),
+}));
 const profile: HealthProfile = {
   id: 'p',
   familyId: 'f',
@@ -80,5 +86,13 @@ describe('Đồng thuận bằng lời mời, không suy diễn từ metadata c�
       <ProfileCard profile={profile} onConsent={() => undefined} onDelete={() => undefined} />,
     );
     expect(html).toMatch(/Xóa hồ sơ<\/button><\/article>$/);
+  });
+  it('TC-393 — tên hồ sơ và nút "Xem hồ sơ" dẫn tới /profiles/{id}, kể cả hồ sơ chưa đồng thuận', () => {
+    const html = renderToStaticMarkup(
+      <ProfileCard profile={profile} onConsent={() => undefined} onDelete={() => undefined} />,
+    );
+    expect(html.match(/href="\/profiles\/p"/g)).toHaveLength(2);
+    expect(html).toMatch(/href="\/profiles\/p"[^>]*>[^]*Mẹ[^]*<\/a>/);
+    expect(html).toContain('Xem hồ sơ');
   });
 });
