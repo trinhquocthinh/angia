@@ -37,6 +37,7 @@
     "heic:spike:docker": "bash scripts/heic-spike/runInDocker.sh",
     "perf:budget": "tsx scripts/perf/checkBundleBudget.ts",
     "ops:ocr-latency": "tsx --env-file-if-exists=.env scripts/ops/measureOcrLatency.ts",
+    "ops:reminder-audit": "tsx --env-file-if-exists=.env scripts/ops/auditReminders.ts",
     "postinstall": "husky"
   },
   "devDependencies": {
