@@ -1,0 +1,71 @@
+import type { components } from '@src/shared/api/schema.gen';
+import type { ApproveDocumentRequest, SourceDocument } from '../../application/reviewPorts';
+import type { ReviewRequestError } from '../../application/ReviewRequestError';
+import { reviewItemState } from '../../application/reviewQueuePolling';
+import { ExtractingPlaceholder } from './ExtractingPlaceholder';
+import { LabResultForm } from './LabResultForm';
+import { ManualEntryForm } from './ManualEntryForm';
+import { PrescriptionForm } from './PrescriptionForm';
+import { ReadingForm } from './ReadingForm';
+import { ReviewNotice } from './ReviewNotice';
+const MANUAL_INTRO =
+  'Giấy tờ này cần nhập tay. Chọn loại dữ liệu rồi nhập theo ảnh; ảnh không dùng được thì có thể loại bỏ.';
+// BR-018: hết ngân sách AI tháng này — AI sẽ đọc lại khi có ngân sách, hoặc nhập tay ngay không cần chờ.
+const BUDGET_INTRO =
+  'Đã hết lượt tự động nhận diện tháng này nên ảnh đang chờ để được đọc khi có lượt mới. Bạn có thể nhập tay ngay theo ảnh mà không cần chờ.';
+type DetailBodyProps = {
+  document: SourceDocument;
+  extraction: components['schemas']['DocumentReview']['extraction'];
+  pending: boolean;
+  error: ReviewRequestError | null;
+  onSubmit: (request: ApproveDocumentRequest) => void;
+};
+
+export function ReviewDetailBody({ document, extraction, pending, error, onSubmit }: DetailBodyProps) {
+  const state = reviewItemState(document);
+  if (state === 'preparing')
+    return (
+      <ReviewNotice
+        title="Đang chuẩn bị ảnh"
+        body="Ảnh đang được chuyển đổi để bạn xem và kiểm tra trước khi OCR."
+      />
+    );
+  if (state === 'reading') return <ExtractingPlaceholder />;
+  if (state === 'manual' || state === 'budget')
+    return (
+      <ManualEntryForm
+        key={document.id}
+        initialType={document.type}
+        intro={state === 'budget' ? BUDGET_INTRO : MANUAL_INTRO}
+        pending={pending}
+        error={error}
+        onSubmit={onSubmit}
+      />
+    );
+  if (document.status !== 'pending_review')
+    return <ReviewNotice title="Giấy tờ không còn chờ kiểm tra" body="Giấy tờ này đã được xử lý trước đó." />;
+  if (document.type === 'prescription')
+    return (
+      <PrescriptionForm
+        key={document.id}
+        payload={extraction?.type === 'prescription' ? extraction : null}
+        pending={pending}
+        error={error}
+        onSubmit={onSubmit}
+      />
+    );
+  if (document.type === 'lab_result')
+    return (
+      <LabResultForm
+        key={document.id}
+        payload={extraction?.type === 'lab_result' ? extraction : null}
+        pending={pending}
+        error={error}
+        onSubmit={onSubmit}
+      />
+    );
+  const payload = extraction?.type === 'device_reading' ? extraction : null;
+  return (
+    <ReadingForm key={document.id} payload={payload} pending={pending} error={error} onSubmit={onSubmit} />
+  );
+}

@@ -1,0 +1,87 @@
+// Kiểm kê route theo NFR-4. Route mới phải được xếp vào một nhóm, nếu không TC-107 đỏ;
+// route dữ liệu sức khỏe còn phải có ca kiểm thử trong crossFamilyIsolation.int.test.ts.
+//  - scoped: nhắm tài nguyên của gia đình qua ID/token → expectCrossFamilyDenied.
+//  - list:   trả danh sách theo gia đình của phiên → không lẫn dữ liệu gia đình khác.
+//  - uniform: không chạm dữ liệu, mọi ID nhận cùng một phản hồi.
+export const HEALTH_DATA_ROUTES = {
+  'GET /api/health-profiles': 'list',
+  'GET /api/health-profiles/linkable-accounts': 'list',
+  'POST /api/health-profiles': 'scoped',
+  'DELETE /api/health-profiles/:id': 'scoped',
+  'POST /api/health-profiles/:id/consent': 'uniform',
+  'POST /api/health-profiles/:id/consent-invitations': 'scoped',
+  'DELETE /api/health-profiles/:id/consent-invitations': 'scoped',
+  'GET /api/consent-invitations/view': 'scoped',
+  'POST /api/consent-invitations/respond': 'scoped',
+  'POST /api/health-profiles/:id/upload-batches': 'scoped',
+  'GET /api/source-documents': 'list',
+  'GET /api/source-documents/:id/review': 'scoped',
+  'GET /api/source-documents/:id/image': 'scoped',
+  'POST /api/source-documents/:id/approve': 'scoped',
+  'POST /api/source-documents/:id/reject': 'scoped',
+  'POST /api/source-documents/:id/privacy-drafts': 'scoped',
+  'GET /api/source-documents/:id/privacy-draft': 'scoped',
+  'GET /api/source-documents/:id/privacy-drafts/:draftId/image': 'scoped',
+  'POST /api/source-documents/:id/privacy-approval': 'scoped',
+  'POST /api/source-documents/:id/manual-entry': 'scoped',
+  'GET /api/health-profiles/:id/measurements': 'scoped',
+  'GET /api/health-profiles/:id/measurements/series': 'scoped',
+  'GET /api/health-profiles/:id/lab-result-series': 'scoped',
+  'GET /api/health-profiles/:id/document-entries': 'scoped',
+  'POST /api/health-profiles/:id/manual-records': 'scoped',
+  'POST /api/health-profiles/:id/medication-courses': 'scoped',
+  'GET /api/health-profiles/:id/medication-courses/stoppable': 'scoped',
+  'GET /api/health-profiles/:id/medication-courses/current': 'scoped',
+  'POST /api/health-profiles/:id/medication-courses/:courseId/stop': 'scoped',
+  'POST /api/health-profiles/:id/prescriptions/:prescriptionId/reuse': 'scoped',
+  'GET /api/health-profiles/:id/adherence-periods': 'scoped',
+  'POST /api/health-profiles/:id/adherence-periods': 'scoped',
+  'GET /api/health-profiles/:id/dose-slots': 'scoped',
+  'PUT /api/health-profiles/:id/dose-slots': 'scoped',
+  'GET /api/health-profiles/:id/reminder-recipients': 'scoped',
+  'PUT /api/health-profiles/:id/reminder-recipients': 'scoped',
+  'GET /api/health-profiles/:id/visit-summary': 'scoped',
+  // SPEC-035: người nhận hợp lệ (gồm member liên kết hồ sơ) đọc lời nhắc của mình.
+  'GET /api/me/reminders/:reminderId': 'scoped',
+} as const;
+
+type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;
+
+// TC-016: route dùng phiên phải chặn member 403. Loại trừ route dùng token mời và /api/me/reminders
+// (SPEC-035: người nhận hợp lệ kể cả member đọc được lời nhắc của mình — TC-344/TC-345 kiểm riêng).
+export const MEMBER_BLOCKED_SESSION_ROUTES = Object.keys(HEALTH_DATA_ROUTES).filter(
+  (route) => !route.includes('/consent-invitations/') && !route.startsWith('GET /api/me/reminders/'),
+);
+// Record<RouteOfKind<'scoped'>, …> buộc test liệt kê đủ route của nhóm ngay lúc typecheck.
+export type RouteOfKind<Kind extends string> = {
+  [K in HealthDataRoute]: (typeof HEALTH_DATA_ROUTES)[K] extends Kind ? K : never;
+}[HealthDataRoute];
+
+// Không chứa dữ liệu sức khỏe: hạ tầng, xác thực, quản trị nhóm/tài khoản (BR-006) và trần ngân sách AI
+// toàn hệ thống (SPEC-013, chỉ số tiền theo tháng).
+export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
+  'GET /api/health',
+  'GET /api/auth/login',
+  'GET /api/auth/callback',
+  'POST /api/auth/logout',
+  'GET /api/me',
+  'GET /api/me/push-config',
+  'PUT /api/me/push-subscription',
+  'DELETE /api/me/push-subscription',
+  'POST /api/me/push-test',
+  // F07: tài khoản liên kết đọc/rút đồng thuận của hồ sơ mình; chỉ tên, trạng thái, không trả dữ liệu sức khỏe.
+  'GET /api/me/consent',
+  'POST /api/me/consent/withdraw',
+  'GET /api/admin/families',
+  'POST /api/admin/families',
+  'GET /api/admin/accounts',
+  'POST /api/admin/accounts/:id/membership',
+  'PATCH /api/admin/accounts/:id/membership',
+  'GET /api/admin/extraction-cap',
+  'PUT /api/admin/extraction-cap',
+  // SPEC-030: chỉ số đếm (byte, số ảnh) của gia đình phiên, không chứa bản ghi sức khỏe.
+  'GET /api/family/usage',
+  // SPEC-031: trần/chi phí OCR (USD) theo gia đình — dữ liệu quản trị, không phải bản ghi sức khỏe.
+  'GET /api/admin/family-extraction-caps',
+  'PUT /api/admin/families/:id/extraction-cap',
+];

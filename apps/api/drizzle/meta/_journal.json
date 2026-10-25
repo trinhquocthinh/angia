@@ -1,0 +1,181 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791176954081,
+      "tag": "0000_skeleton",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791177005049,
+      "tag": "0001_health_profiles_family_immutable",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791181624846,
+      "tag": "0002_family_policy_nullif",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791262949197,
+      "tag": "0003_consent_invitations",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791298160603,
+      "tag": "0004_pgboss_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791442934225,
+      "tag": "0005_document_privacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791442934226,
+      "tag": "0006_privacy_drafts",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791535578966,
+      "tag": "0007_clinical_records",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791563907562,
+      "tag": "0008_extraction_budget",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791644124341,
+      "tag": "0009_medication_courses",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791688820620,
+      "tag": "0010_medication_course_replacement",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791697136665,
+      "tag": "0011_medication_course_strength",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791705889777,
+      "tag": "0012_medication_course_stop",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1791789827849,
+      "tag": "0013_prescription_item_external_use",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1791814007164,
+      "tag": "0014_dose_slot_as_needed",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1791858314037,
+      "tag": "0015_adherence_periods",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1791878967229,
+      "tag": "0016_medication_course_item_many",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1792399532774,
+      "tag": "0017_family_extraction_cap",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1792512933584,
+      "tag": "0018_push_subscriptions",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1792597038417,
+      "tag": "0019_push_device_lifetime",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1792739283045,
+      "tag": "0020_dose_slots",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1792742768439,
+      "tag": "0021_reminder_recipients",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1792746242842,
+      "tag": "0022_reminders",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1792752001273,
+      "tag": "0023_reminder_deliveries",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1792857844362,
+      "tag": "0024_consent_withdrawal",
+      "breakpoints": true
+    }
+  ]
+}

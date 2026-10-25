@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <!-- viewport-fit=cover: khi mở như ứng dụng (PWA) giao diện phủ kín màn hình, env(safe-area-inset-*) có giá trị. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f0fcfb" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="AN GIA" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <title>An Gia - Chăm chút từng thói quen, chở che từng thế hệ.</title>
+    <!-- Màn khởi động theo Stitch 27ad1b8f: chỉ hiện khi mở từ Màn hình chính (display-mode standalone),
+         vẽ trước khi JS tải xong; src/app/hideSplash.ts ẩn khi ứng dụng đã dựng. -->
+    <style>
+      #splash {
+        display: none;
+      }
+      @media (display-mode: standalone) {
+        #splash {
+          position: fixed;
+          inset: 0;
+          z-index: 2147483647;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 0;
+          text-align: center;
+          color: #131d1d;
+          padding: max(24px, env(safe-area-inset-top)) 32px max(24px, env(safe-area-inset-bottom));
+          background: radial-gradient(60% 40% at 50% 30%, #ffffff 0%, #f0fcfb 70%);
+          font-family: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+        }
+      }
+      #splash .sp-tile {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 168px;
+        height: 168px;
+        border-radius: 40px;
+        background: #fff;
+        box-shadow:
+          0 24px 60px #00413522,
+          inset 0 0 0 10px #eaf6f5;
+        animation: sp-rise 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+      #splash .sp-tile img {
+        width: 104px;
+        height: 104px;
+        object-fit: contain;
+      }
+      #splash .sp-heart {
+        position: absolute;
+        right: -14px;
+        bottom: -12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: #ffdbc9;
+        color: #602900;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 6px 16px #83390022;
+        animation: sp-pop 420ms 420ms cubic-bezier(0.3, 1.4, 0.5, 1) both;
+      }
+      #splash .sp-chip {
+        margin-top: 40px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: #c8f2e3;
+        color: #20594b;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      #splash h1 {
+        margin: 18px 0 0;
+        font:
+          700 40px/1.1 'Newsreader',
+          Georgia,
+          serif;
+        color: #004135;
+        letter-spacing: -0.01em;
+      }
+      #splash .sp-quote {
+        margin: 12px 0 0;
+        max-width: 320px;
+        font:
+          italic 400 24px/1.3 'Newsreader',
+          Georgia,
+          serif;
+        color: #404945;
+      }
+      #splash .sp-desc {
+        margin: 16px 0 0;
+        max-width: 300px;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #55615f;
+      }
+      #splash .sp-chip,
+      #splash h1,
+      #splash .sp-quote,
+      #splash .sp-desc,
+      #splash .sp-progress {
+        animation: sp-up 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+      #splash .sp-chip {
+        animation-delay: 160ms;
+      }
+      #splash h1 {
+        animation-delay: 220ms;
+      }
+      #splash .sp-quote {
+        animation-delay: 280ms;
+      }
+      #splash .sp-desc {
+        animation-delay: 340ms;
+      }
+      #splash .sp-progress {
+        margin-top: 44px;
+        width: min(240px, 70vw);
+        animation-delay: 400ms;
+      }
+      #splash .sp-track {
+        height: 6px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #deebea;
+      }
+      #splash .sp-bar {
+        height: 100%;
+        width: 100%;
+        border-radius: inherit;
+        transform-origin: left;
+        background: linear-gradient(90deg, #2f6f5e, #20594b 60%, #b65f12);
+        animation: sp-fill 1400ms 400ms cubic-bezier(0.4, 0, 0.2, 1) both;
+      }
+      #splash .sp-status {
+        margin: 12px 0 0;
+        font-size: 13px;
+        color: #404945;
+      }
+      #splash.sp-leave {
+        animation: sp-out 280ms ease-in forwards;
+      }
+      @keyframes sp-rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px) scale(0.92);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes sp-pop {
+        from {
+          opacity: 0;
+          transform: scale(0.4);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes sp-up {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes sp-fill {
+        from {
+          transform: scaleX(0.05);
+        }
+        to {
+          transform: scaleX(0.9);
+        }
+      }
+      @keyframes sp-out {
+        to {
+          opacity: 0;
+          transform: scale(1.02);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #splash *,
+        #splash.sp-leave {
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="splash" aria-hidden="true">
+      <div class="sp-tile">
+        <img src="/logo.webp" alt="" />
+        <span class="sp-heart">♡ Tổ ấm</span>
+      </div>
+      <span class="sp-chip">Sổ Sức Khỏe Gia Đình</span>
+      <h1>AN GIA</h1>
+      <p class="sp-quote">“Chăm chút từng thói quen, chở che từng thế hệ.”</p>
+      <p class="sp-desc">Đơn thuốc, chỉ số sức khỏe và lời nhắc dùng thuốc của cả nhà ở một nơi.</p>
+      <div class="sp-progress">
+        <div class="sp-track"><div class="sp-bar"></div></div>
+        <p class="sp-status">Đang mở sổ sức khỏe…</p>
+      </div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/app/main.tsx"></script>
+  </body>
+</html>

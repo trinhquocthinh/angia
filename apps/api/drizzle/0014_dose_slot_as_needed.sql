@@ -1,0 +1,6 @@
+ALTER TABLE "medication_courses" DROP CONSTRAINT "medication_courses_slots_valid";--> statement-breakpoint
+ALTER TABLE "prescription_items" DROP CONSTRAINT "prescription_items_quantity_valid";--> statement-breakpoint
+ALTER TABLE "prescription_items" DROP CONSTRAINT "prescription_items_slots_valid";--> statement-breakpoint
+ALTER TABLE "medication_courses" ADD CONSTRAINT "medication_courses_slots_valid" CHECK ((cardinality("medication_courses"."slots") >= 1 AND "medication_courses"."slots" <@ ARRAY['morning', 'noon', 'afternoon', 'evening']::text[]) OR ("medication_courses"."slots" = ARRAY['as_needed']::text[] AND "medication_courses"."source" = 'prescription'));--> statement-breakpoint
+ALTER TABLE "prescription_items" ADD CONSTRAINT "prescription_items_quantity_valid" CHECK (CASE WHEN "prescription_items"."quantity_per_dose" IS NULL THEN "prescription_items"."external_use" OR "prescription_items"."slots" = ARRAY['as_needed']::text[] ELSE "prescription_items"."quantity_per_dose" > 0 END);--> statement-breakpoint
+ALTER TABLE "prescription_items" ADD CONSTRAINT "prescription_items_slots_valid" CHECK ((cardinality("prescription_items"."slots") >= 1 AND "prescription_items"."slots" <@ ARRAY['morning', 'noon', 'afternoon', 'evening']::text[]) OR "prescription_items"."slots" = ARRAY['as_needed']::text[]);

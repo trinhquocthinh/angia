@@ -1,0 +1,48 @@
+@import 'tailwindcss';
+@import './fonts.css';
+
+/* Design tokens theo 09-design-criteria §4.1 (chế độ sáng; dark mode là nợ kỹ thuật #8). */
+@theme {
+  --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+  --color-bg: #faf8f5;
+  --color-surface: #ffffff;
+  --color-border: #e4e0da;
+  --color-text-primary: #1f2a2a;
+  --color-text-secondary: #55615f;
+  --color-accent: #2f6f5e;
+  --color-accent-hover: #255a4c;
+  --color-accent-soft: #e3efea;
+  --color-on-accent: #ffffff;
+  --color-danger: #b42318;
+  --color-success: #2e7d4f;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+/* Mở như ứng dụng (PWA): nền khớp thanh trạng thái, không kéo nảy cả trang, không viền xám khi chạm. */
+@media (display-mode: standalone) {
+  html,
+  body {
+    background-color: #f0fcfb;
+    overscroll-behavior-y: none;
+  }
+  body {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+}
+
+/* Mọi dropdown dùng chung mũi tên riêng, cách mép phải 12px; để ngoài @layer nên thắng tiện ích px-* của Tailwind. */
+select:not([multiple]):not([size]) {
+  appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23404945' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.125rem;
+  text-overflow: ellipsis;
+}

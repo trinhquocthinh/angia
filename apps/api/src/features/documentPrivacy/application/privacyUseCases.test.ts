@@ -1,0 +1,230 @@
+import { describe, expect, it } from 'vitest';
+import { createPrivacyDraft } from './createPrivacyDraft.js';
+import { approvePrivacy } from './approvePrivacy.js';
+import { selectManualEntry } from './selectManualEntry.js';
+import { getPrivacyDraft } from './getPrivacyDraft.js';
+import { openPrivacyImage } from './openPrivacyImage.js';
+import { privacyFixture } from '@src/shared/test/privacyFixture.js';
+const edits = {
+  rotation: 0,
+  crop: { left: 0, top: 0, width: 1_000_000, height: 1_000_000 },
+  masks: [],
+} as const;
+describe('Bản nháp và xác nhận ảnh', () => {
+  it('TC-167: tạo pending và chỉ enqueue bản mới', async () => {
+    const f = privacyFixture();
+    const result = await createPrivacyDraft(f.deps, { ...f.target, edits: { ...edits, masks: [] } });
+    expect(result).toEqual({ ok: true, value: { state: 'pending', draftId: f.draftId } });
+    expect(f.jobs).toEqual(['prepare']);
+    expect(f.doc.ocrImageKey).toBeNull();
+  });
+  it('TC-167b: pending hoặc consent bị thu hồi không tạo thêm job', async () => {
+    const f = privacyFixture();
+    f.doc.privacyDraftStatus = 'pending';
+    expect(await createPrivacyDraft(f.deps, { ...f.target, edits: { ...edits, masks: [] } })).toMatchObject({
+      ok: false,
+    });
+    f.doc.privacyDraftStatus = null;
+    f.consent = false;
+    expect(await createPrivacyDraft(f.deps, { ...f.target, edits: { ...edits, masks: [] } })).toEqual({
+      ok: false,
+      code: 'ERR_CONSENT_REQUIRED',
+    });
+    expect(f.jobs).toEqual([]);
+  });
+  it('TC-168: xác nhận PNG đúng hash lấy actor từ input phiên và enqueue một lần', async () => {
+    const f = privacyFixture();
+    f.ready();
+    expect(await approvePrivacy(f.deps, f.approval)).toMatchObject({
+      ok: true,
+      value: { status: 'extracting', privacyApprovedBy: 'actor' },
+    });
+    expect(await approvePrivacy(f.deps, f.approval)).toMatchObject({ ok: true });
+    expect(f.jobs).toEqual(['extract']);
+  });
+  it('TC-169: byte/hash bị đổi hoặc key khác prefix không được gửi OCR', async () => {
+    for (const change of ['bytes', 'prefix', 'hash']) {
+      const f = privacyFixture();
+      f.ready();
+      if (change === 'bytes') f.bytes = new Uint8Array([1, 2, 3]);
+      if (change === 'prefix') f.doc.ocrImageKey = 'families/other/ocr.png';
+      if (change === 'hash') f.approval.sha256 = '0'.repeat(64);
+      expect(await approvePrivacy(f.deps, f.approval)).toMatchObject({ ok: false });
+      expect(f.jobs).toEqual([]);
+    }
+  });
+  it('TC-170: đọc S3 ngoài transaction, khóa lại và kiểm consent/phiên bản', async () => {
+    for (const change of ['consent', 'version']) {
+      const f = privacyFixture();
+      f.ready();
+      f.onRead = () => {
+        if (change === 'consent') f.consent = false;
+        else f.doc.privacyDraftId = 'new';
+      };
+      expect(await approvePrivacy(f.deps, f.approval)).toMatchObject({ ok: false });
+      expect(f.jobs).toEqual([]);
+    }
+  });
+  it('TC-171: nhập tay từ uploaded/awaiting_privacy, OCR không chạy', async () => {
+    const f = privacyFixture();
+    expect(await selectManualEntry(f.deps.repository, f.target)).toMatchObject({
+      ok: true,
+      value: { status: 'manual_entry' },
+    });
+    expect(await selectManualEntry(f.deps.repository, f.target)).toMatchObject({ ok: false });
+    expect(f.jobs).toEqual([]);
+  });
+  it('TC-172: pending mất job hoặc terminal phục hồi failed nhưng job active giữ pending', async () => {
+    for (const state of [null, 'failed', 'cancelled', 'completed', 'active', 'created', 'retry']) {
+      const f = privacyFixture();
+      f.doc.privacyDraftStatus = 'pending';
+      f.doc.privacyDraftId = f.draftId;
+      f.jobState = state;
+      const terminal = [null, 'failed', 'cancelled', 'completed'].includes(state);
+      expect(await getPrivacyDraft(f.deps.repository, f.deps.queue, f.target)).toEqual({
+        ok: true,
+        value: { state: terminal ? 'failed' : 'pending', draftId: f.draftId },
+      });
+    }
+  });
+  it('TC-173: ảnh chỉ đọc đúng bản ready hiện hành, không dùng gốc/preview', async () => {
+    const f = privacyFixture();
+    f.ready();
+    expect(
+      await openPrivacyImage(f.deps.repository, f.deps.reader, { ...f.target, draftId: f.draftId }),
+    ).toMatchObject({ ok: true, value: { contentType: 'image/png' } });
+    expect(
+      await openPrivacyImage(f.deps.repository, f.deps.reader, { ...f.target, draftId: 'old' }),
+    ).toMatchObject({ ok: false, code: 'ERR_NOT_FOUND' });
+  });
+  it('TC-380: hồ sơ đã rút đồng thuận → xem bản nháp và ảnh trả ERR_CONSENT_REQUIRED, không đọc ảnh', async () => {
+    const f = privacyFixture();
+    f.ready();
+    f.consent = false;
+    let reads = 0;
+    f.onRead = () => {
+      reads += 1;
+    };
+    const blocked = { ok: false, code: 'ERR_CONSENT_REQUIRED' };
+    expect(await getPrivacyDraft(f.deps.repository, f.deps.queue, f.target)).toEqual(blocked);
+    expect(
+      await openPrivacyImage(f.deps.repository, f.deps.reader, { ...f.target, draftId: f.draftId }),
+    ).toEqual(blocked);
+    expect(reads).toBe(0);
+  });
+  it('TC-380: rút đồng thuận giữa hai transaction của getPrivacyDraft → không phục hồi failed, không ghi', async () => {
+    const f = privacyFixture();
+    f.doc.privacyDraftStatus = 'pending';
+    f.doc.privacyDraftId = f.draftId;
+    const queue = {
+      state: async () => {
+        f.consent = false;
+        return null;
+      },
+    };
+    expect(await getPrivacyDraft(f.deps.repository, queue, f.target)).toEqual({
+      ok: false,
+      code: 'ERR_CONSENT_REQUIRED',
+    });
+    expect(f.calls).not.toContain('update');
+    expect(f.doc.privacyDraftStatus).toBe('pending');
+  });
+  it('TC-174: khác gia đình và không có chứng từ đều trả not found', async () => {
+    const f = privacyFixture();
+    f.missing = true;
+    expect(await createPrivacyDraft(f.deps, { ...f.target, edits: { ...edits, masks: [] } })).toEqual({
+      ok: false,
+      code: 'ERR_NOT_FOUND',
+    });
+    expect(await approvePrivacy(f.deps, f.approval)).toEqual({ ok: false, code: 'ERR_NOT_FOUND' });
+    expect(await selectManualEntry(f.deps.repository, f.target)).toEqual({
+      ok: false,
+      code: 'ERR_NOT_FOUND',
+    });
+  });
+});
+
+describe('Quota chờ worker ở bước riêng tư (SPEC-030, BR-043)', () => {
+  const full = { storageBytes: 0, uploadsToday: 0, pendingJobs: 3 };
+
+  it('TC-299: hàng đợi gia đình đầy → tạo bản kiểm tra trả ERR_QUEUE_QUOTA, không cập nhật hay enqueue', async () => {
+    const f = privacyFixture();
+    f.usage = full;
+    expect(await createPrivacyDraft(f.deps, { ...f.target, edits: { ...edits, masks: [] } })).toEqual({
+      ok: false,
+      code: 'ERR_QUEUE_QUOTA',
+      details: { used: 3, limit: 3, requested: 1 },
+    });
+    expect(f.jobs).toEqual([]);
+    expect(f.calls).toEqual(['quota:lock']);
+  });
+
+  it('TC-299: hàng đợi gia đình đầy → xác nhận gửi AI trả ERR_QUEUE_QUOTA, không enqueue OCR', async () => {
+    const f = privacyFixture();
+    f.ready();
+    f.usage = full;
+    expect(await approvePrivacy(f.deps, f.approval)).toMatchObject({ ok: false, code: 'ERR_QUEUE_QUOTA' });
+    expect(f.jobs).toEqual([]);
+    expect(f.doc.status).toBe('awaiting_privacy');
+  });
+
+  it('chứng từ đã duyệt gọi lại vẫn trả thành công dù hàng đợi đầy (idempotent)', async () => {
+    const f = privacyFixture();
+    f.ready();
+    expect((await approvePrivacy(f.deps, f.approval)).ok).toBe(true);
+    f.usage = full;
+    expect((await approvePrivacy(f.deps, f.approval)).ok).toBe(true);
+  });
+
+  it('dung lượng và ảnh/ngày đã vượt nhưng hàng đợi còn chỗ thì không chặn', async () => {
+    const f = privacyFixture();
+    f.usage = { storageBytes: 500, uploadsToday: 50, pendingJobs: 0 };
+    expect((await createPrivacyDraft(f.deps, { ...f.target, edits: { ...edits, masks: [] } })).ok).toBe(true);
+    expect(f.calls).toEqual(['quota:lock', 'update']);
+  });
+
+  it('kiểm quota sau kiểm đồng thuận: thiếu đồng thuận vẫn trả ERR_CONSENT_REQUIRED', async () => {
+    const f = privacyFixture();
+    f.consent = false;
+    f.usage = full;
+    expect(await createPrivacyDraft(f.deps, { ...f.target, edits: { ...edits, masks: [] } })).toEqual({
+      ok: false,
+      code: 'ERR_CONSENT_REQUIRED',
+    });
+  });
+});
+
+describe('Hết trần AI của gia đình ở bước duyệt riêng tư (SPEC-031, BR-018)', () => {
+  it('TC-306: gia đình hết trần → chứng từ awaiting_budget, ghi người duyệt, không enqueue OCR', async () => {
+    const f = privacyFixture();
+    f.ready();
+    f.aiBudget = { familySpentUsd: 0.49, familyCapUsd: 0.5, globalSpentUsd: 0, globalCapUsd: 5 };
+    expect(await approvePrivacy(f.deps, f.approval)).toMatchObject({
+      ok: true,
+      value: { status: 'awaiting_budget', privacyApprovedBy: 'actor' },
+    });
+    expect(f.jobs).toEqual([]);
+  });
+
+  it('hết trần thì không cần chỗ trong hàng đợi worker (không tạo job)', async () => {
+    const f = privacyFixture();
+    f.ready();
+    f.aiBudget = { familySpentUsd: 0.1, familyCapUsd: 0.5, globalSpentUsd: 4.99, globalCapUsd: 5 };
+    f.usage = { storageBytes: 0, uploadsToday: 0, pendingJobs: 3 };
+    expect(await approvePrivacy(f.deps, f.approval)).toMatchObject({
+      ok: true,
+      value: { status: 'awaiting_budget' },
+    });
+  });
+
+  it('còn trần → luồng cũ: extracting và enqueue OCR', async () => {
+    const f = privacyFixture();
+    f.ready();
+    f.aiBudget = { familySpentUsd: 0.48, familyCapUsd: 0.5, globalSpentUsd: 0, globalCapUsd: 5 };
+    expect(await approvePrivacy(f.deps, f.approval)).toMatchObject({
+      ok: true,
+      value: { status: 'extracting' },
+    });
+    expect(f.jobs).toEqual(['extract']);
+  });
+});

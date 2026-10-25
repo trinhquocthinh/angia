@@ -1,0 +1,5 @@
+ALTER POLICY "family_isolation_policy" ON "extractions" TO public USING (family_id = NULLIF(current_setting('app.family_id', true), '')::uuid);--> statement-breakpoint
+ALTER POLICY "family_isolation_policy" ON "health_profiles" TO public USING (family_id = NULLIF(current_setting('app.family_id', true), '')::uuid);--> statement-breakpoint
+ALTER POLICY "family_isolation_policy" ON "measurements" TO public USING (family_id = NULLIF(current_setting('app.family_id', true), '')::uuid);--> statement-breakpoint
+ALTER POLICY "family_isolation_policy" ON "source_documents" TO public USING (family_id = NULLIF(current_setting('app.family_id', true), '')::uuid);--> statement-breakpoint
+ALTER POLICY "family_isolation_policy" ON "upload_batches" TO public USING (family_id = NULLIF(current_setting('app.family_id', true), '')::uuid);
