@@ -12,18 +12,23 @@ const normalize = (name: string) =>
     .replace(/[.:]+$/, '')
     .trim();
 
-// Thứ tự khớp: cả tên → tên bỏ phần trong ngoặc → từng phần trong ngoặc ("AST (GOT)", "Glucose (máu)").
-function candidates(testName: string): string[] {
-  const name = normalize(testName);
+// Mẫu nước tiểu hoặc mã ngắn dùng chung cho máu và nước tiểu: chỉ chấp nhận khớp vào nhóm "Nước tiểu".
+const URINE_CONTEXT = /(^|[^a-z0-9])(nieu|nuoc tieu|glu|pro|bld|leu|bil|ery|ph)([^a-z0-9]|$)/;
+
+// Thứ tự khớp: cả tên → tên giữ nội dung ngoặc ("Glucose (nước tiểu)" → "glucose nuoc tieu")
+// → tên bỏ phần trong ngoặc → từng phần trong ngoặc ("AST (GOT)", "Glucose (máu)").
+function candidates(name: string): string[] {
   const inner = [...name.matchAll(/\(([^)]*)\)/g)].map((match) => normalize(match[1]!));
-  return [name, normalize(name.replace(/\([^)]*\)/g, ' ')), ...inner];
+  return [name, normalize(name.replace(/[()]/g, ' ')), normalize(name.replace(/\([^)]*\)/g, ' ')), ...inner];
 }
 
-// Tra nhóm cơ quan và ghi chú trung tính theo tên chỉ số trên phiếu; không khớp → "Khác", không ghi chú.
+// Tra nhóm cơ quan và ghi chú trung tính theo tên chỉ số trên phiếu; không khớp chắc chắn → "Khác", không ghi chú.
 export function findLabCatalogEntry(testName: string): { group: LabGroupId; note: string | null } {
-  for (const candidate of candidates(testName)) {
+  const name = normalize(testName);
+  const urineOnly = URINE_CONTEXT.test(name);
+  for (const candidate of candidates(name)) {
     const entry = byAlias.get(candidate);
-    if (entry) return { group: entry.group, note: entry.note };
+    if (entry && (!urineOnly || entry.group === 'urine')) return { group: entry.group, note: entry.note };
   }
   return { group: 'other', note: null };
 }

@@ -27,6 +27,25 @@ describe('findLabCatalogEntry — BR-022 làm rõ 2026-10-25', () => {
     },
   );
 
+  it.each([
+    ['Glucose (nước tiểu)', 'urine', 'Lượng đường trong nước tiểu'],
+    ['Hồng cầu (niệu)', 'urine', 'Hồng cầu trong nước tiểu'],
+    ['Bilirubin toàn phần', 'liver', 'Sắc tố mật, do gan xử lý'],
+  ])('TC-395 — phần trong ngoặc chỉ nước tiểu: "%s" → %s, không xếp nhầm sang máu', (name, group, note) => {
+    expect(findLabCatalogEntry(name)).toEqual({ group, note });
+  });
+
+  it.each([
+    'Glucose (GLU)',
+    'GLU (Glucose)',
+    'Albumin (niệu)',
+    'Bilirubin',
+    'Bilirubin (BIL)',
+    'Protein (PRO)',
+  ])('TC-395 — "%s" kèm mã mơ hồ hoặc mẫu nước tiểu không có trong từ điển → "Khác"', (name) => {
+    expect(findLabCatalogEntry(name)).toEqual({ group: 'other', note: null });
+  });
+
   it('TC-394 — ghi chú ngắn, không chứa chữ nhận định; alias không trùng giữa các mục', () => {
     const aliases = LAB_CATALOG.flatMap((entry) => entry.aliases);
     expect(new Set(aliases).size).toBe(aliases.length);

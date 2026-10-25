@@ -60,7 +60,7 @@ export const LAB_CATALOG: readonly LabCatalogEntry[] = [
   { group: 'liver', aliases: ['ggt', 'gamma gt'], note: 'Men gan GGT' },
   {
     group: 'liver',
-    aliases: ['bilirubin', 'bilirubin toan phan', 'bilirubin truc tiep', 'bilirubin gian tiep'],
+    aliases: ['bilirubin toan phan', 'bilirubin truc tiep', 'bilirubin gian tiep'],
     note: 'Sắc tố mật, do gan xử lý',
   },
   { group: 'liver', aliases: ['albumin'], note: 'Loại đạm chính trong máu, do gan tạo ra' },
