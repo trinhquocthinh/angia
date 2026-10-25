@@ -53,7 +53,7 @@ describe('Nhập liệu thủ công: route thật + RLS (SPEC-011, E3-S4-T1)', (
   };
 
   it('TC-036: chứng từ manual_entry chưa rõ loại, nhập đơn thuốc 2 dòng → đơn gắn chứng từ, approved', async () => {
-    const { familyId, main, profile } = await familyFixture(false);
+    const { familyId, main, profile } = await familyFixture(true);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const { documentId } = await seedPendingDocument(t, owner, bloodPressure);
     await t.owner.query(`UPDATE source_documents SET status='manual_entry', type=NULL WHERE id=$1`, [

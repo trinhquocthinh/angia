@@ -38,6 +38,7 @@ describe('API xử lý xung đột đợt thuốc (SPEC-015)', () => {
     const main = await t.session(familyId);
     const response = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' });
     const profile = (await response.json()) as HealthProfile;
+    await acceptConsentInvitation(t, main, profile.id);
     const oldIds: string[] = [];
     for (let n = 0; n < count; n++) {
       const id = randomUUID();
@@ -194,7 +195,6 @@ describe('API xử lý xung đột đợt thuốc (SPEC-015)', () => {
   });
   it('hai lệnh nhập trực tiếp đồng thời không deadlock khi đã khóa SHARE hồ sơ', async () => {
     const f = await fixture('2026-09-01', 0);
-    await acceptConsentInvitation(t, f.main, f.profileId);
     const responses = await Promise.all(
       [0, 1].map(() =>
         t.call(f.main, 'POST', `/api/health-profiles/${f.profileId}/manual-records`, {

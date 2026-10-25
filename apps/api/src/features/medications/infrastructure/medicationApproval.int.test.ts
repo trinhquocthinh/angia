@@ -52,6 +52,7 @@ describe('Phê duyệt tạo đợt thuốc nguyên tử và cô lập gia đìn
     const main = await t.session(familyId);
     const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' });
     const profile = (await created.json()) as HealthProfile;
+    await acceptConsentInvitation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const { documentId } = await seedPendingDocument(t, owner, prescription);
     const approve = (data: object = prescription) =>
@@ -218,7 +219,6 @@ describe('Phê duyệt tạo đợt thuốc nguyên tử và cô lập gia đìn
     expect((await f.approve()).status).toBe(200);
     expect(await courses(f.profile.id)).toHaveLength(2);
     const direct = await fixture();
-    await acceptConsentInvitation(t, direct.main, direct.profile.id);
     const response = await t.call(
       direct.main,
       'POST',

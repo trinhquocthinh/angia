@@ -1,7 +1,8 @@
+import type { ConsentStatus } from '@src/features/profiles/domain/HealthProfile.js';
 import type { DoseSlotTime, DoseSlotTimes } from '../domain/DoseSlotConfig.js';
 
 interface DoseSlotStore {
-  findProfile(profileId: string): Promise<{ consentStatus: string } | null>;
+  findProfile(profileId: string): Promise<{ consentStatus: ConsentStatus } | null>;
   /** Thay toàn bộ khung giờ của hồ sơ trong giao dịch hiện tại (xóa buổi không còn trong danh sách). */
   replaceSlots(profileId: string, slots: DoseSlotTime[]): Promise<void>;
   /** Khung giờ đã lưu theo thứ tự buổi Sáng → Tối. */
@@ -17,6 +18,7 @@ export interface SetDoseSlotsRequest {
   slots: DoseSlotTimes;
 }
 type DoseSlotFailure = { ok: false; code: 'ERR_NOT_FOUND' | 'ERR_CONSENT_REQUIRED' };
-export type ReadDoseSlotOutcome = { ok: true; value: DoseSlotTime[] } | { ok: false; code: 'ERR_NOT_FOUND' };
+export type ReadDoseSlotOutcome =
+  { ok: true; value: DoseSlotTime[] } | { ok: false; code: 'ERR_NOT_FOUND' | 'ERR_CONSENT_REQUIRED' };
 export type DoseSlotOutcome =
   { ok: true; value: DoseSlotTime[] } | DoseSlotFailure | { ok: false; code: 'ERR_VALIDATION' };

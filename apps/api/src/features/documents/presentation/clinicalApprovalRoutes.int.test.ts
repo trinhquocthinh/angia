@@ -6,6 +6,7 @@ import type {
   SourceDocument,
   SourceDocumentPage,
 } from '@angia/contracts';
+import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { PENDING_JPEG, seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
@@ -50,6 +51,7 @@ describe('Duyệt đơn thuốc/xét nghiệm, loại bỏ và phân trang chứ
     const main = await t.session(familyId);
     const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' });
     const profile = (await created.json()) as HealthProfile;
+    await acceptConsentInvitation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const seed = (payload: object) => seedPendingDocument(t, owner, payload);
     return { familyId, main, profile, seed };

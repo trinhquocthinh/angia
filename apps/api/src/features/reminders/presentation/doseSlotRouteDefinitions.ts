@@ -23,7 +23,11 @@ export const getDoseSlotsRoute = createRoute({
   tags: ['reminders'],
   summary: 'Đọc khung giờ buổi của hồ sơ (SPEC-025)',
   request: { params: z.object({ id: z.uuid() }) },
-  responses: { 200: slots, ...common },
+  responses: {
+    200: slots,
+    ...common,
+    409: error('ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận'),
+  },
 });
 
 export const setDoseSlotsRoute = createRoute({

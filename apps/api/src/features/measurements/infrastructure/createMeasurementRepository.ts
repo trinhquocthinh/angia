@@ -1,6 +1,5 @@
-import { and, eq } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { healthProfiles } from '@src/shared/db/schema/index.js';
+import { findProfileConsent } from '@src/features/profiles/infrastructure/findProfileConsent.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import { listAdherencePeriodsBetween } from '@src/features/adherence/infrastructure/listAdherencePeriodsBetween.js';
 import type { MeasurementRepository } from '../application/ports.js';
@@ -13,13 +12,7 @@ export function createMeasurementRepository(db: Database): MeasurementRepository
     withFamily: (familyId, work) =>
       withFamilyScope(db, familyId, (tx) =>
         work({
-          profileExists: async (profileId) =>
-            (
-              await tx
-                .select({ id: healthProfiles.id })
-                .from(healthProfiles)
-                .where(and(eq(healthProfiles.id, profileId), eq(healthProfiles.familyId, familyId)))
-            ).length === 1,
+          profileConsent: (profileId) => findProfileConsent(tx, familyId, profileId),
           listMeasurementPage: (profileId, kind, page) =>
             listMeasurementPage(tx, familyId, profileId, kind, page),
           listMeasurementsBetween: (profileId, kind, from, to) =>

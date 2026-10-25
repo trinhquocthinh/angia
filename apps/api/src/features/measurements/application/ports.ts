@@ -1,3 +1,4 @@
+import type { ConsentStatus } from '@src/features/profiles/domain/HealthProfile.js';
 import type { AdherencePeriod } from '@src/features/adherence/domain/AdherencePeriod.js';
 import type { Measurement, MeasurementKind } from '../domain/Measurement.js';
 
@@ -11,7 +12,8 @@ export interface MeasurementPage {
   nextCursor: string | null;
 }
 interface MeasurementStore {
-  profileExists(profileId: string): Promise<boolean>;
+  /** Trạng thái đồng thuận của hồ sơ; null = không có trong gia đình. */
+  profileConsent(profileId: string): Promise<ConsentStatus | null>;
   /** Số đo đã duyệt, mới nhất trước (ngày đo, giờ đo — chưa có giờ ở cuối ngày, thời điểm ghi, id). */
   listMeasurementPage(
     profileId: string,

@@ -11,7 +11,8 @@ const calls: unknown[][] = [];
 const repository: LabResultRepository = {
   withFamily: (familyId, work) =>
     work({
-      profileExists: async (id) => familyId === 'family-a' && id === 'me',
+      profileConsent: async (id) =>
+        familyId !== 'family-a' ? null : id === 'me' ? 'confirmed' : id === 'rut' ? 'withdrawn' : null,
       listLabResults: async (...args) => {
         calls.push(args);
         return stored;
@@ -37,6 +38,15 @@ describe('getLabSeries — SPEC-021', () => {
     expect(await getLabSeries(repository, { familyId: 'family-b', profileId: 'me' })).toEqual({
       ok: false,
       code: 'ERR_NOT_FOUND',
+    });
+    expect(calls).toHaveLength(before);
+  });
+
+  it('TC-380: hồ sơ đã rút đồng thuận → ERR_CONSENT_REQUIRED, không đọc kết quả', async () => {
+    const before = calls.length;
+    expect(await getLabSeries(repository, { familyId: 'family-a', profileId: 'rut' })).toEqual({
+      ok: false,
+      code: 'ERR_CONSENT_REQUIRED',
     });
     expect(calls).toHaveLength(before);
   });

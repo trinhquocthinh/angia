@@ -1,8 +1,9 @@
+import type { ConsentStatus } from '@src/features/profiles/domain/HealthProfile.js';
 import type { FamilyAccount, ReminderRecipients } from '../domain/ReminderRecipient.js';
 
 interface ReminderRecipientStore {
   /** Khóa dòng hồ sơ trong giao dịch hiện tại để tuần tự hóa các lệnh lưu. */
-  findProfile(profileId: string): Promise<{ consentStatus: string } | null>;
+  findProfile(profileId: string): Promise<{ consentStatus: ConsentStatus } | null>;
   /** Tài khoản đang thuộc gia đình, theo thứ tự tạo. */
   listFamilyAccounts(): Promise<FamilyAccount[]>;
   listRecipientIds(profileId: string): Promise<string[]>;
@@ -19,7 +20,7 @@ export interface SetReminderRecipientsRequest {
   recipientAccountIds: string[];
 }
 export type ReadRecipientsOutcome =
-  { ok: true; value: ReminderRecipients } | { ok: false; code: 'ERR_NOT_FOUND' };
+  { ok: true; value: ReminderRecipients } | { ok: false; code: 'ERR_NOT_FOUND' | 'ERR_CONSENT_REQUIRED' };
 export type RecipientsOutcome =
   | { ok: true; value: ReminderRecipients }
   | { ok: false; code: 'ERR_NOT_FOUND' | 'ERR_CONSENT_REQUIRED' | 'ERR_VALIDATION' };

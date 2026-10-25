@@ -123,7 +123,12 @@ export function createMemoryReviewRepository(
           items: filterDocuments(documents, familyId, filter),
           nextCursor: null,
         }),
-        findDocument: async (id) => owned(id),
+        findDocument: async (id) => {
+          const document = owned(id);
+          if (!document) return null;
+          const profile = profiles.find((p) => p.id === document.healthProfileId && p.familyId === familyId);
+          return { ...document, profileConsentStatus: profile?.consentStatus ?? 'confirmed' };
+        },
         findLatestExtraction: async (id) => (owned(id) ? (extractions[id] ?? null) : null),
         ...pendingInserters(pending, nextId, CREATED_AT),
         ...savedRecordFinders({ prescriptions, labResults, measurements }),

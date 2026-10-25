@@ -15,6 +15,7 @@ const commonErrors = {
   401: error('ERR_UNAUTHENTICATED'),
   403: error('ERR_FORBIDDEN'),
   404: error('ERR_NOT_FOUND: hồ sơ không thuộc gia đình'),
+  409: error('ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận'),
   422: error('ERR_VALIDATION'),
 };
 

@@ -1,7 +1,8 @@
+import type { ConsentStatus } from '@src/features/profiles/domain/HealthProfile.js';
 import type { ReminderRecipientRepository } from '@src/features/reminders/application/recipientPorts.js';
 import type { FamilyAccount } from '@src/features/reminders/domain/ReminderRecipient.js';
 
-type MemoryProfile = { id: string; familyId: string; consentStatus: string };
+type MemoryProfile = { id: string; familyId: string; consentStatus: ConsentStatus };
 type StoredRecipient = { familyId: string; profileId: string; accountId: string };
 
 const DEFAULT_ACCOUNTS: (FamilyAccount & { familyId: string })[] = [

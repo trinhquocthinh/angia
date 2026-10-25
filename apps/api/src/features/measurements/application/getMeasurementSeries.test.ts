@@ -31,7 +31,8 @@ const periodCalls: unknown[][] = [];
 const repository: MeasurementRepository = {
   withFamily: (familyId, work) =>
     work({
-      profileExists: async (id) => familyId === 'family-a' && id === 'me',
+      profileConsent: async (id) =>
+        familyId !== 'family-a' ? null : id === 'me' ? 'confirmed' : id === 'rut' ? 'withdrawn' : null,
       listMeasurementPage: async () => ({ items: [], nextCursor: null }),
       listMeasurementsBetween: async (...args) => {
         calls.push(args);
@@ -101,5 +102,14 @@ describe('getMeasurementSeries — SPEC-020', () => {
     });
     expect(calls).toHaveLength(before);
     expect(periodCalls).toHaveLength(periodsBefore);
+  });
+
+  it('TC-380: hồ sơ đã rút đồng thuận → ERR_CONSENT_REQUIRED, không đọc số đo', async () => {
+    const before = calls.length;
+    expect(await getMeasurementSeries(repository, { ...request, profileId: 'rut' })).toEqual({
+      ok: false,
+      code: 'ERR_CONSENT_REQUIRED',
+    });
+    expect(calls).toHaveLength(before);
   });
 });

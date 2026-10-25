@@ -1,3 +1,4 @@
+import type { ConsentStatus } from '@src/features/profiles/domain/HealthProfile.js';
 import type { PrivacyDraft } from '@angia/contracts';
 import type { PrivacyDocument } from '../domain/PrivacyDocument.js';
 import type { PrivacyEdits } from '../domain/privacyEdits.js';
@@ -16,12 +17,14 @@ type PrivacyUpdate = Partial<
     | 'privacyApprovedAt'
   >
 >;
+/** Chứng từ kèm trạng thái đồng thuận của hồ sơ chủ (join) để gate đọc không thêm truy vấn. */
+export type PrivacyDocumentView = PrivacyDocument & { profileConsentStatus: ConsentStatus };
 export interface PrivacyStore {
   /** SPEC-030: mức dùng của gia đình trong transaction này; `lock` khóa quota theo gia đình trước khi đếm. */
   readQuotaUsage: ReadQuotaUsage;
   /** SPEC-031: ngân sách AI tháng của gia đình (chỉ đọc). */
   readAiBudget(month: string, policy: AiBudgetPolicy): Promise<AiBudgetSnapshot>;
-  findDocument(id: string, lock?: boolean): Promise<PrivacyDocument | null>;
+  findDocument(id: string, lock?: boolean): Promise<PrivacyDocumentView | null>;
   consentConfirmed(profileId: string): Promise<boolean>;
   updateDocument(id: string, update: PrivacyUpdate): Promise<PrivacyDocument>;
   enqueuePreparation(documentId: string, draftId: string, edits: PrivacyEdits): Promise<void>;

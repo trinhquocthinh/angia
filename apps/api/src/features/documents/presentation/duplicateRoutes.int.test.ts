@@ -55,6 +55,7 @@ describe('Kiểm trùng chứng từ: route thật + RLS (SPEC-012, BR-017, E3-S
     const main = await t.session(familyId);
     const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' });
     const profile = (await created.json()) as HealthProfile;
+    await acceptConsentInvitation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const seed = async (payload: { type: string }) =>
       (await seedPendingDocument(t, owner, payload)).documentId;
@@ -120,7 +121,6 @@ describe('Kiểm trùng chứng từ: route thật + RLS (SPEC-012, BR-017, E3-S
 
   it('nhập trực tiếp: trùng bản đã duyệt → 409; xét nghiệm gom theo từng lần lưu', async () => {
     const { main, profile, seed } = await familyFixture();
-    await acceptConsentInvitation(t, main, profile.id);
     const hba1c = lab([{ testName: 'HbA1c', value: '7,2' }]);
     expect((await approve(main, await seed(hba1c), hba1c)).status).toBe(200);
     const duplicate = await manual(main, profile.id, lab([{ testName: 'hba1c', value: ' 7,2' }]));
@@ -136,7 +136,6 @@ describe('Kiểm trùng chứng từ: route thật + RLS (SPEC-012, BR-017, E3-S
 
   it('số đo nhập trực tiếp trùng bản nhập trực tiếp → duplicateOf null; khác giờ đo thì lưu', async () => {
     const { main, profile } = await familyFixture();
-    await acceptConsentInvitation(t, main, profile.id);
     expect((await manual(main, profile.id, reading('07:30'))).status).toBe(200);
     const duplicate = await manual(main, profile.id, reading(null));
     expect(duplicate.status).toBe(409);

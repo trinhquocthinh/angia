@@ -1,3 +1,4 @@
+import { consentGate } from '@src/features/profiles/domain/consentGate.js';
 import { resolveReminderRecipients } from '../domain/resolveReminderRecipients.js';
 import type { ReadRecipientsOutcome, ReminderRecipientRepository } from './recipientPorts.js';
 
@@ -8,7 +9,8 @@ export function getReminderRecipients(
   profileId: string,
 ): Promise<ReadRecipientsOutcome> {
   return repository.withFamily(familyId, async (store) => {
-    if (!(await store.findProfile(profileId))) return { ok: false, code: 'ERR_NOT_FOUND' };
+    const blocked = consentGate((await store.findProfile(profileId))?.consentStatus ?? null);
+    if (blocked) return { ok: false, code: blocked };
     const accounts = await store.listFamilyAccounts();
     const stored = await store.listRecipientIds(profileId);
     return { ok: true, value: resolveReminderRecipients(profileId, accounts, stored) };

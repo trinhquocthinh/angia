@@ -1,3 +1,4 @@
+import { consentGate } from '@src/features/profiles/domain/consentGate.js';
 import type { DocumentStatus } from '../domain/SourceDocument.js';
 import type { ApprovalDraft } from './approvalDrafts.js';
 import type { ApproveOutcome } from './approvalOutcome.js';
@@ -21,7 +22,8 @@ export async function approveDocument(
 
 async function approveInStore(store: ReviewStore, request: ApproveRequest): Promise<ApproveOutcome> {
   const document = await store.findDocument(request.documentId, { lock: true });
-  if (!document) return { ok: false, code: 'ERR_NOT_FOUND' };
+  const blocked = consentGate(document?.profileConsentStatus ?? null);
+  if (blocked || !document) return { ok: false, code: blocked ?? 'ERR_NOT_FOUND' };
   const manual = MANUAL.includes(document.status);
   if (!manual && document.status !== 'pending_review')
     return { ok: false, code: 'ERR_INVALID_STATE_TRANSITION' };

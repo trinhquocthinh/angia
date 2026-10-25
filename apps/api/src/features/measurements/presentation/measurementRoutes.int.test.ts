@@ -23,6 +23,7 @@ describe('API số đo: phân trang F09a và chuỗi theo tuần SPEC-020 (E5-S1
     const profile = (await (
       await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' })
     ).json()) as HealthProfile;
+    await acceptConsentInvitation(t, main, profile.id);
     const base = `/api/health-profiles/${profile.id}/measurements`;
     return { familyId, main, profile, base };
   };
@@ -96,7 +97,6 @@ describe('API số đo: phân trang F09a và chuỗi theo tuần SPEC-020 (E5-S1
 
   it('TC-064 — SPEC-023: 6 số đo + 2 giai đoạn giao khoảng, JSON không có trường nhận xét', async () => {
     const f = await fixture();
-    await acceptConsentInvitation(t, f.main, f.profile.id);
     const days = ['2026-09-02', '2026-09-09', '2026-09-16', '2026-09-23', '2026-09-30', '2026-10-07'];
     for (const measuredOn of days) await insertBloodPressure(f.familyId, f.profile.id, { measuredOn });
     const adherence = `/api/health-profiles/${f.profile.id}/adherence-periods`;

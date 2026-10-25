@@ -20,7 +20,10 @@ export interface DuplicateRecord {
   savedAt: Date;
 }
 export type ApproveError =
-  | { ok: false; code: 'ERR_NOT_FOUND' | 'ERR_VALIDATION' | 'ERR_INVALID_STATE_TRANSITION' }
+  | {
+      ok: false;
+      code: 'ERR_NOT_FOUND' | 'ERR_CONSENT_REQUIRED' | 'ERR_VALIDATION' | 'ERR_INVALID_STATE_TRANSITION';
+    }
   | { ok: false; code: 'ERR_DOCUMENT_DATE_REQUIRED' | 'ERR_BP_INVALID' | 'ERR_GLUCOSE_UNIT_REQUIRED' }
   | { ok: false; code: 'ERR_OUT_OF_RANGE_UNCONFIRMED'; fields: string[] }
   | { ok: false; code: 'ERR_DOSE_INFO_MISSING'; invalidItemIndexes: number[] }

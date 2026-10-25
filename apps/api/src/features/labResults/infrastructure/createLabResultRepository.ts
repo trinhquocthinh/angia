@@ -1,6 +1,5 @@
-import { and, eq } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { healthProfiles } from '@src/shared/db/schema/index.js';
+import { findProfileConsent } from '@src/features/profiles/infrastructure/findProfileConsent.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { LabResultRepository } from '../application/ports.js';
 import { listLabResults } from './listLabResults.js';
@@ -11,13 +10,7 @@ export function createLabResultRepository(db: Database): LabResultRepository {
     withFamily: (familyId, work) =>
       withFamilyScope(db, familyId, (tx) =>
         work({
-          profileExists: async (profileId) =>
-            (
-              await tx
-                .select({ id: healthProfiles.id })
-                .from(healthProfiles)
-                .where(and(eq(healthProfiles.id, profileId), eq(healthProfiles.familyId, familyId)))
-            ).length === 1,
+          profileConsent: (profileId) => findProfileConsent(tx, familyId, profileId),
           listLabResults: (profileId, normalizedTestName) =>
             listLabResults(tx, familyId, profileId, normalizedTestName),
         }),

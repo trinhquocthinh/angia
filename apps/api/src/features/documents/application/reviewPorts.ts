@@ -1,3 +1,4 @@
+import type { ConsentStatus } from '@src/features/profiles/domain/HealthProfile.js';
 import type { ConflictCourse } from '@src/features/medications/domain/MedicationConflict.js';
 import type {
   MedicationCourse,
@@ -12,6 +13,9 @@ import type {
 import type { NewPrescription, Prescription } from '@src/features/prescriptions/domain/Prescription.js';
 import type { DocumentStatus, DocumentType, SourceDocument } from '../domain/SourceDocument.js';
 import type { ProfileConsent } from './ports.js';
+
+/** Chứng từ kèm trạng thái đồng thuận của hồ sơ chủ (join) để gate không thêm truy vấn. */
+export type ReviewDocument = SourceDocument & { profileConsentStatus: ConsentStatus };
 
 export interface DocumentFilter {
   statuses?: DocumentStatus[] | undefined;
@@ -29,7 +33,7 @@ export interface DocumentPage {
 export interface ReviewStore {
   listDocuments(filter: DocumentFilter): Promise<DocumentPage>;
   /** `lock` khóa dòng FOR UPDATE để hai lệnh duyệt đồng thời không cùng qua kiểm tra trạng thái. */
-  findDocument(id: string, options?: { lock: boolean }): Promise<SourceDocument | null>;
+  findDocument(id: string, options?: { lock: boolean }): Promise<ReviewDocument | null>;
   /** Payload thô của lần trích xuất mới nhất; presentation tự kiểm hợp đồng. */
   findLatestExtraction(documentId: string): Promise<unknown>;
   insertMeasurement(input: NewMeasurement): Promise<Measurement>;
