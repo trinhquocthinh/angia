@@ -15,18 +15,28 @@ export function createExtractionStore(client: pg.PoolClient, familyId: string): 
   };
   return {
     ...createBudgetLedger(client, familyId),
-    findDocument: async (id) =>
-      (
-        await client.query<DocumentToExtract>(
-          `SELECT d.id, d.status, d.type AS "declaredType", d.original_key AS "originalKey", d.mime_type AS "mimeType",
+    findDocument: async (id) => {
+      // Khóa chia sẻ hàng hồ sơ trước khi đọc đồng thuận (FOR SHARE không áp được lên phía LEFT JOIN),
+      // để tuần tự hóa với lệnh rút đồng thuận (FOR UPDATE hồ sơ).
+      await client.query(
+        `SELECT 1 FROM health_profiles WHERE family_id = $2
+           AND id = (SELECT health_profile_id FROM source_documents WHERE id = $1 AND family_id = $2) FOR SHARE`,
+        [id, familyId],
+      );
+      return (
+        (
+          await client.query<DocumentToExtract>(
+            `SELECT d.id, d.status, d.type AS "declaredType", d.original_key AS "originalKey", d.mime_type AS "mimeType",
            d.preview_key AS "previewKey", d.ocr_image_key AS "ocrImageKey", d.ocr_image_sha256 AS "ocrImageSha256",
            d.privacy_approved_by AS "privacyApprovedBy", d.privacy_approved_at AS "privacyApprovedAt",
            COALESCE(p.consent_status = 'confirmed', false) AS "profileConsentConfirmed"
            FROM source_documents d LEFT JOIN health_profiles p ON p.id = d.health_profile_id AND p.family_id = d.family_id
            WHERE d.id = $1 AND d.family_id = $2 FOR UPDATE OF d`,
-          [id, familyId],
-        )
-      ).rows[0] ?? null,
+            [id, familyId],
+          )
+        ).rows[0] ?? null
+      );
+    },
     markExtracting: (id) => transition(id, 'extracting', ['extracting']),
     markManualEntry: (id) => transition(id, 'manual_entry', ['uploaded', 'extracting']),
     markAwaitingBudget: (id) => transition(id, 'awaiting_budget', ['extracting']),

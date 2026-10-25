@@ -1,10 +1,10 @@
 import type { MyConsentProfile } from '../../application/myConsentPorts';
 import { formatWithdrawnAt } from '../../application/formatWithdrawnAt';
-const statusText: Record<string, string> = {
-  pending: 'Chưa có xác nhận của người thân',
-  invited: 'Đang chờ người thân xác nhận',
-  declined: 'Lời mời đã bị từ chối',
-  confirmed: 'Đã đồng ý chia sẻ',
+// Câu trung tính (người liên kết đọc, không phải người chăm sóc chính); confirmed/withdrawn có nhánh riêng.
+const statusText: Record<Exclude<MyConsentProfile['consentStatus'], 'withdrawn' | 'confirmed'>, string> = {
+  pending: 'Chưa có đồng thuận lưu thông tin sức khỏe cho hồ sơ này.',
+  invited: 'Đang chờ phản hồi lời mời đồng thuận.',
+  declined: 'Lời mời đồng thuận đã bị từ chối.',
 };
 // SPEC-036: thẻ đồng thuận của tài khoản liên kết; chỉ trạng thái đã đồng thuận mới có nút rút.
 export function MyConsentCard({
@@ -25,7 +25,9 @@ export function MyConsentCard({
       <p className="mt-1 text-sm leading-6 text-[#55615f]">
         {consentStatus === 'withdrawn'
           ? `Bạn đã rút đồng thuận lúc ${withdrawnAt ? formatWithdrawnAt(withdrawnAt) : ''}.`
-          : (statusText[consentStatus] ?? '')}
+          : consentStatus === 'confirmed'
+            ? 'Đã đồng ý chia sẻ'
+            : statusText[consentStatus]}
       </p>
       {consentStatus === 'confirmed' && (
         <button

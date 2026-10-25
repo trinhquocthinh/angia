@@ -15,6 +15,7 @@ import { pino } from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { ExtractionDependencies } from '@src/features/extraction/application/ports.js';
 import { createExtractionRepository } from '@src/features/extraction/infrastructure/createExtractionRepository.js';
+import { createExtractionStore } from '@src/features/extraction/infrastructure/createExtractionStore.js';
 import { createFakeExtractor } from '@src/features/extraction/infrastructure/createFakeExtractor.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { handleExtractDocumentJob } from './handleExtractDocumentJob.js';
@@ -153,6 +154,27 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
       [documentId],
     );
     expect(reservations.rowCount).toBe(0);
+  });
+  it('TC-391: findDocument chờ khóa hồ sơ đang giữ bởi lệnh rút đồng thuận (FOR SHARE hồ sơ)', async () => {
+    const { familyId, documentId } = await seedDocument();
+    await owner.query('BEGIN');
+    try {
+      await owner.query('SELECT 1 FROM health_profiles WHERE family_id=$1 FOR UPDATE', [familyId]);
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        await client.query(`SELECT set_config('app.family_id', $1, true)`, [familyId]);
+        await client.query(`SET LOCAL lock_timeout = '300ms'`);
+        await expect(createExtractionStore(client, familyId).findDocument(documentId)).rejects.toMatchObject({
+          code: '55P03',
+        });
+      } finally {
+        await client.query('ROLLBACK').catch(() => undefined);
+        client.release();
+      }
+    } finally {
+      await owner.query('ROLLBACK');
+    }
   });
   const previewDeps = () => ({
     repository: createPreviewRepository(pool),

@@ -19,9 +19,15 @@ describe('TC-382 — thẻ đồng thuận của tài khoản liên kết', () =
     expect(html).toContain('Bạn đã rút đồng thuận lúc 10:05, 24/10/2026.');
     expect(html).not.toContain('<button');
   });
-  it.each(['invited', 'pending', 'declined'] as const)('%s: chỉ hiện trạng thái, không nút', (status) => {
+  it.each([
+    ['pending', 'Chưa có đồng thuận lưu thông tin sức khỏe cho hồ sơ này.'],
+    ['invited', 'Đang chờ phản hồi lời mời đồng thuận.'],
+    ['declined', 'Lời mời đồng thuận đã bị từ chối.'],
+  ] as const)('TC-392: %s: hiện câu trung tính, không nút', (status, text) => {
     const html = render({ ...base, consentStatus: status });
     expect(html).toContain('Mẹ');
+    expect(html).toContain(text);
+    expect(html).not.toContain('người thân');
     expect(html).not.toContain('<button');
     expect(html).not.toContain('Rút đồng thuận');
   });
