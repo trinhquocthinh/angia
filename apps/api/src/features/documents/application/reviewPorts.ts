@@ -15,7 +15,7 @@ import type { DocumentStatus, DocumentType, SourceDocument } from '../domain/Sou
 import type { ProfileConsent } from './ports.js';
 
 /** Chứng từ kèm trạng thái đồng thuận của hồ sơ chủ (join) để gate không thêm truy vấn. */
-export type ReviewDocument = SourceDocument & { profileConsentStatus: ConsentStatus };
+type ReviewDocument = SourceDocument & { profileConsentStatus: ConsentStatus };
 
 export interface DocumentFilter {
   statuses?: DocumentStatus[] | undefined;

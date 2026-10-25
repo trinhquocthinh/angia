@@ -4,13 +4,14 @@ import { describe, expect, it, vi } from 'vitest';
 import type { MyConsentRepository } from './myConsentPorts';
 import type { ProfileSession } from './ports';
 import { profileScopeKey } from './profileScopeKey';
-import { myConsentKey, useMyConsent } from './useMyConsent';
+import { useMyConsent } from './useMyConsent';
 const session: ProfileSession = {
   account: { id: 'a', displayName: 'An', isSystemAdmin: false, healthProfileId: 'p' },
   family: { id: 'f', name: 'Nhà An' },
   role: 'member',
   csrfToken: 'csrf',
 };
+const myConsentKey = (s: ProfileSession) => [...profileScopeKey(s), 'my-consent'];
 describe('TC-386 — useMyConsent', () => {
   it('rút thành công thì làm mới truy vấn đồng thuận và danh sách hồ sơ', async () => {
     const client = new QueryClient();

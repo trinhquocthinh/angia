@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { MyConsentRepository } from './myConsentPorts';
 import type { ProfileSession } from './ports';
 import { profileScopeKey } from './profileScopeKey';
-export function myConsentKey(session: ProfileSession | null | undefined) {
+function myConsentKey(session: ProfileSession | null | undefined) {
   return [...profileScopeKey(session), 'my-consent'] as const;
 }
 // SPEC-036: tài khoản liên kết đọc và rút đồng thuận; thành công thì làm mới đồng thuận và danh sách hồ sơ.

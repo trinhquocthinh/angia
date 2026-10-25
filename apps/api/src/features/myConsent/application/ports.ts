@@ -6,7 +6,7 @@ export interface MyConsentProfile {
   consentStatus: ConsentStatus;
 }
 
-export interface MyConsentStore {
+interface MyConsentStore {
   /** Đọc hồ sơ dưới RLS (không khóa); null khi không thấy. */
   readProfile(id: string): Promise<(MyConsentProfile & { withdrawnAt: Date | null }) | null>;
   /** SELECT … FOR UPDATE dưới RLS; null khi không thấy. */

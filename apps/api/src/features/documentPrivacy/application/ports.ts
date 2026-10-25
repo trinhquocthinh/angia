@@ -18,7 +18,7 @@ type PrivacyUpdate = Partial<
   >
 >;
 /** Chứng từ kèm trạng thái đồng thuận của hồ sơ chủ (join) để gate đọc không thêm truy vấn. */
-export type PrivacyDocumentView = PrivacyDocument & { profileConsentStatus: ConsentStatus };
+type PrivacyDocumentView = PrivacyDocument & { profileConsentStatus: ConsentStatus };
 export interface PrivacyStore {
   /** SPEC-030: mức dùng của gia đình trong transaction này; `lock` khóa quota theo gia đình trước khi đếm. */
   readQuotaUsage: ReadQuotaUsage;
