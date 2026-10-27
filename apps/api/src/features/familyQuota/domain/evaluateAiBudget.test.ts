@@ -1,62 +1,49 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateAiBudget } from './evaluateAiBudget.js';
-
-const snapshot = (familySpentUsd: number, familyCapUsd = 0.5, globalSpentUsd = 1, globalCapUsd = 5) => ({
-  familySpentUsd,
-  familyCapUsd,
-  globalSpentUsd,
-  globalCapUsd,
-});
-
-describe('TC-306 — phần trăm và trạng thái hết trần AI của gia đình (SPEC-031)', () => {
-  it('đã dùng $0,21 / $0,50 → 42%, còn trần', () => {
-    expect(evaluateAiBudget(snapshot(0.21), 0.02)).toEqual({
-      usedPercent: 42,
-      anyUsed: true,
-      exhausted: false,
-    });
-  });
-
-  it('đã dùng + ước tính vượt trần gia đình → hết trần', () => {
-    expect(evaluateAiBudget(snapshot(0.49), 0.02)).toEqual({
-      usedPercent: 98,
-      anyUsed: true,
-      exhausted: true,
-    });
-    expect(evaluateAiBudget(snapshot(0.48), 0.02)).toEqual({
-      usedPercent: 96,
-      anyUsed: true,
-      exhausted: false,
-    });
-  });
-
-  it('trần tổng hết thì cũng hết, phần trăm vẫn theo trần gia đình', () => {
-    expect(evaluateAiBudget(snapshot(0.1, 0.5, 4.99, 5), 0.02)).toEqual({
-      usedPercent: 20,
-      anyUsed: true,
-      exhausted: true,
-    });
-  });
-
-  it('trần 0 → 100% và hết; đã dùng vượt trần → kẹp 100%', () => {
-    expect(evaluateAiBudget(snapshot(0, 0), 0.02)).toEqual({
-      usedPercent: 100,
+const snapshot = {
+  grantedScans: 20,
+  usedScans: 7,
+  heldScans: 0,
+  billingAvailable: true,
+  budgetExhausted: false,
+};
+describe('Cổng lượt gia đình và tiền thực toàn hệ thống', () => {
+  it('TC-610: phần trăm và anyUsed chỉ dựa trên lượt đã dùng', () => {
+    expect(evaluateAiBudget(snapshot)).toEqual({ usedPercent: 35, anyUsed: true, exhausted: false });
+    expect(evaluateAiBudget({ ...snapshot, usedScans: 0, heldScans: 2 })).toMatchObject({
+      usedPercent: 0,
       anyUsed: false,
-      exhausted: true,
-    });
-    expect(evaluateAiBudget(snapshot(0.7), 0.02)).toEqual({
-      usedPercent: 100,
-      anyUsed: true,
-      exhausted: true,
     });
   });
-
-  it('đã dùng > 0 nhưng chưa tới 1% → usedPercent 0 kèm anyUsed để giao diện hiện "dưới 1%"', () => {
-    expect(evaluateAiBudget(snapshot(0.001), 0.02)).toEqual({
+  it('TC-611: giữ chỗ dùng hết lượt và gia đình chưa cấp đều chặn', () => {
+    expect(evaluateAiBudget({ ...snapshot, heldScans: 13 })).toMatchObject({
+      exhausted: true,
+      reason: 'scan_quota_exhausted',
+    });
+    expect(evaluateAiBudget({ ...snapshot, grantedScans: 0, usedScans: 0 })).toMatchObject({
+      exhausted: true,
+      usedPercent: 0,
+    });
+  });
+  it('TC-612: phí thiếu hoặc hết ngân sách có nguyên nhân riêng, không lộ số tiền', () => {
+    expect(evaluateAiBudget({ ...snapshot, billingAvailable: false })).toEqual({
+      usedPercent: 35,
+      anyUsed: true,
+      exhausted: true,
+      reason: 'billing_unavailable',
+    });
+    expect(evaluateAiBudget({ ...snapshot, budgetExhausted: true })).toEqual({
+      usedPercent: 35,
+      anyUsed: true,
+      exhausted: true,
+      reason: 'budget_exhausted',
+    });
+  });
+  it('TC-613: phần trăm dưới một phần trăm giữ anyUsed và không vượt 100', () => {
+    expect(evaluateAiBudget({ ...snapshot, grantedScans: 1000, usedScans: 1 })).toMatchObject({
       usedPercent: 0,
       anyUsed: true,
-      exhausted: false,
     });
-    expect(evaluateAiBudget(snapshot(0), 0.02)).toEqual({ usedPercent: 0, anyUsed: false, exhausted: false });
+    expect(evaluateAiBudget({ ...snapshot, usedScans: 21 })).toMatchObject({ usedPercent: 100 });
   });
 });

@@ -2,6 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { PrivacyDraft } from '@angia/contracts';
 import { createAwaitingPrivacyFixture } from '@src/shared/test/createAwaitingPrivacyFixture.js';
+import { seedOcrAdmission } from '@src/shared/test/seedOcrAdmission.js';
 import { seedQuotaDocument } from '@src/shared/test/seedQuotaDocument.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 
@@ -17,6 +18,7 @@ describe('Quota chờ worker ở bước riêng tư: route thật + pg-boss (SPE
 
   it('TC-299: 10 chứng từ đang chờ worker → tạo bản kiểm tra và xác nhận gửi AI đều 429, không tạo job', async () => {
     const f = await createAwaitingPrivacyFixture(t);
+    await seedOcrAdmission(t.owner, f.familyId);
     const created = await t.call(f.main, 'POST', `${f.path}/privacy-drafts`, edits);
     expect(created.status).toBe(202);
     const draft = (await created.json()) as Extract<PrivacyDraft, { draftId: string }>;

@@ -1,3 +1,10 @@
+import { registerScanQuotaHeaders } from '@src/features/scanQuota/presentation/registerScanQuotaHeaders.js';
+import type { ScanQuotaDependencies } from '@src/features/scanQuota/application/ports.js';
+import { registerScanQuotaRoutes } from '@src/features/scanQuota/presentation/registerScanQuotaRoutes.js';
+import type { AiBillingDependencies } from '@src/features/aiBilling/application/ports.js';
+import { registerAiBillingRoutes } from '@src/features/aiBilling/presentation/registerAiBillingRoutes.js';
+import type { AiRoutingDependencies } from '@src/features/aiRouting/application/ports.js';
+import { registerAiRoutingRoutes } from '@src/features/aiRouting/presentation/registerAiRoutingRoutes.js';
 import { HTTPException } from 'hono/http-exception';
 import type { AdherenceRepository } from '@src/features/adherence/application/ports.js';
 import { registerAdherenceRoutes } from '@src/features/adherence/presentation/registerAdherenceRoutes.js';
@@ -64,6 +71,9 @@ export type AppDependencies = {
   auth: AuthRouteDeps;
   familyAdmin: FamilyAdminRepository;
   aiBudget: AiBudgetDependencies;
+  aiRouting: AiRoutingDependencies;
+  aiBilling: AiBillingDependencies;
+  scanQuota: ScanQuotaDependencies;
   profiles: ProfileDependencies;
   consentInvitations: InvitationRouteDependencies;
   documents: DocumentDependencies;
@@ -108,6 +118,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
     return errorResponse(c, 'ERR_INTERNAL');
   });
   registerPrivacyHeaders(app);
+  registerScanQuotaHeaders(app);
   app.use(
     '/api/*',
     except(
@@ -121,8 +132,11 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerMeRoute(app);
   if (deps.push)
     registerPushRoutes(app, deps.push, { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies });
-  registerAdminRoutes(app, deps.familyAdmin);
+  registerAdminRoutes(app, deps.familyAdmin, deps.scanQuota.now);
+  registerScanQuotaRoutes(app, deps.scanQuota);
   registerAiBudgetRoutes(app, deps.aiBudget);
+  registerAiRoutingRoutes(app, deps.aiRouting);
+  registerAiBillingRoutes(app, deps.aiBilling);
   registerFamilyUsageRoute(app, deps.familyUsage);
   registerFamilyCapRoutes(app, deps.familyCaps);
   registerProfileRoutes(app, { ...deps.profiles, logger: deps.auth.logger }, deps.auth.login.now);

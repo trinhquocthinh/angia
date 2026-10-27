@@ -1,3 +1,4 @@
+import type { FamilyUsage } from '@angia/contracts';
 import { useState } from 'react';
 import type { PrivacyEditorAction, PrivacyEditorState } from '../../application/privacyEditorState';
 import { PrivacyCandidateImage } from './PrivacyCandidateImage';
@@ -10,10 +11,12 @@ type Props = {
   dispatch: (action: PrivacyEditorAction) => void;
   onApprove: () => void;
   aiExhausted?: boolean;
+  aiReason?: FamilyUsage['aiOcr']['reason'];
   onManual?: () => void;
 };
 // Được gắn key theo bản kiểm tra nên bản mới luôn tự mở hộp thoại.
-export function PrivacyDraftReview({ state, busy, dispatch, onApprove, aiExhausted, onManual }: Props) {
+export function PrivacyDraftReview(props: Props) {
+  const { state, busy, dispatch, onApprove, aiExhausted, aiReason, onManual } = props;
   const [open, setOpen] = useState(true);
   const draft = state.candidate;
   if (draft.state === 'pending')
@@ -60,6 +63,7 @@ export function PrivacyDraftReview({ state, busy, dispatch, onApprove, aiExhaust
           dispatch={dispatch}
           onApprove={onApprove}
           aiExhausted={aiExhausted ?? false}
+          aiReason={aiReason}
           onManual={onManual ?? (() => undefined)}
         />
       }

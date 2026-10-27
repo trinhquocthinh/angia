@@ -37,7 +37,7 @@ describe('Đổi sang model dự phòng (SPEC-009, E3-S6-T2)', () => {
     expect(await createFallbackExtractor(primary, fallback).extract(image)).toEqual(
       answer('moonshotai/kimi-k2.6', 0.0035),
     );
-    expect(fallback.extract).toHaveBeenCalledWith(image);
+    expect(fallback.extract).toHaveBeenCalledWith(image, undefined);
   });
 
   it('model chính trả sai định dạng → giữ kết quả chính (manual_entry), không tốn thêm lời gọi dự phòng', async () => {

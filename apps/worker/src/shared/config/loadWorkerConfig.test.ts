@@ -37,13 +37,21 @@ describe('Cấu hình worker', () => {
     });
   });
 
-  it('AI_PROVIDER=openrouter thiếu OPENROUTER_API_KEY thì dừng khởi động', () => {
-    expect(() => loadWorkerConfig({ ...base, AI_PROVIDER: 'openrouter' })).toThrow('OPENROUTER_API_KEY');
-    expect(
-      loadWorkerConfig({ ...base, AI_PROVIDER: 'openrouter', OPENROUTER_API_KEY: 'sk-or-x' }),
-    ).toMatchObject({
-      AI_PROVIDER: 'openrouter',
+  it('TC-531: biến cũ chỉ suy ra run mode; thiếu key được phân loại theo provider tại từng lượt', () => {
+    expect(loadWorkerConfig({ ...base, AI_PROVIDER: 'openrouter' })).toMatchObject({ AI_RUN_MODE: 'live' });
+    expect(loadWorkerConfig(base)).toMatchObject({ AI_RUN_MODE: 'fake' });
+  });
+
+  it('TC-531: run mode tường minh ưu tiên biến cũ; provider/model thực lấy từ DB', () => {
+    expect(loadWorkerConfig({ ...base, AI_RUN_MODE: 'live' })).toMatchObject({ AI_RUN_MODE: 'live' });
+    expect(loadWorkerConfig({ ...base, AI_PROVIDER: undefined, AI_RUN_MODE: 'fake' })).toMatchObject({
+      AI_RUN_MODE: 'fake',
     });
+    expect(loadWorkerConfig({ ...base, AI_PROVIDER: 'openrouter', AI_RUN_MODE: 'fake' })).toMatchObject({
+      AI_RUN_MODE: 'fake',
+    });
+    expect(() => loadWorkerConfig({ ...base, AI_RUN_MODE: 'woku' })).toThrow();
+    expect(() => loadWorkerConfig({ ...base, AI_PROVIDER: undefined })).toThrow();
   });
 
   it('ngân sách AI (BR-018): mặc định trần $5.00, ước tính $0.02; giá trị âm/không phải số bị từ chối', () => {
@@ -171,4 +179,47 @@ describe('Cấu hình worker', () => {
     expect(loadWorkerConfig({ ...base, ...sitIdp, ...push, STACK: 'sit' }).webPush).not.toBeNull();
     expect(() => loadWorkerConfig({ ...base, ...sitIdp, STACK: 'sit' })).toThrow('WEB_PUSH_PUBLIC_KEY');
   });
+});
+
+it('TC-544: nguồn phí mặc định rỗng; đọc JSON tường minh và không lộ credential trong lỗi', () => {
+  expect(loadWorkerConfig(base).AI_BILLING_SOURCES_JSON).toEqual([]);
+  const source = { id: '01900000-0000-7000-8000-000000000001', provider: 'openrouter', apiKey: 'synthetic' };
+  expect(
+    loadWorkerConfig({ ...base, AI_BILLING_SOURCES_JSON: JSON.stringify([source]) }).AI_BILLING_SOURCES_JSON,
+  ).toEqual([source]);
+  expect(() => loadWorkerConfig({ ...base, AI_BILLING_SOURCES_JSON: 'synthetic' })).toThrow(
+    'billing_sources_invalid',
+  );
+});
+
+it('TC-544: cấu hình nguồn phí không rỗng phải bao phủ key OpenRouter runtime cả ở fake', () => {
+  const source = {
+    id: '01900000-0000-7000-8000-000000000001',
+    provider: 'openrouter',
+    apiKey: 'configured-synthetic',
+  };
+  const vars = {
+    ...base,
+    OPENROUTER_API_KEY: 'runtime-synthetic',
+    AI_BILLING_SOURCES_JSON: JSON.stringify([source]),
+  };
+  expect(() => loadWorkerConfig(vars)).toThrow('Nguồn phí phải bao phủ credential OpenRouter đang cấu hình');
+  try {
+    loadWorkerConfig(vars);
+  } catch (error) {
+    expect(String(error)).not.toContain('runtime-synthetic');
+    expect(String(error)).not.toContain('configured-synthetic');
+    expect(String(error)).toContain('AI_BILLING_SOURCES_JSON');
+  }
+  expect(
+    loadWorkerConfig({ ...vars, OPENROUTER_API_KEY: ' configured-synthetic ' }).AI_BILLING_SOURCES_JSON,
+  ).toEqual([source]);
+  expect(loadWorkerConfig({ ...vars, OPENROUTER_API_KEY: ' ' }).AI_BILLING_SOURCES_JSON).toEqual([source]);
+  expect(loadWorkerConfig({ ...vars, AI_BILLING_SOURCES_JSON: '[]' }).AI_BILLING_SOURCES_JSON).toEqual([]);
+  expect(() =>
+    loadWorkerConfig({
+      ...vars,
+      AI_BILLING_SOURCES_JSON: JSON.stringify([{ ...source, provider: 'woku', apiKey: 'runtime-synthetic' }]),
+    }),
+  ).toThrow('Nguồn phí phải bao phủ credential OpenRouter đang cấu hình');
 });

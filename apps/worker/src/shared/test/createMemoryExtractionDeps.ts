@@ -60,6 +60,7 @@ export function createMemoryExtractionDeps(options: Options) {
         work({
           findDocument: async (id) =>
             familyId === ownerFamilyId && id === document.id ? { ...document } : null,
+          hasLiveExtractionJob: async () => false,
           markExtracting: () => setStatus('extracting'),
           markManualEntry: () => setStatus('manual_entry'),
           markAwaitingBudget: () => setStatus('awaiting_budget'),
@@ -76,9 +77,7 @@ export function createMemoryExtractionDeps(options: Options) {
       defaultFamilyCapUsd: 0.5,
       now: () => MEMORY_NOW,
     },
-    storage: {
-      get: async (key) => getMemoryObject(objects, key),
-    },
+    storage: { get: async (key) => getMemoryObject(objects, key) },
     images: { heicToJpeg: async () => new Uint8Array([0xff, 0xd8]) },
     ocrImages: createMemoryOcrImages(objects),
     extractor: createFakeExtractor(options.result, extractorCalls),
@@ -108,7 +107,8 @@ function createMemoryOcrImages(objects: Map<string, Uint8Array>): ExtractionDepe
 
 function createFakeExtractor(result: Options['result'], calls: ExtractorImage[]): DocumentExtractor {
   return {
-    extract: async (image) => {
+    extract: async (image, beforeDispatch) => {
+      await beforeDispatch?.();
       calls.push(image);
       if (result instanceof Error) throw result;
       return { ...result, provider: 'openrouter', model: 'google/gemini-3.1-flash-lite', costUsd: 0.001 };

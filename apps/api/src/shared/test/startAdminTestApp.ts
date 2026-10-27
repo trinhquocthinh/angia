@@ -1,3 +1,6 @@
+import { createScanQuotaRepository } from '@src/features/scanQuota/infrastructure/createScanQuotaRepository.js';
+import { createAiBillingRepository } from '@src/features/aiBilling/infrastructure/createAiBillingRepository.js';
+import { createAiRoutingRepository } from '@src/features/aiRouting/infrastructure/createAiRoutingRepository.js';
 import { createStubReviewDeps } from './createStubReviewDeps.js';
 import { createStubDocumentDeps } from './createStubDocumentDeps.js';
 import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
@@ -40,7 +43,15 @@ const budgetAdminDeps = (database: Database, boss: PgBoss) => ({
   },
 });
 
-export async function startAdminTestApp() {
+const scanQuotaAdminDeps = (database: Database, boss: PgBoss, now: () => Date = () => new Date()) => ({
+  repository: createScanQuotaRepository(database, boss),
+  now,
+  defaultMonthlyCapUsd: 5,
+});
+
+export async function startAdminTestApp(
+  options: { aiBillingNow?: () => Date; scanQuotaNow?: () => Date } = {},
+) {
   const db = await startTestDatabase();
   await runMigrations(db.ownerUrl);
   const owner = new pg.Client({ connectionString: db.ownerUrl });
@@ -62,8 +73,14 @@ export async function startAdminTestApp() {
       cookieSecret: TEST_COOKIE_SECRET,
     },
     profiles: createStubProfileDeps(),
-    familyAdmin: createFamilyAdminRepository(database),
+    familyAdmin: createFamilyAdminRepository(database, { defaultMonthlyCapUsd: 5 }),
+    scanQuota: scanQuotaAdminDeps(database, boss, options.scanQuotaNow),
     ...budgetAdminDeps(database, boss),
+    aiBilling: {
+      repository: createAiBillingRepository(pool),
+      now: options.aiBillingNow ?? (() => new Date()),
+    },
+    aiRouting: { repository: createAiRoutingRepository(database), now: () => new Date() },
   });
 
   const call = (session: SeededSession, method: string, path: string, body?: unknown) =>
@@ -96,7 +113,7 @@ export async function startAdminTestApp() {
     await db.container.stop();
   };
 
-  return { app, owner, admin, call, seedFamily, membershipOf, stop };
+  return { app, owner, pool, database, admin, call, seedFamily, membershipOf, stop };
 }
 
 export type AdminTestApp = Awaited<ReturnType<typeof startAdminTestApp>>;

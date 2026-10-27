@@ -1,9 +1,12 @@
+import { prepareExtraction } from './prepareExtraction.js';
+import { dispatchExtraction } from './dispatchExtraction.js';
 import { canUseApprovedOcrImage } from '../domain/canUseApprovedOcrImage.js';
 import { ImageConversionError } from './ImageConversionError.js';
 import { assessExtraction } from '../domain/assessExtraction.js';
-import { canStartExtraction } from '../domain/canStartExtraction.js';
 import type { DocumentToExtract } from '../domain/ExtractionDocument.js';
 import type { BudgetCall, ExtractionDependencies, ExtractorImage, ExtractorResult } from './ports.js';
+import { OcrGuardChangedError } from './OcrGuardChangedError.js';
+import { OcrGateBlockedError, type OcrGateReason } from './OcrGateBlockedError.js';
 import { toBudgetCall } from './toBudgetCall.js';
 
 interface ExtractionJob {
@@ -23,7 +26,7 @@ type ManualReason =
   | 'consent_required';
 export type ExtractionOutcome =
   | { status: 'skipped' }
-  | { status: 'awaiting_budget' }
+  | { status: 'awaiting_budget'; reason: OcrGateReason }
   | { status: 'pending_review'; costUsd: number }
   | { status: 'manual_entry'; reason: ManualReason; costUsd: number };
 
@@ -35,50 +38,34 @@ export async function extractDocument(
   job: ExtractionJob,
 ): Promise<ExtractionOutcome> {
   const call = toBudgetCall(deps.budget);
-  const document = await deps.repository.withFamily(job.familyId, async (store) => {
-    const found = await store.findDocument(job.documentId);
-    if (!found || (found.status !== 'uploaded' && !canStartExtraction(found.status))) return null;
-    if (!found.profileConsentConfirmed) {
-      // F07: hồ sơ không còn đồng thuận → không giữ ngân sách, không đọc ảnh, không gọi AI.
-      await store.markManualEntry(found.id);
-      return 'consent_required' as const;
-    }
-    if (
-      found.status === 'uploaded' ||
-      !found.ocrImageKey?.startsWith(`families/${job.familyId}/`) ||
-      !found.ocrImageKey.startsWith(found.originalKey.slice(0, found.originalKey.lastIndexOf('/') + 1)) ||
-      found.ocrImageKey === found.previewKey ||
-      !canUseApprovedOcrImage(found, found.originalKey, found.ocrImageSha256 ?? '')
-    ) {
-      await store.markManualEntry(found.id);
-      return 'privacy_required' as const;
-    }
-    if (!(await store.reserveBudget(found.id, call))) {
-      await store.markAwaitingBudget(found.id);
-      return 'awaiting_budget' as const;
-    }
-    await store.markExtracting(found.id);
-    return found;
-  });
+  const document = await prepareExtraction(deps, job, call);
   if (!document) return { status: 'skipped' };
   if (document === 'consent_required')
     return { status: 'manual_entry', reason: 'consent_required', costUsd: 0 };
   if (document === 'privacy_required')
     return { status: 'manual_entry', reason: 'privacy_required', costUsd: 0 };
-  if (document === 'awaiting_budget') return { status: 'awaiting_budget' };
+  if ('blocked' in document) {
+    if (document.blocked === 'dispatch_limit')
+      return { status: 'manual_entry', reason: 'extractor_failed', costUsd: 0 };
+    return { status: 'awaiting_budget', reason: document.blocked };
+  }
   let result: ExtractorResult;
   try {
-    result = await deps.extractor.extract(await loadImage(deps, document));
+    result = await deps.extractor.extract(await loadImage(deps, document), () =>
+      dispatchExtraction(deps, job, call, document),
+    );
+    return await finish(deps, job, call, document, result);
   } catch (error) {
+    if (error instanceof OcrGuardChangedError) return guardChanged(deps, job, call, error.reason);
+    if (error instanceof OcrGateBlockedError) return gateBlocked(deps, job, call, error.reason);
     if (error instanceof ImageConversionError) return toManualEntry(deps, job, call, 'image_unusable', 0);
     if (!job.finalAttempt) {
-      // Lỗi mạng/HTTP không có usage.cost: trả lại chỗ giữ, lần thử lại sẽ giữ chỗ mới.
+      // Lỗi trước dispatch trả held; lỗi sau dispatch giữ used và retry không trừ thêm.
       await deps.repository.withFamily(job.familyId, (store) => store.settleBudget(job.documentId, 0, call));
       throw error;
     }
     return toManualEntry(deps, job, call, 'extractor_failed', 0);
   }
-  return finish(deps, job, call, document, result);
 }
 
 async function finish(
@@ -105,7 +92,7 @@ async function finish(
   return { status: 'pending_review', costUsd };
 }
 
-// Quyết toán cùng transaction với chuyển trạng thái: chi phí thực của lời gọi (nếu có) được ghi đúng một lần.
+// Chuyển trạng thái và trả held cùng transaction; phí thực thuộc sổ provider độc lập.
 async function toManualEntry(
   deps: ExtractionDependencies,
   job: ExtractionJob,
@@ -126,4 +113,29 @@ async function loadImage(deps: ExtractionDependencies, document: DocumentToExtra
   const image = await deps.ocrImages.get(document.ocrImageKey);
   if (!canUseApprovedOcrImage(document, document.originalKey, image.sha256)) throw new ImageConversionError();
   return { bytes: image.bytes, mimeType: image.mimeType };
+}
+
+async function gateBlocked(
+  deps: ExtractionDependencies,
+  job: ExtractionJob,
+  call: BudgetCall,
+  reason: OcrGateReason,
+): Promise<ExtractionOutcome> {
+  if (reason === 'dispatch_limit') return toManualEntry(deps, job, call, 'extractor_failed', 0);
+  await deps.repository.withFamily(job.familyId, async (store) => {
+    await store.markAwaitingBudget(job.documentId, reason);
+    await store.settleBudget(job.documentId, 0, call);
+  });
+  return { status: 'awaiting_budget', reason };
+}
+
+async function guardChanged(
+  deps: ExtractionDependencies,
+  job: ExtractionJob,
+  call: BudgetCall,
+  reason: OcrGuardChangedError['reason'],
+): Promise<ExtractionOutcome> {
+  if (reason !== 'skipped') return toManualEntry(deps, job, call, reason, 0);
+  await deps.repository.withFamily(job.familyId, (store) => store.settleBudget(job.documentId, 0, call));
+  return { status: 'skipped' };
 }

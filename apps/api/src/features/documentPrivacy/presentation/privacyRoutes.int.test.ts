@@ -1,3 +1,4 @@
+import { seedOcrAdmission } from '@src/shared/test/seedOcrAdmission.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile, PrivacyDraft } from '@angia/contracts';
@@ -22,6 +23,7 @@ describe('Bảo vệ ảnh: PostgreSQL và queue thật', () => {
       await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Ba' })
     ).json()) as HealthProfile;
     await acceptConsentInvitation(t, main, profile.id);
+    await seedOcrAdmission(t.owner, familyId);
     const { documentId } = await seedPendingDocument(
       t,
       { familyId, profileId: profile.id, accountId: main.accountId },

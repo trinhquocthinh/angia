@@ -1,3 +1,4 @@
+import { seedOcrGate } from '@src/shared/test/seedOcrGate.js';
 import { prepareDocumentPreview } from '@src/features/documentPreview/application/prepareDocumentPreview.js';
 import { createPreviewRepository } from '@src/features/documentPreview/infrastructure/createPreviewRepository.js';
 import { handleConvertHeicJob } from './handleConvertHeicJob.js';
@@ -81,8 +82,11 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
     await container?.stop();
   });
 
-  const seedDocument = (declaredType: string | null = null, approved = true) =>
-    seedExtractingDocument(owner, declaredType, approved);
+  const seedDocument = async (declaredType: string | null = null, approved = true) => {
+    const doc = await seedExtractingDocument(owner, declaredType, approved);
+    await seedOcrGate(owner, doc.familyId, new Date());
+    return doc;
+  };
   const documentState = async (documentId: string) =>
     (
       await owner.query(

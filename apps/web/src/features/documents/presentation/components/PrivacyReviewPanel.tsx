@@ -1,11 +1,13 @@
+import type { FamilyUsage } from '@angia/contracts';
 import type { usePrivacyWorkspace } from '../../application/usePrivacyWorkspace';
 import { PrivacyDraftReview } from './PrivacyDraftReview';
 type Props = {
   workspace: ReturnType<typeof usePrivacyWorkspace>;
   inputPending: boolean;
   aiExhausted: boolean;
+  aiReason?: FamilyUsage['aiOcr']['reason'];
 };
-export function PrivacyReviewPanel({ workspace, inputPending, aiExhausted }: Props) {
+export function PrivacyReviewPanel({ workspace, inputPending, aiExhausted, aiReason }: Props) {
   const { state, dispatch, busy, error, query } = workspace;
   return (
     <div className="flex flex-col gap-3">
@@ -45,6 +47,7 @@ export function PrivacyReviewPanel({ workspace, inputPending, aiExhausted }: Pro
           if (!inputPending) void workspace.approve();
         }}
         aiExhausted={aiExhausted}
+        aiReason={aiReason}
         onManual={() => void workspace.manual()}
       />
     </div>

@@ -55,7 +55,7 @@ export async function approvePrivacy(
     // SPEC-031: gia đình (hoặc hệ thống) hết trần AI tháng → ghi nhận duyệt nhưng xếp chờ ngân sách, không tạo job;
     // requeue đầu tháng/khi nâng trần đọc tiếp bản ảnh đã duyệt này.
     const budget = await store.readAiBudget(budgetMonth(deps.ai.now()), deps.ai);
-    if (evaluateAiBudget(budget, deps.ai.estimatedCostUsd).exhausted)
+    if (evaluateAiBudget(budget).exhausted)
       return {
         ok: true,
         value: await store.updateDocument(doc.id, { status: 'awaiting_budget', ...approval }),

@@ -1,3 +1,6 @@
+import { createScanQuotaRepository } from '@src/features/scanQuota/infrastructure/createScanQuotaRepository.js';
+import { createAiBillingRepository } from '@src/features/aiBilling/infrastructure/createAiBillingRepository.js';
+import { createAiRoutingRepository } from '@src/features/aiRouting/infrastructure/createAiRoutingRepository.js';
 import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
 import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
 import { createMyConsentRepository } from '@src/features/myConsent/infrastructure/createMyConsentRepository.js';
@@ -114,7 +117,14 @@ const app = createApp({
     secureCookies: config.STACK !== 'dev',
     logger,
   },
-  familyAdmin: createFamilyAdminRepository(db),
+  familyAdmin: createFamilyAdminRepository(db, { defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD }),
+  scanQuota: {
+    repository: createScanQuotaRepository(db, boss),
+    now: () => new Date(),
+    defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,
+  },
+  aiBilling: { repository: createAiBillingRepository(pool), now: () => new Date() },
+  aiRouting: { repository: createAiRoutingRepository(db), now: () => new Date() },
   aiBudget: {
     repository: createAiBudgetRepository(db, boss),
     defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,

@@ -176,6 +176,41 @@
       "when": 1792857844362,
       "tag": "0024_consent_withdrawal",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1793003725229,
+      "tag": "0025_ai_routing_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1793031030235,
+      "tag": "0026_ai_routing_one_to_one",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1793033341748,
+      "tag": "0027_ai_provider_billing",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1793071713410,
+      "tag": "0028_scan_quotas",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1793079521378,
+      "tag": "0029_ocr_scan_runtime",
+      "breakpoints": true
     }
   ]
 }

@@ -339,6 +339,276 @@
           }
         ]
       },
+      "AdminScanQuotaView": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "policy": {
+            "$ref": "#/components/schemas/ScanQuotaPolicy"
+          },
+          "monthlyCapUsd": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)\\.[0-9]{12}$"
+          },
+          "actualSpendUsd": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^(0|[1-9][0-9]*)\\.[0-9]{12}$"
+          },
+          "billingStatus": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "incomplete",
+              "stale",
+              "unconfigured"
+            ]
+          },
+          "committedRemainingScans": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "availableAdditionalScans": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "overAllocatedScans": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^(0|[1-9][0-9]*)$"
+          },
+          "families": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "familyId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "familyName": {
+                  "type": "string"
+                },
+                "quota": {
+                  "$ref": "#/components/schemas/FamilyScanQuota"
+                },
+                "previousApprovedScans": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "familyId",
+                "familyName",
+                "quota",
+                "previousApprovedScans"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "runtimeActive": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "month",
+          "version",
+          "policy",
+          "monthlyCapUsd",
+          "actualSpendUsd",
+          "billingStatus",
+          "committedRemainingScans",
+          "availableAdditionalScans",
+          "overAllocatedScans",
+          "families",
+          "runtimeActive"
+        ],
+        "additionalProperties": false
+      },
+      "ScanQuotaPolicy": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "estimatedCostPerScanUsd": {
+            "type": "string",
+            "maxLength": 41,
+            "pattern": "^(0|[1-9][0-9]{0,27})(\\.[0-9]{1,12})?$"
+          },
+          "reserveBasisPoints": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "trialScans": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "estimatedCostPerScanUsd",
+          "reserveBasisPoints",
+          "trialScans"
+        ],
+        "additionalProperties": false
+      },
+      "FamilyScanQuota": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "unconfigured",
+              "trial",
+              "approved"
+            ]
+          },
+          "grantedScans": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "usedScans": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "heldScans": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "remainingScans": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "runtimeActive": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "month",
+          "status",
+          "grantedScans",
+          "usedScans",
+          "heldScans",
+          "remainingScans",
+          "runtimeActive"
+        ],
+        "additionalProperties": false
+      },
+      "UpdateScanQuotaPolicyRequest": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "policy": {
+            "$ref": "#/components/schemas/ScanQuotaPolicy"
+          }
+        },
+        "required": [
+          "month",
+          "expectedVersion",
+          "policy"
+        ],
+        "additionalProperties": false
+      },
+      "GrantScanQuotasRequest": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "grants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "familyId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "approved"
+                  ]
+                },
+                "grantedScans": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                }
+              },
+              "required": [
+                "familyId",
+                "status",
+                "grantedScans",
+                "reason"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "month",
+          "expectedVersion",
+          "grants"
+        ],
+        "additionalProperties": false
+      },
       "SpendResponse": {
         "type": "object",
         "properties": {
@@ -371,6 +641,235 @@
         "required": [
           "monthlyCapUsd"
         ]
+      },
+      "AiRoutingView": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "settings": {
+            "$ref": "#/components/schemas/AiRoutingSettings"
+          },
+          "updatedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "updatedBy": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "version",
+          "settings",
+          "updatedAt",
+          "updatedBy"
+        ],
+        "additionalProperties": false
+      },
+      "AiRoutingSettings": {
+        "type": "object",
+        "properties": {
+          "selectedProvider": {
+            "type": "string",
+            "enum": [
+              "woku",
+              "openrouter"
+            ]
+          },
+          "woku": {
+            "type": "object",
+            "properties": {
+              "primaryModel": {
+                "type": "string",
+                "enum": [
+                  "gemini-3-flash-preview",
+                  "gemini-3.8-flash"
+                ]
+              },
+              "fallbackModel": {
+                "type": "string",
+                "enum": [
+                  "gemini-3-flash-preview",
+                  "gemini-3.8-flash"
+                ]
+              }
+            },
+            "required": [
+              "primaryModel",
+              "fallbackModel"
+            ],
+            "additionalProperties": false
+          },
+          "openrouter": {
+            "type": "object",
+            "properties": {
+              "primaryModel": {
+                "type": "string",
+                "enum": [
+                  "google/gemini-3.1-flash-lite",
+                  "moonshotai/kimi-k2.6"
+                ]
+              },
+              "fallbackModel": {
+                "type": "string",
+                "enum": [
+                  "google/gemini-3.1-flash-lite",
+                  "moonshotai/kimi-k2.6"
+                ]
+              }
+            },
+            "required": [
+              "primaryModel",
+              "fallbackModel"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "selectedProvider",
+          "woku",
+          "openrouter"
+        ],
+        "additionalProperties": false
+      },
+      "UpdateAiRoutingRequest": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "settings": {
+            "$ref": "#/components/schemas/AiRoutingSettings"
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "settings"
+        ],
+        "additionalProperties": false
+      },
+      "AiBillingView": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "USD"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "incomplete",
+              "stale",
+              "unconfigured"
+            ]
+          },
+          "confirmedSpendUsd": {
+            "type": "string",
+            "pattern": "^(0|[1-9]\\d*)\\.\\d{12}$"
+          },
+          "actualSpendUsd": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^(0|[1-9]\\d*)\\.\\d{12}$"
+          },
+          "lastSyncedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "provider": {
+                  "type": "string",
+                  "enum": [
+                    "woku",
+                    "openrouter"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "unverified",
+                    "complete",
+                    "gap",
+                    "error",
+                    "counter_reset",
+                    "credential_changed",
+                    "receipt_conflict",
+                    "missing_credential"
+                  ]
+                },
+                "confirmedSpendUsd": {
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d*)\\.\\d{12}$"
+                },
+                "lastAttemptAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "lastCompleteAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "id",
+                "provider",
+                "status",
+                "confirmedSpendUsd",
+                "lastAttemptAt",
+                "lastCompleteAt"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "month",
+          "unit",
+          "status",
+          "confirmedSpendUsd",
+          "actualSpendUsd",
+          "lastSyncedAt",
+          "sources"
+        ],
+        "additionalProperties": false
       },
       "FamilyUsage": {
         "type": "object",
@@ -447,6 +946,14 @@
               },
               "exhausted": {
                 "type": "boolean"
+              },
+              "reason": {
+                "type": "string",
+                "enum": [
+                  "scan_quota_exhausted",
+                  "budget_exhausted",
+                  "billing_unavailable"
+                ]
               }
             },
             "required": [
@@ -4258,6 +4765,286 @@
         }
       }
     },
+    "/api/admin/scan-quotas": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Đọc quota quét của tháng hiện tại",
+        "responses": {
+          "200": {
+            "description": "Quota đã cấp và sức chứa hiện tại; chưa áp dụng runtime OCR",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminScanQuotaView"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_SCAN_QUOTA_CONFLICT / ERR_SCAN_QUOTA_UNAVAILABLE / ERR_SCAN_QUOTA_DECREASE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/scan-quota-policy": {
+      "put": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Lưu chính sách cấp lượt quét giữ qua tháng",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateScanQuotaPolicyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quota đã cấp và sức chứa hiện tại; chưa áp dụng runtime OCR",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminScanQuotaView"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_SCAN_QUOTA_CONFLICT / ERR_SCAN_QUOTA_UNAVAILABLE / ERR_SCAN_QUOTA_DECREASE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/scan-quota-grants": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Duyệt tường minh tổng lượt quét theo gia đình trong tháng",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantScanQuotasRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quota đã cấp và sức chứa hiện tại; chưa áp dụng runtime OCR",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminScanQuotaView"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_SCAN_QUOTA_CONFLICT / ERR_SCAN_QUOTA_UNAVAILABLE / ERR_SCAN_QUOTA_DECREASE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/family/scan-quota": {
+      "get": {
+        "tags": [
+          "family"
+        ],
+        "summary": "Đọc lượt quét của gia đình trong phiên",
+        "responses": {
+          "200": {
+            "description": "Chỉ số lượt quét, không có tiền hoặc định danh gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyScanQuota"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/extraction-cap": {
       "get": {
         "tags": [
@@ -4345,6 +5132,154 @@
           },
           "422": {
             "description": "ERR_VALIDATION: ngoài 0.00 – 100.00 hoặc lẻ hơn 0.01",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/ai-routing": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Đọc cấu hình mong muốn của nhà cung cấp OCR, không trả key",
+        "responses": {
+          "200": {
+            "description": "Cấu hình và phiên bản, chưa khẳng định worker đã áp dụng",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiRoutingView"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần SystemAdmin và CSRF hợp lệ với PUT",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Lưu cấu hình OCR và audit khi expectedVersion khớp",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAiRoutingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cấu hình đã lưu, version tăng một",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiRoutingView"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần SystemAdmin và CSRF hợp lệ với PUT",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_AI_ROUTING_CONFLICT",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/ai-billing": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Đọc phí thực đã xác nhận trong tháng Việt Nam và mức đầy đủ nguồn",
+        "responses": {
+          "200": {
+            "description": "Metadata phí toàn hệ thống; actual chỉ có khi mọi nguồn đủ và mới",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiBillingView"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần SystemAdmin",
             "content": {
               "application/json": {
                 "schema": {

@@ -16,7 +16,8 @@ const usageRepository = createFamilyUsageRepository();
 export function PrivacyEditor({ repository, session, documentId }: Props) {
   const workspace = usePrivacyWorkspace(repository, session, documentId);
   // SPEC-031: hết trần đọc tự động tháng này → khóa gửi AI, cho nhập tay hoặc xếp hàng chờ.
-  const aiExhausted = useFamilyUsage(usageRepository, true).data?.aiOcr.exhausted ?? false;
+  const aiOcr = useFamilyUsage(usageRepository, true).data?.aiOcr;
+  const aiExhausted = aiOcr?.exhausted ?? false;
   const [inputPending, setInputPending] = useState(false);
   const ready = workspace.state.candidate.state === 'ready';
   return (
@@ -28,11 +29,21 @@ export function PrivacyEditor({ repository, session, documentId }: Props) {
         onInputPending={setInputPending}
       >
         {!ready && (
-          <PrivacyReviewPanel workspace={workspace} inputPending={inputPending} aiExhausted={aiExhausted} />
+          <PrivacyReviewPanel
+            workspace={workspace}
+            inputPending={inputPending}
+            aiExhausted={aiExhausted}
+            aiReason={aiOcr?.reason}
+          />
         )}
       </PrivacyEditPanel>
       {ready && (
-        <PrivacyReviewPanel workspace={workspace} inputPending={inputPending} aiExhausted={aiExhausted} />
+        <PrivacyReviewPanel
+          workspace={workspace}
+          inputPending={inputPending}
+          aiExhausted={aiExhausted}
+          aiReason={aiOcr?.reason}
+        />
       )}
     </section>
   );

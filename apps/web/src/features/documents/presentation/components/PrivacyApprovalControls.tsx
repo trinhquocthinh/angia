@@ -1,3 +1,4 @@
+import type { FamilyUsage } from '@angia/contracts';
 import { useState } from 'react';
 import type { PrivacyEditorAction, PrivacyEditorState } from '../../application/privacyEditorState';
 import { canApprovePrivacy } from '../../application/canApprovePrivacy';
@@ -12,6 +13,7 @@ type Props = {
   onApprove: () => void;
   /** SPEC-031: gia đình hết trần đọc tự động tháng này. */
   aiExhausted?: boolean;
+  aiReason?: FamilyUsage['aiOcr']['reason'];
   onManual?: () => void;
 };
 // Component được gắn key theo bản kiểm tra: chỉnh ảnh tạo bản mới nên câu trả lời "vẫn gửi" không mang sang.
@@ -45,6 +47,7 @@ export function PrivacyApprovalControls(props: Props) {
         // Xếp hàng vẫn là xác nhận ảnh: ảnh chưa có vùng che phải qua câu hỏi lại BR-041 như nút gửi thường.
         <AiBudgetSpentNotice
           busy={busy}
+          reason={props.aiReason}
           queueDisabled={!loaded || !canApprovePrivacy(state)}
           onManual={onManual}
           onQueue={() => submit(false)}

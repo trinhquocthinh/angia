@@ -1,23 +1,33 @@
-// SPEC-031: ảnh chụp ngân sách OCR tháng hiện tại (gồm phần đang giữ chỗ) của gia đình và toàn hệ thống.
+// Cổng OCR: lượt theo gia đình, phí thực và độ tươi theo toàn hệ thống.
 export interface AiBudgetSnapshot {
-  familySpentUsd: number;
-  familyCapUsd: number;
-  globalSpentUsd: number;
-  globalCapUsd: number;
+  grantedScans: number;
+  usedScans: number;
+  heldScans: number;
+  billingAvailable: boolean;
+  budgetExhausted: boolean;
 }
-
-// Gia đình chỉ thấy phần trăm theo trần riêng; "hết" khi lời gọi kế tiếp vượt trần gia đình hoặc trần tổng.
-// anyUsed: đã có chi tiêu > 0 — phần trăm làm tròn xuống 0 vẫn hiện "dưới 1%" thay vì 0%.
-export function evaluateAiBudget(
-  budget: AiBudgetSnapshot,
-  estimatedCostUsd: number,
-): { usedPercent: number; anyUsed: boolean; exhausted: boolean } {
+export type OcrGateReason = 'scan_quota_exhausted' | 'budget_exhausted' | 'billing_unavailable';
+export function evaluateAiBudget(budget: AiBudgetSnapshot): {
+  usedPercent: number;
+  anyUsed: boolean;
+  exhausted: boolean;
+  reason?: OcrGateReason;
+} {
   const usedPercent =
-    budget.familyCapUsd <= 0
-      ? 100
-      : Math.min(100, Math.max(0, Math.floor((budget.familySpentUsd / budget.familyCapUsd) * 100 + 1e-9)));
-  const exhausted =
-    budget.familySpentUsd + estimatedCostUsd > budget.familyCapUsd + 1e-9 ||
-    budget.globalSpentUsd + estimatedCostUsd > budget.globalCapUsd + 1e-9;
-  return { usedPercent, anyUsed: budget.familySpentUsd > 0, exhausted };
+    budget.grantedScans <= 0
+      ? 0
+      : Math.min(100, Math.max(0, Number((BigInt(budget.usedScans) * 100n) / BigInt(budget.grantedScans))));
+  const reason: OcrGateReason | undefined = !budget.billingAvailable
+    ? 'billing_unavailable'
+    : budget.budgetExhausted
+      ? 'budget_exhausted'
+      : budget.grantedScans - budget.usedScans - budget.heldScans <= 0
+        ? 'scan_quota_exhausted'
+        : undefined;
+  return {
+    usedPercent,
+    anyUsed: budget.usedScans > 0,
+    exhausted: reason !== undefined,
+    ...(reason ? { reason } : {}),
+  };
 }
