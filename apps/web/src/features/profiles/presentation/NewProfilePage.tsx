@@ -27,6 +27,8 @@ export function NewProfilePage() {
       <p className="mb-8 mt-3 text-sm leading-6 text-[#55615f]">Thêm người thân vào sổ sức khỏe gia đình.</p>
       {session.data.role === 'main' ? (
         <NewProfileForm
+          key={`${session.data.account.id}:${session.data.family?.id ?? ''}`}
+          currentAccountId={session.data.account.id}
           accounts={workspace.accounts.data ?? []}
           accountsLoading={workspace.accounts.isPending}
           accountsError={workspace.accounts.isError}

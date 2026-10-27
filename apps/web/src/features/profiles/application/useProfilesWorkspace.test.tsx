@@ -11,6 +11,8 @@ const session: ProfileSession = {
   csrfToken: 'csrf',
 };
 const profile = {
+  consentAction: 'attestation' as const,
+  consentConfirmedByName: null,
   id: 'p',
   familyId: 'f',
   displayName: 'Mẹ',
@@ -31,6 +33,7 @@ function repository(fail = false): ProfilesRepository {
       if (fail) throw new Error('Lỗi mạng');
       return profile;
     }),
+    confirmConsent: vi.fn(),
     createInvitation: vi.fn(async () => ({ token: 'opaque', expiresAt: '2026-10-13T00:00:00Z' })),
     revokeInvitation: vi.fn(async () => undefined),
     remove: vi.fn(async () => undefined),

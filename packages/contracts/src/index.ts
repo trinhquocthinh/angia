@@ -39,6 +39,10 @@ export {
 export type { PurgeProfileObjectsJob } from './jobs/purgeProfileObjectsJob.js';
 export { healthResponseSchema } from './health/healthResponseSchema.js';
 export type { HealthResponse } from './health/healthResponseSchema.js';
+export { consentConfirmationSchema } from './profiles/consentConfirmationSchema.js';
+export type { ConsentConfirmation } from './profiles/consentConfirmationSchema.js';
+export { profileListItemSchema } from './profiles/profileListItemSchema.js';
+export type { ProfileListItem } from './profiles/profileListItemSchema.js';
 export { healthProfileSchema } from './profiles/healthProfileSchema.js';
 export type { HealthProfile } from './profiles/healthProfileSchema.js';
 export {

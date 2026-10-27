@@ -36,6 +36,14 @@ describe('Hồ sơ qua hợp đồng HTTP và bảo vệ phiên', () => {
     expect(requests[0]?.headers.get('X-CSRF-Token')).toBe('csrf');
     expect(requests[0]?.credentials).toBe('same-origin');
   });
+  it('TC-558: xác nhận cam kết gửi endpoint mới, body và CSRF', async () => {
+    const { repository, requests } = harness(200, { id: 'p' });
+    const body = { kind: 'attestation', attestation: true, basis: 'guardian', respondentName: 'Mẹ' } as const;
+    await repository.confirmConsent('p', body, 'csrf');
+    expect(new URL(requests[0]!.url).pathname).toBe('/api/health-profiles/p/consent-attestation');
+    expect(await requests[0]!.json()).toEqual(body);
+    expect(requests[0]!.headers.get('X-CSRF-Token')).toBe('csrf');
+  });
   it('main tạo và thu hồi link bằng CSRF, không xác nhận thay người nhận', async () => {
     const { repository, requests } = harness(200, { token: 'opaque', expiresAt: '2026-10-13T00:00:00Z' });
     await repository.createInvitation('p', 'csrf');

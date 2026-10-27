@@ -9,6 +9,7 @@ export const HEALTH_DATA_ROUTES = {
   'POST /api/health-profiles': 'scoped',
   'DELETE /api/health-profiles/:id': 'scoped',
   'POST /api/health-profiles/:id/consent': 'uniform',
+  'POST /api/health-profiles/:id/consent-attestation': 'scoped',
   'POST /api/health-profiles/:id/consent-invitations': 'scoped',
   'DELETE /api/health-profiles/:id/consent-invitations': 'scoped',
   'GET /api/consent-invitations/view': 'scoped',

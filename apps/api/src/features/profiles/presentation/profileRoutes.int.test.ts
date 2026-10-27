@@ -35,7 +35,9 @@ describe('Hồ sơ: route thật, transaction và RLS', () => {
     await expectCrossFamilyDenied(read, () =>
       t.call(other, 'POST', `${base}/${randomUUID()}/consent-invitations`, { attestation: true }),
     );
-    expect(await (await t.call(main, 'GET', base)).json()).toEqual([profile]);
+    expect(await (await t.call(main, 'GET', base)).json()).toEqual([
+      { ...profile, consentAction: 'attestation', consentConfirmedByName: null },
+    ]);
     expect(await (await t.call(other, 'GET', base)).json()).toEqual([]);
     expect((await t.pool.query('SELECT count(*)::int AS n FROM health_profiles')).rows[0].n).toBe(0);
   });
@@ -75,7 +77,9 @@ describe('Hồ sơ: route thật, transaction và RLS', () => {
     const response = await t.call(main, 'POST', consent(profile.id), { confirmedBy: 'guardian' });
     expect(response.status).toBe(409);
     expect(await response.json()).toMatchObject({ error: { code: 'ERR_CONSENT_INVITATION_REQUIRED' } });
-    expect(await (await t.call(main, 'GET', base)).json()).toEqual([profile]);
+    expect(await (await t.call(main, 'GET', base)).json()).toEqual([
+      { ...profile, consentAction: 'attestation', consentConfirmedByName: null },
+    ]);
   });
   it('member, admin không phải main và phiên thiếu CSRF bị chặn trước validate', async () => {
     const family = await t.family();

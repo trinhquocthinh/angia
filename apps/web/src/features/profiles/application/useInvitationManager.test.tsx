@@ -28,6 +28,7 @@ function repository(): ProfilesRepository {
     list: vi.fn(),
     linkableAccounts: vi.fn(),
     create: vi.fn(),
+    confirmConsent: vi.fn(),
     createInvitation: vi.fn(async () => ({ token: 'raw-secret', expiresAt: '2026-10-13T00:00:00Z' })),
     revokeInvitation: vi.fn(async () => undefined),
     remove: vi.fn(async () => undefined),

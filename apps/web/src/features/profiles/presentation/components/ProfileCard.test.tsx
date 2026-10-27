@@ -2,13 +2,15 @@ import type { ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import { ProfileCard } from './ProfileCard';
-import type { HealthProfile } from '../../application/ports';
+import type { ProfileListItem } from '../../application/ports';
 vi.mock('@tanstack/react-router', () => ({
   Link: ({ to, params, children }: { to: string; params: { profileId: string }; children: ReactNode }) => (
     <a href={to.replace('$profileId', params.profileId)}>{children}</a>
   ),
 }));
-const profile: HealthProfile = {
+const profile: ProfileListItem = {
+  consentAction: 'attestation',
+  consentConfirmedByName: null,
   id: 'p',
   familyId: 'f',
   displayName: 'Mẹ',
@@ -21,8 +23,8 @@ const profile: HealthProfile = {
   consentSource: null,
   consentRespondentName: null,
 };
-describe('Đồng thuận bằng lời mời, không suy diễn từ metadata cũ', () => {
-  it('metadata xác nhận legacy không mở gate; yêu cầu lời mời mới', () => {
+describe('TC-558 — thẻ hồ sơ chọn đúng thao tác đồng thuận', () => {
+  it('metadata xác nhận legacy không mở gate; yêu cầu cam kết mới', () => {
     const html = renderToStaticMarkup(
       <ProfileCard
         profile={{
@@ -34,7 +36,7 @@ describe('Đồng thuận bằng lời mời, không suy diễn từ metadata c�
         onDelete={() => undefined}
       />,
     );
-    expect(html).toContain('Tạo link mời người thân');
+    expect(html).toContain('Xác nhận đồng ý');
     expect(html).not.toContain('Đã đồng ý chia sẻ');
     expect(html).toContain('Xác nhận cũ');
     expect(html).toContain('Năm sinh 1954');
@@ -48,7 +50,8 @@ describe('Đồng thuận bằng lời mời, không suy diễn từ metadata c�
         onDelete={() => undefined}
       />,
     );
-    expect(html).toContain(status === 'invited' ? 'Quản lý link xác nhận' : 'Tạo link mời người thân');
+    expect(html).toContain('Xác nhận đồng ý');
+    expect(html).not.toContain('Tạo link mời người thân');
   });
   it('đã đồng thuận ghi tên tự khai và giới hạn xác minh; không có main xác nhận thay', () => {
     const html = renderToStaticMarkup(
@@ -56,6 +59,7 @@ describe('Đồng thuận bằng lời mời, không suy diễn từ metadata c�
         profile={{
           ...profile,
           consentStatus: 'confirmed',
+          consentAction: null,
           consentSource: 'invitation',
           consentRespondentName: 'An',
         }}
@@ -73,7 +77,7 @@ describe('Đồng thuận bằng lời mời, không suy diễn từ metadata c�
   it('TC-387: hồ sơ withdrawn có nhãn rút đồng thuận và nút tạo link mời', () => {
     const html = renderToStaticMarkup(
       <ProfileCard
-        profile={{ ...profile, consentStatus: 'withdrawn' }}
+        profile={{ ...profile, consentStatus: 'withdrawn', consentAction: 'invitation' }}
         onConsent={() => undefined}
         onDelete={() => undefined}
       />,
@@ -94,5 +98,50 @@ describe('Đồng thuận bằng lời mời, không suy diễn từ metadata c�
     expect(html.match(/href="\/profiles\/p"/g)).toHaveLength(2);
     expect(html).toMatch(/href="\/profiles\/p"[^>]*>[^]*Mẹ[^]*<\/a>/);
     expect(html).toContain('Xem hồ sơ');
+  });
+  it.each([
+    ['pending', 'attestation', 'Xác nhận đồng ý'],
+    ['invited', 'attestation', 'Xác nhận đồng ý'],
+    ['declined', 'attestation', 'Xác nhận đồng ý'],
+    ['pending', 'self', 'Xác nhận đồng ý'],
+    ['pending', 'invitation', 'Tạo link mời người thân'],
+    ['invited', 'invitation', 'Quản lý link xác nhận'],
+    ['withdrawn', 'invitation', 'Tạo link mời người thân'],
+  ] as const)('TC-558: %s/action %s có nút %s', (consentStatus, consentAction, label) => {
+    const html = renderToStaticMarkup(
+      <ProfileCard
+        profile={{ ...profile, consentStatus, consentAction }}
+        onConsent={() => undefined}
+        onDelete={() => undefined}
+      />,
+    );
+    expect(html).toContain(label);
+    if (consentAction !== 'invitation') expect(html).not.toContain('link');
+  });
+  it.each(['main_attested', 'self', 'invitation'] as const)(
+    'TC-558: confirmed/%s không yêu cầu xác nhận lại',
+    (consentSource) => {
+      const html = renderToStaticMarkup(
+        <ProfileCard
+          profile={{ ...profile, consentSource, consentStatus: 'confirmed', consentAction: null }}
+          onConsent={() => undefined}
+          onDelete={() => undefined}
+        />,
+      );
+      expect(html).toContain('Đã đồng ý chia sẻ');
+      expect(html.match(/<button/g)).toHaveLength(1);
+    },
+  );
+  it('TC-558: withdrawn không liên kết chỉ còn xóa; không cam kết hay gửi link', () => {
+    const html = renderToStaticMarkup(
+      <ProfileCard
+        profile={{ ...profile, consentStatus: 'withdrawn', consentAction: null }}
+        onConsent={() => undefined}
+        onDelete={() => undefined}
+      />,
+    );
+    expect(html.match(/<button/g)).toHaveLength(1);
+    expect(html).not.toContain('Xác nhận đồng ý');
+    expect(html).not.toContain('link');
   });
 });

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { consentConfirmationSchema } from './consentConfirmationSchema.js';
 
 // Giới hạn năm hiện tại do use case kiểm tra bằng đồng hồ Việt Nam tại thời điểm request.
 export const createHealthProfileRequestSchema = z
@@ -6,6 +7,7 @@ export const createHealthProfileRequestSchema = z
     displayName: z.string().trim().min(1).max(60),
     birthYear: z.number().int().min(1900).optional(),
     linkedAccountId: z.uuid().optional(),
+    consent: consentConfirmationSchema.optional(),
   })
   .meta({ id: 'CreateHealthProfileRequest' });
 export type CreateHealthProfileRequest = z.infer<typeof createHealthProfileRequestSchema>;

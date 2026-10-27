@@ -14,6 +14,14 @@ export function createProfilesRepository(client = apiClient): ProfilesRepository
       readProfileResponse(
         await client.POST('/api/health-profiles', { body, headers: { 'X-CSRF-Token': csrfToken } }),
       ),
+    confirmConsent: async (id, body, csrfToken) =>
+      readProfileResponse(
+        await client.POST('/api/health-profiles/{id}/consent-attestation', {
+          params: { path: { id } },
+          body,
+          headers: { 'X-CSRF-Token': csrfToken },
+        }),
+      ),
     createInvitation: async (id, csrfToken) =>
       readProfileResponse(
         await client.POST('/api/health-profiles/{id}/consent-invitations', {

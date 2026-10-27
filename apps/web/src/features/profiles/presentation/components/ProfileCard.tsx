@@ -1,16 +1,16 @@
 import { Link } from '@tanstack/react-router';
 import { ProfileConsentStatus } from './ProfileConsentStatus';
-import type { HealthProfile } from '../../application/ports';
+import type { ProfileListItem } from '../../application/ports';
 export function ProfileCard({
   profile,
   onConsent,
   onDelete,
 }: {
-  profile: HealthProfile;
-  onConsent: (profile: HealthProfile) => void;
-  onDelete: (profile: HealthProfile) => void;
+  profile: ProfileListItem;
+  onConsent: (profile: ProfileListItem) => void;
+  onDelete: (profile: ProfileListItem) => void;
 }) {
-  const confirmed = profile.consentStatus === 'confirmed' && profile.consentSource === 'invitation';
+  const action = profile.consentAction;
   return (
     <article className="flex min-h-[280px] flex-col rounded-[20px] bg-white p-6 shadow-sm">
       {/* Lối vào hồ sơ ở mọi cỡ màn — dưới lg sidebar ẩn nên đây là lối vào duy nhất (LG-01). */}
@@ -40,12 +40,16 @@ export function ProfileCard({
       >
         Xem hồ sơ
       </Link>
-      {!confirmed && (
+      {action && (
         <button
           className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-[#004135] px-5 py-3 text-center text-sm font-semibold text-white cursor-pointer disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958] mt-5"
           onClick={() => onConsent(profile)}
         >
-          {profile.consentStatus === 'invited' ? 'Quản lý link xác nhận' : 'Tạo link mời người thân'}
+          {action !== 'invitation'
+            ? 'Xác nhận đồng ý'
+            : profile.consentStatus === 'invited'
+              ? 'Quản lý link xác nhận'
+              : 'Tạo link mời người thân'}
         </button>
       )}
       <button

@@ -1,3 +1,4 @@
+import { ATTESTATION, attestationPath, invitationCall } from './profileConsentFixture.js';
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
@@ -31,16 +32,6 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     await t?.stop();
   });
 
-  const tokenCall = (path: string, token: string, body?: unknown) =>
-    t.app.request(path, {
-      method: body ? 'POST' : 'GET',
-      headers: {
-        authorization: `Bearer ${token}`,
-        'content-type': 'application/json',
-        origin: 'http://localhost:5173',
-      },
-      ...(body ? { body: JSON.stringify(body) } : {}),
-    });
   const upload = (user: SeededSession, profileId: string) => {
     const form = new FormData();
     form.append('files', new File([new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 9])], 'a.jpg'));
@@ -55,13 +46,14 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'POST', profiles, { displayName: 'Lén', linkedAccountId: x.accountId }),
     'DELETE /api/health-profiles/:id': (u, x) =>
       t.call(u, 'DELETE', `${profiles}/${x.profileId}`, { confirmName: 'Mẹ' }), // tên đúng của nạn nhân
+    'POST /api/health-profiles/:id/consent-attestation': (u, x) =>
+      t.call(u, 'POST', attestationPath(x.profileId), ATTESTATION),
     'POST /api/health-profiles/:id/consent-invitations': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/consent-invitations`, { attestation: true }),
     'DELETE /api/health-profiles/:id/consent-invitations': (u, x) =>
       t.call(u, 'DELETE', `${profiles}/${x.profileId}/consent-invitations`),
-    'GET /api/consent-invitations/view': (_u, x) => tokenCall('/api/consent-invitations/view', x.token),
-    'POST /api/consent-invitations/respond': (_u, x) =>
-      tokenCall('/api/consent-invitations/respond', x.token, respondBody),
+    'GET /api/consent-invitations/view': (_u, x) => invitationCall(t, x.token),
+    'POST /api/consent-invitations/respond': (_u, x) => invitationCall(t, x.token, respondBody),
     'POST /api/health-profiles/:id/upload-batches': (u, x) => upload(u, x.profileId),
     'GET /api/source-documents/:id/review': (u, x) => t.call(u, 'GET', `${documents}/${x.documentId}/review`),
     'GET /api/source-documents/:id/image': (u, x) => t.call(u, 'GET', `${documents}/${x.documentId}/image`),

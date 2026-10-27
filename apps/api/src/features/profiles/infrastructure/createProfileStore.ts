@@ -1,3 +1,4 @@
+import { createProfileConsentStore } from './createProfileConsentStore.js';
 import { PURGE_PROFILE_OBJECTS_DELAY_SECONDS, PURGE_PROFILE_OBJECTS_QUEUE } from '@angia/contracts';
 import { and, asc, eq, isNull } from 'drizzle-orm';
 import type { PgBoss } from 'pg-boss';
@@ -11,6 +12,7 @@ export function createProfileStore(tx: FamilyScopedTx, familyId: string, boss: P
   const sameAccount = (id: string) => and(eq(accounts.id, id), eq(accounts.familyId, familyId));
   const sameProfile = (id: string) => and(eq(healthProfiles.id, id), eq(healthProfiles.familyId, familyId));
   return {
+    ...createProfileConsentStore(tx, familyId),
     listProfiles: () =>
       tx
         .select()
@@ -35,10 +37,10 @@ export function createProfileStore(tx: FamilyScopedTx, familyId: string, boss: P
           .where(sameAccount(id))
           .for('update')
       )[0] ?? null,
-    insertProfile: async ({ displayName, birthYear }) => {
+    insertProfile: async ({ displayName, birthYear }, receipt) => {
       const [profile] = await tx
         .insert(healthProfiles)
-        .values({ familyId, displayName, birthYear: birthYear ?? null })
+        .values({ familyId, displayName, birthYear: birthYear ?? null, ...receipt })
         .returning();
       if (!profile) throw new Error('Không tạo được hồ sơ');
       return profile;
@@ -47,13 +49,7 @@ export function createProfileStore(tx: FamilyScopedTx, familyId: string, boss: P
       await tx.update(accounts).set({ healthProfileId: profileId }).where(sameAccount(id));
     },
     lockProfile: async (id) =>
-      (
-        await tx
-          .select({ id: healthProfiles.id, displayName: healthProfiles.displayName })
-          .from(healthProfiles)
-          .where(sameProfile(id))
-          .for('update')
-      )[0] ?? null,
+      (await tx.select().from(healthProfiles).where(sameProfile(id)).for('update'))[0] ?? null,
     // FK ON DELETE CASCADE xóa mọi dữ liệu phụ thuộc; accounts.health_profile_id → NULL (BR-010).
     deleteProfile: async (id) => {
       await tx.delete(healthProfiles).where(sameProfile(id));

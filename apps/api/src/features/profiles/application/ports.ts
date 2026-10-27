@@ -1,13 +1,18 @@
+import type { ConsentReceipt } from '../domain/ConsentReceipt.js';
 import type { PurgeProfileObjectsJob } from '@angia/contracts';
 import type { HealthProfile, LinkableAccount, LinkCandidate, NewProfile } from '../domain/HealthProfile.js';
 
 export interface ProfileStore {
   listProfiles(): Promise<HealthProfile[]>;
+  listConsentAccounts(): Promise<{ id: string; displayName: string; healthProfileId: string | null }[]>;
   listLinkableAccounts(): Promise<LinkableAccount[]>;
   lockAccount(id: string): Promise<LinkCandidate | null>;
-  insertProfile(input: NewProfile): Promise<HealthProfile>;
+  insertProfile(input: NewProfile, receipt: ConsentReceipt | null): Promise<HealthProfile>;
   linkAccount(accountId: string, profileId: string): Promise<void>;
-  lockProfile(id: string): Promise<{ id: string; displayName: string } | null>;
+  lockProfile(id: string): Promise<HealthProfile | null>;
+  findLinkedAccount(profileId: string): Promise<LinkableAccount | null>;
+  saveConsentReceipt(profileId: string, receipt: ConsentReceipt): Promise<HealthProfile>;
+  revokePendingInvitations(profileId: string, at: Date): Promise<void>;
   deleteProfile(id: string): Promise<void>;
   enqueuePurge(job: PurgeProfileObjectsJob): Promise<void>;
 }
