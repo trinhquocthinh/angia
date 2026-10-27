@@ -4,6 +4,7 @@ import type { PrivacyDraft } from '@angia/contracts';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 import { createAwaitingPrivacyFixture } from '@src/shared/test/createAwaitingPrivacyFixture.js';
 import { createPrivacyIntegrationDeps } from '@src/shared/test/createPrivacyIntegrationDeps.js';
+import { seedOcrAdmission } from '@src/shared/test/seedOcrAdmission.js';
 import { createPrivacyQueue } from './createPrivacyQueue.js';
 import { createPrivacyDraft } from '../application/createPrivacyDraft.js';
 import { approvePrivacy } from '../application/approvePrivacy.js';
@@ -23,6 +24,7 @@ describe('Giao dịch và kiểm lại ảnh trên PostgreSQL thật', () => {
   });
   const ready = async () => {
     const f = await createAwaitingPrivacyFixture(t);
+    await seedOcrAdmission(t.owner, f.familyId);
     const draft = (await (await t.call(f.main, 'POST', f.path + '/privacy-drafts', edits)).json()) as Exclude<
       PrivacyDraft,
       { state: 'none' }

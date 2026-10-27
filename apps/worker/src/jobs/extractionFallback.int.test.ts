@@ -7,9 +7,11 @@ import { createFallbackExtractor } from '@src/features/extraction/infrastructure
 import { createOpenRouterExtractor } from '@src/features/extraction/infrastructure/createOpenRouterExtractor.js';
 import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
 import { APPROVED_OCR_BYTES, seedExtractingDocument } from '@src/shared/test/seedExtractingDocument.js';
+import { seedOcrGate } from '@src/shared/test/seedOcrGate.js';
 import { handleExtractDocumentJob } from './handleExtractDocumentJob.js';
 
 const logger = pino({ level: 'silent' });
+const NOW = new Date('2026-10-15T03:00:00Z');
 const PRIMARY = 'google/gemini-3.1-flash-lite';
 const FALLBACK = 'moonshotai/kimi-k2.6';
 const READING = {
@@ -49,12 +51,12 @@ function openRouter(byModel: Record<string, () => Response | Promise<Response>>)
 describe('Model dự phòng trên PostgreSQL thật (E3-S6-T2, SPEC-009, BR-016)', () => {
   let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
   const deps = (extractor: ExtractionDependencies['extractor']): ExtractionDependencies => ({
-    repository: createExtractionRepository(fx.pool),
+    repository: createExtractionRepository(fx.pool, () => NOW),
     budget: {
       estimatedCostUsd: 0.02,
       defaultMonthlyCapUsd: 5,
       defaultFamilyCapUsd: 0.5,
-      now: () => new Date('2026-10-15T03:00:00Z'),
+      now: () => NOW,
     },
     storage: { get: async () => APPROVED_OCR_BYTES },
     images: { heicToJpeg: async (bytes) => bytes },
@@ -79,6 +81,11 @@ describe('Model dự phòng trên PostgreSQL thật (E3-S6-T2, SPEC-009, BR-016)
         [documentId],
       )
     ).rows[0];
+  const seedDocument = async () => {
+    const doc = await seedExtractingDocument(fx.owner);
+    await seedOcrGate(fx.owner, doc.familyId, NOW);
+    return doc;
+  };
 
   beforeAll(async () => {
     fx = await createPrivacyPgFixture();
@@ -88,7 +95,7 @@ describe('Model dự phòng trên PostgreSQL thật (E3-S6-T2, SPEC-009, BR-016)
   });
 
   it('TC-086: Gemini lỗi 500, Kimi trả JSON hợp lệ → pending_review, Extraction ghi model Kimi', async () => {
-    const doc = await seedExtractingDocument(fx.owner);
+    const doc = await seedDocument();
     const ai = openRouter({
       [PRIMARY]: () => new Response('upstream', { status: 500 }),
       [FALLBACK]: completion,
@@ -104,7 +111,7 @@ describe('Model dự phòng trên PostgreSQL thật (E3-S6-T2, SPEC-009, BR-016)
   });
 
   it('TC-087: cả hai model lỗi mạng ở lượt cuối → manual_entry, giữ ảnh gốc, không tạo Extraction', async () => {
-    const doc = await seedExtractingDocument(fx.owner);
+    const doc = await seedDocument();
     const down = () => Promise.reject(new TypeError('fetch failed'));
     const ai = openRouter({ [PRIMARY]: down, [FALLBACK]: down });
     await expect(run(ai.extractor, doc, 0)).rejects.toThrow('fetch failed');
