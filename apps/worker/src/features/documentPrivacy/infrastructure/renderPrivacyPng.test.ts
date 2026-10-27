@@ -71,4 +71,5 @@ it('TC-225: nén ảnh có tương quan không làm đổi pixel và giảm dung
   const output = await renderPrivacyPng(original, 'image/png', edits);
   expect(output.length).toBeLessThan(original.length * 0.5);
   expect(await sharp(output).raw().toBuffer()).toEqual(pixels);
-});
+  // Nén PNG mức 9 tốn CPU; chạy riêng ~1 giây nhưng vượt 5 giây khi cả bộ unit chạy song song.
+}, 20_000);
