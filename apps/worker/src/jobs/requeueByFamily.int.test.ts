@@ -4,6 +4,7 @@ import { pino } from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createBudgetRequeueRepository } from '@src/features/extraction/infrastructure/createBudgetRequeueRepository.js';
 import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
+import { seedOcrGate } from '@src/shared/test/seedOcrGate.js';
 import { seedExtractingDocument } from '@src/shared/test/seedExtractingDocument.js';
 import { handleRequeueAwaitingBudgetJob } from './handleRequeueAwaitingBudgetJob.js';
 
@@ -32,7 +33,7 @@ describe('Requeue awaiting_budget theo gia đình trên PostgreSQL + pg-boss th�
     await fx?.close();
   });
 
-  it('TC-307: requeue bỏ qua gia đình còn hết trần riêng; job kèm familyId chỉ chạm gia đình đó', async () => {
+  it('TC-307: requeue bỏ qua gia đình hết quota; job kèm familyId chỉ chạm gia đình đó', async () => {
     await fx.owner.query(`DELETE FROM pgboss.job WHERE name = $1`, [EXTRACT_DOCUMENT_QUEUE]);
     await fx.owner.query(
       `UPDATE source_documents SET status = 'manual_entry' WHERE status = 'awaiting_budget'`,
@@ -40,10 +41,8 @@ describe('Requeue awaiting_budget theo gia đình trên PostgreSQL + pg-boss th�
     const a = await seedExtractingDocument(fx.owner);
     const b = await seedExtractingDocument(fx.owner);
     await setSpend(0);
-    await fx.owner.query(
-      `INSERT INTO family_extraction_spend(family_id, month, spent_usd) VALUES ($1, '2026-10', 0.49)`,
-      [b.familyId],
-    );
+    await seedOcrGate(fx.owner, a.familyId, NOW, 5);
+    await seedOcrGate(fx.owner, b.familyId, NOW, 0);
     await fx.owner.query(`UPDATE source_documents SET status='awaiting_budget' WHERE id = ANY($1)`, [
       [a.documentId, b.documentId],
     ]);
@@ -53,7 +52,7 @@ describe('Requeue awaiting_budget theo gia đình trên PostgreSQL + pg-boss th�
       defaultFamilyCapUsd: 0.5,
       now: () => NOW,
     };
-    const repo = createBudgetRequeueRepository(fx.pool, boss);
+    const repo = createBudgetRequeueRepository(fx.pool, boss, () => NOW);
     const handle = handleRequeueAwaitingBudgetJob(repo, policy, logger);
     await handle({ id: 'r1', data: { familyId: b.familyId } });
     expect(await status(b.documentId)).toBe('awaiting_budget');
@@ -70,6 +69,7 @@ describe('Requeue awaiting_budget theo gia đình trên PostgreSQL + pg-boss th�
       `UPDATE source_documents SET status = 'manual_entry' WHERE status = 'awaiting_budget'`,
     );
     const first = await seedExtractingDocument(fx.owner);
+    await seedOcrGate(fx.owner, first.familyId, NOW, 10);
     const ids = [first.documentId];
     for (const minutesAgo of [20, 30, 10]) {
       const copy = await seedExtractingDocument(fx.owner);
@@ -106,7 +106,7 @@ describe('Requeue awaiting_budget theo gia đình trên PostgreSQL + pg-boss th�
       );
     }
     await handleRequeueAwaitingBudgetJob(
-      createBudgetRequeueRepository(fx.pool, boss),
+      createBudgetRequeueRepository(fx.pool, boss, () => NOW),
       policy,
       logger,
     )({

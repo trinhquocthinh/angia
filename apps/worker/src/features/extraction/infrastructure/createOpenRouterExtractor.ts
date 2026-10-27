@@ -1,9 +1,10 @@
 import type { DocumentExtractor } from '../application/ports.js';
+import type { VisionBillingObserver } from './observeVisionCharge.js';
 import { callVisionModel } from './callVisionModel.js';
 import { EXTRACTION_PROMPT } from './extractionPrompt.js';
 import { parseModelJson } from './parseModelJson.js';
 
-interface OpenRouterOptions {
+interface OpenRouterOptions extends VisionBillingObserver {
   baseUrl: string;
   apiKey: string;
   model: string;
@@ -22,7 +23,7 @@ export function createOpenRouterExtractor(
   const fetchWithTimeout: typeof fetch = (input, init) =>
     fetchFn(input, { ...init, signal: AbortSignal.timeout(timeoutMs) });
   return {
-    extract: async (image) => {
+    extract: async (image, beforeDispatch) => {
       const response = await callVisionModel(
         {
           baseUrl: options.baseUrl,
@@ -31,6 +32,9 @@ export function createOpenRouterExtractor(
           prompt: EXTRACTION_PROMPT,
           image: { mimeType: image.mimeType, base64: Buffer.from(image.bytes).toString('base64') },
           disableReasoning: true,
+          beforeDispatch,
+          observeCharge: options.observeCharge,
+          onBillingObservationError: options.onBillingObservationError,
         },
         fetchWithTimeout,
       );

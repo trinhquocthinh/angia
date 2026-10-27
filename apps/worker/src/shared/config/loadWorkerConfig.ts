@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { parseBillingSources } from '@src/features/aiBilling/infrastructure/parseBillingSources.js';
 
 // Nguồn duy nhất đọc biến môi trường của worker (10-setup-and-ops-guide §3).
 // Web Push (E9-S2-T2) dùng chung bộ biến WEB_PUSH_* với API.
@@ -23,12 +24,14 @@ const workerEnvSchema = z
     S3_ACCESS_KEY_ID: z.string().min(1),
     S3_SECRET_ACCESS_KEY: z.string().min(1),
     S3_FORCE_PATH_STYLE: z.enum(['true', 'false']).transform((value) => value === 'true'),
-    // Dev để `fake` để không phát sinh chi phí (Setup gotcha 8.8).
-    AI_PROVIDER: z.enum(['openrouter', 'fake']),
+    // Run mode độc lập provider; biến cũ chỉ dùng suy ra mode khi chưa đặt AI_RUN_MODE.
+    AI_RUN_MODE: unsetWhenEmpty(z.enum(['fake', 'live'])),
+    AI_PROVIDER: unsetWhenEmpty(z.enum(['openrouter', 'fake'])),
     OPENROUTER_BASE_URL: z.string().url().default('https://openrouter.ai/api/v1'),
     OPENROUTER_API_KEY: z.string().optional(),
+    AI_BILLING_SOURCES_JSON: z.string().default('[]').transform(parseBillingSources),
     AI_PRIMARY_MODEL: z.string().min(1).default('google/gemini-3.1-flash-lite'),
-    // Model chính lỗi mạng/HTTP/timeout thì gọi model này trong cùng lượt thử (E3-S6-T2).
+    // Hai biến model cũ giữ tương thích; worker đọc model từ DB, không dùng chúng để định tuyến.
     AI_FALLBACK_MODEL: z.string().min(1).default('moonshotai/kimi-k2.6'),
     // BR-018: trần khởi tạo khi chưa có tháng nào trong extraction_spend; ước tính giữ chỗ mỗi lần gọi AI.
     AI_DEFAULT_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(5),
@@ -59,9 +62,24 @@ const workerEnvSchema = z
       .default('false')
       .transform((value) => value === 'true'),
   })
-  .refine((env) => env.AI_PROVIDER !== 'openrouter' || Boolean(env.OPENROUTER_API_KEY), {
-    message: 'AI_PROVIDER=openrouter bắt buộc có OPENROUTER_API_KEY',
-    path: ['OPENROUTER_API_KEY'],
+  .refine((env) => Boolean(env.AI_RUN_MODE || env.AI_PROVIDER), {
+    message: 'Cần đặt AI_RUN_MODE=fake|live (hoặc AI_PROVIDER cũ trong thời gian chuyển đổi)',
+    path: ['AI_RUN_MODE'],
+  })
+  .superRefine((env, ctx) => {
+    const runtimeKey = env.OPENROUTER_API_KEY?.trim();
+    if (
+      env.AI_BILLING_SOURCES_JSON.length &&
+      runtimeKey &&
+      !env.AI_BILLING_SOURCES_JSON.some(
+        (source) => source.provider === 'openrouter' && source.apiKey === runtimeKey,
+      )
+    )
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Nguồn phí phải bao phủ credential OpenRouter đang cấu hình',
+        path: ['AI_BILLING_SOURCES_JSON'],
+      });
   })
   .superRefine((env, ctx) => {
     if (env.STACK === 'dev' && !env.AUTHENTIK_API_TOKEN) return;
@@ -89,6 +107,7 @@ const workerEnvSchema = z
       ...env
     }) => ({
       ...env,
+      AI_RUN_MODE: env.AI_RUN_MODE ?? (env.AI_PROVIDER === 'fake' ? 'fake' : 'live'),
       ADMIN_GROUP_NAME: env.ADMIN_GROUP_NAME ?? 'angia-admins',
       webPush: publicKey && privateKey && subject ? { publicKey, privateKey, subject } : null,
     }),

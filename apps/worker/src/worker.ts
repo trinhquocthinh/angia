@@ -1,3 +1,8 @@
+import { createBillingRepository } from '@src/features/aiBilling/infrastructure/createBillingRepository.js';
+import { createProviderBillingReader } from '@src/features/aiBilling/infrastructure/createProviderBillingReader.js';
+import { registerSyncProviderBillingJob } from '@src/jobs/registerSyncProviderBillingJob.js';
+import { createAiRoutingReader } from '@src/features/aiRouting/infrastructure/createAiRoutingReader.js';
+import { createExtractionAttempts } from '@src/features/aiRouting/infrastructure/createExtractionAttempts.js';
 import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
 import { createPrivacyStorage } from '@src/features/documentPrivacy/infrastructure/createPrivacyStorage.js';
 import { createPrivacyImageRenderer } from '@src/features/documentPrivacy/infrastructure/createPrivacyImageRenderer.js';
@@ -14,9 +19,7 @@ import pg from 'pg';
 import { pino } from 'pino';
 import { createExtractionRepository } from '@src/features/extraction/infrastructure/createExtractionRepository.js';
 import { createFakeExtractor } from '@src/features/extraction/infrastructure/createFakeExtractor.js';
-import { createFallbackExtractor } from '@src/features/extraction/infrastructure/createFallbackExtractor.js';
 import { createHeicImageConverter } from '@src/features/extraction/infrastructure/createHeicImageConverter.js';
-import { createOpenRouterExtractor } from '@src/features/extraction/infrastructure/createOpenRouterExtractor.js';
 import { createS3ObjectReader } from '@src/features/extraction/infrastructure/createS3ObjectReader.js';
 import { createBudgetRequeueRepository } from '@src/features/extraction/infrastructure/createBudgetRequeueRepository.js';
 import { handleExtractDocumentJob } from '@src/jobs/handleExtractDocumentJob.js';
@@ -50,20 +53,6 @@ import { createS3Client } from '@src/shared/storage/createS3Client.js';
 // job hằng ngày dọn object S3 mồ côi (BR-044), job 00:05 sinh lời nhắc thuốc, job mỗi phút gửi lời nhắc qua Web Push (SPEC-027; tắt nếu thiếu WEB_PUSH_*) và job 5 phút đồng bộ phiên với Authentik (BR-045).
 const config = loadWorkerConfig(process.env);
 const logger = pino({ level: config.LOG_LEVEL, base: { service: 'angia-worker', stack: config.STACK } });
-
-function createExtractor(workerConfig: WorkerConfig) {
-  if (workerConfig.AI_PROVIDER === 'fake') return createFakeExtractor();
-  const openRouter = (model: string) =>
-    createOpenRouterExtractor({
-      baseUrl: workerConfig.OPENROUTER_BASE_URL,
-      apiKey: workerConfig.OPENROUTER_API_KEY ?? '',
-      model,
-    });
-  return createFallbackExtractor(
-    openRouter(workerConfig.AI_PRIMARY_MODEL),
-    openRouter(workerConfig.AI_FALLBACK_MODEL),
-  );
-}
 
 // BR-045/SPEC-033: config bắt buộc đủ biến ở sit/prod; dev không có token thì tắt job và gỡ lịch cũ.
 // Trả về job có được bật hay không.
@@ -100,6 +89,18 @@ const boss = createPgBoss(config.DATABASE_URL, logger);
 
 try {
   await boss.start();
+  const billing = createBillingRepository(pool);
+  await billing.register(config.AI_BILLING_SOURCES_JSON);
+  await registerSyncProviderBillingJob(
+    boss,
+    config.AI_BILLING_SOURCES_JSON,
+    billing,
+    createProviderBillingReader(),
+    logger,
+  );
+  const billingSource = config.AI_BILLING_SOURCES_JSON.find(
+    (source) => source.provider === 'openrouter' && source.apiKey === config.OPENROUTER_API_KEY?.trim(),
+  );
   const extraction = {
     repository: createExtractionRepository(pool),
     budget: {
@@ -110,10 +111,17 @@ try {
     },
     storage: createS3ObjectReader(createS3Client(config), config.S3_BUCKET),
     images: createHeicImageConverter(),
-    extractor: createExtractor(config),
+    extractor: createFakeExtractor(),
     ocrImages: createApprovedOcrImageReader(createS3ObjectReader(createS3Client(config), config.S3_BUCKET)),
   };
-  await registerExtractDocumentJob(boss, handleExtractDocumentJob(extraction, logger));
+  const attempts = createExtractionAttempts(extraction, createAiRoutingReader(pool), {
+    runMode: config.AI_RUN_MODE,
+    openRouterBaseUrl: config.OPENROUTER_BASE_URL,
+    openRouterApiKey: config.OPENROUTER_API_KEY,
+    observeCharge: billingSource ? (charge) => billing.observe(billingSource, charge) : undefined,
+    onBillingObservationError: (code) => logger.warn({ code }, 'Không thể ghi metadata phí OpenRouter'),
+  });
+  await registerExtractDocumentJob(boss, handleExtractDocumentJob(extraction, logger, attempts));
   await registerRecoverDeadExtractionJob(boss, handleRecoverDeadExtractionJob(extraction, logger));
   await registerRequeueAwaitingBudgetJob(
     boss,
@@ -185,7 +193,7 @@ try {
   else logger.warn('Chưa cấu hình WEB_PUSH_*, không gửi lời nhắc');
   const idpSyncEnabled = await registerIdpSessionSync(config, pool);
   logger.info(
-    { aiProvider: config.AI_PROVIDER, idpSyncEnabled },
+    { aiRunMode: config.AI_RUN_MODE, aiRoutingSource: 'database', idpSyncEnabled },
     `Worker sẵn sàng — đã đăng ký job convert-heic, prepare-ocr-image, extract-document, ngân sách AI, dọn object mồ côi, sinh lời nhắc${idpSyncEnabled ? ' và đồng bộ phiên IdP' : ''}`,
   );
 } catch (error) {

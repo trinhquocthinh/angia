@@ -77,6 +77,14 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'GET /api/admin/accounts',
   'POST /api/admin/accounts/:id/membership',
   'PATCH /api/admin/accounts/:id/membership',
+  // SPEC-041: cấu hình OCR toàn hệ thống, không chứa ảnh/kết quả sức khỏe.
+  'GET /api/admin/ai-billing',
+  'GET /api/admin/scan-quotas',
+  'PUT /api/admin/scan-quota-policy',
+  'POST /api/admin/scan-quota-grants',
+  'GET /api/family/scan-quota',
+  'GET /api/admin/ai-routing',
+  'PUT /api/admin/ai-routing',
   'GET /api/admin/extraction-cap',
   'PUT /api/admin/extraction-cap',
   // SPEC-030: chỉ số đếm (byte, số ảnh) của gia đình phiên, không chứa bản ghi sức khỏe.

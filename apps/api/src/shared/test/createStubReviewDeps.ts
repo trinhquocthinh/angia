@@ -1,3 +1,6 @@
+import { createStubScanQuotaDeps } from './createStubScanQuotaDeps.js';
+import { createStubAiBillingDeps } from './createStubAiBillingDeps.js';
+import { createStubAiRoutingDeps } from './createStubAiRoutingDeps.js';
 import { createStubPrivacyDeps } from './createStubPrivacyDeps.js';
 import { TEST_AI_POLICY, TEST_HEAVY_RATE_LIMIT, TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
 import type { AppDependencies } from '@src/createApp.js';
@@ -7,6 +10,9 @@ const notConfigured = () => Promise.reject(new Error('Kho duyệt/số đo chưa
 // Sinh OpenAPI hoặc test feature khác: không được gọi hạ tầng duyệt chứng từ và số đo.
 export function createStubReviewDeps(): Pick<
   AppDependencies,
+  | 'scanQuota'
+  | 'aiBilling'
+  | 'aiRouting'
   | 'review'
   | 'measurements'
   | 'labResults'
@@ -24,6 +30,9 @@ export function createStubReviewDeps(): Pick<
   | 'heavyRateLimit'
 > {
   return {
+    scanQuota: createStubScanQuotaDeps(),
+    aiRouting: createStubAiRoutingDeps(),
+    aiBilling: createStubAiBillingDeps(),
     privacy: createStubPrivacyDeps(),
     review: { repository: { withFamily: notConfigured }, reader: { get: notConfigured } },
     medications: { withFamily: notConfigured },

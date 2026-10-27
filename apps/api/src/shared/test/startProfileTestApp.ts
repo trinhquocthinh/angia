@@ -1,3 +1,6 @@
+import { createStubScanQuotaDeps } from './createStubScanQuotaDeps.js';
+import { createStubAiBillingDeps } from './createStubAiBillingDeps.js';
+import { createStubAiRoutingDeps } from './createStubAiRoutingDeps.js';
 import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
 import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
 import { createMyConsentRepository } from '@src/features/myConsent/infrastructure/createMyConsentRepository.js';
@@ -90,6 +93,9 @@ function buildApp(
     },
     familyAdmin: createFakeFamilyAdminRepository().repository,
     aiBudget: createStubAiBudgetDeps(),
+    aiRouting: createStubAiRoutingDeps(),
+    aiBilling: createStubAiBillingDeps(),
+    scanQuota: createStubScanQuotaDeps(),
     profiles: { repository: createProfileRepository(database, boss), storage: memory.profileStorage },
     consentInvitations: {
       repository: createInvitationRepository(database),

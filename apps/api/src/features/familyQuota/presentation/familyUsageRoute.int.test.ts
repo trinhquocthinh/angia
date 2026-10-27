@@ -1,3 +1,4 @@
+import { seedOcrAdmission } from '@src/shared/test/seedOcrAdmission.js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { budgetMonth, type FamilyUsage, type HealthProfile } from '@angia/contracts';
 import { seedQuotaDocument } from '@src/shared/test/seedQuotaDocument.js';
@@ -15,6 +16,7 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
     for (const key of ['a', 'b'] as const) {
       const familyId = await t.family();
       const main = await t.session(familyId);
+      await seedOcrAdmission(t.owner, familyId);
       const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Bà' });
       owners[key] = { familyId, main, profileId: ((await created.json()) as HealthProfile).id };
     }
@@ -72,7 +74,7 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
     expect(usage.storage.usedBytes).toBe(2);
   });
 
-  it('TC-306: aiOcr theo trần gia đình tháng hiện tại; chưa có dòng chi tiêu thì 0% và không ghi DB', async () => {
+  it('TC-627: aiOcr theo quota lượt; tiền gia đình lịch sử không chặn OCR', async () => {
     const month = budgetMonth(new Date());
     const before = await (await t.call(owners.b.main, 'GET', '/api/family/usage')).json();
     expect((before as FamilyUsage).aiOcr).toEqual({
@@ -95,7 +97,18 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
       [owners.a.familyId, month],
     );
     const usage = (await (await t.call(owners.a.main, 'GET', '/api/family/usage')).json()) as FamilyUsage;
-    expect(usage.aiOcr).toEqual({ month, usedPercent: 98, anyUsed: true, exhausted: true });
+    expect(usage.aiOcr).toEqual({ month, usedPercent: 0, anyUsed: false, exhausted: false });
+    await t.owner.query('UPDATE family_scan_quotas SET used_scans=20 WHERE family_id=$1', [
+      owners.a.familyId,
+    ]);
+    const exhausted = (await (await t.call(owners.a.main, 'GET', '/api/family/usage')).json()) as FamilyUsage;
+    expect(exhausted.aiOcr).toEqual({
+      month,
+      usedPercent: 100,
+      anyUsed: true,
+      exhausted: true,
+      reason: 'scan_quota_exhausted',
+    });
   });
 
   it('TC-301: tài khoản không phải người chăm sóc chính → 403; không phiên → 401', async () => {

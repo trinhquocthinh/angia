@@ -221,3 +221,20 @@ export type { VisitSummary } from './visitSummary/visitSummarySchemas.js';
 export { pushSubscriptionSchema, pushConfigSchema } from './push/pushSchemas.js';
 export { myConsentSchema, myConsentWithdrawnSchema } from './profiles/myConsentSchemas.js';
 export type { MyConsent, MyConsentWithdrawn } from './profiles/myConsentSchemas.js';
+
+export { WOKU_OCR_MODELS, OPENROUTER_OCR_MODELS } from './aiRouting/aiModelCatalog.js';
+export { DEFAULT_AI_ROUTING_SETTINGS } from './aiRouting/aiRoutingDefaults.js';
+export {
+  aiRoutingSettingsSchema,
+  aiRoutingViewSchema,
+  updateAiRoutingRequestSchema,
+} from './aiRouting/aiRoutingSchemas.js';
+export type {
+  AiRoutingSettings,
+  AiRoutingView,
+  UpdateAiRoutingRequest,
+} from './aiRouting/aiRoutingSchemas.js';
+export { aiBillingViewSchema } from './aiBilling/aiBillingSchema.js';
+export type { AiBillingView } from './aiBilling/aiBillingSchema.js';
+
+export * from './scanQuota/scanQuotaSchemas.js';

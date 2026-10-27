@@ -13,7 +13,7 @@ describe('Phục hồi chứng từ kẹt extracting khi job chết (nợ #20, F
     });
     expect(await recoverDeadExtraction(memory.deps, job)).toEqual({ status: 'manual_entry' });
     expect(memory.statusHistory).toEqual(['manual_entry']);
-    expect(memory.ledger.spentUsd()).toBe(1);
+    expect(memory.ledger.spentUsd()).toBe(1.02);
     expect(memory.ledger.hasReservation()).toBe(false);
   });
 
@@ -24,7 +24,7 @@ describe('Phục hồi chứng từ kẹt extracting khi job chết (nợ #20, F
     });
     await recoverDeadExtraction(memory.deps, job);
     await recoverDeadExtraction(memory.deps, job);
-    expect(memory.ledger.spentUsd()).toBe(1);
+    expect(memory.ledger.spentUsd()).toBe(1.02);
   });
 
   it('chứng từ đã có kết quả (pending_review) → bỏ qua, không đổi trạng thái', async () => {

@@ -1,3 +1,4 @@
+import type { useFamilyScanQuota } from '@src/features/scanQuota/application/useFamilyScanQuota';
 import { useState } from 'react';
 import type { FamilyUsage } from '@angia/contracts';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
@@ -7,7 +8,7 @@ import { useUploadQueue } from '../../application/useUploadQueue';
 import { usageBlockReason } from '../../application/familyUsageState';
 import { useOpenUploadedDocument } from '../../application/useOpenUploadedDocument';
 import { UploadPickNotices } from './UploadPickNotices';
-import { FamilyUsageCard } from './FamilyUsageCard';
+import { UploadUsageCards } from './UploadUsageCards';
 import { ProfileChoices } from './ProfileChoices';
 import { RejectedFiles } from './RejectedFiles';
 import { UploadActions } from './UploadActions';
@@ -21,6 +22,7 @@ type UploadWorkspaceProps = {
   csrfToken: string;
   profiles: HealthProfile[];
   usage: FamilyUsage | null;
+  scanQuota: ReturnType<typeof useFamilyScanQuota>;
   loading: boolean;
   error: boolean;
   retry: () => void;
@@ -32,6 +34,7 @@ export function UploadWorkspace({
   csrfToken,
   profiles,
   usage,
+  scanQuota,
   ...status
 }: UploadWorkspaceProps) {
   const queue = useUploadQueue(uploader, prepare, csrfToken);
@@ -48,7 +51,7 @@ export function UploadWorkspace({
   return (
     <>
       <UploadIntro />
-      {usage && <FamilyUsageCard usage={usage} />}
+      <UploadUsageCards usage={usage} scanQuota={scanQuota} />
       <ProfileChoices
         profiles={profiles}
         {...status}

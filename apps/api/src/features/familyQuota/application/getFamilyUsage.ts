@@ -16,6 +16,6 @@ export async function getFamilyUsage(deps: FamilyUsageDependencies, familyId: st
     storage: { usedBytes: usage.storageBytes, limitBytes: limits.storageBytes },
     dailyUploads: { used: usage.uploadsToday, limit: limits.dailyUploads, resetsAt },
     pendingJobs: { used: usage.pendingJobs, limit: limits.pendingJobs },
-    aiOcr: { month, ...evaluateAiBudget(budget, deps.ai.estimatedCostUsd) },
+    aiOcr: { month, ...evaluateAiBudget(budget) },
   };
 }

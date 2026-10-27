@@ -1,64 +1,63 @@
+import { budgetMonth } from '@angia/contracts';
 import type pg from 'pg';
 import type { BudgetCall, ExtractionStore } from '../application/ports.js';
-import { adjustFamily, ensureFamilyMonth, reserveFamily } from './familySpendSql.js';
+import { OcrGateBlockedError } from '../application/OcrGateBlockedError.js';
+import { assertOcrMoneyGate } from './readOcrMoneyGate.js';
+import { lockScanRuntime } from './scanRuntimeLocks.js';
+import { reserveScanOperation } from './reserveScanOperation.js';
 
-// Tháng mới chép trần của tháng gần nhất; chưa có tháng nào thì lấy AI_DEFAULT_MONTHLY_CAP_USD (BR-018).
-const ENSURE_MONTH = `INSERT INTO extraction_spend (month, cap_usd)
-  VALUES ($1, COALESCE((SELECT cap_usd FROM extraction_spend ORDER BY month DESC LIMIT 1), $2::numeric))
-  ON CONFLICT (month) DO NOTHING`;
-
-// Chạy trong transaction withFamilyScope đang khóa FOR UPDATE chứng từ (Tech Spec §3, F03a; SPEC-031 thêm trần gia đình).
-// UPDATE có điều kiện khóa dòng tháng nên nhiều worker giữ chỗ đồng thời vẫn không vượt trần.
+// Tên port giữ tương thích nội bộ; CP5.4 chỉ giữ/trả LƯỢT, không ghi sổ tiền gia đình/hóa đơn ước tính.
 export function createBudgetLedger(
   client: pg.PoolClient,
   familyId: string,
-): Pick<ExtractionStore, 'reserveBudget' | 'settleBudget'> {
-  const ensureMonth = (call: BudgetCall) =>
-    client.query(ENSURE_MONTH, [call.month, call.defaultMonthlyCapUsd]);
+  now: () => Date = () => new Date(),
+): Pick<ExtractionStore, 'reserveBudget' | 'settleBudget' | 'dispatchBudget'> {
+  const check = async (call: BudgetCall) => {
+    const checkedAt = now();
+    if (budgetMonth(checkedAt) !== call.month) throw new OcrGateBlockedError('billing_unavailable');
+    await assertOcrMoneyGate(client, call.month, call.defaultMonthlyCapUsd, checkedAt);
+  };
   return {
     reserveBudget: async (id, call) => {
-      const held = await client.query(`SELECT 1 FROM extraction_reservations WHERE source_document_id = $1`, [
-        id,
-      ]);
-      if (held.rowCount) return true;
-      await ensureMonth(call);
-      await ensureFamilyMonth(client, familyId, call.month);
-      // Thứ tự khóa cố định: dòng gia đình rồi dòng tổng (SPEC-031) — không có vòng chờ giữa các worker.
-      if (!(await reserveFamily(client, familyId, call))) return false;
-      const reserved = await client.query(
-        `UPDATE extraction_spend SET spent_usd = spent_usd + $2::numeric, updated_at = now()
-         WHERE month = $1 AND spent_usd + $2::numeric <= cap_usd`,
-        [call.month, call.estimatedCostUsd],
-      );
-      if (reserved.rowCount !== 1) {
-        await adjustFamily(client, familyId, call.month, -call.estimatedCostUsd);
-        return false;
-      }
-      await client.query(
-        `INSERT INTO extraction_reservations (source_document_id, family_id, month, amount_usd)
-         VALUES ($1, $2, $3, $4)`,
-        [id, familyId, call.month, call.estimatedCostUsd],
-      );
-      return true;
+      const existing = await lockScanRuntime(client, familyId, id, call);
+      await check(call);
+      return reserveScanOperation(client, familyId, id, call.month, existing);
     },
-    settleBudget: async (id, costUsd, call) => {
-      const released = await client.query<{ month: string; amount_usd: string }>(
-        `DELETE FROM extraction_reservations WHERE source_document_id = $1 RETURNING month, amount_usd`,
-        [id],
-      );
-      const reservation = released.rows[0];
-      if (!reservation && costUsd <= 0) return;
-      if (!reservation) {
-        await ensureMonth(call);
-        await ensureFamilyMonth(client, familyId, call.month);
+    dispatchBudget: async (id, call) => {
+      const operation = await lockScanRuntime(client, familyId, id, call);
+      if (!operation || operation.state === 'released') throw new OcrGateBlockedError('scan_quota_exhausted');
+      if (operation.dispatch_attempts >= 6) throw new OcrGateBlockedError('dispatch_limit');
+      await check(call);
+      if (operation.state === 'held') {
+        if (operation.month !== call.month) throw new OcrGateBlockedError('billing_unavailable');
+        const consumed = await client.query(
+          `UPDATE family_scan_quotas SET held_scans=held_scans-1,used_scans=used_scans+1
+          WHERE family_id=$1 AND month=$2 AND held_scans>0`,
+          [familyId, operation.month],
+        );
+        if (consumed.rowCount !== 1) throw new Error('Không còn lượt giữ của operation');
+        await client.query(
+          `UPDATE scan_quota_months SET committed_remaining_scans=committed_remaining_scans-1
+          WHERE month=$1`,
+          [operation.month],
+        );
       }
-      const month = reservation?.month ?? call.month;
-      const delta = costUsd - Number(reservation?.amount_usd ?? 0);
-      await adjustFamily(client, familyId, month, delta);
       await client.query(
-        `UPDATE extraction_spend SET spent_usd = spent_usd + $2::numeric - $3::numeric, updated_at = now()
-         WHERE month = $1`,
-        [reservation?.month ?? call.month, costUsd, reservation?.amount_usd ?? 0],
+        `UPDATE ocr_operations SET state='dispatched',dispatch_attempts=dispatch_attempts+1,
+        dispatched_at=COALESCE(dispatched_at,$3) WHERE source_document_id=$1 AND family_id=$2`,
+        [id, familyId, now()],
+      );
+    },
+    settleBudget: async (id, _costUsd, call) => {
+      const operation = await lockScanRuntime(client, familyId, id, call);
+      if (operation?.state !== 'held') return;
+      await client.query(
+        'UPDATE family_scan_quotas SET held_scans=held_scans-1 WHERE family_id=$1 AND month=$2',
+        [familyId, operation.month],
+      );
+      await client.query(
+        "UPDATE ocr_operations SET state='released' WHERE source_document_id=$1 AND family_id=$2",
+        [id, familyId],
       );
     },
   };

@@ -1,7 +1,7 @@
 import type { ExtractionPayload } from '@angia/contracts';
 import type { DocumentExtractor } from '../application/ports.js';
 
-// AI_PROVIDER=fake (dev, test thủ công): không gọi mạng, không phát sinh chi phí (Setup gotcha 8.8).
+// AI_RUN_MODE=fake (dev, test thủ công): không gọi mạng, không phát sinh chi phí (Setup gotcha 8.8).
 const SAMPLE_PRESCRIPTION: ExtractionPayload = {
   type: 'prescription',
   issuedDate: '2026-10-01',
@@ -16,7 +16,7 @@ const SAMPLE_PRESCRIPTION: ExtractionPayload = {
       slots: ['morning'],
       durationDays: 30,
       longTerm: false,
-      note: 'Dữ liệu giả lập từ AI_PROVIDER=fake',
+      note: 'Dữ liệu giả lập từ AI_RUN_MODE=fake',
       totalQuantity: 30,
     },
   ],
@@ -24,12 +24,15 @@ const SAMPLE_PRESCRIPTION: ExtractionPayload = {
 
 export function createFakeExtractor(): DocumentExtractor {
   return {
-    extract: async () => ({
-      ok: true,
-      content: SAMPLE_PRESCRIPTION,
-      provider: 'fake',
-      model: 'fake',
-      costUsd: 0,
-    }),
+    extract: async (_image, beforeDispatch) => {
+      await beforeDispatch?.();
+      return {
+        ok: true,
+        content: SAMPLE_PRESCRIPTION,
+        provider: 'fake',
+        model: 'fake',
+        costUsd: 0,
+      };
+    },
   };
 }

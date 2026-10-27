@@ -1,8 +1,9 @@
+import type { useAdminScanQuota } from '@src/features/scanQuota/application/useAdminScanQuota';
+import type { useAiBilling } from '@src/features/aiBilling/application/useAiBilling';
+import type { useAiRouting } from '@src/features/aiRouting/application/useAiRouting';
 import type { useAdminWorkspace } from '../../application/useAdminWorkspace';
 import type { useAiBudget } from '../../application/useAiBudget';
-import type { useFamilyCaps } from '../../application/useFamilyCaps';
-import { FamilyCapsCard } from './FamilyCapsCard';
-import { AiBudgetCard } from './AiBudgetCard';
+import { AdminAiPanels } from './AdminAiPanels';
 import type { AdminCommand } from '../../application/ports';
 import type { AdminTask } from '../AdminTask';
 import { AdminLoadError } from './AdminLoadError';
@@ -12,27 +13,35 @@ import { FamilyCards } from './FamilyCards';
 import { PendingAccountsCard } from './PendingAccountsCard';
 import { FamilyAccessCard } from './FamilyAccessCard';
 
-export function AdminDataContent({
-  workspace,
-  aiBudget,
-  familyCaps,
-  onTask,
-  accountQuery,
-  onAccountQuery,
-  currentFamilyId,
-  onSubmit,
-  inlineError,
-}: {
+type AdminDataContentProps = {
   workspace: ReturnType<typeof useAdminWorkspace>;
   aiBudget: ReturnType<typeof useAiBudget>;
-  familyCaps: ReturnType<typeof useFamilyCaps>;
+  aiRouting: ReturnType<typeof useAiRouting>;
+  aiBilling: ReturnType<typeof useAiBilling>;
+  scanQuota: ReturnType<typeof useAdminScanQuota>;
+  currentAccountId: string;
   onTask: (task: AdminTask) => void;
   accountQuery: string;
   onAccountQuery: (query: string) => void;
   currentFamilyId: string | null;
   onSubmit: (command: AdminCommand) => void;
   inlineError: Error | null;
-}) {
+};
+
+export function AdminDataContent({
+  workspace,
+  aiBudget,
+  aiRouting,
+  aiBilling,
+  scanQuota,
+  currentAccountId,
+  onTask,
+  accountQuery,
+  onAccountQuery,
+  currentFamilyId,
+  onSubmit,
+  inlineError,
+}: AdminDataContentProps) {
   const { families, accounts, action } = workspace;
   const error = families.error ?? accounts.error;
   if (error) return <AdminLoadError error={error} families={families} accounts={accounts} />;
@@ -58,8 +67,14 @@ export function AdminDataContent({
           error={inlineError}
           onSubmit={onSubmit}
         />
-        <AiBudgetCard {...aiBudget} />
-        <FamilyCapsCard {...familyCaps} />
+        <AdminAiPanels
+          budget={aiBudget}
+          billing={aiBilling}
+          routing={aiRouting}
+          scanQuota={scanQuota}
+          accountId={currentAccountId}
+          accounts={accounts.data}
+        />
         <FamilyAccessCard />
       </aside>
     </div>

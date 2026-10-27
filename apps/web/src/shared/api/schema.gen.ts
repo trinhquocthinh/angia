@@ -905,6 +905,320 @@ export interface paths {
     };
     trace?: never;
   };
+  '/api/admin/scan-quotas': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc quota quét của tháng hiện tại */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Quota đã cấp và sức chứa hiện tại; chưa áp dụng runtime OCR */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AdminScanQuotaView'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_SCAN_QUOTA_CONFLICT / ERR_SCAN_QUOTA_UNAVAILABLE / ERR_SCAN_QUOTA_DECREASE */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/admin/scan-quota-policy': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Lưu chính sách cấp lượt quét giữ qua tháng */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['UpdateScanQuotaPolicyRequest'];
+        };
+      };
+      responses: {
+        /** @description Quota đã cấp và sức chứa hiện tại; chưa áp dụng runtime OCR */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AdminScanQuotaView'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_SCAN_QUOTA_CONFLICT / ERR_SCAN_QUOTA_UNAVAILABLE / ERR_SCAN_QUOTA_DECREASE */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/admin/scan-quota-grants': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Duyệt tường minh tổng lượt quét theo gia đình trong tháng */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['GrantScanQuotasRequest'];
+        };
+      };
+      responses: {
+        /** @description Quota đã cấp và sức chứa hiện tại; chưa áp dụng runtime OCR */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AdminScanQuotaView'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_SCAN_QUOTA_CONFLICT / ERR_SCAN_QUOTA_UNAVAILABLE / ERR_SCAN_QUOTA_DECREASE */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/family/scan-quota': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc lượt quét của gia đình trong phiên */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Chỉ số lượt quét, không có tiền hoặc định danh gia đình */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['FamilyScanQuota'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/admin/extraction-cap': {
     parameters: {
       query?: never;
@@ -1003,6 +1317,174 @@ export interface paths {
         };
       };
     };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/admin/ai-routing': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc cấu hình mong muốn của nhà cung cấp OCR, không trả key */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Cấu hình và phiên bản, chưa khẳng định worker đã áp dụng */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AiRoutingView'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: cần SystemAdmin và CSRF hợp lệ với PUT */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    /** Lưu cấu hình OCR và audit khi expectedVersion khớp */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['UpdateAiRoutingRequest'];
+        };
+      };
+      responses: {
+        /** @description Cấu hình đã lưu, version tăng một */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AiRoutingView'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: cần SystemAdmin và CSRF hợp lệ với PUT */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AI_ROUTING_CONFLICT */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/admin/ai-billing': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc phí thực đã xác nhận trong tháng Việt Nam và mức đầy đủ nguồn */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Metadata phí toàn hệ thống; actual chỉ có khi mọi nguồn đủ và mới */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AiBillingView'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: cần SystemAdmin */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -4473,6 +4955,60 @@ export interface components {
           /** @enum {string} */
           action: 'remove';
         };
+    AdminScanQuotaView: {
+      month: string;
+      version: number;
+      policy: components['schemas']['ScanQuotaPolicy'];
+      monthlyCapUsd: string;
+      actualSpendUsd: string | null;
+      /** @enum {string} */
+      billingStatus: 'ready' | 'incomplete' | 'stale' | 'unconfigured';
+      committedRemainingScans: string;
+      availableAdditionalScans: string | null;
+      overAllocatedScans: string | null;
+      families: {
+        /** Format: uuid */
+        familyId: string;
+        familyName: string;
+        quota: components['schemas']['FamilyScanQuota'];
+        previousApprovedScans: number | null;
+      }[];
+      /** @enum {boolean} */
+      runtimeActive: true;
+    };
+    ScanQuotaPolicy: {
+      estimatedCostPerScanUsd: string;
+      reserveBasisPoints: number;
+      trialScans: number;
+    } | null;
+    FamilyScanQuota: {
+      month: string;
+      /** @enum {string} */
+      status: 'unconfigured' | 'trial' | 'approved';
+      grantedScans: number;
+      usedScans: number;
+      heldScans: number;
+      remainingScans: number;
+      /** @enum {boolean} */
+      runtimeActive: true;
+    };
+    UpdateScanQuotaPolicyRequest: {
+      month: string;
+      expectedVersion: number;
+      policy: components['schemas']['ScanQuotaPolicy'];
+    };
+    GrantScanQuotasRequest: {
+      month: string;
+      expectedVersion: number;
+      grants: {
+        /** Format: uuid */
+        familyId: string;
+        /** @enum {string} */
+        status: 'approved';
+        grantedScans: number;
+        reason: string;
+      }[];
+    };
     SpendResponse: {
       month: string;
       monthlyCapUsd: number;
@@ -4480,6 +5016,66 @@ export interface components {
     };
     UpdateExtractionCapRequest: {
       monthlyCapUsd: number;
+    };
+    AiRoutingView: {
+      version: number;
+      settings: components['schemas']['AiRoutingSettings'];
+      /** Format: date-time */
+      updatedAt: string | null;
+      /** Format: uuid */
+      updatedBy: string | null;
+    };
+    AiRoutingSettings: {
+      /** @enum {string} */
+      selectedProvider: 'woku' | 'openrouter';
+      woku: {
+        /** @enum {string} */
+        primaryModel: 'gemini-3-flash-preview' | 'gemini-3.8-flash';
+        /** @enum {string} */
+        fallbackModel: 'gemini-3-flash-preview' | 'gemini-3.8-flash';
+      };
+      openrouter: {
+        /** @enum {string} */
+        primaryModel: 'google/gemini-3.1-flash-lite' | 'moonshotai/kimi-k2.6';
+        /** @enum {string} */
+        fallbackModel: 'google/gemini-3.1-flash-lite' | 'moonshotai/kimi-k2.6';
+      };
+    };
+    UpdateAiRoutingRequest: {
+      expectedVersion: number;
+      settings: components['schemas']['AiRoutingSettings'];
+    };
+    AiBillingView: {
+      month: string;
+      /** @enum {string} */
+      unit: 'USD';
+      /** @enum {string} */
+      status: 'ready' | 'incomplete' | 'stale' | 'unconfigured';
+      confirmedSpendUsd: string;
+      actualSpendUsd: string | null;
+      /** Format: date-time */
+      lastSyncedAt: string | null;
+      sources: {
+        /** Format: uuid */
+        id: string;
+        /** @enum {string} */
+        provider: 'woku' | 'openrouter';
+        /** @enum {string} */
+        status:
+          | 'unverified'
+          | 'complete'
+          | 'gap'
+          | 'error'
+          | 'counter_reset'
+          | 'credential_changed'
+          | 'receipt_conflict'
+          | 'missing_credential';
+        confirmedSpendUsd: string;
+        /** Format: date-time */
+        lastAttemptAt: string | null;
+        /** Format: date-time */
+        lastCompleteAt: string | null;
+      }[];
     };
     FamilyUsage: {
       storage: {
@@ -4500,6 +5096,8 @@ export interface components {
         usedPercent: number;
         anyUsed: boolean;
         exhausted: boolean;
+        /** @enum {string} */
+        reason?: 'scan_quota_exhausted' | 'budget_exhausted' | 'billing_unavailable';
       };
     };
     FamilyExtractionCap: {

@@ -18,7 +18,13 @@ export function privacyFixture() {
     usage: { storageBytes: 0, uploadsToday: 0, pendingJobs: 0 },
     calls: [] as string[],
     // SPEC-031: ảnh chụp ngân sách AI trả cho bước duyệt.
-    aiBudget: { familySpentUsd: 0, familyCapUsd: 0.5, globalSpentUsd: 0, globalCapUsd: 5 },
+    aiBudget: {
+      grantedScans: 20,
+      usedScans: 0,
+      heldScans: 0,
+      billingAvailable: true,
+      budgetExhausted: false,
+    },
     inTx: false,
     onRead: () => {},
     target: { familyId: 'family', documentId: 'doc' },

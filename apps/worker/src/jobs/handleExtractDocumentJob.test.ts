@@ -46,4 +46,11 @@ describe('Job extract-document trên pg-boss', () => {
     await expect(handler({ ...job(0), data: { documentId: 'x' } })).rejects.toThrow();
     expect(memory.extractorCalls).toEqual([]);
   });
+  it('TC-603: worker trùng đang giữ khóa ném lỗi thử lại, không đọc ảnh hoặc gọi AI', async () => {
+    const memory = deps(new Error('không được gọi'));
+    memory.deps.repository.runExclusive = async () => null;
+    await expect(handleExtractDocumentJob(memory.deps, logger)(job(0))).rejects.toThrow('extraction_busy');
+    expect(memory.extractorCalls).toHaveLength(0);
+    expect(memory.statusHistory).toEqual([]);
+  });
 });
