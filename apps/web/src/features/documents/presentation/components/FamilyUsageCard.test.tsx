@@ -1,4 +1,4 @@
-import type { FamilyUsage } from '@angia/contracts';
+import type { FamilyScanQuota, FamilyUsage } from '@angia/contracts';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { FamilyUsageCard } from './FamilyUsageCard';
@@ -48,5 +48,36 @@ describe('TC-302 — thẻ "Mức sử dụng của gia đình" (SPEC-030)', () 
       />,
     );
     expect(html).toContain('Đọc chữ tự động tháng này: đã dùng dưới 1%');
+  });
+
+  const quota: FamilyScanQuota = {
+    month: '2026-10',
+    status: 'approved',
+    grantedScans: 20,
+    usedScans: 3,
+    heldScans: 1,
+    remainingScans: 16,
+    runtimeActive: true,
+  };
+
+  it('có hạn mức lượt thì hiện số lượt đã dùng (gồm đang giữ) / lượt được cấp thay cho phần trăm', () => {
+    const html = renderToStaticMarkup(<FamilyUsageCard usage={usage} scanQuota={quota} />);
+    expect(html).toContain('Đọc chữ tự động tháng này: 4 / 20 lượt');
+    expect(html).toContain('aria-valuenow="4"');
+    expect(html).toContain('aria-valuemax="20"');
+    expect(html).not.toContain('%</span>');
+  });
+
+  it('chưa dùng lượt nào thì hiện 0 / 20 lượt', () => {
+    const fresh = { ...quota, usedScans: 0, heldScans: 0, remainingScans: 20 };
+    const html = renderToStaticMarkup(<FamilyUsageCard usage={usage} scanQuota={fresh} />);
+    expect(html).toContain('Đọc chữ tự động tháng này: 0 / 20 lượt');
+  });
+
+  it('gia đình chưa được cấp lượt tháng này thì nêu rõ, thanh đầy', () => {
+    const none = { ...quota, status: 'unconfigured' as const, grantedScans: 0, usedScans: 0, heldScans: 0 };
+    const html = renderToStaticMarkup(<FamilyUsageCard usage={usage} scanQuota={none} />);
+    expect(html).toContain('Đọc chữ tự động tháng này: chưa được cấp lượt');
+    expect(html).toContain('width:100%');
   });
 });

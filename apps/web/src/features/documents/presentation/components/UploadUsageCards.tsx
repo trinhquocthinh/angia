@@ -11,7 +11,7 @@ export function UploadUsageCards({
 }) {
   return (
     <>
-      {usage && <FamilyUsageCard usage={usage} />}
+      {usage && <FamilyUsageCard usage={usage} scanQuota={scanQuota.data ?? null} />}
       <FamilyScanQuotaCard
         quota={scanQuota.data ?? null}
         loading={scanQuota.isPending}
