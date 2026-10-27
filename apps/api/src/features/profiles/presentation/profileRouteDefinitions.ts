@@ -5,6 +5,7 @@ import {
   deleteHealthProfileRequestSchema,
   errorResponseSchema,
   healthProfileSchema,
+  profileListItemSchema,
   linkableAccountSchema,
 } from '@angia/contracts';
 
@@ -22,7 +23,7 @@ export const listProfilesRoute = createRoute({
   tags: ['profiles'],
   summary: 'Hồ sơ của gia đình hiện tại',
   responses: {
-    200: { description: 'Hồ sơ, cũ nhất trước', content: json(z.array(healthProfileSchema)) },
+    200: { description: 'Hồ sơ, cũ nhất trước', content: json(z.array(profileListItemSchema)) },
     ...guards,
   },
 });
@@ -40,7 +41,7 @@ export const createProfileRoute = createRoute({
   method: 'post',
   path: base,
   tags: ['profiles'],
-  summary: 'Tạo hồ sơ chưa xác nhận đồng thuận',
+  summary: 'Tạo hồ sơ, tùy chọn cam kết hoặc tự xác nhận đồng thuận',
   request: { body: { required: true, content: json(createHealthProfileRequestSchema) } },
   responses: {
     201: { description: 'Hồ sơ đã tạo', content: json(healthProfileSchema) },

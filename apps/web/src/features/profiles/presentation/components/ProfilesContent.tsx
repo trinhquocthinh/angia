@@ -1,15 +1,15 @@
 import { ProfileIcon } from './ProfileIcon';
 import { AddProfileTile } from './AddProfileTile';
 import { Link } from '@tanstack/react-router';
-import type { HealthProfile } from '../../application/ports';
+import type { ProfileListItem } from '../../application/ports';
 import { ProfileCard } from './ProfileCard';
 type ProfilesContentProps = {
-  profiles: HealthProfile[];
+  profiles: ProfileListItem[];
   loading: boolean;
   error: boolean;
   retry: () => void;
-  onConsent: (profile: HealthProfile) => void;
-  onDelete: (profile: HealthProfile) => void;
+  onConsent: (profile: ProfileListItem) => void;
+  onDelete: (profile: ProfileListItem) => void;
 };
 export function ProfilesContent({
   profiles,

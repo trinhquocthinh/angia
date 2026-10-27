@@ -1,18 +1,21 @@
 import type { LinkableAccount } from '../../application/ports';
 import { ProfileIdentityFields } from './ProfileIdentityFields';
+type ProfileFormFieldsProps = {
+  errors: { displayName?: string; birthYear?: string; linkedAccountId?: string };
+  accounts: LinkableAccount[];
+  accountsLoading: boolean;
+  accountsError: boolean;
+  retry: () => void;
+  currentAccountId: string;
+};
 export function ProfileFormFields({
   errors,
   accounts,
   accountsLoading,
   accountsError,
   retry,
-}: {
-  errors: { displayName?: string; birthYear?: string; linkedAccountId?: string };
-  accounts: LinkableAccount[];
-  accountsLoading: boolean;
-  accountsError: boolean;
-  retry: () => void;
-}) {
+  currentAccountId,
+}: ProfileFormFieldsProps) {
   return (
     <>
       <ProfileIdentityFields errors={errors} />
@@ -31,7 +34,9 @@ export function ProfileFormFields({
           <option value="">Không liên kết tài khoản</option>
           {accounts.map((account) => (
             <option key={account.id} value={account.id}>
-              {account.displayName}
+              {account.id === currentAccountId
+                ? `Đây là hồ sơ của tôi — ${account.displayName}`
+                : account.displayName}
             </option>
           ))}
         </select>

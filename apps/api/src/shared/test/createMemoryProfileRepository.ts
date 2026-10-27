@@ -16,12 +16,13 @@ export function createMemoryProfileRepository(accounts: Account[] = []): Profile
       const findAccount = (id: string) => accounts.find((a) => a.id === id && a.familyId === familyId);
       const store: ProfileStore = {
         listProfiles: async () => profiles.filter((p) => p.familyId === familyId),
+        listConsentAccounts: async () => accounts.filter((a) => a.familyId === familyId),
         listLinkableAccounts: async () =>
           accounts
             .filter((a) => a.familyId === familyId && !a.healthProfileId)
             .map(({ id, displayName }) => ({ id, displayName })),
         lockAccount: async (id) => findAccount(id) ?? null,
-        insertProfile: async (input) => {
+        insertProfile: async (input, receipt) => {
           const profile: HealthProfile = {
             id: `profile-${profiles.length}`,
             familyId,
@@ -36,6 +37,7 @@ export function createMemoryProfileRepository(accounts: Account[] = []): Profile
             consentWithdrawnAt: null,
             consentWithdrawnBy: null,
             createdAt: new Date('2026-10-06T00:00:00Z'),
+            ...receipt,
           };
           profiles.push(profile);
           return profile;
@@ -44,6 +46,14 @@ export function createMemoryProfileRepository(accounts: Account[] = []): Profile
           findAccount(id)!.healthProfileId = profileId;
         },
         lockProfile: async (id) => profiles.find((p) => p.id === id && p.familyId === familyId) ?? null,
+        findLinkedAccount: async (id) =>
+          accounts.find((a) => a.familyId === familyId && a.healthProfileId === id) ?? null,
+        saveConsentReceipt: async (id, receipt) => {
+          const profile = profiles.find((p) => p.id === id && p.familyId === familyId)!;
+          Object.assign(profile, receipt);
+          return profile;
+        },
+        revokePendingInvitations: async () => {},
         deleteProfile: async (id) => {
           profiles.splice(
             profiles.findIndex((p) => p.id === id),

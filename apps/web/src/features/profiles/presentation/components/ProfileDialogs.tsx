@@ -1,6 +1,6 @@
-import type { HealthProfile, ProfilesRepository, ProfileSession } from '../../application/ports';
+import type { ProfileListItem, ProfilesRepository, ProfileSession } from '../../application/ports';
 import { DeleteProfileDialog } from './DeleteProfileDialog';
-import { InvitationManagerDialog } from './InvitationManagerDialog';
+import { ProfileConsentDialog } from './ProfileConsentDialog';
 // Dialog chỉ mở cho hồ sơ thuộc gia đình của phiên hiện tại; key theo phiên để đổi tài khoản là dựng lại.
 export function ProfileDialogs({
   session,
@@ -13,21 +13,24 @@ export function ProfileDialogs({
 }: {
   session: ProfileSession;
   repository: ProfilesRepository;
-  profiles: HealthProfile[];
-  consent: HealthProfile | null;
-  deleting: HealthProfile | null;
+  profiles: ProfileListItem[];
+  consent: ProfileListItem | null;
+  deleting: ProfileListItem | null;
   closeConsent: () => void;
   closeDelete: () => void;
 }) {
   const family = session.family;
   if (!family) return null;
-  const key = (profile: HealthProfile) => `${session.account.id}:${family.id}:${profile.id}`;
+  const currentConsent = profiles.find(
+    (profile) => profile.id === consent?.id && profile.familyId === family.id,
+  );
+  const key = (profile: ProfileListItem) => `${session.account.id}:${family.id}:${profile.id}`;
   return (
     <>
-      {consent && consent.familyId === family.id && (
-        <InvitationManagerDialog
-          key={key(consent)}
-          profile={profiles.find((profile) => profile.id === consent.id) ?? consent}
+      {currentConsent && (
+        <ProfileConsentDialog
+          key={key(currentConsent)}
+          profile={currentConsent}
           session={session}
           repository={repository}
           onClose={closeConsent}

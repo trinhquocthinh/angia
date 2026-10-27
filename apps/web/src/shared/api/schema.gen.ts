@@ -1701,7 +1701,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['HealthProfile'][];
+            'application/json': components['schemas']['ProfileListItem'][];
           };
         };
         /** @description ERR_UNAUTHENTICATED */
@@ -1725,7 +1725,7 @@ export interface paths {
       };
     };
     put?: never;
-    /** Tạo hồ sơ chưa xác nhận đồng thuận */
+    /** Tạo hồ sơ, tùy chọn cam kết hoặc tự xác nhận đồng thuận */
     post: {
       parameters: {
         query?: never;
@@ -1849,6 +1849,93 @@ export interface paths {
     };
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/consent-attestation': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Cam kết đồng thuận hoặc tự xác nhận trong phiên main */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['ConsentConfirmation'];
+        };
+      };
+      responses: {
+        /** @description Hồ sơ đã đồng thuận, giữ nguyên receipt nếu đã confirmed */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['HealthProfile'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: cần main và CSRF */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_INVITATION_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
     delete?: never;
     options?: never;
     head?: never;
@@ -5112,6 +5199,35 @@ export interface components {
     UpdateFamilyExtractionCapRequest: {
       capUsd: number | null;
     };
+    ProfileListItem: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      familyId: string;
+      displayName: string;
+      birthYear: number | null;
+      /** Format: date-time */
+      consentConfirmedAt: string | null;
+      /** Format: uuid */
+      consentConfirmedBy: string | null;
+      /** @enum {string|null} */
+      consentBasis: 'self' | 'guardian' | null;
+      /** @enum {string} */
+      consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed' | 'withdrawn';
+      /** @enum {string|null} */
+      consentSource: 'legacy_attestation' | 'invitation' | 'main_attested' | 'self' | null;
+      consentRespondentName: string | null;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string|null} */
+      consentAction: 'attestation' | 'self' | 'invitation' | null;
+      consentConfirmedByName: string | null;
+    };
+    LinkableAccount: {
+      /** Format: uuid */
+      id: string;
+      displayName: string;
+    };
     HealthProfile: {
       /** Format: uuid */
       id: string;
@@ -5128,22 +5244,32 @@ export interface components {
       /** @enum {string} */
       consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed' | 'withdrawn';
       /** @enum {string|null} */
-      consentSource: 'legacy_attestation' | 'invitation' | null;
+      consentSource: 'legacy_attestation' | 'invitation' | 'main_attested' | 'self' | null;
       consentRespondentName: string | null;
       /** Format: date-time */
       createdAt: string;
-    };
-    LinkableAccount: {
-      /** Format: uuid */
-      id: string;
-      displayName: string;
     };
     CreateHealthProfileRequest: {
       displayName: string;
       birthYear?: number;
       /** Format: uuid */
       linkedAccountId?: string;
+      consent?: components['schemas']['ConsentConfirmation'];
     };
+    ConsentConfirmation:
+      | {
+          /** @enum {string} */
+          kind: 'attestation';
+          /** @enum {boolean} */
+          attestation: true;
+          /** @enum {string} */
+          basis: 'self' | 'guardian';
+          respondentName: string;
+        }
+      | {
+          /** @enum {string} */
+          kind: 'self';
+        };
     ConfirmConsentRequest: {
       /** @enum {string} */
       confirmedBy: 'self' | 'guardian';

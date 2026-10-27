@@ -6,6 +6,7 @@ describe('Form tạo hồ sơ và lựa chọn đồng thuận rõ ràng', () =>
   it('hiển thị tài khoản có thể liên kết, không tự xác nhận', () => {
     const html = renderToStaticMarkup(
       <NewProfileForm
+        currentAccountId="a"
         accounts={[{ id: 'a', displayName: 'An' }]}
         accountsLoading={false}
         accountsError={false}
@@ -16,11 +17,14 @@ describe('Form tạo hồ sơ và lựa chọn đồng thuận rõ ràng', () =>
     );
     expect(html).toContain('Không liên kết tài khoản');
     expect(html).toContain('An');
-    expect(html).toContain('Hồ sơ mới chưa có xác nhận từ người thân');
+    expect(html).toContain('Tôi đã hỏi và được đồng ý');
+    expect(html).not.toContain('checked=');
+    expect(html).toContain('Đây là hồ sơ của tôi');
   });
   it('khóa form và hiển thị đang lưu trong lúc gửi', () => {
     const html = renderToStaticMarkup(
       <NewProfileForm
+        currentAccountId="a"
         accounts={[]}
         accountsLoading={false}
         accountsError={false}

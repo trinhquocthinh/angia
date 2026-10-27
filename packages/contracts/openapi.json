@@ -1020,6 +1020,135 @@
           "capUsd"
         ]
       },
+      "ProfileListItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "familyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "birthYear": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "consentConfirmedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "consentConfirmedBy": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "consentBasis": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "self",
+              "guardian",
+              null
+            ]
+          },
+          "consentStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "invited",
+              "declined",
+              "confirmed",
+              "withdrawn"
+            ]
+          },
+          "consentSource": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "legacy_attestation",
+              "invitation",
+              "main_attested",
+              "self",
+              null
+            ]
+          },
+          "consentRespondentName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "consentAction": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "attestation",
+              "self",
+              "invitation",
+              null
+            ]
+          },
+          "consentConfirmedByName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "familyId",
+          "displayName",
+          "birthYear",
+          "consentConfirmedAt",
+          "consentConfirmedBy",
+          "consentBasis",
+          "consentStatus",
+          "consentSource",
+          "consentRespondentName",
+          "createdAt",
+          "consentAction",
+          "consentConfirmedByName"
+        ]
+      },
+      "LinkableAccount": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName"
+        ]
+      },
       "HealthProfile": {
         "type": "object",
         "properties": {
@@ -1083,6 +1212,8 @@
             "enum": [
               "legacy_attestation",
               "invitation",
+              "main_attested",
+              "self",
               null
             ]
           },
@@ -1111,22 +1242,6 @@
           "createdAt"
         ]
       },
-      "LinkableAccount": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "displayName": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "displayName"
-        ]
-      },
       "CreateHealthProfileRequest": {
         "type": "object",
         "properties": {
@@ -1142,10 +1257,66 @@
           "linkedAccountId": {
             "type": "string",
             "format": "uuid"
+          },
+          "consent": {
+            "$ref": "#/components/schemas/ConsentConfirmation"
           }
         },
         "required": [
           "displayName"
+        ]
+      },
+      "ConsentConfirmation": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "attestation"
+                ]
+              },
+              "attestation": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              },
+              "basis": {
+                "type": "string",
+                "enum": [
+                  "self",
+                  "guardian"
+                ]
+              },
+              "respondentName": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              }
+            },
+            "required": [
+              "kind",
+              "attestation",
+              "basis",
+              "respondentName"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "self"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          }
         ]
       },
       "ConfirmConsentRequest": {
@@ -5469,7 +5640,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/HealthProfile"
+                    "$ref": "#/components/schemas/ProfileListItem"
                   }
                 }
               }
@@ -5501,7 +5672,7 @@
         "tags": [
           "profiles"
         ],
-        "summary": "Tạo hồ sơ chưa xác nhận đồng thuận",
+        "summary": "Tạo hồ sơ, tùy chọn cam kết hoặc tự xác nhận đồng thuận",
         "requestBody": {
           "required": true,
           "content": {
@@ -5608,6 +5779,97 @@
           },
           "403": {
             "description": "ERR_FORBIDDEN: cần main cùng gia đình và CSRF cho request ghi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/consent-attestation": {
+      "post": {
+        "tags": [
+          "profiles"
+        ],
+        "summary": "Cam kết đồng thuận hoặc tự xác nhận trong phiên main",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentConfirmation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Hồ sơ đã đồng thuận, giữ nguyên receipt nếu đã confirmed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthProfile"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần main và CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_INVITATION_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
             "content": {
               "application/json": {
                 "schema": {
