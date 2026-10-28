@@ -16,6 +16,8 @@ export interface BudgetCall {
   defaultMonthlyCapUsd: number;
   /** Tương thích cấu hình cũ; CP5.4 không dùng trần USD riêng để chặn OCR. */
   defaultFamilyCapUsd: number;
+  /** CP5.5: số lượt hệ thống tự cấp cho gia đình chưa có dòng quota tháng; thiếu = 0. */
+  defaultMonthlyScans?: number;
 }
 export interface ExtractionStore {
   findDocument(id: string): Promise<DocumentToExtract | null>;
@@ -64,6 +66,7 @@ export interface BudgetPolicy {
   estimatedCostUsd: number;
   defaultMonthlyCapUsd: number;
   defaultFamilyCapUsd: number;
+  defaultMonthlyScans?: number;
   now(): Date;
 }
 export interface ExtractionDependencies {

@@ -1,25 +1,18 @@
 import { useState } from 'react';
-import type {
-  AdminScanQuotaView,
-  GrantScanQuotasRequest,
-  UpdateScanQuotaPolicyRequest,
-} from '@angia/contracts';
+import type { AdminScanQuotaView, GrantScanQuotasRequest } from '@angia/contracts';
 import { AdminRequestError } from '@src/features/family/application/AdminRequestError';
-import { ScanQuotaPolicyForm } from './ScanQuotaPolicyForm';
 import { ScanQuotaGrantForm } from './ScanQuotaGrantForm';
 export function ScanQuotaEditor({
   initial,
   pending,
   error,
   saved,
-  onPolicy,
   onGrant,
 }: {
   initial: AdminScanQuotaView;
   pending: boolean;
   error: Error | null;
   saved: boolean;
-  onPolicy(input: UpdateScanQuotaPolicyRequest): Promise<unknown>;
   onGrant(input: GrantScanQuotasRequest): Promise<unknown>;
 }) {
   const [snapshot] = useState(initial);
@@ -40,7 +33,6 @@ export function ScanQuotaEditor({
           Đã lưu hạn mức lượt.
         </p>
       )}
-      <ScanQuotaPolicyForm initial={snapshot} pending={pending} onSave={onPolicy} />
       <ScanQuotaGrantForm initial={snapshot} pending={pending} onSave={onGrant} />
     </div>
   );

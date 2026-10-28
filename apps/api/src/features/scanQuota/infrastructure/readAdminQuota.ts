@@ -1,29 +1,23 @@
 import { budgetMonth, type AdminScanQuotaView } from '@angia/contracts';
 import { sql } from 'drizzle-orm';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
-import type { ScanQuotaContext } from '../application/ports.js';
-import { calculateScanCapacity } from '../domain/calculateScanCapacity.js';
+import type { ScanQuotaContext, ScanQuotaDefaults } from '../application/ports.js';
+import { effectiveCapacity } from './effectiveCapacity.js';
 import { loadQuotaState } from './loadQuotaState.js';
 import { readQuotaBilling } from './readQuotaBilling.js';
 import { toFamilyQuota } from './readFamilyQuota.js';
-import type { QuotaRow, QuotaState, QuotaTx } from './quotaTypes.js';
+import type { QuotaRow, QuotaTx } from './quotaTypes.js';
 export async function readAdminQuota(
   tx: QuotaTx,
   context: ScanQuotaContext,
-  state?: QuotaState,
+  defaults: ScanQuotaDefaults,
 ): Promise<AdminScanQuotaView> {
   const month = budgetMonth(context.now);
-  const allocation = state ?? (await loadQuotaState(tx, month));
+  const allocation = await loadQuotaState(tx, month, defaults);
   const billing = await readQuotaBilling(tx, month, context);
-  const capacity =
-    allocation.policy && billing.actualSpendUsd !== null
-      ? calculateScanCapacity({
-          capUsd: billing.monthlyCapUsd,
-          actualSpendUsd: billing.actualSpendUsd,
-          ...allocation.policy,
-          committedRemainingScans: allocation.committed,
-        })
-      : { availableAdditionalScans: null, overAllocatedScans: null };
+  const effective = effectiveCapacity(allocation, billing);
+  const { policy } = effective;
+  const capacity = effective.capacity ?? { availableAdditionalScans: null, overAllocatedScans: null };
   const rows = await tx.execute<{ id: string; name: string }>(
     sql`SELECT id, name FROM families ORDER BY created_at, id`,
   );
@@ -40,6 +34,7 @@ export async function readAdminQuota(
         quota: toFamilyQuota(
           month,
           quotas.rows.find((q) => q.month === month),
+          defaults.monthlyScans,
         ),
         previousApprovedScans: previous ? Number(previous.granted_scans) : null,
       };
@@ -49,7 +44,7 @@ export async function readAdminQuota(
   return {
     month,
     version: allocation.version,
-    policy: allocation.policy,
+    policy,
     monthlyCapUsd: billing.monthlyCapUsd,
     actualSpendUsd: billing.actualSpendUsd,
     billingStatus: billing.billingStatus,

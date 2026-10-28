@@ -37,7 +37,7 @@ export function createBudgetLedger(
         );
         if (consumed.rowCount !== 1) throw new Error('Không còn lượt giữ của operation');
         await client.query(
-          `UPDATE scan_quota_months SET committed_remaining_scans=committed_remaining_scans-1
+          `UPDATE scan_quota_months SET committed_remaining_scans=committed_remaining_scans-1,used_scans=used_scans+1
           WHERE month=$1`,
           [operation.month],
         );

@@ -1,8 +1,3 @@
-import { budgetMonth } from '@angia/contracts';
-import { lockQuotaActor } from '@src/features/scanQuota/infrastructure/lockQuotaActor.js';
-import { loadQuotaState } from '@src/features/scanQuota/infrastructure/loadQuotaState.js';
-import { lockQuotaBudget } from '@src/features/scanQuota/infrastructure/lockQuotaBudget.js';
-import { grantNewFamilyTrial } from '@src/features/scanQuota/infrastructure/grantNewFamilyTrial.js';
 import { revokeAccountPushSubscriptions } from './revokeAccountPushSubscriptions.js';
 import { asc, eq, sql } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
@@ -80,32 +75,13 @@ function createMembershipStore(tx: Executor): MembershipStore {
 const familyColumns = { id: families.id, name: families.name, createdAt: families.createdAt };
 
 // families/accounts không áp RLS (cấu trúc nhóm, không phải dữ liệu sức khỏe) nên chạy thẳng trên role app.
-export function createFamilyAdminRepository(
-  db: Database,
-  quota?: { defaultMonthlyCapUsd: number },
-): FamilyAdminRepository {
+export function createFamilyAdminRepository(db: Database): FamilyAdminRepository {
   return {
-    async createFamily(name, context) {
-      return db.transaction(async (tx) => {
-        if (quota && context) await lockQuotaActor(tx, context.actorId);
-        const state = quota && context ? await loadQuotaState(tx, budgetMonth(context.now), true) : null;
-        if (state?.policy && quota && context)
-          await lockQuotaBudget(tx, budgetMonth(context.now), {
-            now: context.now,
-            defaultMonthlyCapUsd: quota.defaultMonthlyCapUsd,
-          });
-        const [row] = await tx.insert(families).values({ name }).returning(familyColumns);
-        if (!row) throw new Error('INSERT families không trả về dòng nào');
-        if (state && quota && context)
-          await grantNewFamilyTrial(
-            tx,
-            row.id,
-            context.actorId,
-            { ...context, defaultMonthlyCapUsd: quota.defaultMonthlyCapUsd },
-            state,
-          );
-        return row;
-      });
+    // CP5.5: không cấp lượt dùng thử; gia đình mới tự có lượt mặc định tháng ở lần nhận diện đầu.
+    async createFamily(name) {
+      const [row] = await db.insert(families).values({ name }).returning(familyColumns);
+      if (!row) throw new Error('INSERT families không trả về dòng nào');
+      return row;
     },
 
     listFamilies: () =>

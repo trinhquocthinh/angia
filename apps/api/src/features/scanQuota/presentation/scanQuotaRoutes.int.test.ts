@@ -37,7 +37,7 @@ describe('Quota quét theo tháng với PostgreSQL và role app', () => {
   beforeEach(async () => {
     // Audit bất biến nên cô lập bằng TRUNCATE role owner trong fixture.
     await t.owner.query(
-      'TRUNCATE ocr_operations, scan_quota_audit, scan_quota_policy_audit, family_scan_quotas, scan_quota_months, scan_quota_policy, ai_provider_charges, ai_billing_sources',
+      'TRUNCATE ocr_operations, scan_quota_audit, scan_quota_policy_audit, family_scan_quotas, scan_quota_months, scan_quota_policy, ai_provider_charges, ai_billing_sources, extraction_spend CASCADE',
     );
   });
   it('TC-582: GET không ghi mặc định, unknown khác 0 và mọi phản hồi no-store', async () => {
@@ -48,7 +48,8 @@ describe('Quota quét theo tháng với PostgreSQL và role app', () => {
     const view = adminScanQuotaViewSchema.parse(await response.json());
     expect(view).toMatchObject({
       version: 0,
-      policy: null,
+      // CP5.5: thông số luôn lấy từ env, không ghi DB.
+      policy: { estimatedCostPerScanUsd: '0.100000000000', reserveBasisPoints: 0, trialScans: 0 },
       actualSpendUsd: null,
       availableAdditionalScans: null,
       runtimeActive: true,
@@ -107,7 +108,10 @@ describe('Quota quét theo tháng với PostgreSQL và role app', () => {
     expect((await grant(familyId, 1, 1)).status).toBe(409);
     await seedBilling();
     expect((await grant(familyId, 40, 1)).status).toBe(200);
-    expect((await policy(2, { ...POLICY, reserveBasisPoints: 10000 })).status).toBe(200);
+    // CP5.5: chính sách theo env; hạ trần tiền tháng về 0 để thấy phần cấp vượt.
+    await t.owner.query(
+      "INSERT INTO extraction_spend (month,cap_usd) VALUES ('2026-10',0) ON CONFLICT (month) DO UPDATE SET cap_usd=0",
+    );
     expect(await read()).toMatchObject({
       committedRemainingScans: '40',
       availableAdditionalScans: '0',
@@ -133,20 +137,6 @@ describe('Quota quét theo tháng với PostgreSQL và role app', () => {
     }
     expect((await t.app.request('/api/family/scan-quota')).status).toBe(401);
     expect((await t.call(t.admin, 'GET', '/api/family/scan-quota')).status).toBe(403);
-  });
-  it('TC-587: trial chỉ lúc tạo mới, thiếu điều kiện vẫn tạo gia đình', async () => {
-    const create = () => t.call(t.admin, 'POST', '/api/admin/families', { name: 'Nhà mới' });
-    expect((await create()).status).toBe(201);
-    await policy();
-    await seedBilling();
-    const response = await create();
-    expect(response.status).toBe(201);
-    const family = (await response.json()) as { id: string };
-    expect((await read()).families.find((f) => f.familyId === family.id)?.quota).toMatchObject({
-      status: 'trial',
-      grantedScans: 2,
-    });
-    expect((await read()).committedRemainingScans).toBe('2');
   });
   it('TC-588: chặn xác thực/CSRF, request lạ và tháng cũ', async () => {
     const unauthenticated = await t.app.request(PATH);

@@ -1,8 +1,8 @@
 interface CurrentGrant {
-  status: 'trial' | 'approved';
+  status: 'default' | 'trial' | 'approved';
   grantedScans: number;
 }
-// Chỉ Admin mới duyệt approved; trial chỉ phát một lần tại thời điểm tạo gia đình mới.
+// Chỉ Admin mới duyệt approved; gia đình chưa có dòng tháng được tính như lượt mặc định (CP5.5).
 export function decideScanGrant(current: CurrentGrant | null, grantedScans: number) {
   const delta = grantedScans - (current?.grantedScans ?? 0);
   return delta < 0

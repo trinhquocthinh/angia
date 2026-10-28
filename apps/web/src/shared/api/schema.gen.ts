@@ -5071,7 +5071,7 @@ export interface components {
     FamilyScanQuota: {
       month: string;
       /** @enum {string} */
-      status: 'unconfigured' | 'trial' | 'approved';
+      status: 'unconfigured' | 'default' | 'trial' | 'approved';
       grantedScans: number;
       usedScans: number;
       heldScans: number;

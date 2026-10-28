@@ -1,7 +1,12 @@
 import type { AdminScanQuotaView } from '@angia/contracts';
 type Family = AdminScanQuotaView['families'][number];
 export function ScanQuotaFamilyDetails({ family }: { family: Family }) {
-  const status = { unconfigured: 'Chưa cấp lượt', trial: 'Dùng thử', approved: 'Đã duyệt' };
+  const status = {
+    unconfigured: 'Chưa cấp lượt',
+    default: 'Mặc định',
+    trial: 'Dùng thử',
+    approved: 'Đã duyệt',
+  };
   return (
     <>
       <p className="m-0 break-all text-[11px] text-[#707975]">{family.familyId}</p>

@@ -90,7 +90,14 @@ const aiPolicy = {
   estimatedCostUsd: config.AI_ESTIMATED_COST_USD,
   defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,
   defaultFamilyCapUsd: config.AI_DEFAULT_FAMILY_MONTHLY_CAP_USD,
+  defaultMonthlyScans: config.SCAN_QUOTA_DEFAULT_MONTHLY,
   now: () => new Date(),
+};
+// CP5.5: lượt mặc định/tháng và thông số dự toán lấy từ env thay form chính sách.
+const scanQuotaDefaults = {
+  monthlyScans: config.SCAN_QUOTA_DEFAULT_MONTHLY,
+  reserveBasisPoints: Math.round(config.SCAN_QUOTA_RESERVE_PERCENT * 100),
+  initialCostPerScanUsd: config.SCAN_QUOTA_INITIAL_COST_PER_SCAN_USD,
 };
 const app = createApp({
   push: createPushDependencies(db, config),
@@ -117,9 +124,9 @@ const app = createApp({
     secureCookies: config.STACK !== 'dev',
     logger,
   },
-  familyAdmin: createFamilyAdminRepository(db, { defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD }),
+  familyAdmin: createFamilyAdminRepository(db),
   scanQuota: {
-    repository: createScanQuotaRepository(db, boss),
+    repository: createScanQuotaRepository(db, scanQuotaDefaults, boss),
     now: () => new Date(),
     defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,
   },

@@ -54,11 +54,13 @@ describe('Cấu hình worker', () => {
     expect(() => loadWorkerConfig({ ...base, AI_PROVIDER: undefined })).toThrow();
   });
 
-  it('ngân sách AI (BR-018): mặc định trần $5.00, ước tính $0.02; giá trị âm/không phải số bị từ chối', () => {
+  it('ngân sách AI (BR-018, CP5.5): mặc định trần $10, 10 lượt/gia đình, ước tính $0.02; giá trị âm bị từ chối', () => {
     expect(loadWorkerConfig(base)).toMatchObject({
-      AI_DEFAULT_MONTHLY_CAP_USD: 5,
+      AI_DEFAULT_MONTHLY_CAP_USD: 10,
+      SCAN_QUOTA_DEFAULT_MONTHLY: 10,
       AI_ESTIMATED_COST_USD: 0.02,
     });
+    expect(() => loadWorkerConfig({ ...base, SCAN_QUOTA_DEFAULT_MONTHLY: '-1' })).toThrow();
     expect(
       loadWorkerConfig({ ...base, AI_DEFAULT_MONTHLY_CAP_USD: '2.50', AI_ESTIMATED_COST_USD: '0.01' }),
     ).toMatchObject({ AI_DEFAULT_MONTHLY_CAP_USD: 2.5, AI_ESTIMATED_COST_USD: 0.01 });

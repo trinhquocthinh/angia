@@ -10,14 +10,6 @@ export interface ScanQuotaRepository {
   savePolicy(input: UpdateScanQuotaPolicyRequest, csrfToken: string): Promise<AdminScanQuotaView>;
   grant(input: GrantScanQuotasRequest, csrfToken: string): Promise<AdminScanQuotaView>;
 }
-export interface PolicyDraft {
-  month: string;
-  expectedVersion: number;
-  estimatedCostPerScanUsd: string;
-  reservePercent: string;
-  trialScans: string;
-}
-export type PolicyErrors = Partial<Record<keyof PolicyDraft, string>>;
 export interface GrantDraft {
   selected: boolean;
   grantedScans: string;

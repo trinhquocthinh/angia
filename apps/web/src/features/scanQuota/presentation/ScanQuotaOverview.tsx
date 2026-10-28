@@ -1,5 +1,6 @@
 import type { AdminScanQuotaView } from '@angia/contracts';
 import { formatBillingUsd } from '@src/features/aiBilling/application/formatBillingUsd';
+import { requiredCapIncreaseUsd } from '../application/requiredCapIncreaseUsd';
 export function ScanQuotaOverview({ view }: { view: AdminScanQuotaView }) {
   const billing = {
     ready: 'Đủ dữ liệu',
@@ -23,9 +24,11 @@ export function ScanQuotaOverview({ view }: { view: AdminScanQuotaView }) {
           ? 'Chưa thể xác định lượt cấp thêm'
           : `Có thể cấp thêm: ${view.availableAdditionalScans} lượt`}
       </p>
-      {!view.policy && (
-        <p role="status" className="m-0">
-          Chưa cấu hình chính sách. Nhập và lưu chính sách trước khi cấp lượt.
+      {view.policy && (
+        <p className="m-0">
+          Mặc định {view.policy.trialScans} lượt/gia đình/tháng · dự phòng{' '}
+          {view.policy.reserveBasisPoints / 100}% · ước tính{' '}
+          {formatBillingUsd(view.policy.estimatedCostPerScanUsd)}/lượt
         </p>
       )}
       {view.billingStatus !== 'ready' && (
@@ -35,7 +38,12 @@ export function ScanQuotaOverview({ view }: { view: AdminScanQuotaView }) {
       )}
       {view.overAllocatedScans !== null && view.overAllocatedScans !== '0' && (
         <p role="alert" className="m-0 text-[#93000a]">
-          Đang cấp vượt khả năng ngân sách {view.overAllocatedScans} lượt. Hạn mức đã cấp không tự giảm.
+          Đang cấp vượt khả năng ngân sách {view.overAllocatedScans} lượt; cần nâng chi phí cố định tháng thêm
+          khoảng{' '}
+          {view.policy
+            ? formatBillingUsd(requiredCapIncreaseUsd(view.policy, Number(view.overAllocatedScans)))
+            : 'chưa xác định'}
+          . Hạn mức đã cấp không tự giảm.
         </p>
       )}
     </div>

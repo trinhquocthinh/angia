@@ -45,7 +45,6 @@ export function ScanQuotaCard({ state }: { state: ReturnType<typeof useAdminScan
             pending={pending}
             error={mutation.error}
             saved={mutation.isSuccess}
-            onPolicy={(input) => saved(state.savePolicy(input))}
             onGrant={(input) => saved(state.grant(input))}
           />
         </>

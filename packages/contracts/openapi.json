@@ -487,6 +487,7 @@
             "type": "string",
             "enum": [
               "unconfigured",
+              "default",
               "trial",
               "approved"
             ]

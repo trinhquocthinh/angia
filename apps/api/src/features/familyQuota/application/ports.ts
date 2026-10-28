@@ -12,6 +12,8 @@ export interface AiBudgetPolicy {
   estimatedCostUsd: number;
   defaultMonthlyCapUsd: number;
   defaultFamilyCapUsd: number;
+  /** CP5.5: lượt mặc định khi gia đình chưa có dòng quota tháng; thiếu = 0. */
+  defaultMonthlyScans?: number;
   now(): Date;
 }
 export interface FamilyUsageRepository {

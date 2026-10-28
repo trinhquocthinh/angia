@@ -218,6 +218,13 @@
       "when": 1793115233733,
       "tag": "0030_consent_attestation",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1793158777063,
+      "tag": "0031_default_scan_quota",
+      "breakpoints": true
     }
   ]
 }
