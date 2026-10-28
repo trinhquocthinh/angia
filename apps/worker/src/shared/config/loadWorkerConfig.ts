@@ -33,13 +33,10 @@ const workerEnvSchema = z
     AI_PRIMARY_MODEL: z.string().min(1).default('google/gemini-3.1-flash-lite'),
     // Hai biến model cũ giữ tương thích; worker đọc model từ DB, không dùng chúng để định tuyến.
     AI_FALLBACK_MODEL: z.string().min(1).default('moonshotai/kimi-k2.6'),
-    // BR-018: trần khởi tạo khi chưa có tháng nào trong extraction_spend; ước tính giữ chỗ mỗi lần gọi AI.
+    // BR-018: trần khởi tạo khi chưa có tháng nào trong extraction_spend.
     AI_DEFAULT_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(10),
     // CP5.5: lượt mặc định mỗi gia đình/tháng; trùng giá trị API.
     SCAN_QUOTA_DEFAULT_MONTHLY: z.coerce.number().int().nonnegative().default(10),
-    AI_ESTIMATED_COST_USD: z.coerce.number().positive().default(0.02),
-    // SPEC-031: trần mặc định mỗi gia đình/tháng khi families.extraction_cap_usd để trống; trùng giá trị API.
-    AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(0.5),
     // BR-044/SPEC-032: dọn object S3 mồ côi — ân hạn (giờ), trần xóa mỗi lần quét, chạy thử chỉ đếm.
     ORPHAN_OBJECT_GRACE_HOURS: z.coerce.number().int().min(1).default(24),
     ORPHAN_OBJECT_MAX_DELETES: z.coerce.number().int().min(1).default(500),

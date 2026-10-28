@@ -41,9 +41,7 @@ describe.each(['main_attested', 'self'] as const)('LG-02: cổng OCR với recei
     await f.deps.repository.withFamily(f.ids.familyId, (store) =>
       store.reserveBudget(f.ids.documentId, {
         month: budgetMonth(f.deps.budget.now()),
-        estimatedCostUsd: 0.02,
         defaultMonthlyCapUsd: 5,
-        defaultFamilyCapUsd: 0.5,
         defaultMonthlyScans: 0,
       }),
     );

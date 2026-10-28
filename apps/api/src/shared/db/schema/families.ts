@@ -9,7 +9,7 @@ export const families = pgTable(
     id: uuid('id').primaryKey().$defaultFn(newId),
     name: text('name').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    // SPEC-031: trần chi phí OCR riêng của gia đình mỗi tháng; NULL = AI_DEFAULT_FAMILY_MONTHLY_CAP_USD.
+    // SPEC-031 (lịch sử): trần USD gia đình cũ; CP5.7 gỡ API, cột giữ làm dữ liệu lịch sử.
     extractionCapUsd: numeric('extraction_cap_usd', { precision: 10, scale: 2 }),
   },
   (table) => [

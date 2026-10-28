@@ -39,7 +39,6 @@ import {
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
 import { createApp } from '@src/createApp.js';
-import { createFamilyCapRepository } from '@src/features/family/infrastructure/createFamilyCapRepository.js';
 import { createFamilyUsageRepository } from '@src/features/familyQuota/infrastructure/createFamilyUsageRepository.js';
 import { createFamilyAdminRepository } from '@src/features/family/infrastructure/createFamilyAdminRepository.js';
 import { createAiBudgetRepository } from '@src/features/family/infrastructure/createAiBudgetRepository.js';
@@ -87,9 +86,7 @@ const quotaPolicy = {
 };
 // SPEC-031: tham số ngân sách AI dùng chung cho duyệt riêng tư và mức dùng (trùng env worker).
 const aiPolicy = {
-  estimatedCostUsd: config.AI_ESTIMATED_COST_USD,
   defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,
-  defaultFamilyCapUsd: config.AI_DEFAULT_FAMILY_MONTHLY_CAP_USD,
   defaultMonthlyScans: config.SCAN_QUOTA_DEFAULT_MONTHLY,
   now: () => new Date(),
 };
@@ -176,11 +173,6 @@ const app = createApp({
   myConsent: createMyConsentRepository(db),
   visitSummary: createVisitSummaryRepository(db),
   familyUsage: { repository: createFamilyUsageRepository(db), quota: quotaPolicy, ai: aiPolicy },
-  familyCaps: {
-    repository: createFamilyCapRepository(db, boss),
-    defaultFamilyCapUsd: config.AI_DEFAULT_FAMILY_MONTHLY_CAP_USD,
-    now: () => new Date(),
-  },
   heavyRateLimit: { perMinute: config.RATE_LIMIT_HEAVY_PER_MINUTE, now: () => Date.now() },
 });
 

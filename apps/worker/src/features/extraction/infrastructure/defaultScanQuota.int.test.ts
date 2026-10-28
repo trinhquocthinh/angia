@@ -10,9 +10,7 @@ const NOW = new Date();
 const MONTH = budgetMonth(NOW);
 const call = {
   month: MONTH,
-  estimatedCostUsd: 0.02,
   defaultMonthlyCapUsd: 10,
-  defaultFamilyCapUsd: 0,
   defaultMonthlyScans: 10,
 };
 describe('CP5.5: lượt mặc định mỗi gia đình trên PostgreSQL thật', () => {

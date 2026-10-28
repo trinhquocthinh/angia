@@ -53,9 +53,7 @@ describe('Model dự phòng trên PostgreSQL thật (E3-S6-T2, SPEC-009, BR-016)
   const deps = (extractor: ExtractionDependencies['extractor']): ExtractionDependencies => ({
     repository: createExtractionRepository(fx.pool, () => NOW),
     budget: {
-      estimatedCostUsd: 0.02,
       defaultMonthlyCapUsd: 5,
-      defaultFamilyCapUsd: 0.5,
       defaultMonthlyScans: 0,
       now: () => NOW,
     },

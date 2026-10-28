@@ -9,9 +9,7 @@ export interface QuotaPolicy {
 export type ReadQuotaUsage = (dayStart: Date, lock: boolean) => Promise<UsageCounts>;
 /** SPEC-031: tham số ngân sách AI — phải trùng giá trị env của worker. */
 export interface AiBudgetPolicy {
-  estimatedCostUsd: number;
   defaultMonthlyCapUsd: number;
-  defaultFamilyCapUsd: number;
   /** CP5.5: lượt mặc định khi gia đình chưa có dòng quota tháng. */
   defaultMonthlyScans: number;
   now(): Date;

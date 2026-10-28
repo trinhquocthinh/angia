@@ -13,14 +13,6 @@ export type { CreateFamilyRequest, Family } from './family/familySchema.js';
 export { aiBudgetSchema, updateAiBudgetRequestSchema } from './family/aiBudgetSchemas.js';
 export type { AiBudget, UpdateAiBudgetRequest } from './family/aiBudgetSchemas.js';
 export { familyUsageSchema } from './family/familyUsageSchema.js';
-export {
-  familyExtractionCapSchema,
-  updateFamilyExtractionCapRequestSchema,
-} from './family/familyExtractionCapSchemas.js';
-export type {
-  FamilyExtractionCap,
-  UpdateFamilyExtractionCapRequest,
-} from './family/familyExtractionCapSchemas.js';
 export type { FamilyUsage } from './family/familyUsageSchema.js';
 export { budgetMonth } from './budget/budgetMonth.js';
 export {

@@ -12,10 +12,7 @@ type SavedExtraction = {
 /** Tháng ngân sách và tham số cấu hình của một lần giữ chỗ/quyết toán (BR-018). */
 export interface BudgetCall {
   month: string;
-  estimatedCostUsd: number;
   defaultMonthlyCapUsd: number;
-  /** Tương thích cấu hình cũ; CP5.4 không dùng trần USD riêng để chặn OCR. */
-  defaultFamilyCapUsd: number;
   /** CP5.5: số lượt hệ thống tự cấp cho gia đình chưa có dòng quota tháng. */
   defaultMonthlyScans: number;
 }
@@ -63,9 +60,7 @@ export interface DocumentExtractor {
   extract(image: ExtractorImage, beforeDispatch?: () => Promise<void>): Promise<ExtractorResult>;
 }
 export interface BudgetPolicy {
-  estimatedCostUsd: number;
   defaultMonthlyCapUsd: number;
-  defaultFamilyCapUsd: number;
   defaultMonthlyScans: number;
   now(): Date;
 }

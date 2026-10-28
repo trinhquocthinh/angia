@@ -47,9 +47,7 @@ describe('Requeue awaiting_budget theo gia đình trên PostgreSQL + pg-boss th�
       [a.documentId, b.documentId],
     ]);
     const policy = {
-      estimatedCostUsd: 0.02,
       defaultMonthlyCapUsd: 5,
-      defaultFamilyCapUsd: 0.5,
       defaultMonthlyScans: 0,
       now: () => NOW,
     };
@@ -88,9 +86,7 @@ describe('Requeue awaiting_budget theo gia đình trên PostgreSQL + pg-boss th�
       [first.documentId],
     );
     const policy = {
-      estimatedCostUsd: 0.02,
       defaultMonthlyCapUsd: 5,
-      defaultFamilyCapUsd: 0.5,
       defaultMonthlyScans: 0,
       now: () => NOW,
     };

@@ -5,9 +5,7 @@ import type { BudgetCall, BudgetPolicy } from './ports.js';
 export function toBudgetCall(policy: BudgetPolicy): BudgetCall {
   return {
     month: budgetMonth(policy.now()),
-    estimatedCostUsd: policy.estimatedCostUsd,
     defaultMonthlyCapUsd: policy.defaultMonthlyCapUsd,
-    defaultFamilyCapUsd: policy.defaultFamilyCapUsd,
     defaultMonthlyScans: policy.defaultMonthlyScans,
   };
 }

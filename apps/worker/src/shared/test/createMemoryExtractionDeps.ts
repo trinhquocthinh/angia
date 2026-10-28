@@ -72,9 +72,7 @@ export function createMemoryExtractionDeps(options: Options) {
         }),
     },
     budget: {
-      estimatedCostUsd: 0.02,
       defaultMonthlyCapUsd: 5,
-      defaultFamilyCapUsd: 0.5,
       defaultMonthlyScans: 0,
       now: () => MEMORY_NOW,
     },

@@ -33,9 +33,6 @@ const apiEnvSchema = z.object({
     .string()
     .regex(/^(0|[1-9][0-9]{0,27})(\.[0-9]{1,12})?$/)
     .default('0.001594'),
-  // SPEC-031: trần AI mặc định mỗi gia đình/tháng và ước tính mỗi lời gọi — phải trùng giá trị của worker.
-  AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(0.5),
-  AI_ESTIMATED_COST_USD: z.coerce.number().positive().default(0.02),
   // F03b (SPEC-030, BR-043): quota tài nguyên theo gia đình và nhịp thao tác nặng theo tài khoản.
   QUOTA_FAMILY_STORAGE_BYTES: z.coerce
     .number()
