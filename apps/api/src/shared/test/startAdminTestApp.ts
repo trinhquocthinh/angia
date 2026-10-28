@@ -10,7 +10,6 @@ import { REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS } 
 import pg from 'pg';
 import { createApp } from '@src/createApp.js';
 import { createAiBudgetRepository } from '@src/features/family/infrastructure/createAiBudgetRepository.js';
-import { createFamilyCapRepository } from '@src/features/family/infrastructure/createFamilyCapRepository.js';
 import { createFamilyAdminRepository } from '@src/features/family/infrastructure/createFamilyAdminRepository.js';
 import { createSessionRepository } from '@src/shared/auth/infrastructure/createSessionRepository.js';
 import { createDatabase, type Database } from '@src/shared/db/createDatabase.js';
@@ -29,16 +28,11 @@ interface MembershipRow {
 }
 
 // App thật trên PostgreSQL Testcontainers (role app NOBYPASSRLS) cho test route /api/admin/*.
-// Ngân sách AI toàn hệ thống (SPEC-013) và trần theo gia đình (SPEC-031) trên DB + pg-boss thật.
+// Ngân sách AI toàn hệ thống (SPEC-013) trên DB + pg-boss thật.
 const budgetAdminDeps = (database: Database, boss: PgBoss) => ({
   aiBudget: {
     repository: createAiBudgetRepository(database, boss),
     defaultMonthlyCapUsd: 5,
-    now: () => new Date(),
-  },
-  familyCaps: {
-    repository: createFamilyCapRepository(database, boss),
-    defaultFamilyCapUsd: 0.5,
     now: () => new Date(),
   },
 });

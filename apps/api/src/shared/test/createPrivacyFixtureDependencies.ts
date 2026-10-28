@@ -63,9 +63,7 @@ export function createPrivacyFixtureDependencies(f: Fixture): PrivacyDependencie
     newId: () => f.draftId,
     now: FIXED_NOW,
     ai: {
-      estimatedCostUsd: 0.02,
       defaultMonthlyCapUsd: 5,
-      defaultFamilyCapUsd: 0.5,
       defaultMonthlyScans: 10,
       now: FIXED_NOW,
     },

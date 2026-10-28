@@ -53,7 +53,7 @@ it('TC-633: worker CP5.4 thật chờ quota cùng Admin cấp thêm đều hoàn
   const script = `import pg from 'pg'; import {createExtractionRepository} from ${JSON.stringify(module)};
     const pool=new pg.Pool({connectionString:process.env.CP54_APP_URL});
     try { await createExtractionRepository(pool,()=>new Date('${NOW.toISOString()}')).withFamily('${familyId}',async store=>{
-      await store.findDocument('${documentId}'); await store.reserveBudget('${documentId}',{month:'2026-10',estimatedCostUsd:0.02,defaultMonthlyCapUsd:5,defaultFamilyCapUsd:0});
+      await store.findDocument('${documentId}'); await store.reserveBudget('${documentId}',{month:'2026-10',defaultMonthlyCapUsd:5});
     }); } finally {await pool.end();}`;
   const child = spawn(process.execPath, ['--import', 'tsx', '--input-type=module', '--eval', script], {
     cwd: fileURLToPath(root),

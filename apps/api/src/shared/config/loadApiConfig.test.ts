@@ -59,13 +59,14 @@ describe('Ân hạn dọn thư mục tạm upload mồ côi (F08b, nợ #21)', (
 });
 
 describe('Trần AI theo gia đình (SPEC-031, BR-018)', () => {
-  it('mặc định trần gia đình $0.50 và ước tính $0.02 (trùng worker); giá trị âm bị từ chối', () => {
-    expect(loadApiConfig(env)).toMatchObject({
-      AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: 0.5,
-      AI_ESTIMATED_COST_USD: 0.02,
+  it('TC-652: không còn AI_ESTIMATED_COST_USD, AI_DEFAULT_FAMILY_MONTHLY_CAP_USD; có đặt cũng bị bỏ qua', () => {
+    const config = loadApiConfig({
+      ...env,
+      AI_ESTIMATED_COST_USD: '0',
+      AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: '-1',
     });
-    expect(() => loadApiConfig({ ...env, AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: '-1' })).toThrow();
-    expect(() => loadApiConfig({ ...env, AI_ESTIMATED_COST_USD: '0' })).toThrow();
+    expect(config).not.toHaveProperty('AI_ESTIMATED_COST_USD');
+    expect(config).not.toHaveProperty('AI_DEFAULT_FAMILY_MONTHLY_CAP_USD');
   });
   it('CP5.5: mặc định trần $10, 10 lượt/gia đình, dự phòng 15%, chi phí khởi đầu 0.001594/lượt', () => {
     expect(loadApiConfig(env)).toMatchObject({

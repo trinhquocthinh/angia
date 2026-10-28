@@ -54,24 +54,26 @@ describe('Cấu hình worker', () => {
     expect(() => loadWorkerConfig({ ...base, AI_PROVIDER: undefined })).toThrow();
   });
 
-  it('ngân sách AI (BR-018, CP5.5): mặc định trần $10, 10 lượt/gia đình, ước tính $0.02; giá trị âm bị từ chối', () => {
+  it('ngân sách AI (BR-018, CP5.5): mặc định trần $10, 10 lượt/gia đình; giá trị âm bị từ chối', () => {
     expect(loadWorkerConfig(base)).toMatchObject({
       AI_DEFAULT_MONTHLY_CAP_USD: 10,
       SCAN_QUOTA_DEFAULT_MONTHLY: 10,
-      AI_ESTIMATED_COST_USD: 0.02,
     });
     expect(() => loadWorkerConfig({ ...base, SCAN_QUOTA_DEFAULT_MONTHLY: '-1' })).toThrow();
-    expect(
-      loadWorkerConfig({ ...base, AI_DEFAULT_MONTHLY_CAP_USD: '2.50', AI_ESTIMATED_COST_USD: '0.01' }),
-    ).toMatchObject({ AI_DEFAULT_MONTHLY_CAP_USD: 2.5, AI_ESTIMATED_COST_USD: 0.01 });
+    expect(loadWorkerConfig({ ...base, AI_DEFAULT_MONTHLY_CAP_USD: '2.50' })).toMatchObject({
+      AI_DEFAULT_MONTHLY_CAP_USD: 2.5,
+    });
     expect(() => loadWorkerConfig({ ...base, AI_DEFAULT_MONTHLY_CAP_USD: '-1' })).toThrow();
-    expect(() => loadWorkerConfig({ ...base, AI_ESTIMATED_COST_USD: '0' })).toThrow();
-    expect(() => loadWorkerConfig({ ...base, AI_ESTIMATED_COST_USD: 'abc' })).toThrow();
   });
 
-  it('trần AI theo gia đình (SPEC-031): mặc định $0.50, giá trị âm bị từ chối', () => {
-    expect(loadWorkerConfig(base)).toMatchObject({ AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: 0.5 });
-    expect(() => loadWorkerConfig({ ...base, AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: '-0.1' })).toThrow();
+  it('TC-653: không còn AI_ESTIMATED_COST_USD, AI_DEFAULT_FAMILY_MONTHLY_CAP_USD; có đặt cũng bị bỏ qua', () => {
+    const config = loadWorkerConfig({
+      ...base,
+      AI_ESTIMATED_COST_USD: '0',
+      AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: '-1',
+    });
+    expect(config).not.toHaveProperty('AI_ESTIMATED_COST_USD');
+    expect(config).not.toHaveProperty('AI_DEFAULT_FAMILY_MONTHLY_CAP_USD');
   });
 
   it('TC-332: biến đồng bộ IdP — bắt buộc ở sit/prod, tùy chọn ở dev, mặc định angia-admins/10/false', () => {

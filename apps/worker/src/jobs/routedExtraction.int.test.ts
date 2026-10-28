@@ -24,9 +24,7 @@ describe('SPEC-041: định tuyến trên PostgreSQL bằng role app NOBYPASSRLS
   const dependencies = () => ({
     repository: createExtractionRepository(fx.pool, () => new Date('2026-10-15T03:00:00Z')),
     budget: {
-      estimatedCostUsd: 0.02,
       defaultMonthlyCapUsd: 5,
-      defaultFamilyCapUsd: 0.5,
       defaultMonthlyScans: 0,
       now: () => new Date('2026-10-15T03:00:00Z'),
     },

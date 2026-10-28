@@ -36,9 +36,7 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
   const deps = (): ExtractionDependencies => ({
     repository: createExtractionRepository(pool),
     budget: {
-      estimatedCostUsd: 0.02,
       defaultMonthlyCapUsd: 5,
-      defaultFamilyCapUsd: 0.5,
       defaultMonthlyScans: 0,
       now: () => new Date(),
     },

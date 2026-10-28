@@ -48,8 +48,6 @@ import type { FamilyAdminRepository } from '@src/features/family/application/por
 import { registerAdminRoutes } from '@src/features/family/presentation/registerAdminRoutes.js';
 import type { AiBudgetDependencies } from '@src/features/family/application/aiBudgetPorts.js';
 import { registerAiBudgetRoutes } from '@src/features/family/presentation/registerAiBudgetRoutes.js';
-import type { FamilyCapDependencies } from '@src/features/family/application/familyCapPorts.js';
-import { registerFamilyCapRoutes } from '@src/features/family/presentation/registerFamilyCapRoutes.js';
 import type { FamilyUsageDependencies } from '@src/features/familyQuota/application/ports.js';
 import { registerFamilyUsageRoute } from '@src/features/familyQuota/presentation/registerFamilyUsageRoute.js';
 import type { HealthProbes } from '@src/features/health/application/ports.js';
@@ -90,7 +88,6 @@ export type AppDependencies = {
   myConsent: MyConsentRepository;
   visitSummary: VisitSummaryRepository;
   familyUsage: FamilyUsageDependencies;
-  familyCaps: FamilyCapDependencies;
   // F03b: nhịp thao tác nặng mỗi tài khoản/thao tác trong 60 s (đếm trong tiến trình).
   heavyRateLimit: { perMinute: number; now(): number };
 };
@@ -138,7 +135,6 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerAiRoutingRoutes(app, deps.aiRouting);
   registerAiBillingRoutes(app, deps.aiBilling);
   registerFamilyUsageRoute(app, deps.familyUsage);
-  registerFamilyCapRoutes(app, deps.familyCaps);
   registerProfileRoutes(app, { ...deps.profiles, logger: deps.auth.logger }, deps.auth.login.now);
   // Một limiter dùng chung cho mọi thao tác nặng; khóa tách theo tài khoản + thao tác.
   const heavyLimiter = createSlidingWindowLimiter({
