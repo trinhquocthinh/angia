@@ -1,13 +1,7 @@
-import type {
-  AdminScanQuotaView,
-  FamilyScanQuota,
-  GrantScanQuotasRequest,
-  UpdateScanQuotaPolicyRequest,
-} from '@angia/contracts';
+import type { AdminScanQuotaView, FamilyScanQuota, GrantScanQuotasRequest } from '@angia/contracts';
 export interface ScanQuotaRepository {
   getAdmin(signal?: AbortSignal): Promise<AdminScanQuotaView>;
   getFamily(signal?: AbortSignal): Promise<FamilyScanQuota>;
-  savePolicy(input: UpdateScanQuotaPolicyRequest, csrfToken: string): Promise<AdminScanQuotaView>;
   grant(input: GrantScanQuotasRequest, csrfToken: string): Promise<AdminScanQuotaView>;
 }
 export interface GrantDraft {
@@ -17,5 +11,4 @@ export interface GrantDraft {
 }
 export type GrantDrafts = Record<string, GrantDraft>;
 export type GrantErrors = Record<string, string>;
-export type QuotaWrite =
-  { kind: 'policy'; input: UpdateScanQuotaPolicyRequest } | { kind: 'grant'; input: GrantScanQuotasRequest };
+export type QuotaWrite = { input: GrantScanQuotasRequest };

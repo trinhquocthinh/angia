@@ -36,15 +36,6 @@ describe('Cấp quota cùng lúc worker tạo sổ tiền gia đình', () => {
         [randomUUID(), provider, randomUUID(), NOW],
       );
     const familyId = await t.seedFamily();
-    expect(
-      (
-        await t.call(t.admin, 'PUT', '/api/admin/scan-quota-policy', {
-          month: '2026-10',
-          expectedVersion: 0,
-          policy: { estimatedCostPerScanUsd: '0.1', reserveBasisPoints: 0, trialScans: 0 },
-        })
-      ).status,
-    ).toBe(200);
     await t.owner.query("INSERT INTO extraction_spend (month,cap_usd) VALUES ('2026-10',5)");
     const worker = await t.pool.connect();
     await worker.query('BEGIN');
@@ -73,7 +64,7 @@ describe('Cấp quota cùng lúc worker tạo sổ tiền gia đình', () => {
       await waitForWorkerFamilyLock(t, workerPid);
       apiRun = t.call(t.admin, 'POST', '/api/admin/scan-quota-grants', {
         month: '2026-10',
-        expectedVersion: 1,
+        expectedVersion: 0,
         grants: [{ familyId, status: 'approved', grantedScans: 1, reason: 'Duyệt tháng' }],
       });
       await waitForApiFamilyLock(t);

@@ -47,9 +47,6 @@ export const adminScanQuotaViewSchema = z
     runtimeActive: z.literal(true),
   })
   .meta({ id: 'AdminScanQuotaView' });
-export const updateScanQuotaPolicyRequestSchema = z
-  .strictObject({ month, expectedVersion: count, policy: scanQuotaPolicySchema })
-  .meta({ id: 'UpdateScanQuotaPolicyRequest' });
 export const grantScanQuotasRequestSchema = z
   .strictObject({
     month,
@@ -78,5 +75,4 @@ export const grantScanQuotasRequestSchema = z
 export type ScanQuotaPolicy = z.infer<typeof scanQuotaPolicySchema>;
 export type FamilyScanQuota = z.infer<typeof familyScanQuotaSchema>;
 export type AdminScanQuotaView = z.infer<typeof adminScanQuotaViewSchema>;
-export type UpdateScanQuotaPolicyRequest = z.infer<typeof updateScanQuotaPolicyRequestSchema>;
 export type GrantScanQuotasRequest = z.infer<typeof grantScanQuotasRequestSchema>;

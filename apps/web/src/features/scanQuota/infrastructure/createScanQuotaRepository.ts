@@ -2,7 +2,6 @@ import {
   adminScanQuotaViewSchema,
   familyScanQuotaSchema,
   grantScanQuotasRequestSchema,
-  updateScanQuotaPolicyRequestSchema,
 } from '@angia/contracts';
 import { apiClient } from '@src/shared/api/apiClient';
 import { AdminRequestError } from '@src/features/family/application/AdminRequestError';
@@ -26,16 +25,6 @@ export function createScanQuotaRepository(client = apiClient): ScanQuotaReposito
       const parsed = familyScanQuotaSchema.safeParse(readScanQuotaResponse(result));
       if (!parsed.success) throw new AdminRequestError('ERR_INTERNAL');
       return parsed.data;
-    },
-    savePolicy: async (input, csrfToken) => {
-      const parsed = updateScanQuotaPolicyRequestSchema.safeParse(input);
-      if (!parsed.success) throw new AdminRequestError('ERR_VALIDATION', 422);
-      return read(
-        await client.PUT('/api/admin/scan-quota-policy', {
-          body: parsed.data,
-          headers: { 'X-CSRF-Token': csrfToken },
-        }),
-      );
     },
     grant: async (input, csrfToken) => {
       const parsed = grantScanQuotasRequestSchema.safeParse(input);

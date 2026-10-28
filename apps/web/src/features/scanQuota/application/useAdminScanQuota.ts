@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import type { GrantScanQuotasRequest, UpdateScanQuotaPolicyRequest } from '@angia/contracts';
+import type { GrantScanQuotasRequest } from '@angia/contracts';
 import { AdminRequestError } from '@src/features/family/application/AdminRequestError';
 import { refreshQuotaSession } from './refreshQuotaSession';
 import { useScanQuotaMutation } from './useScanQuotaMutation';
@@ -34,9 +34,6 @@ export function useAdminScanQuota(
     isSuccess: ownsWrite && write.isSuccess,
     error: ownsWrite ? write.error : null,
   };
-  const savePolicy = (input: UpdateScanQuotaPolicyRequest) =>
-    mutation.mutateAsync({ kind: 'policy', input, accountId, csrfToken });
-  const grant = (input: GrantScanQuotasRequest) =>
-    mutation.mutateAsync({ kind: 'grant', input, accountId, csrfToken });
-  return { config, mutation, savePolicy, grant };
+  const grant = (input: GrantScanQuotasRequest) => mutation.mutateAsync({ input, accountId, csrfToken });
+  return { config, mutation, grant };
 }

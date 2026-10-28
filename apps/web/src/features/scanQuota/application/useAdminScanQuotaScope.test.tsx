@@ -22,7 +22,6 @@ describe('Trạng thái ghi theo tài khoản', () => {
       const repository: ScanQuotaRepository = {
         getAdmin: async () => view,
         getFamily: async () => quota,
-        savePolicy: vi.fn(),
         grant: vi.fn(),
       };
       const client = new QueryClient();

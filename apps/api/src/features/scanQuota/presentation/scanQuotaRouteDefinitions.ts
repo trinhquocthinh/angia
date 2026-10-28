@@ -3,7 +3,6 @@ import { z } from 'zod';
 import {
   adminScanQuotaViewSchema,
   familyScanQuotaSchema,
-  updateScanQuotaPolicyRequestSchema,
   grantScanQuotasRequestSchema,
   errorResponseSchema,
 } from '@angia/contracts';
@@ -27,16 +26,6 @@ export const getAdminScanQuotasRoute = createRoute({
   path: '/api/admin/scan-quotas',
   tags: ['admin'],
   summary: 'Đọc quota quét của tháng hiện tại',
-  responses: adminResponses,
-});
-export const putScanQuotaPolicyRoute = createRoute({
-  method: 'put',
-  path: '/api/admin/scan-quota-policy',
-  tags: ['admin'],
-  summary: 'Lưu chính sách cấp lượt quét giữ qua tháng',
-  request: {
-    body: { required: true, content: { 'application/json': { schema: updateScanQuotaPolicyRequestSchema } } },
-  },
   responses: adminResponses,
 });
 export const postScanQuotaGrantsRoute = createRoute({

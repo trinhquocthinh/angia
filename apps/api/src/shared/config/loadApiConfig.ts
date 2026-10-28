@@ -28,7 +28,7 @@ const apiEnvSchema = z.object({
   AI_DEFAULT_MONTHLY_CAP_USD: z.coerce.number().nonnegative().default(10),
   // CP5.5: lượt mặc định mỗi gia đình/tháng (trùng worker), dự phòng % trần và chi phí khởi đầu mỗi lượt.
   SCAN_QUOTA_DEFAULT_MONTHLY: z.coerce.number().int().nonnegative().default(10),
-  SCAN_QUOTA_RESERVE_PERCENT: z.coerce.number().min(0).max(100).default(15),
+  SCAN_QUOTA_RESERVE_PERCENT: z.coerce.number().min(0).max(99).default(15),
   SCAN_QUOTA_INITIAL_COST_PER_SCAN_USD: z
     .string()
     .regex(/^(0|[1-9][0-9]{0,27})(\.[0-9]{1,12})?$/)

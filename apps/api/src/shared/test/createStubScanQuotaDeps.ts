@@ -5,7 +5,6 @@ export function createStubScanQuotaDeps(): ScanQuotaDependencies {
     repository: {
       readAdmin: unavailable,
       readFamily: unavailable,
-      updatePolicy: unavailable,
       grant: unavailable,
     },
     now: () => new Date(),

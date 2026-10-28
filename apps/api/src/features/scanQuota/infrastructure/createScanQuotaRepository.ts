@@ -55,23 +55,6 @@ export function createScanQuotaRepository(
         accessMode: 'read only',
       }),
     readFamily: (familyId, now) => readFamilyQuota(db, familyId, now, defaults.monthlyScans),
-    updatePolicy: (request, actorId, context) =>
-      mutate(
-        db,
-        request.month,
-        request.expectedVersion,
-        actorId,
-        context,
-        defaults,
-        async (tx, state, lockedContext) => {
-          await tx.execute(
-            sql`UPDATE scan_quota_policy SET estimated_cost_per_scan_usd=${request.policy.estimatedCostPerScanUsd}::numeric, reserve_basis_points=${request.policy.reserveBasisPoints}, trial_scans=${request.policy.trialScans}, updated_at=${lockedContext.now}, updated_by=${actorId} WHERE id=1`,
-          );
-          await tx.execute(
-            sql`INSERT INTO scan_quota_policy_audit (version, actor_id, occurred_at, before, after) VALUES (${state.version + 1}, ${actorId}, ${lockedContext.now}, ${state.policy === null ? null : JSON.stringify(state.policy)}::jsonb, ${JSON.stringify(request.policy)}::jsonb)`,
-          );
-        },
-      ),
     grant: (request, actorId, context) =>
       mutate(
         db,

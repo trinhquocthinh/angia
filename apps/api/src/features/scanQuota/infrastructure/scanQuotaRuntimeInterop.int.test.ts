@@ -36,22 +36,13 @@ it('TC-633: worker CP5.4 thật chờ quota cùng Admin cấp thêm đều hoàn
     (id,provider,credential_fingerprint,status,last_attempt_at,last_complete_at) VALUES($1,$2,$3,'complete',$4,$4)`,
       [randomUUID(), provider, randomUUID(), NOW],
     );
-  expect(
-    (
-      await t.call(t.admin, 'PUT', '/api/admin/scan-quota-policy', {
-        month: '2026-10',
-        expectedVersion: 0,
-        policy: { estimatedCostPerScanUsd: '0.1', reserveBasisPoints: 0, trialScans: 0 },
-      })
-    ).status,
-  ).toBe(200);
   const grant = (total: number, version: number) =>
     t.call(t.admin, 'POST', '/api/admin/scan-quota-grants', {
       month: '2026-10',
       expectedVersion: version,
       grants: [{ familyId, status: 'approved', grantedScans: total, reason: 'Duyệt' }],
     });
-  expect((await grant(4, 1)).status).toBe(200);
+  expect((await grant(4, 0)).status).toBe(200);
   await t.owner.query('BEGIN');
   await t.owner.query('SELECT * FROM family_scan_quotas WHERE family_id=$1 FOR UPDATE', [familyId]);
   const root = new URL('../../../../../../', import.meta.url);
@@ -93,7 +84,7 @@ it('TC-633: worker CP5.4 thật chờ quota cùng Admin cấp thêm đều hoàn
         { timeout: 10000 },
       )
       .toBe(1);
-    const pendingGrant = Promise.resolve(grant(5, 2));
+    const pendingGrant = Promise.resolve(grant(5, 1));
     api = pendingGrant;
     await expect
       .poll(
