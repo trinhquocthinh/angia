@@ -30,21 +30,17 @@ describe('Đồng hồ quota sau khi chờ khóa ngân sách và gia đình', ()
         `INSERT INTO ai_billing_sources (id,provider,credential_fingerprint,status,last_attempt_at,last_complete_at) VALUES ($1,$2,$3,'complete',$4,$4)`,
         [randomUUID(), provider, randomUUID(), START],
       );
-    expect(
-      (
-        await t.call(t.admin, 'PUT', '/api/admin/scan-quota-policy', {
-          month: '2026-10',
-          expectedVersion: 0,
-          policy: { estimatedCostPerScanUsd: '0.1', reserveBasisPoints: 0, trialScans: 2 },
-        })
-      ).status,
-    ).toBe(200);
     await t.owner.query("INSERT INTO extraction_spend (month,cap_usd) VALUES ('2026-10',5)");
+    // GET chỉ đọc để pool app mở sẵn kết nối; kết nối đầu tiên có thể chậm hơn cửa sổ chờ khóa.
+    expect((await t.call(t.admin, 'GET', '/api/admin/scan-quotas')).status).toBe(200);
   });
+  // Giao dịch bị từ chối rollback cả dòng singleton nên đọc COALESCE thay vì giả định đã có dòng.
+  const policyVersion = async () =>
+    (await t.owner.query('SELECT COALESCE(max(version),0)::text AS v FROM scan_quota_policy')).rows[0]?.v;
   const grant = (familyId: string) =>
     t.call(t.admin, 'POST', '/api/admin/scan-quota-grants', {
       month: '2026-10',
-      expectedVersion: 1,
+      expectedVersion: 0,
       grants: [{ familyId, status: 'approved', grantedScans: 1, reason: 'Duyệt tháng' }],
     });
   async function blockThenAdvance(
@@ -76,7 +72,7 @@ describe('Đồng hồ quota sau khi chờ khóa ngân sách và gia đình', ()
     expect(response.status).toBe(409);
     expect(await response.json()).toMatchObject({ error: { code: 'ERR_SCAN_QUOTA_CONFLICT' } });
     expect((await t.owner.query('SELECT count(*) FROM family_scan_quotas')).rows[0]?.count).toBe('0');
-    expect((await t.owner.query('SELECT version FROM scan_quota_policy')).rows[0]?.version).toBe('1');
+    expect(await policyVersion()).toBe('0');
   });
   it('TC-585: duyệt chờ khóa gia đình kiểm tra lại billing hết hạn trước khi ghi', async () => {
     const familyId = await t.seedFamily();
@@ -97,7 +93,7 @@ describe('Đồng hồ quota sau khi chờ khóa ngân sách và gia đình', ()
     expect(response.status).toBe(200);
     expect(await response.json()).toMatchObject({
       month: '2026-10',
-      version: 2,
+      version: 1,
       billingStatus: 'ready',
       committedRemainingScans: '1',
     });
@@ -110,16 +106,19 @@ describe('Đồng hồ quota sau khi chờ khóa ngân sách và gia đình', ()
     const entry = { familyId, status: 'approved', grantedScans: 2, reason: 'Duyệt tháng' };
     const response = await t.call(t.admin, 'POST', '/api/admin/scan-quota-grants', {
       month: '2026-10',
-      expectedVersion: 1,
+      expectedVersion: 0,
       grants: [entry, { ...entry, familyId: familyId.toUpperCase(), grantedScans: 3 }],
     });
     expect(response.status).toBe(422);
     expect((await t.owner.query('SELECT count(*) FROM family_scan_quotas')).rows[0]?.count).toBe('0');
     expect((await t.owner.query('SELECT count(*) FROM scan_quota_audit')).rows[0]?.count).toBe('0');
     expect(
-      (await t.owner.query('SELECT committed_remaining_scans FROM scan_quota_months')).rows[0]
-        ?.committed_remaining_scans,
+      (
+        await t.owner.query(
+          'SELECT COALESCE(sum(committed_remaining_scans),0)::text AS n FROM scan_quota_months',
+        )
+      ).rows[0]?.n,
     ).toBe('0');
-    expect((await t.owner.query('SELECT version FROM scan_quota_policy')).rows[0]?.version).toBe('1');
+    expect(await policyVersion()).toBe('0');
   });
 });

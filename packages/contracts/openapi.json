@@ -530,29 +530,6 @@
         ],
         "additionalProperties": false
       },
-      "UpdateScanQuotaPolicyRequest": {
-        "type": "object",
-        "properties": {
-          "month": {
-            "type": "string",
-            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
-          },
-          "expectedVersion": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "policy": {
-            "$ref": "#/components/schemas/ScanQuotaPolicy"
-          }
-        },
-        "required": [
-          "month",
-          "expectedVersion",
-          "policy"
-        ],
-        "additionalProperties": false
-      },
       "GrantScanQuotasRequest": {
         "type": "object",
         "properties": {
@@ -4909,86 +4886,6 @@
           "admin"
         ],
         "summary": "Đọc quota quét của tháng hiện tại",
-        "responses": {
-          "200": {
-            "description": "Quota đã cấp và sức chứa hiện tại; chưa áp dụng runtime OCR",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AdminScanQuotaView"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "ERR_UNAUTHENTICATED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "ERR_FORBIDDEN",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ERR_NOT_FOUND",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "ERR_SCAN_QUOTA_CONFLICT / ERR_SCAN_QUOTA_UNAVAILABLE / ERR_SCAN_QUOTA_DECREASE",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "ERR_VALIDATION",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/admin/scan-quota-policy": {
-      "put": {
-        "tags": [
-          "admin"
-        ],
-        "summary": "Lưu chính sách cấp lượt quét giữ qua tháng",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateScanQuotaPolicyRequest"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "Quota đã cấp và sức chứa hiện tại; chưa áp dụng runtime OCR",

@@ -20,12 +20,6 @@ describe('Cấp lượt và requeue nguyên tử', () => {
         [randomUUID(), provider, randomUUID(), NOW],
       );
   };
-  const policy = () =>
-    t.call(t.admin, 'PUT', '/api/admin/scan-quota-policy', {
-      month: '2026-10',
-      expectedVersion: 0,
-      policy: { estimatedCostPerScanUsd: '0.1', reserveBasisPoints: 0, trialScans: 0 },
-    });
   const grants = (entries: { familyId: string; grantedScans: number }[], expectedVersion: number) =>
     t.call(t.admin, 'POST', '/api/admin/scan-quota-grants', {
       month: '2026-10',
@@ -34,15 +28,14 @@ describe('Cấp lượt và requeue nguyên tử', () => {
     });
   it('TC-631: cấp quota và requeue cùng commit; lỗi hàng đợi rollback toàn bộ', async () => {
     await seedBilling();
-    await policy();
     const familyId = await t.seedFamily();
     await t.owner.query(`CREATE FUNCTION fail_quota_requeue() RETURNS trigger LANGUAGE plpgsql AS $$
       BEGIN IF NEW.name='requeue-awaiting-budget' THEN RAISE EXCEPTION 'synthetic_queue_failure'; END IF;
       RETURN NEW; END; $$;
       CREATE TRIGGER fail_quota_requeue BEFORE INSERT ON pgboss.job FOR EACH ROW EXECUTE FUNCTION fail_quota_requeue()`);
     try {
-      expect((await grants([{ familyId, grantedScans: 2 }], 1)).status).toBe(500);
-      expect(await read()).toMatchObject({ version: 1, committedRemainingScans: '0' });
+      expect((await grants([{ familyId, grantedScans: 2 }], 0)).status).toBe(500);
+      expect(await read()).toMatchObject({ version: 0, committedRemainingScans: '0' });
       expect(
         (await t.owner.query('SELECT * FROM family_scan_quotas WHERE family_id=$1', [familyId])).rowCount,
       ).toBe(0);
@@ -54,7 +47,7 @@ describe('Cấp lượt và requeue nguyên tử', () => {
         'DROP TRIGGER fail_quota_requeue ON pgboss.job; DROP FUNCTION fail_quota_requeue()',
       );
     }
-    expect((await grants([{ familyId, grantedScans: 2 }], 1)).status).toBe(200);
+    expect((await grants([{ familyId, grantedScans: 2 }], 0)).status).toBe(200);
     expect(
       (
         await t.owner.query(

@@ -22,8 +22,8 @@ export const view: AdminScanQuotaView = {
   runtimeActive: true,
   families: [{ familyId, familyName: 'Gia đình A', quota, previousApprovedScans: 8 }],
 };
-export const policyInput = {
+export const grantInput = {
   month: view.month,
   expectedVersion: view.version,
-  policy: { estimatedCostPerScanUsd: '0.000000000001', reserveBasisPoints: 1234, trialScans: 0 },
+  grants: [{ familyId, status: 'approved' as const, grantedScans: 12, reason: 'Duyệt tháng' }],
 };

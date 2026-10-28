@@ -1,7 +1,7 @@
 import createClient from 'openapi-fetch';
 import { describe, expect, it } from 'vitest';
 import type { paths } from '@src/shared/api/schema.gen';
-import { familyId, policyInput, quota, view } from '../test/scanQuotaFixtures';
+import { grantInput, quota, view } from '../test/scanQuotaFixtures';
 import { createScanQuotaRepository } from './createScanQuotaRepository';
 function harness(status = 200, body: unknown = view) {
   const requests: Request[] = [];
@@ -32,29 +32,16 @@ describe('HTTP hạn mức lượt', () => {
       expect(h.requests[0]!.signal.aborted).toBe(true);
     }
   });
-  it('TC-589: PUT/POST gửi đúng payload và CSRF', async () => {
+  it('TC-589: POST gửi đúng payload và CSRF', async () => {
     const h = harness();
-    await h.repository.savePolicy(policyInput, 'csrf');
-    const input = {
-      month: view.month,
-      expectedVersion: 7,
-      grants: [{ familyId, status: 'approved' as const, grantedScans: 12, reason: 'Duyệt tháng' }],
-    };
-    await h.repository.grant(input, 'csrf');
-    expect(h.requests.map((r) => r.method)).toEqual(['PUT', 'POST']);
-    expect(h.requests.map((r) => new URL(r.url).pathname)).toEqual([
-      '/api/admin/scan-quota-policy',
-      '/api/admin/scan-quota-grants',
-    ]);
-    expect(h.requests.every((r) => r.headers.get('x-csrf-token') === 'csrf')).toBe(true);
-    expect(await h.requests[0]!.json()).toEqual(policyInput);
-    expect(await h.requests[1]!.json()).toEqual(input);
+    await h.repository.grant(grantInput, 'csrf');
+    expect(h.requests.map((r) => r.method)).toEqual(['POST']);
+    expect(new URL(h.requests[0]!.url).pathname).toBe('/api/admin/scan-quota-grants');
+    expect(h.requests[0]!.headers.get('x-csrf-token')).toBe('csrf');
+    expect(await h.requests[0]!.json()).toEqual(grantInput);
   });
   it('TC-589: input không đúng schema bị chặn trước mạng', async () => {
     const h = harness();
-    await expect(
-      h.repository.savePolicy({ ...policyInput, extra: true } as typeof policyInput, 'csrf'),
-    ).rejects.toMatchObject({ code: 'ERR_VALIDATION' });
     await expect(
       h.repository.grant({ month: view.month, expectedVersion: 7, grants: [] }, 'csrf'),
     ).rejects.toMatchObject({ code: 'ERR_VALIDATION' });

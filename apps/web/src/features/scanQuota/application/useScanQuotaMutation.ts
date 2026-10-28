@@ -9,9 +9,7 @@ export function useScanQuotaMutation(repository: ScanQuotaRepository) {
     retry: false,
     mutationFn: (write: ScopedWrite) => {
       if (!write.csrfToken || !write.accountId) throw new AdminRequestError('ERR_UNAUTHENTICATED', 401);
-      return write.kind === 'policy'
-        ? repository.savePolicy(write.input, write.csrfToken)
-        : repository.grant(write.input, write.csrfToken);
+      return repository.grant(write.input, write.csrfToken);
     },
     onSuccess: async (saved, write) => {
       const queryKey = ['admin', 'scan-quotas', write.accountId];

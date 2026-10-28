@@ -4,17 +4,10 @@ import { startAdminTestApp, type AdminTestApp } from '@src/shared/test/startAdmi
 import { seedAccount, seedSession } from '@src/shared/test/seedAuthFixtures.js';
 import { adminScanQuotaViewSchema, familyScanQuotaSchema } from '@angia/contracts';
 const NOW = new Date('2026-10-15T00:00:00Z');
-const POLICY = { estimatedCostPerScanUsd: '0.1', reserveBasisPoints: 0, trialScans: 2 };
 const PATH = '/api/admin/scan-quotas';
 describe('Quota quét theo tháng với PostgreSQL và role app', () => {
   let t: AdminTestApp;
   const read = async () => adminScanQuotaViewSchema.parse(await (await t.call(t.admin, 'GET', PATH)).json());
-  const policy = (expectedVersion = 0, value = POLICY) =>
-    t.call(t.admin, 'PUT', '/api/admin/scan-quota-policy', {
-      month: '2026-10',
-      expectedVersion,
-      policy: value,
-    });
   const grant = (familyId: string, grantedScans: number, expectedVersion: number) =>
     t.call(t.admin, 'POST', '/api/admin/scan-quota-grants', {
       month: '2026-10',
@@ -63,16 +56,15 @@ describe('Quota quét theo tháng với PostgreSQL và role app', () => {
   it('TC-583: cấp tổng, audit, cùng tổng không cộng lại và từ chối giảm', async () => {
     await seedBilling();
     const familyId = await t.seedFamily();
-    expect((await policy()).status).toBe(200);
+    expect((await grant(familyId, 10, 0)).status).toBe(200);
     expect((await grant(familyId, 10, 1)).status).toBe(200);
-    expect((await grant(familyId, 10, 2)).status).toBe(200);
     expect(await read()).toMatchObject({
-      version: 3,
+      version: 2,
       committedRemainingScans: '10',
       availableAdditionalScans: '40',
     });
-    expect((await grant(familyId, 9, 3)).status).toBe(409);
-    expect((await read()).version).toBe(3);
+    expect((await grant(familyId, 9, 2)).status).toBe(409);
+    expect((await read()).version).toBe(2);
     expect(
       (await t.owner.query('SELECT count(*) FROM scan_quota_audit WHERE family_id=$1', [familyId])).rows[0]
         ?.count,
@@ -83,13 +75,12 @@ describe('Quota quét theo tháng với PostgreSQL và role app', () => {
   });
   it('TC-584: CAS và hai Admin không thể cấp vượt sức chứa; lô sai không ghi một phần', async () => {
     await seedBilling();
-    await policy();
     const a = await t.seedFamily();
     const b = await t.seedFamily();
-    const responses = await Promise.all([grant(a, 40, 1), grant(b, 40, 1)]);
+    const responses = await Promise.all([grant(a, 40, 0), grant(b, 40, 0)]);
     expect(responses.map((r) => r.status).sort()).toEqual([200, 409]);
     const deniedFamily = responses[0]?.status === 409 ? a : b;
-    expect((await grant(deniedFamily, 40, 2)).status).toBe(409);
+    expect((await grant(deniedFamily, 40, 1)).status).toBe(409);
     const current = await read();
     const batch = await t.call(t.admin, 'POST', '/api/admin/scan-quota-grants', {
       month: '2026-10',
@@ -104,10 +95,9 @@ describe('Quota quét theo tháng với PostgreSQL và role app', () => {
   });
   it('TC-585: cấu hình mới không cắt lượt và billing thiếu không cho cấp', async () => {
     const familyId = await t.seedFamily();
-    await policy();
-    expect((await grant(familyId, 1, 1)).status).toBe(409);
+    expect((await grant(familyId, 1, 0)).status).toBe(409);
     await seedBilling();
-    expect((await grant(familyId, 40, 1)).status).toBe(200);
+    expect((await grant(familyId, 40, 0)).status).toBe(200);
     // CP5.5: chính sách theo env; hạ trần tiền tháng về 0 để thấy phần cấp vượt.
     await t.owner.query(
       "INSERT INTO extraction_spend (month,cap_usd) VALUES ('2026-10',0) ON CONFLICT (month) DO UPDATE SET cap_usd=0",
@@ -120,10 +110,9 @@ describe('Quota quét theo tháng với PostgreSQL và role app', () => {
   });
   it('TC-586: chỉ phiên gia đình được đọc lượt; không chọn nhóm qua query/path', async () => {
     await seedBilling();
-    await policy();
     const a = await t.seedFamily();
     const b = await t.seedFamily();
-    await grant(a, 4, 1);
+    await grant(a, 4, 0);
     for (const familyRole of ['main', 'member'] as const) {
       const user = await seedSession(t.owner, await seedAccount(t.owner, { familyId: a, familyRole }));
       const response = await t.call(user, 'GET', '/api/family/scan-quota');
@@ -142,30 +131,24 @@ describe('Quota quét theo tháng với PostgreSQL và role app', () => {
     const unauthenticated = await t.app.request(PATH);
     expect(unauthenticated.status).toBe(401);
     expect(unauthenticated.headers.get('cache-control')).toBe('no-store');
-    const response = await t.app.request('/api/admin/scan-quota-policy', {
-      method: 'PUT',
+    const familyId = await t.seedFamily();
+    const body = (month: string) => ({
+      month,
+      expectedVersion: 0,
+      grants: [{ familyId, status: 'approved', grantedScans: 1, reason: 'Duyệt' }],
+    });
+    const response = await t.app.request('/api/admin/scan-quota-grants', {
+      method: 'POST',
       headers: { cookie: t.admin.cookie, 'content-type': 'application/json' },
-      body: JSON.stringify({ month: '2026-10', expectedVersion: 0, policy: POLICY }),
+      body: JSON.stringify(body('2026-10')),
     });
     expect(response.status).toBe(403);
+    expect((await t.call(t.admin, 'POST', '/api/admin/scan-quota-grants', body('2026-09'))).status).toBe(409);
     expect(
-      (
-        await t.call(t.admin, 'PUT', '/api/admin/scan-quota-policy', {
-          month: '2026-09',
-          expectedVersion: 0,
-          policy: POLICY,
-        })
-      ).status,
-    ).toBe(409);
-    expect(
-      (
-        await t.call(t.admin, 'PUT', '/api/admin/scan-quota-policy', {
-          month: '2026-10',
-          expectedVersion: 0,
-          policy: POLICY,
-          capUsd: 10,
-        })
-      ).status,
+      (await t.call(t.admin, 'POST', '/api/admin/scan-quota-grants', { ...body('2026-10'), capUsd: 10 }))
+        .status,
     ).toBe(422);
+    // CP5.5: chính sách lấy từ env, route đổi chính sách đã gỡ.
+    expect((await t.call(t.admin, 'PUT', '/api/admin/scan-quota-policy', {})).status).toBe(404);
   });
 });

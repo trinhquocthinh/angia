@@ -6,7 +6,6 @@ import type { ScanQuotaDependencies } from '../application/ports.js';
 import { mutateScanQuota } from '../application/mutateScanQuota.js';
 import {
   getAdminScanQuotasRoute,
-  putScanQuotaPolicyRoute,
   postScanQuotaGrantsRoute,
   getFamilyScanQuotaRoute,
 } from './scanQuotaRouteDefinitions.js';
@@ -17,12 +16,8 @@ export function registerScanQuotaRoutes(app: OpenAPIHono<AppEnv>, deps: ScanQuot
       200,
     ),
   );
-  app.openapi(putScanQuotaPolicyRoute, async (c) => {
-    const outcome = await mutateScanQuota(deps, 'policy', c.req.valid('json'), currentSession(c).account.id);
-    return outcome.ok ? c.json(outcome.view, 200) : c.json(...errorJson(outcome.code));
-  });
   app.openapi(postScanQuotaGrantsRoute, async (c) => {
-    const outcome = await mutateScanQuota(deps, 'grant', c.req.valid('json'), currentSession(c).account.id);
+    const outcome = await mutateScanQuota(deps, c.req.valid('json'), currentSession(c).account.id);
     return outcome.ok ? c.json(outcome.view, 200) : c.json(...errorJson(outcome.code));
   });
   app.openapi(getFamilyScanQuotaRoute, async (c) => {

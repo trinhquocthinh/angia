@@ -9,18 +9,11 @@ import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import { createScanQuotaRepository } from './createScanQuotaRepository.js';
 import { adminScanQuotaViewSchema } from '@angia/contracts';
 const NOW = new Date('2026-10-15T00:00:00Z');
-const POLICY = { estimatedCostPerScanUsd: '0.1', reserveBasisPoints: 0, trialScans: 2 };
 describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
   let t: AdminTestApp;
   let clock = NOW;
   const read = async () =>
     adminScanQuotaViewSchema.parse(await (await t.call(t.admin, 'GET', '/api/admin/scan-quotas')).json());
-  const policy = async () =>
-    t.call(t.admin, 'PUT', '/api/admin/scan-quota-policy', {
-      month: '2026-10',
-      expectedVersion: 0,
-      policy: POLICY,
-    });
   const grants = (entries: { familyId: string; grantedScans: number }[], version: number) =>
     t.call(t.admin, 'POST', '/api/admin/scan-quota-grants', {
       month: '2026-10',
@@ -46,15 +39,6 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
       'TRUNCATE scan_quota_audit, scan_quota_policy_audit, family_scan_quotas, scan_quota_months, scan_quota_policy, ai_provider_charges, ai_billing_sources, extraction_spend CASCADE',
     );
   });
-  it('TC-582: cấu hình kho trực tiếp trả DTO chuẩn sau khi có billing', async () => {
-    await seedBilling();
-    const result = await createScanQuotaRepository(t.database, TEST_SCAN_QUOTA_DEFAULTS).updatePolicy(
-      { month: '2026-10', expectedVersion: 0, policy: POLICY },
-      t.admin.accountId,
-      { now: NOW, defaultMonthlyCapUsd: 5 },
-    );
-    expect(result.ok).toBe(true);
-  });
   it('TC-582: ràng buộc DB từ chối cấu hình thiếu trường và snapshot không hữu hạn', async () => {
     await expect(
       t.owner.query('INSERT INTO scan_quota_policy (id,estimated_cost_per_scan_usd) VALUES (1,1)'),
@@ -69,7 +53,6 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
   });
   it('TC-584: lô vượt sức chứa không ghi một phần và không tăng version', async () => {
     await seedBilling();
-    await policy();
     const a = await t.seedFamily();
     const b = await t.seedFamily();
     expect(
@@ -79,18 +62,17 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
             { familyId: a, grantedScans: 30 },
             { familyId: b, grantedScans: 30 },
           ],
-          1,
+          0,
         )
       ).status,
     ).toBe(409);
-    expect(await read()).toMatchObject({ version: 1, committedRemainingScans: '0' });
+    expect(await read()).toMatchObject({ version: 0, committedRemainingScans: '0' });
     expect((await t.owner.query('SELECT count(*) FROM scan_quota_audit')).rows[0]?.count).toBe('0');
   });
   it('TC-585: giảm trần tiền giữ nguyên lượt đã cấp và hiển thị cấp vượt', async () => {
     await seedBilling();
-    await policy();
     const familyId = await t.seedFamily();
-    expect((await grants([{ familyId, grantedScans: 40 }], 1)).status).toBe(200);
+    expect((await grants([{ familyId, grantedScans: 40 }], 0)).status).toBe(200);
     await t.owner.query("UPDATE extraction_spend SET cap_usd=1 WHERE month='2026-10'");
     expect(await read()).toMatchObject({
       monthlyCapUsd: '1.000000000000',
@@ -100,7 +82,6 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
     expect((await read()).families.find((f) => f.familyId === familyId)?.quota.grantedScans).toBe(40);
   });
   it('TC-585: phí cũ hoặc ở tương lai không được xem là 0 sẵn có', async () => {
-    await policy();
     const familyId = await t.seedFamily();
     await seedBilling(181);
     expect(await read()).toMatchObject({
@@ -108,7 +89,7 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
       actualSpendUsd: null,
       availableAdditionalScans: null,
     });
-    expect((await grants([{ familyId, grantedScans: 1 }], 1)).status).toBe(409);
+    expect((await grants([{ familyId, grantedScans: 1 }], 0)).status).toBe(409);
     await t.owner.query('UPDATE ai_billing_sources SET last_complete_at=$1', [
       new Date(NOW.getTime() + 1000),
     ]);
@@ -116,14 +97,13 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
   });
   it('TC-583: giữ used và held khi tăng tổng, held chỉ tính một lần trong committed', async () => {
     await seedBilling();
-    await policy();
     const familyId = await t.seedFamily();
-    await grants([{ familyId, grantedScans: 10 }], 1);
+    await grants([{ familyId, grantedScans: 10 }], 0);
     await t.owner.query('UPDATE family_scan_quotas SET used_scans=3,held_scans=2 WHERE family_id=$1', [
       familyId,
     ]);
     await t.owner.query("UPDATE scan_quota_months SET committed_remaining_scans=7 WHERE month='2026-10'");
-    expect((await grants([{ familyId, grantedScans: 12 }], 2)).status).toBe(200);
+    expect((await grants([{ familyId, grantedScans: 12 }], 1)).status).toBe(200);
     expect(await read()).toMatchObject({ committedRemainingScans: '9', availableAdditionalScans: '41' });
     expect((await read()).families.find((f) => f.familyId === familyId)?.quota).toMatchObject({
       usedScans: 3,
@@ -134,7 +114,6 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
   });
   it('TC-586: role app không đọc/ghi quota và audit của gia đình khác', async () => {
     await seedBilling();
-    await policy();
     const a = await t.seedFamily();
     const b = await t.seedFamily();
     await grants(
@@ -142,7 +121,7 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
         { familyId: a, grantedScans: 3 },
         { familyId: b, grantedScans: 4 },
       ],
-      1,
+      0,
     );
     const client = await t.pool.connect();
     try {
@@ -179,22 +158,20 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
     });
   });
   it('TC-581: sau khi khóa nếu đã sang tháng thì hủy toàn bộ yêu cầu cũ', async () => {
-    await policy();
     const actor = (await t.owner.query('SELECT id FROM accounts WHERE is_system_admin=true LIMIT 1')).rows[0]!
       .id as string;
     const repository = createScanQuotaRepository(t.database, TEST_SCAN_QUOTA_DEFAULTS);
     expect(
-      await repository.updatePolicy({ month: '2026-10', expectedVersion: 1, policy: POLICY }, actor, {
+      await repository.grant({ month: '2026-10', expectedVersion: 0, grants: [] }, actor, {
         now: NOW,
         recheckNow: () => new Date('2026-10-31T17:00:00Z'),
         defaultMonthlyCapUsd: 5,
       }),
     ).toEqual({ ok: false, code: 'ERR_SCAN_QUOTA_CONFLICT' });
-    expect((await read()).version).toBe(1);
+    expect((await read()).version).toBe(0);
   });
   it('TC-587: thiếu sức chứa vẫn tạo gia đình mà không cấp trial một phần', async () => {
     await seedBilling();
-    await policy();
     await t.owner.query(
       "INSERT INTO extraction_spend (month,cap_usd) VALUES ('2026-10',0) ON CONFLICT (month) DO UPDATE SET cap_usd=0",
     );
@@ -205,9 +182,8 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
   });
   it('TC-588: tháng mới giữ cấu hình, không chép lượt, chỉ gợi ý approved tháng trước', async () => {
     await seedBilling();
-    await policy();
     const a = await t.seedFamily();
-    await grants([{ familyId: a, grantedScans: 12 }], 1);
+    await grants([{ familyId: a, grantedScans: 12 }], 0);
     const response = await t.call(t.admin, 'POST', '/api/admin/families', { name: 'Nhà dùng thử' });
     const trial = (await response.json()) as { id: string };
     clock = new Date('2026-10-31T17:00:00Z');

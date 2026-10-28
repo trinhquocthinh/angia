@@ -74,7 +74,9 @@ describe('Trần AI theo gia đình (SPEC-031, BR-018)', () => {
       SCAN_QUOTA_RESERVE_PERCENT: 15,
       SCAN_QUOTA_INITIAL_COST_PER_SCAN_USD: '0.001594',
     });
-    expect(() => loadApiConfig({ ...env, SCAN_QUOTA_RESERVE_PERCENT: '101' })).toThrow();
+    // Dự phòng 100% làm phép chia (1 − dự phòng) bằng 0 khi tính USD cần nâng trần.
+    expect(() => loadApiConfig({ ...env, SCAN_QUOTA_RESERVE_PERCENT: '100' })).toThrow();
+    expect(loadApiConfig({ ...env, SCAN_QUOTA_RESERVE_PERCENT: '99' }).SCAN_QUOTA_RESERVE_PERCENT).toBe(99);
     expect(() => loadApiConfig({ ...env, SCAN_QUOTA_INITIAL_COST_PER_SCAN_USD: '1e-3' })).toThrow();
   });
 });

@@ -81,7 +81,6 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   // SPEC-041: cấu hình OCR toàn hệ thống, không chứa ảnh/kết quả sức khỏe.
   'GET /api/admin/ai-billing',
   'GET /api/admin/scan-quotas',
-  'PUT /api/admin/scan-quota-policy',
   'POST /api/admin/scan-quota-grants',
   'GET /api/family/scan-quota',
   'GET /api/admin/ai-routing',

@@ -28,17 +28,13 @@ describe('Thứ tự khóa tài khoản và quota gia đình', () => {
         [randomUUID(), provider, randomUUID(), NOW],
       );
     const familyId = await t.seedFamily();
-    const policy = await t.call(t.admin, 'PUT', '/api/admin/scan-quota-policy', {
-      month: '2026-10',
-      expectedVersion: 0,
-      policy: { estimatedCostPerScanUsd: '0.1', reserveBasisPoints: 0, trialScans: 0 },
-    });
-    expect(policy.status).toBe(200);
+    // GET chỉ đọc để pool app mở sẵn kết nối; kết nối đầu tiên có thể chậm hơn cửa sổ chờ khóa.
+    expect((await t.call(t.admin, 'GET', '/api/admin/scan-quotas')).status).toBe(200);
     await t.owner.query('BEGIN');
     await t.owner.query('SELECT id FROM accounts WHERE id=$1 FOR UPDATE', [t.admin.accountId]);
     const pending = t.call(t.admin, 'POST', '/api/admin/scan-quota-grants', {
       month: '2026-10',
-      expectedVersion: 1,
+      expectedVersion: 0,
       grants: [{ familyId, status: 'approved', grantedScans: 1, reason: 'Duyệt tháng' }],
     });
     try {
