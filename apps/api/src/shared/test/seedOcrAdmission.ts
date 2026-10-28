@@ -3,15 +3,22 @@ import { budgetMonth } from '@angia/contracts';
 import type pg from 'pg';
 
 // Fixture cấp lượt và đối soát tường minh; chỉ dùng PostgreSQL container test.
-export async function seedOcrAdmission(owner: pg.Client, familyId: string, now = new Date(), granted = 20) {
+// granted=null: không tạo dòng quota, gia đình dùng lượt mặc định (CP5.5).
+export async function seedOcrAdmission(
+  owner: pg.Client,
+  familyId: string,
+  now = new Date(),
+  granted: number | null = 20,
+) {
   const month = budgetMonth(now);
   await owner.query('INSERT INTO scan_quota_months(month) VALUES($1) ON CONFLICT DO NOTHING', [month]);
-  await owner.query(
-    `INSERT INTO family_scan_quotas(family_id,month,status,granted_scans,updated_at,updated_by)
+  if (granted !== null)
+    await owner.query(
+      `INSERT INTO family_scan_quotas(family_id,month,status,granted_scans,updated_at,updated_by)
     SELECT $1,$2,'approved',$3,$4,id FROM accounts WHERE family_id=$1 LIMIT 1
     ON CONFLICT(family_id,month) DO NOTHING`,
-    [familyId, month, granted, now],
-  );
+      [familyId, month, granted, now],
+    );
   await owner.query(
     `UPDATE scan_quota_months SET committed_remaining_scans=(
     SELECT coalesce(sum(granted_scans-used_scans),0) FROM family_scan_quotas WHERE month=$1) WHERE month=$1`,

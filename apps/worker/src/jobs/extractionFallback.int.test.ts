@@ -56,6 +56,7 @@ describe('Model dự phòng trên PostgreSQL thật (E3-S6-T2, SPEC-009, BR-016)
       estimatedCostUsd: 0.02,
       defaultMonthlyCapUsd: 5,
       defaultFamilyCapUsd: 0.5,
+      defaultMonthlyScans: 0,
       now: () => NOW,
     },
     storage: { get: async () => APPROVED_OCR_BYTES },

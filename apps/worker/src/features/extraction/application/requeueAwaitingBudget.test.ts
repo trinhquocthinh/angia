@@ -7,6 +7,7 @@ const call: BudgetCall = {
   estimatedCostUsd: 0.02,
   defaultMonthlyCapUsd: 5,
   defaultFamilyCapUsd: 0.5,
+  defaultMonthlyScans: 0,
 };
 
 function repository(counts: Record<string, number>) {

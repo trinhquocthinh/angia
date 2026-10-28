@@ -62,7 +62,13 @@ export function createPrivacyFixtureDependencies(f: Fixture): PrivacyDependencie
     hashPng: hashPrivacyPng,
     newId: () => f.draftId,
     now: FIXED_NOW,
-    ai: { estimatedCostUsd: 0.02, defaultMonthlyCapUsd: 5, defaultFamilyCapUsd: 0.5, now: FIXED_NOW },
+    ai: {
+      estimatedCostUsd: 0.02,
+      defaultMonthlyCapUsd: 5,
+      defaultFamilyCapUsd: 0.5,
+      defaultMonthlyScans: 10,
+      now: FIXED_NOW,
+    },
     quota: { limits: { storageBytes: 100, dailyUploads: 10, pendingJobs: 3 }, now: FIXED_NOW },
   };
 }

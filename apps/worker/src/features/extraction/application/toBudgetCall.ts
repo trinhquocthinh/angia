@@ -8,6 +8,6 @@ export function toBudgetCall(policy: BudgetPolicy): BudgetCall {
     estimatedCostUsd: policy.estimatedCostUsd,
     defaultMonthlyCapUsd: policy.defaultMonthlyCapUsd,
     defaultFamilyCapUsd: policy.defaultFamilyCapUsd,
-    defaultMonthlyScans: policy.defaultMonthlyScans ?? 0,
+    defaultMonthlyScans: policy.defaultMonthlyScans,
   };
 }

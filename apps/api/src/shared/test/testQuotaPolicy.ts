@@ -11,5 +11,6 @@ export const TEST_AI_POLICY: AiBudgetPolicy = {
   estimatedCostUsd: 0.02,
   defaultMonthlyCapUsd: 5,
   defaultFamilyCapUsd: 0.5,
+  defaultMonthlyScans: 10,
   now: () => new Date(),
 };
