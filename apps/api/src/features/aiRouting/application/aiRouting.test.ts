@@ -58,7 +58,7 @@ describe('Cấu hình nhà cung cấp OCR: application', () => {
     expect(repo.compareAndSet).toHaveBeenCalledTimes(1);
   });
 
-  it('TC-468: không biến lỗi đọc DB thành cấu hình Woku mặc định', async () => {
+  it('TC-468: không biến lỗi đọc DB thành cấu hình mặc định', async () => {
     const repo = repository();
     vi.mocked(repo.read).mockRejectedValue(new Error('db unavailable'));
     await expect(getAiRoutingSettings(repo)).rejects.toThrow('db unavailable');

@@ -10,7 +10,7 @@ beforeAll(async () => {
 afterAll(async () => {
   await fixture?.close();
 });
-const source = (): BillingSource => ({ id: randomUUID(), provider: 'woku', apiKey: randomUUID() });
+const source = (): BillingSource => ({ id: randomUUID(), provider: 'openrouter', apiKey: randomUUID() });
 const charge = (externalId: string, counterAmount = '20') => ({
   externalId,
   chargedAt: new Date('2026-09-30T17:01:00Z'),

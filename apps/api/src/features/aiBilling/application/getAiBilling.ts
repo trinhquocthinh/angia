@@ -5,9 +5,7 @@ const FRESHNESS_MS = 180_000;
 
 function coverage(sources: AiBillingSource[], now: Date): AiBillingView['status'] {
   if (sources.length === 0) return 'unconfigured';
-  const providers = new Set(sources.map((source) => source.provider));
   if (
-    providers.size < 2 ||
     sources.some(
       (source) =>
         source.status !== 'complete' ||

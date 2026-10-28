@@ -20,9 +20,7 @@ export function AiBillingSourceList({ sources }: { sources: AiBillingView['sourc
           className="grid min-w-0 gap-1 border-t border-[#e4e9e5] pt-3 text-[12px] leading-5"
         >
           <div className="flex flex-wrap justify-between gap-x-3">
-            <span className="font-semibold text-[#131d1d]">
-              {source.provider === 'woku' ? 'Woku' : 'OpenRouter'}
-            </span>
+            <span className="font-semibold text-[#131d1d]">OpenRouter</span>
             <span className="break-all text-[#55615f]">{formatBillingUsd(source.confirmedSpendUsd)}</span>
           </div>
           <span className="break-all text-[11px] text-[#707975]">Mã nguồn: {source.id}</span>

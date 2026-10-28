@@ -13,14 +13,13 @@ export function AiRoutingSummary({
   view: AiRoutingView;
   updatedByName: string | null;
 }) {
-  const selected = view.settings.selectedProvider;
-  const models = view.settings[selected];
+  const models = view.settings.openrouter;
   return (
     <div className="grid gap-3">
       <div className="flex items-center justify-between gap-2">
         <span className="text-[12px] text-[#707975]">Nhà cung cấp đã lưu</span>
         <span className="rounded-md bg-[#e4f0f0] px-2 py-1 text-[12px] font-semibold text-[#004135]">
-          {selected === 'woku' ? 'Woku' : 'OpenRouter'}
+          OpenRouter
         </span>
       </div>
       <dl className="m-0 grid gap-2 text-[12px] leading-5">

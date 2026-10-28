@@ -13,7 +13,7 @@ const sourceStatusSchema = z.enum([
 ]);
 const sourceSchema = z.strictObject({
   id: z.uuid(),
-  provider: z.enum(['woku', 'openrouter']),
+  provider: z.literal('openrouter'),
   status: sourceStatusSchema,
   confirmedSpendUsd: moneySchema,
   lastAttemptAt: z.iso.datetime().nullable(),

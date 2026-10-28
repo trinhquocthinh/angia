@@ -71,7 +71,7 @@ describe('SPEC-041: định tuyến trên PostgreSQL bằng role app NOBYPASSRLS
     });
   });
 
-  it('TC-533: đổi Woku → OpenRouter giữa hai lượt; không giữ chỗ ở lượt bị chặn, phí ghi đúng', async () => {
+  it('TC-533: lượt OCR đọc cấu hình OpenRouter đã lưu trong DB, phí ghi đúng', async () => {
     const doc = await seedExtractingDocument(fx.owner);
     await seedOcrGate(fx.owner, doc.familyId, new Date('2026-10-15T03:00:00Z'));
     const deps = dependencies();
@@ -112,13 +112,7 @@ describe('SPEC-041: định tuyến trên PostgreSQL bằng role app NOBYPASSRLS
         ),
     );
     const run = handleExtractDocumentJob(deps, logger, attempts);
-    await expect(run(job(doc))).rejects.toThrow('woku_live_unavailable');
-    expect((await fx.owner.query('SELECT count(*)::int AS n FROM extraction_reservations')).rows[0].n).toBe(
-      0,
-    );
-    const settings = structuredClone(DEFAULT_AI_ROUTING_SETTINGS) as AiRoutingSettings;
-    settings.selectedProvider = 'openrouter';
-    await saveConfig(settings, 1);
+    await saveConfig(structuredClone(DEFAULT_AI_ROUTING_SETTINGS) as AiRoutingSettings, 1);
     expect(await run(job(doc))).toMatchObject({ status: 'pending_review', costUsd: 0.0035 });
     expect(
       (
@@ -138,7 +132,6 @@ describe('SPEC-041: định tuyến trên PostgreSQL bằng role app NOBYPASSRLS
     const doc = await seedExtractingDocument(fx.owner);
     const other = await seedExtractingDocument(fx.owner);
     const settings = structuredClone(DEFAULT_AI_ROUTING_SETTINGS) as AiRoutingSettings;
-    settings.selectedProvider = 'openrouter';
     await saveConfig(settings, 1);
     let calls = 0;
     await seedOcrGate(fx.owner, doc.familyId, new Date('2026-10-15T03:00:00Z'));

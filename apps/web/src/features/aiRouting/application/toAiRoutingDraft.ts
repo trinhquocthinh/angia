@@ -5,9 +5,6 @@ import type { AiRoutingDraft } from './ports';
 export function toAiRoutingDraft(view: AiRoutingView): AiRoutingDraft {
   return {
     expectedVersion: view.version,
-    selectedProvider: view.settings.selectedProvider,
-    wokuPrimary: view.settings.woku.primaryModel,
-    wokuFallback: view.settings.woku.fallbackModel,
     openrouterPrimary: view.settings.openrouter.primaryModel,
     openrouterFallback: view.settings.openrouter.fallbackModel,
   };

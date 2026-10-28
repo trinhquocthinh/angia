@@ -8,7 +8,7 @@ export interface AiRoutingReader {
 /** Bản chốt trong bộ nhớ của một lượt xử lý; không đại diện sổ phí tổng của provider. */
 export interface ExtractionSnapshot {
   readonly runMode: AiRunMode;
-  readonly provider: 'woku' | 'openrouter';
+  readonly provider: 'openrouter';
   readonly primaryModel: string;
   readonly fallbackModel: string;
   readonly month: string;

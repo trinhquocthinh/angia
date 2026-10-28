@@ -226,7 +226,7 @@ export { pushSubscriptionSchema, pushConfigSchema } from './push/pushSchemas.js'
 export { myConsentSchema, myConsentWithdrawnSchema } from './profiles/myConsentSchemas.js';
 export type { MyConsent, MyConsentWithdrawn } from './profiles/myConsentSchemas.js';
 
-export { WOKU_OCR_MODELS, OPENROUTER_OCR_MODELS } from './aiRouting/aiModelCatalog.js';
+export { OPENROUTER_OCR_MODELS } from './aiRouting/aiModelCatalog.js';
 export { DEFAULT_AI_ROUTING_SETTINGS } from './aiRouting/aiRoutingDefaults.js';
 export {
   aiRoutingSettingsSchema,

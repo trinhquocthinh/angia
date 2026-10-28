@@ -20,12 +20,12 @@ function form(pending = false, error: Error | null = null) {
   );
 }
 describe('Form cấu hình nhận diện', () => {
-  it('TC-507: hiển thị cả hai cặp model, không có ô hệ số/key/URL', () => {
+  it('TC-507, TC-651: chỉ cặp model OpenRouter, không chọn nhà cung cấp, không có ô hệ số/key/URL', () => {
     const markup = form();
-    expect(markup).toContain('Model chính Woku');
+    expect(markup).toContain('Model chính OpenRouter');
     expect(markup).toContain('Model dự phòng OpenRouter');
-    expect(markup).not.toContain('name="wokuRate"');
-    expect(markup).not.toContain('USD ngân sách cho 1 USD nội bộ Woku');
+    expect(markup).not.toContain('name="selectedProvider"');
+    expect(markup).not.toContain('Woku');
     expect(markup).not.toContain('type="password"');
     expect(markup).not.toContain('name="apiKey"');
     expect(markup).not.toContain('name="baseUrl"');
@@ -46,8 +46,8 @@ describe('Form cấu hình nhận diện', () => {
   });
   it('TC-507: tóm tắt bootstrap không khẳng định dịch vụ đang hoạt động', () => {
     const markup = renderToStaticMarkup(<AiRoutingSummary view={initial} updatedByName={null} />);
-    expect(markup).toContain('Nhà cung cấp đã lưu');
-    expect(markup).not.toContain('Hệ số Woku');
+    expect(markup).toContain('OpenRouter');
+    expect(markup).not.toContain('Woku');
     expect(markup).not.toContain('Đang hoạt động');
   });
 });

@@ -18,7 +18,7 @@ export async function seedOcrGate(owner: pg.Client, familyId: string, now: Date,
     SELECT coalesce(sum(granted_scans-used_scans),0) FROM family_scan_quotas WHERE month=$1) WHERE month=$1`,
     [month],
   );
-  for (const provider of ['openrouter', 'woku']) {
+  for (const provider of ['openrouter']) {
     const fingerprint = `fixture-${provider}`;
     await owner.query(
       `INSERT INTO ai_billing_sources(id,provider,credential_fingerprint,status,last_attempt_at,last_complete_at)

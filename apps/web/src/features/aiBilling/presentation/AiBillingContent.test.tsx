@@ -14,7 +14,7 @@ const incomplete: AiBillingView = {
   sources: [
     {
       id: '00000000-0000-4000-8000-000000000001',
-      provider: 'woku',
+      provider: 'openrouter',
       status: 'gap',
       confirmedSpendUsd: '0.013086000000',
       lastAttemptAt: now.toISOString(),

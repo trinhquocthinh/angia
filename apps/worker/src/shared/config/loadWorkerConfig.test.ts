@@ -221,7 +221,7 @@ it('TC-544: cấu hình nguồn phí không rỗng phải bao phủ key OpenRout
   expect(() =>
     loadWorkerConfig({
       ...vars,
-      AI_BILLING_SOURCES_JSON: JSON.stringify([{ ...source, provider: 'woku', apiKey: 'runtime-synthetic' }]),
+      AI_BILLING_SOURCES_JSON: JSON.stringify([{ ...source, apiKey: 'other-synthetic' }]),
     }),
   ).toThrow('Nguồn phí phải bao phủ credential OpenRouter đang cấu hình');
 });

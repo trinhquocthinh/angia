@@ -44,12 +44,16 @@ const completion = () =>
   );
 
 describe('SPEC-041: job dùng snapshot động', () => {
-  it('TC-527: Woku live bị chặn trước đọc ảnh/giữ ngân sách kể cả ở lượt cuối', async () => {
+  it('TC-527: OpenRouter thiếu key bị chặn trước đọc ảnh/giữ ngân sách kể cả ở lượt cuối', async () => {
     const fixture = memory();
-    const attempts = createExtractionAttempts(fixture.deps, { read: async () => config() }, runtime);
+    const attempts = createExtractionAttempts(
+      fixture.deps,
+      { read: async () => config() },
+      { ...runtime, openRouterApiKey: ' ' },
+    );
     await expect(
       handleExtractDocumentJob(fixture.deps, logger, attempts)({ ...job, retryCount: 2 }),
-    ).rejects.toMatchObject({ code: 'woku_live_unavailable' });
+    ).rejects.toMatchObject({ code: 'openrouter_key_missing' });
     expect(fixture.statusHistory).toEqual([]);
     expect(fixture.extractorCalls).toEqual([]);
     expect(fixture.ledger.spentUsd()).toBe(0);
@@ -58,7 +62,6 @@ describe('SPEC-041: job dùng snapshot động', () => {
   it('TC-528: OpenRouter chính lỗi 500 dùng model dự phòng trong cùng snapshot và ghi phí cũ', async () => {
     const fixture = memory();
     const settings = config();
-    settings.settings.selectedProvider = 'openrouter';
     const models: string[] = [];
     const attempts = createExtractionAttempts(
       fixture.deps,
@@ -79,23 +82,6 @@ describe('SPEC-041: job dùng snapshot động', () => {
       model: 'moonshotai/kimi-k2.6',
       costUsd: 0.0035,
     });
-  });
-
-  it('TC-529: cùng handler nhận thay đổi provider ở retry tiếp theo mà không restart', async () => {
-    const fixture = memory();
-    const settings = config();
-    const attempts = createExtractionAttempts(
-      fixture.deps,
-      { read: async () => settings },
-      runtime,
-      async () => completion(),
-    );
-    const run = handleExtractDocumentJob(fixture.deps, logger, attempts);
-    await expect(run(job)).rejects.toMatchObject({ code: 'woku_live_unavailable' });
-    settings.version++;
-    settings.settings.selectedProvider = 'openrouter';
-    expect(await run({ ...job, retryCount: 1 })).toMatchObject({ status: 'pending_review' });
-    expect(fixture.extractions[0]?.provider).toBe('openrouter');
   });
 
   it('TC-530: payload sai bị từ chối trước đọc cấu hình DB', async () => {
@@ -121,12 +107,16 @@ describe('SPEC-041: job dùng snapshot động', () => {
     const fixture = memory();
     const lines: string[] = [];
     const log = pino({}, { write: (line: string) => lines.push(line) });
-    const attempts = createExtractionAttempts(fixture.deps, { read: async () => config() }, runtime);
+    const attempts = createExtractionAttempts(
+      fixture.deps,
+      { read: async () => config() },
+      { ...runtime, openRouterApiKey: ' ' },
+    );
     await expect(handleExtractDocumentJob(fixture.deps, log, attempts)(job)).rejects.toThrow(
-      'woku_live_unavailable',
+      'openrouter_key_missing',
     );
     expect(lines.map((line) => JSON.parse(line))).toContainEqual(
-      expect.objectContaining({ reason: 'woku_live_unavailable' }),
+      expect.objectContaining({ reason: 'openrouter_key_missing' }),
     );
     expect(lines.join('')).not.toContain('synthetic-key');
   });

@@ -1,7 +1,7 @@
 import type pg from 'pg';
 import { OcrGateBlockedError } from '../application/OcrGateBlockedError.js';
 
-// Cùng coverage CP5.2: mọi nguồn của cả hai provider đầy đủ, mới <=180s; numeric so sánh trước khi làm tròn.
+// CP5.6: có nguồn OpenRouter và mọi nguồn đầy đủ, mới <=180s; numeric so sánh trước khi làm tròn.
 export async function assertOcrMoneyGate(
   client: pg.PoolClient,
   month: string,
@@ -10,7 +10,7 @@ export async function assertOcrMoneyGate(
 ): Promise<void> {
   const result = await client.query<{ ready: boolean; under_cap: boolean }>(
     `WITH sources AS (
-    SELECT count(DISTINCT provider)=2 AND coalesce(bool_and(status='complete'
+    SELECT count(*)>0 AND coalesce(bool_and(status='complete'
       AND last_attempt_at IS NOT NULL AND last_complete_at IS NOT NULL
       AND last_complete_at <= $3::timestamptz
       AND last_complete_at >= $3::timestamptz-interval '180 seconds'),false) AS ready FROM ai_billing_sources

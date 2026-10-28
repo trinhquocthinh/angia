@@ -3,9 +3,6 @@ import type { AiRoutingDraft, AiRoutingErrors, AiRoutingField } from './ports';
 
 type Result = { ok: true; request: UpdateAiRoutingRequest } | { ok: false; errors: AiRoutingErrors };
 const fieldPaths: Record<string, AiRoutingField> = {
-  'settings.selectedProvider': 'selectedProvider',
-  'settings.woku.primaryModel': 'wokuPrimary',
-  'settings.woku.fallbackModel': 'wokuFallback',
   'settings.openrouter.primaryModel': 'openrouterPrimary',
   'settings.openrouter.fallbackModel': 'openrouterFallback',
 };
@@ -14,11 +11,6 @@ export function buildAiRoutingRequest(draft: AiRoutingDraft): Result {
   const parsed = updateAiRoutingRequestSchema.safeParse({
     expectedVersion: draft.expectedVersion,
     settings: {
-      selectedProvider: draft.selectedProvider,
-      woku: {
-        primaryModel: draft.wokuPrimary,
-        fallbackModel: draft.wokuFallback,
-      },
       openrouter: { primaryModel: draft.openrouterPrimary, fallbackModel: draft.openrouterFallback },
     },
   });

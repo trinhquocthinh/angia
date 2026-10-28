@@ -5113,14 +5113,6 @@ export interface components {
       updatedBy: string | null;
     };
     AiRoutingSettings: {
-      /** @enum {string} */
-      selectedProvider: 'woku' | 'openrouter';
-      woku: {
-        /** @enum {string} */
-        primaryModel: 'gemini-3-flash-preview' | 'gemini-3.8-flash';
-        /** @enum {string} */
-        fallbackModel: 'gemini-3-flash-preview' | 'gemini-3.8-flash';
-      };
       openrouter: {
         /** @enum {string} */
         primaryModel: 'google/gemini-3.1-flash-lite' | 'moonshotai/kimi-k2.6';
@@ -5146,7 +5138,7 @@ export interface components {
         /** Format: uuid */
         id: string;
         /** @enum {string} */
-        provider: 'woku' | 'openrouter';
+        provider: 'openrouter';
         /** @enum {string} */
         status:
           | 'unverified'

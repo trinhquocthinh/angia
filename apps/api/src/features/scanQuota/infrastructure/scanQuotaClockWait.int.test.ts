@@ -25,7 +25,7 @@ describe('Đồng hồ quota sau khi chờ khóa ngân sách và gia đình', ()
     await t.owner.query(
       'TRUNCATE scan_quota_audit, scan_quota_policy_audit, family_scan_quotas, scan_quota_months, scan_quota_policy, ai_provider_charges, ai_billing_sources, extraction_spend CASCADE',
     );
-    for (const provider of ['woku', 'openrouter'])
+    for (const provider of ['openrouter'])
       await t.owner.query(
         `INSERT INTO ai_billing_sources (id,provider,credential_fingerprint,status,last_attempt_at,last_complete_at) VALUES ($1,$2,$3,'complete',$4,$4)`,
         [randomUUID(), provider, randomUUID(), START],
