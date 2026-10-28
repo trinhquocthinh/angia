@@ -81,4 +81,14 @@ describe('CP5.4: duyệt riêng tư qua cổng lượt và phí thực, PostgreS
       expect((await t.call(f.main, 'POST', `${f.path}/privacy-approval`, f.approval)).status).toBe(200);
     },
   );
+  it('TC-646: gia đình chưa có dòng quota tháng vẫn được duyệt nhờ lượt mặc định', async () => {
+    const f = await ready();
+    await seedOcrAdmission(t.owner, f.familyId, new Date(), null);
+    const response = await t.call(f.main, 'POST', `${f.path}/privacy-approval`, f.approval);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ status: 'extracting' });
+    expect(
+      (await t.owner.query('SELECT 1 FROM family_scan_quotas WHERE family_id=$1', [f.familyId])).rowCount,
+    ).toBe(0);
+  });
 });

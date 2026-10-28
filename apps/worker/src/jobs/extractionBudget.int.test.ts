@@ -22,7 +22,13 @@ import { registerRequeueAwaitingBudgetJob } from './registerRequeueAwaitingBudge
 
 const logger = pino({ level: 'silent' });
 const NOW = new Date('2026-10-15T03:00:00Z');
-const policy = { estimatedCostUsd: 0.02, defaultMonthlyCapUsd: 5, defaultFamilyCapUsd: 0, now: () => NOW };
+const policy = {
+  estimatedCostUsd: 0.02,
+  defaultMonthlyCapUsd: 5,
+  defaultFamilyCapUsd: 0,
+  defaultMonthlyScans: 0,
+  now: () => NOW,
+};
 function countingExtractor(error?: Error) {
   const calls: number[] = [];
   const extractor: DocumentExtractor = {

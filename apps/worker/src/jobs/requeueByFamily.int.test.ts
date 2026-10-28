@@ -50,6 +50,7 @@ describe('Requeue awaiting_budget theo gia đình trên PostgreSQL + pg-boss th�
       estimatedCostUsd: 0.02,
       defaultMonthlyCapUsd: 5,
       defaultFamilyCapUsd: 0.5,
+      defaultMonthlyScans: 0,
       now: () => NOW,
     };
     const repo = createBudgetRequeueRepository(fx.pool, boss, () => NOW);
@@ -90,6 +91,7 @@ describe('Requeue awaiting_budget theo gia đình trên PostgreSQL + pg-boss th�
       estimatedCostUsd: 0.02,
       defaultMonthlyCapUsd: 5,
       defaultFamilyCapUsd: 0.5,
+      defaultMonthlyScans: 0,
       now: () => NOW,
     };
     await setSpend(0);

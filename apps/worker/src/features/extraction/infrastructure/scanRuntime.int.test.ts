@@ -8,7 +8,13 @@ import { createBudgetLedger } from './createBudgetLedger.js';
 
 const NOW = new Date();
 const MONTH = budgetMonth(NOW);
-const call = { month: MONTH, estimatedCostUsd: 0.02, defaultMonthlyCapUsd: 5, defaultFamilyCapUsd: 0 };
+const call = {
+  month: MONTH,
+  estimatedCostUsd: 0.02,
+  defaultMonthlyCapUsd: 5,
+  defaultFamilyCapUsd: 0,
+  defaultMonthlyScans: 0,
+};
 describe('CP5.4: giữ và dispatch lượt trên PostgreSQL thật', () => {
   let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
   let ids: Awaited<ReturnType<typeof seedExtractingDocument>>;

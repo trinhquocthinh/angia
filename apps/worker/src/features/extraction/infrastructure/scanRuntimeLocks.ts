@@ -42,7 +42,7 @@ export async function lockScanRuntime(client: pg.PoolClient, familyId: string, i
       SELECT $1,$2,'default',$3,now() WHERE $3::bigint > 0 ON CONFLICT DO NOTHING RETURNING granted_scans)
     UPDATE scan_quota_months SET committed_remaining_scans=committed_remaining_scans+added.granted_scans,
       quota_families=quota_families+1 FROM added WHERE month=$2`,
-    [familyId, call.month, call.defaultMonthlyScans ?? 0],
+    [familyId, call.month, call.defaultMonthlyScans],
   );
   await client.query(
     `SELECT month FROM family_scan_quotas WHERE family_id=$1 AND month=ANY($2::text[])

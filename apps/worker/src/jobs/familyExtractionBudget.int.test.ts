@@ -18,6 +18,7 @@ describe('CP5.4: quota gia đình, khóa operation và tháng Việt Nam', () =>
     estimatedCostUsd: 0.02,
     defaultMonthlyCapUsd: 5,
     defaultFamilyCapUsd: 0,
+    defaultMonthlyScans: 0,
   });
   const ledger = <T>(id: string, work: (store: ReturnType<typeof createBudgetLedger>) => Promise<T>) =>
     withFamilyScope(fx.pool, doc.familyId, (client) =>
