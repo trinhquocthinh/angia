@@ -29,7 +29,7 @@ describe('CP5.5: lượt mặc định mỗi gia đình trên PostgreSQL thật'
       'TRUNCATE families, scan_quota_policy, scan_quota_months, extraction_spend, ai_billing_sources CASCADE',
     );
     ids = await seedExtractingDocument(fx.owner);
-    for (const provider of ['openrouter', 'woku'])
+    for (const provider of ['openrouter'])
       await fx.owner.query(
         `INSERT INTO ai_billing_sources
       (id,provider,credential_fingerprint,status,last_attempt_at,last_complete_at) VALUES ($1,$2,$3,'complete',$4,$4)`,

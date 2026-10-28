@@ -28,7 +28,7 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
       grants: entries.map((entry) => ({ ...entry, status: 'approved', reason: 'Duyệt tháng' })),
     });
   const seedBilling = async (age = 0) => {
-    for (const provider of ['woku', 'openrouter'])
+    for (const provider of ['openrouter'])
       await t.owner.query(
         `INSERT INTO ai_billing_sources (id, provider, credential_fingerprint, status, last_attempt_at, last_complete_at) VALUES ($1,$2,$3,'complete',$4,$5)`,
         [randomUUID(), provider, randomUUID(), NOW, new Date(NOW.getTime() - age * 1000)],

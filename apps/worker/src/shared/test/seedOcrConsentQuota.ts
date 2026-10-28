@@ -17,7 +17,7 @@ export async function seedOcrConsentQuota(owner: pg.Client, familyId: string, mo
     SELECT $1,$2,'approved',2,$3,id FROM accounts WHERE family_id=$1`,
     [familyId, month, now],
   );
-  for (const provider of ['openrouter', 'woku'])
+  for (const provider of ['openrouter'])
     await owner.query(
       `INSERT INTO ai_billing_sources
     (id,provider,credential_fingerprint,status,last_attempt_at,last_complete_at) VALUES ($1,$2,$3,'complete',$4,$4)`,

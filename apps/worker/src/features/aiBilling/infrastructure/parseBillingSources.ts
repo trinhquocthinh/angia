@@ -6,7 +6,7 @@ const schema = z
     z
       .object({
         id: z.uuid(),
-        provider: z.enum(['woku', 'openrouter']),
+        provider: z.literal('openrouter'),
         apiKey: z.string().trim().min(1).max(4096),
       })
       .strict(),

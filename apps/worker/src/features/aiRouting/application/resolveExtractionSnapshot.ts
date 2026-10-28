@@ -6,11 +6,10 @@ export function resolveExtractionSnapshot(
   runMode: AiRunMode,
   now: Date,
 ): ExtractionSnapshot {
-  const provider = view.settings.selectedProvider;
-  const models = view.settings[provider];
+  const models = view.settings.openrouter;
   return Object.freeze({
     runMode,
-    provider,
+    provider: 'openrouter' as const,
     primaryModel: models.primaryModel,
     fallbackModel: models.fallbackModel,
     month: budgetMonth(now),

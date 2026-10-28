@@ -34,7 +34,7 @@ describe('HTTP cấu hình OCR', () => {
     const { requests, repository } = harness();
     const input = {
       expectedVersion: 0,
-      settings: { ...DEFAULT_AI_ROUTING_SETTINGS, selectedProvider: 'openrouter' as const },
+      settings: DEFAULT_AI_ROUTING_SETTINGS,
     };
     await repository.save(input, 'synthetic-csrf');
     expect(requests[0]?.method).toBe('PUT');
@@ -51,10 +51,7 @@ describe('HTTP cấu hình OCR', () => {
   it('TC-511: giữ mã xung đột 409 để form yêu cầu tải lại', async () => {
     const { repository } = harness(409, { error: { code: 'ERR_AI_ROUTING_CONFLICT', message: 'server' } });
     await expect(
-      repository.save(
-        { expectedVersion: 0, settings: { ...DEFAULT_AI_ROUTING_SETTINGS, selectedProvider: 'openrouter' } },
-        'csrf',
-      ),
+      repository.save({ expectedVersion: 0, settings: DEFAULT_AI_ROUTING_SETTINGS }, 'csrf'),
     ).rejects.toMatchObject({ code: 'ERR_AI_ROUTING_CONFLICT', status: 409 });
   });
   it('TC-509: HTTP 200 sai hợp đồng không biến thành cấu hình mặc định', async () => {

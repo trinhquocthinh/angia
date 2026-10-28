@@ -14,7 +14,7 @@ const initial: AiRoutingView = {
 };
 const input = {
   expectedVersion: 0,
-  settings: { ...DEFAULT_AI_ROUTING_SETTINGS, selectedProvider: 'openrouter' as const },
+  settings: DEFAULT_AI_ROUTING_SETTINGS,
 };
 function harness(csrf: string | null = 'csrf', account: string | null = 'admin-a') {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: Infinity } } });

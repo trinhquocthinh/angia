@@ -53,10 +53,6 @@ function createSnapshotExtractor(
   fetchFn: typeof fetch,
 ) {
   if (snapshot.runMode === 'fake') return createFakeExtractor();
-  if (snapshot.provider === 'woku') {
-    // CP5 chưa nối cổng phí tổng/quota và điều kiện upstream; không đọc ảnh hoặc gọi Woku thật.
-    throw new AiRoutingError('woku_live_unavailable');
-  }
   if (!runtime.openRouterApiKey?.trim()) throw new AiRoutingError('openrouter_key_missing');
   if (!runtime.observeCharge) throw new AiRoutingError('billing_source_missing');
   const adapter = (model: string) =>

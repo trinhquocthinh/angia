@@ -17,7 +17,7 @@ export const aiBillingSources = pgTable(
   },
   (table) => [
     uniqueIndex('ai_billing_sources_credential_unique').on(table.provider, table.credentialFingerprint),
-    check('ai_billing_sources_provider_valid', sql`${table.provider} IN ('woku', 'openrouter')`),
+    check('ai_billing_sources_provider_valid', sql`${table.provider} IN ('openrouter')`),
     check(
       'ai_billing_sources_status_valid',
       sql`${table.status} IN ('unverified', 'complete', 'gap', 'error', 'counter_reset', 'credential_changed', 'receipt_conflict', 'missing_credential')`,

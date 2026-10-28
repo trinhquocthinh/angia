@@ -10,10 +10,12 @@ import { seedAccount, seedSession } from '@src/shared/test/seedAuthFixtures.js';
 const PATH = '/api/admin/ai-routing';
 const request = (expectedVersion = 0): UpdateAiRoutingRequest => ({
   expectedVersion,
-  settings: {
-    ...DEFAULT_AI_ROUTING_SETTINGS,
-  },
+  settings: structuredClone(DEFAULT_AI_ROUTING_SETTINGS) as UpdateAiRoutingRequest['settings'],
 });
+const swapped = {
+  primaryModel: 'moonshotai/kimi-k2.6',
+  fallbackModel: 'google/gemini-3.1-flash-lite',
+} as const;
 
 describe('API cấu hình nhà cung cấp OCR trong Admin', () => {
   let t: AdminTestApp;
@@ -35,7 +37,7 @@ describe('API cấu hình nhà cung cấp OCR trong Admin', () => {
     );
   });
 
-  it('TC-458: GET chỉ đọc bootstrap Woku, không ghi audit và không có secret', async () => {
+  it('TC-458: GET chỉ đọc bootstrap OpenRouter, không ghi audit và không có secret', async () => {
     const response = await t.call(t.admin, 'GET', PATH);
     expect(response.status).toBe(200);
     expect(response.headers.get('cache-control')).toBe('no-store');
@@ -78,7 +80,7 @@ describe('API cấu hình nhà cung cấp OCR trong Admin', () => {
   it('TC-461: hai PUT đồng thời chỉ một thành công, audit và cấu hình cùng phiên bản', async () => {
     const a = request();
     const b = request();
-    b.settings.selectedProvider = 'openrouter';
+    b.settings.openrouter = swapped;
     const responses = await Promise.all([t.call(t.admin, 'PUT', PATH, a), t.call(t.admin, 'PUT', PATH, b)]);
     expect(responses.map((r) => r.status).sort()).toEqual([200, 409]);
     const winner = responses.find((r) => r.status === 200);
@@ -86,20 +88,14 @@ describe('API cấu hình nhà cung cấp OCR trong Admin', () => {
     expect(await auditCount()).toBe(1);
   });
 
-  it('TC-462: chuyển Woku → OpenRouter → Woku giữ nguyên cấu hình provider còn lại', async () => {
+  it('TC-462: đổi cặp model OpenRouter rồi đổi lại, mỗi lần một version và một audit', async () => {
     const first = aiRoutingViewSchema.parse(await (await t.call(t.admin, 'PUT', PATH, request())).json());
-    const next = {
-      expectedVersion: first.version,
-      settings: { ...first.settings, selectedProvider: 'openrouter' },
-    };
+    const next = { expectedVersion: first.version, settings: { openrouter: swapped } };
     const second = aiRoutingViewSchema.parse(await (await t.call(t.admin, 'PUT', PATH, next)).json());
-    expect(second.settings.woku).toEqual(first.settings.woku);
+    expect(second.settings.openrouter).toEqual(swapped);
     const third = aiRoutingViewSchema.parse(
       await (
-        await t.call(t.admin, 'PUT', PATH, {
-          expectedVersion: second.version,
-          settings: { ...second.settings, selectedProvider: 'woku' },
-        })
+        await t.call(t.admin, 'PUT', PATH, { expectedVersion: second.version, settings: first.settings })
       ).json(),
     );
     expect(third.version).toBe(3);
@@ -152,16 +148,22 @@ describe('API cấu hình nhà cung cấp OCR trong Admin', () => {
     expect((await read()).version).toBe(0);
   });
 
-  it('TC-467: PUT chặn key/URL/actor giả và hệ số cũ từ client, giữ nguyên DB', async () => {
+  it('TC-467, TC-647: PUT chặn key/URL/actor giả, hệ số và khóa Woku cũ, giữ nguyên DB', async () => {
     const body = request();
+    const models = body.settings.openrouter;
     const invalid = [
       { ...body, apiKey: 'synthetic-secret' },
       { ...body, updatedBy: t.admin.accountId },
+      { ...body, settings: { openrouter: { ...models, baseUrl: 'https://example.invalid' } } },
+      { ...body, settings: { openrouter: { ...models, usdPerCredit: '1' } } },
+      { ...body, settings: { ...body.settings, selectedProvider: 'openrouter' } },
       {
         ...body,
-        settings: { ...body.settings, woku: { ...body.settings.woku, baseUrl: 'https://example.invalid' } },
+        settings: {
+          ...body.settings,
+          woku: { primaryModel: 'gemini-3-flash-preview', fallbackModel: 'gemini-3.8-flash' },
+        },
       },
-      { ...body, settings: { ...body.settings, woku: { ...body.settings.woku, usdPerCredit: '1' } } },
     ];
     for (const input of invalid) expect((await t.call(t.admin, 'PUT', PATH, input)).status).toBe(422);
     expect((await read()).version).toBe(0);

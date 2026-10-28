@@ -1,15 +1,5 @@
 import { z } from 'zod';
-import { OPENROUTER_OCR_MODELS, WOKU_OCR_MODELS } from './aiModelCatalog.js';
-
-const wokuSettingsSchema = z
-  .strictObject({
-    primaryModel: z.enum(WOKU_OCR_MODELS),
-    fallbackModel: z.enum(WOKU_OCR_MODELS),
-  })
-  .refine((value) => value.primaryModel !== value.fallbackModel, {
-    message: 'Model dự phòng phải khác model chính',
-    path: ['fallbackModel'],
-  });
+import { OPENROUTER_OCR_MODELS } from './aiModelCatalog.js';
 
 const openRouterSettingsSchema = z
   .strictObject({
@@ -21,13 +11,9 @@ const openRouterSettingsSchema = z
     path: ['fallbackModel'],
   });
 
-// selectedProvider là cấu hình mong muốn; không khẳng định worker đã gọi dịch vụ thật.
+// CP5.6: chỉ OpenRouter (định tuyến ZDR); Woku không dùng cho ảnh sức khỏe.
 export const aiRoutingSettingsSchema = z
-  .strictObject({
-    selectedProvider: z.enum(['woku', 'openrouter']),
-    woku: wokuSettingsSchema,
-    openrouter: openRouterSettingsSchema,
-  })
+  .strictObject({ openrouter: openRouterSettingsSchema })
   .meta({ id: 'AiRoutingSettings' });
 
 export type AiRoutingSettings = z.infer<typeof aiRoutingSettingsSchema>;

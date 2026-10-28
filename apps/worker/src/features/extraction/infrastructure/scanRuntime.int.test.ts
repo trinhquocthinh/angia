@@ -39,7 +39,7 @@ describe('CP5.4: giữ và dispatch lượt trên PostgreSQL thật', () => {
       SELECT $1,$2,'approved',2,$3,id FROM accounts WHERE family_id=$1`,
       [ids.familyId, MONTH, NOW],
     );
-    for (const provider of ['openrouter', 'woku'])
+    for (const provider of ['openrouter'])
       await fx.owner.query(
         `INSERT INTO ai_billing_sources
       (id,provider,credential_fingerprint,status,last_attempt_at,last_complete_at) VALUES ($1,$2,$3,'complete',$4,$4)`,
@@ -80,6 +80,20 @@ describe('CP5.4: giữ và dispatch lượt trên PostgreSQL thật', () => {
     await ledger((store) => store.reserveBudget(ids.documentId, call));
     await fx.owner.query('DELETE FROM health_profiles WHERE family_id=$1', [ids.familyId]);
     expect(await counts()).toEqual({ used: 0, held: 0, committed: 2 });
+  });
+  it('TC-649: chỉ cần nguồn OpenRouter; không có nguồn phí nào thì chặn và không giữ lượt', async () => {
+    await fx.owner.query('TRUNCATE ai_billing_sources CASCADE');
+    await expect(ledger((store) => store.reserveBudget(ids.documentId, call))).rejects.toMatchObject({
+      reason: 'billing_unavailable',
+    });
+    expect(await counts()).toEqual({ used: 0, held: 0, committed: 2 });
+    await fx.owner.query(
+      `INSERT INTO ai_billing_sources(id,provider,credential_fingerprint,status,last_attempt_at,last_complete_at)
+      VALUES ($1,'openrouter',$2,'complete',$3,$3)`,
+      [randomUUID(), randomUUID(), NOW],
+    );
+    await ledger((store) => store.reserveBudget(ids.documentId, call));
+    expect(await counts()).toEqual({ used: 0, held: 1, committed: 2 });
   });
   it('TC-607: nguồn stale hoặc phí đạt trần đều chặn mà không giữ lượt', async () => {
     await fx.owner.query("UPDATE ai_billing_sources SET last_complete_at=now()-interval '4 minutes'");

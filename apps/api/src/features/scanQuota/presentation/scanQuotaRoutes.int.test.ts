@@ -22,7 +22,7 @@ describe('Quota quét theo tháng với PostgreSQL và role app', () => {
       grants: [{ familyId, status: 'approved', grantedScans, reason: 'Duyệt tháng' }],
     });
   const seedBilling = async () => {
-    for (const provider of ['woku', 'openrouter'])
+    for (const provider of ['openrouter'])
       await t.owner.query(
         `INSERT INTO ai_billing_sources (id, provider, credential_fingerprint, status, last_attempt_at, last_complete_at) VALUES ($1,$2,$4,'complete',$3,$3)`,
         [randomUUID(), provider, NOW, randomUUID()],

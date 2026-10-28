@@ -7,9 +7,6 @@ export interface AiRoutingRepository {
 
 export interface AiRoutingDraft {
   expectedVersion: number;
-  selectedProvider: string;
-  wokuPrimary: string;
-  wokuFallback: string;
   openrouterPrimary: string;
   openrouterFallback: string;
 }

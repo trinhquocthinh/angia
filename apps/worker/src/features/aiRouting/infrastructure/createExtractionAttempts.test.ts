@@ -26,7 +26,7 @@ const completion = () =>
   );
 
 describe('SPEC-041: chuẩn bị adapter theo snapshot', () => {
-  it('TC-519: fake chọn Woku vẫn dùng fake, không cần tỷ lệ/key và không gọi mạng', async () => {
+  it('TC-519: fake vẫn dùng fake, không cần key và không gọi mạng', async () => {
     const network = vi.fn<typeof fetch>();
     const attempt = await createExtractionAttempts(
       memory().deps,
@@ -34,7 +34,7 @@ describe('SPEC-041: chuẩn bị adapter theo snapshot', () => {
       { ...runtime, runMode: 'fake', openRouterApiKey: undefined },
       network,
     ).prepare();
-    expect(attempt.snapshot).toMatchObject({ provider: 'woku', runMode: 'fake' });
+    expect(attempt.snapshot).toMatchObject({ provider: 'openrouter', runMode: 'fake' });
     expect(await attempt.dependencies.extractor.extract(image)).toMatchObject({
       provider: 'fake',
       costUsd: 0,
@@ -42,21 +42,8 @@ describe('SPEC-041: chuẩn bị adapter theo snapshot', () => {
     expect(network).not.toHaveBeenCalled();
   });
 
-  it('TC-520: Woku live vẫn bị chặn trước mọi tác động OCR', async () => {
-    const config = view();
-    const fixture = memory();
-    const network = vi.fn<typeof fetch>();
-    await expect(
-      createExtractionAttempts(fixture.deps, { read: async () => config }, runtime, network).prepare(),
-    ).rejects.toMatchObject({ code: 'woku_live_unavailable' });
-    expect(fixture.statusHistory).toEqual([]);
-    expect(fixture.extractorCalls).toEqual([]);
-    expect(network).not.toHaveBeenCalled();
-  });
-
   it('TC-521: OpenRouter thiếu key không giữ ngân sách hoặc tự gọi provider khác', async () => {
     const config = view();
-    config.settings.selectedProvider = 'openrouter';
     await expect(
       createExtractionAttempts(
         memory().deps,
@@ -68,7 +55,6 @@ describe('SPEC-041: chuẩn bị adapter theo snapshot', () => {
 
   it('TC-522: mỗi lượt đọc lại DB; thay cặp model giữa hai lượt không thay snapshot/adapter cũ', async () => {
     const config = view();
-    config.settings.selectedProvider = 'openrouter';
     const bodies: Record<string, unknown>[] = [];
     const network: typeof fetch = async (_url, init) => {
       bodies.push(JSON.parse(String(init?.body)));
@@ -139,7 +125,6 @@ describe('SPEC-041: chuẩn bị adapter theo snapshot', () => {
 
 it('TC-629: key OCR chưa gắn nguồn phí An Gia bị chặn trước đọc ảnh hoặc gọi AI', async () => {
   const config = view();
-  config.settings.selectedProvider = 'openrouter';
   const fixture = memory();
   const network = vi.fn<typeof fetch>();
   await expect(

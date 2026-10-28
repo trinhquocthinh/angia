@@ -3,11 +3,6 @@ import { DEFAULT_AI_ROUTING_SETTINGS } from './aiRoutingDefaults.js';
 import { aiRoutingViewSchema, updateAiRoutingRequestSchema } from './aiRoutingSchemas.js';
 
 const settings = () => ({
-  selectedProvider: 'woku',
-  woku: {
-    primaryModel: 'gemini-3-flash-preview',
-    fallbackModel: 'gemini-3.8-flash',
-  },
   openrouter: {
     primaryModel: 'google/gemini-3.1-flash-lite',
     fallbackModel: 'moonshotai/kimi-k2.6',
@@ -16,40 +11,32 @@ const settings = () => ({
 const request = () => ({ expectedVersion: 0, settings: settings() });
 
 describe('Hợp đồng cấu hình nhà cung cấp OCR trong Admin', () => {
-  it('mặc định chọn Woku với Flash 3 Preview và Flash 3.8 dự phòng, không có hệ số', () => {
+  it('TC-647: mặc định chỉ OpenRouter, Flash-Lite chính và Kimi dự phòng', () => {
     expect(DEFAULT_AI_ROUTING_SETTINGS).toEqual(settings());
     expect(updateAiRoutingRequestSchema.safeParse(request()).success).toBe(true);
   });
 
-  it.each(['fake', 'unknown'])('không coi %s là nhà cung cấp dịch vụ thật', (selectedProvider) => {
+  it.each([
+    ['selectedProvider', 'openrouter'],
+    ['woku', { primaryModel: 'gemini-3-flash-preview', fallbackModel: 'gemini-3.8-flash' }],
+  ])('TC-647: chặn khóa %s của cấu hình Woku cũ', (key, value) => {
     const body = request();
     expect(
-      updateAiRoutingRequestSchema.safeParse({
-        ...body,
-        settings: { ...body.settings, selectedProvider },
-      }).success,
+      updateAiRoutingRequestSchema.safeParse({ ...body, settings: { ...body.settings, [key]: value } })
+        .success,
     ).toBe(false);
   });
 
-  it.each(['woku', 'openrouter'] as const)('chặn model chính và dự phòng trùng nhau ở %s', (provider) => {
+  it('chặn model chính và dự phòng trùng nhau', () => {
     const body = request();
-    const models = body.settings[provider];
-    const changed = {
-      ...body.settings,
-      [provider]: { ...models, fallbackModel: models.primaryModel },
-    };
+    const models = body.settings.openrouter;
+    const changed = { openrouter: { ...models, fallbackModel: models.primaryModel } };
     expect(updateAiRoutingRequestSchema.safeParse({ ...body, settings: changed }).success).toBe(false);
   });
 
-  it.each(['woku', 'openrouter'] as const)('chặn model ngoài danh mục ở %s', (provider) => {
+  it('chặn model ngoài danh mục', () => {
     const body = request();
-    const changed = {
-      ...body.settings,
-      [provider]: {
-        ...body.settings[provider],
-        primaryModel: 'arbitrary-model',
-      },
-    };
+    const changed = { openrouter: { ...body.settings.openrouter, primaryModel: 'arbitrary-model' } };
     expect(updateAiRoutingRequestSchema.safeParse({ ...body, settings: changed }).success).toBe(false);
   });
 
@@ -78,7 +65,7 @@ describe('Hợp đồng cấu hình nhà cung cấp OCR trong Admin', () => {
     const body = request();
     const changed = {
       ...body.settings,
-      woku: { ...body.settings.woku, apiKey: 'synthetic-secret' },
+      openrouter: { ...body.settings.openrouter, apiKey: 'synthetic-secret' },
     };
     expect(updateAiRoutingRequestSchema.safeParse({ ...body, settings: changed }).success).toBe(false);
   });

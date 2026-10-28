@@ -30,7 +30,7 @@ it('TC-633: worker CP5.4 thật chờ quota cùng Admin cấp thêm đều hoàn
     "INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,status,original_key,mime_type,size_bytes) VALUES($1,$2,$3,$4,'extracting','synthetic','image/png',1)",
     [documentId, familyId, profileId, batchId],
   );
-  for (const provider of ['woku', 'openrouter'])
+  for (const provider of ['openrouter'])
     await t.owner.query(
       `INSERT INTO ai_billing_sources
     (id,provider,credential_fingerprint,status,last_attempt_at,last_complete_at) VALUES($1,$2,$3,'complete',$4,$4)`,

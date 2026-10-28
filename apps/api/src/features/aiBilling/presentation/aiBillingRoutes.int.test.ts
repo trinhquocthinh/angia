@@ -59,7 +59,7 @@ describe('Phí thực nhà cung cấp toàn hệ thống qua Admin', () => {
     }
   });
   it('TC-539: cộng numeric trước làm tròn, theo tháng VN và không trả secret', async () => {
-    const woku = await seedSource('woku');
+    const first = await seedSource('openrouter');
     const openrouter = await seedSource('openrouter');
     const month = budgetMonth(NOW);
     const insert = (id: string, ext: string, offset: string, amount: string, divisor: string) =>
@@ -68,9 +68,9 @@ describe('Phí thực nhà cung cấp toàn hệ thống qua Admin', () => {
         ($3::date::timestamp AT TIME ZONE 'Asia/Ho_Chi_Minh') + $4::interval, $5, $6)`,
         [id, ext, `${month}-01`, offset, amount, divisor],
       );
-    await insert(woku, 'before-vn', '-1 second', '999', '1');
-    await insert(woku, 'vn-start', '0 second', '9007199254740993.123456789012', '1');
-    await insert(woku, 'third-a', '1 second', '1', '3');
+    await insert(first, 'before-vn', '-1 second', '999', '1');
+    await insert(first, 'vn-start', '0 second', '9007199254740993.123456789012', '1');
+    await insert(first, 'third-a', '1 second', '1', '3');
     await insert(openrouter, 'third-b', '2 seconds', '2', '3');
     await insert(openrouter, 'next-vn', '1 month', '888', '1');
     const view = await read();
@@ -81,21 +81,21 @@ describe('Phí thực nhà cung cấp toàn hệ thống qua Admin', () => {
     expect(JSON.stringify(view)).not.toMatch(/fingerprint|credential|last_counter|synthetic-secret/);
   });
   it('TC-539: nhiều nguồn giữ lịch sử và dùng mốc hoàn tất cũ nhất', async () => {
-    await seedSource('woku');
     await seedSource('openrouter');
-    const staleId = await seedSource('woku', 181);
+    await seedSource('openrouter');
+    const staleId = await seedSource('openrouter', 181);
     const view = await read();
     expect(view.sources).toHaveLength(3);
     expect(view).toMatchObject({ status: 'stale', actualSpendUsd: null });
     expect(view.lastSyncedAt).toBe(view.sources.find((s) => s.id === staleId)?.lastCompleteAt);
   });
   it('TC-539: mốc hoàn tất ở tương lai bị từ chối, không trả ready 0', async () => {
-    await seedSource('woku');
+    await seedSource('openrouter');
     await seedSource('openrouter', -1);
     expect(await read()).toMatchObject({ status: 'incomplete', actualSpendUsd: null });
   });
   it('TC-539: credential đã lưu không được đăng ký lại với UUID mới sau khi bỏ khỏi cấu hình', async () => {
-    const originalId = await seedSource('woku');
+    const originalId = await seedSource('openrouter');
     await t.owner.query("UPDATE ai_billing_sources SET status = 'missing_credential' WHERE id = $1", [
       originalId,
     ]);
@@ -116,9 +116,9 @@ describe('Phí thực nhà cung cấp toàn hệ thống qua Admin', () => {
     expect(rows).toEqual([{ id: originalId, status: 'missing_credential', external_id: 'retained-charge' }]);
     expect((await read()).confirmedSpendUsd).toBe('4.000000000000');
   });
-  it('TC-539: một provider hoặc nguồn gap không được ready 0', async () => {
-    await seedSource('woku');
-    expect((await read()).status).toBe('incomplete');
+  it('TC-649: một nguồn OpenRouter đủ là ready; thêm nguồn gap thì không được ready 0', async () => {
+    await seedSource('openrouter');
+    expect((await read()).status).toBe('ready');
     await seedSource('openrouter', 0, 'gap');
     expect(await read()).toMatchObject({ status: 'incomplete', actualSpendUsd: null });
   });

@@ -1,4 +1,4 @@
-type BillingProvider = 'woku' | 'openrouter';
+type BillingProvider = 'openrouter';
 export interface BillingSource {
   id: string;
   provider: BillingProvider;

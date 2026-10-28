@@ -30,7 +30,7 @@ describe('CP5.5: lượt mặc định mỗi gia đình qua API thật', () => {
     await t.owner.query(
       'TRUNCATE scan_quota_audit, family_scan_quotas, scan_quota_months, scan_quota_policy, ai_provider_charges, ai_billing_sources, extraction_spend CASCADE',
     );
-    for (const provider of ['woku', 'openrouter'])
+    for (const provider of ['openrouter'])
       await t.owner.query(
         `INSERT INTO ai_billing_sources (id, provider, credential_fingerprint, status, last_attempt_at, last_complete_at) VALUES ($1,$2,$3,'complete',$4,$4)`,
         [randomUUID(), provider, randomUUID(), NOW],

@@ -30,7 +30,7 @@ describe('Cấp quota cùng lúc worker tạo sổ tiền gia đình', () => {
     await t?.stop();
   });
   it('TC-584: FK của sổ tiền worker và cấp quota đều hoàn tất khi chờ cùng gia đình', async () => {
-    for (const provider of ['woku', 'openrouter'])
+    for (const provider of ['openrouter'])
       await t.owner.query(
         `INSERT INTO ai_billing_sources (id,provider,credential_fingerprint,status,last_attempt_at,last_complete_at) VALUES ($1,$2,$3,'complete',$4,$4)`,
         [randomUUID(), provider, randomUUID(), NOW],

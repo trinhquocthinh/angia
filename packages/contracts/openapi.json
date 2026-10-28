@@ -680,37 +680,6 @@
       "AiRoutingSettings": {
         "type": "object",
         "properties": {
-          "selectedProvider": {
-            "type": "string",
-            "enum": [
-              "woku",
-              "openrouter"
-            ]
-          },
-          "woku": {
-            "type": "object",
-            "properties": {
-              "primaryModel": {
-                "type": "string",
-                "enum": [
-                  "gemini-3-flash-preview",
-                  "gemini-3.8-flash"
-                ]
-              },
-              "fallbackModel": {
-                "type": "string",
-                "enum": [
-                  "gemini-3-flash-preview",
-                  "gemini-3.8-flash"
-                ]
-              }
-            },
-            "required": [
-              "primaryModel",
-              "fallbackModel"
-            ],
-            "additionalProperties": false
-          },
           "openrouter": {
             "type": "object",
             "properties": {
@@ -737,8 +706,6 @@
           }
         },
         "required": [
-          "selectedProvider",
-          "woku",
           "openrouter"
         ],
         "additionalProperties": false
@@ -813,7 +780,6 @@
                 "provider": {
                   "type": "string",
                   "enum": [
-                    "woku",
                     "openrouter"
                   ]
                 },
