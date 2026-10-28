@@ -67,4 +67,14 @@ describe('Trần AI theo gia đình (SPEC-031, BR-018)', () => {
     expect(() => loadApiConfig({ ...env, AI_DEFAULT_FAMILY_MONTHLY_CAP_USD: '-1' })).toThrow();
     expect(() => loadApiConfig({ ...env, AI_ESTIMATED_COST_USD: '0' })).toThrow();
   });
+  it('CP5.5: mặc định trần $10, 10 lượt/gia đình, dự phòng 15%, chi phí khởi đầu 0.001594/lượt', () => {
+    expect(loadApiConfig(env)).toMatchObject({
+      AI_DEFAULT_MONTHLY_CAP_USD: 10,
+      SCAN_QUOTA_DEFAULT_MONTHLY: 10,
+      SCAN_QUOTA_RESERVE_PERCENT: 15,
+      SCAN_QUOTA_INITIAL_COST_PER_SCAN_USD: '0.001594',
+    });
+    expect(() => loadApiConfig({ ...env, SCAN_QUOTA_RESERVE_PERCENT: '101' })).toThrow();
+    expect(() => loadApiConfig({ ...env, SCAN_QUOTA_INITIAL_COST_PER_SCAN_USD: '1e-3' })).toThrow();
+  });
 });

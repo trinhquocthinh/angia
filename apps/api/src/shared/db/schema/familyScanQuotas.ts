@@ -15,13 +15,12 @@ export const familyScanQuotas = pgTable(
     usedScans: bigint('used_scans', { mode: 'number' }).notNull().default(0),
     heldScans: bigint('held_scans', { mode: 'number' }).notNull().default(0),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),
-    updatedBy: uuid('updated_by')
-      .notNull()
-      .references(() => accounts.id),
+    // NULL = hệ thống tự cấp lượt mặc định (CP5.5).
+    updatedBy: uuid('updated_by').references(() => accounts.id),
   },
   (table) => [
     primaryKey({ columns: [table.familyId, table.month] }),
-    check('family_scan_quotas_status', sql`${table.status} IN ('trial', 'approved')`),
+    check('family_scan_quotas_status', sql`${table.status} IN ('default', 'trial', 'approved')`),
     check(
       'family_scan_quotas_counts',
       sql`${table.grantedScans} BETWEEN 0 AND 9007199254740991 AND ${table.usedScans} >= 0 AND ${table.heldScans} >= 0 AND ${table.usedScans} + ${table.heldScans} <= ${table.grantedScans}`,

@@ -1,6 +1,10 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { startAdminTestApp, type AdminTestApp } from '@src/shared/test/startAdminTestApp.js';
+import {
+  startAdminTestApp,
+  TEST_SCAN_QUOTA_DEFAULTS,
+  type AdminTestApp,
+} from '@src/shared/test/startAdminTestApp.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import { createScanQuotaRepository } from './createScanQuotaRepository.js';
 import { adminScanQuotaViewSchema } from '@angia/contracts';
@@ -44,7 +48,7 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
   });
   it('TC-582: cấu hình kho trực tiếp trả DTO chuẩn sau khi có billing', async () => {
     await seedBilling();
-    const result = await createScanQuotaRepository(t.database).updatePolicy(
+    const result = await createScanQuotaRepository(t.database, TEST_SCAN_QUOTA_DEFAULTS).updatePolicy(
       { month: '2026-10', expectedVersion: 0, policy: POLICY },
       t.admin.accountId,
       { now: NOW, defaultMonthlyCapUsd: 5 },
@@ -168,7 +172,7 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
     } finally {
       client.release();
     }
-    const quota = await createScanQuotaRepository(t.database).readFamily(a, NOW);
+    const quota = await createScanQuotaRepository(t.database, TEST_SCAN_QUOTA_DEFAULTS).readFamily(a, NOW);
     expect(quota.grantedScans).toBe(3);
     await withFamilyScope(t.database, a, async (tx) => {
       expect(tx).toBeDefined();
@@ -178,7 +182,7 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
     await policy();
     const actor = (await t.owner.query('SELECT id FROM accounts WHERE is_system_admin=true LIMIT 1')).rows[0]!
       .id as string;
-    const repository = createScanQuotaRepository(t.database);
+    const repository = createScanQuotaRepository(t.database, TEST_SCAN_QUOTA_DEFAULTS);
     expect(
       await repository.updatePolicy({ month: '2026-10', expectedVersion: 1, policy: POLICY }, actor, {
         now: NOW,
@@ -221,25 +225,5 @@ describe('Giao dịch quota quét, chuyển tháng và RLS', () => {
     expect(
       (await t.owner.query("SELECT count(*) FROM scan_quota_months WHERE month='2026-11'")).rows[0]?.count,
     ).toBe('0');
-  });
-  it('TC-587: lỗi ghi audit rollback cả gia đình, trial và snapshot', async () => {
-    await seedBilling();
-    await policy();
-    await t.owner.query(
-      "CREATE FUNCTION fail_trial_audit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'synthetic'; END; $$; CREATE TRIGGER fail_trial_audit BEFORE INSERT ON scan_quota_audit FOR EACH ROW EXECUTE FUNCTION fail_trial_audit()",
-    );
-    try {
-      expect((await t.call(t.admin, 'POST', '/api/admin/families', { name: 'Nhà rollback' })).status).toBe(
-        500,
-      );
-      expect(
-        (await t.owner.query('SELECT count(*) FROM families WHERE name=$1', ['Nhà rollback'])).rows[0]?.count,
-      ).toBe('0');
-      expect(await read()).toMatchObject({ version: 1, committedRemainingScans: '0' });
-    } finally {
-      await t.owner.query(
-        'DROP TRIGGER fail_trial_audit ON scan_quota_audit; DROP FUNCTION fail_trial_audit()',
-      );
-    }
   });
 });

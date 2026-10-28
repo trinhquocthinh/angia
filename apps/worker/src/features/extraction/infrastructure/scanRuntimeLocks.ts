@@ -36,6 +36,14 @@ export async function lockScanRuntime(client: pg.PoolClient, familyId: string, i
     [call.month, call.defaultMonthlyCapUsd],
   );
   await client.query('SELECT month FROM extraction_spend WHERE month=$1 FOR UPDATE', [call.month]);
+  // CP5.5: gia đình chưa có dòng tháng nhận lượt mặc định; cộng snapshot tháng đúng một lần khi chèn được.
+  await client.query(
+    `WITH added AS (INSERT INTO family_scan_quotas(family_id,month,status,granted_scans,updated_at)
+      SELECT $1,$2,'default',$3,now() WHERE $3::bigint > 0 ON CONFLICT DO NOTHING RETURNING granted_scans)
+    UPDATE scan_quota_months SET committed_remaining_scans=committed_remaining_scans+added.granted_scans,
+      quota_families=quota_families+1 FROM added WHERE month=$2`,
+    [familyId, call.month, call.defaultMonthlyScans ?? 0],
+  );
   await client.query(
     `SELECT month FROM family_scan_quotas WHERE family_id=$1 AND month=ANY($2::text[])
     ORDER BY month FOR UPDATE`,

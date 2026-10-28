@@ -7,6 +7,12 @@ import type {
 export type ScanQuotaError =
   'ERR_NOT_FOUND' | 'ERR_SCAN_QUOTA_CONFLICT' | 'ERR_SCAN_QUOTA_UNAVAILABLE' | 'ERR_SCAN_QUOTA_DECREASE';
 export type ScanQuotaOutcome = { ok: true; view: AdminScanQuotaView } | { ok: false; code: ScanQuotaError };
+// CP5.5: thông số env thay form chính sách; lượt mặc định cấp cho mọi gia đình mỗi tháng.
+export interface ScanQuotaDefaults {
+  monthlyScans: number;
+  reserveBasisPoints: number;
+  initialCostPerScanUsd: string;
+}
 export interface ScanQuotaContext {
   now: Date;
   recheckNow?(): Date;

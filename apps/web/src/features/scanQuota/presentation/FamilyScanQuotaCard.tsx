@@ -39,7 +39,12 @@ export function FamilyScanQuotaCard({
       ) : (
         <div className="grid gap-1 text-sm text-[#404945]">
           <p>
-            Tháng {quota.month} · {quota.status === 'trial' ? 'Lượt dùng thử' : 'Đã duyệt'}
+            Tháng {quota.month} ·{' '}
+            {quota.status === 'default'
+              ? 'Lượt mặc định'
+              : quota.status === 'trial'
+                ? 'Lượt dùng thử'
+                : 'Đã duyệt'}
           </p>
           <p>
             Đã dùng {quota.usedScans} / {quota.grantedScans} lượt

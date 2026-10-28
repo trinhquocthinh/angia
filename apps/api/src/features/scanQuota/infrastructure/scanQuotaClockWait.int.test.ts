@@ -90,28 +90,6 @@ describe('Đồng hồ quota sau khi chờ khóa ngân sách và gia đình', ()
     expect(await response.json()).toMatchObject({ error: { code: 'ERR_SCAN_QUOTA_UNAVAILABLE' } });
     expect((await t.owner.query('SELECT count(*) FROM scan_quota_audit')).rows[0]?.count).toBe('0');
   });
-  for (const scenario of [
-    { name: 'qua tháng', next: new Date('2026-10-31T17:00:00Z') },
-    { name: 'billing hết hạn', next: new Date(START.getTime() + 181000) },
-  ])
-    it(`TC-587: tạo gia đình chờ ngân sách ${scenario.name} vẫn thành công và bỏ trial`, async () => {
-      const response = await blockThenAdvance(
-        'budget',
-        () => t.call(t.admin, 'POST', '/api/admin/families', { name: 'Nhà chờ khóa' }),
-        scenario.next,
-      );
-      expect(response.status).toBe(201);
-      const family = (await response.json()) as { id: string };
-      expect(
-        (await t.owner.query('SELECT count(*) FROM families WHERE id=$1', [family.id])).rows[0]?.count,
-      ).toBe('1');
-      expect(
-        (await t.owner.query('SELECT count(*) FROM family_scan_quotas WHERE family_id=$1', [family.id]))
-          .rows[0]?.count,
-      ).toBe('0');
-      expect((await t.owner.query('SELECT count(*) FROM scan_quota_audit')).rows[0]?.count).toBe('0');
-      expect((await t.owner.query('SELECT version FROM scan_quota_policy')).rows[0]?.version).toBe('1');
-    });
   it('TC-583: lần duyệt sau chờ khóa ghi audit và phản hồi theo cùng thời gian cuối', async () => {
     const familyId = await t.seedFamily();
     const finalTime = new Date(START.getTime() + 60000);

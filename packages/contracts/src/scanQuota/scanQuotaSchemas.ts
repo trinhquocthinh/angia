@@ -17,7 +17,7 @@ export const scanQuotaPolicySchema = z
 export const familyScanQuotaSchema = z
   .strictObject({
     month,
-    status: z.enum(['unconfigured', 'trial', 'approved']),
+    status: z.enum(['unconfigured', 'default', 'trial', 'approved']),
     grantedScans: count,
     usedScans: count,
     heldScans: count,

@@ -43,15 +43,29 @@ const budgetAdminDeps = (database: Database, boss: PgBoss) => ({
   },
 });
 
-const scanQuotaAdminDeps = (database: Database, boss: PgBoss, now: () => Date = () => new Date()) => ({
-  repository: createScanQuotaRepository(database, boss),
+// Lượt mặc định 0 và dự toán 0.1 USD/lượt, dự phòng 0 giữ phép tính của các ca CP5.3; ca CP5.5 truyền riêng.
+export const TEST_SCAN_QUOTA_DEFAULTS = {
+  monthlyScans: 0,
+  reserveBasisPoints: 0,
+  initialCostPerScanUsd: '0.1',
+};
+const scanQuotaAdminDeps = (
+  database: Database,
+  boss: PgBoss,
+  now: () => Date = () => new Date(),
+  defaults = TEST_SCAN_QUOTA_DEFAULTS,
+) => ({
+  repository: createScanQuotaRepository(database, defaults, boss),
   now,
   defaultMonthlyCapUsd: 5,
 });
 
-export async function startAdminTestApp(
-  options: { aiBillingNow?: () => Date; scanQuotaNow?: () => Date } = {},
-) {
+interface AdminTestOptions {
+  aiBillingNow?: () => Date;
+  scanQuotaNow?: () => Date;
+  scanQuotaDefaults?: typeof TEST_SCAN_QUOTA_DEFAULTS;
+}
+export async function startAdminTestApp(options: AdminTestOptions = {}) {
   const db = await startTestDatabase();
   await runMigrations(db.ownerUrl);
   const owner = new pg.Client({ connectionString: db.ownerUrl });
@@ -73,8 +87,8 @@ export async function startAdminTestApp(
       cookieSecret: TEST_COOKIE_SECRET,
     },
     profiles: createStubProfileDeps(),
-    familyAdmin: createFamilyAdminRepository(database, { defaultMonthlyCapUsd: 5 }),
-    scanQuota: scanQuotaAdminDeps(database, boss, options.scanQuotaNow),
+    familyAdmin: createFamilyAdminRepository(database),
+    scanQuota: scanQuotaAdminDeps(database, boss, options.scanQuotaNow, options.scanQuotaDefaults),
     ...budgetAdminDeps(database, boss),
     aiBilling: {
       repository: createAiBillingRepository(pool),

@@ -1,47 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { familyId, policyInput, view } from '../test/scanQuotaFixtures';
-import { toPolicyDraft } from './toPolicyDraft';
-import { buildPolicyRequest } from './buildPolicyRequest';
+import { familyId, view } from '../test/scanQuotaFixtures';
 import { createGrantDrafts } from './createGrantDrafts';
 import { buildGrantRequest } from './buildGrantRequest';
-describe('Bản sửa chính sách và cấp lượt', () => {
-  it('TC-591: chưa cấu hình thì ba ô trống, không tự đặt ví dụ', () => {
-    expect(toPolicyDraft(view)).toEqual({
-      month: '2026-10',
-      expectedVersion: 7,
-      estimatedCostPerScanUsd: '',
-      reservePercent: '',
-      trialScans: '',
-    });
-    expect(buildPolicyRequest(toPolicyDraft(view)).request).toBeNull();
-  });
-  it('TC-591: số tiền giữ nguyên chuỗi, phần trăm đổi chính xác, dùng version bản sửa', () => {
-    const draft = toPolicyDraft({ ...view, version: 2, policy: policyInput.policy });
-    expect(draft.reservePercent).toBe('12.34');
-    expect(buildPolicyRequest(draft).request).toEqual({ ...policyInput, expectedVersion: 2 });
-  });
-  it.each(['', '1.001', '1e1', '-1', '100.01', 'NaN'])(
-    'TC-591: từ chối phần trăm không hợp lệ %s',
-    (reservePercent) => {
-      const result = buildPolicyRequest({
-        ...toPolicyDraft({ ...view, policy: policyInput.policy }),
-        reservePercent,
-      });
-      expect(result.request).toBeNull();
-      expect(result.errors.reservePercent).toBeTruthy();
-    },
-  );
-  it.each(['0', '-1', '1e-2', '0.0000000000001'])(
-    'TC-591: từ chối ước tính ngoài hợp đồng %s',
-    (estimatedCostPerScanUsd) => {
-      expect(
-        buildPolicyRequest({
-          ...toPolicyDraft({ ...view, policy: policyInput.policy }),
-          estimatedCostPerScanUsd,
-        }).errors.estimatedCostPerScanUsd,
-      ).toBeTruthy();
-    },
-  );
+describe('Bản sửa cấp lượt', () => {
   it('TC-592: tải danh sách không chọn ai, gợi ý không đè tổng hiện tại cao hơn', () => {
     const drafts = createGrantDrafts(view);
     expect(drafts[familyId]).toEqual({ selected: false, grantedScans: '12', reason: '' });
@@ -75,5 +36,19 @@ describe('Bản sửa chính sách và cấp lượt', () => {
       buildGrantRequest(current, { [familyId]: { selected: true, grantedScans: '12', reason: 'Xác nhận' } })
         .request,
     ).not.toBeNull();
+  });
+  it('TC-643: vượt lượt có thể cấp thêm thì không gửi, báo số USD cần nâng trần', () => {
+    const current = {
+      ...view,
+      policy: { estimatedCostPerScanUsd: '0.001594000000', reserveBasisPoints: 1500, trialScans: 10 },
+      availableAdditionalScans: '3',
+    };
+    const result = buildGrantRequest(current, {
+      [familyId]: { selected: true, grantedScans: '20', reason: 'Nâng hạng' },
+    });
+    expect(result.request).toBeNull();
+    expect(result.errors.selection).toBe(
+      'Vượt dự toán 5 lượt; cần nâng chi phí cố định tháng thêm khoảng 0,01 USD.',
+    );
   });
 });

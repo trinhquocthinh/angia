@@ -1,7 +1,7 @@
 import type * as React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AdminRequestError } from '@src/features/family/application/AdminRequestError';
-import { familyId, policyInput, view } from '../test/scanQuotaFixtures';
+import { familyId, view } from '../test/scanQuotaFixtures';
 import { createQuotaRenderer } from '../test/createQuotaRenderer';
 import { ScanQuotaEditor } from './ScanQuotaEditor';
 vi.mock('react', async (importOriginal) => ({
@@ -11,7 +11,6 @@ vi.mock('react', async (importOriginal) => ({
 afterEach(() => vi.clearAllMocks());
 function harness() {
   const renderer = createQuotaRenderer();
-  const onPolicy = vi.fn(async () => undefined);
   const onGrant = vi.fn(async () => undefined);
   let initial = view;
   let account = 'a';
@@ -25,14 +24,12 @@ function harness() {
         pending={pending}
         error={error}
         saved={false}
-        onPolicy={onPolicy}
         onGrant={onGrant}
       />,
     );
   render();
   return {
     renderer,
-    onPolicy,
     onGrant,
     render,
     setView: (next: typeof view) => {
@@ -50,23 +47,10 @@ function harness() {
   };
 }
 describe('Tương tác cấp lượt', () => {
-  it('TC-591: ô trống và dữ liệu sai không gọi mạng, lỗi hiện ngay tại ô', () => {
-    const h = harness();
-    h.renderer.submit(0);
-    h.render();
-    expect(h.onPolicy).not.toHaveBeenCalled();
-    expect(h.renderer.text).toContain('Nhập chi phí lớn hơn 0');
-    h.renderer.change('scan-estimate', '0.000000000001');
-    h.renderer.change('scan-reserve', '12.34');
-    h.renderer.change('scan-trial', '0');
-    h.render();
-    h.renderer.submit(0);
-    expect(h.onPolicy).toHaveBeenCalledWith(policyInput);
-  });
   it('TC-592: không tự duyệt khi tải, chỉ gửi dòng được chọn với tổng đã sửa', () => {
     const h = harness();
     expect(h.onGrant).not.toHaveBeenCalled();
-    h.renderer.submit(1);
+    h.renderer.submit(0);
     h.render();
     expect(h.onGrant).not.toHaveBeenCalled();
     h.renderer.select(0, true);
@@ -75,7 +59,7 @@ describe('Tương tác cấp lượt', () => {
     h.render();
     h.renderer.change(`scan-grant-${familyId}-reason`, 'Gia hạn tháng');
     h.render();
-    h.renderer.submit(1);
+    h.renderer.submit(0);
     expect(h.onGrant).toHaveBeenCalledWith({
       month: '2026-10',
       expectedVersion: 7,
@@ -93,18 +77,21 @@ describe('Tương tác cấp lượt', () => {
     h.render();
     expect(h.renderer.text).toContain('Bản đang sửa vẫn được giữ');
     expect(h.renderer.text).toContain('Bản sửa tháng 2026-10');
-    h.renderer.submit(1);
+    h.renderer.submit(0);
     expect(h.onGrant).toHaveBeenCalledWith(expect.objectContaining({ month: '2026-10', expectedVersion: 7 }));
   });
   it('TC-591: đổi tài khoản đặt lại bản sửa và bỏ lựa chọn cũ', () => {
     const h = harness();
-    h.renderer.change('scan-estimate', '123');
     h.renderer.select(0, true);
+    h.render();
+    h.renderer.change(`scan-grant-${familyId}`, '99');
     h.render();
     h.setAccount('b');
     h.setView({ ...view, month: '2026-11', version: 9 });
     h.render();
-    expect(h.renderer.nodes.find((node) => node.props.id === 'scan-estimate')?.props.value).toBe('');
+    expect(h.renderer.nodes.find((node) => node.props.id === `scan-grant-${familyId}`)?.props.value).toBe(
+      '12',
+    );
     expect(h.renderer.nodes.find((node) => node.props.type === 'checkbox')?.props.checked).toBe(false);
     expect(h.renderer.text).toContain('Bản sửa tháng 2026-11');
     expect(h.onGrant).not.toHaveBeenCalled();
@@ -114,14 +101,12 @@ describe('Tương tác cấp lượt', () => {
     h.setPending();
     h.render();
     h.renderer.submit(0);
-    h.renderer.submit(1);
     expect(
       h.renderer.nodes
         .filter((node) => node.type === 'fieldset')
-        .slice(0, 2)
+        .slice(0, 1)
         .every((node) => node.props.disabled),
     ).toBe(true);
-    expect(h.onPolicy).not.toHaveBeenCalled();
     expect(h.onGrant).not.toHaveBeenCalled();
   });
 });

@@ -24,7 +24,7 @@ export async function readAiBudget(
   });
   const row = scans.rows[0];
   return {
-    grantedScans: Number(row?.granted_scans ?? 0),
+    grantedScans: Number(row?.granted_scans ?? policy.defaultMonthlyScans ?? 0),
     usedScans: Number(row?.used_scans ?? 0),
     heldScans: Number(row?.held_scans ?? 0),
     billingAvailable: billing.billingStatus === 'ready',

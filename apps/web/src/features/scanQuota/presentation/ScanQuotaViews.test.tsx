@@ -49,7 +49,6 @@ describe('Giao diện hạn mức lượt', () => {
   it('TC-592: phí chưa xác định khác 0 và cảnh báo ngân sách/chính sách chưa đủ', () => {
     const html = renderToStaticMarkup(<ScanQuotaOverview view={view} />);
     expect(html).toContain('Chưa xác định');
-    expect(html).toContain('Chưa cấu hình chính sách');
     expect(html).toContain('Chưa thể xác định lượt cấp thêm');
     expect(html).not.toContain('Phí thực: 0');
   });
@@ -67,26 +66,18 @@ describe('Giao diện hạn mức lượt', () => {
         error: new Error('PRIVATE_DETAIL'),
       },
       mutation: { isPending: false, error: null, isSuccess: false },
-      savePolicy: async () => undefined,
       grant: async () => undefined,
     } as unknown as ComponentProps<typeof ScanQuotaCard>['state'];
     const html = renderToStaticMarkup(<ScanQuotaCard state={state} />);
     expect(html).toContain('Không thể tải hạn mức lượt');
-    expect(html).toContain('Chính sách cấp lượt');
+    expect(html).toContain('Duyệt lượt tháng');
     expect(html).not.toContain('Đối soát: Đủ dữ liệu');
     expect(html).not.toContain('Có thể cấp thêm: 99 lượt');
     expect(html).not.toContain('PRIVATE_DETAIL');
   });
   it('TC-592: danh sách chưa chọn, gợi ý tháng trước chỉ tham khảo, nút duyệt rõ ràng', () => {
     const html = renderToStaticMarkup(
-      <ScanQuotaEditor
-        initial={view}
-        pending={false}
-        error={null}
-        saved={false}
-        onPolicy={async () => {}}
-        onGrant={async () => {}}
-      />,
+      <ScanQuotaEditor initial={view} pending={false} error={null} saved={false} onGrant={async () => {}} />,
     );
     expect(html).not.toContain('checked=""');
     expect(html).toContain('Tháng trước đã duyệt: 8 lượt');
@@ -101,7 +92,6 @@ describe('Giao diện hạn mức lượt', () => {
           pending={true}
           error={error}
           saved={false}
-          onPolicy={async () => {}}
           onGrant={async () => {}}
         />,
       );
@@ -110,5 +100,39 @@ describe('Giao diện hạn mức lượt', () => {
     );
     expect(render(new Error('PRIVATE_SQL'))).not.toContain('PRIVATE_SQL');
     expect(render(new Error())).toContain('fieldset disabled=""');
+  });
+  it('TC-645: gia đình dùng lượt mặc định thấy nhãn riêng; Admin không còn form chính sách', () => {
+    const html = renderToStaticMarkup(
+      <FamilyScanQuotaCard
+        quota={{ ...quota, status: 'default' }}
+        loading={false}
+        error={false}
+        onRetry={noop}
+      />,
+    );
+    expect(html).toContain('Lượt mặc định');
+    const editor = renderToStaticMarkup(
+      <ScanQuotaEditor initial={view} pending={false} error={null} saved={false} onGrant={async () => {}} />,
+    );
+    expect(editor).not.toContain('Chính sách cấp lượt');
+  });
+  it('TC-641: tổng quan hiện thông số env và số USD cần nâng khi cấp vượt dự toán', () => {
+    const html = renderToStaticMarkup(
+      <ScanQuotaOverview
+        view={{
+          ...view,
+          policy: { estimatedCostPerScanUsd: '0.001594000000', reserveBasisPoints: 1500, trialScans: 10 },
+          billingStatus: 'ready',
+          actualSpendUsd: '0.000000000000',
+          availableAdditionalScans: '0',
+          overAllocatedScans: '100',
+        }}
+      />,
+    );
+    expect(html).toContain('Mặc định 10 lượt/gia đình/tháng');
+    expect(html).toContain('dự phòng 15%');
+    expect(html).toContain('0,001594 USD/lượt');
+    expect(html).toContain('Đang cấp vượt khả năng ngân sách 100 lượt');
+    expect(html).toContain('cần nâng chi phí cố định tháng thêm khoảng 0,19 USD');
   });
 });

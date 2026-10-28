@@ -3,7 +3,9 @@ import {
   type AdminScanQuotaView,
   type GrantScanQuotasRequest,
 } from '@angia/contracts';
+import { formatBillingUsd } from '@src/features/aiBilling/application/formatBillingUsd';
 import type { GrantDrafts, GrantErrors } from './ports';
+import { requiredCapIncreaseUsd } from './requiredCapIncreaseUsd';
 export function buildGrantRequest(
   view: AdminScanQuotaView,
   drafts: GrantDrafts,
@@ -31,6 +33,17 @@ export function buildGrantRequest(
     });
   if (grants.length === 0 || grants.length > 100)
     errors.selection = 'Chọn từ 1 đến 100 gia đình để duyệt cùng lúc.';
+  // CP5.5: kiểm sớm phần vượt dự toán để báo số USD cần nâng; máy chủ vẫn kiểm lại.
+  const added = grants.reduce(
+    (sum, grant) =>
+      sum + grant.grantedScans - view.families.find((f) => f.familyId === grant.familyId)!.quota.grantedScans,
+    0,
+  );
+  const shortfall = added - Number(view.availableAdditionalScans ?? Infinity);
+  if (view.policy && shortfall > 0 && Object.keys(errors).length === 0)
+    errors.selection = `Vượt dự toán ${shortfall} lượt; cần nâng chi phí cố định tháng thêm khoảng ${formatBillingUsd(
+      requiredCapIncreaseUsd(view.policy, shortfall),
+    )}.`;
   const parsed = grantScanQuotasRequestSchema.safeParse({
     month: view.month,
     expectedVersion: view.version,
