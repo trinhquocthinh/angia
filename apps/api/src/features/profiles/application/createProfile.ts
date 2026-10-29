@@ -22,8 +22,9 @@ export async function createProfile(
   if (
     !displayName ||
     displayName.length > 60 ||
-    (input.birthYear !== undefined &&
-      (!Number.isInteger(input.birthYear) || input.birthYear < 1900 || input.birthYear > year))
+    !Number.isInteger(input.birthYear) ||
+    input.birthYear < 1900 ||
+    input.birthYear > year
   ) {
     return { ok: false, code: 'ERR_VALIDATION' };
   }

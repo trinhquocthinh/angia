@@ -21,7 +21,10 @@ describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () =>
   const household = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Bà' });
+    const created = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Bà',
+    });
     const profileId = ((await created.json()) as HealthProfile).id;
     await acceptConsentInvitation(t, main, profileId);
     const seed = (doc: Parameters<typeof seedQuotaDocument>[2]) =>

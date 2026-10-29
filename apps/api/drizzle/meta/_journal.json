@@ -239,6 +239,13 @@
       "when": 1793199543978,
       "tag": "0033_client_side_redaction",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1793283893853,
+      "tag": "0034_profile_vitals_enabled",
+      "breakpoints": true
     }
   ]
 }

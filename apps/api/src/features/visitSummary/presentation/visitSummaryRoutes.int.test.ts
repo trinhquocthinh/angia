@@ -22,7 +22,7 @@ describe('API bản tóm tắt tái khám SPEC-024 (E6-S1-T1)', () => {
   const fixture = async (consent = true) => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const created = await t.call(main, 'POST', profiles, { displayName: 'Mẹ' });
+    const created = await t.call(main, 'POST', profiles, { birthYear: 1950, displayName: 'Mẹ' });
     const profile = (await created.json()) as HealthProfile;
     if (consent) await acceptConsentInvitation(t, main, profile.id);
     return { familyId, main, profile, base: `${profiles}/${profile.id}/visit-summary` };
@@ -69,7 +69,7 @@ describe('API bản tóm tắt tái khám SPEC-024 (E6-S1-T1)', () => {
     });
     const before = Date.now();
     const summary = await getSummary(f);
-    expect(summary.profile).toEqual({ id: f.profile.id, displayName: 'Mẹ', birthYear: null });
+    expect(summary.profile).toEqual({ id: f.profile.id, displayName: 'Mẹ', birthYear: 1950 });
     expect(Date.parse(summary.createdAt)).toBeGreaterThanOrEqual(before - 1000);
     expect({ from: summary.from, to: summary.to }).toEqual({ from: '2026-07-01', to: '2026-09-30' });
     expect(summary.currentMedications.map((course) => course.name).sort()).toEqual([

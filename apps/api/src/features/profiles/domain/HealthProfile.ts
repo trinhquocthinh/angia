@@ -8,6 +8,7 @@ export interface HealthProfile {
   familyId: string;
   displayName: string;
   birthYear: number | null;
+  vitalsEnabled: boolean | null;
   consentConfirmedAt: Date | null;
   consentConfirmedBy: string | null;
   consentBasis: ConsentBasis | null;
@@ -21,7 +22,7 @@ export interface HealthProfile {
 
 export interface NewProfile {
   displayName: string;
-  birthYear?: number | undefined;
+  birthYear: number;
   linkedAccountId?: string | undefined;
   consent?: ConsentConfirmation | undefined;
 }

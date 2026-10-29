@@ -16,6 +16,14 @@ describe('Hồ sơ: route thật, transaction và RLS', () => {
     await t?.stop();
   });
 
+  it('TC-442: thiếu năm sinh trả 422 và không tạo hồ sơ', async () => {
+    const main = await t.session(await t.family());
+    const response = await t.call(main, 'POST', base, { displayName: 'Bé An' });
+    expect(response.status).toBe(422);
+    expect(await response.json()).toMatchObject({ error: { code: 'ERR_VALIDATION' } });
+    expect(await (await t.call(main, 'GET', base)).json()).toEqual([]);
+  });
+
   it('TC-008: hồ sơ độc lập chưa đồng thuận, list chỉ trong gia đình và không cache', async () => {
     const [a, b] = await Promise.all([t.family(), t.family()]);
     const [main, other] = await Promise.all([t.session(a), t.session(b)]);
@@ -26,6 +34,8 @@ describe('Hồ sơ: route thật, transaction và RLS', () => {
     expect(profile).toMatchObject({
       familyId: a,
       displayName: 'Bé An',
+      birthYear: 2020,
+      vitalsEnabled: null,
       consentConfirmedAt: null,
       consentConfirmedBy: null,
       consentBasis: null,
@@ -45,8 +55,8 @@ describe('Hồ sơ: route thật, transaction và RLS', () => {
     const family = await t.family();
     const main = await t.session(family);
     const responses = await Promise.all([
-      t.call(main, 'POST', base, { displayName: 'Mẹ', linkedAccountId: main.accountId }),
-      t.call(main, 'POST', base, { displayName: 'Mẹ nữa', linkedAccountId: main.accountId }),
+      t.call(main, 'POST', base, { birthYear: 1950, displayName: 'Mẹ', linkedAccountId: main.accountId }),
+      t.call(main, 'POST', base, { birthYear: 1950, displayName: 'Mẹ nữa', linkedAccountId: main.accountId }),
     ]);
     expect(responses.map((r) => r.status).sort()).toEqual([201, 409]);
     const failure = responses.find((r) => r.status === 409)!;
@@ -62,8 +72,10 @@ describe('Hồ sơ: route thật, transaction và RLS', () => {
     const [a, b] = await Promise.all([t.family(), t.family()]);
     const [main, other] = await Promise.all([t.session(a), t.session(b)]);
     await expectCrossFamilyDenied(
-      () => t.call(main, 'POST', base, { displayName: 'Lén', linkedAccountId: other.accountId }),
-      () => t.call(main, 'POST', base, { displayName: 'Lén', linkedAccountId: randomUUID() }),
+      () =>
+        t.call(main, 'POST', base, { birthYear: 1950, displayName: 'Lén', linkedAccountId: other.accountId }),
+      () =>
+        t.call(main, 'POST', base, { birthYear: 1950, displayName: 'Lén', linkedAccountId: randomUUID() }),
     );
     expect(await (await t.call(main, 'GET', `${base}/linkable-accounts`)).json()).toEqual([
       { id: main.accountId, displayName: 'Người chăm' },
@@ -73,7 +85,9 @@ describe('Hồ sơ: route thật, transaction và RLS', () => {
   it('route đồng thuận cũ trả 409, không thay metadata', async () => {
     const family = await t.family();
     const main = await t.session(family);
-    const profile = (await (await t.call(main, 'POST', base, { displayName: 'Mẹ' })).json()) as HealthProfile;
+    const profile = (await (
+      await t.call(main, 'POST', base, { birthYear: 1950, displayName: 'Mẹ' })
+    ).json()) as HealthProfile;
     const response = await t.call(main, 'POST', consent(profile.id), { confirmedBy: 'guardian' });
     expect(response.status).toBe(409);
     expect(await response.json()).toMatchObject({ error: { code: 'ERR_CONSENT_INVITATION_REQUIRED' } });

@@ -26,7 +26,7 @@ describe('API lời nhắc cá nhân GET /api/me/reminders/:reminderId (SPEC-035
     const uncle = await t.session(familyId, 'member', 'Chú');
     const create = async (body: object, recipient?: string) => {
       const profile = (await (
-        await t.call(dad, 'POST', '/api/health-profiles', body)
+        await t.call(dad, 'POST', '/api/health-profiles', { birthYear: 1950, ...body })
       ).json()) as HealthProfile;
       await acceptConsentInvitation(t, dad, profile.id);
       return { profile, reminderId: await seedReminder(t.owner, familyId, profile.id, recipient) };

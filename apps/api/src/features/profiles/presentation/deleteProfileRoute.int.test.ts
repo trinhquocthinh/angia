@@ -61,7 +61,11 @@ describe('SPEC-007: xóa triệt để hồ sơ qua route thật, RLS và pg-bos
     const linked = await seedAccount(t.owner, { familyId, familyRole: 'member', displayName: 'Mẹ' });
     const create = async (displayName: string, linkedAccountId?: string) =>
       (await (
-        await t.call(main, 'POST', base, { displayName, ...(linkedAccountId ? { linkedAccountId } : {}) })
+        await t.call(main, 'POST', base, {
+          birthYear: 1950,
+          displayName,
+          ...(linkedAccountId ? { linkedAccountId } : {}),
+        })
       ).json()) as HealthProfile;
     const [mother, father] = [await create('Mẹ', linked), await create('Bố')];
     await acceptConsentInvitation(t, main, mother.id);

@@ -22,6 +22,7 @@ describe('API rút đồng thuận /api/me/consent (SPEC-036)', () => {
     const uncle = await t.session(familyId, 'member', 'Chú');
     const profile = (await (
       await t.call(dad, 'POST', '/api/health-profiles', {
+        birthYear: 1950,
         displayName: 'Bà Tư',
         linkedAccountId: grandma.accountId,
       })

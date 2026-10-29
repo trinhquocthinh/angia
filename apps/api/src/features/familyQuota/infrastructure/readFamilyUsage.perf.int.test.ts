@@ -16,7 +16,10 @@ describe('Đo truy vấn mức dùng gia đình với 1.000 chứng từ (SPEC-0
     t = await startProfileTestApp();
     familyId = await t.family();
     const main = await t.session(familyId);
-    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Bà' });
+    const created = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Bà',
+    });
     const profileId = ((await created.json()) as HealthProfile).id;
     const batch = await t.owner.query(
       'INSERT INTO upload_batches(id,family_id,health_profile_id,created_by) VALUES (gen_random_uuid(),$1,$2,$3) RETURNING id',

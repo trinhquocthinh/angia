@@ -40,7 +40,7 @@ export function createProfileStore(tx: FamilyScopedTx, familyId: string, boss: P
     insertProfile: async ({ displayName, birthYear }, receipt) => {
       const [profile] = await tx
         .insert(healthProfiles)
-        .values({ familyId, displayName, birthYear: birthYear ?? null, ...receipt })
+        .values({ familyId, displayName, birthYear, ...receipt })
         .returning();
       if (!profile) throw new Error('Không tạo được hồ sơ');
       return profile;

@@ -72,7 +72,11 @@ describe('LG-02: tạo hồ sơ kèm đồng thuận trên PostgreSQL', () => {
       { consent: { kind: 'self' }, linkedAccountId: other.accountId },
       { consent: { kind: 'self' } },
     ]) {
-      const response = await t.call(f.main, 'POST', PROFILE_BASE, { displayName: 'Bé', ...input });
+      const response = await t.call(f.main, 'POST', PROFILE_BASE, {
+        birthYear: 1950,
+        displayName: 'Bé',
+        ...input,
+      });
       expect(response.status).toBe(422);
       expect(await response.json()).toMatchObject({ error: { code: 'ERR_VALIDATION' } });
     }
@@ -85,7 +89,11 @@ describe('LG-02: tạo hồ sơ kèm đồng thuận trên PostgreSQL', () => {
   });
   it('TC-549: phản hồi tạo hồ sơ có no-store', async () => {
     const f = await profileConsentFixture(t);
-    const response = await t.call(f.main, 'POST', PROFILE_BASE, { displayName: 'Bé', consent: ATTESTATION });
+    const response = await t.call(f.main, 'POST', PROFILE_BASE, {
+      birthYear: 1950,
+      displayName: 'Bé',
+      consent: ATTESTATION,
+    });
     expect(response.status).toBe(201);
     expect(response.headers.get('cache-control')).toBe('no-store');
     expect(((await response.json()) as HealthProfile).consentSource).toBe('main_attested');

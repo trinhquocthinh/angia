@@ -53,7 +53,10 @@ describe('Kiểm trùng chứng từ: route thật + RLS (SPEC-012, BR-017, E3-S
   const familyFixture = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' });
+    const created = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Mẹ',
+    });
     const profile = (await created.json()) as HealthProfile;
     await acceptConsentInvitation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
@@ -111,7 +114,10 @@ describe('Kiểm trùng chứng từ: route thật + RLS (SPEC-012, BR-017, E3-S
     const mother = await familyFixture();
     const content = prescription(['Amlodipin', 'Metformin']);
     expect((await approve(mother.main, await mother.seed(content), content)).status).toBe(200);
-    const created = await t.call(mother.main, 'POST', '/api/health-profiles', { displayName: 'Ba' });
+    const created = await t.call(mother.main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Ba',
+    });
     const father = (await created.json()) as HealthProfile;
     await acceptConsentInvitation(t, mother.main, father.id);
     expect((await manual(mother.main, father.id, content)).status).toBe(200);

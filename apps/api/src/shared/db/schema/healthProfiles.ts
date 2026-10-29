@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm';
 import {
   type AnyPgColumn,
+  boolean,
   check,
   index,
   integer,
@@ -22,6 +23,7 @@ export const healthProfiles = pgTable(
     familyId: familyIdColumn(),
     displayName: text('display_name').notNull(),
     birthYear: integer('birth_year'),
+    vitalsEnabled: boolean('vitals_enabled'),
     consentConfirmedAt: timestamp('consent_confirmed_at', { withTimezone: true }),
     consentConfirmedBy: uuid('consent_confirmed_by').references((): AnyPgColumn => accounts.id, {
       onDelete: 'set null',

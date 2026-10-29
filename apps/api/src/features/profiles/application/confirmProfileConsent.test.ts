@@ -19,7 +19,7 @@ async function fixture(linkedAccountId?: string) {
   const result = await createProfile(
     repository,
     'a',
-    { displayName: 'Bé', linkedAccountId },
+    { birthYear: 1950, displayName: 'Bé', linkedAccountId },
     () => at,
     'main',
   );

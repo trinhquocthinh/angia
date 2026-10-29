@@ -43,7 +43,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
   };
   const probes: Record<RouteOfKind<'scoped'>, Probe> = {
     'POST /api/health-profiles': (u, x) =>
-      t.call(u, 'POST', profiles, { displayName: 'Lén', linkedAccountId: x.accountId }),
+      t.call(u, 'POST', profiles, { birthYear: 1950, displayName: 'Lén', linkedAccountId: x.accountId }),
     'DELETE /api/health-profiles/:id': (u, x) =>
       t.call(u, 'DELETE', `${profiles}/${x.profileId}`, { confirmName: 'Mẹ' }), // tên đúng của nạn nhân
     'POST /api/health-profiles/:id/consent-attestation': (u, x) =>
@@ -115,7 +115,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
   const victimFixture = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const created = await t.call(main, 'POST', profiles, { displayName: 'Mẹ' });
+    const created = await t.call(main, 'POST', profiles, { birthYear: 1950, displayName: 'Mẹ' });
     const profile = (await created.json()) as HealthProfile;
     const token = await acceptConsentInvitation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
@@ -175,9 +175,11 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
 
   it('TC-017: danh sách chỉ gồm dữ liệu gia đình của phiên, không lẫn nhóm khác', async () => {
     const victim = await victimFixture();
-    for (const name of ['Ba', 'Bà']) await t.call(victim.main, 'POST', profiles, { displayName: name });
+    for (const name of ['Ba', 'Bà'])
+      await t.call(victim.main, 'POST', profiles, { birthYear: 1950, displayName: name });
     const { familyId, main } = await attackers();
-    for (const name of ['A', 'B', 'C', 'D']) await t.call(main, 'POST', profiles, { displayName: name });
+    for (const name of ['A', 'B', 'C', 'D'])
+      await t.call(main, 'POST', profiles, { birthYear: 1950, displayName: name });
     const listPaths: Record<RouteOfKind<'list'>, string> = {
       'GET /api/health-profiles': profiles,
       'GET /api/health-profiles/linkable-accounts': `${profiles}/linkable-accounts`,

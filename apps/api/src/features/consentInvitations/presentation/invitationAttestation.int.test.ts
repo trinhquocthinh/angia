@@ -17,7 +17,9 @@ describe('Cam kết của main khi tạo link: PostgreSQL thật', () => {
   it('TC-375 tạo link bắt buộc cam kết: thiếu body hoặc false → 422, true → 201 và lưu thời điểm cam kết', async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const profile = (await (await t.call(main, 'POST', base, { displayName: 'Bà' })).json()) as HealthProfile;
+    const profile = (await (
+      await t.call(main, 'POST', base, { birthYear: 1950, displayName: 'Bà' })
+    ).json()) as HealthProfile;
     const path = invitationPath(profile.id);
     for (const body of [undefined, {}, { attestation: false }, { attestation: true, extra: 1 }]) {
       const denied = await t.call(main, 'POST', path, body);

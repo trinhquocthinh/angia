@@ -16,9 +16,7 @@ describe('Link đồng thuận: PostgreSQL thật và NOBYPASSRLS', () => {
   beforeAll(async () => {
     t = await startProfileTestApp();
   });
-  afterAll(async () => {
-    await t?.stop();
-  });
+  afterAll(async () => t?.stop());
   const publicCall = (token: string, method = 'GET', body?: unknown, callerOrigin: string | null = origin) =>
     t.app.request(`/api/consent-invitations/${method === 'GET' ? 'view' : 'respond'}`, {
       method,
@@ -32,7 +30,9 @@ describe('Link đồng thuận: PostgreSQL thật và NOBYPASSRLS', () => {
   const fixture = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const profile = (await (await t.call(main, 'POST', base, { displayName: 'Mẹ' })).json()) as HealthProfile;
+    const profile = (await (
+      await t.call(main, 'POST', base, { displayName: 'Mẹ', birthYear: 1950 })
+    ).json()) as HealthProfile;
     const created = await t.call(main, 'POST', invitationPath(profile.id), attest);
     expect(created.status).toBe(201);
     const invitation = (await created.json()) as ConsentInvitationCreated;

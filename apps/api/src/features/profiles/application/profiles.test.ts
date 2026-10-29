@@ -7,9 +7,35 @@ import { createMemoryProfileRepository } from '@src/shared/test/createMemoryProf
 const now = () => new Date('2026-10-05T17:30:00Z');
 
 describe('Hồ sơ và đồng thuận', () => {
+  it('TC-442: thiếu năm sinh bị từ chối và không tạo hồ sơ', async () => {
+    const repository = createMemoryProfileRepository();
+    const input = { displayName: 'Bé An' } as Parameters<typeof createProfile>[2];
+    expect(await createProfile(repository, 'family-a', input, now, 'main')).toEqual({
+      ok: false,
+      code: 'ERR_VALIDATION',
+    });
+    expect(await listProfiles(repository, 'family-a', 'main')).toEqual([]);
+  });
+  it('TC-442: tạo hợp lệ lưu năm sinh và mặc định theo dõi theo độ tuổi', async () => {
+    expect(
+      await createProfile(
+        createMemoryProfileRepository(),
+        'family-a',
+        { displayName: 'Bé An', birthYear: 2020 },
+        now,
+        'main',
+      ),
+    ).toMatchObject({ ok: true, value: { birthYear: 2020, vitalsEnabled: null } });
+  });
   it('TC-008: tạo hồ sơ độc lập đúng nhóm và chưa xác nhận đồng thuận', async () => {
     const repository = createMemoryProfileRepository();
-    const result = await createProfile(repository, 'family-a', { displayName: ' Bé An ' }, now, 'main');
+    const result = await createProfile(
+      repository,
+      'family-a',
+      { birthYear: 1950, displayName: ' Bé An ' },
+      now,
+      'main',
+    );
     expect(result).toMatchObject({
       ok: true,
       value: { familyId: 'family-a', displayName: 'Bé An', consentConfirmedAt: null },
@@ -21,7 +47,7 @@ describe('Hồ sơ và đồng thuận', () => {
     const repository = createMemoryProfileRepository([
       { id: 'account-a', familyId: 'family-a', displayName: 'Mẹ', healthProfileId: null },
     ]);
-    const input = { displayName: 'Mẹ', linkedAccountId: 'account-a' };
+    const input = { birthYear: 1950, displayName: 'Mẹ', linkedAccountId: 'account-a' };
     expect(await createProfile(repository, 'family-a', input, now, 'main')).toMatchObject({ ok: true });
     expect(await createProfile(repository, 'family-a', input, now, 'main')).toEqual({
       ok: false,
@@ -36,7 +62,13 @@ describe('Hồ sơ và đồng thuận', () => {
     ]);
     for (const linkedAccountId of ['other', 'missing']) {
       expect(
-        await createProfile(repository, 'family-a', { displayName: 'An', linkedAccountId }, now, 'main'),
+        await createProfile(
+          repository,
+          'family-a',
+          { birthYear: 1950, displayName: 'An', linkedAccountId },
+          now,
+          'main',
+        ),
       ).toEqual({ ok: false, code: 'ERR_NOT_FOUND' });
     }
     expect(await listProfiles(repository, 'family-a', 'main')).toEqual([]);
@@ -70,7 +102,7 @@ describe('Hồ sơ và đồng thuận', () => {
       await createProfile(repository, 'a', { displayName: 'An', birthYear: 2026 }, clock, 'main'),
     ).toMatchObject({ ok: true });
     for (const displayName of ['', '   ', 'a'.repeat(61)]) {
-      expect(await createProfile(repository, 'a', { displayName }, now, 'main')).toEqual({
+      expect(await createProfile(repository, 'a', { birthYear: 1950, displayName }, now, 'main')).toEqual({
         ok: false,
         code: 'ERR_VALIDATION',
       });

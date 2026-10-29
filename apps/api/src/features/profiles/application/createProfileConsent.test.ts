@@ -15,7 +15,9 @@ const account = { id: 'main', familyId: 'a', displayName: '  Nguyễn An ', he
 describe('Tạo hồ sơ kèm receipt đồng thuận', () => {
   it('TC-549: cam kết tạo receipt đúng người, thời điểm và tên chuẩn hóa', async () => {
     const repository = createMemoryProfileRepository();
-    expect(await createProfile(repository, 'a', { displayName: 'Bé', consent }, now, 'main')).toMatchObject({
+    expect(
+      await createProfile(repository, 'a', { birthYear: 1950, displayName: 'Bé', consent }, now, 'main'),
+    ).toMatchObject({
       ok: true,
       value: {
         consentStatus: 'confirmed',
@@ -29,7 +31,13 @@ describe('Tạo hồ sơ kèm receipt đồng thuận', () => {
   });
   it('TC-550: bỏ consent vẫn tạo pending', async () => {
     expect(
-      await createProfile(createMemoryProfileRepository(), 'a', { displayName: 'Bé' }, now, 'main'),
+      await createProfile(
+        createMemoryProfileRepository(),
+        'a',
+        { birthYear: 1950, displayName: 'Bé' },
+        now,
+        'main',
+      ),
     ).toMatchObject({
       ok: true,
       value: { consentStatus: 'pending', consentSource: null, consentConfirmedAt: null },
@@ -41,7 +49,7 @@ describe('Tạo hồ sơ kèm receipt đồng thuận', () => {
       await createProfile(
         repository,
         'a',
-        { displayName: 'Tên khác', linkedAccountId: 'main', consent: { kind: 'self' } },
+        { birthYear: 1950, displayName: 'Tên khác', linkedAccountId: 'main', consent: { kind: 'self' } },
         now,
         'main',
       ),
@@ -64,7 +72,9 @@ describe('Tạo hồ sơ kèm receipt đồng thuận', () => {
     { consent: { kind: 'self' as const }, linkedAccountId: 'other' },
   ])('TC-552: không tạo hồ sơ hoặc liên kết khi cam kết sai %j', async (input) => {
     const repository = createMemoryProfileRepository([{ ...account }, { ...account, id: 'other' }]);
-    expect(await createProfile(repository, 'a', { displayName: 'Bé', ...input }, now, 'main')).toEqual({
+    expect(
+      await createProfile(repository, 'a', { birthYear: 1950, displayName: 'Bé', ...input }, now, 'main'),
+    ).toEqual({
       ok: false,
       code: 'ERR_VALIDATION',
     });
