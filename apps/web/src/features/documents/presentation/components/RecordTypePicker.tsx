@@ -8,13 +8,15 @@ import { PickerCard } from './PickerCard';
 export function RecordTypePicker({
   value,
   onChange,
+  allowReading = true,
 }: {
+  allowReading?: boolean;
   value: DocumentType | null;
   onChange: (value: DocumentType) => void;
 }) {
   return (
     <PickerCard icon="category" title="Loại dữ liệu" hint="Bắt buộc" required>
-      {DOCUMENT_TYPES.map((type) => (
+      {DOCUMENT_TYPES.filter((type) => type.value !== 'device_reading' || allowReading).map((type) => (
         <ChoiceChip key={type.value} selected={value === type.value} onClick={() => onChange(type.value)}>
           <span className={value === type.value ? 'text-[#b3eddf]' : 'text-[#707975]'}>
             <DocumentIcon name={type.icon} size={16} />

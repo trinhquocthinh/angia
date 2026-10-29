@@ -7,6 +7,7 @@ const profile: HealthProfile = {
   familyId: 'f',
   displayName: 'Bé',
   birthYear: null,
+  vitalsEnabled: null,
   consentConfirmedAt: '2026-10-26T18:30:00Z',
   consentConfirmedBy: 'main',
   consentBasis: 'guardian',

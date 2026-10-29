@@ -9,6 +9,7 @@ const profile: ProfileListItem = {
   familyId: 'f',
   displayName: 'Bé',
   birthYear: null,
+  vitalsEnabled: null,
   consentConfirmedAt: null,
   consentConfirmedBy: null,
   consentBasis: null,

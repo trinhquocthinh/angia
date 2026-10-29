@@ -17,6 +17,7 @@ const profile = {
   familyId: 'f',
   displayName: 'Mẹ',
   birthYear: null,
+  vitalsEnabled: null,
   consentConfirmedAt: null,
   consentConfirmedBy: null,
   consentBasis: null,
