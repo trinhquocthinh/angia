@@ -935,6 +935,12 @@
               "null"
             ]
           },
+          "vitalsEnabled": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
           "consentConfirmedAt": {
             "type": [
               "string",
@@ -1017,6 +1023,7 @@
           "familyId",
           "displayName",
           "birthYear",
+          "vitalsEnabled",
           "consentConfirmedAt",
           "consentConfirmedBy",
           "consentBasis",
@@ -1061,6 +1068,12 @@
           "birthYear": {
             "type": [
               "integer",
+              "null"
+            ]
+          },
+          "vitalsEnabled": {
+            "type": [
+              "boolean",
               "null"
             ]
           },
@@ -1128,6 +1141,7 @@
           "familyId",
           "displayName",
           "birthYear",
+          "vitalsEnabled",
           "consentConfirmedAt",
           "consentConfirmedBy",
           "consentBasis",
@@ -1158,7 +1172,8 @@
           }
         },
         "required": [
-          "displayName"
+          "displayName",
+          "birthYear"
         ]
       },
       "ConsentConfirmation": {
@@ -1213,6 +1228,18 @@
             ]
           }
         ]
+      },
+      "UpdateHealthProfileRequest": {
+        "type": "object",
+        "properties": {
+          "birthYear": {
+            "type": "integer",
+            "minimum": 1900
+          },
+          "vitalsEnabled": {
+            "type": "boolean"
+          }
+        }
       },
       "ConfirmConsentRequest": {
         "type": "object",
@@ -3685,6 +3712,9 @@
             "type": "string",
             "format": "date"
           },
+          "showsVitals": {
+            "type": "boolean"
+          },
           "currentMedications": {
             "type": "array",
             "items": {
@@ -3721,6 +3751,7 @@
           "createdAt",
           "from",
           "to",
+          "showsVitals",
           "currentMedications",
           "measurements",
           "latestLabResults",
@@ -5315,6 +5346,169 @@
         }
       }
     },
+    "/api/health-profiles/{id}": {
+      "patch": {
+        "tags": [
+          "profiles"
+        ],
+        "summary": "Sửa năm sinh và lựa chọn theo dõi huyết áp, đường huyết (SPEC-039)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateHealthProfileRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Hồ sơ đã cập nhật",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthProfile"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần main cùng gia đình và CSRF cho request ghi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "profiles"
+        ],
+        "summary": "Xóa triệt để hồ sơ và toàn bộ dữ liệu y tế (SPEC-007)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteHealthProfileRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Đã xóa hồ sơ, dữ liệu phụ thuộc và ảnh"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần main cùng gia đình và CSRF cho request ghi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_CONFIRMATION_MISMATCH hoặc ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/health-profiles/{id}/consent-attestation": {
       "post": {
         "tags": [
@@ -5476,80 +5670,6 @@
           },
           "422": {
             "description": "ERR_VALIDATION",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/health-profiles/{id}": {
-      "delete": {
-        "tags": [
-          "profiles"
-        ],
-        "summary": "Xóa triệt để hồ sơ và toàn bộ dữ liệu y tế (SPEC-007)",
-        "parameters": [
-          {
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true,
-            "name": "id",
-            "in": "path"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteHealthProfileRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "Đã xóa hồ sơ, dữ liệu phụ thuộc và ảnh"
-          },
-          "401": {
-            "description": "ERR_UNAUTHENTICATED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "ERR_FORBIDDEN: cần main cùng gia đình và CSRF cho request ghi",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ERR_NOT_FOUND",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "ERR_CONFIRMATION_MISMATCH hoặc ERR_VALIDATION",
             "content": {
               "application/json": {
                 "schema": {

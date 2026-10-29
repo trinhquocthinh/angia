@@ -46,6 +46,8 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'POST', profiles, { birthYear: 1950, displayName: 'Lén', linkedAccountId: x.accountId }),
     'DELETE /api/health-profiles/:id': (u, x) =>
       t.call(u, 'DELETE', `${profiles}/${x.profileId}`, { confirmName: 'Mẹ' }), // tên đúng của nạn nhân
+    'PATCH /api/health-profiles/:id': (u, x) =>
+      t.call(u, 'PATCH', `${profiles}/${x.profileId}`, { birthYear: 2020, vitalsEnabled: true }),
     'POST /api/health-profiles/:id/consent-attestation': (u, x) =>
       t.call(u, 'POST', attestationPath(x.profileId), ATTESTATION),
     'POST /api/health-profiles/:id/consent-invitations': (u, x) =>

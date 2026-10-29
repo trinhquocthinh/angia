@@ -50,6 +50,11 @@ export function createProfileStore(tx: FamilyScopedTx, familyId: string, boss: P
     },
     lockProfile: async (id) =>
       (await tx.select().from(healthProfiles).where(sameProfile(id)).for('update'))[0] ?? null,
+    updateProfile: async (id, patch) => {
+      const [profile] = await tx.update(healthProfiles).set(patch).where(sameProfile(id)).returning();
+      if (!profile) throw new Error('Không cập nhật được hồ sơ');
+      return profile;
+    },
     // FK ON DELETE CASCADE xóa mọi dữ liệu phụ thuộc; accounts.health_profile_id → NULL (BR-010).
     deleteProfile: async (id) => {
       await tx.delete(healthProfiles).where(sameProfile(id));

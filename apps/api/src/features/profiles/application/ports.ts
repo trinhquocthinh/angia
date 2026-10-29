@@ -10,6 +10,10 @@ export interface ProfileStore {
   insertProfile(input: NewProfile, receipt: ConsentReceipt | null): Promise<HealthProfile>;
   linkAccount(accountId: string, profileId: string): Promise<void>;
   lockProfile(id: string): Promise<HealthProfile | null>;
+  updateProfile(
+    id: string,
+    patch: { birthYear?: number; vitalsEnabled?: true | null },
+  ): Promise<HealthProfile>;
   findLinkedAccount(profileId: string): Promise<LinkableAccount | null>;
   saveConsentReceipt(profileId: string, receipt: ConsentReceipt): Promise<HealthProfile>;
   revokePendingInvitations(profileId: string, at: Date): Promise<void>;

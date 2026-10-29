@@ -38,6 +38,7 @@ type ProfileError =
   | 'ERR_NOT_FOUND'
   | 'ERR_PROFILE_ALREADY_LINKED'
   | 'ERR_VALIDATION'
+  | 'ERR_CONSENT_REQUIRED'
   | 'ERR_CONFIRMATION_MISMATCH'
   | 'ERR_CONSENT_INVITATION_REQUIRED';
 export type ProfileOutcome<T, Code extends ProfileError = ProfileError> =
