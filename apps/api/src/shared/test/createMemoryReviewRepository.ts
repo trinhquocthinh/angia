@@ -135,7 +135,6 @@ export function createMemoryReviewRepository(
         ...medicationStore.store,
         findProfile: async (id) => profiles.find((p) => p.id === id && p.familyId === familyId) ?? null,
         markApproved: async (id, changes) => update(id, { status: 'approved', ...changes }),
-        markRejected: async (id) => update(id, { status: 'rejected' }),
       });
       measurements.push(...pending.measurements);
       prescriptions.push(...pending.prescriptions);

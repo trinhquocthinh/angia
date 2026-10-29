@@ -5,7 +5,7 @@ import { usePrivacyDrag } from '../../application/usePrivacyDrag';
 import { PrivacyPreviewImage } from './PrivacyPreviewImage';
 import { PrivacyOverlay } from './PrivacyOverlay';
 type Props = {
-  documentId: string;
+  src: string;
   edits: PrivacyEdits;
   mode: 'crop' | 'mask';
   disabled: boolean;
@@ -13,7 +13,7 @@ type Props = {
   onRectangle: (rect: PrivacyRectangle) => void;
   onPreview: (loaded: boolean) => void;
 };
-export function PrivacyCanvas({ documentId, edits, mode, disabled, onBegin, onRectangle, onPreview }: Props) {
+export function PrivacyCanvas({ src, edits, mode, disabled, onBegin, onRectangle, onPreview }: Props) {
   const [size, setSize] = useState({ width: 1, height: 1 });
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -23,7 +23,7 @@ export function PrivacyCanvas({ documentId, edits, mode, disabled, onBegin, onRe
     <div className="overflow-hidden rounded-2xl bg-[#131d1d] text-[#e7f3f3]">
       {failed && (
         <p role="alert" className="p-4 text-sm text-[#9b472c]">
-          Không tải được ảnh xem trước. Tải lại ảnh giấy tờ hoặc chọn nhập tay.
+          Không mở được ảnh này trên trình duyệt. Hãy chụp lại hoặc chọn ảnh JPG.
         </p>
       )}
       <div className="flex h-[clamp(320px,52dvh,520px)] items-center justify-center">
@@ -35,7 +35,7 @@ export function PrivacyCanvas({ documentId, edits, mode, disabled, onBegin, onRe
           }}
         >
           <PrivacyPreviewImage
-            documentId={documentId}
+            src={src}
             rotation={edits.rotation}
             size={size}
             failed={failed}

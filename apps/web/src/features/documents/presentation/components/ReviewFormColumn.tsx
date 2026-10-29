@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router';
 import { useCourseConflictPrompt } from '@src/features/medications/application/useCourseConflictPrompt';
 import { CourseConflictNotice } from '@src/features/medications/presentation/CourseConflictNotice';
 import type { components } from '@src/shared/api/schema.gen';
@@ -5,8 +6,8 @@ import type { ApproveDocumentRequest, ReviewRepository } from '../../application
 import { ReviewRequestError } from '../../application/ReviewRequestError';
 import { useDuplicatePrompt } from '../../application/useDuplicatePrompt';
 import { useApproveDocument } from '../../application/useReviewWorkspace';
+import { DeleteDocumentControl } from './DeleteDocumentControl';
 import { DuplicateNotice } from './DuplicateNotice';
-import { RejectDocumentControl } from './RejectDocumentControl';
 import { ReviewDetailBody } from './ReviewDetailBody';
 
 type DocumentReview = components['schemas']['DocumentReview'];
@@ -16,7 +17,7 @@ type ReviewFormColumnProps = DocumentReview & {
   onDone: () => void;
 };
 
-// Cột form đối soát: lưu (nghi trùng thì hỏi "Vẫn lưu bản này" — SPEC-012) hoặc loại bỏ, xong thì sang chứng từ kế.
+// Cột form đối soát: lưu (nghi trùng thì hỏi "Vẫn lưu bản này" — SPEC-012) xong thì sang chứng từ kế.
 export function ReviewFormColumn({
   repository,
   session,
@@ -24,12 +25,12 @@ export function ReviewFormColumn({
   extraction,
   onDone,
 }: ReviewFormColumnProps) {
+  const navigate = useNavigate();
   const approve = useApproveDocument(repository, session, document.id);
   const save = (request: ApproveDocumentRequest) => approve.mutate(request, { onSuccess: onDone });
   const error = approve.error instanceof ReviewRequestError ? approve.error : null;
   const courses = useCourseConflictPrompt(save, error);
   const duplicate = useDuplicatePrompt(courses.submit, courses.formError);
-  const rejectable = document.status === 'pending_review' || document.status === 'manual_entry';
   return (
     <div className="flex flex-col gap-4">
       <fieldset disabled={approve.isPending || Boolean(courses.prompt)} className="min-w-0 border-0 p-0">
@@ -58,13 +59,14 @@ export function ReviewFormColumn({
           onConfirm={() => duplicate.submit(duplicate.prompt!.request)}
         />
       )}
-      {rejectable && (
-        <RejectDocumentControl
-          key={document.id}
-          {...{ repository, session, documentId: document.id }}
-          onRejected={onDone}
-        />
-      )}
+      <DeleteDocumentControl
+        repository={repository}
+        session={session}
+        documentId={document.id}
+        profileId={document.healthProfileId}
+        disabled={approve.isPending || Boolean(courses.prompt)}
+        onDeleted={() => void navigate({ to: '/review', state: { deletedDocument: true } })}
+      />
     </div>
   );
 }

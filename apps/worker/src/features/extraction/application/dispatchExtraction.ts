@@ -1,4 +1,4 @@
-import { canUseApprovedOcrImage } from '../domain/canUseApprovedOcrImage.js';
+import { canUseApprovedImage } from '../domain/canUseApprovedImage.js';
 import type { DocumentToExtract } from '../domain/ExtractionDocument.js';
 import { OcrGuardChangedError } from './OcrGuardChangedError.js';
 import type { BudgetCall, ExtractionDependencies } from './ports.js';
@@ -14,11 +14,7 @@ export async function dispatchExtraction(
     const document = await store.findDocument(job.documentId);
     if (!document || document.status !== 'extracting') throw new OcrGuardChangedError('skipped');
     if (!document.profileConsentConfirmed) throw new OcrGuardChangedError('consent_required');
-    if (
-      document.ocrImageKey !== expected.ocrImageKey ||
-      document.originalKey !== expected.originalKey ||
-      !canUseApprovedOcrImage(document, expected.originalKey, expected.ocrImageSha256 ?? '')
-    )
+    if (document.imageKey !== expected.imageKey || !canUseApprovedImage(document, expected.imageSha256 ?? ''))
       throw new OcrGuardChangedError('privacy_required');
     await store.dispatchBudget(job.documentId, call);
   });

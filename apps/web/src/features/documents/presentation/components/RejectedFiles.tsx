@@ -5,9 +5,7 @@ const megabytes = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 const reason = ({ problem, file }: UploadItem) =>
   problem === 'too_large'
     ? `Dung lượng vượt quá 30 MB (${megabytes(file.size)})`
-    : problem === 'not_compressible'
-      ? `Trình duyệt không nén được ảnh này, vượt quá 10 MB (${megabytes(file.size)})`
-      : 'Chỉ nhận ảnh JPG, PNG, HEIC, WebP';
+    : 'Chỉ nhận ảnh JPG, PNG, HEIC, WebP';
 
 export function RejectedFiles({
   items,

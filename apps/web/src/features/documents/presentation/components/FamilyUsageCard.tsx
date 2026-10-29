@@ -1,5 +1,10 @@
 import type { FamilyScanQuota, FamilyUsage } from '@angia/contracts';
-import { formatAiUsage, formatStorageUsage, usageBlockReason } from '../../application/familyUsageState';
+import {
+  aiQueueBlockReason,
+  formatAiUsage,
+  formatStorageUsage,
+  usageBlockReason,
+} from '../../application/familyUsageState';
 
 function UsageBar({ label, used, limit }: { label: string; used: number; limit: number }) {
   const percent = limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 100;
@@ -46,7 +51,7 @@ export function FamilyUsageCard({
   usage: FamilyUsage;
   scanQuota?: FamilyScanQuota | null;
 }) {
-  const reason = usageBlockReason(usage);
+  const reason = usageBlockReason(usage) ?? aiQueueBlockReason(usage, 0);
   const { storage, dailyUploads, pendingJobs } = usage;
   return (
     <section

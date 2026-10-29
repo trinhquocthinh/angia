@@ -89,7 +89,7 @@ describe('TC-558 — thẻ hồ sơ chọn đúng thao tác đồng thuận', ()
     const html = renderToStaticMarkup(
       <ProfileCard profile={profile} onConsent={() => undefined} onDelete={() => undefined} />,
     );
-    expect(html).toMatch(/Xóa hồ sơ<\/button><\/article>$/);
+    expect(html).toMatch(/Xóa hồ sơ<\/button>(<\/div>)+<\/article>$/);
   });
   it('TC-393 — tên hồ sơ và nút "Xem hồ sơ" dẫn tới /profiles/{id}, kể cả hồ sơ chưa đồng thuận', () => {
     const html = renderToStaticMarkup(
@@ -143,5 +143,26 @@ describe('TC-558 — thẻ hồ sơ chọn đúng thao tác đồng thuận', ()
     expect(html.match(/<button/g)).toHaveLength(1);
     expect(html).not.toContain('Xác nhận đồng ý');
     expect(html).not.toContain('link');
+  });
+});
+describe('TC-382 — nút rút đồng thuận nằm trên thẻ hồ sơ của chính tài khoản', () => {
+  const confirmed = { ...profile, consentStatus: 'confirmed' as const, consentAction: null };
+  const render = (item: ProfileListItem, onWithdraw?: () => void) =>
+    renderToStaticMarkup(
+      <ProfileCard
+        profile={item}
+        onConsent={() => undefined}
+        onDelete={() => undefined}
+        onWithdraw={onWithdraw}
+      />,
+    );
+  it('hồ sơ của mình đã đồng thuận: có nút "Rút đồng thuận"', () => {
+    const html = render(confirmed, () => undefined);
+    expect(html).toContain('Rút đồng thuận');
+    expect(html).toMatch(/Rút đồng thuận<\/button>.*Xóa hồ sơ<\/button>(<\/div>)+<\/article>$/);
+  });
+  it('hồ sơ người khác hoặc chưa đồng thuận: không có nút', () => {
+    expect(render(confirmed)).not.toContain('Rút đồng thuận');
+    expect(render(profile, () => undefined)).not.toContain('Rút đồng thuận');
   });
 });

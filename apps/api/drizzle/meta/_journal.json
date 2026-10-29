@@ -232,6 +232,13 @@
       "when": 1793175966916,
       "tag": "0032_remove_woku",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1793199543978,
+      "tag": "0033_client_side_redaction",
+      "breakpoints": true
     }
   ]
 }

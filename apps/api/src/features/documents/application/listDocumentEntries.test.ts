@@ -14,7 +14,7 @@ const head = (n: number): DocumentEntryHead => ({
   dateKnown: true,
   createdAt: new Date('2026-10-13T08:00:00Z'),
   createdKey: '2026-10-13T08:00:00.000000Z',
-  hasOcrImage: false,
+  hasImage: false,
 });
 
 function fixture(heads: DocumentEntryHead[], consent: ConsentStatus | null = 'confirmed') {

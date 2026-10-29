@@ -1888,7 +1888,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Tải lên 1–10 ảnh chứng từ (JPEG/PNG/HEIC/WebP ≤ 10 MiB/ảnh) cho hồ sơ đã đồng thuận */
+    /** Tải lên 1–10 ảnh chứng từ đã che (chỉ JPEG ≤ 10 MiB/ảnh) cho hồ sơ đã đồng thuận */
     post: {
       parameters: {
         query?: never;
@@ -1967,7 +1967,7 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_VALIDATION (không có tệp, sai loại khai báo) hoặc ERR_NO_VALID_FILE */
+        /** @description ERR_VALIDATION (không có tệp, sai loại khai báo hoặc cờ sendToAi) hoặc ERR_NO_VALID_FILE */
         422: {
           headers: {
             [name: string]: unknown;
@@ -2014,25 +2014,9 @@ export interface paths {
       parameters: {
         query?: {
           status?:
+            | ('uploaded' | 'extracting' | 'pending_review' | 'approved' | 'manual_entry' | 'awaiting_budget')
             | (
-                | 'uploaded'
-                | 'awaiting_privacy'
-                | 'extracting'
-                | 'pending_review'
-                | 'approved'
-                | 'rejected'
-                | 'manual_entry'
-                | 'awaiting_budget'
-              )
-            | (
-                | 'uploaded'
-                | 'awaiting_privacy'
-                | 'extracting'
-                | 'pending_review'
-                | 'approved'
-                | 'rejected'
-                | 'manual_entry'
-                | 'awaiting_budget'
+                'uploaded' | 'extracting' | 'pending_review' | 'approved' | 'manual_entry' | 'awaiting_budget'
               )[];
           profileId?: string;
           batchId?: string;
@@ -2172,12 +2156,10 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Luồng ảnh chứng từ (preview chưa có thì trả ảnh gốc; ocr = bản đã che đã gửi AI) */
+    /** Ảnh chứng từ đã che định danh */
     get: {
       parameters: {
-        query?: {
-          variant?: 'preview' | 'original' | 'ocr';
-        };
+        query?: never;
         header?: never;
         path: {
           id: string;
@@ -2192,7 +2174,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'image/*': string;
+            'image/jpeg': string;
           };
         };
         /** @description ERR_UNAUTHENTICATED */
@@ -2329,17 +2311,15 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/source-documents/{id}/reject': {
+  '/api/source-documents/{id}/deletion-impact': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get?: never;
-    put?: never;
-    /** Loại bỏ chứng từ chờ duyệt hoặc chờ nhập tay; ảnh gốc giữ nguyên */
-    post: {
+    /** Số bản ghi sẽ mất khi xóa chứng từ (SPEC-037) */
+    get: {
       parameters: {
         query?: never;
         header?: never;
@@ -2350,13 +2330,13 @@ export interface paths {
       };
       requestBody?: never;
       responses: {
-        /** @description Chứng từ rejected */
+        /** @description Số lượng theo loại, gồm đợt thuốc đang dùng */
         200: {
           headers: {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['SourceDocument'];
+            'application/json': components['schemas']['DocumentDeletionImpact'];
           };
         };
         /** @description ERR_UNAUTHENTICATED */
@@ -2386,8 +2366,17 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_INVALID_STATE_TRANSITION */
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
         409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
           headers: {
             [name: string]: unknown;
           };
@@ -2397,7 +2386,94 @@ export interface paths {
         };
       };
     };
+    put?: never;
+    post?: never;
     delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/source-documents/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Xóa vĩnh viễn chứng từ, ảnh và mọi bản ghi sinh ra từ nó (SPEC-037, BR-048) */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['DeleteDocumentRequest'];
+        };
+      };
+      responses: {
+        /** @description Đã xóa */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: cần main cùng gia đình (và CSRF với lệnh đột biến) */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
     options?: never;
     head?: never;
     patch?: never;
@@ -2476,466 +2552,6 @@ export interface paths {
         };
         /** @description ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_DOSE_INFO_MISSING (details.invalidItemIndexes), ERR_VALIDATION */
         422: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/source-documents/{id}/privacy-drafts': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Tạo bản che/cắt để kiểm tra; chưa gọi AI */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreatePrivacyDraftRequest'];
-        };
-      };
-      responses: {
-        /** @description Bản nháp hiện hành */
-        202: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['PrivacyDraft'];
-          };
-        };
-        /** @description ERR_UNAUTHENTICATED */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_FORBIDDEN */
-        403: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_NOT_FOUND */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_INVALID_STATE_TRANSITION, ERR_CONSENT_REQUIRED */
-        409: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description Giới hạn body 16 KiB */
-        413: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_VALIDATION */
-        422: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_QUEUE_QUOTA (Retry-After: 30) | ERR_RATE_LIMITED (Retry-After) — SPEC-030 */
-        429: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/source-documents/{id}/privacy-draft': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Trạng thái bản ảnh kiểm tra hiện hành */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Bản nháp hiện hành */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['PrivacyDraft'];
-          };
-        };
-        /** @description ERR_UNAUTHENTICATED */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_FORBIDDEN */
-        403: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_NOT_FOUND */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
-        409: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/source-documents/{id}/privacy-drafts/{draftId}/image': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** PNG đúng bản kiểm tra hiện hành */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-          draftId: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description PNG */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'image/png': string;
-          };
-        };
-        /** @description ERR_UNAUTHENTICATED */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_FORBIDDEN */
-        403: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_NOT_FOUND */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận */
-        409: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/source-documents/{id}/privacy-approval': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Main xác nhận đúng hash PNG và gửi OCR */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['ApprovePrivacyRequest'];
-        };
-      };
-      responses: {
-        /** @description Chứng từ */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['SourceDocument'];
-          };
-        };
-        /** @description ERR_UNAUTHENTICATED */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_FORBIDDEN */
-        403: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_NOT_FOUND */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_INVALID_STATE_TRANSITION, ERR_CONSENT_REQUIRED */
-        409: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description Giới hạn body 16 KiB */
-        413: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_VALIDATION */
-        422: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_QUEUE_QUOTA (Retry-After: 30) | ERR_RATE_LIMITED (Retry-After) — SPEC-030 */
-        429: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/source-documents/{id}/manual-entry': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Chọn nhập tay */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Chứng từ */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['SourceDocument'];
-          };
-        };
-        /** @description ERR_UNAUTHENTICATED */
-        401: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_FORBIDDEN */
-        403: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_NOT_FOUND */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_INVALID_STATE_TRANSITION, ERR_CONSENT_REQUIRED */
-        409: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description Giới hạn body 16 KiB */
-        413: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_VALIDATION */
-        422: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_QUEUE_QUOTA (Retry-After: 30) | ERR_RATE_LIMITED (Retry-After) — SPEC-030 */
-        429: {
           headers: {
             [name: string]: unknown;
           };
@@ -5055,15 +4671,8 @@ export interface components {
       /** @enum {string|null} */
       type: 'prescription' | 'lab_result' | 'device_reading' | null;
       /** @enum {string} */
-      status:
-        | 'uploaded'
-        | 'awaiting_privacy'
-        | 'extracting'
-        | 'pending_review'
-        | 'approved'
-        | 'rejected'
-        | 'manual_entry'
-        | 'awaiting_budget';
+      status: 'uploaded' | 'extracting' | 'pending_review' | 'approved' | 'manual_entry' | 'awaiting_budget';
+      hasImage: boolean;
       /** Format: date */
       documentDate: string | null;
       mimeType: string;
@@ -5075,6 +4684,7 @@ export interface components {
       files: string | string[];
       /** @enum {string} */
       declaredType?: 'prescription' | 'lab_result' | 'device_reading';
+      sendToAi?: string;
     };
     SourceDocumentPage: {
       items: components['schemas']['SourceDocument'][];
@@ -5303,57 +4913,22 @@ export interface components {
           };
           confirmDuplicate?: boolean;
         };
+    DocumentDeletionImpact: {
+      prescriptions: number;
+      prescriptionItems: number;
+      labResults: number;
+      measurements: number;
+      medicationCourses: number;
+      activeMedicationCourses: number;
+    };
+    DeleteDocumentRequest: {
+      /** @enum {string} */
+      confirm: 'XÓA';
+    };
     ManualRecordsResponse: {
       measurements: components['schemas']['Measurement'][];
       prescription: components['schemas']['Prescription'];
       labResults: components['schemas']['LabResult'][];
-    };
-    PrivacyDraft:
-      | {
-          /** @enum {string} */
-          state: 'none';
-        }
-      | {
-          /** @enum {string} */
-          state: 'pending';
-          /** Format: uuid */
-          draftId: string;
-        }
-      | {
-          /** @enum {string} */
-          state: 'failed';
-          /** Format: uuid */
-          draftId: string;
-        }
-      | {
-          /** @enum {string} */
-          state: 'ready';
-          /** Format: uuid */
-          draftId: string;
-          sha256: string;
-          imageUrl: string;
-        };
-    CreatePrivacyDraftRequest: {
-      rotation: 0 | 90 | 180 | 270;
-      crop: {
-        left: number;
-        top: number;
-        width: number;
-        height: number;
-      };
-      masks: {
-        left: number;
-        top: number;
-        width: number;
-        height: number;
-      }[];
-    };
-    ApprovePrivacyRequest: {
-      /** Format: uuid */
-      draftId: string;
-      sha256: string;
-      /** @enum {boolean} */
-      confirmed: true;
     };
     MeasurementPage: {
       items: components['schemas']['Measurement'][];
@@ -5427,11 +5002,9 @@ export interface components {
       /** @enum {string} */
       status:
         | 'uploaded'
-        | 'awaiting_privacy'
         | 'extracting'
         | 'pending_review'
         | 'approved'
-        | 'rejected'
         | 'manual_entry'
         | 'awaiting_budget'
         | 'manual_record';
@@ -5440,7 +5013,7 @@ export interface components {
       dateKnown: boolean;
       /** Format: date-time */
       createdAt: string;
-      hasOcrImage: boolean;
+      hasImage: boolean;
       records: {
         prescription: components['schemas']['Prescription'];
         labResults: components['schemas']['LabResult'][];

@@ -5,7 +5,7 @@ import { DocumentIcon } from './DocumentIcon';
 
 type NoMaskWarningProps = { busy: boolean; onBack: () => void; onSendAnyway: () => void };
 
-// BR-041 bổ sung 2026-10-12: bản kiểm tra không có vùng che nào thì hỏi lại trước khi gửi AI.
+// BR-041 bổ sung 2026-10-12, D5: ảnh không có vùng che nào thì hỏi lại trước khi tải lên.
 // Hộp thoại theo Stitch 369b16ad (mobile: bottom sheet 4f573bdf); lời lẽ trung tính, không hù doạ,
 // không tuyên bố hệ thống tự phát hiện định danh. Escape/nút đóng = quay lại che.
 export function NoMaskWarning({ busy, onBack, onSendAnyway }: NoMaskWarningProps) {
@@ -34,7 +34,7 @@ export function NoMaskWarning({ busy, onBack, onSendAnyway }: NoMaskWarningProps
             <strong className="font-semibold underline decoration-[#ffb68c] decoration-2 underline-offset-4">
               họ tên, ngày sinh, địa chỉ, số điện thoại, mã bệnh nhân hoặc số bảo hiểm y tế
             </strong>
-            , hãy che trước khi gửi để tự động nhận diện.
+            , hãy che trước khi tải lên.
           </span>
         </p>
         <div className="angia-modal-reveal grid gap-3 sm:grid-cols-2" style={revealStyle(1)}>
@@ -48,7 +48,7 @@ export function NoMaskWarning({ busy, onBack, onSendAnyway }: NoMaskWarningProps
             <span className="-scale-x-100">
               <DocumentIcon name="arrow" size={18} />
             </span>
-            Quay lại che thông tin
+            Quay lại che
           </button>
           <button
             type="button"
@@ -56,7 +56,7 @@ export function NoMaskWarning({ busy, onBack, onSendAnyway }: NoMaskWarningProps
             onClick={onSendAnyway}
             className="min-h-12 rounded-xl border border-[#ffb68c] bg-[#fff6f1] px-4 text-sm font-semibold text-[#602900] transition-colors duration-200 hover:bg-[#ffdbc9] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#602900] motion-reduce:transition-none"
           >
-            Ảnh không có thông tin cá nhân — vẫn gửi
+            Ảnh không có thông tin cá nhân — vẫn tải lên
           </button>
         </div>
       </div>

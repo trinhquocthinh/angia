@@ -74,8 +74,8 @@ describe('Nhập tay theo ảnh chứng từ (SPEC-011, BR-014, BR-016)', () => 
     expect(memory.prescriptions).toEqual([]);
   });
 
-  it('chứng từ đã loại bỏ → ERR_INVALID_STATE_TRANSITION', async () => {
-    const memory = manualDocument({ status: 'rejected' });
+  it('chứng từ đang trích xuất → ERR_INVALID_STATE_TRANSITION', async () => {
+    const memory = manualDocument({ status: 'extracting' });
     expect(await approveDocument(memory.repository, prescription())).toEqual({
       ok: false,
       code: 'ERR_INVALID_STATE_TRANSITION',

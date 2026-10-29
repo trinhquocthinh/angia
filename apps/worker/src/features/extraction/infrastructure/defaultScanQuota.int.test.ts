@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { budgetMonth } from '@angia/contracts';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
-import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
+import { createSanitizePgFixture } from '@src/shared/test/createSanitizePgFixture.test-helper.js';
 import { seedExtractingDocument } from '@src/shared/test/seedExtractingDocument.js';
 import { createBudgetLedger } from './createBudgetLedger.js';
 
@@ -14,10 +14,10 @@ const call = {
   defaultMonthlyScans: 10,
 };
 describe('CP5.5: lượt mặc định mỗi gia đình trên PostgreSQL thật', () => {
-  let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
+  let fx: Awaited<ReturnType<typeof createSanitizePgFixture>>;
   let ids: Awaited<ReturnType<typeof seedExtractingDocument>>;
   beforeAll(async () => {
-    fx = await createPrivacyPgFixture();
+    fx = await createSanitizePgFixture();
   });
   afterAll(async () => {
     await fx?.close();

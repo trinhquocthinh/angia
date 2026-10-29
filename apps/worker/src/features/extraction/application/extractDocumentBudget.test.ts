@@ -93,10 +93,20 @@ describe('Giữ ngân sách AI trước lời gọi (SPEC-009, BR-018, E3-S6-T1,
 
   it('thiếu xác nhận riêng tư → manual_entry trước khi giữ ngân sách', async () => {
     const memory = createMemoryExtractionDeps({
-      status: 'uploaded',
       result: { ok: true, content: prescription },
       budget: { spentUsd: 4.99 },
     });
+    const original = memory.deps.repository.withFamily;
+    memory.deps.repository.withFamily = (family, work) =>
+      original(family, (store) =>
+        work({
+          ...store,
+          findDocument: async (id) => {
+            const document = await store.findDocument(id);
+            return document ? { ...document, privacyApprovedBy: null, privacyApprovedAt: null } : null;
+          },
+        }),
+      );
     expect(await extractDocument(memory.deps, job)).toMatchObject({ reason: 'privacy_required' });
     expect(memory.ledger.hasReservation()).toBe(false);
   });

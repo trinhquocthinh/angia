@@ -7,14 +7,12 @@ import { approveDocument } from '../application/approveDocument.js';
 import { getDocumentReview } from '../application/getDocumentReview.js';
 import { listDocuments } from '../application/listDocuments.js';
 import { openDocumentImage } from '../application/openDocumentImage.js';
-import { rejectDocument } from '../application/rejectDocument.js';
 import type { ObjectReader, ReviewRepository } from '../application/reviewPorts.js';
 import {
   approveDocumentRoute,
   documentImageRoute,
   documentReviewRoute,
   listDocumentsRoute,
-  rejectDocumentRoute,
 } from './reviewRouteDefinitions.js';
 import { toApprovedDocumentResponse } from './toApprovedDocumentResponse.js';
 import { toApproveErrorJson } from './toApproveErrorJson.js';
@@ -51,7 +49,6 @@ export function registerReviewRoutes(app: OpenAPIHono<AppEnv>, deps: ReviewDepen
     const result = await openDocumentImage(deps.repository, deps.reader, {
       familyId: familyOf(c),
       documentId: c.req.valid('param').id,
-      variant: c.req.valid('query').variant,
     });
     if (!result.ok) return c.json(...errorJson(result.code));
     c.header('Content-Type', result.value.contentType);
@@ -67,10 +64,5 @@ export function registerReviewRoutes(app: OpenAPIHono<AppEnv>, deps: ReviewDepen
     });
     if (result.ok) return c.json(toApprovedDocumentResponse(result.value), 200);
     return c.json(...toApproveErrorJson(result));
-  });
-  app.openapi(rejectDocumentRoute, async (c) => {
-    const result = await rejectDocument(deps.repository, familyOf(c), c.req.valid('param').id);
-    if (!result.ok) return c.json(...errorJson(result.code));
-    return c.json(toSourceDocumentResponse(result.value), 200);
   });
 }

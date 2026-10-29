@@ -1,3 +1,4 @@
+import { useRouterState } from '@tanstack/react-router';
 import { useCurrentSession } from '@src/features/auth/application/useCurrentSession';
 import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
 import { useProfileSessionRecovery } from '@src/features/profiles/application/useProfileSessionRecovery';
@@ -8,7 +9,7 @@ import { RecipientNotice } from '@src/features/profiles/presentation/components/
 import '@src/features/profiles/presentation/profiles.css';
 import { useReviewQueue } from '../application/useReviewWorkspace';
 import { createReviewRepository } from '../infrastructure/createReviewRepository';
-import { createPrivacyRepository } from '../infrastructure/createPrivacyRepository';
+import { DeletedDocumentNotice } from './components/DeletedDocumentNotice';
 import { ReviewDetail } from './components/ReviewDetail';
 import { ReviewNotice } from './components/ReviewNotice';
 import { ReviewQueue } from './components/ReviewQueue';
@@ -16,10 +17,10 @@ import { UploadedNotice } from './components/UploadedNotice';
 
 const profilesRepository = createProfilesRepository();
 const reviewRepository = createReviewRepository();
-const privacyRepository = createPrivacyRepository();
 
 // Master–Detail trên desktop (hàng đợi | ảnh + form); di động: `/review` là danh sách, `/review/:id` là màn duyệt.
 export function ReviewPage({ documentId = null }: { documentId?: string | null }) {
+  const deleted = useRouterState({ select: (state) => state.location.state.deletedDocument });
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(profilesRepository, session.data);
   const queue = useReviewQueue(reviewRepository, session.data);
@@ -32,6 +33,7 @@ export function ReviewPage({ documentId = null }: { documentId?: string | null }
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
       <UploadedNotice />
+      {deleted && <DeletedDocumentNotice />}
       {main ? (
         <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)] 2xl:grid-cols-[340px_minmax(0,1fr)]">
           <div className={documentId ? 'max-lg:hidden' : ''}>
@@ -53,7 +55,6 @@ export function ReviewPage({ documentId = null }: { documentId?: string | null }
             {documentId ? (
               <ReviewDetail
                 repository={reviewRepository}
-                privacyRepository={privacyRepository}
                 session={session.data}
                 documentId={documentId}
                 queue={documents}

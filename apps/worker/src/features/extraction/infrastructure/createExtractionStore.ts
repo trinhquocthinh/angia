@@ -32,8 +32,7 @@ export function createExtractionStore(
       return (
         (
           await client.query<DocumentToExtract>(
-            `SELECT d.id, d.status, d.type AS "declaredType", d.original_key AS "originalKey", d.mime_type AS "mimeType",
-           d.preview_key AS "previewKey", d.ocr_image_key AS "ocrImageKey", d.ocr_image_sha256 AS "ocrImageSha256",
+            `SELECT d.id, d.status, d.type AS "declaredType", d.image_key AS "imageKey", d.image_sha256 AS "imageSha256",
            d.privacy_approved_by AS "privacyApprovedBy", d.privacy_approved_at AS "privacyApprovedAt",
            COALESCE(p.consent_status = 'confirmed', false) AS "profileConsentConfirmed"
            FROM source_documents d LEFT JOIN health_profiles p ON p.id = d.health_profile_id AND p.family_id = d.family_id

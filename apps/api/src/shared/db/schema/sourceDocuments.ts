@@ -8,11 +8,9 @@ import { uploadBatches } from './uploadBatches.js';
 // Tập trạng thái theo FSM BR §3.1; chuyển trạng thái hợp lệ do domain cưỡng chế.
 const DOCUMENT_STATUSES = [
   'uploaded',
-  'awaiting_privacy',
   'extracting',
   'pending_review',
   'approved',
-  'rejected',
   'manual_entry',
   'awaiting_budget',
 ] as const;
@@ -34,13 +32,8 @@ export const sourceDocuments = pgTable(
     type: text('type', { enum: DOCUMENT_TYPES }),
     status: text('status', { enum: DOCUMENT_STATUSES }).notNull(),
     documentDate: date('document_date'),
-    originalKey: text('original_key').notNull(),
-    previewKey: text('preview_key'),
-    // Bản OCR được server chuẩn bị; xác nhận gắn với khóa bất biến và hash nội dung.
-    privacyDraftId: uuid('privacy_draft_id'),
-    privacyDraftStatus: text('privacy_draft_status', { enum: ['pending', 'ready', 'failed'] }),
-    ocrImageKey: text('ocr_image_key'),
-    ocrImageSha256: text('ocr_image_sha256'),
+    imageKey: text('image_key'),
+    imageSha256: text('image_sha256'),
     privacyApprovedBy: uuid('privacy_approved_by').references(() => accounts.id),
     privacyApprovedAt: timestamp('privacy_approved_at', { withTimezone: true }),
     mimeType: text('mime_type').notNull(),
@@ -53,28 +46,19 @@ export const sourceDocuments = pgTable(
     check('source_documents_status_valid', sql`${table.status} IN (${inList(DOCUMENT_STATUSES)})`),
     check('source_documents_type_valid', sql`${table.type} IN (${inList(DOCUMENT_TYPES)})`),
     check(
-      'source_documents_ocr_image_complete',
-      sql`(${table.ocrImageKey} IS NULL AND ${table.ocrImageSha256} IS NULL)
-        OR (${table.ocrImageKey} IS NOT NULL AND ${table.ocrImageSha256} IS NOT NULL
-          AND char_length(btrim(${table.ocrImageKey})) > 0
-          AND ${table.ocrImageKey} = btrim(${table.ocrImageKey})
-          AND ${table.ocrImageKey} <> ${table.originalKey}
-          AND ${table.ocrImageSha256} ~ '^[0-9a-f]{64}$')`,
+      'source_documents_image_complete',
+      sql`(${table.imageKey} IS NULL AND ${table.imageSha256} IS NULL)
+        OR (${table.imageKey} IS NOT NULL
+          AND char_length(btrim(${table.imageKey})) > 0
+          AND ${table.imageKey} = btrim(${table.imageKey})
+          AND ((${table.status} = 'uploaded' AND ${table.imageSha256} IS NULL)
+            OR COALESCE(${table.imageSha256} ~ '^[0-9a-f]{64}$', false)))`,
     ),
     check(
       'source_documents_privacy_approval_complete',
       sql`(${table.privacyApprovedBy} IS NULL AND ${table.privacyApprovedAt} IS NULL)
         OR (${table.privacyApprovedBy} IS NOT NULL AND ${table.privacyApprovedAt} IS NOT NULL
-          AND ${table.ocrImageKey} IS NOT NULL AND ${table.ocrImageSha256} IS NOT NULL
           AND isfinite(${table.privacyApprovedAt}))`,
-    ),
-    check(
-      'source_documents_privacy_draft_complete',
-      sql`(${table.privacyDraftId} IS NULL AND ${table.privacyDraftStatus} IS NULL)
-        OR (${table.privacyDraftId} IS NOT NULL AND ${table.privacyDraftStatus} IS NOT NULL
-          AND ${table.privacyDraftStatus} IN ('pending', 'ready', 'failed')
-          AND (${table.privacyDraftStatus} <> 'ready'
-            OR (${table.ocrImageKey} IS NOT NULL AND ${table.ocrImageSha256} IS NOT NULL)))`,
     ),
     // BR-015: chứng từ đã duyệt bắt buộc có ngày.
     check(

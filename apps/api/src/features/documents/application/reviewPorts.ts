@@ -61,8 +61,6 @@ export interface ReviewStore {
     changes: { documentDate: string; type: DocumentType },
     from: readonly DocumentStatus[],
   ): Promise<SourceDocument>;
-  /** Chỉ cập nhật khi trạng thái còn thuộc `from` (bảo vệ thêm ngoài khóa dòng). */
-  markRejected(id: string, from: readonly DocumentStatus[]): Promise<SourceDocument>;
 }
 export interface ReviewRepository {
   withFamily<T>(familyId: string, work: (store: ReviewStore) => Promise<T>): Promise<T>;

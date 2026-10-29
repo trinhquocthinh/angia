@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { pino } from 'pino';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { DEFAULT_AI_ROUTING_SETTINGS, type AiRoutingSettings } from '@angia/contracts';
-import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
+import { createSanitizePgFixture } from '@src/shared/test/createSanitizePgFixture.test-helper.js';
 import { APPROVED_OCR_BYTES, seedExtractingDocument } from '@src/shared/test/seedExtractingDocument.js';
 import { createExtractionRepository } from '@src/features/extraction/infrastructure/createExtractionRepository.js';
 import { createFakeExtractor } from '@src/features/extraction/infrastructure/createFakeExtractor.js';
@@ -12,7 +12,7 @@ import { createExtractionAttempts } from '@src/features/aiRouting/infrastructure
 import { handleExtractDocumentJob } from './handleExtractDocumentJob.js';
 
 describe('SPEC-041: định tuyến trên PostgreSQL bằng role app NOBYPASSRLS', () => {
-  let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
+  let fx: Awaited<ReturnType<typeof createSanitizePgFixture>>;
   const logger = pino({ level: 'silent' });
   const runtime = {
     runMode: 'live' as const,
@@ -28,8 +28,6 @@ describe('SPEC-041: định tuyến trên PostgreSQL bằng role app NOBYPASSRLS
       defaultMonthlyScans: 0,
       now: () => new Date('2026-10-15T03:00:00Z'),
     },
-    storage: { get: async () => APPROVED_OCR_BYTES },
-    images: { heicToJpeg: async (bytes: Uint8Array) => bytes },
     extractor: createFakeExtractor(),
     ocrImages: {
       get: async () => ({
@@ -47,7 +45,7 @@ describe('SPEC-041: định tuyến trên PostgreSQL bằng role app NOBYPASSRLS
     );
   };
   beforeAll(async () => {
-    fx = await createPrivacyPgFixture();
+    fx = await createSanitizePgFixture();
   });
   afterAll(async () => {
     await fx?.close();

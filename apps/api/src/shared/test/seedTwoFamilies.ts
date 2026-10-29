@@ -56,8 +56,8 @@ async function seedDocumentChain(client: pg.Client, familyId: string, profileId:
     [batchId, familyId, profileId, accountId],
   );
   await client.query(
-    `INSERT INTO source_documents (id, family_id, health_profile_id, batch_id, status, original_key, mime_type, size_bytes)
-     VALUES ($1, $2, $3, $4, 'pending_review', 'k', 'image/jpeg', 10)`,
+    `INSERT INTO source_documents (id, family_id, health_profile_id, batch_id, status, image_key, image_sha256, mime_type, size_bytes)
+     VALUES ($1, $2, $3, $4, 'pending_review', 'k', repeat('a',64), 'image/jpeg', 10)`,
     [documentId, familyId, profileId, batchId],
   );
   await client.query(

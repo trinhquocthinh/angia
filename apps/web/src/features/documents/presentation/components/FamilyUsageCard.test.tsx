@@ -26,7 +26,7 @@ describe('TC-302 — thẻ "Mức sử dụng của gia đình" (SPEC-030)', () 
     const full = { ...usage, pendingJobs: { used: 10, limit: 10 } };
     const html = renderToStaticMarkup(<FamilyUsageCard usage={full} />);
     expect(html).toContain('role="status"');
-    expect(html).toContain('Đang có 10 ảnh chờ xử lý. Vui lòng đợi xử lý xong rồi gửi tiếp.');
+    expect(html).toContain('Hàng chờ tự động nhận diện của gia đình đã đủ 10 ảnh.');
   });
 
   it('TC-309: thêm thanh phần trăm đọc chữ tự động tháng này, không hiện số tiền', () => {

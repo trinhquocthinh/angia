@@ -1,14 +1,14 @@
 import { budgetMonth } from '@angia/contracts';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
+import { createSanitizePgFixture } from '@src/shared/test/createSanitizePgFixture.test-helper.js';
 import { seedOcrConsentFixture } from '@src/shared/test/seedOcrConsentFixture.js';
 import { extractDocument } from '../application/extractDocument.js';
 
 // Các TC AIR được tái kiểm với nguồn mới; không đổi mã TC hay hợp đồng cổng OCR.
 describe.each(['main_attested', 'self'] as const)('LG-02: cổng OCR với receipt %s', (source) => {
-  let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
+  let fx: Awaited<ReturnType<typeof createSanitizePgFixture>>;
   beforeAll(async () => {
-    fx = await createPrivacyPgFixture();
+    fx = await createSanitizePgFixture();
   });
   afterAll(async () => {
     await fx?.close();

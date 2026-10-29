@@ -32,10 +32,11 @@ const request = (overrides: Partial<Parameters<typeof uploadDocument>[1]> = {}) 
   profileId: 'me',
   files: [file('don-thuoc.jpg', jpeg())],
   ...overrides,
+  sendToAi: overrides.sendToAi ?? (overrides.files ?? [null]).map(() => false),
 });
 
 describe('Tải lên chứng từ đơn lẻ hoặc theo lô (SPEC-008)', () => {
-  it('TC-020: ảnh JPEG 3 MB tạo 01 chứng từ uploaded trong một lô và lưu ảnh gốc theo tiền tố', async () => {
+  it('TC-020: ảnh JPEG 3 MB tạo 01 chứng từ uploaded trong một lô và lưu ảnh đã che theo tiền tố', async () => {
     const memory = createMemoryDocumentDeps(profiles);
     const result = await uploadDocument(memory.deps, request({ declaredType: 'prescription' }));
     expect(result).toEqual({
@@ -43,14 +44,14 @@ describe('Tải lên chứng từ đơn lẻ hoặc theo lô (SPEC-008)', () => 
       value: { id: 'id-1', documents: [memory.documents[0]], rejectedFiles: [] },
     });
     expect(memory.batches).toEqual([{ id: 'id-1', healthProfileId: 'me', createdBy: 'account-a' }]);
-    const key = 'families/family-a/profiles/me/documents/id-2/original.jpg';
+    const key = 'families/family-a/profiles/me/documents/id-2/upload.jpg';
     expect(memory.documents[0]).toMatchObject({
       id: 'id-2',
       batchId: 'id-1',
       healthProfileId: 'me',
       status: 'uploaded',
       type: 'prescription',
-      originalKey: key,
+      imageKey: key,
       mimeType: 'image/jpeg',
       sizeBytes: 3 * 1024 * 1024,
     });
@@ -58,7 +59,7 @@ describe('Tải lên chứng từ đơn lẻ hoặc theo lô (SPEC-008)', () => 
     expect(memory.objects.get(key)?.body.length).toBe(3 * 1024 * 1024);
   });
 
-  it('SPEC-008 → SPEC-009: chứng từ hợp lệ được đẩy job convert-heic kèm nhóm của phiên', async () => {
+  it('SPEC-008 → SPEC-009: chứng từ hợp lệ được đẩy job sanitize-document-image kèm nhóm của phiên', async () => {
     const memory = createMemoryDocumentDeps(profiles);
     await uploadDocument(memory.deps, request());
     expect(memory.jobs).toEqual([{ documentId: 'id-2', familyId: 'family-a' }]);

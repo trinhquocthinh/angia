@@ -11,6 +11,7 @@ const doc = (id: string, createdAt: string): SourceDocument => ({
   documentDate: null,
   mimeType: 'image/jpeg',
   sizeBytes: 1,
+  hasImage: true,
   createdAt,
 });
 

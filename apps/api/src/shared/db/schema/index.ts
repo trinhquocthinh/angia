@@ -31,3 +31,4 @@ export * from './familyScanQuotas.js';
 export * from './scanQuotaAudit.js';
 export * from './scanQuotaPolicyAudit.js';
 export { ocrOperations } from './ocrOperations.js';
+export { objectPurges } from './objectPurges.js';

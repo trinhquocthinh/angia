@@ -55,7 +55,7 @@ export function DocumentEntryCard({
             </Link>
           ) : (
             <button type="button" onClick={() => onOpen(entry)} className={actionClass}>
-              {action === 'image' ? 'Xem ảnh' : 'Xem chi tiết'}
+              Xem chi tiết
             </button>
           )}
         </div>

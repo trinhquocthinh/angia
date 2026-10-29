@@ -8,7 +8,6 @@ const CHIPS: Record<ReviewItemState, { label: string; className: string; dot: st
     dot: 'bg-[#707975]',
     busy: true,
   },
-  privacy: { label: 'Chờ kiểm tra riêng tư', className: 'bg-[#e4f0f0] text-[#404945]', dot: 'bg-[#707975]' },
   reading: {
     label: 'Đang tự động nhận diện…',
     className: 'bg-[#d9e5e4] text-[#404945]',

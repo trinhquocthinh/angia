@@ -20,7 +20,7 @@ export interface DocumentEntryHead {
   dateKnown: boolean;
   createdAt: Date;
   createdKey: string;
-  hasOcrImage: boolean;
+  hasImage: boolean;
 }
 
 export interface EntryRecords {

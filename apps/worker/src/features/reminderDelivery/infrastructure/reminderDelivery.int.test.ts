@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
-import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
+import { createSanitizePgFixture } from '@src/shared/test/createSanitizePgFixture.test-helper.js';
 import { sendReminders } from '../application/sendReminders.js';
 import type { DeliveryRepository } from '../application/ports.js';
 import { createDeliveryRepository } from './createDeliveryRepository.js';
@@ -18,10 +18,10 @@ import {
 const T0 = new Date('2026-10-23T00:00:00.000Z');
 
 describe('Gửi lời nhắc theo thiết bị trên PostgreSQL thật, role app NOBYPASSRLS (SPEC-027)', () => {
-  let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
+  let fx: Awaited<ReturnType<typeof createSanitizePgFixture>>;
   let repository: DeliveryRepository;
   beforeAll(async () => {
-    fx = await createPrivacyPgFixture();
+    fx = await createSanitizePgFixture();
     repository = createDeliveryRepository(fx.pool, randomUUID);
   });
   afterAll(async () => {

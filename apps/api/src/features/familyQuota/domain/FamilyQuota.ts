@@ -29,5 +29,3 @@ export type QuotaResult = { ok: true } | QuotaFailure;
 
 // Kiểm sơ bộ trước khi đọc body: xin thêm 1 ở mọi chiều ⇔ "đã chạm trần nào chưa".
 export const PREFLIGHT_REQUEST: QuotaRequest = { files: 1, bytes: 1, jobs: 1 };
-// Tạo bản kiểm tra / xác nhận gửi AI chỉ thêm một job worker.
-export const ONE_JOB: QuotaRequest = { files: 0, bytes: 0, jobs: 1 };

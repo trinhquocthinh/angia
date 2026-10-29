@@ -25,6 +25,7 @@ declare module '@tanstack/react-router' {
   // Số ảnh vừa gửi từ /upload để Trang chủ hiển thị thông báo (không đưa vào URL).
   interface HistoryState {
     uploadedCount?: number;
+    deletedDocument?: boolean;
   }
 }
 

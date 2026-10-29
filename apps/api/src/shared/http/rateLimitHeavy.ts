@@ -3,7 +3,7 @@ import type { AppEnv } from './AppEnv.js';
 import type { SlidingWindowLimiter } from './createSlidingWindowLimiter.js';
 import { errorResponse } from './errorResponse.js';
 
-export type HeavyRoute = 'upload' | 'privacy-draft' | 'privacy-approval';
+export type HeavyRoute = 'upload';
 
 export const heavyKey = (accountId: string, route: HeavyRoute) => `${accountId}:${route}`;
 

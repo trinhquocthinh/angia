@@ -6,6 +6,17 @@ import { extractDocument } from './extractDocument.js';
 const prescription = { type: 'prescription' as const, items: [{ name: 'Amlodipin' }] };
 const job = { documentId: 'doc-1', familyId: 'family-a', finalAttempt: false };
 
+it('TC-420: uploaded còn chờ sanitize → bỏ qua OCR, giữ trạng thái và không gọi AI', async () => {
+  const memory = createMemoryExtractionDeps({
+    status: 'uploaded',
+    result: { ok: true, content: prescription },
+  });
+  expect(await extractDocument(memory.deps, job)).toEqual({ status: 'skipped' });
+  expect(memory.statusHistory).toEqual([]);
+  expect(memory.extractorCalls).toEqual([]);
+  expect(memory.ledger.usedScans()).toBe(0);
+});
+
 describe('Trích xuất chứng từ bằng Vision-LLM (SPEC-009, E2-S5-T2)', () => {
   it('TC-027 (phần trạng thái): đơn thuốc in máy → Extraction + pending_review, loại lấy theo AI', async () => {
     const memory = createMemoryExtractionDeps({ result: { ok: true, content: prescription } });
@@ -39,7 +50,7 @@ describe('Trích xuất chứng từ bằng Vision-LLM (SPEC-009, E2-S5-T2)', ()
     expect(memory.extractions).toEqual([]);
     expect(memory.ledger.hasReservation()).toBe(false);
     expect(memory.ledger.spentUsd()).toBe(0);
-    expect(memory.objects.size).toBe(2);
+    expect(memory.objects.size).toBe(1);
   });
 
   it('TC-029: AI trả về rỗng → manual_entry, không tạo Extraction', async () => {
@@ -90,7 +101,7 @@ describe('Trích xuất chứng từ bằng Vision-LLM (SPEC-009, E2-S5-T2)', ()
       costUsd: 0,
     });
     expect(memory.statusHistory).toEqual(['extracting', 'manual_entry']);
-    expect(memory.objects.has('families/family-a/profiles/me/documents/doc-1/original.jpg')).toBe(true);
+    expect(memory.objects.has(memory.imageKey)).toBe(true);
   });
 
   it('TC-079: AI chỉ nhận byte ảnh và mimeType, không có ID hồ sơ/nhóm/chứng từ', async () => {
@@ -99,9 +110,8 @@ describe('Trích xuất chứng từ bằng Vision-LLM (SPEC-009, E2-S5-T2)', ()
     expect(memory.extractorCalls).toEqual([{ bytes: memory.approvedBytes, mimeType: 'image/jpeg' }]);
   });
 
-  it('ảnh gốc HEIC không được đọc: chỉ gửi bản JPEG OCR đã duyệt', async () => {
+  it('chỉ gửi byte JPEG của một ảnh đã đồng ý', async () => {
     const memory = createMemoryExtractionDeps({
-      mimeType: 'image/heic',
       result: { ok: true, content: prescription },
     });
     await extractDocument(memory.deps, job);
@@ -122,9 +132,8 @@ describe('Trích xuất chứng từ bằng Vision-LLM (SPEC-009, E2-S5-T2)', ()
   });
 });
 
-it('TC-125: ảnh không xử lý được → nhập tay ngay, không gọi AI, giữ ảnh gốc', async () => {
+it('TC-125: ảnh không xử lý được → nhập tay ngay, không gọi AI, giữ ảnh đã che', async () => {
   const memory = createMemoryExtractionDeps({
-    mimeType: 'image/heic',
     result: new Error('không được gọi'),
   });
   memory.deps.ocrImages.get = async () => {
@@ -137,7 +146,7 @@ it('TC-125: ảnh không xử lý được → nhập tay ngay, không gọi AI,
   });
   expect(memory.extractorCalls).toEqual([]);
   expect(memory.statusHistory).toEqual(['extracting', 'manual_entry']);
-  expect(memory.objects.has('families/family-a/profiles/me/documents/doc-1/original.jpg')).toBe(true);
+  expect(memory.objects.has(memory.imageKey)).toBe(true);
 });
 
 it('TC-150: thiếu xác nhận riêng tư → chặn AI và chuyển job OCR cũ sang nhập tay', async () => {
@@ -163,7 +172,7 @@ it('TC-150: thiếu xác nhận riêng tư → chặn AI và chuyển job OCR c�
 
 it('TC-151: byte bản OCR đổi → hash không khớp, không AI hoặc fallback ảnh gốc', async () => {
   const memory = createMemoryExtractionDeps({ result: { ok: true, content: prescription } });
-  memory.objects.set(memory.ocrKey, new Uint8Array([0xff, 0xd8, 1]));
+  memory.objects.set(memory.imageKey, new Uint8Array([0xff, 0xd8, 1]));
   expect(await extractDocument(memory.deps, job)).toMatchObject({
     status: 'manual_entry',
     reason: 'image_unusable',
@@ -180,7 +189,7 @@ it('TC-152: bản OCR trỏ sang gia đình khác → chặn trước đọc ả
         ...store,
         findDocument: async (id) => {
           const document = await store.findDocument(id);
-          return document ? { ...document, ocrImageKey: 'families/other/ocr.jpg' } : null;
+          return document ? { ...document, imageKey: 'families/other/ocr.jpg' } : null;
         },
       }),
     );
@@ -191,7 +200,7 @@ it('TC-152: bản OCR trỏ sang gia đình khác → chặn trước đọc ả
   expect(memory.extractorCalls).toEqual([]);
 });
 
-it('TC-159: khóa OCR trùng preview → chặn AI trước đọc ảnh', async () => {
+it('TC-419: ảnh NULL → chặn AI trước đọc ảnh', async () => {
   const memory = createMemoryExtractionDeps({ result: { ok: true, content: prescription } });
   const original = memory.deps.repository.withFamily;
   memory.deps.repository.withFamily = (family, work) =>
@@ -200,7 +209,7 @@ it('TC-159: khóa OCR trùng preview → chặn AI trước đọc ảnh', async
         ...store,
         findDocument: async (id) => {
           const document = await store.findDocument(id);
-          return document ? { ...document, previewKey: document.ocrImageKey } : null;
+          return document ? { ...document, imageKey: null, imageSha256: null } : null;
         },
       }),
     );

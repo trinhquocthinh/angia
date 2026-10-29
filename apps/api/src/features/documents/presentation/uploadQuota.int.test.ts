@@ -43,7 +43,7 @@ describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () =>
 
   it('TC-295: hai lô đồng thời sát trần dung lượng → đúng một lô 201, lô kia 413 và không để lại object', async () => {
     const home = await household();
-    await home.seed({ status: 'rejected', sizeBytes: 70 });
+    await home.seed({ status: 'manual_entry', sizeBytes: 70 });
     const objectsBefore = t.objects.size;
     const responses = await Promise.all([
       upload(home.main, home.profileId),
@@ -61,7 +61,7 @@ describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () =>
 
   it('TC-295: lô B phải chờ khóa quota khi lô A đang ghi dở, rồi bị từ chối theo mức dùng đã commit của A', async () => {
     const home = await household();
-    await home.seed({ status: 'rejected', sizeBytes: 70 });
+    await home.seed({ status: 'manual_entry', sizeBytes: 70 });
     const held = t.holdNextPut();
     const first = upload(home.main, home.profileId);
     await held.arrived;
@@ -75,7 +75,7 @@ describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () =>
 
   it('TC-295: hai lô đồng thời sát trần ảnh/ngày → 201 và 429 kèm Retry-After tới 0 giờ giờ VN', async () => {
     const home = await household();
-    for (let i = 0; i < 3; i += 1) await home.seed({ status: 'rejected', sizeBytes: 1 });
+    for (let i = 0; i < 3; i += 1) await home.seed({ status: 'manual_entry', sizeBytes: 1 });
     const responses = await Promise.all([
       upload(home.main, home.profileId),
       upload(home.main, home.profileId),
@@ -92,7 +92,7 @@ describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () =>
     const home = await household();
     const yesterday = new Date(vietnamDayBounds(new Date()).start.getTime() - 60_000);
     for (let i = 0; i < 4; i += 1)
-      await home.seed({ status: 'rejected', sizeBytes: 1, createdAt: yesterday });
+      await home.seed({ status: 'manual_entry', sizeBytes: 1, createdAt: yesterday });
     expect((await upload(home.main, home.profileId)).status).toBe(201);
   });
 

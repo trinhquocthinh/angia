@@ -9,12 +9,21 @@ export function UploadGrid({
   locked,
   onRetry,
   onRemove,
+  onRedact,
 }: {
   items: UploadItem[];
-  summary: { preparing: number; ready: number; total: number; done: number; active: number; failed: number };
+  summary: {
+    needsRedaction: number;
+    ready: number;
+    total: number;
+    done: number;
+    active: number;
+    failed: number;
+  };
   locked: boolean;
   onRetry: () => void;
   onRemove: (id: string) => void;
+  onRedact: (id: string) => void;
 }) {
   const shown = items.filter((item) => item.status !== 'rejected');
   if (shown.length === 0) return null;
@@ -34,7 +43,13 @@ export function UploadGrid({
       </div>
       <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
         {shown.map((item) => (
-          <UploadTile key={item.id} item={item} locked={locked} onRemove={() => onRemove(item.id)} />
+          <UploadTile
+            key={item.id}
+            item={item}
+            locked={locked}
+            onRemove={() => onRemove(item.id)}
+            onRedact={() => onRedact(item.id)}
+          />
         ))}
       </ul>
     </section>

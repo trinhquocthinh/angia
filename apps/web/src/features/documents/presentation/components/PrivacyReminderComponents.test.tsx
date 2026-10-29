@@ -13,8 +13,8 @@ describe('Nhắc che định danh (BR-041 bổ sung 2026-10-12)', () => {
     expect(html).toContain('aria-labelledby="no-mask-title"');
     expect(html).toContain('Ảnh chưa có vùng che nào');
     expect(html).toContain('Đóng và quay lại che thông tin');
-    expect(html).toContain('Quay lại che thông tin');
-    expect(html).toContain('Ảnh không có thông tin cá nhân — vẫn gửi');
+    expect(html).toMatch(/>\s*Quay lại che\s*</);
+    expect(html).toContain('Ảnh không có thông tin cá nhân — vẫn tải lên');
     expect(html).not.toMatch(/tự (phát hiện|che)/);
   });
 

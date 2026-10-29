@@ -13,7 +13,7 @@ import type {
 } from '@src/features/extraction/application/ports.js';
 import { createBudgetRequeueRepository } from '@src/features/extraction/infrastructure/createBudgetRequeueRepository.js';
 import { createExtractionRepository } from '@src/features/extraction/infrastructure/createExtractionRepository.js';
-import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
+import { createSanitizePgFixture } from '@src/shared/test/createSanitizePgFixture.test-helper.js';
 import { APPROVED_OCR_BYTES, seedExtractingDocument } from '@src/shared/test/seedExtractingDocument.js';
 import { seedOcrGate } from '@src/shared/test/seedOcrGate.js';
 import { handleExtractDocumentJob } from './handleExtractDocumentJob.js';
@@ -47,13 +47,11 @@ function countingExtractor(error?: Error) {
 }
 
 describe('CP5.4: vòng đời worker, quota, billing, phục hồi và pg-boss thật', () => {
-  let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
+  let fx: Awaited<ReturnType<typeof createSanitizePgFixture>>;
   let boss: PgBoss;
   const deps = (extractor: DocumentExtractor): ExtractionDependencies => ({
     repository: createExtractionRepository(fx.pool, () => NOW),
     budget: policy,
-    storage: { get: async () => APPROVED_OCR_BYTES },
-    images: { heicToJpeg: async (bytes) => bytes },
     extractor,
     ocrImages: {
       get: async () => ({
@@ -79,7 +77,7 @@ describe('CP5.4: vòng đời worker, quota, billing, phục hồi và pg-boss t
       )
     ).rows[0];
   beforeAll(async () => {
-    fx = await createPrivacyPgFixture();
+    fx = await createSanitizePgFixture();
     boss = new PgBoss({ connectionString: fx.appUrl, migrate: false, createSchema: false });
     await boss.start();
     await ensureExtractDocumentQueues(boss);

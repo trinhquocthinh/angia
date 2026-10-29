@@ -55,19 +55,6 @@ export function useApproveDocument(
   });
 }
 
-// Loại bỏ chứng từ chờ duyệt/chờ nhập tay; ảnh gốc giữ nguyên, chứng từ rời hàng đợi.
-export function useRejectDocument(
-  repository: ReviewRepository,
-  session: Session | null | undefined,
-  id: string,
-) {
-  const client = useQueryClient();
-  return useMutation({
-    mutationFn: () => repository.reject(id, session?.csrfToken ?? ''),
-    onSuccess: () => client.invalidateQueries({ queryKey: reviewScopeKey(session) }),
-  });
-}
-
 // SPEC-011 nhập trực tiếp: lưu xong làm mới số đo của hồ sơ.
 export function useCreateManualRecords(
   repository: ReviewRepository,

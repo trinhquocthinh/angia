@@ -61,7 +61,7 @@ describe('Tải chứng từ đơn lẻ/theo lô: route thật, transaction và 
       await t.owner.query(
         `SELECT (SELECT count(*)::int FROM upload_batches) AS batches,
                 (SELECT count(*)::int FROM source_documents) AS documents,
-                (SELECT count(*)::int FROM pgboss.job WHERE name = 'convert-heic') AS jobs`,
+                (SELECT count(*)::int FROM pgboss.job WHERE name = 'sanitize-document-image') AS jobs`,
       )
     ).rows[0];
   const profileFixture = async (consented = true) => {
@@ -101,20 +101,22 @@ describe('Tải chứng từ đơn lẻ/theo lô: route thật, transaction và 
     ]);
     expect(JSON.stringify(batch)).not.toMatch(/families\/|Nguyen/);
     const documentId = batch.documents[0]!.id;
-    const key = `families/${familyId}/profiles/${profile.id}/documents/${documentId}/original.jpg`;
+    const key = `families/${familyId}/profiles/${profile.id}/documents/${documentId}/upload.jpg`;
     const row = (
-      await t.owner.query('SELECT family_id, original_key, preview_key FROM source_documents WHERE id=$1', [
+      await t.owner.query('SELECT family_id, image_key, image_sha256 FROM source_documents WHERE id=$1', [
         documentId,
       ])
     ).rows[0];
-    expect(row).toEqual({ family_id: familyId, original_key: key, preview_key: null });
+    expect(row).toEqual({ family_id: familyId, image_key: key, image_sha256: null });
     const batchRow = (await t.owner.query('SELECT created_by FROM upload_batches WHERE id=$1', [batch.id]))
       .rows[0];
     expect(batchRow.created_by).toBe(main.accountId);
     expect(t.objects.get(key)).toMatchObject({ contentType: 'image/jpeg' });
     expect(t.objects.get(key)!.body.length).toBe(3 * MiB);
     // E2-S5-T2: job OCR ghi cùng transaction, payload chỉ có ID (không tên tệp/hồ sơ).
-    const jobs = await t.owner.query(`SELECT data, state FROM pgboss.job WHERE name = 'convert-heic'`);
+    const jobs = await t.owner.query(
+      `SELECT data, state FROM pgboss.job WHERE name = 'sanitize-document-image'`,
+    );
     expect(jobs.rows.filter((job) => job.data.documentId === documentId)).toEqual([
       { data: { documentId, familyId }, state: 'created' },
     ]);
@@ -132,13 +134,11 @@ describe('Tải chứng từ đơn lẻ/theo lô: route thật, transaction và 
     expect(await counts()).toEqual(before);
   });
 
-  it('TC-025: ảnh HEIC giữ nguyên định dạng gốc, chưa có bản xem trước', async () => {
+  it('TC-404: HEIC bị từ chối dù tên tệp hợp lệ', async () => {
     const { main, profile } = await profileFixture();
     const response = await upload(main, profile.id, [{ name: 'IMG.HEIC', bytes: image(2048, HEIC_HEAD) }]);
-    expect(response.status).toBe(201);
-    const { documents } = (await response.json()) as UploadBatchResponse;
-    expect(documents[0]).toMatchObject({ mimeType: 'image/heic', type: null });
-    expect([...t.objects.keys()].some((k) => k.endsWith(`${documents[0]!.id}/original.heic`))).toBe(true);
+    expect(response.status).toBe(422);
+    expect(await response.json()).toMatchObject({ error: { code: 'ERR_NO_VALID_FILE' } });
   });
 
   it.each([

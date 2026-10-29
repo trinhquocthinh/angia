@@ -84,3 +84,11 @@ describe('Truy vấn danh sách chứng từ phân trang (F09a)', () => {
     expect(documentListQuerySchema.safeParse({ cursor: 'abc' }).success).toBe(false);
   });
 });
+
+it('TC-409: bộ lọc danh sách kế thừa trạng thái KH-2', () => {
+  expect(documentListQuerySchema.safeParse({ status: ['uploaded', 'manual_entry'] }).success).toBe(true);
+  for (const status of ['awaiting_privacy', 'rejected']) {
+    expect(documentListQuerySchema.safeParse({ status }).success).toBe(false);
+    expect(documentListQuerySchema.safeParse({ status: ['uploaded', status] }).success).toBe(false);
+  }
+});

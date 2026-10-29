@@ -7,21 +7,26 @@ export function UploadTile({
   item,
   locked,
   onRemove,
+  onRedact,
 }: {
   item: UploadItem;
   locked: boolean;
   onRemove: () => void;
+  onRedact: () => void;
 }) {
-  const preview = item.previewUrl;
-  const [broken, setBroken] = useState(false);
+  // Đã che thì chỉ hiện bản đã xuất (bản sẽ gửi), không hiện ảnh gốc.
+  const preview = item.thumbnailUrl ?? (item.status === 'needs_redaction' ? item.previewUrl : null);
+  const editable = (item.status === 'needs_redaction' || item.status === 'ready') && !locked;
+  // Nhớ theo src: ảnh gốc HEIC lỗi hiển thị không được chặn ảnh thu nhỏ của bản đã xuất.
+  const [broken, setBroken] = useState<string | null>(null);
   const busy = item.status === 'queued' || item.status === 'uploading';
   return (
     <li className="relative flex aspect-square flex-col overflow-hidden rounded-xl bg-[#deebea] shadow-sm">
-      {preview && !broken ? (
+      {preview && broken !== preview ? (
         <img
           src={preview}
           alt=""
-          onError={() => setBroken(true)}
+          onError={() => setBroken(preview)}
           className={`h-full w-full object-cover ${busy ? 'opacity-60' : ''}`}
         />
       ) : (
@@ -29,7 +34,7 @@ export function UploadTile({
           <DocumentIcon name="image" size={32} />
         </span>
       )}
-      {(item.status === 'ready' || item.status === 'preparing') && !locked && (
+      {editable && (
         <button
           type="button"
           onClick={onRemove}
@@ -37,6 +42,17 @@ export function UploadTile({
           className="absolute right-1 top-1 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#404945] shadow-md hover:text-[#ba1a1a] focus-visible:outline-2 focus-visible:outline-[#286958]"
         >
           <DocumentIcon name="close" size={16} />
+        </button>
+      )}
+      {editable && (
+        <button
+          type="button"
+          onClick={onRedact}
+          className={`absolute inset-x-2 bottom-8 min-h-9 rounded-full px-2 text-xs font-semibold shadow-md focus-visible:outline-2 focus-visible:outline-[#286958] ${
+            item.status === 'ready' ? 'bg-white/90 text-[#004135]' : 'bg-[#004135] text-white'
+          }`}
+        >
+          {item.status === 'ready' ? 'Chỉnh lại' : 'Che thông tin'}
         </button>
       )}
       <TileStatus item={item} onRemove={onRemove} />

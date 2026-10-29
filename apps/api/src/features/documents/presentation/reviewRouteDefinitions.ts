@@ -7,7 +7,6 @@ import {
   documentReviewResponseSchema,
   errorResponseSchema,
   sourceDocumentPageSchema,
-  sourceDocumentSchema,
 } from '@angia/contracts';
 
 const error = (description: string) => ({
@@ -58,15 +57,14 @@ export const documentImageRoute = createRoute({
   method: 'get',
   path: '/api/source-documents/{id}/image',
   tags: ['documents'],
-  summary: 'Luồng ảnh chứng từ (preview chưa có thì trả ảnh gốc; ocr = bản đã che đã gửi AI)',
+  summary: 'Ảnh chứng từ đã che định danh',
   request: {
     params: idParam,
-    query: z.object({ variant: z.enum(['preview', 'original', 'ocr']).default('original') }),
   },
   responses: {
     200: {
       description: 'Ảnh',
-      content: { 'image/*': { schema: z.string().meta({ type: 'string', format: 'binary' }) } },
+      content: { 'image/jpeg': { schema: z.string().meta({ type: 'string', format: 'binary' }) } },
     },
     ...guarded,
     404: error('ERR_NOT_FOUND'),
@@ -101,22 +99,5 @@ export const approveDocumentRoute = createRoute({
     422: error(
       'ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_DOSE_INFO_MISSING (details.invalidItemIndexes), ERR_VALIDATION',
     ),
-  },
-});
-
-export const rejectDocumentRoute = createRoute({
-  method: 'post',
-  path: '/api/source-documents/{id}/reject',
-  tags: ['documents'],
-  summary: 'Loại bỏ chứng từ chờ duyệt hoặc chờ nhập tay; ảnh gốc giữ nguyên',
-  request: { params: idParam },
-  responses: {
-    200: {
-      description: 'Chứng từ rejected',
-      content: { 'application/json': { schema: sourceDocumentSchema } },
-    },
-    ...guarded,
-    404: error('ERR_NOT_FOUND'),
-    409: error('ERR_INVALID_STATE_TRANSITION'),
   },
 });

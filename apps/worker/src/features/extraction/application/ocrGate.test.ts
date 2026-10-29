@@ -58,7 +58,7 @@ describe('Cổng OCR tại giữ lượt và ngay trước HTTP', () => {
   });
   it.each([
     ['consent_required', { profileConsentConfirmed: false }],
-    ['privacy_required', { ocrImageSha256: 'changed' }],
+    ['privacy_required', { imageSha256: 'changed' }],
   ] as const)(
     'TC-609: đọc lại %s trước gửi HTTP, trả chỗ giữ và chuyển nhập tay',
     async (reason, changed) => {
@@ -99,10 +99,12 @@ describe('Cổng OCR tại giữ lượt và ngay trước HTTP', () => {
 
 it.each([
   ['consent_required', { profileConsentConfirmed: false }],
-  ['privacy_required', { status: 'uploaded' as const }],
+  ['skipped', { status: 'uploaded' as const }],
 ])('TC-626: %s ở lần retry trả held của lần chạy đã chết', async (reason, changes) => {
   const memory = createMemoryExtractionDeps({ result, budget: { held: true }, ...changes });
-  expect(await extractDocument(memory.deps, job)).toMatchObject({ status: 'manual_entry', reason });
+  expect(await extractDocument(memory.deps, job)).toMatchObject(
+    reason === 'skipped' ? { status: 'skipped' } : { status: 'manual_entry', reason },
+  );
   expect(memory.ledger.hasReservation()).toBe(false);
   expect(memory.extractorCalls).toHaveLength(0);
 });

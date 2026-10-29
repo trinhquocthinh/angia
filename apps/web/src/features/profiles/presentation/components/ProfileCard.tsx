@@ -1,48 +1,50 @@
 import { Link } from '@tanstack/react-router';
 import { ProfileConsentStatus } from './ProfileConsentStatus';
+import { ProfileCardActions } from './ProfileCardActions';
+import { ProfileBasisBadge } from './ProfileBasisBadge';
 import type { ProfileListItem } from '../../application/ports';
-export function ProfileCard({
-  profile,
-  onConsent,
-  onDelete,
-}: {
+
+type ProfileCardProps = {
   profile: ProfileListItem;
   onConsent: (profile: ProfileListItem) => void;
   onDelete: (profile: ProfileListItem) => void;
-}) {
+  onWithdraw?: (() => void) | undefined;
+};
+
+export function ProfileCard({ profile, onConsent, onDelete, onWithdraw }: ProfileCardProps) {
   const action = profile.consentAction;
   return (
-    <article className="flex min-h-[280px] flex-col rounded-[20px] bg-white p-6 shadow-sm">
-      {/* Lối vào hồ sơ ở mọi cỡ màn — dưới lg sidebar ẩn nên đây là lối vào duy nhất (LG-01). */}
-      <Link
-        to="/profiles/$profileId"
-        params={{ profileId: profile.id }}
-        className="flex min-h-11 items-center gap-3 rounded-2xl hover:text-[#004135] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
-      >
-        <span
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#b3eddf] text-2xl font-semibold text-[#004135]"
-          aria-hidden="true"
+    <article className="flex flex-col rounded-2xl border border-[#bfc9c4]/30 bg-white p-5 shadow-sm transition-all duration-200 hover:border-[#bfc9c4]/50 hover:shadow-md lg:rounded-3xl lg:p-6">
+      <div className="flex items-start justify-between gap-3">
+        {/* Lối vào hồ sơ ở mọi cỡ màn — dưới lg không có điều hướng hồ sơ nên đây là lối vào chính (LG-01). */}
+        <Link
+          to="/profiles/$profileId"
+          params={{ profileId: profile.id }}
+          className="flex min-h-11 min-w-0 items-center gap-3 rounded-2xl hover:text-[#004135] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958] lg:gap-3.5"
         >
-          {profile.displayName.slice(0, 1)}
-        </span>
-        <div className="min-w-0">
-          <h2 className="break-words text-xl font-semibold">{profile.displayName}</h2>
-          {profile.birthYear !== null && (
-            <p className="mt-1 text-sm text-[#55615f]">Năm sinh {profile.birthYear}</p>
-          )}
-        </div>
-      </Link>
+          <span
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#aef0da] text-lg font-semibold text-[#002019] shadow-sm select-none lg:h-14 lg:w-14 lg:rounded-2xl lg:text-xl lg:font-bold"
+            aria-hidden="true"
+          >
+            {profile.displayName.slice(0, 1)}
+          </span>
+          <div className="min-w-0">
+            <h2 className="break-words text-xl leading-7 font-semibold text-[#131d1d] lg:text-lg lg:leading-6">
+              {profile.displayName}
+            </h2>
+            {profile.birthYear !== null && (
+              <p className="text-xs font-semibold text-[#404945] lg:text-[13px] lg:leading-5 lg:font-normal">
+                Năm sinh {profile.birthYear}
+              </p>
+            )}
+          </div>
+        </Link>
+        <ProfileBasisBadge basis={profile.consentBasis} />
+      </div>
       <ProfileConsentStatus profile={profile} />
-      <Link
-        to="/profiles/$profileId"
-        params={{ profileId: profile.id }}
-        className="mt-5 inline-flex min-h-[52px] items-center justify-center rounded-xl border border-[#004135] px-5 py-3 text-center text-sm font-semibold text-[#004135] hover:bg-[#e4f0f0] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
-      >
-        Xem hồ sơ
-      </Link>
       {action && (
         <button
-          className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-[#004135] px-5 py-3 text-center text-sm font-semibold text-white cursor-pointer disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958] mt-5"
+          className="mt-4 inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl bg-[#004135] px-5 py-2.5 text-center text-sm font-semibold text-white disabled:cursor-default disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
           onClick={() => onConsent(profile)}
         >
           {action !== 'invitation'
@@ -52,12 +54,11 @@ export function ProfileCard({
               : 'Tạo link mời người thân'}
         </button>
       )}
-      <button
-        className="mt-auto self-start pt-5 text-sm font-semibold text-[#b42318] underline-offset-4 cursor-pointer hover:underline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
-        onClick={() => onDelete(profile)}
-      >
-        Xóa hồ sơ
-      </button>
+      <ProfileCardActions
+        profileId={profile.id}
+        onDelete={() => onDelete(profile)}
+        onWithdraw={profile.consentStatus === 'confirmed' ? onWithdraw : undefined}
+      />
     </article>
   );
 }

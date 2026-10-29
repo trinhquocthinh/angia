@@ -18,15 +18,13 @@ import type { ReminderRecipientRepository } from '@src/features/reminders/applic
 import { registerReminderRecipientRoutes } from '@src/features/reminders/presentation/registerReminderRecipientRoutes.js';
 import type { MedicationManagementRepository } from '@src/features/medications/application/managementPorts.js';
 import { registerMedicationRoutes } from '@src/features/medications/presentation/registerMedicationRoutes.js';
-import { registerPrivacyHeaders } from '@src/features/documentPrivacy/presentation/registerPrivacyHeaders.js';
-import type { PrivacyDependencies } from '@src/features/documentPrivacy/application/ports.js';
-import { registerPrivacyRoutes } from '@src/features/documentPrivacy/presentation/registerPrivacyRoutes.js';
 import {
   registerInvitationRoutes,
   type InvitationRouteDependencies,
 } from '@src/features/consentInvitations/presentation/registerInvitationRoutes.js';
 import type { DocumentDependencies } from '@src/features/documents/application/ports.js';
 import { registerDocumentRoutes } from '@src/features/documents/presentation/registerDocumentRoutes.js';
+import { registerDeletionRoutes } from '@src/features/documents/presentation/registerDeletionRoutes.js';
 import { registerManualRecordRoutes } from '@src/features/documents/presentation/registerManualRecordRoutes.js';
 import {
   registerReviewRoutes,
@@ -76,7 +74,6 @@ export type AppDependencies = {
   consentInvitations: InvitationRouteDependencies;
   documents: DocumentDependencies;
   review: ReviewDependencies;
-  privacy: PrivacyDependencies;
   measurements: MeasurementRepository;
   labResults: LabResultRepository;
   documentEntries: DocumentEntryRepository;
@@ -114,7 +111,11 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
     deps.auth.logger.error({ reason: error.name }, 'Lỗi chưa xử lý');
     return errorResponse(c, 'ERR_INTERNAL');
   });
-  registerPrivacyHeaders(app);
+  app.use('/api/source-documents/*', async (c, next) => {
+    c.header('Cache-Control', 'no-store');
+    c.header('X-Content-Type-Options', 'nosniff');
+    await next();
+  });
   registerScanQuotaHeaders(app);
   app.use(
     '/api/*',
@@ -144,8 +145,8 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   });
   registerDocumentRoutes(app, deps.documents, heavyLimiter);
   registerReviewRoutes(app, deps.review);
+  registerDeletionRoutes(app, deps.documents, deps.auth.logger);
   registerManualRecordRoutes(app, deps.review.repository);
-  registerPrivacyRoutes(app, deps.privacy, heavyLimiter);
   registerMeasurementRoutes(app, deps.measurements);
   registerLabResultRoutes(app, deps.labResults);
   registerDocumentEntryRoutes(app, deps.documentEntries);

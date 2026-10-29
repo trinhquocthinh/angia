@@ -1,6 +1,5 @@
-import { and, eq } from 'drizzle-orm';
+import { findProfileInFamily } from '@src/features/profiles/infrastructure/findProfileInFamily.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { healthProfiles } from '@src/shared/db/schema/index.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { AdherenceRepository } from '../application/ports.js';
 import { closeAdherencePeriod } from './closeAdherencePeriod.js';
@@ -15,14 +14,7 @@ export function createAdherenceRepository(db: Database): AdherenceRepository {
     withFamily: (familyId, work) =>
       withFamilyScope(db, familyId, (tx) =>
         work({
-          findProfile: async (id) =>
-            (
-              await tx
-                .select({ consentStatus: healthProfiles.consentStatus })
-                .from(healthProfiles)
-                .where(and(eq(healthProfiles.id, id), eq(healthProfiles.familyId, familyId)))
-                .for('share')
-            )[0] ?? null,
+          findProfile: (id) => findProfileInFamily(tx, familyId, id, 'share'),
           lockAdherenceProfile: (id) => lockAdherenceProfile(tx, familyId, id),
           findLatestPeriod: (id, name) => findLatestAdherencePeriod(tx, familyId, id, name),
           closePeriod: (id, periodId, toDate) => closeAdherencePeriod(tx, familyId, id, periodId, toDate),

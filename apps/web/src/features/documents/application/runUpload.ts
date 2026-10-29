@@ -62,16 +62,21 @@ export async function runUpload(
   const first = items[0];
   if (!first?.profileId) return null;
   const ids = items.map((item) => item.id);
+  // D1: chỉ gửi bản đã che; không bao giờ lùi về ảnh gốc.
+  if (items.some((item) => !item.upload)) {
+    dispatch({ type: 'fail', ids, message: 'Ảnh chưa được che. Mở ảnh để che rồi gửi lại.' });
+    return null;
+  }
   const named = items.map((item, index) => {
-    const file = item.upload ?? item.file;
-    return { item, file, fileName: batchFileName(index, file) };
+    const file = item.upload!;
+    return { item, file, sendToAi: item.sendToAi === true, fileName: batchFileName(index, file) };
   });
   for (let busyRetries = 0; ; busyRetries += 1) {
     dispatch({ type: 'start', ids });
     try {
       const batch = await uploader.upload({
         profileId: first.profileId,
-        files: named.map(({ fileName, file }) => ({ fileName, file })),
+        files: named.map(({ fileName, file, sendToAi }) => ({ fileName, file, sendToAi })),
         declaredType: first.declaredType,
         csrfToken,
         onProgress: (percent) => dispatch({ type: 'progress', ids, percent }),

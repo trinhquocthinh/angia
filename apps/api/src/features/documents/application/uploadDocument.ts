@@ -17,19 +17,21 @@ interface UploadRequest {
   accountId: string;
   profileId: string;
   files: UploadedFile[];
+  sendToAi: boolean[];
   declaredType?: DocumentType | undefined;
 }
 
 // Số tệp kiểm trước, không cần DB (route đã chặn lô quá trần ngay lúc nhận multipart);
 // sau đó theo flowchart SPEC-008: hồ sơ → đồng thuận (BR-009) → từng tệp.
 // Object S3 ghi trong transaction; mọi lỗi (kể cả commit) xóa object đã ghi để không mồ côi.
-// Job convert-heic ghi cùng transaction nên chỉ tồn tại khi chứng từ đã commit.
+// Job sanitize-document-image ghi cùng transaction nên chỉ tồn tại khi chứng từ đã commit.
 export async function uploadDocument(
   deps: DocumentDependencies,
   request: UploadRequest,
 ): Promise<DocumentOutcome<UploadBatch> | QuotaFailure> {
   const { files } = request;
   if (files.length === 0) return { ok: false, code: 'ERR_VALIDATION' };
+  if (request.sendToAi.length !== files.length) return { ok: false, code: 'ERR_VALIDATION' };
   if (files.length > MAX_FILES_PER_UPLOAD) return { ok: false, code: 'ERR_BATCH_TOO_LARGE' };
   const storedKeys: string[] = [];
   try {
@@ -51,46 +53,52 @@ async function storeUpload(
   const profile = await store.findProfile(request.profileId);
   if (!profile) return { ok: false, code: 'ERR_NOT_FOUND' };
   if (profile.consentStatus !== 'confirmed') return { ok: false, code: 'ERR_CONSENT_REQUIRED' };
-  const checked = request.files.map((file) => ({ file, result: classifyFile(file.head, file.sizeBytes) }));
+  const checked = request.files.map((file, index) => ({
+    file,
+    sendToAi: request.sendToAi[index] === true,
+    result: classifyFile(file.head, file.sizeBytes),
+  }));
   const rejectedFiles = checked.flatMap(({ file, result }) =>
     result.ok ? [] : [{ fileName: file.fileName, code: result.code }],
   );
   if (rejectedFiles.length === checked.length) return { ok: false, code: 'ERR_NO_VALID_FILE' };
   // SPEC-030: khóa quota gia đình rồi đếm lại trước lệnh ghi S3 đầu tiên — lô đồng thời cùng gia đình xếp hàng;
   // lỗi sau đó rollback nên quota tự trả (số đo tính từ dòng đã commit). Tệp bị loại không tính.
-  const valid = checked.filter(({ result }) => result.ok).map(({ file }) => file);
-  const bytes = valid.reduce((sum, file) => sum + file.sizeBytes, 0);
+  const valid = checked.filter(({ result }) => result.ok);
+  const bytes = valid.reduce((sum, { file }) => sum + file.sizeBytes, 0);
+  const jobs = valid.filter(({ sendToAi }) => sendToAi).length;
   const quota = await checkFamilyQuota(
     store.readQuotaUsage,
     deps.quota,
-    { files: valid.length, bytes, jobs: valid.length },
+    { files: valid.length, bytes, jobs },
     true,
   );
   if (!quota.ok) return quota;
   const batchId = deps.newId();
   await store.insertBatch({ id: batchId, healthProfileId: request.profileId, createdBy: request.accountId });
   const documents: SourceDocument[] = [];
-  for (const { file, result } of checked) {
+  for (const { file, result, sendToAi } of checked) {
     if (!result.ok) continue;
     const id = deps.newId();
     const location = { familyId: request.familyId, healthProfileId: request.profileId, documentId: id };
-    const originalKey = documentObjectKey(location, result.extension);
+    const imageKey = documentObjectKey(location);
     // Ghi tuần tự theo luồng: bộ nhớ không tăng theo kích thước lô. Ghi khóa trước khi put
     // để lỗi mất phản hồi sau khi S3 đã nhận vẫn được dọn (xóa khóa chưa tồn tại là vô hại).
-    storedKeys.push(originalKey);
-    await deps.storage.put(originalKey, file.open(), result.mimeType, file.sizeBytes);
+    storedKeys.push(imageKey);
+    await deps.storage.put(imageKey, file.open(), result.mimeType, file.sizeBytes);
     documents.push(
       await store.insertDocument({
         id,
         healthProfileId: request.profileId,
         batchId,
         type: request.declaredType ?? null,
-        originalKey,
+        imageKey,
+        privacyApprovedBy: sendToAi ? request.accountId : null,
         mimeType: result.mimeType,
         sizeBytes: file.sizeBytes,
       }),
     );
-    await store.enqueuePreview(id);
+    await store.enqueueSanitize(id);
   }
   return { ok: true, value: { id: batchId, documents, rejectedFiles } };
 }

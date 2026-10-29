@@ -3,7 +3,7 @@ import { PgBoss } from 'pg-boss';
 import { pino } from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createBudgetRequeueRepository } from '@src/features/extraction/infrastructure/createBudgetRequeueRepository.js';
-import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
+import { createSanitizePgFixture } from '@src/shared/test/createSanitizePgFixture.test-helper.js';
 import { seedOcrGate } from '@src/shared/test/seedOcrGate.js';
 import { seedExtractingDocument } from '@src/shared/test/seedExtractingDocument.js';
 import { handleRequeueAwaitingBudgetJob } from './handleRequeueAwaitingBudgetJob.js';
@@ -12,7 +12,7 @@ const logger = pino({ level: 'silent' });
 const NOW = new Date('2026-10-15T03:00:00Z'); // tháng ngân sách 2026-10 giờ Việt Nam
 
 describe('Requeue awaiting_budget theo gia đình trên PostgreSQL + pg-boss thật (SPEC-031)', () => {
-  let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
+  let fx: Awaited<ReturnType<typeof createSanitizePgFixture>>;
   let boss: PgBoss;
   const setSpend = (spent: number) =>
     fx.owner.query(
@@ -23,7 +23,7 @@ describe('Requeue awaiting_budget theo gia đình trên PostgreSQL + pg-boss th�
     (await fx.owner.query('SELECT status FROM source_documents WHERE id=$1', [id])).rows[0].status;
 
   beforeAll(async () => {
-    fx = await createPrivacyPgFixture();
+    fx = await createSanitizePgFixture();
     boss = new PgBoss({ connectionString: fx.appUrl, migrate: false, createSchema: false });
     await boss.start();
     await ensureExtractDocumentQueues(boss);
@@ -94,10 +94,10 @@ describe('Requeue awaiting_budget theo gia đình trên PostgreSQL + pg-boss th�
     // Mỗi chứng từ một gia đình riêng (seed) → gom về gia đình của first để kiểm thứ tự trong một gia đình.
     for (const id of ids.slice(1)) {
       await fx.owner.query(
-        `INSERT INTO source_documents (id, family_id, health_profile_id, batch_id, type, status, original_key, mime_type,
-           size_bytes, ocr_image_key, ocr_image_sha256, privacy_approved_by, privacy_approved_at, created_at)
+        `INSERT INTO source_documents (id, family_id, health_profile_id, batch_id, type, status, image_key, mime_type,
+           size_bytes, image_sha256, privacy_approved_by, privacy_approved_at, created_at)
          SELECT gen_random_uuid(), s.family_id, s.health_profile_id, s.batch_id, s.type, 'awaiting_budget',
-           s.original_key || '-' || o.id, s.mime_type, s.size_bytes, s.ocr_image_key || '-' || o.id, s.ocr_image_sha256,
+           s.image_key || '-' || o.id, s.mime_type, s.size_bytes, s.image_sha256,
            s.privacy_approved_by, s.privacy_approved_at, o.created_at
          FROM source_documents s, source_documents o WHERE s.id = $1::uuid AND o.id = $2::uuid`,
         [first.documentId, id],

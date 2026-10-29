@@ -1,6 +1,6 @@
 import { prepareExtraction } from './prepareExtraction.js';
 import { dispatchExtraction } from './dispatchExtraction.js';
-import { canUseApprovedOcrImage } from '../domain/canUseApprovedOcrImage.js';
+import { canUseApprovedImage } from '../domain/canUseApprovedImage.js';
 import { ImageConversionError } from './ImageConversionError.js';
 import { assessExtraction } from '../domain/assessExtraction.js';
 import type { DocumentToExtract } from '../domain/ExtractionDocument.js';
@@ -107,11 +107,11 @@ async function toManualEntry(
   return { status: 'manual_entry', reason, costUsd };
 }
 
-// Đọc đúng bản OCR đã duyệt, kiểm byte/hash trên mỗi lần thử; không lấy ảnh gốc hoặc preview làm fallback.
+// Đọc một ảnh đã đồng ý, kiểm byte/hash trên mỗi lần thử.
 async function loadImage(deps: ExtractionDependencies, document: DocumentToExtract): Promise<ExtractorImage> {
-  if (!document.ocrImageKey) throw new ImageConversionError();
-  const image = await deps.ocrImages.get(document.ocrImageKey);
-  if (!canUseApprovedOcrImage(document, document.originalKey, image.sha256)) throw new ImageConversionError();
+  if (!document.imageKey) throw new ImageConversionError();
+  const image = await deps.ocrImages.get(document.imageKey);
+  if (!canUseApprovedImage(document, image.sha256)) throw new ImageConversionError();
   return { bytes: image.bytes, mimeType: image.mimeType };
 }
 
