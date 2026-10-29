@@ -46,7 +46,10 @@ describe('Nhập liệu thủ công: route thật + RLS (SPEC-011, E3-S4-T1)', (
   const familyFixture = async (consent: boolean) => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' });
+    const created = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Mẹ',
+    });
     const profile = (await created.json()) as HealthProfile;
     if (consent) await acceptConsentInvitation(t, main, profile.id);
     return { familyId, main, profile };

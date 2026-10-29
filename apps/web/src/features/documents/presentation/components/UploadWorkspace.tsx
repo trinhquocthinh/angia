@@ -1,5 +1,6 @@
 import type { useFamilyScanQuota } from '@src/features/scanQuota/application/useFamilyScanQuota';
 import { useState } from 'react';
+import { profileShowsVitals } from '@src/features/profiles/application/profileShowsVitals';
 import type { FamilyUsage } from '@angia/contracts';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
 import type { DocumentType, DocumentUploader } from '../../application/ports';
@@ -29,14 +30,8 @@ type UploadWorkspaceProps = {
 const nextToRedact = (items: UploadItem[], doneId: string) =>
   items.find((item) => item.id !== doneId && item.status === 'needs_redaction')?.id ?? null;
 
-export function UploadWorkspace({
-  uploader,
-  csrfToken,
-  profiles,
-  usage,
-  scanQuota,
-  ...status
-}: UploadWorkspaceProps) {
+export function UploadWorkspace(props: UploadWorkspaceProps) {
+  const { uploader, csrfToken, profiles, usage, scanQuota, ...status } = props;
   const queue = useUploadQueue(uploader, csrfToken);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [declaredType, setDeclaredType] = useState<DocumentType | null>(null);
@@ -44,6 +39,8 @@ export function UploadWorkspace({
   const { summary } = queue;
   useLeaveWarning(shouldWarnOnLeave(summary));
   const ready = profiles.find((profile) => profile.id === profileId && profile.consentStatus === 'confirmed');
+  const selectedType =
+    ready && !profileShowsVitals(ready) && declaredType === 'device_reading' ? null : declaredType;
   useOpenUploadedDocument(summary);
   const editing = queue.items.find((item) => item.id === editingId);
   return (
@@ -55,8 +52,12 @@ export function UploadWorkspace({
         {...status}
         profileId={ready?.id ?? null}
         locked={summary.active > 0}
-        onProfile={setProfileId}
-        declaredType={declaredType}
+        onProfile={(id) => {
+          setProfileId(id);
+          const next = profiles.find((profile) => profile.id === id);
+          if (next && !profileShowsVitals(next) && declaredType === 'device_reading') setDeclaredType(null);
+        }}
+        declaredType={selectedType}
         onType={setDeclaredType}
       />
       {editing?.previewUrl ? (
@@ -79,7 +80,7 @@ export function UploadWorkspace({
           // SPEC-030: chạm trần nào thì khóa chọn ảnh kèm lý do; máy chủ vẫn là nơi quyết định.
           blocked={usage ? usageBlockReason(usage) : null}
           profileChosen={Boolean(ready)}
-          onSubmit={() => ready && queue.submit(ready.id, declaredType)}
+          onSubmit={() => ready && queue.submit(ready.id, selectedType)}
           onRedact={(id) => {
             queue.dispatch({ type: 'reopen', id });
             setEditingId(id);

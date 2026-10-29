@@ -15,7 +15,15 @@ export type ProfileTabKey = (typeof LINKED_TABS)[number]['key'];
 
 // Tab hồ sơ đều là route: Diễn biến sức khỏe, Thuốc điều trị (E4-S4-T1), Kết quả xét nghiệm (E5-S2-T1),
 // Hồ sơ & Giấy tờ khám (E5-S4-T1).
-export function ProfileTabs({ profileId, active }: { profileId: string; active: ProfileTabKey }) {
+export function ProfileTabs({
+  profileId,
+  active,
+  showsVitals = true,
+}: {
+  profileId: string;
+  active: ProfileTabKey;
+  showsVitals?: boolean;
+}) {
   const navRef = useRef<HTMLElement>(null);
   // Màn hẹp: dải tab cuộn ngang, kéo tab đang mở vào tầm nhìn (chỉ cuộn ngang, không cuộn trang).
   useEffect(() => {
@@ -27,7 +35,7 @@ export function ProfileTabs({ profileId, active }: { profileId: string; active: 
   }, [active]);
   return (
     <nav ref={navRef} aria-label="Các mục hồ sơ" className="flex gap-2 overflow-x-auto pb-1">
-      {LINKED_TABS.map((tab) => (
+      {LINKED_TABS.filter((tab) => tab.key !== 'health' || showsVitals).map((tab) => (
         <Link
           key={tab.key}
           to={tab.to}

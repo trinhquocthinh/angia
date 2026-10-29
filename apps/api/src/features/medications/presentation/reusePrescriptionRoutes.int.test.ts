@@ -31,7 +31,7 @@ describe('API Dùng lại đơn thuốc + RLS (SPEC-029)', () => {
     const main = await t.session(familyId);
     const create = async (name: string) =>
       (await (
-        await t.call(main, 'POST', '/api/health-profiles', { displayName: name })
+        await t.call(main, 'POST', '/api/health-profiles', { birthYear: 1950, displayName: name })
       ).json()) as HealthProfile;
     const profile = await create('Bà ngoại');
     await acceptConsentInvitation(t, main, profile.id);

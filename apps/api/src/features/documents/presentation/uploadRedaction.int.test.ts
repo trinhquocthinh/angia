@@ -22,7 +22,10 @@ describe('Upload JPEG đã che, receipt và quota (E11-S2-T1)', () => {
   const household = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const response = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' });
+    const response = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Mẹ',
+    });
     const profileId = ((await response.json()) as HealthProfile).id;
     await acceptConsentInvitation(t, main, profileId);
     return { familyId, main, profileId };

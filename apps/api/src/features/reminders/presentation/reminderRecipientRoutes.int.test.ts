@@ -19,7 +19,9 @@ describe('API người nhận nhắc thuốc + RLS (SPEC-026)', () => {
     const mom = await t.session(familyId, 'main', 'Mẹ');
     const grandma = await t.session(familyId, 'member', 'Bà');
     const create = async (body: object) =>
-      (await (await t.call(dad, 'POST', '/api/health-profiles', body)).json()) as HealthProfile;
+      (await (
+        await t.call(dad, 'POST', '/api/health-profiles', { birthYear: 1950, ...body })
+      ).json()) as HealthProfile;
     const child = await create({ displayName: 'Bé An' });
     if (consent) await acceptConsentInvitation(t, dad, child.id);
     const path = (id: string) => `/api/health-profiles/${id}/reminder-recipients`;

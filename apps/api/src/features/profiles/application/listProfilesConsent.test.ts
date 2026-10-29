@@ -25,7 +25,7 @@ describe('TC-558 — metadata thao tác đồng thuận theo phiên main', () =>
     const result = await createProfile(
       repo,
       'f',
-      { displayName: 'Bé An', ...(linked ? { linkedAccountId: linked } : {}) },
+      { birthYear: 1950, displayName: 'Bé An', ...(linked ? { linkedAccountId: linked } : {}) },
       now,
       'main',
     );
@@ -44,6 +44,7 @@ describe('TC-558 — metadata thao tác đồng thuận theo phiên main', () =>
       repo,
       'f',
       {
+        birthYear: 1950,
         displayName: 'Bé',
         consent: { kind: 'attestation', attestation: true, basis: 'guardian', respondentName: 'Mẹ' },
       },

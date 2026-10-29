@@ -20,7 +20,7 @@ describe('API chuỗi xét nghiệm SPEC-021 (E5-S2-T1)', () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
     const profile = (await (
-      await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' })
+      await t.call(main, 'POST', '/api/health-profiles', { birthYear: 1950, displayName: 'Mẹ' })
     ).json()) as HealthProfile;
     await acceptConsentInvitation(t, main, profile.id);
     return { familyId, main, profile, base: `/api/health-profiles/${profile.id}/lab-result-series` };

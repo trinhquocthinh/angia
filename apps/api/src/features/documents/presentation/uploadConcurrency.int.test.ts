@@ -45,7 +45,10 @@ describe('Giới hạn 3 lô tải lên xử lý đồng thời (E3-S1-T1)', () 
   beforeAll(async () => {
     t = await startProfileTestApp();
     main = await t.session(await t.family());
-    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Bà' });
+    const created = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Bà',
+    });
     profileId = ((await created.json()) as HealthProfile).id;
     await acceptConsentInvitation(t, main, profileId);
   });

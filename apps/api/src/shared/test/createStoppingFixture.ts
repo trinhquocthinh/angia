@@ -8,7 +8,7 @@ export async function createStoppingFixture(t: ProfileTestApp, consent = true, f
   const familyId = await t.family();
   const main = await t.session(familyId);
   const profile = (await (
-    await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Bà ngoại' })
+    await t.call(main, 'POST', '/api/health-profiles', { birthYear: 1950, displayName: 'Bà ngoại' })
   ).json()) as HealthProfile;
   if (consent) await acceptConsentInvitation(t, main, profile.id);
   const collection = `/api/health-profiles/${profile.id}/medication-courses`;

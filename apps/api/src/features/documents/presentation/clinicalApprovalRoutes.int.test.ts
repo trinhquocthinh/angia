@@ -42,7 +42,10 @@ describe('Duyệt đơn thuốc/xét nghiệm và phân trang chứng từ: rout
   const familyFixture = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' });
+    const created = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Mẹ',
+    });
     const profile = (await created.json()) as HealthProfile;
     await acceptConsentInvitation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };

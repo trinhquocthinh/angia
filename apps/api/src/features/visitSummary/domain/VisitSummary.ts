@@ -18,6 +18,7 @@ export interface VisitSummary<Course extends MedicationCourse = MedicationCourse
   createdAt: Date;
   from: string;
   to: string;
+  showsVitals: boolean;
   currentMedications: Course[];
   measurements: Measurement[];
   latestLabResults: LabResult[];

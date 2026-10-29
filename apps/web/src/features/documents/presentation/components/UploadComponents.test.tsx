@@ -16,6 +16,7 @@ const profile = (id: string, consentStatus: HealthProfile['consentStatus']): Hea
   familyId: 'f',
   displayName: id === 'me' ? 'Mẹ' : 'Ba',
   birthYear: null,
+  vitalsEnabled: null,
   consentConfirmedAt: null,
   consentConfirmedBy: null,
   consentBasis: null,

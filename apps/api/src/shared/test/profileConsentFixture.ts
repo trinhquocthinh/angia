@@ -25,7 +25,11 @@ export async function profileConsentFixture(t: ProfileTestApp) {
   const familyId = await t.family();
   const main = await t.session(familyId);
   const create = async (input: object = {}) => {
-    const response = await t.call(main, 'POST', PROFILE_BASE, { displayName: 'Bé An', ...input });
+    const response = await t.call(main, 'POST', PROFILE_BASE, {
+      birthYear: 1950,
+      displayName: 'Bé An',
+      ...input,
+    });
     expect(response.status).toBe(201);
     return (await response.json()) as HealthProfile;
   };

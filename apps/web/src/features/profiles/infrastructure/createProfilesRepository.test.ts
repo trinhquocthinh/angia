@@ -44,6 +44,22 @@ describe('Hồ sơ qua hợp đồng HTTP và bảo vệ phiên', () => {
     expect(await requests[0]!.json()).toEqual(body);
     expect(requests[0]!.headers.get('X-CSRF-Token')).toBe('csrf');
   });
+  it('TC-449 — sửa hồ sơ gửi PATCH đúng body, đường dẫn và CSRF', async () => {
+    const { repository, requests } = harness(200, { id: 'p', birthYear: 2020, vitalsEnabled: null });
+    const body = { birthYear: 2020, vitalsEnabled: false };
+    expect(await repository.update('p', body, 'csrf')).toMatchObject({ birthYear: 2020 });
+    expect(new URL(requests[0]!.url).pathname).toBe('/api/health-profiles/p');
+    expect(requests[0]!.method).toBe('PATCH');
+    expect(requests[0]!.headers.get('X-CSRF-Token')).toBe('csrf');
+    expect(await requests[0]!.json()).toEqual(body);
+  });
+  it.each([401, 403, 404, 409, 422, 500])(
+    'TC-449 — PATCH lỗi %s không báo lưu thành công',
+    async (status) => {
+      const { repository } = harness(status, { error: { code: 'ERR_VALIDATION' } });
+      await expect(repository.update('p', { birthYear: 2020 }, 'csrf')).rejects.toMatchObject({ status });
+    },
+  );
   it('main tạo và thu hồi link bằng CSRF, không xác nhận thay người nhận', async () => {
     const { repository, requests } = harness(200, { token: 'opaque', expiresAt: '2026-10-13T00:00:00Z' });
     await repository.createInvitation('p', 'csrf');
@@ -59,7 +75,9 @@ describe('Hồ sơ qua hợp đồng HTTP và bảo vệ phiên', () => {
   });
   it.each([401, 403, 409, 500])('HTTP %s không giả lập lưu thành công', async (status) => {
     const { repository } = harness(status, { error: { code: 'ERR_INTERNAL', message: 'SQL secret' } });
-    await expect(repository.create({ displayName: 'Mẹ' }, 'csrf')).rejects.toMatchObject({ status });
+    await expect(repository.create({ displayName: 'Mẹ', birthYear: 1954 }, 'csrf')).rejects.toMatchObject({
+      status,
+    });
     if (status === 500) await expect(repository.list()).rejects.not.toThrow('SQL secret');
   });
   it('xóa hồ sơ gửi DELETE với tên nhập lại và CSRF; 422 trả mã không khớp', async () => {

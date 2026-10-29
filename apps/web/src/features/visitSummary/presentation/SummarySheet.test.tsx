@@ -22,6 +22,7 @@ const measurement: Measurement = {
 };
 const summary: VisitSummary = {
   profile: { id: '0192f000-0000-7000-8000-000000000001', displayName: 'Mẹ', birthYear: 1954 },
+  showsVitals: true,
   createdAt: '2026-10-05T03:00:00.000Z',
   from: '2026-07-05',
   to: '2026-10-05',
@@ -142,5 +143,22 @@ describe('Trạng thái màn tóm tắt (Design §6)', () => {
     expect(states({ loading: true })).toContain('Đang tạo bản tóm tắt');
     expect(states({ error: true })).toContain('Không tải được bản tóm tắt.');
     expect(states({})).toContain('Chưa đủ dữ liệu để kết xuất tóm tắt');
+  });
+});
+
+describe('TC-448 — bản in theo lựa chọn theo dõi', () => {
+  it.each([0, 2, 40])('ẩn cả mục số đo với %s dòng, giữ các phần khác', (count) => {
+    const html = render({
+      ...summary,
+      showsVitals: false,
+      measurements: Array.from({ length: count }, (_, i) => ({ ...measurement, id: `m${i}` })),
+    });
+    expect(html).not.toContain('summary-measurements');
+    expect(html).not.toContain('Số đo');
+    expect(html).not.toContain('128/82');
+    expect(html).toContain('Amlodipin');
+    expect(html).toContain('HbA1c');
+    expect(html).toContain('Canxi');
+    expect(html).toContain('summary-grid--even');
   });
 });

@@ -1,4 +1,5 @@
 import { createConsentReceipt } from '../domain/createConsentReceipt.js';
+import { isValidBirthYear } from '../domain/isValidBirthYear.js';
 import type { HealthProfile, NewProfile, ProfileOutcome } from '../domain/HealthProfile.js';
 import type { Clock, ProfileRepository } from './ports.js';
 
@@ -16,15 +17,7 @@ export async function createProfile(
     return { ok: false, code: 'ERR_VALIDATION' };
   }
   const displayName = input.displayName.trim();
-  const year = Number(
-    new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric' }).format(now()),
-  );
-  if (
-    !displayName ||
-    displayName.length > 60 ||
-    (input.birthYear !== undefined &&
-      (!Number.isInteger(input.birthYear) || input.birthYear < 1900 || input.birthYear > year))
-  ) {
+  if (!displayName || displayName.length > 60 || !isValidBirthYear(input.birthYear, now())) {
     return { ok: false, code: 'ERR_VALIDATION' };
   }
   return repository.withFamily(familyId, async (store) => {

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { profileShowsVitals } from '@src/features/profiles/application/profileShowsVitals';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
 import type { ApproveDocumentRequest } from '../../application/reviewPorts';
 import type { ReviewRequestError } from '../../application/ReviewRequestError';
@@ -63,6 +64,8 @@ export function ManualRecordContent({
       </h1>
       <fieldset disabled={formDisabled} className="min-w-0 border-0 p-0">
         <ManualEntryForm
+          key={profile.id}
+          allowReading={profileShowsVitals(profile)}
           initialType={null}
           intro="Dữ liệu được ghi là nhập tay, không kèm ảnh giấy tờ gốc. Nhập đúng như trên giấy tờ hoặc màn hình máy đo."
           {...form}

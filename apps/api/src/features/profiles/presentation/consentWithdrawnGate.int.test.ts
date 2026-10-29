@@ -27,7 +27,7 @@ describe('Gate đồng thuận sau khi rút: đọc, ảnh, duyệt (F07 §4.4)'
   });
 
   const createProfile = async (main: SeededSession, body: object) =>
-    (await (await t.call(main, 'POST', profiles, body)).json()) as HealthProfile;
+    (await (await t.call(main, 'POST', profiles, { birthYear: 1950, ...body })).json()) as HealthProfile;
 
   // Hồ sơ Bà Tư đã đồng thuận kèm đủ dữ liệu, liên kết tài khoản Bà; hồ sơ đối chứng của cùng gia đình.
   const fixture = async () => {

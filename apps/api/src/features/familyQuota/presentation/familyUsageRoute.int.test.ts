@@ -17,7 +17,10 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
       const familyId = await t.family();
       const main = await t.session(familyId);
       await seedOcrAdmission(t.owner, familyId);
-      const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Bà' });
+      const created = await t.call(main, 'POST', '/api/health-profiles', {
+        birthYear: 1950,
+        displayName: 'Bà',
+      });
       owners[key] = { familyId, main, profileId: ((await created.json()) as HealthProfile).id };
     }
   });
@@ -56,7 +59,10 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
   it('chứng từ kẹt ở uploaded quá 1 giờ (job làm sạch đã hết lượt) không còn tính vào chờ worker', async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Ông' });
+    const created = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Ông',
+    });
     const profileId = ((await created.json()) as HealthProfile).id;
     const owner = { familyId, profileId, accountId: main.accountId };
     await seedQuotaDocument(t, owner, {

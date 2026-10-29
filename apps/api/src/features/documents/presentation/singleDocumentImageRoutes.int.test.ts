@@ -17,9 +17,7 @@ describe('TC-408/TC-409: API một ảnh và ngừng luồng riêng tư cũ', ()
     const familyId = await t.family();
     const main = await t.session(familyId);
     const profile = (await (
-      await t.call(main, 'POST', '/api/health-profiles', {
-        displayName: 'Mẹ',
-      })
+      await t.call(main, 'POST', '/api/health-profiles', { birthYear: 1950, displayName: 'Mẹ' })
     ).json()) as HealthProfile;
     await acceptConsentInvitation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };

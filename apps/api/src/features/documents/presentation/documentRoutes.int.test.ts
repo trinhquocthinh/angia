@@ -67,7 +67,10 @@ describe('Tải chứng từ đơn lẻ/theo lô: route thật, transaction và 
   const profileFixture = async (consented = true) => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' });
+    const created = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Mẹ',
+    });
     const profile = (await created.json()) as HealthProfile;
     if (consented) await acceptConsentInvitation(t, main, profile.id);
     return { familyId, main, profile };

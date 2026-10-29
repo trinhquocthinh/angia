@@ -65,7 +65,9 @@ it('TC-552: migration mở receipt mới, giữ nguyên hồ sơ/lời mời/aud
     const snapshot = async () => {
       const rows: unknown[][] = [];
       for (const table of ['health_profiles', 'consent_invitations', 'consent_legacy_attestations']) {
-        rows.push((await owner.query(`SELECT * FROM ${table} ORDER BY 1`)).rows);
+        // KH-3 thêm cột; ca LG-02 chỉ đối chiếu các trường đã tồn tại trước migration.
+        const selection = table === 'health_profiles' ? "to_jsonb(t) - 'vitals_enabled' AS profile" : '*';
+        rows.push((await owner.query(`SELECT ${selection} FROM ${table} t ORDER BY 1`)).rows);
       }
       return rows;
     };

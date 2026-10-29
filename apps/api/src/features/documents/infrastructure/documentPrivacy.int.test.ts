@@ -23,7 +23,10 @@ describe('Ảnh chứng từ: bất biến, không lộ metadata và role app NO
   const fixture = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const response = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Ba' });
+    const response = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Ba',
+    });
     const profile = (await response.json()) as HealthProfile;
     await acceptConsentInvitation(t, main, profile.id);
     const { documentId, key } = await seedPendingDocument(

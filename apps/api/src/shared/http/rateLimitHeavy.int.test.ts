@@ -15,7 +15,10 @@ describe('TC-300 — rate limit thao tác nặng theo tài khoản (SPEC-030)', 
 
   const consentedProfile = async () => {
     const main = await t.session(await t.family());
-    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Bà' });
+    const created = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Bà',
+    });
     const profileId = ((await created.json()) as HealthProfile).id;
     await acceptConsentInvitation(t, main, profileId);
     return { main, profileId };

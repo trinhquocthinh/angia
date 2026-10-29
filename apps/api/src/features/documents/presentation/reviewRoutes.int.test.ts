@@ -37,7 +37,10 @@ describe('Duyệt số đo từ ảnh máy đo: route thật, transaction và RL
   const pendingFixture = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Ba' });
+    const created = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Ba',
+    });
     const profile = (await created.json()) as HealthProfile;
     await acceptConsentInvitation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };

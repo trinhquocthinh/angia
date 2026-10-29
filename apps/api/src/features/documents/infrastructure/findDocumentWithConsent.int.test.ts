@@ -21,7 +21,7 @@ describe('TC-390 — đọc chứng từ có khóa tuần tự hóa với rút �
     const familyId = await t.family();
     const main = await t.session(familyId);
     const profile = (await (
-      await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Ba' })
+      await t.call(main, 'POST', '/api/health-profiles', { birthYear: 1950, displayName: 'Ba' })
     ).json()) as HealthProfile;
     await acceptConsentInvitation(t, main, profile.id);
     const { documentId } = await seedPendingDocument(

@@ -7,6 +7,7 @@ import {
   healthProfileSchema,
   profileListItemSchema,
   linkableAccountSchema,
+  updateHealthProfileRequestSchema,
 } from '@angia/contracts';
 
 const json = <T extends z.ZodType>(schema: T) => ({ 'application/json': { schema } });
@@ -49,6 +50,23 @@ export const createProfileRoute = createRoute({
     404: error('ERR_NOT_FOUND: tài khoản không thuộc nhóm'),
     409: error('ERR_PROFILE_ALREADY_LINKED'),
     422: error('ERR_VALIDATION: tên/năm sinh/tài khoản không hợp lệ'),
+  },
+});
+export const updateProfileRoute = createRoute({
+  method: 'patch',
+  path: `${base}/{id}`,
+  tags: ['profiles'],
+  summary: 'Sửa năm sinh và lựa chọn theo dõi huyết áp, đường huyết (SPEC-039)',
+  request: {
+    params: z.object({ id: z.uuid() }),
+    body: { required: true, content: json(updateHealthProfileRequestSchema) },
+  },
+  responses: {
+    200: { description: 'Hồ sơ đã cập nhật', content: json(healthProfileSchema) },
+    ...guards,
+    404: error('ERR_NOT_FOUND'),
+    409: error('ERR_CONSENT_REQUIRED'),
+    422: error('ERR_VALIDATION'),
   },
 });
 export const confirmConsentRoute = createRoute({

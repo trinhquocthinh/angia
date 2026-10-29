@@ -36,7 +36,10 @@ describe('API xử lý xung đột đợt thuốc (SPEC-015)', () => {
   async function fixture(startDate = '2026-09-01', count = 1) {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const response = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' });
+    const response = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Mẹ',
+    });
     const profile = (await response.json()) as HealthProfile;
     await acceptConsentInvitation(t, main, profile.id);
     const oldIds: string[] = [];

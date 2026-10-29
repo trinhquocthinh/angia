@@ -1,3 +1,4 @@
+import { profileShowsVitals } from '@src/features/profiles/application/profileShowsVitals';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
 import type { DocumentType } from '../../application/ports';
 import { DocumentTypePicker } from './DocumentTypePicker';
@@ -40,10 +41,15 @@ export function ProfileChoices({
       </div>
     );
   }
+  const profile = profiles.find((item) => item.id === profileId);
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <ProfilePicker profiles={profiles} selectedId={profileId} locked={locked} onSelect={onProfile} />
-      <DocumentTypePicker value={declaredType} onChange={onType} />
+      <DocumentTypePicker
+        value={declaredType}
+        onChange={onType}
+        allowDeviceReading={!profile || profileShowsVitals(profile)}
+      />
     </div>
   );
 }

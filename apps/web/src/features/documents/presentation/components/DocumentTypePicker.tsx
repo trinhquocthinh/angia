@@ -14,7 +14,9 @@ export const DOCUMENT_TYPES: { value: DocumentType; label: string; icon: Documen
 export function DocumentTypePicker({
   value,
   onChange,
+  allowDeviceReading = true,
 }: {
+  allowDeviceReading?: boolean;
   value: DocumentType | null;
   onChange: (value: DocumentType | null) => void;
 }) {
@@ -23,7 +25,7 @@ export function DocumentTypePicker({
       <ChoiceChip selected={value === null} onClick={() => onChange(null)}>
         Tự động nhận diện
       </ChoiceChip>
-      {DOCUMENT_TYPES.map((type) => (
+      {DOCUMENT_TYPES.filter((type) => type.value !== 'device_reading' || allowDeviceReading).map((type) => (
         <ChoiceChip
           key={type.value}
           selected={value === type.value}

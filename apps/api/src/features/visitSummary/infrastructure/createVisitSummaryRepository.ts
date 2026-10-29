@@ -21,6 +21,7 @@ export function createVisitSummaryRepository(db: Database): VisitSummaryReposito
                 id: healthProfiles.id,
                 displayName: healthProfiles.displayName,
                 birthYear: healthProfiles.birthYear,
+                vitalsEnabled: healthProfiles.vitalsEnabled,
                 consentStatus: healthProfiles.consentStatus,
               })
               .from(healthProfiles)

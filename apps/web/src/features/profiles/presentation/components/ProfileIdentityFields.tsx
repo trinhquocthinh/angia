@@ -24,11 +24,12 @@ export function ProfileIdentityFields({ errors }: { errors: { displayName?: stri
       </div>
       <div>
         <label htmlFor="profile-year" className="text-sm font-semibold">
-          Năm sinh (tùy chọn)
+          Năm sinh <span aria-hidden="true">*</span>
         </label>
         <input
           id="profile-year"
           name="birthYear"
+          required
           type="text"
           inputMode="numeric"
           className="mt-2 block min-h-12 w-full rounded-xl bg-[#eaf6f5] p-3 text-sm text-[#131d1d] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"

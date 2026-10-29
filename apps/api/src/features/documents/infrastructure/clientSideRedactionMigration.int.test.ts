@@ -17,6 +17,7 @@ describe('TC-400–403 migration che ảnh trên thiết bị', () => {
   let database: TestDatabase;
   let owner: pg.Client;
   let scratch: string;
+  let pendingMigrations: number;
   const familyId = randomUUID();
   const otherFamilyId = randomUUID();
   const profileId = randomUUID();
@@ -34,10 +35,13 @@ describe('TC-400–403 migration che ảnh trên thiết bị', () => {
     await owner.connect();
     scratch = await mkdtemp(join(tmpdir(), 'angia-pre-redaction-'));
     await mkdir(join(scratch, 'meta'));
-    const journal = JSON.parse(await readFile(join(migrations, 'meta/_journal.json'), 'utf8'));
-    const oldEntries = journal.entries.filter(
-      (entry: { tag: string }) => entry.tag !== '0033_client_side_redaction',
-    );
+    const journal = JSON.parse(await readFile(join(migrations, 'meta/_journal.json'), 'utf8')) as {
+      entries: { tag: string }[];
+    };
+    const index = journal.entries.findIndex((entry) => entry.tag === '0033_client_side_redaction');
+    expect(index).toBeGreaterThan(0);
+    pendingMigrations = journal.entries.length - index;
+    const oldEntries = journal.entries.slice(0, index);
     journal.entries = oldEntries;
     await writeFile(join(scratch, 'meta/_journal.json'), JSON.stringify(journal));
     for (const entry of oldEntries) {
@@ -113,7 +117,7 @@ describe('TC-400–403 migration che ảnh trên thiết bị', () => {
   });
 
   it('TC-400–403 giữ bản đã duyệt, xóa chứng từ chưa duyệt và ghi đủ khóa cần dọn', async () => {
-    expect(await runMigrations(database.ownerUrl)).toBe(1);
+    expect(await runMigrations(database.ownerUrl)).toBe(pendingMigrations);
     const { rows } = await owner.query<{
       id: string;
       status: string;

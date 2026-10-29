@@ -8,6 +8,7 @@ export interface HealthProfile {
   familyId: string;
   displayName: string;
   birthYear: number | null;
+  vitalsEnabled: boolean | null;
   consentConfirmedAt: Date | null;
   consentConfirmedBy: string | null;
   consentBasis: ConsentBasis | null;
@@ -21,7 +22,7 @@ export interface HealthProfile {
 
 export interface NewProfile {
   displayName: string;
-  birthYear?: number | undefined;
+  birthYear: number;
   linkedAccountId?: string | undefined;
   consent?: ConsentConfirmation | undefined;
 }
@@ -37,6 +38,7 @@ type ProfileError =
   | 'ERR_NOT_FOUND'
   | 'ERR_PROFILE_ALREADY_LINKED'
   | 'ERR_VALIDATION'
+  | 'ERR_CONSENT_REQUIRED'
   | 'ERR_CONFIRMATION_MISMATCH'
   | 'ERR_CONSENT_INVITATION_REQUIRED';
 export type ProfileOutcome<T, Code extends ProfileError = ProfileError> =

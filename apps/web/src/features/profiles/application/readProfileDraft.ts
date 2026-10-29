@@ -1,4 +1,5 @@
 import type { ProfileRequest } from './ports';
+import { readBirthYear } from './readBirthYear';
 export function readProfileDraft(
   displayName: string,
   birthYear: string,
@@ -8,14 +9,13 @@ export function readProfileDraft(
   const errors: { displayName?: string; birthYear?: string } = {};
   const name = displayName.trim();
   if (!name || name.length > 60) errors.displayName = 'Tên thân mật cần có từ 1 đến 60 ký tự.';
-  const year = Number(birthYear);
-  if (birthYear && (!Number.isInteger(year) || year < 1900 || year > currentYear)) {
-    errors.birthYear = `Nhập năm sinh từ 1900 đến ${currentYear}.`;
-  }
+  const year = readBirthYear(birthYear, currentYear);
+  if (year === null) errors.birthYear = 'Nhập năm sinh từ 1900 đến năm nay.';
+  if (year === null || Object.keys(errors).length) return { body: null, errors };
   const body: ProfileRequest = {
     displayName: name,
-    ...(birthYear ? { birthYear: year } : {}),
+    birthYear: year,
     ...(linkedAccountId ? { linkedAccountId } : {}),
   };
-  return { body: Object.keys(errors).length ? null : body, errors };
+  return { body, errors };
 }

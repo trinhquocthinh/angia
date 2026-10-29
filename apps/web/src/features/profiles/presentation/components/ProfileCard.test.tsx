@@ -15,6 +15,7 @@ const profile: ProfileListItem = {
   familyId: 'f',
   displayName: 'Mẹ',
   birthYear: 1954,
+  vitalsEnabled: null,
   consentConfirmedAt: null,
   consentConfirmedBy: null,
   consentBasis: null,

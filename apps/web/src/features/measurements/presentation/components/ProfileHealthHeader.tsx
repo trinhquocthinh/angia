@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
+import { profileShowsVitals } from '@src/features/profiles/application/profileShowsVitals';
 import { currentVietnamYear } from '@src/features/profiles/application/currentVietnamYear';
-import type { HealthProfile } from '@src/features/profiles/application/ports';
+import { ProfileEditControls } from '@src/features/profiles/presentation/components/ProfileEditControls';
+import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
 import { VisitSummaryLink } from '@src/features/visitSummary/presentation/VisitSummaryLink';
 import { formatDay, readingText } from '../../application/formatMeasurement';
 import type { Measurement } from '../../application/ports';
@@ -9,6 +11,7 @@ import { ProfileTabs, type ProfileTabKey } from './ProfileTabs';
 
 type Props = {
   profile: HealthProfile;
+  session: ProfileSession;
   /** undefined: không hiện dòng chỉ số (tab không tải số đo). */
   latest?: Measurement | null;
   active?: ProfileTabKey;
@@ -19,10 +22,12 @@ type Props = {
 // Đầu trang hồ sơ (Stitch 718c9615): thẻ hồ sơ có avatar, tên + tuổi, chỉ số mới nhất và nút hành động bên phải;
 // hàng tab nằm ngoài thẻ. Nhập tay không kèm ảnh theo SPEC-011. Thẻ hẹp hơn 64rem (container query) thì xếp
 // hàng nút xuống dưới tên để 4 nút không bị gãy dòng lẻ (E6-S1-T2 thêm "Tóm tắt đi khám").
-export function ProfileHealthHeader({ profile, latest, active = 'health', actions }: Props) {
+export function ProfileHealthHeader({ profile, session, latest, active = 'health', actions }: Props) {
+  const showsVitals = profileShowsVitals(profile);
   const age = profile.birthYear ? currentVietnamYear() - profile.birthYear : null;
   return (
     <div className="flex flex-col gap-4">
+      <ProfileEditControls profile={profile} session={session} />
       <section className="@container rounded-xl bg-white p-5 shadow-sm lg:p-6">
         <div className="flex flex-col justify-between gap-4 @5xl:flex-row @5xl:items-center">
           <div className="flex min-w-0 items-center gap-4">
@@ -45,7 +50,7 @@ export function ProfileHealthHeader({ profile, latest, active = 'health', action
                   </span>
                 )}
               </div>
-              {latest !== undefined && <LatestReading latest={latest} />}
+              {showsVitals && latest !== undefined && <LatestReading latest={latest} />}
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2 self-start @5xl:shrink-0 @5xl:flex-nowrap @5xl:self-center">
@@ -55,7 +60,7 @@ export function ProfileHealthHeader({ profile, latest, active = 'health', action
           </div>
         </div>
       </section>
-      <ProfileTabs profileId={profile.id} active={active} />
+      <ProfileTabs profileId={profile.id} active={active} showsVitals={showsVitals} />
     </div>
   );
 }
