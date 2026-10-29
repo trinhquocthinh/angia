@@ -6,6 +6,7 @@ export const healthProfileSchema = z
     familyId: z.uuid(),
     displayName: z.string(),
     birthYear: z.number().int().nullable(),
+    vitalsEnabled: z.boolean().nullable(),
     consentConfirmedAt: z.iso.datetime().nullable(),
     consentConfirmedBy: z.uuid().nullable(),
     consentBasis: z.enum(['self', 'guardian']).nullable(),

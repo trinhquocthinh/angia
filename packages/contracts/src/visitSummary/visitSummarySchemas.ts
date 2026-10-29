@@ -19,9 +19,10 @@ export const visitSummarySchema = z
     createdAt: z.iso.datetime(),
     from: z.iso.date(),
     to: z.iso.date(),
+    showsVitals: z.boolean(),
     /** SPEC-018 tại ngày tạo. */
     currentMedications: z.array(currentMedicationCourseSchema),
-    /** Mọi loại số đo trong [from, to], cũ nhất trước; đường huyết giữ đơn vị gốc (BR-020). */
+    /** BR-049: rỗng khi showsVitals = false; còn lại giữ khoảng và đơn vị gốc (BR-020). */
     measurements: z.array(measurementSchema),
     /** Kết quả mới nhất từng chỉ số có ngày ≤ to; chỉ số có kết quả mới nhất trước. */
     latestLabResults: z.array(labResultSchema),

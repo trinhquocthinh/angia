@@ -39,14 +39,17 @@ export { healthProfileSchema } from './profiles/healthProfileSchema.js';
 export type { HealthProfile } from './profiles/healthProfileSchema.js';
 export {
   createHealthProfileRequestSchema,
+  updateHealthProfileRequestSchema,
   confirmConsentRequestSchema,
   deleteHealthProfileRequestSchema,
 } from './profiles/profileRequests.js';
 export type {
   CreateHealthProfileRequest,
+  UpdateHealthProfileRequest,
   ConfirmConsentRequest,
   DeleteHealthProfileRequest,
 } from './profiles/profileRequests.js';
+export { CHILD_AGE_LIMIT, showsVitals } from './profiles/showsVitals.js';
 export { consentConfirmationResponseSchema } from './profiles/consentConfirmationResponseSchema.js';
 export type { ConsentConfirmationResponse } from './profiles/consentConfirmationResponseSchema.js';
 export { linkableAccountSchema } from './profiles/linkableAccountSchema.js';
