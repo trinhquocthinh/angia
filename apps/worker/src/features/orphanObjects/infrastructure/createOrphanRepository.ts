@@ -9,13 +9,11 @@ export function createOrphanRepository(pool: pg.Pool): OrphanRepository {
       (await pool.query<{ id: string }>('SELECT id FROM families ORDER BY id')).rows.map((row) => row.id),
     referencedKeys: (familyId) =>
       withFamilyScope(pool, familyId, async (client) => {
-        const result = await client.query<{ keys: (string | null)[] }>(
-          `SELECT ARRAY[original_key, preview_key, ocr_image_key] AS keys FROM source_documents WHERE family_id = $1`,
+        const result = await client.query<{ image_key: string }>(
+          `SELECT image_key FROM source_documents WHERE family_id = $1 AND image_key IS NOT NULL`,
           [familyId],
         );
-        const keys = new Set<string>();
-        for (const row of result.rows) for (const key of row.keys) if (key) keys.add(key);
-        return keys;
+        return new Set(result.rows.map((row) => row.image_key));
       }),
   };
 }

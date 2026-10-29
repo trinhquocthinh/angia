@@ -40,9 +40,6 @@ export interface ExtractionRepository {
 export interface ObjectReader {
   get(key: string): Promise<Uint8Array>;
 }
-export interface ImageConverter {
-  heicToJpeg(bytes: Uint8Array): Promise<Uint8Array>;
-}
 export interface ExtractorImage {
   bytes: Uint8Array;
   mimeType: string;
@@ -67,17 +64,11 @@ export interface BudgetPolicy {
 export interface ExtractionDependencies {
   repository: ExtractionRepository;
   budget: BudgetPolicy;
-  storage: ObjectReader;
-  images: ImageConverter;
   extractor: DocumentExtractor;
-  ocrImages: ApprovedOcrImageReader;
+  ocrImages: DocumentImageReader;
 }
 
-export interface PreviewImageConverter {
-  toWebp(bytes: Uint8Array, mimeType: string): Promise<Uint8Array>;
-}
-
-export interface ApprovedOcrImageReader {
+export interface DocumentImageReader {
   get(key: string): Promise<ExtractorImage & { sha256: string }>;
 }
 

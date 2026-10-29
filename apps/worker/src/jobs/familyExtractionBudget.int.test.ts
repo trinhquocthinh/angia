@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { budgetMonth } from '@angia/contracts';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
-import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
+import { createSanitizePgFixture } from '@src/shared/test/createSanitizePgFixture.test-helper.js';
 import { seedExtractingDocument } from '@src/shared/test/seedExtractingDocument.js';
 import { seedOcrGate } from '@src/shared/test/seedOcrGate.js';
 import { createBudgetLedger } from '@src/features/extraction/infrastructure/createBudgetLedger.js';
@@ -10,7 +10,7 @@ import { createExtractionRepository } from '@src/features/extraction/infrastruct
 
 // Thay kiểm trần USD gia đình SPEC-031 cũ bằng quota BR-018 CP5.4; vẫn kiểm tranh chấp và chuyển tháng.
 describe('CP5.4: quota gia đình, khóa operation và tháng Việt Nam', () => {
-  let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
+  let fx: Awaited<ReturnType<typeof createSanitizePgFixture>>;
   let doc: Awaited<ReturnType<typeof seedExtractingDocument>>;
   let now: Date;
   const call = () => ({
@@ -33,7 +33,7 @@ describe('CP5.4: quota gia đình, khóa operation và tháng Việt Nam', () =>
       )
     ).rows[0];
   beforeAll(async () => {
-    fx = await createPrivacyPgFixture();
+    fx = await createSanitizePgFixture();
   });
   afterAll(async () => {
     await fx?.close();
@@ -49,8 +49,8 @@ describe('CP5.4: quota gia đình, khóa operation và tháng Việt Nam', () =>
   async function cloneDocument() {
     const id = randomUUID();
     await fx.owner.query(
-      `INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,status,original_key,mime_type,size_bytes)
-      SELECT $1::uuid,family_id,health_profile_id,batch_id,'extracting',original_key||$1::text,'image/jpeg',3 FROM source_documents WHERE id=$2`,
+      `INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,status,image_key,image_sha256,mime_type,size_bytes)
+      SELECT $1::uuid,family_id,health_profile_id,batch_id,'extracting',image_key||$1::text,image_sha256,'image/jpeg',3 FROM source_documents WHERE id=$2`,
       [id, doc.documentId],
     );
     return id;

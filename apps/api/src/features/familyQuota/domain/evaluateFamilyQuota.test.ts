@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateFamilyQuota } from './evaluateFamilyQuota.js';
-import { ONE_JOB, PREFLIGHT_REQUEST, type QuotaLimits } from './FamilyQuota.js';
+import { PREFLIGHT_REQUEST, type QuotaLimits } from './FamilyQuota.js';
 
 const limits: QuotaLimits = { storageBytes: 100, dailyUploads: 10, pendingJobs: 3 };
 const usage = { storageBytes: 90, uploadsToday: 5, pendingJobs: 1 };
@@ -46,7 +46,9 @@ describe('TC-292 — so ngưỡng quota tài nguyên gia đình (SPEC-030, BR-04
 
   it('phần xin thêm bằng 0 không bị tính vượt dù mức đã dùng cao hơn trần (hạ ngưỡng env)', () => {
     const over = { storageBytes: 150, uploadsToday: 12, pendingJobs: 1 };
-    expect(evaluateFamilyQuota(over, ONE_JOB, limits, resetsAt)).toEqual({ ok: true });
+    expect(evaluateFamilyQuota(over, { files: 0, bytes: 0, jobs: 1 }, limits, resetsAt)).toEqual({
+      ok: true,
+    });
   });
 
   it('kiểm sơ bộ (1 tệp, 1 byte, 1 job) chặn khi một trần đã chạm', () => {

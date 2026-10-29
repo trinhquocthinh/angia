@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
+import { createSanitizePgFixture } from '@src/shared/test/createSanitizePgFixture.test-helper.js';
 import type { DirectoryMember } from '../domain/planIdpSync.js';
 import { IdpDirectoryError } from '../application/IdpDirectoryError.js';
 import type { IdpDirectory, IdpSyncPolicy } from '../application/ports.js';
@@ -21,9 +21,9 @@ const directoryOf = (groups: Record<string, DirectoryMember[]>): IdpDirectory =>
 });
 
 describe('Đồng bộ phiên với IdP trên PostgreSQL thật, role app NOBYPASSRLS (BR-045)', () => {
-  let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
+  let fx: Awaited<ReturnType<typeof createSanitizePgFixture>>;
   beforeAll(async () => {
-    fx = await createPrivacyPgFixture();
+    fx = await createSanitizePgFixture();
   });
   afterAll(async () => {
     await fx?.close();

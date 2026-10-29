@@ -1,6 +1,7 @@
+import { findProfileInFamily } from '@src/features/profiles/infrastructure/findProfileInFamily.js';
 import { and, eq, sql } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { doseSlots, healthProfiles } from '@src/shared/db/schema/index.js';
+import { doseSlots } from '@src/shared/db/schema/index.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { DoseSlotRepository } from '../application/ports.js';
 import type { DailySlot } from '../domain/DoseSlotConfig.js';
@@ -14,14 +15,7 @@ export function createDoseSlotRepository(db: Database): DoseSlotRepository {
     withFamily: (familyId, work) =>
       withFamilyScope(db, familyId, (tx) =>
         work({
-          findProfile: async (id) =>
-            (
-              await tx
-                .select({ consentStatus: healthProfiles.consentStatus })
-                .from(healthProfiles)
-                .where(and(eq(healthProfiles.id, id), eq(healthProfiles.familyId, familyId)))
-                .for('update')
-            )[0] ?? null,
+          findProfile: (id) => findProfileInFamily(tx, familyId, id, 'update'),
           replaceSlots: async (profileId, slots) => {
             await tx
               .delete(doseSlots)

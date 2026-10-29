@@ -54,7 +54,7 @@ export function HeaderSearch({ label, placeholder, emptyText, search, onSelect, 
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
         onKeyDown={onKeyDown}
-        className="h-10 w-full rounded-full border-0 bg-[#e4f0ef] pr-4 pl-10 text-sm text-[#131d1d] transition-colors placeholder:text-[#55615f] focus:bg-white focus:shadow-[0_0_0_2px_#b3eddf] focus:outline-none"
+        className="h-12 w-full rounded-xl border border-[#bfc9c4]/30 bg-[#eaf6f5] pr-4 pl-10 text-[13px] text-[#131d1d] shadow-inner transition-colors placeholder:text-[#404945] hover:bg-[#e4f0f0] focus:bg-white focus:shadow-[0_0_0_2px_#b3eddf] focus:outline-none lg:h-10"
       />
       {expanded && (
         <HeaderSearchResults

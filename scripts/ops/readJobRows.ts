@@ -12,7 +12,7 @@ export interface JobRow {
 }
 
 export const EXTRACT_QUEUE = 'extract-document';
-export const PREPARE_QUEUE = 'prepare-ocr-image';
+export const SANITIZE_QUEUE = 'sanitize-document-image';
 
 // Chỉ đọc metadata job pg-boss (mã chứng từ, mốc thời gian, outcome) — không chạm bảng dữ liệu sức khỏe
 // nên không cần withFamilyScope; role app đã có quyền DML trên schema `pgboss`.
@@ -39,7 +39,7 @@ export async function readJobRows(connectionString: string, since: Date): Promis
   await client.connect();
   try {
     await client.query('SET default_transaction_read_only = on');
-    const { rows } = await client.query<RawRow>(SQL, [[EXTRACT_QUEUE, PREPARE_QUEUE], since]);
+    const { rows } = await client.query<RawRow>(SQL, [[EXTRACT_QUEUE, SANITIZE_QUEUE], since]);
     return rows.map((row) => ({
       name: row.name,
       documentId: row.document_id,

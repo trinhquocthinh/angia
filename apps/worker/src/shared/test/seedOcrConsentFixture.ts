@@ -1,14 +1,14 @@
 import { seedOcrConsentQuota } from './seedOcrConsentQuota.js';
 import { createHash } from 'node:crypto';
 import { budgetMonth } from '@angia/contracts';
-import type { createPrivacyPgFixture } from './createPrivacyPgFixture.js';
+import type { createSanitizePgFixture } from './createSanitizePgFixture.test-helper.js';
 import { APPROVED_OCR_BYTES, seedExtractingDocument } from './seedExtractingDocument.js';
 import { createMemoryExtractionDeps } from './createMemoryExtractionDeps.js';
 import { createExtractionRepository } from '@src/features/extraction/infrastructure/createExtractionRepository.js';
 
 // Chỉ AI và kho ảnh là giả; receipt, đọc lại đồng thuận, quota và operation dùng PostgreSQL thật.
 export async function seedOcrConsentFixture(
-  fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>,
+  fx: Awaited<ReturnType<typeof createSanitizePgFixture>>,
   source: 'main_attested' | 'self',
 ) {
   const ids = await seedExtractingDocument(fx.owner);

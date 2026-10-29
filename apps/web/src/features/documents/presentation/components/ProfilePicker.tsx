@@ -20,7 +20,7 @@ export function ProfilePicker({
   return (
     <PickerCard icon="family" title="Của ai?" hint="Bắt buộc" required>
       {profiles.length === 0 && (
-        <p className="text-sm text-[#55615f]">
+        <p className="text-sm text-text-secondary">
           Chưa có hồ sơ.{' '}
           <Link to="/profiles/new" className="font-semibold text-[#286958] underline">
             Tạo hồ sơ

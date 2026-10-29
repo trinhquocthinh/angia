@@ -93,10 +93,10 @@ describe('API danh mục chứng từ của hồ sơ + RLS (SPEC-028)', () => {
     expect((await f.manual('device_reading', reading)).status).toBe(200);
     expect((await f.manual('lab_result', lab('2026-10-03', ['HbA1c', 'Glucose', 'LDL']))).status).toBe(200);
     expect((await f.manual('lab_result', lab('2026-10-03', ['TSH']))).status).toBe(200);
-    const rejected = await seedPendingDocument(t, f.owner, lab('2026-09-20', ['HbA1c']));
+    const manualEntry = await seedPendingDocument(t, f.owner, lab('2026-09-20', ['HbA1c']));
     await t.owner.query(
-      "UPDATE source_documents SET status='rejected', document_date='2026-09-20' WHERE id=$1",
-      [rejected.documentId],
+      "UPDATE source_documents SET status='manual_entry', document_date='2026-09-20' WHERE id=$1",
+      [manualEntry.documentId],
     );
     const pending = await seedPendingDocument(t, f.owner, lab('2026-10-10', ['HbA1c']));
     const { response, body } = await f.list();
@@ -110,9 +110,9 @@ describe('API danh mục chứng từ của hồ sơ + RLS (SPEC-028)', () => {
       ['manual', 'lab_result', 'manual_record', '2026-10-03', true],
       ['manual', 'lab_result', 'manual_record', '2026-10-03', true],
       ['document', 'lab_result', 'approved', '2026-10-01', true],
-      ['document', 'lab_result', 'rejected', '2026-09-20', true],
+      ['document', 'lab_result', 'manual_entry', '2026-09-20', true],
     ]);
-    const [first, manualRx, labTsh, labTriple, approvedEntry, rejectedEntry] = body.items;
+    const [first, manualRx, labTsh, labTriple, approvedEntry, manualEntryEntry] = body.items;
     expect(first).toMatchObject({
       id: pending.documentId,
       records: { prescription: null, labResults: [], measurements: [] },
@@ -123,9 +123,9 @@ describe('API danh mục chứng từ của hồ sơ + RLS (SPEC-028)', () => {
     });
     expect(labTsh!.records.labResults.map((r) => r.testName)).toEqual(['TSH']);
     expect(labTriple!.records.labResults.map((r) => r.testName)).toEqual(['HbA1c', 'Glucose', 'LDL']);
-    expect(approvedEntry).toMatchObject({ id: approved.documentId, hasOcrImage: false });
+    expect(approvedEntry).toMatchObject({ id: approved.documentId, hasImage: true });
     expect(approvedEntry!.records.labResults).toHaveLength(3);
-    expect(rejectedEntry!.records).toEqual({ prescription: null, labResults: [], measurements: [] });
+    expect(manualEntryEntry!.records).toEqual({ prescription: null, labResults: [], measurements: [] });
     expect(JSON.stringify(body)).not.toMatch(/Cần chú ý|Bình thường|bất thường/);
   });
 
@@ -150,8 +150,8 @@ describe('API danh mục chứng từ của hồ sơ + RLS (SPEC-028)', () => {
       [batchId, f.familyId, f.profile.id, f.main.accountId],
     );
     await t.owner.query(
-      `INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,type,status,document_date,original_key,mime_type,size_bytes,created_at)
-       SELECT gen_random_uuid(), $1, $2, $3, 'lab_result', 'pending_review', '2026-10-01', 'k/' || g, 'image/jpeg', 1,
+      `INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,type,status,document_date,image_key,image_sha256,mime_type,size_bytes,created_at)
+       SELECT gen_random_uuid(), $1, $2, $3, 'lab_result', 'pending_review', '2026-10-01', 'k/' || g, repeat('a', 64), 'image/jpeg', 1,
          '2026-10-13T01:02:03.456789Z'
        FROM generate_series(1, 25) g`,
       [f.familyId, f.profile.id, batchId],
@@ -186,30 +186,13 @@ describe('API danh mục chứng từ của hồ sơ + RLS (SPEC-028)', () => {
     ).toBe(403);
   });
 
-  it('TC-275: ảnh variant=ocr trả bản đã che; chứng từ chưa che → 404; gia đình khác → 404', async () => {
+  it('TC-409: ảnh còn có hasImage true; bản nhập tay luôn false', async () => {
     const f = await fixture();
-    const masked = await seedPendingDocument(t, f.owner, { type: 'device_reading' });
-    const plain = await seedPendingDocument(t, f.owner, { type: 'device_reading' });
-    const ocrKey = `${masked.key}.ocr.png`;
-    await t.owner.query('UPDATE source_documents SET ocr_image_key=$2, ocr_image_sha256=$3 WHERE id=$1', [
-      masked.documentId,
-      ocrKey,
-      'a'.repeat(64),
-    ]);
-    const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
-    t.objects.set(ocrKey, { body: png, contentType: 'image/png' });
-    const image = (id: string, user = f.main) =>
-      t.call(user, 'GET', `/api/source-documents/${id}/image?variant=ocr`);
-    const response = await image(masked.documentId);
-    expect(response.status).toBe(200);
-    expect(response.headers.get('content-type')).toBe('image/png');
-    expect(new Uint8Array(await response.arrayBuffer())).toEqual(png);
-    expect((await image(plain.documentId)).status).toBe(404);
-    const other = await t.session(await t.family());
-    await expectCrossFamilyDenied(
-      () => image(masked.documentId, other),
-      () => image(randomUUID(), other),
-    );
-    expect((await f.list()).body.items.find((e) => e.id === masked.documentId)?.hasOcrImage).toBe(true);
+    const image = await seedPendingDocument(t, f.owner, { type: 'device_reading' });
+    expect((await f.manual('prescription', prescription)).status).toBe(200);
+    const { body } = await f.list();
+    expect(body.items.find((e) => e.id === image.documentId)).toMatchObject({ hasImage: true });
+    expect(body.items.find((e) => e.origin === 'manual')).toMatchObject({ hasImage: false });
+    expect(JSON.stringify(body)).not.toContain('hasOcrImage');
   });
 });

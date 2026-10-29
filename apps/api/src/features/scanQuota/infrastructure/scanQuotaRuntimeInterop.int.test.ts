@@ -27,8 +27,8 @@ it('TC-633: worker CP5.4 thật chờ quota cùng Admin cấp thêm đều hoàn
     [batchId, familyId, profileId, t.admin.accountId],
   );
   await t.owner.query(
-    "INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,status,original_key,mime_type,size_bytes) VALUES($1,$2,$3,$4,'extracting','synthetic','image/png',1)",
-    [documentId, familyId, profileId, batchId],
+    "INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,status,image_key,image_sha256,mime_type,size_bytes) VALUES($1,$2,$3,$4,'extracting','synthetic',$5,'image/jpeg',1)",
+    [documentId, familyId, profileId, batchId, 'a'.repeat(64)],
   );
   for (const provider of ['openrouter'])
     await t.owner.query(
@@ -53,7 +53,7 @@ it('TC-633: worker CP5.4 thật chờ quota cùng Admin cấp thêm đều hoàn
   const script = `import pg from 'pg'; import {createExtractionRepository} from ${JSON.stringify(module)};
     const pool=new pg.Pool({connectionString:process.env.CP54_APP_URL});
     try { await createExtractionRepository(pool,()=>new Date('${NOW.toISOString()}')).withFamily('${familyId}',async store=>{
-      await store.findDocument('${documentId}'); await store.reserveBudget('${documentId}',{month:'2026-10',defaultMonthlyCapUsd:5});
+      await store.findDocument('${documentId}'); await store.reserveBudget('${documentId}',{month:'2026-10',defaultMonthlyCapUsd:5,defaultMonthlyScans:0});
     }); } finally {await pool.end();}`;
   const child = spawn(process.execPath, ['--import', 'tsx', '--input-type=module', '--eval', script], {
     cwd: fileURLToPath(root),

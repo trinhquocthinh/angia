@@ -11,7 +11,7 @@ interface QuotaDocument {
   status: string;
   sizeBytes: number;
   createdAt?: Date;
-  privacyDraftPending?: boolean;
+  sendToAi?: boolean;
 }
 
 // Chứng từ chỉ để đếm quota (SPEC-030): chèn bằng role owner, không có ảnh S3 hay bản trích xuất.
@@ -23,21 +23,22 @@ export async function seedQuotaDocument(t: ProfileTestApp, owner: QuotaOwner, do
     'INSERT INTO upload_batches(id,family_id,health_profile_id,created_by) VALUES ($1,$2,$3,$4)',
     [batchId, familyId, profileId, owner.accountId],
   );
-  const draftId = document.privacyDraftPending ? randomUUID() : null;
+  const approvedBy = document.sendToAi ? owner.accountId : null;
   await t.owner.query(
-    `INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,status,original_key,mime_type,size_bytes,
-       privacy_draft_id,privacy_draft_status,created_at)
-     VALUES ($1,$2,$3,$4,$5,$6,'image/jpeg',$7,$8,$9,$10)`,
+    `INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,status,image_key,image_sha256,mime_type,size_bytes,
+       privacy_approved_by,privacy_approved_at,created_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,'image/jpeg',$8,$9,$10,$11)`,
     [
       documentId,
       familyId,
       profileId,
       batchId,
       document.status,
-      `families/${familyId}/profiles/${profileId}/documents/${documentId}/original.jpg`,
+      `families/${familyId}/profiles/${profileId}/documents/${documentId}/upload.jpg`,
+      document.status === 'uploaded' ? null : 'a'.repeat(64),
       document.sizeBytes,
-      draftId,
-      draftId ? 'pending' : null,
+      approvedBy,
+      approvedBy ? new Date() : null,
       document.createdAt ?? new Date(),
     ],
   );

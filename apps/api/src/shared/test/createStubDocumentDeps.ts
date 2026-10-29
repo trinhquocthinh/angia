@@ -10,5 +10,6 @@ export function createStubDocumentDeps(): DocumentDependencies {
     storage: { put: notConfigured, delete: notConfigured },
     newId: () => 'stub',
     quota: TEST_QUOTA_POLICY,
+    deletion: { repository: { withFamily: notConfigured }, purgeQueue: { enqueue: notConfigured } },
   };
 }

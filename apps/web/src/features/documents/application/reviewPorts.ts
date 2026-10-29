@@ -1,3 +1,4 @@
+import type { DocumentDeletionImpact } from '@angia/contracts';
 import type { components } from '@src/shared/api/schema.gen';
 
 export type SourceDocument = components['schemas']['SourceDocument'];
@@ -20,8 +21,9 @@ export interface ReviewRepository {
   /** F09a: một trang hàng đợi; `cursor` là id chứng từ cuối trang trước. */
   queue(cursor: string | null, signal?: AbortSignal): Promise<SourceDocumentPage>;
   review(id: string, signal?: AbortSignal): Promise<DocumentReview>;
+  deletionImpact(id: string, signal?: AbortSignal): Promise<DocumentDeletionImpact>;
+  deleteDocument(id: string, csrfToken: string): Promise<void>;
   approve(id: string, body: ApproveDocumentRequest, csrfToken: string): Promise<ApprovedDocument>;
-  reject(id: string, csrfToken: string): Promise<SourceDocument>;
   /** SPEC-011: nhập trực tiếp không kèm ảnh, bản ghi gắn cờ manualWithoutSource. */
   createManualRecords(
     profileId: string,

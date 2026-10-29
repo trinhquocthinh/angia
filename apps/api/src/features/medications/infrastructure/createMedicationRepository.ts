@@ -1,6 +1,5 @@
-import { and, eq } from 'drizzle-orm';
+import { findProfileInFamily } from '@src/features/profiles/infrastructure/findProfileInFamily.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { healthProfiles } from '@src/shared/db/schema/index.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import { findProfilePrescription } from '@src/features/prescriptions/infrastructure/findProfilePrescription.js';
 import type { MedicationManagementRepository } from '../application/managementPorts.js';
@@ -17,14 +16,7 @@ export function createMedicationRepository(db: Database): MedicationManagementRe
     withFamily: (familyId, work) =>
       withFamilyScope(db, familyId, (tx) =>
         work({
-          findProfile: async (id) =>
-            (
-              await tx
-                .select({ consentStatus: healthProfiles.consentStatus })
-                .from(healthProfiles)
-                .where(and(eq(healthProfiles.id, id), eq(healthProfiles.familyId, familyId)))
-                .for('share')
-            )[0] ?? null,
+          findProfile: (id) => findProfileInFamily(tx, familyId, id, 'share'),
           lockMedicationProfile: (id) => lockMedicationProfile(tx, familyId, id),
           findMedicationCourse: (id, courseId) => findMedicationCourse(tx, familyId, id, courseId),
           findPrescription: (id, prescriptionId) => findProfilePrescription(tx, familyId, id, prescriptionId),

@@ -1,13 +1,6 @@
-import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type {
-  ApprovedDocumentResponse,
-  HealthProfile,
-  SourceDocument,
-  SourceDocumentPage,
-} from '@angia/contracts';
+import type { ApprovedDocumentResponse, HealthProfile, SourceDocumentPage } from '@angia/contracts';
 import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
-import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { PENDING_JPEG, seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -37,7 +30,7 @@ const lab = {
   items: [{ testName: 'HbA1c', value: '7,2', unit: '%', referenceRange: '4.0 - 6.0' }],
 };
 
-describe('Duyệt đơn thuốc/xét nghiệm, loại bỏ và phân trang chứng từ: route thật + RLS (E3-S3-T3)', () => {
+describe('Duyệt đơn thuốc/xét nghiệm và phân trang chứng từ: route thật + RLS (E3-S3-T3)', () => {
   let t: ProfileTestApp;
   beforeAll(async () => {
     t = await startProfileTestApp();
@@ -118,26 +111,6 @@ describe('Duyệt đơn thuốc/xét nghiệm, loại bỏ và phân trang chứ
       expect.objectContaining({ testName: 'HbA1c', value: '7,2', unit: '%', resultDate: '2026-10-02' }),
     ]);
     expect((await approve(main, documentId, 'lab_result', lab)).status).toBe(409);
-  });
-
-  it('loại bỏ chứng từ chờ duyệt/chờ nhập tay; đã duyệt thì ERR_INVALID_STATE_TRANSITION; nhóm khác như không tồn tại', async () => {
-    const { main, seed } = await familyFixture();
-    const pending = await seed(lab);
-    const manual = await seed(lab);
-    await t.owner.query("UPDATE source_documents SET status='manual_entry' WHERE id=$1", [manual.documentId]);
-    const other = await t.session(await t.family());
-    await expectCrossFamilyDenied(
-      () => t.call(other, 'POST', `/api/source-documents/${pending.documentId}/reject`),
-      () => t.call(other, 'POST', `/api/source-documents/${randomUUID()}/reject`),
-    );
-    for (const { documentId, key } of [pending, manual]) {
-      const response = await t.call(main, 'POST', `/api/source-documents/${documentId}/reject`);
-      expect(((await response.json()) as SourceDocument).status).toBe('rejected');
-      expect(t.objects.get(key)!.body).toEqual(PENDING_JPEG);
-    }
-    const again = await t.call(main, 'POST', `/api/source-documents/${pending.documentId}/reject`);
-    expect(again.status).toBe(409);
-    expect((await approve(main, pending.documentId, 'lab_result', lab)).status).toBe(409);
   });
 
   it('F09a: trang theo cursor ổn định, không trùng/sót; cursor nhóm khác cho trang rỗng; limit sai → 422', async () => {

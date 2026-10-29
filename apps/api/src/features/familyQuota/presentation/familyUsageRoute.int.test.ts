@@ -30,13 +30,13 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
 
   it('TC-301: chỉ trả số của gia đình phiên, đếm dung lượng mọi trạng thái, ảnh hôm nay giờ VN và chờ worker', async () => {
     const { start, end } = vietnamDayBounds(new Date());
-    await seed('a', { status: 'uploaded', sizeBytes: 3 * MiB });
+    await seed('a', { status: 'uploaded', sizeBytes: 3 * MiB, sendToAi: true });
     await seed('a', {
-      status: 'rejected',
+      status: 'manual_entry',
       sizeBytes: 2 * MiB,
       createdAt: new Date(start.getTime() - 60_000),
     });
-    await seed('a', { status: 'awaiting_privacy', sizeBytes: MiB, privacyDraftPending: true });
+    await seed('a', { status: 'extracting', sizeBytes: MiB, sendToAi: true });
     await seed('b', { status: 'extracting', sizeBytes: 7 * MiB });
     const response = await t.call(owners.a.main, 'GET', '/api/family/usage');
     expect(response.status).toBe(200);
@@ -53,7 +53,7 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
     expect(other.pendingJobs.used).toBe(1);
   });
 
-  it('chứng từ kẹt ở uploaded quá 1 giờ (job preview đã hết lượt) không còn tính vào chờ worker', async () => {
+  it('chứng từ kẹt ở uploaded quá 1 giờ (job làm sạch đã hết lượt) không còn tính vào chờ worker', async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
     const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Ông' });
@@ -61,11 +61,13 @@ describe('GET /api/family/usage — mức đã dùng của gia đình (SPEC-030)
     const owner = { familyId, profileId, accountId: main.accountId };
     await seedQuotaDocument(t, owner, {
       status: 'uploaded',
+      sendToAi: true,
       sizeBytes: 1,
       createdAt: new Date(Date.now() - 2 * 3600_000),
     });
     await seedQuotaDocument(t, owner, {
       status: 'uploaded',
+      sendToAi: true,
       sizeBytes: 1,
       createdAt: new Date(Date.now() - 30 * 60_000),
     });

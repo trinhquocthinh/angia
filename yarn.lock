@@ -12,7 +12,7 @@ __metadata:
     "@angia/contracts": "workspace:*"
     "@angia/web-push": "workspace:*"
     "@aws-sdk/client-s3": "npm:3.1139.0"
-    "@hono/node-server": "npm:2.1.1"
+    "@hono/node-server": "npm:2.1.3"
     "@hono/zod-openapi": "npm:1.6.3"
     "@opentelemetry/api": "npm:1.9.1"
     "@testcontainers/postgresql": "npm:12.1.0"
@@ -72,6 +72,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:6.1.1"
     echarts: "npm:6.1.0"
     echarts-for-react: "npm:3.0.6"
+    heic-to: "npm:1.6.6"
     openapi-fetch: "npm:0.17.0"
     openapi-typescript: "npm:7.13.0"
     prettier: "npm:3.9.9"
@@ -95,11 +96,9 @@ __metadata:
     "@aws-sdk/client-s3": "npm:3.1139.0"
     "@opentelemetry/api": "npm:1.9.1"
     "@testcontainers/postgresql": "npm:12.1.0"
-    "@types/heic-decode": "npm:2.0.0"
     "@types/node": "npm:22.20.4"
     "@types/pg": "npm:8.23.1"
     drizzle-orm: "npm:0.45.3"
-    heic-decode: "npm:2.1.0"
     pg: "npm:8.23.0"
     pg-boss: "npm:12.36.0"
     pino: "npm:10.3.1"
@@ -1393,12 +1392,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hono/node-server@npm:2.1.1":
-  version: 2.1.1
-  resolution: "@hono/node-server@npm:2.1.1"
+"@hono/node-server@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@hono/node-server@npm:2.1.3"
   peerDependencies:
     hono: ^4
-  checksum: 10c0/7ef810ca647c56d8d9386fd81609e18443b3a5634aa5ecabdf357e7ca724613c535e863c15ded9b7ae89b935a073040fb11e6d59041f3b1c3e153d8ecb699880
+  checksum: 10c0/1b9996f41be620c301f73529928ccb056574fadf822a0979e4925c17cce209583e7f27376ae2308b4e87ab6c1c7501d6f282333c364ed79f21b99b45b47f7ffb
   languageName: node
   linkType: hard
 
@@ -2914,13 +2913,6 @@ __metadata:
   version: 2.1.1
   resolution: "@types/heic-convert@npm:2.1.1"
   checksum: 10c0/7d937ae85e034e30254fa241d3c6bf5136f2a4a9e813556e2ddad67ba07d85a9796c5fc0b18db09b3767314a8635ee73185ed6f8548a8d1417ec42b66b135d29
-  languageName: node
-  linkType: hard
-
-"@types/heic-decode@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@types/heic-decode@npm:2.0.0"
-  checksum: 10c0/62389858146171c5b2dbdb630d343d7555c73e38cacb72175635b02dc7cb583aaf37372ce2d11049ad82314ae3e330e91ea7041fbd9aa1c7743522a43f06828f
   languageName: node
   linkType: hard
 
@@ -5887,6 +5879,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"heic-to@npm:1.6.6":
+  version: 1.6.6
+  resolution: "heic-to@npm:1.6.6"
+  checksum: 10c0/45050c67e2bb79d0e96adb88eb89c071c0b2b3c9dd32b4e38c881a1baccf5ecd088cbc7d2a843d7467626681f5d07c43c4dd3e79beb7ebfcf4e8a7bf3e0b2695
+  languageName: node
+  linkType: hard
+
 "hermes-estree@npm:0.25.1":
   version: 0.25.1
   resolution: "hermes-estree@npm:0.25.1"
@@ -8440,10 +8439,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"seroval@npm:^1.6.2":
-  version: 1.6.8
-  resolution: "seroval@npm:1.6.8"
-  checksum: 10c0/c65f4ca1bd712d89c70c86df41bedc8270ee33cc8365c867761a9fe6310ab3b8c0fc43a48f6c1cea3cf9b5cc362714e7325e5f9275407303e4c51dfcebeb98b2
+"seroval@npm:1.6.11":
+  version: 1.6.11
+  resolution: "seroval@npm:1.6.11"
+  checksum: 10c0/343af2590cf6d9a6da392967325d2930481c5e970b3c33f69db3f7e7d0544b835a46ce922c640e35ad4a75e5b90d8068ee9880d64439840a36c2e64591963c28
   languageName: node
   linkType: hard
 

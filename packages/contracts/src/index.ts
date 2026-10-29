@@ -124,31 +124,28 @@ export {
   extractDocumentJobSchema,
 } from './jobs/extractDocumentJob.js';
 export type { ExtractDocumentJob } from './jobs/extractDocumentJob.js';
+export { privacyRectangleSchema, privacyEditsSchema } from './documents/privacySchemas.js';
+export type { PrivacyRectangle, PrivacyEdits } from './documents/privacySchemas.js';
+
 export {
-  CONVERT_HEIC_QUEUE,
-  CONVERT_HEIC_QUEUE_OPTIONS,
-  convertHeicJobSchema,
-} from './jobs/convertHeicJob.js';
-export type { ConvertHeicJob } from './jobs/convertHeicJob.js';
+  deleteDocumentRequestSchema,
+  documentDeletionImpactSchema,
+} from './documents/documentDeletionSchemas.js';
+export type { DeleteDocumentRequest, DocumentDeletionImpact } from './documents/documentDeletionSchemas.js';
+
 export {
-  privacyRectangleSchema,
-  createPrivacyDraftRequestSchema,
-  approvePrivacyRequestSchema,
-  privacyDraftSchema,
-} from './documents/privacySchemas.js';
-export type {
-  PrivacyRectangle,
-  PrivacyEdits,
-  CreatePrivacyDraftRequest,
-  ApprovePrivacyRequest,
-  PrivacyDraft,
-} from './documents/privacySchemas.js';
+  SANITIZE_DOCUMENT_IMAGE_QUEUE,
+  SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS,
+  sanitizeDocumentImageJobSchema,
+} from './jobs/sanitizeDocumentImageJob.js';
+export type { SanitizeDocumentImageJob } from './jobs/sanitizeDocumentImageJob.js';
+
 export {
-  PREPARE_OCR_IMAGE_QUEUE,
-  PREPARE_OCR_IMAGE_QUEUE_OPTIONS,
-  prepareOcrImageJobSchema,
-} from './jobs/prepareOcrImageJob.js';
-export type { PrepareOcrImageJob } from './jobs/prepareOcrImageJob.js';
+  PURGE_PENDING_OBJECTS_QUEUE,
+  PURGE_PENDING_OBJECTS_QUEUE_OPTIONS,
+  purgePendingObjectsJobSchema,
+} from './jobs/purgePendingObjectsJob.js';
+export type { PurgePendingObjectsJob } from './jobs/purgePendingObjectsJob.js';
 export {
   createSelfReportedCourseRequestSchema,
   medicationCourseSchema,

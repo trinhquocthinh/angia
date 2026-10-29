@@ -23,6 +23,7 @@ const SKELETON_TABLES = [
   'lab_results',
   'measurements',
   'medication_courses',
+  'object_purges',
   'ocr_operations',
   'prescription_items',
   'prescriptions',
@@ -53,6 +54,7 @@ const RLS_TABLES = [
   'lab_results',
   'measurements',
   'medication_courses',
+  'object_purges',
   'ocr_operations',
   'prescription_items',
   'prescriptions',
@@ -119,6 +121,7 @@ describe('runMigrations trên PostgreSQL rỗng', () => {
       );
       expect(rows[0]?.bypass).toBe(false);
       await expect(app.query('SELECT count(*) FROM health_profiles')).resolves.toBeDefined();
+      await expect(app.query('SELECT count(*) FROM object_purges')).resolves.toBeDefined();
     } finally {
       await app.end();
     }

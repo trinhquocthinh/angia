@@ -1,4 +1,4 @@
-import { canUseApprovedOcrImage } from '../domain/canUseApprovedOcrImage.js';
+import { canUseApprovedImage } from '../domain/canUseApprovedImage.js';
 import { canStartExtraction } from '../domain/canStartExtraction.js';
 import { OcrGateBlockedError } from './OcrGateBlockedError.js';
 import type { BudgetCall, ExtractionDependencies } from './ports.js';
@@ -11,7 +11,7 @@ export async function prepareExtraction(
   return await deps.repository.withFamily(job.familyId, async (store) => {
     const found = await store.findDocument(job.documentId);
     if (!found) return null;
-    if (found.status !== 'uploaded' && !canStartExtraction(found.status)) {
+    if (!canStartExtraction(found.status)) {
       await store.settleBudget(found.id, 0, call);
       return null;
     }
@@ -22,11 +22,8 @@ export async function prepareExtraction(
       return 'consent_required' as const;
     }
     if (
-      found.status === 'uploaded' ||
-      !found.ocrImageKey?.startsWith(`families/${job.familyId}/`) ||
-      !found.ocrImageKey.startsWith(found.originalKey.slice(0, found.originalKey.lastIndexOf('/') + 1)) ||
-      found.ocrImageKey === found.previewKey ||
-      !canUseApprovedOcrImage(found, found.originalKey, found.ocrImageSha256 ?? '')
+      !found.imageKey?.startsWith(`families/${job.familyId}/`) ||
+      !canUseApprovedImage(found, found.imageSha256 ?? '')
     ) {
       await store.markManualEntry(found.id);
       await store.settleBudget(found.id, 0, call);

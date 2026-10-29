@@ -6,7 +6,7 @@ interface ReportInput {
   generatedAt: string;
   since: string;
   verdict: OcrLatencyVerdict;
-  preparation: DurationSummary;
+  sanitization: DurationSummary;
   samples: readonly OcrLatencySample[];
 }
 
@@ -26,8 +26,10 @@ export function renderOcrLatencyReport(input: ReportInput): string {
     '# NFR-3 — Thời gian đáp ứng trích xuất OCR (TC-095)',
     '',
     `Sinh lúc ${input.generatedAt}; job tạo từ ${input.since}.`,
-    'Khoảng đo: từ lúc người dùng duyệt riêng tư (API tạo job `extract-document`) tới khi job hoàn tất —',
-    'gồm chờ hàng đợi, gọi AI, model dự phòng và thử lại. Không gồm thời gian người dùng che định danh.',
+    'Khoảng đo: từ `created_on` của job `sanitize-document-image` (lúc tải lên) tới',
+    '`completed_on` của job `extract-document` đầu tiên — gồm làm sạch, chờ hàng đợi, gọi AI,',
+    'model dự phòng và thử lại. Không gồm thời gian người dùng che định danh trên máy.',
+    'Chỉ tính mẫu có đủ hai job; OCR thiếu job làm sạch không vào tập đo.',
     '',
     `Kết luận: ${verdict.passed ? '**ĐẠT**' : '**KHÔNG ĐẠT**'} (trung vị ≤ ${seconds(MEDIAN_LIMIT_MS)} ` +
       `trên ≥ ${REQUIRED_DOCUMENTS} chứng từ có bản trích xuất)`,
@@ -36,12 +38,12 @@ export function renderOcrLatencyReport(input: ReportInput): string {
     '| Tập | Số mẫu | Trung vị | p90 | Nhỏ nhất | Lớn nhất |',
     '| :-- | --: | --: | --: | --: | --: |',
     summaryRow('Có bản trích xuất (pending_review)', verdict.withExtraction),
-    summaryRow('Mọi chứng từ', verdict.all),
-    summaryRow('Chuẩn bị ảnh OCR (prepare-ocr-image)', input.preparation),
+    summaryRow('Mọi chứng từ có OCR và đủ mốc đo', verdict.all),
+    summaryRow('Thời gian làm sạch (sanitize-document-image)', input.sanitization),
     '',
     `Phân bố outcome: ${outcomes || '—'}`,
     '',
-    '| Chứng từ | Outcome | Thử lại | Chờ hàng đợi | Tổng |',
+    '| Chứng từ | Outcome | Thử lại OCR | Chờ hàng đợi OCR | Tổng |',
     '| :-- | :-- | --: | --: | --: |',
     ...input.samples.map(
       (sample) =>

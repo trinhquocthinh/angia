@@ -1,11 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
+import { createSanitizePgFixture } from '@src/shared/test/createSanitizePgFixture.test-helper.js';
 import { createBillingRepository } from './createBillingRepository.js';
 import type { BillingSource } from '../application/ports.js';
-let fixture: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
+let fixture: Awaited<ReturnType<typeof createSanitizePgFixture>>;
 beforeAll(async () => {
-  fixture = await createPrivacyPgFixture();
+  fixture = await createSanitizePgFixture();
 });
 afterAll(async () => {
   await fixture?.close();

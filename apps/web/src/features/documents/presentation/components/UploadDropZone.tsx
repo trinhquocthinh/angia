@@ -7,7 +7,7 @@ const ACCEPT = '.jpg,.jpeg,.png,.webp,.heic,.heif,image/jpeg,image/png,image/web
 const dropHint = (disabled: boolean, blockedReason: string | null) =>
   disabled
     ? (blockedReason ?? 'Đang gửi ảnh, chờ gửi xong rồi chọn thêm.')
-    : `Hỗ trợ JPG, PNG, HEIC, WebP · Tối đa 30 MB mỗi ảnh, ảnh lớn được nén trên máy trước khi gửi · Tối đa ${MAX_FILES_PER_PICK} ảnh mỗi lần chọn`;
+    : `Hỗ trợ JPG, PNG, HEIC, WebP · Tối đa 30 MB mỗi ảnh, ảnh được che và nén trên máy trước khi gửi · Tối đa ${MAX_FILES_PER_PICK} ảnh mỗi lần chọn`;
 
 export function UploadDropZone({
   disabled,

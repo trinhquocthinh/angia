@@ -1315,14 +1315,15 @@
             "type": "string",
             "enum": [
               "uploaded",
-              "awaiting_privacy",
               "extracting",
               "pending_review",
               "approved",
-              "rejected",
               "manual_entry",
               "awaiting_budget"
             ]
+          },
+          "hasImage": {
+            "type": "boolean"
           },
           "documentDate": {
             "type": [
@@ -1348,6 +1349,7 @@
           "batchId",
           "type",
           "status",
+          "hasImage",
           "documentDate",
           "mimeType",
           "sizeBytes",
@@ -1379,6 +1381,9 @@
               "lab_result",
               "device_reading"
             ]
+          },
+          "sendToAi": {
+            "type": "string"
           }
         },
         "required": [
@@ -2510,6 +2515,57 @@
           }
         ]
       },
+      "DocumentDeletionImpact": {
+        "type": "object",
+        "properties": {
+          "prescriptions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "prescriptionItems": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "labResults": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "measurements": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "medicationCourses": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "activeMedicationCourses": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "prescriptions",
+          "prescriptionItems",
+          "labResults",
+          "measurements",
+          "medicationCourses",
+          "activeMedicationCourses"
+        ]
+      },
+      "DeleteDocumentRequest": {
+        "type": "object",
+        "properties": {
+          "confirm": {
+            "type": "string",
+            "enum": [
+              "XÓA"
+            ]
+          }
+        },
+        "required": [
+          "confirm"
+        ]
+      },
       "ManualRecordsResponse": {
         "type": "object",
         "properties": {
@@ -2534,226 +2590,6 @@
           "prescription",
           "labResults"
         ]
-      },
-      "PrivacyDraft": {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "state": {
-                "type": "string",
-                "enum": [
-                  "none"
-                ]
-              }
-            },
-            "required": [
-              "state"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "state": {
-                "type": "string",
-                "enum": [
-                  "pending"
-                ]
-              },
-              "draftId": {
-                "type": "string",
-                "format": "uuid"
-              }
-            },
-            "required": [
-              "state",
-              "draftId"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "state": {
-                "type": "string",
-                "enum": [
-                  "failed"
-                ]
-              },
-              "draftId": {
-                "type": "string",
-                "format": "uuid"
-              }
-            },
-            "required": [
-              "state",
-              "draftId"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "state": {
-                "type": "string",
-                "enum": [
-                  "ready"
-                ]
-              },
-              "draftId": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "sha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
-              },
-              "imageUrl": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "state",
-              "draftId",
-              "sha256",
-              "imageUrl"
-            ],
-            "additionalProperties": false
-          }
-        ]
-      },
-      "CreatePrivacyDraftRequest": {
-        "type": "object",
-        "properties": {
-          "rotation": {
-            "anyOf": [
-              {
-                "type": "number",
-                "enum": [
-                  0
-                ]
-              },
-              {
-                "type": "number",
-                "enum": [
-                  90
-                ]
-              },
-              {
-                "type": "number",
-                "enum": [
-                  180
-                ]
-              },
-              {
-                "type": "number",
-                "enum": [
-                  270
-                ]
-              }
-            ]
-          },
-          "crop": {
-            "type": "object",
-            "properties": {
-              "left": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 1000000
-              },
-              "top": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 1000000
-              },
-              "width": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 1000000
-              },
-              "height": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 1000000
-              }
-            },
-            "required": [
-              "left",
-              "top",
-              "width",
-              "height"
-            ],
-            "additionalProperties": false
-          },
-          "masks": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "left": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 1000000
-                },
-                "top": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 1000000
-                },
-                "width": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "maximum": 1000000
-                },
-                "height": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "maximum": 1000000
-                }
-              },
-              "required": [
-                "left",
-                "top",
-                "width",
-                "height"
-              ],
-              "additionalProperties": false
-            },
-            "maxItems": 32
-          }
-        },
-        "required": [
-          "rotation",
-          "crop",
-          "masks"
-        ],
-        "additionalProperties": false
-      },
-      "ApprovePrivacyRequest": {
-        "type": "object",
-        "properties": {
-          "draftId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "sha256": {
-            "type": "string",
-            "pattern": "^[0-9a-f]{64}$"
-          },
-          "confirmed": {
-            "type": "boolean",
-            "enum": [
-              true
-            ]
-          }
-        },
-        "required": [
-          "draftId",
-          "sha256",
-          "confirmed"
-        ],
-        "additionalProperties": false
       },
       "MeasurementPage": {
         "type": "object",
@@ -3051,11 +2887,9 @@
             "type": "string",
             "enum": [
               "uploaded",
-              "awaiting_privacy",
               "extracting",
               "pending_review",
               "approved",
-              "rejected",
               "manual_entry",
               "awaiting_budget",
               "manual_record"
@@ -3072,7 +2906,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "hasOcrImage": {
+          "hasImage": {
             "type": "boolean"
           },
           "records": {
@@ -3109,7 +2943,7 @@
           "entryDate",
           "dateKnown",
           "createdAt",
-          "hasOcrImage",
+          "hasImage",
           "records"
         ]
       },
@@ -5732,7 +5566,7 @@
         "tags": [
           "documents"
         ],
-        "summary": "Tải lên 1–10 ảnh chứng từ (JPEG/PNG/HEIC/WebP ≤ 10 MiB/ảnh) cho hồ sơ đã đồng thuận",
+        "summary": "Tải lên 1–10 ảnh chứng từ đã che (chỉ JPEG ≤ 10 MiB/ảnh) cho hồ sơ đã đồng thuận",
         "parameters": [
           {
             "schema": {
@@ -5826,7 +5660,7 @@
             }
           },
           "422": {
-            "description": "ERR_VALIDATION (không có tệp, sai loại khai báo) hoặc ERR_NO_VALID_FILE",
+            "description": "ERR_VALIDATION (không có tệp, sai loại khai báo hoặc cờ sendToAi) hoặc ERR_NO_VALID_FILE",
             "content": {
               "application/json": {
                 "schema": {
@@ -5872,11 +5706,9 @@
                   "type": "string",
                   "enum": [
                     "uploaded",
-                    "awaiting_privacy",
                     "extracting",
                     "pending_review",
                     "approved",
-                    "rejected",
                     "manual_entry",
                     "awaiting_budget"
                   ]
@@ -5887,11 +5719,9 @@
                     "type": "string",
                     "enum": [
                       "uploaded",
-                      "awaiting_privacy",
                       "extracting",
                       "pending_review",
                       "approved",
-                      "rejected",
                       "manual_entry",
                       "awaiting_budget"
                     ]
@@ -6062,7 +5892,7 @@
         "tags": [
           "documents"
         ],
-        "summary": "Luồng ảnh chứng từ (preview chưa có thì trả ảnh gốc; ocr = bản đã che đã gửi AI)",
+        "summary": "Ảnh chứng từ đã che định danh",
         "parameters": [
           {
             "schema": {
@@ -6072,27 +5902,13 @@
             "required": true,
             "name": "id",
             "in": "path"
-          },
-          {
-            "schema": {
-              "type": "string",
-              "enum": [
-                "preview",
-                "original",
-                "ocr"
-              ],
-              "default": "original"
-            },
-            "required": false,
-            "name": "variant",
-            "in": "query"
           }
         ],
         "responses": {
           "200": {
             "description": "Ảnh",
             "content": {
-              "image/*": {
+              "image/jpeg": {
                 "schema": {
                   "type": "string",
                   "format": "binary"
@@ -6241,12 +6057,12 @@
         }
       }
     },
-    "/api/source-documents/{id}/reject": {
-      "post": {
+    "/api/source-documents/{id}/deletion-impact": {
+      "get": {
         "tags": [
           "documents"
         ],
-        "summary": "Loại bỏ chứng từ chờ duyệt hoặc chờ nhập tay; ảnh gốc giữ nguyên",
+        "summary": "Số bản ghi sẽ mất khi xóa chứng từ (SPEC-037)",
         "parameters": [
           {
             "schema": {
@@ -6260,11 +6076,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Chứng từ rejected",
+            "description": "Số lượng theo loại, gồm đợt thuốc đang dùng",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SourceDocument"
+                  "$ref": "#/components/schemas/DocumentDeletionImpact"
                 }
               }
             }
@@ -6300,7 +6116,101 @@
             }
           },
           "409": {
-            "description": "ERR_INVALID_STATE_TRANSITION",
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/source-documents/{id}": {
+      "delete": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Xóa vĩnh viễn chứng từ, ảnh và mọi bản ghi sinh ra từ nó (SPEC-037, BR-048)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteDocumentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Đã xóa"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần main cùng gia đình (và CSRF với lệnh đột biến)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
             "content": {
               "application/json": {
                 "schema": {
@@ -6399,481 +6309,6 @@
           },
           "422": {
             "description": "ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_DOSE_INFO_MISSING (details.invalidItemIndexes), ERR_VALIDATION",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/source-documents/{id}/privacy-drafts": {
-      "post": {
-        "tags": [
-          "documents"
-        ],
-        "summary": "Tạo bản che/cắt để kiểm tra; chưa gọi AI",
-        "parameters": [
-          {
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true,
-            "name": "id",
-            "in": "path"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePrivacyDraftRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "202": {
-            "description": "Bản nháp hiện hành",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PrivacyDraft"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "ERR_UNAUTHENTICATED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "ERR_FORBIDDEN",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ERR_NOT_FOUND",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "ERR_INVALID_STATE_TRANSITION, ERR_CONSENT_REQUIRED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "413": {
-            "description": "Giới hạn body 16 KiB",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "ERR_VALIDATION",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "ERR_QUEUE_QUOTA (Retry-After: 30) | ERR_RATE_LIMITED (Retry-After) — SPEC-030",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/source-documents/{id}/privacy-draft": {
-      "get": {
-        "tags": [
-          "documents"
-        ],
-        "summary": "Trạng thái bản ảnh kiểm tra hiện hành",
-        "parameters": [
-          {
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true,
-            "name": "id",
-            "in": "path"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Bản nháp hiện hành",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PrivacyDraft"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "ERR_UNAUTHENTICATED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "ERR_FORBIDDEN",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ERR_NOT_FOUND",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/source-documents/{id}/privacy-drafts/{draftId}/image": {
-      "get": {
-        "tags": [
-          "documents"
-        ],
-        "summary": "PNG đúng bản kiểm tra hiện hành",
-        "parameters": [
-          {
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true,
-            "name": "id",
-            "in": "path"
-          },
-          {
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true,
-            "name": "draftId",
-            "in": "path"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "PNG",
-            "content": {
-              "image/png": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "ERR_UNAUTHENTICATED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "ERR_FORBIDDEN",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ERR_NOT_FOUND",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút đồng thuận",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/source-documents/{id}/privacy-approval": {
-      "post": {
-        "tags": [
-          "documents"
-        ],
-        "summary": "Main xác nhận đúng hash PNG và gửi OCR",
-        "parameters": [
-          {
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true,
-            "name": "id",
-            "in": "path"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApprovePrivacyRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Chứng từ",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SourceDocument"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "ERR_UNAUTHENTICATED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "ERR_FORBIDDEN",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ERR_NOT_FOUND",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "ERR_INVALID_STATE_TRANSITION, ERR_CONSENT_REQUIRED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "413": {
-            "description": "Giới hạn body 16 KiB",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "ERR_VALIDATION",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "ERR_QUEUE_QUOTA (Retry-After: 30) | ERR_RATE_LIMITED (Retry-After) — SPEC-030",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/source-documents/{id}/manual-entry": {
-      "post": {
-        "tags": [
-          "documents"
-        ],
-        "summary": "Chọn nhập tay",
-        "parameters": [
-          {
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "required": true,
-            "name": "id",
-            "in": "path"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Chứng từ",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SourceDocument"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "ERR_UNAUTHENTICATED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "ERR_FORBIDDEN",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "ERR_NOT_FOUND",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "ERR_INVALID_STATE_TRANSITION, ERR_CONSENT_REQUIRED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "413": {
-            "description": "Giới hạn body 16 KiB",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "ERR_VALIDATION",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "ERR_QUEUE_QUOTA (Retry-After: 30) | ERR_RATE_LIMITED (Retry-After) — SPEC-030",
             "content": {
               "application/json": {
                 "schema": {

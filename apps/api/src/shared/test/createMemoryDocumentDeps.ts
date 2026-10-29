@@ -1,6 +1,7 @@
 import type { DocumentDependencies, DocumentStore } from '@src/features/documents/application/ports.js';
 import type { SourceDocument } from '@src/features/documents/domain/SourceDocument.js';
 import type { QuotaLimits, UsageCounts } from '@src/features/familyQuota/domain/FamilyQuota.js';
+import { createStubDocumentDeps } from './createStubDocumentDeps.js';
 import { TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
 
 interface MemoryOptions {
@@ -35,6 +36,7 @@ export function createMemoryDocumentDeps(profiles: Profile[], options: MemoryOpt
   const deps: DocumentDependencies = {
     newId: () => `id-${++ids}`,
     quota: { ...TEST_QUOTA_POLICY, limits: options.limits ?? TEST_QUOTA_POLICY.limits },
+    deletion: createStubDocumentDeps().deletion,
     storage: {
       put: async (key, stream, contentType) => {
         const body = new Uint8Array(await new Response(stream).arrayBuffer());
@@ -63,14 +65,13 @@ export function createMemoryDocumentDeps(profiles: Profile[], options: MemoryOpt
               familyId,
               status: 'uploaded',
               documentDate: null,
-              previewKey: null,
-              ocrImageKey: null,
+              imageSha256: null,
               createdAt: new Date('2026-10-06T00:00:00Z'),
             };
             pendingDocuments.push(document);
             return document;
           },
-          enqueuePreview: async (documentId) => {
+          enqueueSanitize: async (documentId) => {
             pendingJobs.push({ documentId, familyId });
           },
         });

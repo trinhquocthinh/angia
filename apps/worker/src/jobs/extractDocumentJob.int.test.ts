@@ -1,12 +1,8 @@
 import { seedOcrGate } from '@src/shared/test/seedOcrGate.js';
-import { prepareDocumentPreview } from '@src/features/documentPreview/application/prepareDocumentPreview.js';
-import { createPreviewRepository } from '@src/features/documentPreview/infrastructure/createPreviewRepository.js';
-import { handleConvertHeicJob } from './handleConvertHeicJob.js';
-import { registerConvertHeicJob } from './registerConvertHeicJob.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { APPROVED_OCR_BYTES, seedExtractingDocument } from '@src/shared/test/seedExtractingDocument.js';
 import { fileURLToPath } from 'node:url';
-import { CONVERT_HEIC_QUEUE, EXTRACT_DOCUMENT_QUEUE } from '@angia/contracts';
+import { EXTRACT_DOCUMENT_QUEUE } from '@angia/contracts';
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
@@ -40,8 +36,6 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
       defaultMonthlyScans: 0,
       now: () => new Date(),
     },
-    storage: { get: async () => new Uint8Array([0xff, 0xd8, 0xff]) },
-    images: { heicToJpeg: async (bytes) => bytes },
     extractor: createFakeExtractor(),
     ocrImages: {
       get: async () => ({
@@ -179,36 +173,44 @@ describe('Worker extract-document trên PostgreSQL thật (E2-S5-T2, Nợ #11)',
       await owner.query('ROLLBACK');
     }
   });
-  const previewDeps = () => ({
-    repository: createPreviewRepository(pool),
-    newId: randomUUID,
-    images: { toWebp: async () => new Uint8Array([1, 2, 3]) },
-    storage: { get: async () => new Uint8Array([1]), put: async () => {}, delete: async () => {} },
-  });
-  it('TC-156: job convert-heic thật → lưu previewKey, awaiting_privacy; RLS/CAS chặn nhóm khác và job lặp', async () => {
-    const own = await seedDocument(null, false);
-    const other = await seedDocument(null, false);
+  it('TC-420: OCR đến trước sanitize → skipped, giữ uploaded và ảnh tạm không có hash', async () => {
+    const own = await seedDocument();
+    const documentId = randomUUID();
+    const imageKey = `families/${own.familyId}/profiles/profile/documents/${documentId}/upload.jpg`;
+    await owner.query(
+      `INSERT INTO source_documents (id, family_id, health_profile_id, batch_id, status, image_key,
+        mime_type, size_bytes, privacy_approved_by, privacy_approved_at)
+       SELECT $1, family_id, health_profile_id, batch_id, 'uploaded', $2,
+         'image/jpeg', 3, privacy_approved_by, privacy_approved_at FROM source_documents WHERE id=$3`,
+      [documentId, imageKey, own.documentId],
+    );
+    const d = deps();
+    d.ocrImages.get = async () => {
+      throw new Error('Không được đọc ảnh chưa sanitize');
+    };
+    d.extractor.extract = async () => {
+      throw new Error('Không được gọi AI trước sanitize');
+    };
     expect(
-      await prepareDocumentPreview(previewDeps(), { ...own, familyId: other.familyId, finalAttempt: false }),
+      await handleExtractDocumentJob(
+        d,
+        logger,
+      )({
+        id: 'early',
+        data: { documentId, familyId: own.familyId },
+        retryCount: 0,
+        retryLimit: 2,
+      }),
     ).toEqual({ status: 'skipped' });
-    await registerConvertHeicJob(boss, handleConvertHeicJob(previewDeps(), logger));
-    await boss.send(CONVERT_HEIC_QUEUE, own);
-    await expect
-      .poll(() => documentState(own.documentId), { timeout: 15000, interval: 250 })
-      .toMatchObject({ status: 'awaiting_privacy', extractions: 0 });
-    const row = (
-      await owner.query('SELECT preview_key, original_key FROM source_documents WHERE id=$1', [
-        own.documentId,
-      ])
-    ).rows[0];
-    expect(row.preview_key).toContain(`families/${own.familyId}/`);
-    expect(row.preview_key).toMatch(/\.webp$/);
-    expect(row.original_key).toMatch(/original\.jpg$/);
-    expect(await prepareDocumentPreview(previewDeps(), { ...own, finalAttempt: false })).toEqual({
-      status: 'skipped',
-    });
-    expect(await documentState(other.documentId)).toMatchObject({ status: 'uploaded', extractions: 0 });
+    expect(
+      (
+        await owner.query('SELECT status,image_key,image_sha256 FROM source_documents WHERE id=$1', [
+          documentId,
+        ])
+      ).rows[0],
+    ).toEqual({ status: 'uploaded', image_key: imageKey, image_sha256: null });
   });
+
   it('TC-157: job OCR cũ thiếu xác nhận → manual_entry, không tạo Extraction', async () => {
     const own = await seedDocument(null, false);
     expect(

@@ -11,16 +11,16 @@ const usage = (daily: number, pending: number): FamilyUsage => ({
 });
 
 describe('TC-302 — cảnh báo số ảnh chờ gửi vượt chỗ còn lại (SPEC-030)', () => {
-  it('5 ảnh chờ gửi khi chỉ còn 3 chỗ → cảnh báo nêu số còn lại', () => {
+  it('5 ảnh chờ gửi khi chỉ còn 3 lượt hôm nay → cảnh báo nêu số còn lại', () => {
     const html = renderToStaticMarkup(
-      <UploadPickNotices tooMany={false} usage={usage(95, 7)} readyCount={5} />,
+      <UploadPickNotices tooMany={false} usage={usage(97, 10)} readyCount={5} />,
     );
     expect(html).toContain('Gia đình chỉ còn gửi được 3 ảnh lúc này.');
   });
 
   it('vừa đủ chỗ, chưa có mức dùng, hoặc đã khóa vì chạm trần → không cảnh báo trùng', () => {
     const quiet = [
-      <UploadPickNotices key="a" tooMany={false} usage={usage(95, 7)} readyCount={3} />,
+      <UploadPickNotices key="a" tooMany={false} usage={usage(97, 10)} readyCount={3} />,
       <UploadPickNotices key="b" tooMany={false} usage={null} readyCount={30} />,
       <UploadPickNotices key="c" tooMany={false} usage={usage(100, 0)} readyCount={2} />,
     ];

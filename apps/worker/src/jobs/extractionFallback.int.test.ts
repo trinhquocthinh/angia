@@ -5,7 +5,7 @@ import type { ExtractionDependencies } from '@src/features/extraction/applicatio
 import { createExtractionRepository } from '@src/features/extraction/infrastructure/createExtractionRepository.js';
 import { createFallbackExtractor } from '@src/features/extraction/infrastructure/createFallbackExtractor.js';
 import { createOpenRouterExtractor } from '@src/features/extraction/infrastructure/createOpenRouterExtractor.js';
-import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
+import { createSanitizePgFixture } from '@src/shared/test/createSanitizePgFixture.test-helper.js';
 import { APPROVED_OCR_BYTES, seedExtractingDocument } from '@src/shared/test/seedExtractingDocument.js';
 import { seedOcrGate } from '@src/shared/test/seedOcrGate.js';
 import { handleExtractDocumentJob } from './handleExtractDocumentJob.js';
@@ -49,7 +49,7 @@ function openRouter(byModel: Record<string, () => Response | Promise<Response>>)
 }
 
 describe('Model dự phòng trên PostgreSQL thật (E3-S6-T2, SPEC-009, BR-016)', () => {
-  let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
+  let fx: Awaited<ReturnType<typeof createSanitizePgFixture>>;
   const deps = (extractor: ExtractionDependencies['extractor']): ExtractionDependencies => ({
     repository: createExtractionRepository(fx.pool, () => NOW),
     budget: {
@@ -57,8 +57,6 @@ describe('Model dự phòng trên PostgreSQL thật (E3-S6-T2, SPEC-009, BR-016)
       defaultMonthlyScans: 0,
       now: () => NOW,
     },
-    storage: { get: async () => APPROVED_OCR_BYTES },
-    images: { heicToJpeg: async (bytes) => bytes },
     extractor,
     ocrImages: {
       get: async () => ({
@@ -73,10 +71,10 @@ describe('Model dự phòng trên PostgreSQL thật (E3-S6-T2, SPEC-009, BR-016)
   const state = async (documentId: string) =>
     (
       await fx.owner.query(
-        `SELECT d.status, d.original_key, d.ocr_image_key IS NOT NULL AS has_ocr_image, count(e.id)::int AS extractions,
+        `SELECT d.status, d.image_key, count(e.id)::int AS extractions,
            max(e.provider) AS provider, max(e.model) AS model, max(e.cost_usd) AS cost
          FROM source_documents d LEFT JOIN extractions e ON e.source_document_id = d.id
-         WHERE d.id = $1 GROUP BY d.id, d.original_key`,
+         WHERE d.id = $1 GROUP BY d.id`,
         [documentId],
       )
     ).rows[0];
@@ -87,7 +85,7 @@ describe('Model dự phòng trên PostgreSQL thật (E3-S6-T2, SPEC-009, BR-016)
   };
 
   beforeAll(async () => {
-    fx = await createPrivacyPgFixture();
+    fx = await createSanitizePgFixture();
   });
   afterAll(async () => {
     await fx?.close();
@@ -109,7 +107,7 @@ describe('Model dự phòng trên PostgreSQL thật (E3-S6-T2, SPEC-009, BR-016)
     expect(ai.fetchFn).toHaveBeenCalledTimes(2);
   });
 
-  it('TC-087: cả hai model lỗi mạng ở lượt cuối → manual_entry, giữ ảnh gốc, không tạo Extraction', async () => {
+  it('TC-087: cả hai model lỗi mạng ở lượt cuối → manual_entry, giữ ảnh đã che, không tạo Extraction', async () => {
     const doc = await seedDocument();
     const down = () => Promise.reject(new TypeError('fetch failed'));
     const ai = openRouter({ [PRIMARY]: down, [FALLBACK]: down });
@@ -121,8 +119,7 @@ describe('Model dự phòng trên PostgreSQL thật (E3-S6-T2, SPEC-009, BR-016)
     });
     expect(await state(doc.documentId)).toMatchObject({
       status: 'manual_entry',
-      original_key: expect.stringMatching(/original\.jpg$/),
-      has_ocr_image: true,
+      image_key: expect.stringMatching(/images\/image\.jpg$/),
       extractions: 0,
     });
     expect(ai.fetchFn).toHaveBeenCalledTimes(4);

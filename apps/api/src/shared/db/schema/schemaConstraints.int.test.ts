@@ -37,7 +37,7 @@ describe('Ràng buộc lược đồ Walking Skeleton', () => {
       [batchId, familyId, profileId, accountId],
     );
     await owner.query(
-      `INSERT INTO source_documents (id, family_id, health_profile_id, batch_id, status, original_key, mime_type, size_bytes)
+      `INSERT INTO source_documents (id, family_id, health_profile_id, batch_id, status, image_key, mime_type, size_bytes)
        VALUES ($1, $2, $3, $4, 'uploaded', 'k', 'image/jpeg', 10)`,
       [documentId, familyId, profileId, batchId],
     );

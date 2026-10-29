@@ -1,3 +1,4 @@
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import type { HealthProfile } from '../../application/ports';
 import { formatWithdrawnAt } from '../../application/formatWithdrawnAt';
 const labels = {
@@ -13,29 +14,45 @@ type Props = {
     consentConfirmedByName?: string | null;
   };
 };
+const term = 'font-medium text-[#131d1d]';
 export function ProfileConsentStatus({ profile }: Props) {
   const confirmed = profile.consentStatus === 'confirmed';
   return (
-    <div className="mt-6 flex-1 rounded-xl bg-[#eaf6f5] p-4">
-      <p className="text-sm font-medium text-[#004135]">{labels[profile.consentStatus]}</p>
+    <div className="mt-3.5 flex flex-1 flex-col gap-2 rounded-xl border border-[#bfc9c4]/20 bg-[#eaf6f5] p-3 lg:mt-5 lg:p-4">
+      <div className="flex items-center justify-between gap-2">
+        <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#286958]">
+          <AdminIcon name={confirmed ? 'verified_user' : 'info'} size={18} />
+          {labels[profile.consentStatus]}
+        </p>
+        {confirmed && profile.consentBasis === 'guardian' && (
+          <span className="hidden text-[11px] font-medium tracking-[0.03em] text-[#707975] lg:inline">
+            Ủy quyền giám hộ
+          </span>
+        )}
+      </div>
       {confirmed ? (
-        <div className="mt-2 break-words text-sm leading-6 text-[#55615f]">
+        <div className="flex flex-col gap-0.5 break-words text-[13px] leading-5 text-[#404945]">
           <p>
-            Người đồng ý: {profile.consentRespondentName ?? 'Không còn thông tin'}
-            {profile.consentSource !== 'self' && ' (thông tin tự nhập, chưa được xác minh).'}{' '}
+            <span className={term}>Người đồng ý:</span>{' '}
+            {profile.consentRespondentName ?? 'Không còn thông tin'}
+            {profile.consentSource !== 'self' && (
+              <span className="text-xs text-[#707975]"> (thông tin tự nhập, chưa được xác minh)</span>
+            )}
           </p>
           {profile.consentSource === 'main_attested' && (
             <p>
-              Người cam kết:{' '}
+              <span className={term}>Người cam kết:</span>{' '}
               {profile.consentConfirmedByName ?? 'Không còn thông tin tài khoản trong gia đình'}
             </p>
           )}
           {profile.consentConfirmedAt && (
-            <p>Ngày xác nhận: {formatWithdrawnAt(profile.consentConfirmedAt)}</p>
+            <p>
+              <span className={term}>Ngày xác nhận:</span> {formatWithdrawnAt(profile.consentConfirmedAt)}
+            </p>
           )}
         </div>
       ) : (
-        <p className="mt-2 text-sm leading-6 text-[#55615f]">
+        <p className="text-[13px] leading-5 text-[#404945]">
           {profile.consentAction === 'attestation'
             ? 'Xác nhận khi đã hỏi ý kiến và được người thân hoặc người giám hộ hợp pháp đồng ý.'
             : profile.consentAction === 'self'

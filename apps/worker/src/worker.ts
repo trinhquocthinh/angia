@@ -1,25 +1,19 @@
+import { createSanitizeRepository } from '@src/features/documentSanitize/infrastructure/createSanitizeRepository.js';
+import { createSanitizeStorage } from '@src/features/documentSanitize/infrastructure/createSanitizeStorage.js';
+import { createJpegSanitizer } from '@src/features/documentSanitize/infrastructure/createJpegSanitizer.js';
+import { handleSanitizeDocumentImageJob } from '@src/jobs/handleSanitizeDocumentImageJob.js';
+import { registerSanitizeDocumentImageJob } from '@src/jobs/registerSanitizeDocumentImageJob.js';
 import { createBillingRepository } from '@src/features/aiBilling/infrastructure/createBillingRepository.js';
 import { createProviderBillingReader } from '@src/features/aiBilling/infrastructure/createProviderBillingReader.js';
 import { registerSyncProviderBillingJob } from '@src/jobs/registerSyncProviderBillingJob.js';
 import { createAiRoutingReader } from '@src/features/aiRouting/infrastructure/createAiRoutingReader.js';
 import { createExtractionAttempts } from '@src/features/aiRouting/infrastructure/createExtractionAttempts.js';
-import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
-import { createPrivacyStorage } from '@src/features/documentPrivacy/infrastructure/createPrivacyStorage.js';
-import { createPrivacyImageRenderer } from '@src/features/documentPrivacy/infrastructure/createPrivacyImageRenderer.js';
-import { handlePrepareOcrImageJob } from '@src/jobs/handlePrepareOcrImageJob.js';
-import { registerPrepareOcrImageJob } from '@src/jobs/registerPrepareOcrImageJob.js';
 import { v7 as newId } from 'uuid';
-import { createApprovedOcrImageReader } from '@src/features/extraction/infrastructure/createApprovedOcrImageReader.js';
-import { createDocumentPreviewConverter } from '@src/features/extraction/infrastructure/createDocumentPreviewConverter.js';
-import { createPreviewRepository } from '@src/features/documentPreview/infrastructure/createPreviewRepository.js';
-import { createPreviewStorage } from '@src/features/documentPreview/infrastructure/createPreviewStorage.js';
-import { handleConvertHeicJob } from '@src/jobs/handleConvertHeicJob.js';
-import { registerConvertHeicJob } from '@src/jobs/registerConvertHeicJob.js';
+import { createDocumentImageReader } from '@src/features/extraction/infrastructure/createDocumentImageReader.js';
 import pg from 'pg';
 import { pino } from 'pino';
 import { createExtractionRepository } from '@src/features/extraction/infrastructure/createExtractionRepository.js';
 import { createFakeExtractor } from '@src/features/extraction/infrastructure/createFakeExtractor.js';
-import { createHeicImageConverter } from '@src/features/extraction/infrastructure/createHeicImageConverter.js';
 import { createS3ObjectReader } from '@src/features/extraction/infrastructure/createS3ObjectReader.js';
 import { createBudgetRequeueRepository } from '@src/features/extraction/infrastructure/createBudgetRequeueRepository.js';
 import { handleExtractDocumentJob } from '@src/jobs/handleExtractDocumentJob.js';
@@ -29,6 +23,8 @@ import { registerRecoverDeadExtractionJob } from '@src/jobs/registerRecoverDeadE
 import { registerRequeueAwaitingBudgetJob } from '@src/jobs/registerRequeueAwaitingBudgetJob.js';
 import { registerSweepOrphanObjectsJob } from '@src/jobs/registerSweepOrphanObjectsJob.js';
 import { registerPurgeProfileObjectsJob } from '@src/jobs/registerPurgeProfileObjectsJob.js';
+import { registerPurgePendingObjectsJob } from '@src/jobs/registerPurgePendingObjectsJob.js';
+import { createObjectPurgeRepository } from '@src/features/objectPurges/infrastructure/createObjectPurgeRepository.js';
 import { createPurgeRepository } from '@src/features/purgeProfileObjects/infrastructure/createPurgeRepository.js';
 import { createOrphanRepository } from '@src/features/orphanObjects/infrastructure/createOrphanRepository.js';
 import { createOrphanStorage } from '@src/features/orphanObjects/infrastructure/createOrphanStorage.js';
@@ -108,10 +104,8 @@ try {
       defaultMonthlyScans: config.SCAN_QUOTA_DEFAULT_MONTHLY,
       now: () => new Date(),
     },
-    storage: createS3ObjectReader(createS3Client(config), config.S3_BUCKET),
-    images: createHeicImageConverter(),
     extractor: createFakeExtractor(),
-    ocrImages: createApprovedOcrImageReader(createS3ObjectReader(createS3Client(config), config.S3_BUCKET)),
+    ocrImages: createDocumentImageReader(createS3ObjectReader(createS3Client(config), config.S3_BUCKET)),
   };
   const attempts = createExtractionAttempts(extraction, createAiRoutingReader(pool), {
     runMode: config.AI_RUN_MODE,
@@ -128,29 +122,25 @@ try {
     extraction.budget,
     logger,
   );
-  await registerConvertHeicJob(
+  await registerSanitizeDocumentImageJob(
     boss,
-    handleConvertHeicJob(
+    handleSanitizeDocumentImageJob(
       {
-        repository: createPreviewRepository(pool),
-        storage: createPreviewStorage(createS3Client(config), config.S3_BUCKET),
-        images: createDocumentPreviewConverter(),
+        repository: createSanitizeRepository(pool, boss),
+        storage: createSanitizeStorage(createS3Client(config), config.S3_BUCKET),
+        images: createJpegSanitizer(),
         newId,
       },
       logger,
     ),
   );
-  await registerPrepareOcrImageJob(
+  await registerPurgePendingObjectsJob(
     boss,
-    handlePrepareOcrImageJob(
-      {
-        repository: createPrivacyRepository(pool),
-        storage: createPrivacyStorage(createS3Client(config), config.S3_BUCKET),
-        images: createPrivacyImageRenderer(),
-        newId,
-      },
-      logger,
-    ),
+    {
+      repository: createObjectPurgeRepository(pool),
+      storage: createOrphanStorage(createS3Client(config), config.S3_BUCKET),
+    },
+    logger,
   );
   await registerSweepOrphanObjectsJob(
     boss,
@@ -193,7 +183,7 @@ try {
   const idpSyncEnabled = await registerIdpSessionSync(config, pool);
   logger.info(
     { aiRunMode: config.AI_RUN_MODE, aiRoutingSource: 'database', idpSyncEnabled },
-    `Worker sẵn sàng — đã đăng ký job convert-heic, prepare-ocr-image, extract-document, ngân sách AI, dọn object mồ côi, sinh lời nhắc${idpSyncEnabled ? ' và đồng bộ phiên IdP' : ''}`,
+    `Worker sẵn sàng — đã đăng ký job sanitize-document-image, extract-document, ngân sách AI, purge-pending-objects, dọn object mồ côi, sinh lời nhắc${idpSyncEnabled ? ' và đồng bộ phiên IdP' : ''}`,
   );
 } catch (error) {
   logger.error({ reason: (error as Error).message }, 'Worker không khởi động được');

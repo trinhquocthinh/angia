@@ -1,12 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
+import { createSanitizePgFixture } from '@src/shared/test/createSanitizePgFixture.test-helper.js';
 import { seedExtractingDocument } from '@src/shared/test/seedExtractingDocument.js';
 import { createPurgeRepository } from './createPurgeRepository.js';
 
 describe('Kiểm hồ sơ còn tồn tại trên PostgreSQL thật, role app NOBYPASSRLS (BR-010)', () => {
-  let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
+  let fx: Awaited<ReturnType<typeof createSanitizePgFixture>>;
   beforeAll(async () => {
-    fx = await createPrivacyPgFixture();
+    fx = await createSanitizePgFixture();
   });
   afterAll(async () => {
     await fx?.close();

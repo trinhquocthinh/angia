@@ -3,7 +3,8 @@ import { createMyConsentRepository } from '../infrastructure/createMyConsentRepo
 import { RecipientNotice } from './components/RecipientNotice';
 import { useProfileSessionRecovery } from '../application/useProfileSessionRecovery';
 import { useState } from 'react';
-import { Link } from '@tanstack/react-router';
+import { useReviewQueue } from '@src/features/documents/application/useReviewWorkspace';
+import { createReviewRepository } from '@src/features/documents/infrastructure/createReviewRepository';
 import { useCurrentSession } from '@src/features/auth/application/useCurrentSession';
 import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
 import { useProfilesWorkspace } from '../application/useProfilesWorkspace';
@@ -12,14 +13,20 @@ import { createProfilesRepository } from '../infrastructure/createProfilesReposi
 import { ProfileFrame } from './components/ProfileFrame';
 import { ProfilesContent } from './components/ProfilesContent';
 import { ProfileDialogs } from './components/ProfileDialogs';
+import { HomeHeading } from './components/HomeHeading';
+import { PendingReviewBanner } from './components/PendingReviewBanner';
+import { ProfileSearch } from './components/ProfileSearch';
 import './profiles.css';
 const repository = createProfilesRepository();
 const consentRepository = createMyConsentRepository();
+const reviewRepository = createReviewRepository();
 export function HomePage() {
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(repository, session.data);
+  const queue = useReviewQueue(reviewRepository, session.data);
   const [selected, setSelected] = useState<ProfileListItem | null>(null);
   const [deleting, setDeleting] = useState<ProfileListItem | null>(null);
+  const [withdrawing, setWithdrawing] = useState(false);
   useProfileSessionRecovery(workspace.profiles.error ?? workspace.accounts.error ?? workspace.create.error);
   if (!session.data) return null;
   const profiles = workspace.profiles.data ?? [];
@@ -28,26 +35,18 @@ export function HomePage() {
     main && workspace.profiles.isSuccess ? `${profiles.length} hồ sơ thành viên` : 'Sổ sức khỏe gia đình';
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
-      <MyConsentSection repository={consentRepository} session={session.data} />
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-5">
-        <div>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="auth-heading text-[32px] font-semibold leading-tight text-[#004135]">Gia đình</h1>
-            <span className="max-w-full break-words rounded-full bg-[#c8f5e9] px-3 py-1 text-sm font-medium text-[#286958]">
-              {session.data.family?.name}
-            </span>
-          </div>
-          <p className="mt-3 text-sm text-[#55615f]">{subtitle}</p>
-        </div>
-        {main && (
-          <Link
-            to="/profiles/new"
-            className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-[#004135] px-5 py-3 text-center text-sm font-semibold text-white cursor-pointer disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
-          >
-            + Tạo hồ sơ
-          </Link>
-        )}
-      </div>
+      <MyConsentSection
+        repository={consentRepository}
+        session={session.data}
+        open={withdrawing}
+        setOpen={setWithdrawing}
+        showCard={!main}
+      />
+      {main && <ProfileSearch profiles={profiles} className="mb-3 lg:hidden" />}
+      <HomeHeading familyName={session.data.family?.name} subtitle={subtitle} canCreate={main} />
+      {main && (
+        <PendingReviewBanner count={queue.data?.pages.reduce((sum, page) => sum + page.items.length, 0)} />
+      )}
       {main ? (
         <ProfilesContent
           profiles={profiles}
@@ -56,6 +55,8 @@ export function HomePage() {
           retry={() => void workspace.profiles.refetch()}
           onConsent={setSelected}
           onDelete={setDeleting}
+          ownProfileId={session.data.account.healthProfileId}
+          onWithdraw={() => setWithdrawing(true)}
         />
       ) : (
         <RecipientNotice />

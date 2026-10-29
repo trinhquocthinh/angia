@@ -13,7 +13,7 @@ export function entry(overrides: Partial<DocumentEntry> = {}): DocumentEntry {
     entryDate: '2026-10-01',
     dateKnown: true,
     createdAt: '2026-10-13T08:00:00.000Z',
-    hasOcrImage: false,
+    hasImage: true,
     records: empty,
     ...overrides,
   };

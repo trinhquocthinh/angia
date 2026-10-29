@@ -1,10 +1,10 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { createPrivacyPgFixture } from '@src/shared/test/createPrivacyPgFixture.js';
+import { createSanitizePgFixture } from '@src/shared/test/createSanitizePgFixture.test-helper.js';
 import { syncIdpSessions } from '../application/syncIdpSessions.js';
 import { IdpDirectoryError } from '../application/IdpDirectoryError.js';
 import { createAccountSessionStore } from './createAccountSessionStore.js';
-let fx: Awaited<ReturnType<typeof createPrivacyPgFixture>>;
+let fx: Awaited<ReturnType<typeof createSanitizePgFixture>>;
 const now = new Date('2026-10-21T08:00:00Z');
 const policy = {
   accessGroupName: 'access',
@@ -14,7 +14,7 @@ const policy = {
   now: () => now,
 };
 beforeAll(async () => {
-  fx = await createPrivacyPgFixture();
+  fx = await createSanitizePgFixture();
 });
 afterAll(async () => {
   await fx?.close();
