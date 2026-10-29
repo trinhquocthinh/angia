@@ -68,7 +68,7 @@ function setup(profile: Awaited<ReturnType<VisitSummaryStore['findProfile']>> | 
   const store = {
     findProfile: vi.fn(async () =>
       profile === 'default'
-        ? { id: 'p', displayName: 'Mẹ', birthYear: 1958, consentStatus: 'confirmed' }
+        ? { id: 'p', displayName: 'Mẹ', birthYear: 1958, vitalsEnabled: null, consentStatus: 'confirmed' }
         : profile,
     ),
     findMedicationHistory: vi.fn(async () => [
@@ -91,6 +91,7 @@ describe('Kết xuất bản tóm tắt tái khám (SPEC-024, E6-S1-T1)', () => 
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     const summary = result.value;
+    expect(summary.showsVitals).toBe(true);
     expect(summary.profile).toEqual({ id: 'p', displayName: 'Mẹ', birthYear: 1958 });
     expect(summary.createdAt).toEqual(new Date('2026-10-15T17:30:00Z'));
     expect({ from: summary.from, to: summary.to }).toEqual({ from: '2026-07-16', to: '2026-10-16' });
@@ -122,13 +123,74 @@ describe('Kết xuất bản tóm tắt tái khám (SPEC-024, E6-S1-T1)', () => 
       ok: false,
       code: 'ERR_NOT_FOUND',
     });
-    const pending = { id: 'p', displayName: 'Mẹ', birthYear: null, consentStatus: 'pending' };
+    const pending = {
+      id: 'p',
+      displayName: 'Mẹ',
+      birthYear: null,
+      vitalsEnabled: null,
+      consentStatus: 'pending',
+    };
     const { store, repository } = setup(pending);
     expect(await getVisitSummary(repository, request, now)).toEqual({
       ok: false,
       code: 'ERR_CONSENT_REQUIRED',
     });
     expect(store.listMeasurementsBetween).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { birthYear: 2021, vitalsEnabled: null, expected: false },
+    { birthYear: 2021, vitalsEnabled: true, expected: true },
+    { birthYear: 2010, vitalsEnabled: null, expected: true },
+    { birthYear: null, vitalsEnabled: null, expected: true },
+  ])(
+    'TC-445: năm sinh $birthYear, lựa chọn $vitalsEnabled → hiển thị $expected',
+    async ({ birthYear, vitalsEnabled, expected }) => {
+      const { store, repository } = setup({
+        id: 'p',
+        displayName: 'Hồ sơ',
+        birthYear,
+        vitalsEnabled,
+        consentStatus: 'confirmed',
+      });
+      const measurements = [measurement(1), measurement(2), measurement(3)];
+      store.listMeasurementsBetween.mockResolvedValue(measurements);
+      const result = await getVisitSummary(
+        repository,
+        { familyId: 'f', profileId: 'p', from: '2026-08-01', to: '2026-08-31' },
+        now,
+      );
+      if (!result.ok) throw new Error(result.code);
+      expect(result.value.showsVitals).toBe(expected);
+      expect(result.value.measurements).toEqual(expected ? measurements : []);
+      expect(store.listMeasurementsBetween).toHaveBeenCalledTimes(expected ? 1 : 0);
+      if (expected) {
+        expect(store.listMeasurementsBetween).toHaveBeenCalledWith('p', '2026-08-01', '2026-08-31');
+      }
+      expect(result.value.currentMedications.map((item) => item.name)).toEqual(['Amlodipin', 'Metformin']);
+      expect(result.value.latestLabResults.map((item) => item.id)).toEqual(['old']);
+      expect(result.value.adherencePeriods).toEqual([period]);
+      expect(result.value.disclaimer).toBe(VISIT_SUMMARY_DISCLAIMER);
+    },
+  );
+
+  it.each([
+    { instant: '2026-12-31T16:59:59Z', expected: false },
+    { instant: '2026-12-31T17:00:00Z', expected: true },
+  ])('TC-445: tính tuổi theo năm Việt Nam tại $instant', async ({ instant, expected }) => {
+    const { repository } = setup({
+      id: 'p',
+      displayName: 'Hồ sơ',
+      birthYear: 2011,
+      vitalsEnabled: null,
+      consentStatus: 'confirmed',
+    });
+    const clock = vi.fn(() => new Date(instant));
+    const result = await getVisitSummary(repository, { familyId: 'f', profileId: 'p' }, clock);
+    if (!result.ok) throw new Error(result.code);
+    expect(result.value.showsVitals).toBe(expected);
+    expect(result.value.createdAt).toEqual(new Date(instant));
+    expect(clock).toHaveBeenCalledTimes(1);
   });
 
   it('khoảng sai → ERR_VALIDATION trước khi đọc dữ liệu', async () => {

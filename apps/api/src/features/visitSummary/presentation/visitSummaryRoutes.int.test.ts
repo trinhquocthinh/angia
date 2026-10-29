@@ -69,6 +69,7 @@ describe('API bản tóm tắt tái khám SPEC-024 (E6-S1-T1)', () => {
     });
     const before = Date.now();
     const summary = await getSummary(f);
+    expect(summary.showsVitals).toBe(true);
     expect(summary.profile).toEqual({ id: f.profile.id, displayName: 'Mẹ', birthYear: 1950 });
     expect(Date.parse(summary.createdAt)).toBeGreaterThanOrEqual(before - 1000);
     expect({ from: summary.from, to: summary.to }).toEqual({ from: '2026-07-01', to: '2026-09-30' });
@@ -84,6 +85,42 @@ describe('API bản tóm tắt tái khám SPEC-024 (E6-S1-T1)', () => {
     expect(summary.adherencePeriods).toHaveLength(1);
     expect(summary.adherencePeriods[0]).not.toHaveProperty('medicationNameNormalized');
     expect(summary.disclaimer).toBe('Tài liệu tổng hợp từ gia đình, không phải chỉ định y khoa.');
+  });
+
+  it('TC-445: trẻ chưa bật không trả số đo; bật lại trả đủ dữ liệu trong khoảng', async () => {
+    const f = await fixture();
+    const currentYear = Number(
+      new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Ho_Chi_Minh',
+        year: 'numeric',
+      }).format(new Date()),
+    );
+    await t.owner.query('UPDATE health_profiles SET birth_year = $1, vitals_enabled = NULL WHERE id = $2', [
+      currentYear - 5,
+      f.profile.id,
+    ]);
+    for (const day of ['2026-08-01', '2026-08-02', '2026-08-03']) {
+      await insertMeasurement(f, day);
+    }
+    await insertMeasurement(f, '2026-06-30');
+    await insertLab(f, '2026-09-15', '6.9');
+    const hidden = await getSummary(f);
+    expect(hidden.showsVitals).toBe(false);
+    expect(hidden.measurements).toEqual([]);
+    expect(hidden.latestLabResults).toHaveLength(1);
+    expect(hidden.profile).not.toHaveProperty('vitalsEnabled');
+    const updated = await t.call(f.main, 'PATCH', `${profiles}/${f.profile.id}`, {
+      vitalsEnabled: true,
+    });
+    expect(updated.status).toBe(200);
+    const visible = await getSummary(f);
+    expect(visible.showsVitals).toBe(true);
+    expect(visible.measurements.map((item) => item.measuredOn)).toEqual([
+      '2026-08-01',
+      '2026-08-02',
+      '2026-08-03',
+    ]);
+    expect(visible.latestLabResults).toEqual(hidden.latestLabResults);
   });
 
   it('TC-066: số đo trong chứng từ pending_review không xuất hiện trên bản tóm tắt', async () => {
