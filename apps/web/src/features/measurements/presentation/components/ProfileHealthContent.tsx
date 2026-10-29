@@ -29,6 +29,7 @@ export function ProfileHealthContent({
   return (
     <div className="flex flex-col gap-6">
       <ProfileHealthHeader
+        session={session}
         profile={profile}
         latest={rows[0] ?? null}
         actions={

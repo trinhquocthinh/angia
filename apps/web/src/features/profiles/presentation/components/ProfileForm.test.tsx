@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { ProfileIdentityFields } from './ProfileIdentityFields';
 import { NewProfileForm } from './NewProfileForm';
 import { InvitationResponseForm } from './InvitationResponseForm';
 describe('Form tạo hồ sơ và lựa chọn đồng thuận rõ ràng', () => {
@@ -20,6 +21,12 @@ describe('Form tạo hồ sơ và lựa chọn đồng thuận rõ ràng', () =>
     expect(html).toContain('Tôi đã hỏi và được đồng ý');
     expect(html).not.toContain('checked=');
     expect(html).toContain('Đây là hồ sơ của tôi');
+  });
+  it('TC-449 — năm sinh được đánh dấu bắt buộc khi tạo hồ sơ', () => {
+    const html = renderToStaticMarkup(<ProfileIdentityFields errors={{}} />);
+    const yearInput = html.match(/<input[^>]*name="birthYear"[^>]*>/)?.[0];
+    expect(yearInput).toContain('required=""');
+    expect(html).not.toContain('tùy chọn');
   });
   it('khóa form và hiển thị đang lưu trong lúc gửi', () => {
     const html = renderToStaticMarkup(

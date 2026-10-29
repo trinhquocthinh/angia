@@ -34,7 +34,7 @@ function DocumentsContent({ profile, session }: { profile: HealthProfile; sessio
   return (
     <div className="flex flex-col gap-6">
       {deleted && <DeletedDocumentNotice />}
-      <ProfileHealthHeader profile={profile} active="documents" />
+      <ProfileHealthHeader session={session} profile={profile} active="documents" />
       <div className="rounded-xl bg-white px-5 py-4 shadow-sm">
         <h2 className="text-lg font-semibold text-[#004135]">Hồ sơ & Giấy tờ khám</h2>
       </div>

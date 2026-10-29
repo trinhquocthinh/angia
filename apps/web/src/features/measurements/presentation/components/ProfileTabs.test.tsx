@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import type { ReactNode } from 'react';
 import { ProfileHealthHeader } from './ProfileHealthHeader';
-import type { HealthProfile } from '@src/features/profiles/application/ports';
+import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
 vi.mock('@tanstack/react-router', () => ({
   Link: ({ children }: { children: ReactNode }) => <a>{children}</a>,
 }));
@@ -25,7 +25,11 @@ describe('TC-446 — tab theo độ tuổi', () => {
     vi.setSystemTime(new Date('2026-10-29T00:00:00Z'));
     try {
       const html = renderToStaticMarkup(
-        <ProfileHealthHeader profile={{ ...profile, birthYear, vitalsEnabled }} active="medications" />,
+        <ProfileHealthHeader
+          session={{ role: 'member' } as ProfileSession}
+          profile={{ ...profile, birthYear, vitalsEnabled }}
+          active="medications"
+        />,
       );
       expect(html.includes('Diễn biến sức khỏe')).toBe(visible);
       for (const label of ['Thuốc điều trị', 'Kết quả xét nghiệm', 'Hồ sơ &amp; Giấy tờ khám'])

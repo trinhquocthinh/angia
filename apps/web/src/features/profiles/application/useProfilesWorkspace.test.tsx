@@ -34,6 +34,7 @@ function repository(fail = false): ProfilesRepository {
       if (fail) throw new Error('Lỗi mạng');
       return profile;
     }),
+    update: vi.fn(),
     confirmConsent: vi.fn(),
     createInvitation: vi.fn(async () => ({ token: 'opaque', expiresAt: '2026-10-13T00:00:00Z' })),
     revokeInvitation: vi.fn(async () => undefined),
@@ -86,7 +87,7 @@ describe('Cô lập cache hồ sơ và quyền thao tác', () => {
         .getAll()
         .map((query) => (query.options as { enabled?: boolean }).enabled),
     ).toEqual([false, false]);
-    await expect(workspace.create.mutateAsync({ displayName: 'Ba' })).rejects.toThrow(
+    await expect(workspace.create.mutateAsync({ displayName: 'Ba', birthYear: 1980 })).rejects.toThrow(
       'Chỉ người chăm sóc chính',
     );
     expect(repo.create).not.toHaveBeenCalled();
@@ -98,7 +99,7 @@ describe('Cô lập cache hồ sơ và quyền thao tác', () => {
     client.setQueryData(key, []);
     client.setQueryData(['current-session'], session);
     const workspace = mount(client, repository(fail), session);
-    const mutation = workspace.create.mutateAsync({ displayName: 'Ba' });
+    const mutation = workspace.create.mutateAsync({ displayName: 'Ba', birthYear: 1980 });
     if (fail) await expect(mutation).rejects.toThrow('Lỗi mạng');
     else await mutation;
     expect(client.getQueryState(key)?.isInvalidated).toBe(!fail);

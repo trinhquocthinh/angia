@@ -26,6 +26,7 @@ function MedicationsContent({
   return (
     <div className="flex flex-col gap-6">
       <ProfileHealthHeader
+        session={session}
         profile={profile}
         active="medications"
         actions={

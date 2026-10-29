@@ -11,6 +11,7 @@ function mount(
 ) {
   const data = new FormData();
   data.set('displayName', ' Bé An ');
+  data.set('birthYear', '2020');
   data.set('linkedAccountId', linkedAccountId);
   vi.stubGlobal(
     'FormData',
@@ -36,13 +37,22 @@ describe('TC-558 — nối form tạo hồ sơ tới payload consent', () => {
       consent,
       {
         displayName: 'Bé An',
+        birthYear: 2020,
         consent: { kind: 'attestation', attestation: true, basis: 'guardian', respondentName: 'Mẹ' },
       },
     ],
-    ['', { ...consent, checked: false }, { displayName: 'Bé An' }],
-    ['main', consent, { displayName: 'Bé An', linkedAccountId: 'main', consent: { kind: 'self' } }],
-    ['main', { ...consent, checked: false }, { displayName: 'Bé An', linkedAccountId: 'main' }],
-    ['other', consent, { displayName: 'Bé An', linkedAccountId: 'other' }],
+    ['', { ...consent, checked: false }, { displayName: 'Bé An', birthYear: 2020 }],
+    [
+      'main',
+      consent,
+      { displayName: 'Bé An', birthYear: 2020, linkedAccountId: 'main', consent: { kind: 'self' } },
+    ],
+    [
+      'main',
+      { ...consent, checked: false },
+      { displayName: 'Bé An', birthYear: 2020, linkedAccountId: 'main' },
+    ],
+    ['other', consent, { displayName: 'Bé An', birthYear: 2020, linkedAccountId: 'other' }],
   ] as const)('liên kết %s và trạng thái tick gửi đúng DTO', async (linked, draft, expected) => {
     const save = vi.fn(async () => undefined);
     await mount(draft, linked, save).save({} as HTMLFormElement);
