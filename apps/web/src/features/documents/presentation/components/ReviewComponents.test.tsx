@@ -24,6 +24,8 @@ describe('TC-435 màn duyệt chỉ hiện bản đã che', () => {
     const html = renderToStaticMarkup(<DocumentImagePanel document={document()} />);
     expect(html).toContain('/api/source-documents/doc-1/image"');
     expect(html).toContain('Đây là bản đã che. AN GIA không lưu ảnh chưa che.');
+    expect(html).toContain('Xem toàn màn hình');
+    expect(html).not.toMatch(/AI OCR|đầu cuối|chuẩn y khoa/);
     expect(html).not.toContain('Mở ảnh gốc');
     expect(html).not.toContain('variant=');
   });
@@ -32,7 +34,8 @@ describe('TC-435 màn duyệt chỉ hiện bản đã che', () => {
     const html = renderToStaticMarkup(<DocumentImagePanel document={document({ hasImage: false })} />);
     expect(html).toContain('Ảnh đã được xóa để bảo vệ riêng tư');
     expect(html).not.toContain('/image"');
-    expect(html).toContain('disabled=""');
+    expect(html).not.toContain('Xoay ảnh');
+    expect(html).not.toContain('Xem toàn màn hình');
   });
 
   it('hàng chờ không còn nhãn "Chờ kiểm tra riêng tư" ở mọi trạng thái', () => {

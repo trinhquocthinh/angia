@@ -23,6 +23,11 @@ const paths = {
   cloud: 'M7 18a4 4 0 0 1-.6-7.95 5.5 5.5 0 0 1 10.7-1A4.5 4.5 0 0 1 17 18Z',
   sparkle: 'M11 4l1.8 5.2L18 11l-5.2 1.8L11 18l-1.8-5.2L4 11l5.2-1.8Z M18.5 3v4 M16.5 5h4',
   plus: 'M12 5v14 M5 12h14',
+  hospital: 'M4 21V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v16 M2 21h20 M12 7v6 M9 10h6 M10 21v-4h4v4',
+  stethoscope: 'M5 3H4v6a5 5 0 0 0 10 0V3h-1 M9 14v2a5 5 0 0 0 10 0v-2 M19 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4',
+  expand: 'M4 9V4h5 M20 9V4h-5 M4 15v5h5 M20 15v5h-5',
+  rotate: 'M20 11a8 8 0 1 0-2.3 5.7 M20 4v7h-7',
+  trash: 'M4 7h16 M9 7V4h6v3 M6 7l1 14h10l1-14 M10 11v6 M14 11v6',
 } as const;
 export type DocumentIconName = keyof typeof paths;
 export function DocumentIcon({ name, size = 20 }: { name: DocumentIconName; size?: number }) {

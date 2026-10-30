@@ -3,6 +3,7 @@ import type { ProfileSession } from '@src/features/profiles/application/ports';
 import type { ReviewRepository } from '../../application/reviewPorts';
 import { useDeleteDocument } from '../../application/useDeleteDocument';
 import { DeleteDocumentDialog } from './DeleteDocumentDialog';
+import { DocumentIcon } from './DocumentIcon';
 
 type Props = {
   repository: ReviewRepository;
@@ -30,14 +31,14 @@ export function DeleteDocumentControl({
       <button
         type="button"
         disabled={disabled || deletion.pending}
-        className="min-h-11 rounded-lg border border-[#a32622] px-4 text-sm font-semibold text-[#a32622] disabled:opacity-55"
+        className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-[#ffdad6]/40 px-4 text-sm font-semibold text-[#a32622] transition-colors duration-200 enabled:cursor-pointer enabled:hover:bg-[#ffdad6] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a32622] motion-reduce:transition-none"
         onClick={() => {
           setValue('');
           deletion.reset();
           setOpen(true);
         }}
       >
-        Xóa chứng từ
+        <DocumentIcon name="trash" size={18} /> Xóa chứng từ
       </button>
       {open && (
         <DeleteDocumentDialog

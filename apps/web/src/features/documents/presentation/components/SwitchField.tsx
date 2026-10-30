@@ -11,7 +11,7 @@ export function SwitchField({ children, className = '', ...input }: SwitchFieldP
       <input type="checkbox" role="switch" className="peer sr-only" {...input} />
       <span
         aria-hidden="true"
-        className="relative h-6 w-10 shrink-0 rounded-full bg-[#bfc9c4] transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-transform peer-checked:bg-[#004135] peer-checked:after:translate-x-4"
+        className="relative h-6 w-10 shrink-0 rounded-full bg-[#bfc9c4] transition-colors duration-200 motion-reduce:transition-none motion-reduce:after:transition-none after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow-sm after:transition-transform after:duration-200 peer-checked:bg-[#004135] peer-checked:after:translate-x-4"
       />
       {children}
     </label>

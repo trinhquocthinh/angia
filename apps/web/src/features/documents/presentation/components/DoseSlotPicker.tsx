@@ -1,8 +1,8 @@
-import { Fragment } from 'react';
 import { Controller, type Control } from 'react-hook-form';
 import { AS_NEEDED, DOSE_SLOTS, toggleDoseSlot } from '../../application/doseSlots';
 import type { PrescriptionFormValues } from '../../application/prescriptionForm';
 import { ChoiceChip } from './ChoiceChip';
+import { DocumentIcon } from './DocumentIcon';
 
 type DoseSlotPickerProps = {
   control: Control<PrescriptionFormValues>;
@@ -26,22 +26,34 @@ export function DoseSlotPicker({ control, index, error, onChanged }: DoseSlotPic
           className="flex flex-col gap-2"
         >
           <legend className="mb-2 text-sm font-medium text-[#3f4946]">Buổi dùng *</legend>
-          <div ref={field.ref} tabIndex={-1} className="flex flex-wrap gap-2 outline-none">
+          <div
+            ref={field.ref}
+            tabIndex={-1}
+            className="grid grid-cols-4 gap-1.5 outline-none @md:grid-cols-5"
+          >
             {[...DOSE_SLOTS, AS_NEEDED].map((slot) => (
-              <Fragment key={slot.value}>
-                {slot.value === AS_NEEDED.value && (
-                  <span aria-hidden="true" className="mx-1 w-px self-stretch bg-[#bfc9c4]" />
-                )}
-                <ChoiceChip
-                  selected={field.value.includes(slot.value)}
-                  onClick={() => {
-                    field.onChange(toggleDoseSlot(field.value, slot.value));
-                    onChanged?.();
-                  }}
-                >
-                  {slot.label}
-                </ChoiceChip>
-              </Fragment>
+              <div
+                key={slot.value}
+                className={slot.value === AS_NEEDED.value ? 'col-span-4 @md:col-span-1' : ''}
+              >
+                <div className="grid">
+                  <ChoiceChip
+                    segment
+                    selected={field.value.includes(slot.value)}
+                    onClick={() => {
+                      field.onChange(toggleDoseSlot(field.value, slot.value));
+                      onChanged?.();
+                    }}
+                  >
+                    {field.value.includes(slot.value) && (
+                      <span className="angia-modal-pop">
+                        <DocumentIcon name="check" size={14} />
+                      </span>
+                    )}
+                    {slot.label}
+                  </ChoiceChip>
+                </div>
+              </div>
             ))}
           </div>
           {error && (

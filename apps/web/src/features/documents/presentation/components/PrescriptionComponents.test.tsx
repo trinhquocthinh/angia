@@ -36,14 +36,16 @@ describe('Form duyệt đơn thuốc (SPEC-010, BR-025)', () => {
     expect(html).toContain('name="revisitDate"');
     expect(html).toContain('name="facility"');
     expect(html).toContain('Chẩn đoán ghi trên đơn');
-    expect(html).toContain('Danh sách thuốc (1 loại)');
+    expect(html).toContain('Danh sách thuốc');
+    expect(html).toContain('1 loại');
+    expect(html).toContain('>Thông tin chung<');
     expect(html).toContain('name="items.0.name"');
-    expect(html).toContain('+ Thêm thuốc');
+    expect(html).toContain('Thêm thuốc');
   });
 
   it('đánh dấu buổi đã chọn và khóa ô số ngày khi dài hạn', () => {
     const html = renderToStaticMarkup(<PrescriptionForm {...props} payload={payload} />);
-    expect(html).toMatch(/aria-pressed="true"[^>]*>Sáng/);
+    expect(html).toMatch(/aria-pressed="true"[^>]*>(<[^>]+>)*Sáng/);
     expect(html).toMatch(/aria-pressed="false"[^>]*>Tối/);
     expect(html).toMatch(/id="items-0-durationDays"[^>]*readOnly=""/);
   });
