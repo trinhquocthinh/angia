@@ -29,6 +29,8 @@ import { Route as ProfilesProfileIdMedicationsRouteImport } from './routes/profi
 import { Route as ProfilesProfileIdRemindersRouteImport } from './routes/profiles.$profileId_.reminders'
 import { Route as ProfilesProfileIdRevisitsRouteImport } from './routes/profiles.$profileId_.revisits'
 import { Route as ProfilesProfileIdSummaryRouteImport } from './routes/profiles.$profileId_.summary'
+import { Route as ProfilesProfileIdPrescriptionsIndexRouteImport } from './routes/profiles.$profileId_.prescriptions.index'
+import { Route as ProfilesProfileIdPrescriptionsPrescriptionIdRouteImport } from './routes/profiles.$profileId_.prescriptions.$prescriptionId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -137,6 +139,18 @@ const ProfilesProfileIdSummaryRoute =
     path: '/profiles/$profileId/summary',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ProfilesProfileIdPrescriptionsIndexRoute =
+  ProfilesProfileIdPrescriptionsIndexRouteImport.update({
+    id: '/profiles/$profileId_/prescriptions/',
+    path: '/profiles/$profileId/prescriptions/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ProfilesProfileIdPrescriptionsPrescriptionIdRoute =
+  ProfilesProfileIdPrescriptionsPrescriptionIdRouteImport.update({
+    id: '/profiles/$profileId_/prescriptions/$prescriptionId',
+    path: '/profiles/$profileId/prescriptions/$prescriptionId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -159,6 +173,8 @@ export interface FileRoutesByFullPath {
   '/profiles/$profileId/reminders': typeof ProfilesProfileIdRemindersRoute
   '/profiles/$profileId/revisits': typeof ProfilesProfileIdRevisitsRoute
   '/profiles/$profileId/summary': typeof ProfilesProfileIdSummaryRoute
+  '/profiles/$profileId/prescriptions/$prescriptionId': typeof ProfilesProfileIdPrescriptionsPrescriptionIdRoute
+  '/profiles/$profileId/prescriptions/': typeof ProfilesProfileIdPrescriptionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -181,6 +197,8 @@ export interface FileRoutesByTo {
   '/profiles/$profileId/reminders': typeof ProfilesProfileIdRemindersRoute
   '/profiles/$profileId/revisits': typeof ProfilesProfileIdRevisitsRoute
   '/profiles/$profileId/summary': typeof ProfilesProfileIdSummaryRoute
+  '/profiles/$profileId/prescriptions/$prescriptionId': typeof ProfilesProfileIdPrescriptionsPrescriptionIdRoute
+  '/profiles/$profileId/prescriptions': typeof ProfilesProfileIdPrescriptionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -204,6 +222,8 @@ export interface FileRoutesById {
   '/profiles/$profileId_/reminders': typeof ProfilesProfileIdRemindersRoute
   '/profiles/$profileId_/revisits': typeof ProfilesProfileIdRevisitsRoute
   '/profiles/$profileId_/summary': typeof ProfilesProfileIdSummaryRoute
+  '/profiles/$profileId_/prescriptions/$prescriptionId': typeof ProfilesProfileIdPrescriptionsPrescriptionIdRoute
+  '/profiles/$profileId_/prescriptions/': typeof ProfilesProfileIdPrescriptionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -228,6 +248,8 @@ export interface FileRouteTypes {
     | '/profiles/$profileId/reminders'
     | '/profiles/$profileId/revisits'
     | '/profiles/$profileId/summary'
+    | '/profiles/$profileId/prescriptions/$prescriptionId'
+    | '/profiles/$profileId/prescriptions/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -250,6 +272,8 @@ export interface FileRouteTypes {
     | '/profiles/$profileId/reminders'
     | '/profiles/$profileId/revisits'
     | '/profiles/$profileId/summary'
+    | '/profiles/$profileId/prescriptions/$prescriptionId'
+    | '/profiles/$profileId/prescriptions'
   id:
     | '__root__'
     | '/'
@@ -272,6 +296,8 @@ export interface FileRouteTypes {
     | '/profiles/$profileId_/reminders'
     | '/profiles/$profileId_/revisits'
     | '/profiles/$profileId_/summary'
+    | '/profiles/$profileId_/prescriptions/$prescriptionId'
+    | '/profiles/$profileId_/prescriptions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -295,6 +321,8 @@ export interface RootRouteChildren {
   ProfilesProfileIdRemindersRoute: typeof ProfilesProfileIdRemindersRoute
   ProfilesProfileIdRevisitsRoute: typeof ProfilesProfileIdRevisitsRoute
   ProfilesProfileIdSummaryRoute: typeof ProfilesProfileIdSummaryRoute
+  ProfilesProfileIdPrescriptionsPrescriptionIdRoute: typeof ProfilesProfileIdPrescriptionsPrescriptionIdRoute
+  ProfilesProfileIdPrescriptionsIndexRoute: typeof ProfilesProfileIdPrescriptionsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -439,6 +467,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfilesProfileIdSummaryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profiles/$profileId_/prescriptions/': {
+      id: '/profiles/$profileId_/prescriptions/'
+      path: '/profiles/$profileId/prescriptions'
+      fullPath: '/profiles/$profileId/prescriptions/'
+      preLoaderRoute: typeof ProfilesProfileIdPrescriptionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profiles/$profileId_/prescriptions/$prescriptionId': {
+      id: '/profiles/$profileId_/prescriptions/$prescriptionId'
+      path: '/profiles/$profileId/prescriptions/$prescriptionId'
+      fullPath: '/profiles/$profileId/prescriptions/$prescriptionId'
+      preLoaderRoute: typeof ProfilesProfileIdPrescriptionsPrescriptionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -463,6 +505,10 @@ const rootRouteChildren: RootRouteChildren = {
   ProfilesProfileIdRemindersRoute: ProfilesProfileIdRemindersRoute,
   ProfilesProfileIdRevisitsRoute: ProfilesProfileIdRevisitsRoute,
   ProfilesProfileIdSummaryRoute: ProfilesProfileIdSummaryRoute,
+  ProfilesProfileIdPrescriptionsPrescriptionIdRoute:
+    ProfilesProfileIdPrescriptionsPrescriptionIdRoute,
+  ProfilesProfileIdPrescriptionsIndexRoute:
+    ProfilesProfileIdPrescriptionsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

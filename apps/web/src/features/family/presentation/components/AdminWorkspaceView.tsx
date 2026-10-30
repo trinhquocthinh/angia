@@ -6,13 +6,14 @@ import type { useAdminWorkspace } from '../../application/useAdminWorkspace';
 import type { useAiBudget } from '../../application/useAiBudget';
 import type { AdminTask } from '../AdminTask';
 import type { AdminSession } from '../AdminSession';
-import { AdminFrame } from './AdminFrame';
+import { AdminFrame, type AdminFrameShell } from './AdminFrame';
 import { AdminHeading } from './AdminHeading';
 import { AdminDataContent } from './AdminDataContent';
 import { ActionDialog } from './ActionDialog';
 
 type AdminWorkspaceViewProps = {
   session: AdminSession;
+  shell: AdminFrameShell;
   workspace: ReturnType<typeof useAdminWorkspace>;
   aiBudget: ReturnType<typeof useAiBudget>;
   aiRouting: ReturnType<typeof useAiRouting>;
@@ -21,24 +22,21 @@ type AdminWorkspaceViewProps = {
 };
 
 export function AdminWorkspaceView(props: AdminWorkspaceViewProps) {
-  const { session, workspace, aiBudget, aiRouting, aiBilling, scanQuota } = props;
+  const { session, shell, workspace, aiBudget, aiRouting, aiBilling, scanQuota } = props;
   const { families, accounts, action } = workspace;
   const [task, setTask] = useState<AdminTask | null>(null);
   const [accountQuery, setAccountQuery] = useState('');
-  const findAccount = (name: string) => {
-    setAccountQuery(name);
-    document.getElementById('accounts-title')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
   const openTask = (next: AdminTask) => {
     action.reset();
     setTask(next);
   };
   const busy = action.isPending || [families, accounts].some((query) => query.isPending || query.isError);
   return (
-    <AdminFrame session={session} accounts={accounts.data ?? []} onFindAccount={findAccount}>
+    <AdminFrame session={session} shell={shell}>
       <AdminHeading
         families={families.data?.length ?? 0}
         accounts={accounts.data?.length ?? 0}
+        waiting={accounts.data?.filter((account) => !account.familyId).length ?? 0}
         disabled={busy}
         onCreate={() => openTask({ kind: 'create' })}
       />

@@ -48,8 +48,8 @@ describe('Giao diện hạn mức lượt', () => {
   it('TC-592: phí chưa xác định khác 0 và cảnh báo ngân sách/chính sách chưa đủ', () => {
     const html = renderToStaticMarkup(<ScanQuotaOverview view={view} />);
     expect(html).toContain('Chưa xác định');
-    expect(html).toContain('Chưa thể xác định lượt cấp thêm');
-    expect(html).not.toContain('Phí thực: 0');
+    expect(html).toContain('Thiếu dữ liệu phí');
+    expect(html).not.toMatch(/>0</);
   });
   it('TC-592: tải lại lỗi giữ editor nhưng không hiện tổng quan cũ như đã xác minh', () => {
     const state = {
@@ -70,8 +70,8 @@ describe('Giao diện hạn mức lượt', () => {
     const html = renderToStaticMarkup(<ScanQuotaCard state={state} />);
     expect(html).toContain('Không thể tải hạn mức lượt');
     expect(html).toContain('Duyệt lượt tháng');
-    expect(html).not.toContain('Đối soát: Đủ dữ liệu');
-    expect(html).not.toContain('Có thể cấp thêm: 99 lượt');
+    expect(html).not.toContain('Đủ dữ liệu');
+    expect(html).not.toContain('Có thể cấp thêm');
     expect(html).not.toContain('PRIVATE_DETAIL');
   });
   it('TC-592: danh sách chưa chọn, gợi ý tháng trước chỉ tham khảo, nút duyệt rõ ràng', () => {
@@ -99,6 +99,16 @@ describe('Giao diện hạn mức lượt', () => {
     );
     expect(render(new Error('PRIVATE_SQL'))).not.toContain('PRIVATE_SQL');
     expect(render(new Error())).toContain('fieldset disabled=""');
+  });
+  it('CP5.5: mô tả đúng lượt mặc định tự làm mới, không hiện UUID hay phiên bản nội bộ', () => {
+    const html = renderToStaticMarkup(
+      <ScanQuotaEditor initial={view} pending={false} error={null} saved={false} onGrant={async () => {}} />,
+    );
+    expect(html).toContain('tự có lượt mặc định mỗi tháng');
+    expect(html).not.toContain('Tháng mới cần duyệt lại');
+    expect(html).not.toContain('dùng thử');
+    expect(html).not.toContain('phiên bản');
+    expect(html).not.toContain(`>${view.families[0]!.familyId}<`);
   });
   it('TC-645: gia đình dùng lượt mặc định thấy nhãn riêng; Admin không còn form chính sách', () => {
     const html = renderToStaticMarkup(
@@ -132,6 +142,6 @@ describe('Giao diện hạn mức lượt', () => {
     expect(html).toContain('dự phòng 15%');
     expect(html).toContain('0,001594 USD/lượt');
     expect(html).toContain('Đang cấp vượt khả năng ngân sách 100 lượt');
-    expect(html).toContain('cần nâng chi phí cố định tháng thêm khoảng 0,19 USD');
+    expect(html).toContain('cần nâng trần tháng thêm khoảng 0,19 USD');
   });
 });

@@ -19,7 +19,10 @@ describe('TC-573/474 — cache lịch sau thay đổi đơn', () => {
       const key = ['revisits', 'a', 'f', 'p'];
       const detail = ['my-revisit-reminder', 'a', 'f', 'id'];
       const other = ['revisits', 'other', 'f', 'p'];
-      for (const k of [key, detail, other]) client.setQueryData(k, []);
+      const chain = ['prescriptions', 'a', 'f', 'p', 'list'];
+      const prescription = ['prescriptions', 'a', 'f', 'p', 'detail', 'rx'];
+      const otherChain = ['prescriptions', 'other', 'f', 'p', 'list'];
+      for (const k of [key, detail, other, chain, prescription, otherChain]) client.setQueryData(k, []);
       const repo = {
         approve: async () => ({}),
         createManualRecords: async () => ({}),
@@ -45,6 +48,9 @@ describe('TC-573/474 — cache lịch sau thay đổi đơn', () => {
       expect(client.getQueryState(key)?.isInvalidated).toBe(true);
       expect(client.getQueryState(detail)?.isInvalidated).toBe(true);
       expect(client.getQueryState(other)?.isInvalidated).toBe(false);
+      expect(client.getQueryState(chain)?.isInvalidated).toBe(true);
+      expect(client.getQueryState(prescription)?.isInvalidated).toBe(true);
+      expect(client.getQueryState(otherChain)?.isInvalidated).toBe(false);
       client.clear();
     },
   );

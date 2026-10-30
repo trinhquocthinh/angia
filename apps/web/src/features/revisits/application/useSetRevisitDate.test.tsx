@@ -38,12 +38,20 @@ describe('TC-474 — sửa ngày hẹn và đồng bộ cache', () => {
       ['revisits', 'a', 'f', 'p'],
       ['documents', 'a', 'f', 'p'],
       ['my-revisit-reminder', 'a', 'f', 'id'],
+      ['prescriptions', 'a', 'f', 'p', 'list'],
+      ['prescriptions', 'a', 'f', 'p', 'detail', 'rx'],
     ];
     const other = ['revisits', 'other', 'f', 'p'];
     for (const key of [...keys, other]) client.setQueryData(key, []);
     expect(await hook.save('')).toBe(true);
     expect(setDate).toHaveBeenCalledWith('p', 'rx', null, 'csrf');
-    expect(keys.map((key) => client.getQueryState(key)?.isInvalidated)).toEqual([true, true, true]);
+    expect(keys.map((key) => client.getQueryState(key)?.isInvalidated)).toEqual([
+      true,
+      true,
+      true,
+      true,
+      true,
+    ]);
     expect(client.getQueryState(other)?.isInvalidated).toBe(false);
     client.clear();
   });

@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
 import { MedicationRequestError } from '@src/features/medications/application/MedicationRequestError';
+import { invalidatePrescriptionData } from '@src/features/prescriptions/application/invalidatePrescriptionData';
 import { invalidateRevisitData } from './invalidateRevisitData';
 import { revisitDateFormSchema } from './revisitDateForm';
 import type { RevisitPrescription, RevisitRepository } from './ports';
@@ -37,6 +38,7 @@ export function useSetRevisitDate(
       await repository.setDate(profile.id, prescription.id, revisitDate || null, session.csrfToken);
       await Promise.all([
         invalidateRevisitData(client, session, profile.id),
+        invalidatePrescriptionData(client, session, profile.id),
         client.invalidateQueries({
           queryKey: ['documents', session.account.id, session.family?.id, profile.id],
         }),

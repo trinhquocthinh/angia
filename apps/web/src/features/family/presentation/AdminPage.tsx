@@ -8,6 +8,8 @@ import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCurrentSession } from '@src/features/auth/application/useCurrentSession';
 import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
+import { useProfilesWorkspace } from '@src/features/profiles/application/useProfilesWorkspace';
+import { createProfilesRepository } from '@src/features/profiles/infrastructure/createProfilesRepository';
 import { AdminRequestError } from '../application/AdminRequestError';
 import { useAdminWorkspace } from '../application/useAdminWorkspace';
 import { useAiBudget } from '../application/useAiBudget';
@@ -21,9 +23,11 @@ const aiBillingRepository = createAiBillingRepository();
 const aiRoutingRepository = createAiRoutingRepository();
 const repository = createAdminRepository();
 const aiBudgetRepository = createAiBudgetRepository();
+const profilesRepository = createProfilesRepository();
 export function AdminPage() {
   const session = useCurrentSession(fetchCurrentSession);
   const client = useQueryClient();
+  const shell = useProfilesWorkspace(profilesRepository, session.data);
   const csrf = session.data?.account.isSystemAdmin ? session.data.csrfToken : null;
   const workspace = useAdminWorkspace(repository, csrf);
   const aiBudget = useAiBudget(aiBudgetRepository, csrf);
@@ -44,6 +48,7 @@ export function AdminPage() {
   return (
     <AdminWorkspaceView
       session={session.data}
+      shell={{ profiles: shell.profiles.data ?? [], logout: shell.logout }}
       workspace={workspace}
       aiBudget={aiBudget}
       aiRouting={aiRouting}

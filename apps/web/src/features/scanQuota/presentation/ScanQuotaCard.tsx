@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { useAdminScanQuota } from '../application/useAdminScanQuota';
 import { AdminRequestError } from '@src/features/family/application/AdminRequestError';
+import { ScanQuotaHeading } from './ScanQuotaHeading';
 import { ScanQuotaOverview } from './ScanQuotaOverview';
 import { ScanQuotaEditor } from './ScanQuotaEditor';
 export function ScanQuotaCard({ state }: { state: ReturnType<typeof useAdminScanQuota> }) {
@@ -23,11 +24,9 @@ export function ScanQuotaCard({ state }: { state: ReturnType<typeof useAdminScan
     <article
       aria-labelledby="scan-quota-title"
       aria-busy={pending}
-      className="admin-panel min-w-0 self-start rounded-2xl bg-white p-4 sm:p-5 shadow-[0_1px_2px_#0000000d] flex flex-col gap-4 admin-reveal"
+      className="admin-panel min-w-0 rounded-2xl bg-white p-4 sm:p-5 shadow-sm flex flex-col gap-4 admin-reveal"
     >
-      <h2 id="scan-quota-title" className="m-0 text-[18px] leading-6 font-semibold text-[#131d1d]">
-        Hạn mức lượt nhận diện
-      </h2>
+      <ScanQuotaHeading month={config.data?.month ?? null} />
       {config.isError && (
         <p role="alert" className="m-0 text-[12px] text-[#93000a]">
           {config.error instanceof AdminRequestError
@@ -52,10 +51,10 @@ export function ScanQuotaCard({ state }: { state: ReturnType<typeof useAdminScan
       <button
         type="button"
         disabled={pending}
-        className="admin-button min-h-10 w-full rounded-xl border-0 bg-[#286958] px-4 py-2 text-[12px] font-semibold text-white shadow-sm transition-colors hover:bg-[#004135] disabled:cursor-wait disabled:opacity-60"
+        className="min-h-11 w-full cursor-pointer rounded-xl border-0 bg-[#e4f0f0] px-4 py-2 text-[13px] font-semibold text-[#004135] transition-colors enabled:hover:bg-[#deebea] disabled:cursor-wait disabled:opacity-60"
         onClick={() => void reload()}
       >
-        Bỏ bản sửa và tải bản mới / tháng hiện tại
+        Bỏ bản sửa và tải số liệu mới
       </button>
     </article>
   );

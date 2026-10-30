@@ -22,7 +22,7 @@ export function AiRoutingCardActions({
           type="button"
           disabled={disabled}
           onClick={panel.start}
-          className="min-h-11 w-full rounded-xl border border-[#e4e0da] bg-white px-3 text-[13px] font-semibold text-[#131d1d] cursor-pointer hover:bg-[#e4f0f0] disabled:opacity-60"
+          className="min-h-11 w-full rounded-xl border-0 bg-[#e4f0f0] px-3 text-[13px] font-semibold text-[#004135] cursor-pointer transition-colors enabled:hover:bg-[#deebea] disabled:opacity-60"
         >
           Chỉnh cấu hình
         </button>

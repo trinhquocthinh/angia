@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export function QuotaTextField({
   id,
   label,
@@ -7,14 +9,14 @@ export function QuotaTextField({
   mode = 'decimal',
 }: {
   id: string;
-  label: string;
+  label: ReactNode;
   value: string;
   onChange(value: string): void;
   error?: string;
   mode?: 'decimal' | 'numeric' | 'text';
 }) {
   return (
-    <label htmlFor={id} className="grid gap-1 text-[12px] font-medium text-[#404945]">
+    <label htmlFor={id} className="grid content-start gap-1 text-[12px] font-medium text-[#404945]">
       {label}
       <input
         id={id}

@@ -19,7 +19,7 @@ export function ChoiceChip({
       aria-pressed={selected}
       disabled={disabled}
       onClick={onClick}
-      className={`flex min-h-11 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958] disabled:cursor-not-allowed disabled:opacity-60 ${
+      className={`flex min-h-11 items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958] disabled:cursor-not-allowed disabled:opacity-60 ${
         selected
           ? `${active} shadow-sm`
           : 'bg-[#e4f0f0] text-[#404945] enabled:hover:bg-[#deebea] enabled:hover:text-[#131d1d]'
