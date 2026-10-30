@@ -64,7 +64,7 @@ export function UploadPrivacyReminder({ onClose }: Props) {
           type="button"
           autoFocus
           onClick={() => onClose(dontRemind)}
-          className="min-h-12 cursor-pointer rounded-xl bg-[#004135] px-5 font-semibold text-white transition-colors duration-200 hover:bg-[#20594b] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
+          className="min-h-12 rounded-xl bg-[#004135] px-5 font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
         >
           Tôi đã hiểu
         </button>

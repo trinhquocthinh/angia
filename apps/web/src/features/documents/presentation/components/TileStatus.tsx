@@ -12,30 +12,29 @@ export function TileStatus({ item, onRemove }: { item: UploadItem; onRemove: () 
         </span>
       )}
       {busy && (
-        <span className="upload-overlay-in absolute inset-0 flex flex-col items-center justify-center bg-[#131d1d]/45 p-3 text-white backdrop-blur-[2px]">
+        <span className="absolute inset-0 flex flex-col items-center justify-center bg-[#131d1d]/45 p-3 text-white backdrop-blur-[2px]">
           {item.notice ? (
-            <span className="text-center text-xs font-semibold leading-4">{item.notice}</span>
+            <span className="text-center text-[11px] font-semibold leading-4">{item.notice}</span>
           ) : (
             <>
               <span className="text-lg font-bold tabular-nums">
                 {item.status === 'queued' ? 'Chờ' : `${item.progress}%`}
               </span>
-              <span className="relative mt-1 h-1.5 w-full overflow-hidden rounded-full bg-white/30">
+              <span className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-white/30">
                 <span
                   className="block h-full origin-left rounded-full bg-[#aef0da] transition-transform duration-300 ease-out motion-reduce:transition-none"
                   style={{ transform: `scaleX(${item.progress / 100})` }}
                 />
-                {item.status === 'uploading' && <span aria-hidden="true" className="upload-progress-sheen" />}
               </span>
             </>
           )}
         </span>
       )}
       {item.status === 'failed' && (
-        <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-[#ffdad6]/95 p-2 text-center text-xs leading-4 text-[#93000a]">
+        <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-[#ffdad6]/95 p-2 text-center text-[11px] leading-4 text-[#93000a]">
           <DocumentIcon name="warning" size={18} />
           {item.error}
-          <button type="button" onClick={onRemove} className="min-h-8 cursor-pointer font-semibold underline">
+          <button type="button" onClick={onRemove} className="min-h-8 font-semibold underline">
             Bỏ ảnh
           </button>
         </span>

@@ -17,15 +17,15 @@ export function UploadIntro() {
         </p>
       </div>
       <section
-        className="angia-modal-reveal flex items-start gap-3 rounded-2xl bg-[#aef0da]/40 p-4 sm:items-center"
+        className="angia-modal-reveal flex items-start gap-3 rounded-2xl bg-[#aef0da]/60 p-4 shadow-sm sm:items-center"
         style={revealStyle(1)}
       >
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#286958] text-white shadow-sm">
           <DocumentIcon name="lock" size={18} />
         </span>
         <p className="text-[15px] leading-6 text-[#131d1d]">
-          <strong className="font-semibold text-[#004135]">Bảo vệ quyền riêng tư gia đình:</strong> Chỉ chụp
-          thuốc, chỉ số, ngày. Không chụp họ tên, mã bệnh nhân hoặc số bảo hiểm y tế.
+          <strong className="text-sm font-bold text-[#004135]">Bảo vệ quyền riêng tư gia đình:</strong> Chỉ
+          chụp thuốc, chỉ số, ngày. Không chụp họ tên, mã bệnh nhân hoặc số bảo hiểm y tế.
         </p>
       </section>
     </>

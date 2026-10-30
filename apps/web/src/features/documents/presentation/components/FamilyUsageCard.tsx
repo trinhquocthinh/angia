@@ -14,14 +14,15 @@ type Meter = { label: string; value: string; used: number; limit: number };
 function UsageMeter({ label, value, used, limit }: Meter) {
   const percent = limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 100;
   const full = used >= limit;
-  const near = !full && percent >= 80;
   const [amount, cap] = value.split(' / ');
   return (
     <div className="flex min-w-0 flex-col justify-end gap-1.5">
       <span className="text-xs leading-4 font-medium text-[#404945]">{label}</span>
       {cap ? (
         <span className="flex flex-wrap items-baseline gap-x-1.5 tabular-nums">
-          <span className="auth-heading text-[22px] leading-8 font-semibold text-[#131d1d]">{amount}</span>
+          <span className="auth-heading text-2xl leading-8 font-semibold text-[#131d1d] sm:text-[28px]">
+            {amount}
+          </span>
           <span className="text-xs leading-4 text-[#55615f]">/ {cap}</span>
         </span>
       ) : (
@@ -36,7 +37,7 @@ function UsageMeter({ label, value, used, limit }: Meter) {
         className="h-1.5 overflow-hidden rounded-full bg-[#e4f0f0]"
       >
         <div
-          className={`upload-meter-fill h-full rounded-full ${full ? 'bg-[#93000a]' : near ? 'bg-[#833b00]' : 'bg-[#286958]'}`}
+          className={`upload-meter-fill h-full rounded-full ${full ? 'bg-[#93000a]' : 'bg-[#286958]'}`}
           style={{ width: `${percent}%` }}
         />
       </div>
@@ -98,8 +99,8 @@ export function FamilyUsageCard({
   return (
     <section
       aria-labelledby="family-usage-title"
-      className="angia-modal-reveal flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-card max-md:p-4"
-      style={revealStyle(6)}
+      className="angia-modal-reveal flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm max-md:p-4"
+      style={revealStyle(2)}
     >
       <h2
         id="family-usage-title"

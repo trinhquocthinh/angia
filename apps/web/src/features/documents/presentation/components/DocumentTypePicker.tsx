@@ -21,7 +21,7 @@ export function DocumentTypePicker({
   onChange: (value: DocumentType | null) => void;
 }) {
   return (
-    <PickerCard icon="category" title="Loại giấy tờ" hint="Không bắt buộc">
+    <PickerCard icon="category" title="Loại giấy tờ" hint="Tùy chọn gợi ý">
       <ChoiceChip selected={value === null} onClick={() => onChange(null)}>
         <span className={value === null ? 'text-[#b3eddf]' : 'text-[#707975]'}>
           <DocumentIcon name="sparkle" size={16} />
@@ -40,12 +40,9 @@ export function DocumentTypePicker({
           {type.label}
         </ChoiceChip>
       ))}
-      <p aria-live="polite" className="basis-full text-[13px] leading-5 text-[#55615f]">
-        <span key={value === null ? 'auto' : 'one'} className="angia-modal-reveal block">
-          {value === null
-            ? 'Mỗi ảnh được đọc riêng để biết loại giấy tờ, hợp với lô ảnh trộn nhiều loại.'
-            : 'Chỉ chọn khi mọi ảnh cùng loại — ảnh khác loại sẽ chuyển sang nhập tay.'}
-        </span>
+      <p className="basis-full text-xs leading-5 text-[#55615f]">
+        Chọn nhiều loại giấy tờ trong một lần tải: để hệ thống tự động nhận diện từng ảnh. Chỉ chọn một loại
+        khi mọi ảnh cùng loại — ảnh khác loại sẽ chuyển sang nhập tay.
       </p>
     </PickerCard>
   );

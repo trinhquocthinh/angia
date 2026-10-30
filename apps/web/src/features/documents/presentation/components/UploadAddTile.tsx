@@ -20,7 +20,7 @@ export function UploadAddTile({ onFiles }: { onFiles: (files: File[]) => void })
         <DocumentIcon name="plus" />
       </span>
       <span className="text-xs font-semibold text-[#404945]">Thêm ảnh khác</span>
-      <span className="text-xs text-[#55615f]">Tối đa {MAX_FILES_PER_PICK} ảnh mỗi lần chọn</span>
+      <span className="text-[11px] text-[#55615f]">Tối đa {MAX_FILES_PER_PICK} ảnh mỗi lần chọn</span>
     </label>
   );
 }

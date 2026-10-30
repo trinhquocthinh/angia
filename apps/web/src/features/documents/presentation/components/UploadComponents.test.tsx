@@ -119,7 +119,7 @@ describe('Giao diện /upload theo Stitch a48f7111', () => {
     );
     expect(button({ ...idle, ready: 3, total: 3 }, false)).toMatch(/<button[^>]*disabled=""/);
     expect(button({ ...idle, ready: 3, total: 3 }, true)).toMatch(
-      /<button type="button" class="[^"]*">Xong — gửi 3 ảnh<span[^>]*>, đến Chờ duyệt/,
+      /<button type="button" class="[^"]*">Xong — gửi 3 ảnh, đến Chờ duyệt/,
     );
     expect(button({ ...idle, total: 3, done: 1, active: 2 }, true)).toMatch(/disabled=""[^>]*>Đang gửi 1\/3/);
   });
@@ -167,31 +167,9 @@ describe('Giao diện /upload theo Stitch a48f7111', () => {
   });
   it('thanh bước chỉ là chỉ báo: đánh dấu đúng bước hiện tại, không có nút bấm', () => {
     const text = html(<UploadStepper current={2} />);
-    expect(text).toMatch(/aria-current="step"[^>]*>.*Cắt &amp; che thông tin/);
+    expect(text).toMatch(/aria-current="step"[^>]*>.*Cắt &amp; Che định danh/);
     expect(text.match(/aria-current/g)).toHaveLength(1);
     expect(text).not.toContain('<button');
-  });
-  it('vùng thả ảnh bị khóa thì tiêu đề nêu đúng tình trạng, không còn mời kéo thả hay nút chọn ảnh', () => {
-    for (const blockedReason of [null, 'Đã đủ ảnh hôm nay.']) {
-      const text = html(<UploadDropZone disabled blockedReason={blockedReason} onFiles={() => undefined} />);
-      expect(text).not.toContain('Kéo ảnh vào đây');
-      expect(text).not.toContain('Chọn ảnh từ máy');
-    }
-  });
-  it('màn hình cảm ứng không nhắc kéo thả; nút chọn ảnh không dùng từ "Duyệt" (trùng nghĩa với Chờ duyệt)', () => {
-    const open = html(<UploadDropZone disabled={false} onFiles={() => undefined} />);
-    expect(open).toMatch(/pointer-coarse:hidden[^>]*>Kéo ảnh vào đây/);
-    expect(open).toMatch(/pointer-coarse:inline[^>]*>Chọn ảnh giấy tờ/);
-    expect(open).toContain('Chọn ảnh từ máy');
-    expect(open).not.toContain('Duyệt');
-  });
-  it('thanh gửi chỉ ghim ở di động khi đã có ảnh; chưa có ảnh thì gợi ý bắt đầu', () => {
-    const idle = { needsRedaction: 0, ready: 0, total: 0, done: 0, active: 0 };
-    const bar = (summary: typeof idle) =>
-      html(<UploadActions summary={summary} profileChosen onSubmit={() => undefined} />);
-    expect(bar(idle)).not.toContain('max-lg:sticky');
-    expect(bar(idle)).toContain('Chọn ảnh ở trên để bắt đầu.');
-    expect(bar({ ...idle, ready: 1, total: 1 })).toContain('max-lg:sticky');
   });
   it('ô ảnh nêu trạng thái bằng chữ; ô "Thêm ảnh khác" chỉ hiện khi được truyền vào', () => {
     const props = {

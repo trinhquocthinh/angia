@@ -6,42 +6,6 @@
 .upload-drop-halo {
   animation: upload-drop-halo 1400ms ease-out infinite;
 }
-.upload-overlay-in {
-  animation: angia-modal-fade 180ms ease-out both;
-}
-/* Vệt sáng chạy qua thanh tiến trình khi đang gửi, để biết máy vẫn chạy cả lúc % chưa đổi. */
-.upload-progress-sheen {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent);
-  animation: upload-progress-sheen 1400ms linear infinite;
-}
-/* Bỏ ảnh: ô ảnh thu nhẹ rồi mờ đi, các ô còn lại trượt về chỗ mới; phần còn lại của trang không nháy. */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-}
-::view-transition-group(.upload-tile) {
-  animation-duration: 240ms;
-  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-::view-transition-old(.upload-tile):only-child {
-  animation: upload-tile-leave 160ms ease-in both;
-}
-@keyframes upload-tile-leave {
-  to {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-}
-@keyframes upload-progress-sheen {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(100%);
-  }
-}
 @keyframes upload-meter-grow {
   from {
     transform: scaleX(0);
@@ -59,12 +23,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .upload-meter-fill,
-  .upload-drop-halo,
-  .upload-overlay-in,
-  .upload-progress-sheen {
+  .upload-drop-halo {
     animation: none;
-  }
-  .upload-progress-sheen {
-    display: none;
   }
 }

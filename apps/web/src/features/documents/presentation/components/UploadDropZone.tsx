@@ -39,8 +39,8 @@ export function UploadDropZone({
         if (!disabled) onFiles([...event.dataTransfer.files]);
       }}
       aria-disabled={disabled}
-      style={revealStyle(4)}
-      className={`angia-modal-reveal group flex flex-col items-center justify-center gap-1 rounded-2xl border-[1.5px] border-dashed p-8 text-center shadow-card transition-[background-color,border-color,box-shadow,scale] duration-200 ease-out focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#286958] motion-reduce:transition-none max-sm:p-6 ${
+      style={revealStyle(5)}
+      className={`angia-modal-reveal group flex flex-col items-center justify-center gap-1 rounded-2xl border-[1.5px] border-dashed p-8 text-center shadow-sm transition-[background-color,border-color,box-shadow,scale] duration-200 ease-out focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#286958] motion-reduce:transition-none max-sm:p-6 ${
         ZONE_STATE[disabled ? 'disabled' : over ? 'over' : 'idle']
       }`}
     >
