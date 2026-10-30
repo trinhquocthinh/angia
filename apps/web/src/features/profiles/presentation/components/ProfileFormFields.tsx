@@ -21,12 +21,12 @@ export function ProfileFormFields({
       <ProfileIdentityFields errors={errors} />
       <div>
         <label htmlFor="profile-account" className="text-sm font-semibold">
-          Liên kết tài khoản (tùy chọn)
+          Liên kết tài khoản <span className="font-normal text-[#707975]">(tùy chọn)</span>
         </label>
         <select
           id="profile-account"
           name="linkedAccountId"
-          className="mt-2 block min-h-12 w-full rounded-xl bg-[#eaf6f5] p-3 text-sm text-[#131d1d] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
+          className="mt-1.5 block h-12 w-full rounded-xl border border-[#bfc9c4]/30 bg-[#eaf6f5] px-4 text-sm text-[#131d1d] max-md:border-[#bfc9c4]/60 max-md:bg-[#f8faf9] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
           disabled={accountsLoading || accountsError}
           aria-invalid={Boolean(errors.linkedAccountId)}
           aria-describedby={errors.linkedAccountId ? 'account-error' : undefined}
@@ -45,7 +45,7 @@ export function ProfileFormFields({
             {errors.linkedAccountId}
           </p>
         )}
-        <p className="mt-2 text-sm leading-6 text-[#55615f]">
+        <p className="mt-1.5 text-xs leading-5 text-[#55615f]">
           Chỉ tài khoản trong gia đình chưa có hồ sơ liên kết được hiển thị.
         </p>
         {accountsLoading && (

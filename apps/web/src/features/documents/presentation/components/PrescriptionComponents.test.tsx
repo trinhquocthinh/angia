@@ -32,6 +32,8 @@ describe('Form duyệt đơn thuốc (SPEC-010, BR-025)', () => {
   it('có ngày kê bắt buộc, nơi khám, chẩn đoán và mỗi dòng thuốc một khối', () => {
     const html = renderToStaticMarkup(<PrescriptionForm {...props} payload={payload} />);
     expect(html).toContain('Ngày kê đơn *');
+    expect(html).toContain('Ngày hẹn tái khám');
+    expect(html).toContain('name="revisitDate"');
     expect(html).toContain('name="facility"');
     expect(html).toContain('Chẩn đoán ghi trên đơn');
     expect(html).toContain('Danh sách thuốc (1 loại)');

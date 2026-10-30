@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { revisitDateFormSchema } from '@src/features/revisits/application/revisitDateForm';
 import { sortDoseSlots } from './doseSlots';
 import type { PrescriptionApproval, PrescriptionPayload } from './reviewPorts';
 
@@ -48,8 +49,7 @@ const itemSchema = z
       issue('durationDays', 'Nhập số ngày là số nguyên dương.');
   });
 
-export const prescriptionFormSchema = z.object({
-  issuedDate: z.string().min(1, 'Nhập ngày kê ghi trên đơn.'),
+export const prescriptionFormSchema = revisitDateFormSchema.safeExtend({
   facility: z.string(),
   diagnosis: z.string(),
   items: z.array(itemSchema).min(1, 'Đơn thuốc cần ít nhất một dòng thuốc.'),
@@ -99,6 +99,7 @@ export function toPrescriptionFormValues(payload: PrescriptionPayload | null): P
   }));
   return {
     issuedDate: text(payload?.issuedDate ?? null),
+    revisitDate: text(payload?.revisitDate ?? null),
     facility: text(payload?.facility ?? null),
     diagnosis: text(payload?.diagnosis ?? null),
     items: items?.length ? items : [emptyPrescriptionItem()],
@@ -110,8 +111,7 @@ export function toPrescriptionApproval(form: PrescriptionFormValues): Prescripti
   return {
     type: 'prescription',
     issuedDate: form.issuedDate,
-    // Ô ngày hẹn và đối soát AI bổ sung ở E13-S3-T4.
-    revisitDate: null,
+    revisitDate: orNull(form.revisitDate),
     facility: orNull(form.facility),
     diagnosis: orNull(form.diagnosis),
     items: form.items.map((item) => ({

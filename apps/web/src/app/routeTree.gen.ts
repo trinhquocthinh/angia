@@ -21,11 +21,13 @@ import { Route as ProfilesNewRouteImport } from './routes/profiles.new'
 import { Route as RemindersReminderIdRouteImport } from './routes/reminders.$reminderId'
 import { Route as ReviewIndexRouteImport } from './routes/review.index'
 import { Route as ReviewDocumentIdRouteImport } from './routes/review.$documentId'
+import { Route as RevisitRemindersReminderIdRouteImport } from './routes/revisit-reminders.$reminderId'
 import { Route as ProfilesProfileIdDocumentsRouteImport } from './routes/profiles.$profileId_.documents'
 import { Route as ProfilesProfileIdLabResultsRouteImport } from './routes/profiles.$profileId_.lab-results'
 import { Route as ProfilesProfileIdManualRouteImport } from './routes/profiles.$profileId_.manual'
 import { Route as ProfilesProfileIdMedicationsRouteImport } from './routes/profiles.$profileId_.medications'
 import { Route as ProfilesProfileIdRemindersRouteImport } from './routes/profiles.$profileId_.reminders'
+import { Route as ProfilesProfileIdRevisitsRouteImport } from './routes/profiles.$profileId_.revisits'
 import { Route as ProfilesProfileIdSummaryRouteImport } from './routes/profiles.$profileId_.summary'
 
 const IndexRoute = IndexRouteImport.update({
@@ -88,6 +90,12 @@ const ReviewDocumentIdRoute = ReviewDocumentIdRouteImport.update({
   path: '/review/$documentId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RevisitRemindersReminderIdRoute =
+  RevisitRemindersReminderIdRouteImport.update({
+    id: '/revisit-reminders/$reminderId',
+    path: '/revisit-reminders/$reminderId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProfilesProfileIdDocumentsRoute =
   ProfilesProfileIdDocumentsRouteImport.update({
     id: '/profiles/$profileId_/documents',
@@ -117,6 +125,12 @@ const ProfilesProfileIdRemindersRoute =
     path: '/profiles/$profileId/reminders',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ProfilesProfileIdRevisitsRoute =
+  ProfilesProfileIdRevisitsRouteImport.update({
+    id: '/profiles/$profileId_/revisits',
+    path: '/profiles/$profileId/revisits',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProfilesProfileIdSummaryRoute =
   ProfilesProfileIdSummaryRouteImport.update({
     id: '/profiles/$profileId_/summary',
@@ -136,12 +150,14 @@ export interface FileRoutesByFullPath {
   '/profiles/new': typeof ProfilesNewRoute
   '/reminders/$reminderId': typeof RemindersReminderIdRoute
   '/review/$documentId': typeof ReviewDocumentIdRoute
+  '/revisit-reminders/$reminderId': typeof RevisitRemindersReminderIdRoute
   '/review/': typeof ReviewIndexRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
   '/profiles/$profileId/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId/medications': typeof ProfilesProfileIdMedicationsRoute
   '/profiles/$profileId/reminders': typeof ProfilesProfileIdRemindersRoute
+  '/profiles/$profileId/revisits': typeof ProfilesProfileIdRevisitsRoute
   '/profiles/$profileId/summary': typeof ProfilesProfileIdSummaryRoute
 }
 export interface FileRoutesByTo {
@@ -156,12 +172,14 @@ export interface FileRoutesByTo {
   '/profiles/new': typeof ProfilesNewRoute
   '/reminders/$reminderId': typeof RemindersReminderIdRoute
   '/review/$documentId': typeof ReviewDocumentIdRoute
+  '/revisit-reminders/$reminderId': typeof RevisitRemindersReminderIdRoute
   '/review': typeof ReviewIndexRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
   '/profiles/$profileId/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId/medications': typeof ProfilesProfileIdMedicationsRoute
   '/profiles/$profileId/reminders': typeof ProfilesProfileIdRemindersRoute
+  '/profiles/$profileId/revisits': typeof ProfilesProfileIdRevisitsRoute
   '/profiles/$profileId/summary': typeof ProfilesProfileIdSummaryRoute
 }
 export interface FileRoutesById {
@@ -177,12 +195,14 @@ export interface FileRoutesById {
   '/profiles/new': typeof ProfilesNewRoute
   '/reminders/$reminderId': typeof RemindersReminderIdRoute
   '/review/$documentId': typeof ReviewDocumentIdRoute
+  '/revisit-reminders/$reminderId': typeof RevisitRemindersReminderIdRoute
   '/review/': typeof ReviewIndexRoute
   '/profiles/$profileId_/documents': typeof ProfilesProfileIdDocumentsRoute
   '/profiles/$profileId_/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId_/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId_/medications': typeof ProfilesProfileIdMedicationsRoute
   '/profiles/$profileId_/reminders': typeof ProfilesProfileIdRemindersRoute
+  '/profiles/$profileId_/revisits': typeof ProfilesProfileIdRevisitsRoute
   '/profiles/$profileId_/summary': typeof ProfilesProfileIdSummaryRoute
 }
 export interface FileRouteTypes {
@@ -199,12 +219,14 @@ export interface FileRouteTypes {
     | '/profiles/new'
     | '/reminders/$reminderId'
     | '/review/$documentId'
+    | '/revisit-reminders/$reminderId'
     | '/review/'
     | '/profiles/$profileId/documents'
     | '/profiles/$profileId/lab-results'
     | '/profiles/$profileId/manual'
     | '/profiles/$profileId/medications'
     | '/profiles/$profileId/reminders'
+    | '/profiles/$profileId/revisits'
     | '/profiles/$profileId/summary'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -219,12 +241,14 @@ export interface FileRouteTypes {
     | '/profiles/new'
     | '/reminders/$reminderId'
     | '/review/$documentId'
+    | '/revisit-reminders/$reminderId'
     | '/review'
     | '/profiles/$profileId/documents'
     | '/profiles/$profileId/lab-results'
     | '/profiles/$profileId/manual'
     | '/profiles/$profileId/medications'
     | '/profiles/$profileId/reminders'
+    | '/profiles/$profileId/revisits'
     | '/profiles/$profileId/summary'
   id:
     | '__root__'
@@ -239,12 +263,14 @@ export interface FileRouteTypes {
     | '/profiles/new'
     | '/reminders/$reminderId'
     | '/review/$documentId'
+    | '/revisit-reminders/$reminderId'
     | '/review/'
     | '/profiles/$profileId_/documents'
     | '/profiles/$profileId_/lab-results'
     | '/profiles/$profileId_/manual'
     | '/profiles/$profileId_/medications'
     | '/profiles/$profileId_/reminders'
+    | '/profiles/$profileId_/revisits'
     | '/profiles/$profileId_/summary'
   fileRoutesById: FileRoutesById
 }
@@ -260,12 +286,14 @@ export interface RootRouteChildren {
   ProfilesNewRoute: typeof ProfilesNewRoute
   RemindersReminderIdRoute: typeof RemindersReminderIdRoute
   ReviewDocumentIdRoute: typeof ReviewDocumentIdRoute
+  RevisitRemindersReminderIdRoute: typeof RevisitRemindersReminderIdRoute
   ReviewIndexRoute: typeof ReviewIndexRoute
   ProfilesProfileIdDocumentsRoute: typeof ProfilesProfileIdDocumentsRoute
   ProfilesProfileIdLabResultsRoute: typeof ProfilesProfileIdLabResultsRoute
   ProfilesProfileIdManualRoute: typeof ProfilesProfileIdManualRoute
   ProfilesProfileIdMedicationsRoute: typeof ProfilesProfileIdMedicationsRoute
   ProfilesProfileIdRemindersRoute: typeof ProfilesProfileIdRemindersRoute
+  ProfilesProfileIdRevisitsRoute: typeof ProfilesProfileIdRevisitsRoute
   ProfilesProfileIdSummaryRoute: typeof ProfilesProfileIdSummaryRoute
 }
 
@@ -355,6 +383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReviewDocumentIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/revisit-reminders/$reminderId': {
+      id: '/revisit-reminders/$reminderId'
+      path: '/revisit-reminders/$reminderId'
+      fullPath: '/revisit-reminders/$reminderId'
+      preLoaderRoute: typeof RevisitRemindersReminderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profiles/$profileId_/documents': {
       id: '/profiles/$profileId_/documents'
       path: '/profiles/$profileId/documents'
@@ -390,6 +425,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfilesProfileIdRemindersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profiles/$profileId_/revisits': {
+      id: '/profiles/$profileId_/revisits'
+      path: '/profiles/$profileId/revisits'
+      fullPath: '/profiles/$profileId/revisits'
+      preLoaderRoute: typeof ProfilesProfileIdRevisitsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profiles/$profileId_/summary': {
       id: '/profiles/$profileId_/summary'
       path: '/profiles/$profileId/summary'
@@ -412,12 +454,14 @@ const rootRouteChildren: RootRouteChildren = {
   ProfilesNewRoute: ProfilesNewRoute,
   RemindersReminderIdRoute: RemindersReminderIdRoute,
   ReviewDocumentIdRoute: ReviewDocumentIdRoute,
+  RevisitRemindersReminderIdRoute: RevisitRemindersReminderIdRoute,
   ReviewIndexRoute: ReviewIndexRoute,
   ProfilesProfileIdDocumentsRoute: ProfilesProfileIdDocumentsRoute,
   ProfilesProfileIdLabResultsRoute: ProfilesProfileIdLabResultsRoute,
   ProfilesProfileIdManualRoute: ProfilesProfileIdManualRoute,
   ProfilesProfileIdMedicationsRoute: ProfilesProfileIdMedicationsRoute,
   ProfilesProfileIdRemindersRoute: ProfilesProfileIdRemindersRoute,
+  ProfilesProfileIdRevisitsRoute: ProfilesProfileIdRevisitsRoute,
   ProfilesProfileIdSummaryRoute: ProfilesProfileIdSummaryRoute,
 }
 export const routeTree = rootRouteImport

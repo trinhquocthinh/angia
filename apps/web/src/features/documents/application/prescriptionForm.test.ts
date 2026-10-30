@@ -25,6 +25,7 @@ const item = (patch: Partial<PrescriptionItemValues> = {}): PrescriptionItemValu
 });
 const values = (patch: Partial<PrescriptionFormValues> = {}): PrescriptionFormValues => ({
   issuedDate: '2026-10-01',
+  revisitDate: '',
   facility: 'BV Nhân dân Gia Định',
   diagnosis: 'Tăng huyết áp',
   items: [item()],
@@ -38,9 +39,31 @@ const errorsOf = (input: PrescriptionFormValues) => {
 };
 
 describe('Form đối soát đơn thuốc (SPEC-010, BR-025)', () => {
-  it('TC-573: form chưa có ô ngày hẹn gửi null theo hợp đồng mới', () => {
+  it('TC-573: không có ngày hẹn thì gửi null, không tự suy diễn', () => {
     expect(toPrescriptionApproval(values())).toHaveProperty('revisitDate', null);
   });
+  it('TC-573: giữ ngày hẹn AI, cho sửa và xóa trước khi duyệt', () => {
+    const payload = {
+      type: 'prescription',
+      issuedDate: '2026-10-01',
+      revisitDate: '2026-10-31',
+      facility: null,
+      diagnosis: null,
+      items: [],
+    } as PrescriptionPayload;
+    expect(toPrescriptionFormValues(payload).revisitDate).toBe('2026-10-31');
+    expect(toPrescriptionApproval(values({ revisitDate: '2026-11-02' })).revisitDate).toBe('2026-11-02');
+    expect(toPrescriptionApproval(values({ revisitDate: '' })).revisitDate).toBeNull();
+  });
+  it.each(['2026-09-30', '2036-09-29', '2026-02-30'])('TC-472: chặn ngày hẹn sai %s', (revisitDate) => {
+    expect(errorsOf(values({ revisitDate }))).toHaveProperty('revisitDate');
+  });
+  it.each(['2026-10-01', '2036-09-28', '2026-10-31', ''])(
+    'TC-472: chấp nhận ngày hẹn %s, kể cả đơn cũ',
+    (revisitDate) => {
+      expect(errorsOf(values({ revisitDate }))).toEqual({});
+    },
+  );
   it('điền sẵn từ bản trích xuất; trường null thành ô trống, không suy diễn liều/buổi', () => {
     const payload: PrescriptionPayload = {
       type: 'prescription',

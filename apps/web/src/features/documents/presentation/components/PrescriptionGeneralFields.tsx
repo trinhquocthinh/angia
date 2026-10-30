@@ -20,6 +20,14 @@ export function PrescriptionGeneralFields({ form, aiDate }: GeneralFieldsProps) 
           {...form.register('issuedDate')}
         />
         <ReadingField
+          id="revisitDate"
+          label="Ngày hẹn tái khám"
+          type="date"
+          error={errors.revisitDate?.message}
+          hint="Chép đúng ngày hẹn trên đơn; đơn không ghi thì để trống."
+          {...form.register('revisitDate')}
+        />
+        <ReadingField
           id="facility"
           label="Nơi khám"
           autoComplete="off"
