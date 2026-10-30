@@ -22,6 +22,7 @@ export function createStubReviewDeps(): Pick<
   | 'revisits'
   | 'reminderRecipients'
   | 'myReminders'
+  | 'myRevisitReminders'
   | 'myConsent'
   | 'visitSummary'
   | 'familyUsage'
@@ -38,6 +39,7 @@ export function createStubReviewDeps(): Pick<
     revisits: { withFamily: notConfigured },
     reminderRecipients: { withFamily: notConfigured },
     myReminders: { load: notConfigured },
+    myRevisitReminders: { load: notConfigured },
     myConsent: { withFamily: notConfigured },
     visitSummary: { withFamily: notConfigured },
     measurements: { withFamily: notConfigured },

@@ -1,4 +1,4 @@
-import { checkDeliveryEligibility } from '../domain/checkDeliveryEligibility.js';
+import { checkReminderDeliveryEligibility } from './checkReminderDeliveryEligibility.js';
 import type { DeliveryStatus, DeliveryUpdate } from '../domain/DeliveryTypes.js';
 import { planDeliveryOutcome } from '../domain/planDeliveryOutcome.js';
 import { isWithinSendWindow, remainingTtlSeconds } from '../domain/sendWindow.js';
@@ -30,7 +30,7 @@ async function decide(
   const { device, attempts, scheduledAt } = candidate;
   const now = clock();
   if (!isWithinSendWindow(scheduledAt, now)) return { status: 'expired', attempts };
-  const eligibility = checkDeliveryEligibility({
+  const eligibility = checkReminderDeliveryEligibility(candidate.kind, {
     deviceAccountId: device?.accountId ?? null,
     profileId: candidate.profileId,
     consentConfirmed: candidate.consentConfirmed,
@@ -39,7 +39,7 @@ async function decide(
   });
   if (eligibility !== 'ok' || !device) return { status: 'revoked', attempts, lastError: eligibility };
   const ttlSeconds = remainingTtlSeconds(scheduledAt, now);
-  const outcome = await notifier.send(device.subscription, candidate.reminderId, ttlSeconds);
+  const outcome = await notifier.send(device.subscription, candidate.reminderId, ttlSeconds, candidate.kind);
   return planDeliveryOutcome(outcome, attempts, scheduledAt, clock());
 }
 

@@ -236,3 +236,6 @@ export type { AiBillingView } from './aiBilling/aiBillingSchema.js';
 export * from './scanQuota/scanQuotaSchemas.js';
 export { revisitQuerySchema, setRevisitDateSchema, revisitListSchema } from './documents/revisitSchemas.js';
 export type { RevisitList } from './documents/revisitSchemas.js';
+
+export { myRevisitReminderSchema } from './reminders/myRevisitReminderSchemas.js';
+export type { MyRevisitReminder } from './reminders/myRevisitReminderSchemas.js';

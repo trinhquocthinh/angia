@@ -3691,6 +3691,72 @@
           "doseUnit"
         ]
       },
+      "MyRevisitReminder": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revisitDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "offset": {
+            "type": "string",
+            "enum": [
+              "two_days_before",
+              "same_day"
+            ]
+          },
+          "profileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "profileName": {
+            "type": "string"
+          },
+          "prescriptions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "issuedDate": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "facility": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "issuedDate",
+                "facility"
+              ]
+            }
+          },
+          "canOpenSummary": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "revisitDate",
+          "offset",
+          "profileId",
+          "profileName",
+          "prescriptions",
+          "canOpenSummary"
+        ]
+      },
       "MyConsent": {
         "type": "object",
         "properties": {
@@ -8181,6 +8247,66 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND: không có lời nhắc hoặc tài khoản không phải người nhận hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/revisit-reminders/{reminderId}": {
+      "get": {
+        "tags": [
+          "reminders"
+        ],
+        "summary": "Đọc nhắc tái khám dành cho người nhận hiện hành (SPEC-044)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "reminderId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chi tiết nhắc tái khám",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyRevisitReminder"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: không tìm thấy hoặc không còn quyền xem",
             "content": {
               "application/json": {
                 "schema": {

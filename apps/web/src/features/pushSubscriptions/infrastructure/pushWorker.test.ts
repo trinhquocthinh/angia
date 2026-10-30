@@ -25,6 +25,35 @@ function harness() {
   return { handlers, notices, opened };
 }
 describe('Service worker AN GIA', () => {
+  it('TC-477: nhắc tái khám hiện nội dung chung và mở đúng trang cùng origin', async () => {
+    const id = '3f2b8c1e-9a4d-4e6f-8b7a-1c2d3e4f5a6b';
+    const h = harness();
+    let work: unknown;
+    const waitUntil = (p: unknown) => {
+      work = p;
+    };
+    h.handlers.get('push')!({
+      data: {
+        json: () => ({
+          type: 'revisit-reminder',
+          reminderId: id,
+          body: 'Bệnh bí mật',
+          url: 'https://evil.test',
+        }),
+      },
+      waitUntil,
+    });
+    await work;
+    const options = h.notices[0]?.[1] as { data: unknown };
+    expect(h.notices[0]).toMatchObject(['AN GIA', { body: 'Sắp đến lịch tái khám' }]);
+    expect(JSON.stringify(options)).not.toContain('bí mật');
+    h.handlers.get('notificationclick')!({
+      notification: { close: () => undefined, data: options.data },
+      waitUntil,
+    });
+    await work;
+    expect(h.opened).toEqual([`https://angia.test/revisit-reminders/${id}`]);
+  });
   it('TC-343: bỏ title/body/URL chứa PII trong payload', async () => {
     const h = harness();
     let work: unknown;

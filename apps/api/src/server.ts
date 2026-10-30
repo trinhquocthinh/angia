@@ -5,6 +5,7 @@ import { createAiRoutingRepository } from '@src/features/aiRouting/infrastructur
 import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
 import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
 import { createMyConsentRepository } from '@src/features/myConsent/infrastructure/createMyConsentRepository.js';
+import { createMyRevisitReminderRepository } from '@src/features/myRevisitReminders/infrastructure/createMyRevisitReminderRepository.js';
 import { createMyReminderRepository } from '@src/features/myReminders/infrastructure/createMyReminderRepository.js';
 import { createReminderRecipientRepository } from '@src/features/reminders/infrastructure/createReminderRecipientRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
@@ -162,6 +163,7 @@ const app = createApp({
   revisits: createRevisitRepository(db),
   reminderRecipients: createReminderRecipientRepository(db),
   myReminders: createMyReminderRepository(db),
+  myRevisitReminders: createMyRevisitReminderRepository(db),
   myConsent: createMyConsentRepository(db),
   visitSummary: createVisitSummaryRepository(db),
   familyUsage: { repository: createFamilyUsageRepository(db), quota: quotaPolicy, ai: aiPolicy },

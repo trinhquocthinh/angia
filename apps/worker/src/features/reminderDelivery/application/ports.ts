@@ -1,7 +1,10 @@
 import type { DeliveryUpdate, PushSubscriptionShape, SendOutcome } from '../domain/DeliveryTypes.js';
 import type { FamilyAccount } from '@src/shared/domain/FamilyAccount.js';
 
+export type ReminderKind = 'medication' | 'revisit';
+
 export interface UnsentReminder {
+  kind: ReminderKind;
   reminderId: string;
   profileId: string;
   scheduledAt: Date;
@@ -15,10 +18,11 @@ export interface FanOutStore {
   listAssignments(): Promise<{ profileId: string; accountId: string }[]>;
   listDeviceIds(accountIds: string[]): Promise<string[]>;
   /** Insert đích pending (ON CONFLICT DO NOTHING) và đặt sent_at = now. */
-  markFannedOut(reminderId: string, deviceIds: string[], now: Date): Promise<void>;
+  markFannedOut(reminderId: string, deviceIds: string[], now: Date, kind: ReminderKind): Promise<void>;
 }
 
 export interface DeliveryCandidate {
+  kind: ReminderKind;
   deliveryId: string;
   reminderId: string;
   profileId: string;
@@ -46,7 +50,12 @@ export interface DeliveryRepository {
 }
 
 export interface ReminderNotifier {
-  send(subscription: PushSubscriptionShape, reminderId: string, ttlSeconds: number): Promise<SendOutcome>;
+  send(
+    subscription: PushSubscriptionShape,
+    reminderId: string,
+    ttlSeconds: number,
+    kind: ReminderKind,
+  ): Promise<SendOutcome>;
 }
 
 export type SendRemindersTotalKey =

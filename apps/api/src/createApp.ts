@@ -14,6 +14,8 @@ import type { DoseSlotRepository } from '@src/features/reminders/application/por
 import { registerDoseSlotRoutes } from '@src/features/reminders/presentation/registerDoseSlotRoutes.js';
 import type { MyConsentRepository } from '@src/features/myConsent/application/ports.js';
 import { registerMyConsentRoutes } from '@src/features/myConsent/presentation/registerMyConsentRoutes.js';
+import type { MyRevisitReminderRepository } from '@src/features/myRevisitReminders/application/ports.js';
+import { registerMyRevisitReminderRoutes } from '@src/features/myRevisitReminders/presentation/registerMyRevisitReminderRoutes.js';
 import type { MyReminderRepository } from '@src/features/myReminders/application/ports.js';
 import { registerMyReminderRoutes } from '@src/features/myReminders/presentation/registerMyReminderRoutes.js';
 import type { ReminderRecipientRepository } from '@src/features/reminders/application/recipientPorts.js';
@@ -85,6 +87,7 @@ export type AppDependencies = {
   revisits: RevisitRepository;
   reminderRecipients: ReminderRecipientRepository;
   myReminders: MyReminderRepository;
+  myRevisitReminders: MyRevisitReminderRepository;
   myConsent: MyConsentRepository;
   visitSummary: VisitSummaryRepository;
   familyUsage: FamilyUsageDependencies;
@@ -159,6 +162,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerRevisitRoutes(app, deps.revisits, deps.auth.login.now);
   registerReminderRecipientRoutes(app, deps.reminderRecipients);
   registerMyReminderRoutes(app, deps.myReminders);
+  registerMyRevisitReminderRoutes(app, deps.myRevisitReminders);
   registerMyConsentRoutes(app, deps.myConsent, deps.auth.login.now);
   registerVisitSummaryRoute(app, deps.visitSummary, deps.auth.login.now);
   registerInvitationRoutes(app, deps.consentInvitations);

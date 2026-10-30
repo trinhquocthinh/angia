@@ -9,6 +9,7 @@ import type { SeededSession } from './seedAuthFixtures.js';
 import type { Target, Probe } from './CrossFamilyTarget.js';
 import { seedPendingDocument } from './seedPendingDocument.js';
 import { seedReminder } from './seedReminder.js';
+import { seedRevisitReminder } from './seedRevisitReminder.js';
 import { snapshotHealthTables } from './snapshotHealthTables.js';
 import {
   manualCourse as course,
@@ -111,6 +112,8 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'PUT', `${profiles}/${x.profileId}/prescriptions/${x.prescriptionId}/revisit-date`, {
         revisitDate: null,
       }),
+    'GET /api/me/revisit-reminders/:reminderId': (u, x) =>
+      t.call(u, 'GET', `/api/me/revisit-reminders/${x.revisitReminderId}`),
     'GET /api/me/reminders/:reminderId': (u, x) => t.call(u, 'GET', `/api/me/reminders/${x.reminderId}`),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
@@ -135,7 +138,18 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const saved = await t.call(main, 'POST', `${profiles}/${profile.id}/manual-records`, body);
     const { id: prescriptionId } = ((await saved.json()) as { prescription: { id: string } }).prescription;
     const reminderId = await seedReminder(t.owner, familyId, profile.id, main.accountId);
-    return { familyId, main, profile, documentId, token, courseId, prescriptionId, reminderId };
+    const revisitReminderId = await seedRevisitReminder(t.owner, familyId, profile.id);
+    return {
+      familyId,
+      main,
+      profile,
+      documentId,
+      token,
+      courseId,
+      prescriptionId,
+      reminderId,
+      revisitReminderId,
+    };
   };
   const attackers = async () => {
     const familyId = await t.family();
@@ -143,7 +157,6 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const adminMain = await t.session(familyId, 'main', 'Quản trị kiêm main', true);
     return { familyId, main, adminMain };
   };
-  const snapshot = () => snapshotHealthTables(t.owner);
 
   it('TC-013, TC-014, TC-015, TC-076: main và Quản trị kiêm main nhóm khác nhận đúng phản hồi của ID không tồn tại, không ghi gì', async () => {
     const victim = await victimFixture();
@@ -155,6 +168,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       courseId: victim.courseId,
       prescriptionId: victim.prescriptionId,
       reminderId: victim.reminderId,
+      revisitReminderId: victim.revisitReminderId,
       token: t.codec.issue({ ...t.codec.verify(victim.token)!, familyId }),
     };
     const missing: Target = {
@@ -164,9 +178,10 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       courseId: randomUUID(),
       prescriptionId: randomUUID(),
       reminderId: randomUUID(),
+      revisitReminderId: randomUUID(),
       token: 'bogus',
     };
-    const before = await snapshot();
+    const before = await snapshotHealthTables(t.owner);
     for (const user of [main, adminMain]) {
       for (const [route, probe] of Object.entries(probes)) {
         await expectCrossFamilyDenied(
@@ -178,7 +193,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       }
     }
     // Hồ sơ "Lén" không được tạo; dữ liệu nạn nhân (gồm link mời, chứng từ, số đo) giữ nguyên.
-    expect(await snapshot()).toEqual(before);
+    expect(await snapshotHealthTables(t.owner)).toEqual(before);
   });
 
   it('TC-017: danh sách chỉ gồm dữ liệu gia đình của phiên, không lẫn nhóm khác', async () => {

@@ -4116,6 +4116,71 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/me/revisit-reminders/{reminderId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc nhắc tái khám dành cho người nhận hiện hành (SPEC-044) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          reminderId: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Chi tiết nhắc tái khám */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['MyRevisitReminder'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: tài khoản chưa thuộc gia đình */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: không tìm thấy hoặc không còn quyền xem */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/me/consent': {
     parameters: {
       query?: never;
@@ -5445,6 +5510,25 @@ export interface components {
       strength: string | null;
       quantityPerDose: string | null;
       doseUnit: string | null;
+    };
+    MyRevisitReminder: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date */
+      revisitDate: string;
+      /** @enum {string} */
+      offset: 'two_days_before' | 'same_day';
+      /** Format: uuid */
+      profileId: string;
+      profileName: string;
+      prescriptions: {
+        /** Format: uuid */
+        id: string;
+        /** Format: date */
+        issuedDate: string;
+        facility: string | null;
+      }[];
+      canOpenSummary: boolean;
     };
     MyConsent: {
       profile: {

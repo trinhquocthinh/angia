@@ -13,6 +13,8 @@ interface ReportInput {
   verdict: ReminderTimingVerdict;
 }
 
+const rate = (onTime: number, eligible: number) =>
+  eligible === 0 ? '—' : `${((onTime / eligible) * 100).toFixed(1)}%`;
 const seconds = (ms: number | null) => (ms === null ? '—' : `${(ms / 1000).toFixed(1)} s`);
 const lagRow = (label: string, summary: DurationSummary) =>
   `| ${label} | ${summary.count} | ${seconds(summary.medianMs)} | ${seconds(summary.p90Ms)} | ` +
@@ -28,7 +30,7 @@ export function renderReminderAuditReport(input: ReportInput): string {
   const { verdict } = input;
   const ratio = verdict.eligible === 0 ? '—' : `${((verdict.onTime / verdict.eligible) * 100).toFixed(1)}%`;
   return [
-    '# TC-096 — Đối soát lời nhắc thuốc 7 ngày (E9-S3-T3)',
+    '# TC-096 / TC-480 — Đối soát lời nhắc thuốc và tái khám 7 ngày',
     '',
     `Sinh lúc ${input.generatedAt}; lời nhắc dự kiến từ ${input.since} tới ${input.until}.`,
     'Đúng giờ = push service tiếp nhận (`accepted_at`) trong ±5 phút so với `scheduled_at`, tính theo từng',
@@ -42,6 +44,13 @@ export function renderReminderAuditReport(input: ReportInput): string {
     `Đúng giờ: ${verdict.onTime}/${verdict.eligible} (${ratio}); bộ trùng: ${verdict.duplicateSlots}; ` +
       `lời nhắc không có thiết bị nhận: ${verdict.remindersWithoutDevices}.`,
     `Trạng thái lượt gửi: ${counts(verdict.statuses)}. Lỗi failed: ${counts(verdict.failedByCode)}.`,
+    '',
+    '| Loại | Lượt gửi tính | Đúng giờ | Tỷ lệ |',
+    '| :-- | --: | --: | --: |',
+    ...verdict.byKind.map(
+      (g) => `| ${g.kind} | ${g.eligible} | ${g.onTime} | ${rate(g.onTime, g.eligible)} |`,
+    ),
+    `| Tổng | ${verdict.eligible} | ${verdict.onTime} | ${rate(verdict.onTime, verdict.eligible)} |`,
     '',
     '| Độ trễ | Số mẫu | Trung vị | p90 | Lớn nhất |',
     '| :-- | --: | --: | --: | --: |',
