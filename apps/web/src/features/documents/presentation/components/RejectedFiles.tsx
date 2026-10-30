@@ -19,7 +19,10 @@ export function RejectedFiles({
   const rejected = items.filter((item) => item.status === 'rejected');
   if (rejected.length === 0) return null;
   return (
-    <section role="alert" className="flex flex-col gap-2 rounded-xl bg-[#ffdad6]/40 p-4 shadow-sm">
+    <section
+      role="alert"
+      className="angia-modal-reveal flex flex-col gap-2 rounded-2xl bg-[#ffdad6]/40 p-4 shadow-sm"
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
           <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#ba1a1a] text-white">

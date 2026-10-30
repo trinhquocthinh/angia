@@ -24,16 +24,16 @@ export function UploadActions({ summary, profileChosen, onSubmit }: UploadAction
         ? 'Chọn hồ sơ ở mục “Của ai?” trước khi gửi.'
         : 'Ảnh chỉ được gửi khi bấm “Xong”; trước đó bạn có thể bỏ bớt ảnh.';
   return (
-    <div className="flex flex-col items-center justify-between gap-4 rounded-xl bg-white p-4 shadow-sm sm:flex-row">
+    <div className="flex flex-col items-center justify-between gap-4 rounded-2xl bg-white p-4 shadow-sm sm:flex-row">
       <div className="flex w-full min-w-0 items-center gap-3 sm:flex-1">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#aef0da] text-[#004135]">
           <DocumentIcon name="shield" />
         </span>
         <div>
-          <p className="text-xs leading-4 font-semibold text-[#131d1d]">
+          <p className="text-[13px] leading-5 font-semibold text-[#131d1d]">
             {sending ? 'Đang gửi ảnh' : 'Ảnh được che và nén trên máy rồi gửi cùng một lô'}
           </p>
-          <p className="mt-0.5 text-xs leading-4 text-[#404945]" aria-live="polite">
+          <p className="text-[13px] leading-5 text-[#404945]" aria-live="polite">
             {hint}
           </p>
         </div>
@@ -41,7 +41,7 @@ export function UploadActions({ summary, profileChosen, onSubmit }: UploadAction
       <div className="flex w-full flex-col-reverse items-stretch gap-2 sm:w-auto sm:shrink-0 sm:flex-row sm:items-center">
         <Link
           to="/"
-          className="flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl px-6 text-xs font-semibold text-[#404945] transition-colors hover:bg-[#e4f0f0] hover:text-[#131d1d]"
+          className="flex min-h-12 shrink-0 items-center justify-center whitespace-nowrap rounded-xl px-6 text-sm font-semibold text-[#404945] transition-colors hover:bg-[#e4f0f0] hover:text-[#131d1d] motion-reduce:transition-none"
         >
           Hủy bỏ
         </Link>
@@ -49,9 +49,19 @@ export function UploadActions({ summary, profileChosen, onSubmit }: UploadAction
           type="button"
           disabled={sending || unredacted > 0 || summary.ready === 0 || !profileChosen}
           onClick={onSubmit}
-          className="flex min-h-11 w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-[#004135] px-6 text-xs font-semibold text-white shadow-sm transition-colors enabled:hover:bg-[#20594b] disabled:cursor-not-allowed disabled:opacity-55 sm:w-auto"
+          className="group flex min-h-12 w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-[#004135] px-6 text-sm font-semibold text-white shadow-sm transition-[background-color,box-shadow,opacity,scale] duration-200 enabled:hover:bg-[#20594b] enabled:hover:shadow-md enabled:active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-55 motion-reduce:transition-none motion-reduce:enabled:active:scale-100 sm:w-auto"
         >
-          {label} <DocumentIcon name="arrow" size={18} />
+          {label}{' '}
+          {sending ? (
+            <span
+              aria-hidden="true"
+              className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white motion-reduce:animate-none"
+            />
+          ) : (
+            <span className="transition-[translate] duration-200 ease-out group-enabled:group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-enabled:group-hover:translate-x-0">
+              <DocumentIcon name="arrow" size={18} />
+            </span>
+          )}
         </button>
       </div>
     </div>

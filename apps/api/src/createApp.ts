@@ -1,5 +1,6 @@
+import type { TimelineRepository } from '@src/features/timeline/application/ports.js';
+import { registerHistoryRoutes } from '@src/registerHistoryRoutes.js';
 import type { PrescriptionChainRepository } from '@src/features/prescriptions/application/prescriptionChainPorts.js';
-import { registerPrescriptionRoutes } from '@src/features/prescriptions/presentation/registerPrescriptionRoutes.js';
 import type { RevisitRepository } from '@src/features/prescriptions/application/revisitPorts.js';
 import { registerScanQuotaHeaders } from '@src/features/scanQuota/presentation/registerScanQuotaHeaders.js';
 import type { ScanQuotaDependencies } from '@src/features/scanQuota/application/ports.js';
@@ -87,6 +88,7 @@ export type AppDependencies = {
   doseSlots: DoseSlotRepository;
   revisits: RevisitRepository;
   prescriptionChain: PrescriptionChainRepository;
+  timeline: TimelineRepository;
   reminderRecipients: ReminderRecipientRepository;
   myReminders: MyReminderRepository;
   myRevisitReminders: MyRevisitReminderRepository;
@@ -161,7 +163,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerMedicationRoutes(app, deps.medications, deps.auth.login.now);
   registerAdherenceRoutes(app, deps.adherence, deps.auth.login.now);
   registerDoseSlotRoutes(app, deps.doseSlots);
-  registerPrescriptionRoutes(app, deps, deps.auth.login.now);
+  registerHistoryRoutes(app, deps, deps.auth.login.now);
   registerReminderRecipientRoutes(app, deps.reminderRecipients);
   registerMyReminderRoutes(app, deps.myReminders);
   registerMyRevisitReminderRoutes(app, deps.myRevisitReminders);

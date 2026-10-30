@@ -7,6 +7,7 @@ import { UploadAddTile } from './UploadAddTile';
 import { UploadDropZone } from './UploadDropZone';
 import { UploadGrid } from './UploadGrid';
 import { UploadIntro } from './UploadIntro';
+import { UploadPhotoTips } from './UploadPhotoTips';
 import { UploadStepper } from './UploadStepper';
 
 vi.mock('@tanstack/react-router', () => ({ Link: ({ children }: { children: unknown }) => children }));
@@ -186,5 +187,33 @@ describe('Giao diện /upload theo Stitch a48f7111', () => {
     );
     expect(more).toContain('Thêm ảnh khác');
     expect(more).toContain('multiple=""');
+  });
+  it('tinh chỉnh nội dung: bỏ chữ thừa, tách định dạng thành nhãn, có gợi ý chụp ảnh không phải lời khuyên y tế', () => {
+    expect(html(<UploadIntro />)).not.toContain('Cập nhật mới');
+    expect(html(<UploadStepper current={1} />)).not.toContain('Hạn mức');
+    const open = html(<UploadDropZone disabled={false} onFiles={() => undefined} />);
+    expect(open).toContain('Kéo ảnh vào đây hoặc');
+    for (const format of ['JPG', 'PNG', 'HEIC', 'WebP']) expect(open).toContain(`>${format}<`);
+    expect(open).toContain('Tối đa 10 ảnh mỗi lần chọn');
+    const blocked = html(<UploadDropZone disabled blockedReason="Đã đủ ảnh hôm nay." onFiles={() => {}} />);
+    expect(blocked).toContain('Đã đủ ảnh hôm nay.');
+    expect(blocked).not.toContain('>HEIC<');
+    const tips = html(<UploadPhotoTips />);
+    expect(tips).toContain('Để ảnh dễ đọc');
+    expect(tips).not.toMatch(/tốt|xấu|bất thường|nên uống/);
+  });
+  it('thanh tiến trình chạy bằng transform để mượt, % vẫn hiển thị bằng chữ', () => {
+    const grid = html(
+      <UploadGrid
+        items={[item('a.jpg', { status: 'uploading', progress: 64 })]}
+        summary={{ needsRedaction: 0, ready: 0, total: 1, done: 0, active: 1, failed: 0 }}
+        locked
+        onRetry={() => undefined}
+        onRemove={() => undefined}
+        onRedact={() => undefined}
+      />,
+    );
+    expect(grid).toContain('scaleX(0.64)');
+    expect(grid).toContain('64%');
   });
 });

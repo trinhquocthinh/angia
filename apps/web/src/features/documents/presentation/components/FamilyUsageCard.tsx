@@ -1,4 +1,5 @@
 import type { FamilyScanQuota, FamilyUsage } from '@angia/contracts';
+import { revealStyle } from '@src/shared/ui/revealStyle';
 import type { ReactNode } from 'react';
 import {
   aiQueueBlockReason,
@@ -36,7 +37,7 @@ function UsageMeter({ label, value, used, limit }: Meter) {
         className="h-1.5 overflow-hidden rounded-full bg-[#e4f0f0]"
       >
         <div
-          className={`h-full rounded-full ${full ? 'bg-[#93000a]' : 'bg-[#286958]'}`}
+          className={`upload-meter-fill h-full rounded-full ${full ? 'bg-[#93000a]' : 'bg-[#286958]'}`}
           style={{ width: `${percent}%` }}
         />
       </div>
@@ -98,7 +99,8 @@ export function FamilyUsageCard({
   return (
     <section
       aria-labelledby="family-usage-title"
-      className="flex flex-col gap-4 rounded-xl bg-white p-6 shadow-sm max-md:p-4"
+      className="angia-modal-reveal flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm max-md:p-4"
+      style={revealStyle(2)}
     >
       <h2
         id="family-usage-title"

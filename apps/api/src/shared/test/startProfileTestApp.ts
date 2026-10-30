@@ -1,3 +1,4 @@
+import { createTimelineRepository } from '@src/features/timeline/infrastructure/createTimelineRepository.js';
 import { createPrescriptionChainRepository } from '@src/features/prescriptions/infrastructure/createPrescriptionChainRepository.js';
 import { createRevisitRepository } from '@src/features/prescriptions/infrastructure/createRevisitRepository.js';
 import { createStubScanQuotaDeps } from './createStubScanQuotaDeps.js';
@@ -70,6 +71,7 @@ const healthDataRepositories = (database: Database) => ({
   doseSlots: createDoseSlotRepository(database),
   revisits: createRevisitRepository(database),
   prescriptionChain: createPrescriptionChainRepository(database),
+  timeline: createTimelineRepository(database),
   reminderRecipients: createReminderRecipientRepository(database),
   myReminders: createMyReminderRepository(database),
   myRevisitReminders: createMyRevisitReminderRepository(database),

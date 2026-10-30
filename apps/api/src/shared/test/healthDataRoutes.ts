@@ -41,6 +41,7 @@ export const HEALTH_DATA_ROUTES = {
   'GET /api/health-profiles/:id/visit-summary': 'scoped',
   'GET /api/health-profiles/:id/revisits': 'scoped',
   'GET /api/health-profiles/:id/prescriptions': 'scoped',
+  'GET /api/health-profiles/:id/timeline': 'scoped',
   'GET /api/health-profiles/:id/prescriptions/:prescriptionId': 'scoped',
   'PUT /api/health-profiles/:id/prescriptions/:prescriptionId/revisit-date': 'scoped',
   // SPEC-035: người nhận hợp lệ (gồm member liên kết hồ sơ) đọc lời nhắc của mình.

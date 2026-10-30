@@ -6,6 +6,7 @@ import { UploadActions } from './UploadActions';
 import { UploadAddTile } from './UploadAddTile';
 import { UploadDropZone } from './UploadDropZone';
 import { UploadGrid } from './UploadGrid';
+import { UploadPhotoTips } from './UploadPhotoTips';
 import { UploadPickNotices } from './UploadPickNotices';
 import { UploadStepper } from './UploadStepper';
 
@@ -33,6 +34,7 @@ export function UploadQueuePanel({ queue, usage, blocked, profileChosen, onSubmi
         blockedReason={sending ? null : blocked}
         onFiles={pick}
       />
+      {summary.total === 0 && <UploadPhotoTips />}
       <UploadPickNotices tooMany={tooMany} usage={usage} readyCount={summary.ready} />
       <UploadGrid
         items={queue.items}

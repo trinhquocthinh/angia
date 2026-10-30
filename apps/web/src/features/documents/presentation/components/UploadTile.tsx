@@ -1,3 +1,4 @@
+import { revealStyle } from '@src/shared/ui/revealStyle';
 import { useState } from 'react';
 import type { UploadItem } from '../../application/uploadQueue';
 import { DocumentIcon } from './DocumentIcon';
@@ -7,11 +8,13 @@ import { TileStatus } from './TileStatus';
 
 export function UploadTile({
   item,
+  revealIndex = 0,
   locked,
   onRemove,
   onRedact,
 }: {
   item: UploadItem;
+  revealIndex?: number;
   locked: boolean;
   onRemove: () => void;
   onRedact: () => void;
@@ -23,14 +26,17 @@ export function UploadTile({
   const [broken, setBroken] = useState<string | null>(null);
   const busy = item.status === 'queued' || item.status === 'uploading';
   return (
-    <li className="flex min-w-0 flex-col gap-2 rounded-xl bg-white p-2 shadow-sm">
-      <div className="relative h-44 overflow-hidden rounded-lg bg-[#deebea] sm:h-56">
+    <li
+      className="angia-modal-reveal group flex min-w-0 flex-col gap-2 rounded-2xl bg-white p-2 shadow-sm transition-shadow duration-200 hover:shadow-md motion-reduce:transition-none"
+      style={revealStyle(revealIndex)}
+    >
+      <div className="relative h-44 overflow-hidden rounded-xl bg-[#deebea] sm:h-56">
         {preview && broken !== preview ? (
           <img
             src={preview}
             alt=""
             onError={() => setBroken(preview)}
-            className={`h-full w-full object-cover ${busy ? 'opacity-60' : ''}`}
+            className={`h-full w-full object-cover transition-[opacity,scale] duration-300 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100 ${busy ? 'opacity-60' : ''}`}
           />
         ) : (
           <span className="flex h-full w-full items-center justify-center text-[#707975]">

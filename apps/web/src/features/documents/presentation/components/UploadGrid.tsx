@@ -4,6 +4,9 @@ import { DocumentIcon } from './DocumentIcon';
 import { UploadSummary } from './UploadSummary';
 import { UploadTile } from './UploadTile';
 
+// Lô 10 ảnh vẫn hiện xong dưới nửa giây thay vì so le đến ảnh cuối.
+const MAX_REVEAL_INDEX = 3;
+
 export function UploadGrid({
   items,
   summary,
@@ -50,10 +53,11 @@ export function UploadGrid({
         )}
       </div>
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {shown.map((item) => (
+        {shown.map((item, index) => (
           <UploadTile
             key={item.id}
             item={item}
+            revealIndex={Math.min(index, MAX_REVEAL_INDEX)}
             locked={locked}
             onRemove={() => onRemove(item.id)}
             onRedact={() => onRedact(item.id)}

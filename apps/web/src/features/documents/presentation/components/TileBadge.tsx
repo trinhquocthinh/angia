@@ -15,6 +15,14 @@ const BADGES: Record<UploadItem['status'], { label: string; className: string }>
 export function TileBadge({ status }: { status: UploadItem['status'] }) {
   const { label, className } = BADGES[status];
   return (
-    <span className={`shrink-0 rounded px-1.5 py-0.5 text-[11px] font-medium ${className}`}>{label}</span>
+    <span
+      className={`flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${className}`}
+    >
+      <span
+        aria-hidden="true"
+        className={`h-1.5 w-1.5 rounded-full bg-current ${status === 'uploading' ? 'animate-pulse motion-reduce:animate-none' : ''}`}
+      />
+      {label}
+    </span>
   );
 }

@@ -7,23 +7,23 @@ export function TileStatus({ item, onRemove }: { item: UploadItem; onRemove: () 
   return (
     <>
       {item.status === 'done' && (
-        <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#286958] text-white shadow-md">
+        <span className="angia-modal-pop absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#286958] text-white shadow-md">
           <DocumentIcon name="check" size={16} />
         </span>
       )}
       {busy && (
-        <span className="absolute inset-0 flex flex-col items-center justify-center bg-[#131d1d]/40 p-2 text-white">
+        <span className="absolute inset-0 flex flex-col items-center justify-center bg-[#131d1d]/45 p-3 text-white backdrop-blur-[2px]">
           {item.notice ? (
             <span className="text-center text-[11px] font-semibold leading-4">{item.notice}</span>
           ) : (
             <>
-              <span className="text-lg font-bold">
+              <span className="text-lg font-bold tabular-nums">
                 {item.status === 'queued' ? 'Chờ' : `${item.progress}%`}
               </span>
               <span className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-white/30">
                 <span
-                  className="block h-full rounded-full bg-[#aef0da]"
-                  style={{ width: `${item.progress}%` }}
+                  className="block h-full origin-left rounded-full bg-[#aef0da] transition-transform duration-300 ease-out motion-reduce:transition-none"
+                  style={{ transform: `scaleX(${item.progress / 100})` }}
                 />
               </span>
             </>

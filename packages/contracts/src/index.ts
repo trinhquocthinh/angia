@@ -247,3 +247,4 @@ export {
   prescriptionDetailSchema,
 } from './prescriptions/prescriptionChainSchemas.js';
 export type { PrescriptionListItem, PrescriptionDetail } from './prescriptions/prescriptionChainSchemas.js';
+export * from './timeline/timelineSchemas.js';

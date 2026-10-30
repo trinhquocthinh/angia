@@ -39,7 +39,7 @@ export function ProfilePicker({
             onClick={() => onSelect(profile.id)}
           >
             {selected ? (
-              <span className="text-[#b3eddf]">
+              <span className="angia-modal-pop text-[#b3eddf]">
                 <DocumentIcon name="checkCircle" size={16} />
               </span>
             ) : (

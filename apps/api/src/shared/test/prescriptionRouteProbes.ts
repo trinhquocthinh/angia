@@ -4,6 +4,8 @@ import type { Probe } from './CrossFamilyTarget.js';
 // Các route đơn thuốc cùng được kiểm ở vòng phá chéo gia đình toàn app.
 export function prescriptionRouteProbes(call: ProfileTestApp['call']) {
   return {
+    'GET /api/health-profiles/:id/timeline': (u, x) =>
+      call(u, 'GET', `/api/health-profiles/${x.profileId}/timeline`),
     'GET /api/health-profiles/:id/prescriptions': (u, x) =>
       call(u, 'GET', `/api/health-profiles/${x.profileId}/prescriptions`),
     'GET /api/health-profiles/:id/prescriptions/:prescriptionId': (u, x) =>

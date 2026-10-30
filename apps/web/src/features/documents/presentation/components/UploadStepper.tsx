@@ -1,13 +1,15 @@
+import { revealStyle } from '@src/shared/ui/revealStyle';
 import { DocumentIcon } from './DocumentIcon';
 
-const STEPS = ['Tải ảnh & Hạn mức', 'Cắt & Che định danh', 'Xem trước & Xác nhận'];
+const STEPS = ['Chọn ảnh', 'Cắt & Che định danh', 'Xem trước & Xác nhận'];
 
 // Chỉ báo, không phải tab: bước 2–3 áp dụng cho từng ảnh nên chỉ mở được từ nút "Che thông tin" trên ô ảnh.
 export function UploadStepper({ current }: { current: 1 | 2 | 3 }) {
   return (
     <ol
       aria-label="Các bước thêm giấy tờ"
-      className="grid grid-cols-3 gap-1.5 rounded-2xl bg-[#deebea]/60 p-1.5"
+      className="angia-modal-reveal grid grid-cols-3 gap-1.5 rounded-2xl bg-[#deebea]/60 p-1.5"
+      style={revealStyle(4)}
     >
       {STEPS.map((label, index) => {
         const step = index + 1;
@@ -21,9 +23,9 @@ export function UploadStepper({ current }: { current: 1 | 2 | 3 }) {
             }`}
           >
             <span
-              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] ${
+              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] tabular-nums ${
                 active
-                  ? 'bg-[#004135] text-white'
+                  ? 'angia-modal-pop bg-[#004135] text-white'
                   : step < current
                     ? 'bg-[#aef0da] text-[#004135]'
                     : 'bg-[#e4f0f0] text-[#131d1d]'

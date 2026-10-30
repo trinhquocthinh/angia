@@ -15,7 +15,7 @@ export function PickerCard({
   children: ReactNode;
 }) {
   return (
-    <fieldset className="flex min-w-0 flex-col gap-3 rounded-xl bg-white p-4 shadow-sm">
+    <fieldset className="flex min-w-0 flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm sm:p-5">
       <div className="flex items-center justify-between gap-2">
         <legend className="contents">
           <span className="flex items-center gap-1.5 text-lg leading-6 font-semibold text-[#131d1d]">

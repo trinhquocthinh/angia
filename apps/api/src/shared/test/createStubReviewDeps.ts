@@ -21,6 +21,7 @@ export function createStubReviewDeps(): Pick<
   | 'doseSlots'
   | 'revisits'
   | 'prescriptionChain'
+  | 'timeline'
   | 'reminderRecipients'
   | 'myReminders'
   | 'myRevisitReminders'
@@ -39,6 +40,7 @@ export function createStubReviewDeps(): Pick<
     doseSlots: { withFamily: notConfigured },
     revisits: { withFamily: notConfigured },
     prescriptionChain: { withFamily: notConfigured },
+    timeline: { withFamily: notConfigured },
     reminderRecipients: { withFamily: notConfigured },
     myReminders: { load: notConfigured },
     myRevisitReminders: { load: notConfigured },
