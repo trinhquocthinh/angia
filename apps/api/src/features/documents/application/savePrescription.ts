@@ -20,6 +20,7 @@ export async function savePrescription(
   if (invalidItemIndexes.length > 0) return { ok: false, code: 'ERR_DOSE_INFO_MISSING', invalidItemIndexes };
   const { issuedDate } = data;
   await store.lockMedicationProfile(target.healthProfileId);
+  await store.lockDuplicateRecord(target.healthProfileId, 'prescription', issuedDate);
   const duplicate = confirmDuplicate
     ? null
     : await findPrescriptionDuplicate(store, target.healthProfileId, { ...data, issuedDate });
