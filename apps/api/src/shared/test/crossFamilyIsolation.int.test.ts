@@ -105,6 +105,12 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       }),
     'GET /api/health-profiles/:id/visit-summary': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/visit-summary`),
+    'GET /api/health-profiles/:id/revisits': (u, x) =>
+      t.call(u, 'GET', `${profiles}/${x.profileId}/revisits`),
+    'PUT /api/health-profiles/:id/prescriptions/:prescriptionId/revisit-date': (u, x) =>
+      t.call(u, 'PUT', `${profiles}/${x.profileId}/prescriptions/${x.prescriptionId}/revisit-date`, {
+        revisitDate: null,
+      }),
     'GET /api/me/reminders/:reminderId': (u, x) => t.call(u, 'GET', `/api/me/reminders/${x.reminderId}`),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {

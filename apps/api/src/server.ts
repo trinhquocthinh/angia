@@ -1,3 +1,4 @@
+import { createRevisitRepository } from '@src/features/prescriptions/infrastructure/createRevisitRepository.js';
 import { createScanQuotaRepository } from '@src/features/scanQuota/infrastructure/createScanQuotaRepository.js';
 import { createAiBillingRepository } from '@src/features/aiBilling/infrastructure/createAiBillingRepository.js';
 import { createAiRoutingRepository } from '@src/features/aiRouting/infrastructure/createAiRoutingRepository.js';
@@ -158,6 +159,7 @@ const app = createApp({
   medications: createMedicationRepository(db),
   adherence: createAdherenceRepository(db),
   doseSlots: createDoseSlotRepository(db),
+  revisits: createRevisitRepository(db),
   reminderRecipients: createReminderRecipientRepository(db),
   myReminders: createMyReminderRepository(db),
   myConsent: createMyConsentRepository(db),

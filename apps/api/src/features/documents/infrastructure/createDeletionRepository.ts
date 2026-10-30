@@ -1,8 +1,9 @@
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { objectPurges, sourceDocuments } from '@src/shared/db/schema/index.js';
+import { objectPurges } from '@src/shared/db/schema/index.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { DeletionRepository, DeletionStore } from '../application/deletionPorts.js';
+import { deleteDocumentWithRevisits } from './deleteDocumentWithRevisits.js';
 import { countDeletionImpact } from './countDeletionImpact.js';
 import { findDocumentWithConsent } from './findDocumentWithConsent.js';
 
@@ -15,11 +16,7 @@ export function createDeletionRepository(db: Database): DeletionRepository {
             const row = await findDocumentWithConsent(tx, familyId, id, lock);
             return row && { imageKey: row.imageKey, profileConsentStatus: row.profileConsentStatus };
           },
-          deleteDocument: async (id) => {
-            await tx
-              .delete(sourceDocuments)
-              .where(and(eq(sourceDocuments.id, id), eq(sourceDocuments.familyId, familyId)));
-          },
+          deleteDocument: (id) => deleteDocumentWithRevisits(tx, familyId, id),
           insertObjectPurge: async (objectKey) => {
             await tx.insert(objectPurges).values({ objectKey, familyId }).onConflictDoNothing();
           },

@@ -1,3 +1,4 @@
+import { createRevisitRepository } from '@src/features/prescriptions/infrastructure/createRevisitRepository.js';
 import { createStubScanQuotaDeps } from './createStubScanQuotaDeps.js';
 import { createStubAiBillingDeps } from './createStubAiBillingDeps.js';
 import { createStubAiRoutingDeps } from './createStubAiRoutingDeps.js';
@@ -65,6 +66,7 @@ const healthDataRepositories = (database: Database) => ({
   medications: createMedicationRepository(database),
   adherence: createAdherenceRepository(database),
   doseSlots: createDoseSlotRepository(database),
+  revisits: createRevisitRepository(database),
   reminderRecipients: createReminderRecipientRepository(database),
   myReminders: createMyReminderRepository(database),
   myConsent: createMyConsentRepository(database),

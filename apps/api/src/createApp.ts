@@ -1,3 +1,5 @@
+import type { RevisitRepository } from '@src/features/prescriptions/application/revisitPorts.js';
+import { registerRevisitRoutes } from '@src/features/prescriptions/presentation/registerRevisitRoutes.js';
 import { registerScanQuotaHeaders } from '@src/features/scanQuota/presentation/registerScanQuotaHeaders.js';
 import type { ScanQuotaDependencies } from '@src/features/scanQuota/application/ports.js';
 import { registerScanQuotaRoutes } from '@src/features/scanQuota/presentation/registerScanQuotaRoutes.js';
@@ -80,6 +82,7 @@ export type AppDependencies = {
   medications: MedicationManagementRepository;
   adherence: AdherenceRepository;
   doseSlots: DoseSlotRepository;
+  revisits: RevisitRepository;
   reminderRecipients: ReminderRecipientRepository;
   myReminders: MyReminderRepository;
   myConsent: MyConsentRepository;
@@ -153,6 +156,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerMedicationRoutes(app, deps.medications, deps.auth.login.now);
   registerAdherenceRoutes(app, deps.adherence, deps.auth.login.now);
   registerDoseSlotRoutes(app, deps.doseSlots);
+  registerRevisitRoutes(app, deps.revisits, deps.auth.login.now);
   registerReminderRecipientRoutes(app, deps.reminderRecipients);
   registerMyReminderRoutes(app, deps.myReminders);
   registerMyConsentRoutes(app, deps.myConsent, deps.auth.login.now);
