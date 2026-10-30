@@ -32,6 +32,7 @@ export const extractionPayloadSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('prescription'),
     issuedDate: isoDate,
+    revisitDate: z.iso.date().nullable().default(null),
     facility: text,
     // Thêm sau E2 (E3-S3-T1): bản trích xuất cũ không có khóa này nên mặc định null.
     diagnosis: text.default(null),

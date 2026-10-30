@@ -246,6 +246,13 @@
       "when": 1793283893853,
       "tag": "0034_profile_vitals_enabled",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1793335818713,
+      "tag": "0035_revisit_reminders",
+      "breakpoints": true
     }
   ]
 }

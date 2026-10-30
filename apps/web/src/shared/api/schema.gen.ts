@@ -4775,6 +4775,11 @@ export interface components {
             /** @enum {string} */
             type: 'prescription';
             issuedDate: string | null;
+            /**
+             * Format: date
+             * @default null
+             */
+            revisitDate: string | null;
             facility: string | null;
             /** @default null */
             diagnosis: string | null;
@@ -4856,6 +4861,8 @@ export interface components {
       sourceDocumentId: string | null;
       /** Format: date */
       issuedDate: string;
+      /** Format: date */
+      revisitDate: string | null;
       facility: string | null;
       diagnosis: string | null;
       manualWithoutSource: boolean;
@@ -4951,6 +4958,11 @@ export interface components {
             type: 'prescription';
             /** Format: date */
             issuedDate: string | null;
+            /**
+             * Format: date
+             * @default null
+             */
+            revisitDate: string | null;
             facility: string | null;
             diagnosis: string | null;
             items: {

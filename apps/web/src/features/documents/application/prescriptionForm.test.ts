@@ -38,10 +38,14 @@ const errorsOf = (input: PrescriptionFormValues) => {
 };
 
 describe('Form đối soát đơn thuốc (SPEC-010, BR-025)', () => {
+  it('TC-573: form chưa có ô ngày hẹn gửi null theo hợp đồng mới', () => {
+    expect(toPrescriptionApproval(values())).toHaveProperty('revisitDate', null);
+  });
   it('điền sẵn từ bản trích xuất; trường null thành ô trống, không suy diễn liều/buổi', () => {
     const payload: PrescriptionPayload = {
       type: 'prescription',
       issuedDate: null,
+      revisitDate: null,
       facility: null,
       diagnosis: null,
       items: [
@@ -127,6 +131,7 @@ describe('Form đối soát đơn thuốc (SPEC-010, BR-025)', () => {
     );
     expect(approval).toEqual({
       type: 'prescription',
+      revisitDate: null,
       issuedDate: '2026-10-01',
       facility: null,
       diagnosis: 'Tăng huyết áp',

@@ -1878,6 +1878,127 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@napi-rs/canvas-android-arm64@npm:1.0.13":
+  version: 1.0.13
+  resolution: "@napi-rs/canvas-android-arm64@npm:1.0.13"
+  conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-darwin-arm64@npm:1.0.13":
+  version: 1.0.13
+  resolution: "@napi-rs/canvas-darwin-arm64@npm:1.0.13"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-darwin-x64@npm:1.0.13":
+  version: 1.0.13
+  resolution: "@napi-rs/canvas-darwin-x64@npm:1.0.13"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-linux-arm-gnueabihf@npm:1.0.13":
+  version: 1.0.13
+  resolution: "@napi-rs/canvas-linux-arm-gnueabihf@npm:1.0.13"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-linux-arm64-gnu@npm:1.0.13":
+  version: 1.0.13
+  resolution: "@napi-rs/canvas-linux-arm64-gnu@npm:1.0.13"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-linux-arm64-musl@npm:1.0.13":
+  version: 1.0.13
+  resolution: "@napi-rs/canvas-linux-arm64-musl@npm:1.0.13"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-linux-riscv64-gnu@npm:1.0.13":
+  version: 1.0.13
+  resolution: "@napi-rs/canvas-linux-riscv64-gnu@npm:1.0.13"
+  conditions: os=linux & cpu=riscv64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-linux-x64-gnu@npm:1.0.13":
+  version: 1.0.13
+  resolution: "@napi-rs/canvas-linux-x64-gnu@npm:1.0.13"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-linux-x64-musl@npm:1.0.13":
+  version: 1.0.13
+  resolution: "@napi-rs/canvas-linux-x64-musl@npm:1.0.13"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-win32-arm64-msvc@npm:1.0.13":
+  version: 1.0.13
+  resolution: "@napi-rs/canvas-win32-arm64-msvc@npm:1.0.13"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-win32-x64-msvc@npm:1.0.13":
+  version: 1.0.13
+  resolution: "@napi-rs/canvas-win32-x64-msvc@npm:1.0.13"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas@npm:^1.0.10":
+  version: 1.0.13
+  resolution: "@napi-rs/canvas@npm:1.0.13"
+  dependencies:
+    "@napi-rs/canvas-android-arm64": "npm:1.0.13"
+    "@napi-rs/canvas-darwin-arm64": "npm:1.0.13"
+    "@napi-rs/canvas-darwin-x64": "npm:1.0.13"
+    "@napi-rs/canvas-linux-arm-gnueabihf": "npm:1.0.13"
+    "@napi-rs/canvas-linux-arm64-gnu": "npm:1.0.13"
+    "@napi-rs/canvas-linux-arm64-musl": "npm:1.0.13"
+    "@napi-rs/canvas-linux-riscv64-gnu": "npm:1.0.13"
+    "@napi-rs/canvas-linux-x64-gnu": "npm:1.0.13"
+    "@napi-rs/canvas-linux-x64-musl": "npm:1.0.13"
+    "@napi-rs/canvas-win32-arm64-msvc": "npm:1.0.13"
+    "@napi-rs/canvas-win32-x64-msvc": "npm:1.0.13"
+  dependenciesMeta:
+    "@napi-rs/canvas-android-arm64":
+      optional: true
+    "@napi-rs/canvas-darwin-arm64":
+      optional: true
+    "@napi-rs/canvas-darwin-x64":
+      optional: true
+    "@napi-rs/canvas-linux-arm-gnueabihf":
+      optional: true
+    "@napi-rs/canvas-linux-arm64-gnu":
+      optional: true
+    "@napi-rs/canvas-linux-arm64-musl":
+      optional: true
+    "@napi-rs/canvas-linux-riscv64-gnu":
+      optional: true
+    "@napi-rs/canvas-linux-x64-gnu":
+      optional: true
+    "@napi-rs/canvas-linux-x64-musl":
+      optional: true
+    "@napi-rs/canvas-win32-arm64-msvc":
+      optional: true
+    "@napi-rs/canvas-win32-x64-msvc":
+      optional: true
+    canvas:
+      built: true
+  checksum: 10c0/6c0144dfe1953a15882c84c04b2960bcac157c72de40d173be5da3abdbe50451d3136961826d9f14d005b857dc50f2ffc8c7baf37096fbbaac1f19983ca96e53
+  languageName: node
+  linkType: hard
+
 "@napi-rs/wasm-runtime@npm:^1.1.4, @napi-rs/wasm-runtime@npm:^1.1.6":
   version: 1.2.4
   resolution: "@napi-rs/wasm-runtime@npm:1.2.4"
@@ -2219,6 +2340,17 @@ __metadata:
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
   checksum: 10c0/5bd7576bb1b38a47a7fc7b51ac9f38748e772beebc56200450c4a817d712232b8f1d3ef70532c80840243c657d491cf6a6be1e3a214cff907645819fdc34aadd
+  languageName: node
+  linkType: hard
+
+"@playwright/test@npm:1.64.1":
+  version: 1.64.1
+  resolution: "@playwright/test@npm:1.64.1"
+  dependencies:
+    playwright: "npm:1.64.1"
+  bin:
+    playwright: cli.js
+  checksum: 10c0/0a1a853d76d6c532cafaf0366a5448584b766737ebd39bbd23dc0580f3d3b6ef4c833082af47a792e7fc2501f444debdfaad37a87a76cc5b195f3803fc80ea3c
   languageName: node
   linkType: hard
 
@@ -3482,6 +3614,7 @@ __metadata:
     "@commitlint/cli": "npm:21.2.3"
     "@commitlint/config-conventional": "npm:21.2.3"
     "@eslint/js": "npm:9.39.5"
+    "@playwright/test": "npm:1.64.1"
     "@types/heic-convert": "npm:2.1.1"
     "@types/node": "npm:22.20.4"
     "@types/pg": "npm:8.23.1"
@@ -3499,6 +3632,7 @@ __metadata:
     jscpd: "npm:5.3.2"
     knip: "npm:6.38.0"
     lint-staged: "npm:17.5.1"
+    pdfjs-dist: "npm:6.4.299"
     pg: "npm:8.23.0"
     prettier: "npm:3.9.9"
     sharp: "npm:0.35.5"
@@ -7637,6 +7771,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pdfjs-dist@npm:6.4.299":
+  version: 6.4.299
+  resolution: "pdfjs-dist@npm:6.4.299"
+  dependencies:
+    "@napi-rs/canvas": "npm:^1.0.10"
+  dependenciesMeta:
+    "@napi-rs/canvas":
+      optional: true
+  checksum: 10c0/f64c9bfda0838a2aba815b2083a1273df4611c749532a959296501270c589cb813c48429a8730a5ca033244d3dd8176c305c6241c8f6d9ebce069d9a9dba3e67
+  languageName: node
+  linkType: hard
+
 "pg-boss@npm:12.36.0":
   version: 12.36.0
   resolution: "pg-boss@npm:12.36.0"
@@ -7832,6 +7978,26 @@ __metadata:
   bin:
     pino: bin.js
   checksum: 10c0/ae1c57f2baac85dd5d63a3500746d5ea1cfc4bfcbf356eaec94d42a782eeb80caa4d4614de43a036cf48e2aed46d855a7ff21b126f55a63811def52a894ef937
+  languageName: node
+  linkType: hard
+
+"playwright-core@npm:1.64.1":
+  version: 1.64.1
+  resolution: "playwright-core@npm:1.64.1"
+  bin:
+    playwright-core: cli.js
+  checksum: 10c0/91c4f5ed1cff4b0e18b6ac62f66770f5f1b6c204d4aebd6a321c07466dca18a70822ac692597c6059705a703f9768097ac551df179fb49294d639509148e04f3
+  languageName: node
+  linkType: hard
+
+"playwright@npm:1.64.1":
+  version: 1.64.1
+  resolution: "playwright@npm:1.64.1"
+  dependencies:
+    playwright-core: "npm:1.64.1"
+  bin:
+    playwright: cli.js
+  checksum: 10c0/edf52d0a79feca37bf383e841a467aa68750684128218eac560063991c9e4b615a94901f580cd8a088bb05fd53008ab4a0e5e8d976067698b60ae5d1de2459f3
   languageName: node
   linkType: hard
 

@@ -1463,6 +1463,14 @@
                     ],
                     "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
                   },
+                  "revisitDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date",
+                    "default": null
+                  },
                   "facility": {
                     "type": [
                       "string",
@@ -1862,6 +1870,13 @@
             "type": "string",
             "format": "date"
           },
+          "revisitDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
           "facility": {
             "type": [
               "string",
@@ -1970,6 +1985,7 @@
           "healthProfileId",
           "sourceDocumentId",
           "issuedDate",
+          "revisitDate",
           "facility",
           "diagnosis",
           "manualWithoutSource",
@@ -2312,6 +2328,14 @@
                       "null"
                     ],
                     "format": "date"
+                  },
+                  "revisitDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date",
+                    "default": null
                   },
                   "facility": {
                     "type": [

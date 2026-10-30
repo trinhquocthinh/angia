@@ -5,6 +5,7 @@ import type { DocumentExtractor } from '../application/ports.js';
 const SAMPLE_PRESCRIPTION: ExtractionPayload = {
   type: 'prescription',
   issuedDate: '2026-10-01',
+  revisitDate: null,
   facility: 'Phòng khám giả lập',
   diagnosis: 'Tăng huyết áp',
   items: [

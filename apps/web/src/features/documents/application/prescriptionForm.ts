@@ -110,6 +110,8 @@ export function toPrescriptionApproval(form: PrescriptionFormValues): Prescripti
   return {
     type: 'prescription',
     issuedDate: form.issuedDate,
+    // Ô ngày hẹn và đối soát AI bổ sung ở E13-S3-T4.
+    revisitDate: null,
     facility: orNull(form.facility),
     diagnosis: orNull(form.diagnosis),
     items: form.items.map((item) => ({

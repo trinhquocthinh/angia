@@ -13,6 +13,7 @@ export const prescriptionSchema = z
     healthProfileId: z.uuid(),
     sourceDocumentId: z.uuid().nullable(),
     issuedDate: z.iso.date(),
+    revisitDate: z.iso.date().nullable(),
     facility: z.string().nullable(),
     diagnosis: z.string().nullable(),
     manualWithoutSource: z.boolean(),

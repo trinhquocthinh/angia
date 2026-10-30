@@ -7,6 +7,7 @@ import { RowErrorSummary } from './RowErrorSummary';
 const payload: PrescriptionPayload = {
   type: 'prescription',
   issuedDate: '2026-10-01',
+  revisitDate: null,
   facility: 'BV Nhân dân Gia Định',
   diagnosis: 'Tăng huyết áp',
   items: [

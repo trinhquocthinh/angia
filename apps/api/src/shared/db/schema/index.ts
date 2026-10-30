@@ -21,6 +21,7 @@ export { doseSlots } from './doseSlots.js';
 export { reminderRecipients } from './reminderRecipients.js';
 export { reminders } from './reminders.js';
 export { reminderDeliveries } from './reminderDeliveries.js';
+export { revisitReminders } from './revisitReminders.js';
 export { aiRoutingSettings } from './aiRoutingSettings.js';
 export { aiRoutingAudit } from './aiRoutingAudit.js';
 export { aiBillingSources } from './aiBillingSources.js';

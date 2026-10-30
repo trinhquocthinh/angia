@@ -3,8 +3,13 @@
   "ignore": ["**/*.gen.ts"],
   "workspaces": {
     ".": {
-      "entry": ["tooling/**/*.test.ts", "scripts/**/*.test.ts", "scripts/heic-spike/measureOne.ts"],
-      "project": ["tooling/**/*.ts", "scripts/**/*.ts"]
+      "entry": [
+        "tooling/**/*.test.ts",
+        "scripts/**/*.test.ts",
+        "scripts/heic-spike/measureOne.ts",
+        "e2e/**/*.spec.ts"
+      ],
+      "project": ["tooling/**/*.ts", "scripts/**/*.ts", "e2e/**/*.ts"]
     },
     "apps/api": {
       "entry": ["src/{server,shared/db/migrate}.ts!"],

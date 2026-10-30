@@ -17,7 +17,7 @@ packages/
 
 ## Khởi động nhanh
 
-Yêu cầu: Node 22 LTS (`.nvmrc`), Corepack, Docker Engine + Compose v2.
+Yêu cầu: Node 22 LTS ≥22.13.0 (`.nvmrc`), Corepack, Docker Engine + Compose v2.
 
 ```bash
 corepack enable && yarn install
@@ -43,5 +43,7 @@ Styling trang Admin dùng utility class của Tailwind trong component, bao gồ
 yarn verify       # toàn bộ cổng chất lượng (giống CI)
 yarn test:int     # integration test với Testcontainers
 ```
+
+Playwright TC-092/093 chạy trên SIT bằng `yarn test:e2e`, cần tài khoản main/gia đình thử và ảnh máy đo riêng. Xem [hướng dẫn E2E](e2e/README.md) để chuẩn bị phiên, fixture và job sau deploy trong repo private. CI public chỉ thu thập test bằng `--list`; kết quả E2E thực tế nằm trong workflow private.
 
 Quy trình nhánh, commit và triển khai: xem tài liệu dự án (`12-onboarding-guide.md`, `10-setup-and-ops-guide.md`).

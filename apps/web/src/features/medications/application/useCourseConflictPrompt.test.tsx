@@ -10,6 +10,7 @@ it('giữ nguyên bản đã gửi khi bên gọi sửa đối tượng lệnh s
     data: {
       type: 'prescription',
       issuedDate: '2026-10-01',
+      revisitDate: null,
       facility: 'BV Trước',
       diagnosis: null,
       items: [
