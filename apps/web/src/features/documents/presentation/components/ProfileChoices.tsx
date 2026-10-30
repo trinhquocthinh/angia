@@ -46,7 +46,7 @@ export function ProfileChoices({
   return (
     <div
       className="angia-modal-reveal grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]"
-      style={revealStyle(3)}
+      style={revealStyle(2)}
     >
       <ProfilePicker profiles={profiles} selectedId={profileId} locked={locked} onSelect={onProfile} />
       <DocumentTypePicker

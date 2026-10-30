@@ -5,6 +5,7 @@ import { DocumentIcon } from './DocumentIcon';
 import { TileActions } from './TileActions';
 import { TileBadge } from './TileBadge';
 import { TileStatus } from './TileStatus';
+import { withTileTransition } from './withTileTransition';
 
 export function UploadTile({
   item,
@@ -25,10 +26,11 @@ export function UploadTile({
   // Nhớ theo src: ảnh gốc HEIC lỗi hiển thị không được chặn ảnh thu nhỏ của bản đã xuất.
   const [broken, setBroken] = useState<string | null>(null);
   const busy = item.status === 'queued' || item.status === 'uploading';
+  const remove = () => withTileTransition(onRemove);
   return (
     <li
-      className="angia-modal-reveal group flex min-w-0 flex-col gap-2 rounded-2xl bg-white p-2 shadow-sm transition-shadow duration-200 hover:shadow-md motion-reduce:transition-none"
-      style={revealStyle(revealIndex)}
+      className="angia-modal-reveal group flex min-w-0 flex-col gap-2 rounded-2xl bg-white p-2 shadow-card transition-shadow duration-200 [view-transition-class:upload-tile] hover:shadow-card-hover motion-reduce:transition-none"
+      style={{ ...revealStyle(revealIndex), viewTransitionName: `upload-tile-${item.id}` }}
     >
       <div className="relative h-44 overflow-hidden rounded-xl bg-[#deebea] sm:h-56">
         {preview && broken !== preview ? (
@@ -47,14 +49,15 @@ export function UploadTile({
           <TileActions
             name={item.file.name}
             ready={item.status === 'ready'}
-            onRemove={onRemove}
+            onRemove={remove}
             onRedact={onRedact}
           />
         )}
-        <TileStatus item={item} onRemove={onRemove} />
+        <TileStatus item={item} onRemove={remove} />
       </div>
-      <div className="flex min-w-0 items-center justify-between gap-2 px-1 pb-1">
-        <span title={item.file.name} className="truncate font-mono text-[11px] text-[#131d1d]">
+      <div className="flex min-w-0 items-center justify-between gap-2 px-1 pb-1 max-sm:flex-col max-sm:items-start max-sm:gap-1">
+        {/* Ô ảnh di động hẹp: tên tệp và nhãn trạng thái xếp hai dòng để tên không bị cắt còn vài ký tự. */}
+        <span title={item.file.name} className="truncate text-xs text-[#404945]">
           {item.file.name}
         </span>
         <TileBadge status={item.status} />

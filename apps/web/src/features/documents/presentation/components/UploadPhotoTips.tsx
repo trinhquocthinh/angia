@@ -13,7 +13,7 @@ export function UploadPhotoTips() {
     <section
       aria-labelledby="upload-tips-title"
       className="angia-modal-reveal flex flex-col gap-2 px-1 sm:flex-row sm:items-center sm:gap-5"
-      style={revealStyle(6)}
+      style={revealStyle(5)}
     >
       <h2 id="upload-tips-title" className="shrink-0 text-[13px] leading-5 font-semibold text-[#20594b]">
         Để ảnh dễ đọc

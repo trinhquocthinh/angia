@@ -7,15 +7,7 @@ import { UploadTile } from './UploadTile';
 // Lô 10 ảnh vẫn hiện xong dưới nửa giây thay vì so le đến ảnh cuối.
 const MAX_REVEAL_INDEX = 3;
 
-export function UploadGrid({
-  items,
-  summary,
-  locked,
-  onRetry,
-  onRemove,
-  onRedact,
-  addMore,
-}: {
+type UploadGridProps = {
   items: UploadItem[];
   summary: {
     needsRedaction: number;
@@ -31,7 +23,17 @@ export function UploadGrid({
   onRedact: (id: string) => void;
   /** Ô chọn thêm ảnh ở cuối lưới; bỏ trống khi không được chọn thêm. */
   addMore?: ReactNode;
-}) {
+};
+
+export function UploadGrid({
+  items,
+  summary,
+  locked,
+  onRetry,
+  onRemove,
+  onRedact,
+  addMore,
+}: UploadGridProps) {
   const shown = items.filter((item) => item.status !== 'rejected');
   if (shown.length === 0) return null;
   return (
@@ -63,7 +65,11 @@ export function UploadGrid({
             onRedact={() => onRedact(item.id)}
           />
         ))}
-        {addMore && <li>{addMore}</li>}
+        {addMore && (
+          <li className="[view-transition-class:upload-tile] [view-transition-name:upload-tile-add]">
+            {addMore}
+          </li>
+        )}
       </ul>
     </section>
   );
