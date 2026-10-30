@@ -43,7 +43,7 @@ export function ProfileChoices({
   }
   const profile = profiles.find((item) => item.id === profileId);
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
       <ProfilePicker profiles={profiles} selectedId={profileId} locked={locked} onSelect={onProfile} />
       <DocumentTypePicker
         value={declaredType}

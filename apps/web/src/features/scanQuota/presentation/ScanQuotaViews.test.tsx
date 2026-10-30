@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { AdminRequestError } from '@src/features/family/application/AdminRequestError';
 import { quota, view } from '../test/scanQuotaFixtures';
-import { FamilyScanQuotaCard } from './FamilyScanQuotaCard';
+import { FamilyScanQuotaSummary } from './FamilyScanQuotaSummary';
 import { ScanQuotaCard } from './ScanQuotaCard';
 import { ScanQuotaOverview } from './ScanQuotaOverview';
 import { ScanQuotaEditor } from './ScanQuotaEditor';
@@ -11,9 +11,8 @@ const noop = () => undefined;
 describe('Giao diện hạn mức lượt', () => {
   it('TC-616: gia đình chỉ xem lượt và hạn mức đang có hiệu lực', () => {
     const html = renderToStaticMarkup(
-      <FamilyScanQuotaCard quota={quota} loading={false} error={false} onRetry={noop} />,
+      <FamilyScanQuotaSummary quota={quota} loading={false} error={false} onRetry={noop} />,
     );
-    expect(html).toContain('Đã dùng 2 / 12 lượt');
     expect(html).toContain('Đang giữ 1 lượt');
     expect(html).toContain('Còn lại 9 lượt');
     expect(html).not.toContain('chưa dùng để chặn hoặc tính lượt');
@@ -22,7 +21,7 @@ describe('Giao diện hạn mức lượt', () => {
   it('TC-593: tải, lỗi, chưa xác định và chưa cấp lượt không biến thành số 0', () => {
     const render = (loading: boolean, error: boolean, data: typeof quota | null = null) =>
       renderToStaticMarkup(
-        <FamilyScanQuotaCard quota={data} loading={loading} error={error} onRetry={noop} />,
+        <FamilyScanQuotaSummary quota={data} loading={loading} error={error} onRetry={noop} />,
       );
     expect(render(true, false)).toContain('Đang tải');
     expect(render(false, true)).toContain('Không thể tải');
@@ -30,7 +29,7 @@ describe('Giao diện hạn mức lượt', () => {
     expect(render(false, false)).not.toContain('Đã dùng 0');
     expect(
       renderToStaticMarkup(
-        <FamilyScanQuotaCard
+        <FamilyScanQuotaSummary
           quota={{
             ...quota,
             status: 'unconfigured',
@@ -103,7 +102,7 @@ describe('Giao diện hạn mức lượt', () => {
   });
   it('TC-645: gia đình dùng lượt mặc định thấy nhãn riêng; Admin không còn form chính sách', () => {
     const html = renderToStaticMarkup(
-      <FamilyScanQuotaCard
+      <FamilyScanQuotaSummary
         quota={{ ...quota, status: 'default' }}
         loading={false}
         error={false}

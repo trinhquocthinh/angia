@@ -15,11 +15,22 @@ describe('TC-302 — thẻ "Mức sử dụng của gia đình" (SPEC-030)', () 
     const html = renderToStaticMarkup(<FamilyUsageCard usage={usage} />);
     expect(html).toContain('Mức sử dụng của gia đình');
     expect(html).toContain('1,2 / 2,0 GiB');
-    expect(html).toContain('37 / 100 ảnh hôm nay');
-    expect(html).toContain('2 / 10 ảnh đang xử lý');
+    expect(html).toContain('Ảnh hôm nay: 37 / 100');
+    expect(html).toContain('Đang xử lý: 2 / 10');
     expect(html.match(/role="progressbar"/g)).toHaveLength(4);
     expect(html).toContain('aria-valuenow="37"');
     expect(html).not.toContain('role="status"');
+  });
+
+  it('tách số đã dùng và trần để nhấn số đã dùng; giá trị không có trần giữ nguyên một dòng', () => {
+    const html = renderToStaticMarkup(<FamilyUsageCard usage={usage} />);
+    expect(html).toMatch(/>37<\/span><span[^>]*>\/ 100</);
+    const percent = renderToStaticMarkup(
+      <FamilyUsageCard
+        usage={{ ...usage, aiOcr: { month: '2026-10', usedPercent: 42, anyUsed: true, exhausted: false } }}
+      />,
+    );
+    expect(percent).toContain('>đã dùng 42%<');
   });
 
   it('chạm trần thì nêu lý do trong vùng trạng thái', () => {
@@ -35,7 +46,7 @@ describe('TC-302 — thẻ "Mức sử dụng của gia đình" (SPEC-030)', () 
         usage={{ ...usage, aiOcr: { month: '2026-10', usedPercent: 42, anyUsed: true, exhausted: false } }}
       />,
     );
-    expect(html).toContain('Đọc chữ tự động tháng này: đã dùng 42%');
+    expect(html).toContain('Nhận diện tháng này: đã dùng 42%');
     expect(html).toContain('aria-valuenow="42"');
     expect(html).not.toContain('$');
     expect(html).not.toContain('USD');
@@ -47,7 +58,7 @@ describe('TC-302 — thẻ "Mức sử dụng của gia đình" (SPEC-030)', () 
         usage={{ ...usage, aiOcr: { month: '2026-10', usedPercent: 0, anyUsed: true, exhausted: false } }}
       />,
     );
-    expect(html).toContain('Đọc chữ tự động tháng này: đã dùng dưới 1%');
+    expect(html).toContain('Nhận diện tháng này: đã dùng dưới 1%');
   });
 
   const quota: FamilyScanQuota = {
@@ -62,22 +73,43 @@ describe('TC-302 — thẻ "Mức sử dụng của gia đình" (SPEC-030)', () 
 
   it('có hạn mức lượt thì hiện số lượt đã dùng (gồm đang giữ) / lượt được cấp thay cho phần trăm', () => {
     const html = renderToStaticMarkup(<FamilyUsageCard usage={usage} scanQuota={quota} />);
-    expect(html).toContain('Đọc chữ tự động tháng này: 4 / 20 lượt');
+    expect(html).toContain('Nhận diện tháng này: 4 / 20 lượt');
     expect(html).toContain('aria-valuenow="4"');
     expect(html).toContain('aria-valuemax="20"');
     expect(html).not.toContain('%</span>');
   });
 
+  it('gộp thông tin lượt vào cùng một thẻ, không lặp số đã dùng', () => {
+    const html = renderToStaticMarkup(
+      <FamilyUsageCard usage={usage} scanQuota={quota}>
+        <p>Còn lại 16 lượt</p>
+      </FamilyUsageCard>,
+    );
+    expect(html.match(/<section/g)).toHaveLength(1);
+    expect(html).toContain('Còn lại 16 lượt');
+    expect(html).not.toContain('Đã dùng');
+  });
+
+  it('chưa tải được mức sử dụng vẫn hiện thông tin lượt, không có thanh tiến độ', () => {
+    const html = renderToStaticMarkup(
+      <FamilyUsageCard usage={null} scanQuota={quota}>
+        <p>Còn lại 16 lượt</p>
+      </FamilyUsageCard>,
+    );
+    expect(html).toContain('Còn lại 16 lượt');
+    expect(html).not.toContain('role="progressbar"');
+  });
+
   it('chưa dùng lượt nào thì hiện 0 / 20 lượt', () => {
     const fresh = { ...quota, usedScans: 0, heldScans: 0, remainingScans: 20 };
     const html = renderToStaticMarkup(<FamilyUsageCard usage={usage} scanQuota={fresh} />);
-    expect(html).toContain('Đọc chữ tự động tháng này: 0 / 20 lượt');
+    expect(html).toContain('Nhận diện tháng này: 0 / 20 lượt');
   });
 
   it('gia đình chưa được cấp lượt tháng này thì nêu rõ, thanh đầy', () => {
     const none = { ...quota, status: 'unconfigured' as const, grantedScans: 0, usedScans: 0, heldScans: 0 };
     const html = renderToStaticMarkup(<FamilyUsageCard usage={usage} scanQuota={none} />);
-    expect(html).toContain('Đọc chữ tự động tháng này: chưa được cấp lượt');
+    expect(html).toContain('Nhận diện tháng này: chưa được cấp lượt');
     expect(html).toContain('width:100%');
   });
 });

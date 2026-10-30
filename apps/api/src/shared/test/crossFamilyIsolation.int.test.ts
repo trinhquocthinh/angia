@@ -11,6 +11,7 @@ import { seedPendingDocument } from './seedPendingDocument.js';
 import { seedReminder } from './seedReminder.js';
 import { seedRevisitReminder } from './seedRevisitReminder.js';
 import { snapshotHealthTables } from './snapshotHealthTables.js';
+import { prescriptionRouteProbes } from './prescriptionRouteProbes.js';
 import {
   manualCourse as course,
   manualPrescription as prescription,
@@ -106,12 +107,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       }),
     'GET /api/health-profiles/:id/visit-summary': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/visit-summary`),
-    'GET /api/health-profiles/:id/revisits': (u, x) =>
-      t.call(u, 'GET', `${profiles}/${x.profileId}/revisits`),
-    'PUT /api/health-profiles/:id/prescriptions/:prescriptionId/revisit-date': (u, x) =>
-      t.call(u, 'PUT', `${profiles}/${x.profileId}/prescriptions/${x.prescriptionId}/revisit-date`, {
-        revisitDate: null,
-      }),
+    ...prescriptionRouteProbes((...args) => t.call(...args)),
     'GET /api/me/revisit-reminders/:reminderId': (u, x) =>
       t.call(u, 'GET', `/api/me/revisit-reminders/${x.revisitReminderId}`),
     'GET /api/me/reminders/:reminderId': (u, x) => t.call(u, 'GET', `/api/me/reminders/${x.reminderId}`),

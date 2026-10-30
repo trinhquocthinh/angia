@@ -8,6 +8,7 @@ import type { UploadItem } from '../../application/uploadQueue';
 import { useRedactionSource } from '../../application/useRedactionSource';
 import { PrivacyEditPanel } from './PrivacyEditPanel';
 import { RedactionPreviewStep } from './RedactionPreviewStep';
+import { UploadStepper } from './UploadStepper';
 
 const codec = createBrowserRedactionCodec();
 
@@ -26,7 +27,8 @@ export function UploadRedactionStudio({ item, onDone, onClose, ...ai }: Props) {
   const [step, setStep] = useState<'edit' | 'confirm'>('edit');
   const source = useRedactionSource(item.file, item.previewUrl, heicToDisplayable);
   return (
-    <section aria-label={`Che thông tin ảnh ${item.file.name}`} className="flex min-w-0 flex-col gap-3">
+    <section aria-label={`Che thông tin ảnh ${item.file.name}`} className="flex min-w-0 flex-col gap-6">
+      <UploadStepper current={step === 'edit' ? 2 : 3} />
       {source.converting ? (
         <p role="status" className="rounded-2xl bg-white p-4 text-sm text-[#55615f] shadow-sm">
           Đang mở ảnh HEIC trên máy…

@@ -16,7 +16,7 @@ const Part = ({ count, className, children }: { count: number; className: string
 // Dòng tổng hợp phía trên lưới ảnh: số ảnh đã chọn, chưa che, chưa gửi, đã gửi, đang gửi.
 export function UploadSummary({ summary }: UploadSummaryProps) {
   return (
-    <p className="flex flex-wrap items-center gap-2 text-lg font-bold text-[#131d1d]">
+    <p className="flex flex-wrap items-center gap-2 text-sm font-bold text-[#131d1d]">
       {summary.total} ảnh đã chọn
       <Part count={summary.needsRedaction} className="text-[#833b00]">
         {summary.needsRedaction} chưa che

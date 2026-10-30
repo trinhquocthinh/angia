@@ -239,3 +239,11 @@ export type { RevisitList } from './documents/revisitSchemas.js';
 
 export { myRevisitReminderSchema } from './reminders/myRevisitReminderSchemas.js';
 export type { MyRevisitReminder } from './reminders/myRevisitReminderSchemas.js';
+
+export { prescriptionDiffSchema } from './prescriptions/prescriptionDiffSchema.js';
+export type { PrescriptionDiff } from './prescriptions/prescriptionDiffSchema.js';
+export {
+  prescriptionListItemSchema,
+  prescriptionDetailSchema,
+} from './prescriptions/prescriptionChainSchemas.js';
+export type { PrescriptionListItem, PrescriptionDetail } from './prescriptions/prescriptionChainSchemas.js';

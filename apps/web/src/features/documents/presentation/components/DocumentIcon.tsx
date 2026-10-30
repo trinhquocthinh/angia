@@ -19,6 +19,10 @@ const paths = {
   lab: 'M9 3h6 M10 3v6l-5 10a1.5 1.5 0 0 0 1.4 2h11.2a1.5 1.5 0 0 0 1.4-2L14 9V3 M7.5 15h9',
   monitor: 'M3 5h18v12H3Z M8 21h8 M6 11h3l2-3 2 6 2-3h3',
   file: 'M14 3H6v18h12V7Z M14 3v4h4',
+  shield: 'M12 3l8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z M8.5 12l2.5 2.5 4.5-5',
+  cloud: 'M7 18a4 4 0 0 1-.6-7.95 5.5 5.5 0 0 1 10.7-1A4.5 4.5 0 0 1 17 18Z',
+  sparkle: 'M11 4l1.8 5.2L18 11l-5.2 1.8L11 18l-1.8-5.2L4 11l5.2-1.8Z M18.5 3v4 M16.5 5h4',
+  plus: 'M12 5v14 M5 12h14',
 } as const;
 export type DocumentIconName = keyof typeof paths;
 export function DocumentIcon({ name, size = 20 }: { name: DocumentIconName; size?: number }) {

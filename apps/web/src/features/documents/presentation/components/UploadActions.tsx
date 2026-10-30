@@ -24,16 +24,16 @@ export function UploadActions({ summary, profileChosen, onSubmit }: UploadAction
         ? 'Chọn hồ sơ ở mục “Của ai?” trước khi gửi.'
         : 'Ảnh chỉ được gửi khi bấm “Xong”; trước đó bạn có thể bỏ bớt ảnh.';
   return (
-    <div className="flex flex-col items-center justify-between gap-4 rounded-xl bg-white p-4 shadow-md sm:flex-row">
+    <div className="flex flex-col items-center justify-between gap-4 rounded-xl bg-white p-4 shadow-sm sm:flex-row">
       <div className="flex w-full min-w-0 items-center gap-3 sm:flex-1">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#aef0da] text-[#002019]">
-          <DocumentIcon name="upload" />
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#aef0da] text-[#004135]">
+          <DocumentIcon name="shield" />
         </span>
         <div>
-          <p className="text-sm font-bold text-[#131d1d]">
+          <p className="text-xs leading-4 font-semibold text-[#131d1d]">
             {sending ? 'Đang gửi ảnh' : 'Ảnh được che và nén trên máy rồi gửi cùng một lô'}
           </p>
-          <p className="text-[11px] font-medium text-[#286958]" aria-live="polite">
+          <p className="mt-0.5 text-xs leading-4 text-[#404945]" aria-live="polite">
             {hint}
           </p>
         </div>
@@ -41,7 +41,7 @@ export function UploadActions({ summary, profileChosen, onSubmit }: UploadAction
       <div className="flex w-full flex-col-reverse items-stretch gap-2 sm:w-auto sm:shrink-0 sm:flex-row sm:items-center">
         <Link
           to="/"
-          className="flex h-[52px] shrink-0 items-center justify-center whitespace-nowrap rounded-xl px-6 text-sm font-semibold text-[#404945] hover:bg-[#e4f0f0]"
+          className="flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl px-6 text-xs font-semibold text-[#404945] transition-colors hover:bg-[#e4f0f0] hover:text-[#131d1d]"
         >
           Hủy bỏ
         </Link>
@@ -49,9 +49,9 @@ export function UploadActions({ summary, profileChosen, onSubmit }: UploadAction
           type="button"
           disabled={sending || unredacted > 0 || summary.ready === 0 || !profileChosen}
           onClick={onSubmit}
-          className="flex h-[52px] w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-[#004135] px-8 text-sm font-bold text-white shadow-md enabled:hover:bg-[#20594b] disabled:cursor-not-allowed disabled:opacity-55 sm:w-auto"
+          className="flex min-h-11 w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-[#004135] px-6 text-xs font-semibold text-white shadow-sm transition-colors enabled:hover:bg-[#20594b] disabled:cursor-not-allowed disabled:opacity-55 sm:w-auto"
         >
-          {label} <DocumentIcon name="arrow" />
+          {label} <DocumentIcon name="arrow" size={18} />
         </button>
       </div>
     </div>
