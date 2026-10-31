@@ -1,7 +1,10 @@
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import { findProfileInFamily } from '@src/features/profiles/infrastructure/findProfileInFamily.js';
-import type { PrescriptionChainRepository } from '../application/prescriptionChainPorts.js';
+import type {
+  PrescriptionChainRepository,
+  PrescriptionChainStore,
+} from '../application/prescriptionChainPorts.js';
 import { findProfilePrescription } from './findProfilePrescription.js';
 import { listProfilePrescriptions } from './listProfilePrescriptions.js';
 import { findPrescriptionPosition } from './findPrescriptionPosition.js';
@@ -22,7 +25,7 @@ export function createPrescriptionChainRepository(db: Database): PrescriptionCha
           findPosition: (id, prescriptionId) => findPrescriptionPosition(tx, familyId, id, prescriptionId),
           findPrescription: (id, prescriptionId) => findProfilePrescription(tx, familyId, id, prescriptionId),
           courses: (id, prescriptionId) => findPrescriptionCourses(tx, familyId, id, prescriptionId),
-        }),
+        } satisfies PrescriptionChainStore),
       ),
   };
 }

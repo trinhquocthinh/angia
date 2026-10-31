@@ -4,7 +4,7 @@ import { findProfileInFamily } from '@src/features/profiles/infrastructure/findP
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { prescriptions } from '@src/shared/db/schema/index.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
-import type { RevisitRepository } from '../application/revisitPorts.js';
+import type { RevisitRepository, RevisitStore } from '../application/revisitPorts.js';
 import { cleanRevisitReminders } from './cleanRevisitReminders.js';
 import { ensureRevisitReminder } from './ensureRevisitReminder.js';
 import { listProfileRevisits } from './listProfileRevisits.js';
@@ -42,7 +42,7 @@ export function createRevisitRepository(db: Database): RevisitRepository {
           },
           cleanReminders: (id, date) => cleanRevisitReminders(tx, familyId, id, date),
           ensureReminder: (id, date, today) => ensureRevisitReminder(tx, familyId, id, date, today),
-        }),
+        } satisfies RevisitStore),
       ),
   };
 }

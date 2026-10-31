@@ -1,4 +1,8 @@
-import type { DeliveryEligibility, DeliveryEligibilityInput } from '../domain/checkDeliveryEligibility.js';
+import {
+  checkDeliveryEligibility,
+  type DeliveryEligibility,
+  type DeliveryEligibilityInput,
+} from '../domain/checkDeliveryEligibility.js';
 import { resolveDeliveryRecipientAccountIds } from './resolveDeliveryRecipientAccountIds.js';
 import type { ReminderKind } from './ports.js';
 
@@ -7,6 +11,7 @@ export function checkReminderDeliveryEligibility(
   kind: ReminderKind,
   input: DeliveryEligibilityInput,
 ): DeliveryEligibility {
+  if (kind === 'medication') return checkDeliveryEligibility(input);
   if (input.deviceAccountId === null) return 'revoked_device';
   if (!input.consentConfirmed) return 'revoked_consent';
   const recipients = resolveDeliveryRecipientAccountIds(
