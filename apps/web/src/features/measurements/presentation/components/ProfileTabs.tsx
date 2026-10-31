@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 
 const LINKED_TABS = [
   { key: 'health', label: 'Diễn biến sức khỏe', to: '/profiles/$profileId' },
+  { key: 'timeline', label: 'Dòng thời gian', to: '/profiles/$profileId/timeline' },
   { key: 'medications', label: 'Thuốc điều trị', to: '/profiles/$profileId/medications' },
   { key: 'lab-results', label: 'Kết quả xét nghiệm', to: '/profiles/$profileId/lab-results' },
   { key: 'revisits', label: 'Lịch tái khám', to: '/profiles/$profileId/revisits' },
