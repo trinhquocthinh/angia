@@ -21,6 +21,7 @@ export interface Prescription {
   healthProfileId: string;
   sourceDocumentId: string | null;
   issuedDate: string;
+  revisitDate: string | null;
   facility: string | null;
   diagnosis: string | null;
   manualWithoutSource: boolean;

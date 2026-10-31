@@ -1,9 +1,13 @@
+import { createTimelineRepository } from '@src/features/timeline/infrastructure/createTimelineRepository.js';
+import { createPrescriptionChainRepository } from '@src/features/prescriptions/infrastructure/createPrescriptionChainRepository.js';
+import { createRevisitRepository } from '@src/features/prescriptions/infrastructure/createRevisitRepository.js';
 import { createScanQuotaRepository } from '@src/features/scanQuota/infrastructure/createScanQuotaRepository.js';
 import { createAiBillingRepository } from '@src/features/aiBilling/infrastructure/createAiBillingRepository.js';
 import { createAiRoutingRepository } from '@src/features/aiRouting/infrastructure/createAiRoutingRepository.js';
 import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
 import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
 import { createMyConsentRepository } from '@src/features/myConsent/infrastructure/createMyConsentRepository.js';
+import { createMyRevisitReminderRepository } from '@src/features/myRevisitReminders/infrastructure/createMyRevisitReminderRepository.js';
 import { createMyReminderRepository } from '@src/features/myReminders/infrastructure/createMyReminderRepository.js';
 import { createReminderRecipientRepository } from '@src/features/reminders/infrastructure/createReminderRecipientRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
@@ -158,8 +162,12 @@ const app = createApp({
   medications: createMedicationRepository(db),
   adherence: createAdherenceRepository(db),
   doseSlots: createDoseSlotRepository(db),
+  revisits: createRevisitRepository(db),
+  prescriptionChain: createPrescriptionChainRepository(db),
+  timeline: createTimelineRepository(db),
   reminderRecipients: createReminderRecipientRepository(db),
   myReminders: createMyReminderRepository(db),
+  myRevisitReminders: createMyRevisitReminderRepository(db),
   myConsent: createMyConsentRepository(db),
   visitSummary: createVisitSummaryRepository(db),
   familyUsage: { repository: createFamilyUsageRepository(db), quota: quotaPolicy, ai: aiPolicy },

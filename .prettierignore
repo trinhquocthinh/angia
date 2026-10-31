@@ -10,3 +10,4 @@ yarn.lock
 apps/api/drizzle/meta/
 .claude/worktrees/
 **/._*
+.playwright/

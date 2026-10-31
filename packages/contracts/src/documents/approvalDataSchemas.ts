@@ -48,6 +48,7 @@ const prescriptionItemApprovalSchema = z.object({
 export const prescriptionApprovalSchema = z.object({
   type: z.literal('prescription'),
   issuedDate: z.iso.date().nullable(),
+  revisitDate: z.iso.date().nullable().default(null),
   facility: optionalText(200),
   diagnosis: optionalText(500),
   items: z.array(prescriptionItemApprovalSchema).min(1).max(50),

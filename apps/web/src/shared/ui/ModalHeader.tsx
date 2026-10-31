@@ -47,11 +47,11 @@ export function ModalHeader({
         )}
         <h2
           id={titleId}
-          className="mt-1 font-['Newsreader',Georgia,serif] text-[22px] leading-7 font-semibold text-[#004135]"
+          className="font-['Newsreader',Georgia,serif] text-[22px] leading-7 font-semibold text-[#004135]"
         >
           {title}
         </h2>
-        {subtitle && <p className="mt-1 text-sm leading-5 text-[#55615f]">{subtitle}</p>}
+        {subtitle && <p className="text-sm leading-5 text-[#55615f]">{subtitle}</p>}
       </div>
       <button
         type="button"

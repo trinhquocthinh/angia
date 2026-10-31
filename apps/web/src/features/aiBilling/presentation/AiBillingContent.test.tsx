@@ -46,8 +46,9 @@ describe('Thẻ phí thực từ nhà cung cấp', () => {
     expect(html).not.toContain('type="password"');
     expect(html).not.toContain('name="apiKey"');
   });
-  it('TC-548: thông báo rõ số liệu chưa nối vào cổng chặn OCR của các bước sau', () => {
+  it('CP5.4: thông báo đúng cổng phí thực đang chặn nhận diện khi thiếu dữ liệu hoặc đạt trần', () => {
     const html = renderToStaticMarkup(<AiBillingContent view={incomplete} now={now} />);
-    expect(html).toContain('Chưa dùng số liệu này để chặn nhận diện');
+    expect(html).toContain('nhận diện ảnh tạm dừng');
+    expect(html).not.toContain('Chưa dùng số liệu này');
   });
 });

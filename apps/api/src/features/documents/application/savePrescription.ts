@@ -1,6 +1,7 @@
 import { planMedicationConflicts } from '@src/features/medications/domain/planMedicationConflicts.js';
 import { createPrescriptionCourses } from '@src/features/medications/domain/createPrescriptionCourses.js';
 import { findIncompleteDoseItems } from '@src/features/prescriptions/domain/findIncompleteDoseItems.js';
+import { isValidRevisitDate } from '@src/features/prescriptions/domain/isValidRevisitDate.js';
 import type { PrescriptionDraft } from './approvalDrafts.js';
 import { DATE_REQUIRED, provenance, saved, type RecordTarget, type SaveOutcome } from './approvalOutcome.js';
 import { findPrescriptionDuplicate } from './findDuplicateRecord.js';
@@ -16,10 +17,13 @@ export async function savePrescription(
   confirmDuplicate: boolean,
 ): Promise<SaveOutcome> {
   if (!data.issuedDate) return DATE_REQUIRED;
+  const revisitDate = data.revisitDate ?? null;
+  if (!isValidRevisitDate(data.issuedDate, revisitDate)) return { ok: false, code: 'ERR_VALIDATION' };
   const invalidItemIndexes = findIncompleteDoseItems(data.items);
   if (invalidItemIndexes.length > 0) return { ok: false, code: 'ERR_DOSE_INFO_MISSING', invalidItemIndexes };
   const { issuedDate } = data;
   await store.lockMedicationProfile(target.healthProfileId);
+  await store.lockDuplicateRecord(target.healthProfileId, 'prescription', issuedDate);
   const duplicate = confirmDuplicate
     ? null
     : await findPrescriptionDuplicate(store, target.healthProfileId, { ...data, issuedDate });
@@ -38,6 +42,7 @@ export async function savePrescription(
   const prescription = await store.insertPrescription({
     ...provenance(target),
     issuedDate: data.issuedDate,
+    revisitDate,
     facility: data.facility,
     diagnosis: data.diagnosis,
     items: data.items.map((item) => ({

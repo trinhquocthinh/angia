@@ -3724,6 +3724,432 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/health-profiles/{id}/revisits': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc lịch tái khám gộp theo ngày (SPEC-043) */
+    get: {
+      parameters: {
+        query?: {
+          from?: string;
+        };
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Lịch hẹn từ from, mặc định hôm nay VN */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['RevisitList'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/prescriptions/{prescriptionId}/revisit-date': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Sửa hoặc xóa ngày hẹn tái khám (SPEC-043) */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+          prescriptionId: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['SetRevisitDate'];
+        };
+      };
+      responses: {
+        /** @description Ngày hẹn đã lưu */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['SetRevisitDate'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/prescriptions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc chuỗi đơn theo ngày kê, thời điểm lưu và ID (SPEC-045) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Chuỗi đơn tăng dần */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['PrescriptionListItem'][];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/prescriptions/{prescriptionId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Chi tiết đơn, đơn liền kề, mọi đợt và so sánh dữ liệu (SPEC-045) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+          prescriptionId: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Chi tiết đơn không kèm nhận định */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['PrescriptionDetail'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/timeline': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Dòng thời gian sáu loại sự kiện đã ghi nhận (SPEC-049, E13-S5-T1) */
+    get: {
+      parameters: {
+        query?: {
+          limit?: number;
+          cursor?: string;
+        };
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Trang dòng thời gian không kèm nhận định */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['TimelinePage'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/reminder-recipients': {
     parameters: {
       query?: never;
@@ -3925,6 +4351,71 @@ export interface paths {
           };
         };
         /** @description ERR_NOT_FOUND: không có lời nhắc hoặc tài khoản không phải người nhận hợp lệ */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/me/revisit-reminders/{reminderId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc nhắc tái khám dành cho người nhận hiện hành (SPEC-044) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          reminderId: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Chi tiết nhắc tái khám */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['MyRevisitReminder'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: tài khoản chưa thuộc gia đình */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: không tìm thấy hoặc không còn quyền xem */
         404: {
           headers: {
             [name: string]: unknown;
@@ -4775,6 +5266,11 @@ export interface components {
             /** @enum {string} */
             type: 'prescription';
             issuedDate: string | null;
+            /**
+             * Format: date
+             * @default null
+             */
+            revisitDate: string | null;
             facility: string | null;
             /** @default null */
             diagnosis: string | null;
@@ -4856,6 +5352,8 @@ export interface components {
       sourceDocumentId: string | null;
       /** Format: date */
       issuedDate: string;
+      /** Format: date */
+      revisitDate: string | null;
       facility: string | null;
       diagnosis: string | null;
       manualWithoutSource: boolean;
@@ -4951,6 +5449,11 @@ export interface components {
             type: 'prescription';
             /** Format: date */
             issuedDate: string | null;
+            /**
+             * Format: date
+             * @default null
+             */
+            revisitDate: string | null;
             facility: string | null;
             diagnosis: string | null;
             items: {
@@ -5210,6 +5713,243 @@ export interface components {
         evening?: components['schemas']['TimeOfDay'];
       };
     };
+    RevisitList: {
+      /** Format: date */
+      revisitDate: string;
+      prescriptions: {
+        /** Format: uuid */
+        id: string;
+        /** Format: date */
+        issuedDate: string;
+        facility: string | null;
+      }[];
+    }[];
+    SetRevisitDate: {
+      /** Format: date */
+      revisitDate: string | null;
+    };
+    PrescriptionListItem: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date */
+      issuedDate: string;
+      facility: string | null;
+      diagnosis: string | null;
+      itemCount: number;
+      /** Format: date */
+      revisitDate: string | null;
+      /** @enum {string} */
+      origin: 'document' | 'manual';
+    };
+    PrescriptionDetail: {
+      prescription: components['schemas']['Prescription'];
+      /** Format: uuid */
+      previousId: string | null;
+      /** Format: uuid */
+      nextId: string | null;
+      courses: components['schemas']['MedicationCourse'][];
+      diff: components['schemas']['PrescriptionDiff'];
+    };
+    PrescriptionDiff: {
+      added: {
+        name: string;
+        items: {
+          /** Format: uuid */
+          id: string;
+          name: string;
+          strength: string | null;
+          quantityPerDose: number | null;
+          externalUse: boolean;
+          doseUnit: string | null;
+          slots: ('morning' | 'noon' | 'afternoon' | 'evening' | 'as_needed')[];
+          durationDays: number | null;
+          longTerm: boolean;
+          note: string | null;
+          totalQuantity: number | null;
+        }[];
+      }[];
+      removed: {
+        name: string;
+        items: {
+          /** Format: uuid */
+          id: string;
+          name: string;
+          strength: string | null;
+          quantityPerDose: number | null;
+          externalUse: boolean;
+          doseUnit: string | null;
+          slots: ('morning' | 'noon' | 'afternoon' | 'evening' | 'as_needed')[];
+          durationDays: number | null;
+          longTerm: boolean;
+          note: string | null;
+          totalQuantity: number | null;
+        }[];
+      }[];
+      changed: {
+        name: string;
+        changes: (
+          | {
+              /** @enum {string} */
+              field: 'strength';
+              before: string | null;
+              after: string | null;
+            }
+          | {
+              /** @enum {string} */
+              field: 'quantityPerDose';
+              before: number | null;
+              after: number | null;
+            }
+          | {
+              /** @enum {string} */
+              field: 'doseUnit';
+              before: string | null;
+              after: string | null;
+            }
+          | {
+              /** @enum {string} */
+              field: 'slots';
+              before: ('morning' | 'noon' | 'afternoon' | 'evening' | 'as_needed')[];
+              after: ('morning' | 'noon' | 'afternoon' | 'evening' | 'as_needed')[];
+            }
+          | {
+              /** @enum {string} */
+              field: 'durationDays';
+              before: number | null;
+              after: number | null;
+            }
+          | {
+              /** @enum {string} */
+              field: 'longTerm';
+              before: boolean;
+              after: boolean;
+            }
+          | {
+              /** @enum {string} */
+              field: 'externalUse';
+              before: boolean;
+              after: boolean;
+            }
+          | {
+              /** @enum {string} */
+              field: 'lines';
+              before: {
+                /** Format: uuid */
+                id: string;
+                name: string;
+                strength: string | null;
+                quantityPerDose: number | null;
+                externalUse: boolean;
+                doseUnit: string | null;
+                slots: ('morning' | 'noon' | 'afternoon' | 'evening' | 'as_needed')[];
+                durationDays: number | null;
+                longTerm: boolean;
+                note: string | null;
+                totalQuantity: number | null;
+              }[];
+              after: {
+                /** Format: uuid */
+                id: string;
+                name: string;
+                strength: string | null;
+                quantityPerDose: number | null;
+                externalUse: boolean;
+                doseUnit: string | null;
+                slots: ('morning' | 'noon' | 'afternoon' | 'evening' | 'as_needed')[];
+                durationDays: number | null;
+                longTerm: boolean;
+                note: string | null;
+                totalQuantity: number | null;
+              }[];
+            }
+        )[];
+      }[];
+    } | null;
+    TimelinePage: {
+      items: components['schemas']['TimelineEvent'][];
+      nextCursor: string | null;
+    };
+    TimelineEvent:
+      | {
+          id: string;
+          /** Format: date */
+          date: string;
+          time: string | null;
+          /** @enum {string} */
+          kind: 'prescription';
+          data: {
+            /** Format: uuid */
+            prescriptionId: string;
+            facility: string | null;
+            diagnosis: string | null;
+            itemCount: number;
+            diffSummary: {
+              added: number;
+              removed: number;
+              changed: number;
+            } | null;
+          };
+        }
+      | {
+          id: string;
+          /** Format: date */
+          date: string;
+          time: string | null;
+          /** @enum {string} */
+          kind: 'lab_result';
+          data: {
+            /** Format: uuid */
+            groupId: string;
+            facility: string | null;
+            results: components['schemas']['LabResult'][];
+          };
+        }
+      | {
+          id: string;
+          /** Format: date */
+          date: string;
+          time: string | null;
+          /** @enum {string} */
+          kind: 'measurement';
+          data: components['schemas']['Measurement'];
+        }
+      | {
+          id: string;
+          /** Format: date */
+          date: string;
+          time: string | null;
+          /** @enum {string} */
+          kind: 'course_stopped';
+          data: {
+            /** Format: uuid */
+            courseId: string;
+            name: string;
+          };
+        }
+      | {
+          id: string;
+          /** Format: date */
+          date: string;
+          time: string | null;
+          /** @enum {string} */
+          kind: 'adherence_period';
+          data: {
+            medicationName: string;
+            /** @enum {string} */
+            status: 'taking' | 'stopped';
+          };
+        }
+      | {
+          id: string;
+          /** Format: date */
+          date: string;
+          time: string | null;
+          /** @enum {string} */
+          kind: 'revisit';
+          data: {
+            prescriptionIds: string[];
+          };
+        };
     ReminderRecipients: {
       /**
        * @description linked: hồ sơ liên kết tài khoản, người nhận cố định; assigned: main được chỉ định
@@ -5245,6 +5985,25 @@ export interface components {
       strength: string | null;
       quantityPerDose: string | null;
       doseUnit: string | null;
+    };
+    MyRevisitReminder: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date */
+      revisitDate: string;
+      /** @enum {string} */
+      offset: 'two_days_before' | 'same_day';
+      /** Format: uuid */
+      profileId: string;
+      profileName: string;
+      prescriptions: {
+        /** Format: uuid */
+        id: string;
+        /** Format: date */
+        issuedDate: string;
+        facility: string | null;
+      }[];
+      canOpenSummary: boolean;
     };
     MyConsent: {
       profile: {

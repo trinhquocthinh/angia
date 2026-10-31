@@ -1,4 +1,5 @@
 import type { useFamilyScanQuota } from '@src/features/scanQuota/application/useFamilyScanQuota';
+import '@src/shared/ui/modal-motion.css';
 import { useState } from 'react';
 import { profileShowsVitals } from '@src/features/profiles/application/profileShowsVitals';
 import type { FamilyUsage } from '@angia/contracts';
@@ -14,6 +15,7 @@ import { ProfileChoices } from './ProfileChoices';
 import { UploadIntro } from './UploadIntro';
 import { UploadQueuePanel } from './UploadQueuePanel';
 import { UploadRedactionStudio } from './UploadRedactionStudio';
+import './upload-motion.css';
 
 type UploadWorkspaceProps = {
   uploader: DocumentUploader;

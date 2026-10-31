@@ -1463,6 +1463,14 @@
                     ],
                     "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
                   },
+                  "revisitDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date",
+                    "default": null
+                  },
                   "facility": {
                     "type": [
                       "string",
@@ -1862,6 +1870,13 @@
             "type": "string",
             "format": "date"
           },
+          "revisitDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
           "facility": {
             "type": [
               "string",
@@ -1970,6 +1985,7 @@
           "healthProfileId",
           "sourceDocumentId",
           "issuedDate",
+          "revisitDate",
           "facility",
           "diagnosis",
           "manualWithoutSource",
@@ -2312,6 +2328,14 @@
                       "null"
                     ],
                     "format": "date"
+                  },
+                  "revisitDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date",
+                    "default": null
                   },
                   "facility": {
                     "type": [
@@ -3468,6 +3492,1139 @@
         ],
         "additionalProperties": false
       },
+      "RevisitList": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "revisitDate": {
+              "type": "string",
+              "format": "date"
+            },
+            "prescriptions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "issuedDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "facility": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "issuedDate",
+                  "facility"
+                ]
+              }
+            }
+          },
+          "required": [
+            "revisitDate",
+            "prescriptions"
+          ]
+        }
+      },
+      "SetRevisitDate": {
+        "type": "object",
+        "properties": {
+          "revisitDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          }
+        },
+        "required": [
+          "revisitDate"
+        ]
+      },
+      "PrescriptionListItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "issuedDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "facility": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "diagnosis": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "itemCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "revisitDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "origin": {
+            "type": "string",
+            "enum": [
+              "document",
+              "manual"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "issuedDate",
+          "facility",
+          "diagnosis",
+          "itemCount",
+          "revisitDate",
+          "origin"
+        ]
+      },
+      "PrescriptionDetail": {
+        "type": "object",
+        "properties": {
+          "prescription": {
+            "$ref": "#/components/schemas/Prescription"
+          },
+          "previousId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "nextId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "courses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MedicationCourse"
+            }
+          },
+          "diff": {
+            "$ref": "#/components/schemas/PrescriptionDiff"
+          }
+        },
+        "required": [
+          "prescription",
+          "previousId",
+          "nextId",
+          "courses",
+          "diff"
+        ]
+      },
+      "PrescriptionDiff": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "added": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "strength": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "quantityPerDose": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "externalUse": {
+                        "type": "boolean"
+                      },
+                      "doseUnit": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "slots": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "morning",
+                            "noon",
+                            "afternoon",
+                            "evening",
+                            "as_needed"
+                          ]
+                        }
+                      },
+                      "durationDays": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "longTerm": {
+                        "type": "boolean"
+                      },
+                      "note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "totalQuantity": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                      "strength",
+                      "quantityPerDose",
+                      "externalUse",
+                      "doseUnit",
+                      "slots",
+                      "durationDays",
+                      "longTerm",
+                      "note",
+                      "totalQuantity"
+                    ]
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "name",
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "removed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "strength": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "quantityPerDose": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "externalUse": {
+                        "type": "boolean"
+                      },
+                      "doseUnit": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "slots": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "morning",
+                            "noon",
+                            "afternoon",
+                            "evening",
+                            "as_needed"
+                          ]
+                        }
+                      },
+                      "durationDays": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "longTerm": {
+                        "type": "boolean"
+                      },
+                      "note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "totalQuantity": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                      "strength",
+                      "quantityPerDose",
+                      "externalUse",
+                      "doseUnit",
+                      "slots",
+                      "durationDays",
+                      "longTerm",
+                      "note",
+                      "totalQuantity"
+                    ]
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "name",
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "changed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "changes": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string",
+                            "enum": [
+                              "strength"
+                            ]
+                          },
+                          "before": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "after": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "before",
+                          "after"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string",
+                            "enum": [
+                              "quantityPerDose"
+                            ]
+                          },
+                          "before": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "after": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "before",
+                          "after"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string",
+                            "enum": [
+                              "doseUnit"
+                            ]
+                          },
+                          "before": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "after": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "before",
+                          "after"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string",
+                            "enum": [
+                              "slots"
+                            ]
+                          },
+                          "before": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "morning",
+                                "noon",
+                                "afternoon",
+                                "evening",
+                                "as_needed"
+                              ]
+                            }
+                          },
+                          "after": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "morning",
+                                "noon",
+                                "afternoon",
+                                "evening",
+                                "as_needed"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "before",
+                          "after"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string",
+                            "enum": [
+                              "durationDays"
+                            ]
+                          },
+                          "before": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "after": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "before",
+                          "after"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string",
+                            "enum": [
+                              "longTerm"
+                            ]
+                          },
+                          "before": {
+                            "type": "boolean"
+                          },
+                          "after": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "before",
+                          "after"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string",
+                            "enum": [
+                              "externalUse"
+                            ]
+                          },
+                          "before": {
+                            "type": "boolean"
+                          },
+                          "after": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "before",
+                          "after"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string",
+                            "enum": [
+                              "lines"
+                            ]
+                          },
+                          "before": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "strength": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "quantityPerDose": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "externalUse": {
+                                  "type": "boolean"
+                                },
+                                "doseUnit": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "slots": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "enum": [
+                                      "morning",
+                                      "noon",
+                                      "afternoon",
+                                      "evening",
+                                      "as_needed"
+                                    ]
+                                  }
+                                },
+                                "durationDays": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "longTerm": {
+                                  "type": "boolean"
+                                },
+                                "note": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "totalQuantity": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "name",
+                                "strength",
+                                "quantityPerDose",
+                                "externalUse",
+                                "doseUnit",
+                                "slots",
+                                "durationDays",
+                                "longTerm",
+                                "note",
+                                "totalQuantity"
+                              ]
+                            }
+                          },
+                          "after": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "strength": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "quantityPerDose": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "externalUse": {
+                                  "type": "boolean"
+                                },
+                                "doseUnit": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "slots": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "enum": [
+                                      "morning",
+                                      "noon",
+                                      "afternoon",
+                                      "evening",
+                                      "as_needed"
+                                    ]
+                                  }
+                                },
+                                "durationDays": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "longTerm": {
+                                  "type": "boolean"
+                                },
+                                "note": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "totalQuantity": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "name",
+                                "strength",
+                                "quantityPerDose",
+                                "externalUse",
+                                "doseUnit",
+                                "slots",
+                                "durationDays",
+                                "longTerm",
+                                "note",
+                                "totalQuantity"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "before",
+                          "after"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "name",
+                "changes"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "added",
+          "removed",
+          "changed"
+        ],
+        "additionalProperties": false
+      },
+      "TimelinePage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimelineEvent"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "TimelineEvent": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "prescription"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "prescriptionId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "facility": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "diagnosis": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "itemCount": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "diffSummary": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {
+                      "added": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "removed": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "changed": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "added",
+                      "removed",
+                      "changed"
+                    ]
+                  }
+                },
+                "required": [
+                  "prescriptionId",
+                  "facility",
+                  "diagnosis",
+                  "itemCount",
+                  "diffSummary"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "lab_result"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "facility": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "results": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/LabResult"
+                    }
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "facility",
+                  "results"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "measurement"
+                ]
+              },
+              "data": {
+                "$ref": "#/components/schemas/Measurement"
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "course_stopped"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "courseId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "courseId",
+                  "name"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "adherence_period"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "medicationName": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "taking",
+                      "stopped"
+                    ]
+                  }
+                },
+                "required": [
+                  "medicationName",
+                  "status"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "revisit"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "prescriptionIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                },
+                "required": [
+                  "prescriptionIds"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          }
+        ]
+      },
       "ReminderRecipients": {
         "type": "object",
         "properties": {
@@ -3607,6 +4764,72 @@
           "strength",
           "quantityPerDose",
           "doseUnit"
+        ]
+      },
+      "MyRevisitReminder": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revisitDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "offset": {
+            "type": "string",
+            "enum": [
+              "two_days_before",
+              "same_day"
+            ]
+          },
+          "profileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "profileName": {
+            "type": "string"
+          },
+          "prescriptions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "issuedDate": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "facility": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "issuedDate",
+                "facility"
+              ]
+            }
+          },
+          "canOpenSummary": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "revisitDate",
+          "offset",
+          "profileId",
+          "profileName",
+          "prescriptions",
+          "canOpenSummary"
         ]
       },
       "MyConsent": {
@@ -7690,6 +8913,472 @@
         }
       }
     },
+    "/api/health-profiles/{id}/revisits": {
+      "get": {
+        "tags": [
+          "prescriptions"
+        ],
+        "summary": "Đọc lịch tái khám gộp theo ngày (SPEC-043)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": false,
+            "name": "from",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lịch hẹn từ from, mặc định hôm nay VN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisitList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/prescriptions/{prescriptionId}/revisit-date": {
+      "put": {
+        "tags": [
+          "prescriptions"
+        ],
+        "summary": "Sửa hoặc xóa ngày hẹn tái khám (SPEC-043)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "prescriptionId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetRevisitDate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ngày hẹn đã lưu",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetRevisitDate"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/prescriptions": {
+      "get": {
+        "tags": [
+          "prescriptions"
+        ],
+        "summary": "Đọc chuỗi đơn theo ngày kê, thời điểm lưu và ID (SPEC-045)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chuỗi đơn tăng dần",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrescriptionListItem"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/prescriptions/{prescriptionId}": {
+      "get": {
+        "tags": [
+          "prescriptions"
+        ],
+        "summary": "Chi tiết đơn, đơn liền kề, mọi đợt và so sánh dữ liệu (SPEC-045)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "prescriptionId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chi tiết đơn không kèm nhận định",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrescriptionDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/timeline": {
+      "get": {
+        "tags": [
+          "timeline"
+        ],
+        "summary": "Dòng thời gian sáu loại sự kiện đã ghi nhận (SPEC-049, E13-S5-T1)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trang dòng thời gian không kèm nhận định",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimelinePage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/health-profiles/{id}/reminder-recipients": {
       "get": {
         "tags": [
@@ -7909,6 +9598,66 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND: không có lời nhắc hoặc tài khoản không phải người nhận hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/revisit-reminders/{reminderId}": {
+      "get": {
+        "tags": [
+          "reminders"
+        ],
+        "summary": "Đọc nhắc tái khám dành cho người nhận hiện hành (SPEC-044)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "reminderId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chi tiết nhắc tái khám",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyRevisitReminder"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: không tìm thấy hoặc không còn quyền xem",
             "content": {
               "application/json": {
                 "schema": {

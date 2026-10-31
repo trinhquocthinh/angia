@@ -42,6 +42,8 @@ export interface ReviewStore {
   insertMedicationCourses(inputs: readonly NewMedicationCourse[]): Promise<MedicationCourse[]>;
   /** SPEC-015: khóa theo hồ sơ trước mọi kiểm tra trùng và xung đột thuốc. */
   lockMedicationProfile(profileId: string): Promise<void>;
+  /** SPEC-012: giữ khóa đến hết transaction, trước khi kiểm trùng và ghi. */
+  lockDuplicateRecord(profileId: string, type: DocumentType, date: string): Promise<void>;
   findMedicationCourses(profileId: string): Promise<ConflictCourse[]>;
   replaceMedicationCourses(profileId: string, ids: readonly string[], endDate: string): Promise<void>;
   insertLabResults(inputs: NewLabResult[]): Promise<LabResult[]>;

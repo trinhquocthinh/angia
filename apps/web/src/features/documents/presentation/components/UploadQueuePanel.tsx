@@ -3,9 +3,12 @@ import { useState } from 'react';
 import type { useUploadQueue } from '../../application/useUploadQueue';
 import { RejectedFiles } from './RejectedFiles';
 import { UploadActions } from './UploadActions';
+import { UploadAddTile } from './UploadAddTile';
 import { UploadDropZone } from './UploadDropZone';
 import { UploadGrid } from './UploadGrid';
+import { UploadPhotoTips } from './UploadPhotoTips';
 import { UploadPickNotices } from './UploadPickNotices';
+import { UploadStepper } from './UploadStepper';
 
 type Props = {
   queue: ReturnType<typeof useUploadQueue>;
@@ -22,13 +25,16 @@ export function UploadQueuePanel({ queue, usage, blocked, profileChosen, onSubmi
   const [tooMany, setTooMany] = useState(false);
   const { summary } = queue;
   const sending = summary.active > 0;
+  const pick = (files: File[]) => files.length && setTooMany(!queue.add(files));
   return (
     <>
+      <UploadStepper current={1} />
       <UploadDropZone
         disabled={sending || blocked !== null}
         blockedReason={sending ? null : blocked}
-        onFiles={(files) => files.length && setTooMany(!queue.add(files))}
+        onFiles={pick}
       />
+      {summary.total === 0 && <UploadPhotoTips />}
       <UploadPickNotices tooMany={tooMany} usage={usage} readyCount={summary.ready} />
       <UploadGrid
         items={queue.items}
@@ -37,6 +43,7 @@ export function UploadQueuePanel({ queue, usage, blocked, profileChosen, onSubmi
         onRetry={() => queue.dispatch({ type: 'retry' })}
         onRemove={queue.remove}
         onRedact={onRedact}
+        addMore={!sending && blocked === null && <UploadAddTile onFiles={pick} />}
       />
       <RejectedFiles
         items={queue.items}

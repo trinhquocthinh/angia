@@ -18,6 +18,7 @@ import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import type { ReviewStore } from '../application/reviewPorts.js';
 import { findDocumentWithConsent } from './findDocumentWithConsent.js';
 import { listDocumentPage } from './listDocumentPage.js';
+import { lockDuplicateRecord } from './lockDuplicateRecord.js';
 
 // Chạy trong transaction đã SET LOCAL app.family_id; bộ lọc family_id bổ sung phòng thủ theo chiều sâu.
 export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewStore {
@@ -42,6 +43,7 @@ export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewS
     insertPrescription: (input) => insertPrescription(tx, familyId, input),
     insertMedicationCourses: (inputs) => insertMedicationCourses(tx, familyId, inputs),
     lockMedicationProfile: (profileId) => lockMedicationProfile(tx, familyId, profileId),
+    lockDuplicateRecord: (profileId, type, date) => lockDuplicateRecord(tx, familyId, profileId, type, date),
     findMedicationCourses: (profileId) => findMedicationCourses(tx, familyId, profileId),
     replaceMedicationCourses: (profileId, ids, endDate) =>
       replaceMedicationCourses(tx, familyId, profileId, ids, endDate),

@@ -23,6 +23,9 @@ export function DocumentTypePicker({
   return (
     <PickerCard icon="category" title="Loại giấy tờ" hint="Tùy chọn gợi ý">
       <ChoiceChip selected={value === null} onClick={() => onChange(null)}>
+        <span className={value === null ? 'text-[#b3eddf]' : 'text-[#707975]'}>
+          <DocumentIcon name="sparkle" size={16} />
+        </span>
         Tự động nhận diện
       </ChoiceChip>
       {DOCUMENT_TYPES.filter((type) => type.value !== 'device_reading' || allowDeviceReading).map((type) => (

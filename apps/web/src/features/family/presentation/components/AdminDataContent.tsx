@@ -1,4 +1,5 @@
 import type { useAdminScanQuota } from '@src/features/scanQuota/application/useAdminScanQuota';
+import { ScanQuotaCard } from '@src/features/scanQuota/presentation/ScanQuotaCard';
 import type { useAiBilling } from '@src/features/aiBilling/application/useAiBilling';
 import type { useAiRouting } from '@src/features/aiRouting/application/useAiRouting';
 import type { useAdminWorkspace } from '../../application/useAdminWorkspace';
@@ -47,7 +48,7 @@ export function AdminDataContent({
   if (error) return <AdminLoadError error={error} families={families} accounts={accounts} />;
   if (!families.isSuccess || !accounts.isSuccess) return <AdminLoading />;
   return (
-    <div className="grid grid-cols-[minmax(0,_760px)_minmax(280px,_1fr)] gap-6 [align-items:start] max-[1199px]:grid-cols-[minmax(0,_1fr)]">
+    <div className="grid grid-cols-[minmax(0,_7fr)_minmax(0,_5fr)] gap-6 [align-items:start] max-[1199px]:grid-cols-[minmax(0,_1fr)]">
       <div className="flex flex-col gap-6 min-w-0">
         <AccountsPanel
           accounts={accounts.data}
@@ -58,6 +59,8 @@ export function AdminDataContent({
           onSearch={onAccountQuery}
         />
         <FamilyCards families={families.data} accounts={accounts.data} currentFamilyId={currentFamilyId} />
+        <ScanQuotaCard key={currentAccountId} state={scanQuota} />
+        <FamilyAccessCard />
       </div>
       <aside className="flex flex-col gap-6 min-w-0 max-[1199px]:grid max-[1199px]:grid-cols-2 max-[600px]:grid-cols-[minmax(0,1fr)]">
         <PendingAccountsCard
@@ -71,11 +74,9 @@ export function AdminDataContent({
           budget={aiBudget}
           billing={aiBilling}
           routing={aiRouting}
-          scanQuota={scanQuota}
           accountId={currentAccountId}
           accounts={accounts.data}
         />
-        <FamilyAccessCard />
       </aside>
     </div>
   );

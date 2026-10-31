@@ -1,5 +1,7 @@
 import type { QueryClient } from '@tanstack/react-query';
 import type { ProfileSession } from '@src/features/profiles/application/ports';
+import { invalidateRevisitData } from '@src/features/revisits/application/invalidateRevisitData';
+import { invalidatePrescriptionData } from '@src/features/prescriptions/application/invalidatePrescriptionData';
 import { FAMILY_USAGE_KEY } from './useFamilyUsage';
 
 export async function invalidateDeletedDocument(
@@ -17,6 +19,8 @@ export async function invalidateDeletedDocument(
   });
   const scope = [session.account.id, session.family?.id, profileId];
   await Promise.all([
+    invalidateRevisitData(client, session, profileId),
+    invalidatePrescriptionData(client, session, profileId),
     client.invalidateQueries({ queryKey: [...review, 'queue'] }),
     client.invalidateQueries({ queryKey: FAMILY_USAGE_KEY }),
     ...['documents', 'medications', 'measurements', 'lab-results', 'visit-summary'].map((name) =>

@@ -1,5 +1,5 @@
 import type { FamilyUsage, PrivacyEdits } from '@angia/contracts';
-import { useReducer, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import { createBrowserRedactionCodec } from '@src/shared/utils/image/createBrowserRedactionCodec';
 import { heicToDisplayable } from '@src/shared/utils/image/heicToDisplayable';
 import { initialPrivacyEditor } from '../../application/initialPrivacyEditor';
@@ -8,6 +8,7 @@ import type { UploadItem } from '../../application/uploadQueue';
 import { useRedactionSource } from '../../application/useRedactionSource';
 import { PrivacyEditPanel } from './PrivacyEditPanel';
 import { RedactionPreviewStep } from './RedactionPreviewStep';
+import { UploadStepper } from './UploadStepper';
 
 const codec = createBrowserRedactionCodec();
 
@@ -25,8 +26,19 @@ export function UploadRedactionStudio({ item, onDone, onClose, ...ai }: Props) {
   const [state, dispatch] = useReducer(privacyEditorReducer, item.edits, initialPrivacyEditor);
   const [step, setStep] = useState<'edit' | 'confirm'>('edit');
   const source = useRedactionSource(item.file, item.previewUrl, heicToDisplayable);
+  const ref = useRef<HTMLElement>(null);
+  // Nút "Che thông tin" nằm dưới lưới ảnh, còn khung che thay chỗ lưới: đưa khung về đầu màn hình khi mở.
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    ref.current?.scrollIntoView({ block: 'start', behavior: reduced ? 'auto' : 'smooth' });
+  }, []);
   return (
-    <section aria-label={`Che thông tin ảnh ${item.file.name}`} className="flex min-w-0 flex-col gap-3">
+    <section
+      ref={ref}
+      aria-label={`Che thông tin ảnh ${item.file.name}`}
+      className="flex min-w-0 scroll-mt-24 flex-col gap-6"
+    >
+      <UploadStepper current={step === 'edit' ? 2 : 3} />
       {source.converting ? (
         <p role="status" className="rounded-2xl bg-white p-4 text-sm text-[#55615f] shadow-sm">
           Đang mở ảnh HEIC trên máy…

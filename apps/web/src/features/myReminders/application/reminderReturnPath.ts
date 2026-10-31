@@ -1,11 +1,12 @@
 // SPEC-035: chỉ nhớ đường dẫn lời nhắc cùng origin để quay lại sau đăng nhập; không nhận return URL từ query.
 const REMINDER_PATH = /^\/reminders\/[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+const REVISIT_PATH = /^\/revisit-reminders\/[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;
 const KEY = 'angia.returnTo';
 
 type ReturnStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 
 export function isReminderPath(path: string): boolean {
-  return REMINDER_PATH.test(path);
+  return REMINDER_PATH.test(path) || REVISIT_PATH.test(path);
 }
 
 // Truy cập sessionStorage có thể ném (chế độ riêng tư, bị chặn) hoặc không tồn tại (SSR/test).

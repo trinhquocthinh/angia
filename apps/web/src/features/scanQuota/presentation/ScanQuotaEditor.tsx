@@ -17,10 +17,8 @@ export function ScanQuotaEditor({
 }) {
   const [snapshot] = useState(initial);
   return (
-    <div className="grid min-w-0 gap-5">
-      <p className="m-0 text-[11px] text-[#707975]">
-        Bản sửa tháng {snapshot.month} · phiên bản {snapshot.version}
-      </p>
+    <div className="grid min-w-0 gap-3 border-t border-[#e4f0f0] pt-4">
+      <p className="m-0 text-xs text-[#55615f]">Bản sửa tháng {snapshot.month}</p>
       {error && (
         <p role="alert" className="m-0 text-[12px] text-[#93000a]">
           {error instanceof AdminRequestError

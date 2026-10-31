@@ -24,6 +24,7 @@ export const savedPrescription = {
   healthProfileId: PROFILE_ID,
   sourceDocumentId: null,
   issuedDate: '2026-10-01',
+  revisitDate: null,
   facility: 'BV Gia Định',
   diagnosis: null,
   manualWithoutSource: true,

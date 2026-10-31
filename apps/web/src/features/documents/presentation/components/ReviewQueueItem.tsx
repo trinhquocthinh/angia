@@ -27,7 +27,7 @@ export function ReviewQueueItem({ document, profileName, active }: ReviewQueueIt
       to="/review/$documentId"
       params={{ documentId: document.id }}
       aria-current={active ? 'page' : undefined}
-      className={`relative flex flex-col gap-2 rounded-xl p-3 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958] ${active ? 'bg-[#deebea] pl-5 shadow-sm' : 'hover:bg-[#eaf6f5]'}`}
+      className={`relative flex flex-col gap-2 rounded-xl p-3 transition-[background-color,scale] duration-200 active:scale-[0.99] motion-reduce:transition-none motion-reduce:active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958] ${active ? 'bg-[#deebea] pl-5 shadow-sm' : 'hover:bg-[#eaf6f5]'}`}
     >
       {active && (
         <span
@@ -54,7 +54,7 @@ export function ReviewQueueItem({ document, profileName, active }: ReviewQueueIt
         </span>
         <ReviewItemChip state={reviewItemState(document)} />
       </span>
-      <span className="flex items-center justify-between text-[11px] text-[#707975]">
+      <span className="flex items-center justify-between text-xs text-[#55615f]">
         <span className="flex items-center gap-1">
           <DocumentIcon name={type.icon} size={14} /> Tải lên
         </span>

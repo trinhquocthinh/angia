@@ -23,11 +23,12 @@ export function PrescriptionItemCard({ form, index, onRemove }: ItemCardProps) {
       invalid={invalid}
       onRemove={onRemove}
     >
-      <div className="grid gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] items-start gap-3">
         <ReadingField
           id={`items-${index}-name`}
           label="Tên thuốc *"
           autoComplete="off"
+          emphasis
           error={errors?.name?.message}
           {...form.register(`items.${index}.name`)}
         />

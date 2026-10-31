@@ -1,4 +1,5 @@
 import type pg from 'pg';
+import { generateRevisitReminders } from './generateRevisitReminders.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { ReminderFamilyStore, ReminderRepository } from '../application/ports.js';
 import type { CourseSnapshot, DailyReminder, DailySlot, ProfileSnapshot } from '../domain/DailyReminder.js';
@@ -86,6 +87,7 @@ export function createReminderRepository(pool: pg.Pool, newId: () => string): Re
     withFamily: (familyId, work) =>
       withFamilyScope(pool, familyId, (client) => {
         const store: ReminderFamilyStore = {
+          generateRevisitReminders: (date) => generateRevisitReminders(client, familyId, date, newId),
           listFamilyAccounts: async () =>
             (
               await client.query(

@@ -12,6 +12,7 @@ import { DocumentEntryList } from './entries/DocumentEntryList';
 import { DocumentEntryPanel } from './entries/DocumentEntryPanel';
 import { DocumentTypeFilter } from './entries/DocumentTypeFilter';
 import { ReusePrescriptionSheet } from './entries/ReusePrescriptionSheet';
+import { DocumentsHeading } from './entries/DocumentsHeading';
 
 const reviewRepository = createReviewRepository();
 const entriesRepository = createDocumentEntriesRepository();
@@ -31,13 +32,15 @@ function DocumentsContent({ profile, session }: { profile: HealthProfile; sessio
   const [opened, setOpened] = useState<DocumentEntry | null>(null);
   const [reusing, setReusing] = useState<DocumentEntry | null>(null);
   const entries = useDocumentEntries(entriesRepository, session, profile, type);
+  const onDeleted = () => {
+    setOpened(null);
+    setDeleted(true);
+  };
   return (
     <div className="flex flex-col gap-6">
       {deleted && <DeletedDocumentNotice />}
       <ProfileHealthHeader session={session} profile={profile} active="documents" />
-      <div className="rounded-xl bg-white px-5 py-4 shadow-sm">
-        <h2 className="text-lg font-semibold text-[#004135]">Hồ sơ & Giấy tờ khám</h2>
-      </div>
+      <DocumentsHeading profile={profile} />
       {profile.consentStatus !== 'confirmed' ? (
         <p role="alert" className="rounded-[20px] bg-white p-6 text-sm">
           Hồ sơ chưa được đồng ý lưu dữ liệu.
@@ -64,10 +67,7 @@ function DocumentsContent({ profile, session }: { profile: HealthProfile; sessio
             repository: reviewRepository,
             session,
             profileId: profile.id,
-            onDeleted: () => {
-              setOpened(null);
-              setDeleted(true);
-            },
+            onDeleted,
           }}
           canReuse={session.role === 'main'}
           onReuse={() => setReusing(opened)}

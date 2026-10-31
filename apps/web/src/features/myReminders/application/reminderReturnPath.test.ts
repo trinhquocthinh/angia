@@ -38,6 +38,23 @@ describe('Quay lại lời nhắc sau đăng nhập (SPEC-035)', () => {
     ])
       expect(isReminderPath(path)).toBe(false);
   });
+  it('SPEC-044: chỉ nhận đường dẫn tái khám hợp lệ và khôi phục một lần', () => {
+    const path = `/revisit-reminders/${id}`;
+    const storage = memoryStorage();
+    expect(isReminderPath(path)).toBe(true);
+    saveReminderReturnPath(path, storage);
+    expect(takeReminderReturnPath(storage)).toBe(path);
+    expect(takeReminderReturnPath(storage)).toBeNull();
+    for (const bad of [
+      path + '?next=//evil.test',
+      path + '/',
+      '/revisit-reminders/abc',
+      '//evil.test' + path,
+      'https://evil.test' + path,
+      '/revisit-reminders/' + id.toUpperCase(),
+    ])
+      expect(isReminderPath(bad)).toBe(false);
+  });
   it('lưu đường dẫn hợp lệ rồi lấy ra đúng một lần và xóa khóa', () => {
     const storage = memoryStorage();
     saveReminderReturnPath(`/reminders/${id}`, storage);

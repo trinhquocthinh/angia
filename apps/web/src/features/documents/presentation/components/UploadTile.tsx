@@ -1,15 +1,20 @@
+import { revealStyle } from '@src/shared/ui/revealStyle';
 import { useState } from 'react';
 import type { UploadItem } from '../../application/uploadQueue';
 import { DocumentIcon } from './DocumentIcon';
+import { TileActions } from './TileActions';
+import { TileBadge } from './TileBadge';
 import { TileStatus } from './TileStatus';
 
 export function UploadTile({
   item,
+  revealIndex = 0,
   locked,
   onRemove,
   onRedact,
 }: {
   item: UploadItem;
+  revealIndex?: number;
   locked: boolean;
   onRemove: () => void;
   onRedact: () => void;
@@ -21,44 +26,39 @@ export function UploadTile({
   const [broken, setBroken] = useState<string | null>(null);
   const busy = item.status === 'queued' || item.status === 'uploading';
   return (
-    <li className="relative flex aspect-square flex-col overflow-hidden rounded-xl bg-[#deebea] shadow-sm">
-      {preview && broken !== preview ? (
-        <img
-          src={preview}
-          alt=""
-          onError={() => setBroken(preview)}
-          className={`h-full w-full object-cover ${busy ? 'opacity-60' : ''}`}
-        />
-      ) : (
-        <span className="flex h-full w-full items-center justify-center text-[#707975]">
-          <DocumentIcon name="image" size={32} />
+    <li
+      className="angia-modal-reveal group flex min-w-0 flex-col gap-2 rounded-2xl bg-white p-2 shadow-sm transition-shadow duration-200 hover:shadow-md motion-reduce:transition-none"
+      style={revealStyle(revealIndex)}
+    >
+      <div className="relative h-44 overflow-hidden rounded-xl bg-[#deebea] sm:h-56">
+        {preview && broken !== preview ? (
+          <img
+            src={preview}
+            alt=""
+            onError={() => setBroken(preview)}
+            className={`h-full w-full object-cover transition-[opacity,scale] duration-300 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100 ${busy ? 'opacity-60' : ''}`}
+          />
+        ) : (
+          <span className="flex h-full w-full items-center justify-center text-[#707975]">
+            <DocumentIcon name="image" size={32} />
+          </span>
+        )}
+        {editable && (
+          <TileActions
+            name={item.file.name}
+            ready={item.status === 'ready'}
+            onRemove={onRemove}
+            onRedact={onRedact}
+          />
+        )}
+        <TileStatus item={item} onRemove={onRemove} />
+      </div>
+      <div className="flex min-w-0 items-center justify-between gap-2 px-1 pb-1">
+        <span title={item.file.name} className="truncate font-mono text-[11px] text-[#131d1d]">
+          {item.file.name}
         </span>
-      )}
-      {editable && (
-        <button
-          type="button"
-          onClick={onRemove}
-          aria-label={`Bỏ ảnh ${item.file.name}`}
-          className="absolute right-1 top-1 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#404945] shadow-md hover:text-[#ba1a1a] focus-visible:outline-2 focus-visible:outline-[#286958]"
-        >
-          <DocumentIcon name="close" size={16} />
-        </button>
-      )}
-      {editable && (
-        <button
-          type="button"
-          onClick={onRedact}
-          className={`absolute inset-x-2 bottom-8 min-h-9 rounded-full px-2 text-xs font-semibold shadow-md focus-visible:outline-2 focus-visible:outline-[#286958] ${
-            item.status === 'ready' ? 'bg-white/90 text-[#004135]' : 'bg-[#004135] text-white'
-          }`}
-        >
-          {item.status === 'ready' ? 'Chỉnh lại' : 'Che thông tin'}
-        </button>
-      )}
-      <TileStatus item={item} onRemove={onRemove} />
-      <span className="absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-[#004135]/80 to-transparent p-1.5 text-center text-[10px] font-medium text-white">
-        {item.file.name}
-      </span>
+        <TileBadge status={item.status} />
+      </div>
       <span className="sr-only" aria-live="polite">
         {item.status === 'done' ? 'Đã gửi xong' : item.status === 'failed' ? 'Gửi lỗi' : ''}
       </span>

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { redactionConfirmDecision, type UploadChoice } from '../../application/redactionConfirmDecision';
 import { NoMaskWarning } from './NoMaskWarning';
 import { RedactionChoices } from './RedactionChoices';
+import { RedactionConfirmHeading } from './RedactionConfirmHeading';
 
 type Props = {
   previewUrl: string;
@@ -36,17 +37,16 @@ export function RedactionConfirmStep({ previewUrl, maskCount, onBack, onConfirm,
   return (
     <section
       aria-label="Xem bản sẽ tải lên"
-      className="flex flex-col gap-4 rounded-2xl bg-white p-4 shadow-sm lg:p-6"
+      className="flex flex-col gap-5 rounded-2xl bg-white p-4 shadow-sm sm:p-6 lg:p-8"
     >
-      <h3 className="text-lg font-bold text-[#004135]">Xem bản sẽ tải lên</h3>
-      <img
-        src={previewUrl}
-        alt="Bản đã che sẽ được tải lên"
-        className="max-h-[52dvh] w-full rounded-xl bg-[#131d1d] object-contain"
-      />
-      <p className="text-[13px] leading-5 text-[#404945]">
-        Đây là đúng ảnh sẽ được gửi đi. AN GIA không nhận ảnh chưa che.
-      </p>
+      <RedactionConfirmHeading maskCount={maskCount} />
+      <div className="flex justify-center overflow-hidden rounded-2xl bg-[#273232] p-3 shadow-inner sm:p-6">
+        <img
+          src={previewUrl}
+          alt="Bản đã che sẽ được tải lên"
+          className="max-h-[60dvh] max-w-full rounded object-contain shadow-2xl"
+        />
+      </div>
       <RedactionChoices
         {...ai}
         choice={choice}
@@ -57,11 +57,11 @@ export function RedactionConfirmStep({ previewUrl, maskCount, onBack, onConfirm,
       {asking && (
         <NoMaskWarning busy={false} onBack={onBack} onSendAnyway={() => onConfirm(choice === 'ai')} />
       )}
-      <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+      <div className="flex flex-col-reverse gap-2 border-t border-[#bfc9c4]/30 pt-4 sm:flex-row sm:justify-end">
         <button
           type="button"
           onClick={onBack}
-          className="min-h-11 rounded-xl px-4 text-sm font-semibold text-[#404945] hover:bg-[#e4f0f0]"
+          className="min-h-11 rounded-xl px-5 text-sm font-semibold text-[#404945] transition-colors hover:bg-[#e4f0f0] hover:text-[#131d1d]"
         >
           Quay lại che
         </button>
@@ -69,7 +69,7 @@ export function RedactionConfirmStep({ previewUrl, maskCount, onBack, onConfirm,
           type="button"
           disabled={decision === 'disabled'}
           onClick={submit}
-          className="min-h-11 rounded-xl bg-[#004135] px-6 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
+          className="min-h-11 rounded-xl bg-[#004135] px-8 text-sm font-semibold text-white shadow-sm transition-colors enabled:hover:bg-[#20594b] disabled:cursor-not-allowed disabled:opacity-40"
         >
           Xác nhận
         </button>

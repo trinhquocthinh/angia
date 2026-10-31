@@ -1,10 +1,11 @@
 import type pg from 'pg';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
-import type { DeliveryCandidate } from '../application/ports.js';
+import type { DeliveryCandidate, ReminderKind } from '../application/ports.js';
 import type { DeliveryUpdate } from '../domain/DeliveryTypes.js';
 import { queryFamilyAccounts } from './queryFamilyAccounts.js';
 
 interface LockedRow {
+  kind: ReminderKind;
   deliveryId: string;
   reminderId: string;
   attempts: number;
@@ -21,12 +22,15 @@ interface LockedRow {
 // Khóa riêng dòng ledger (OF d): giữ khóa suốt lần gửi HTTP để worker khác SKIP LOCKED bỏ qua đích này.
 async function lockNextDue(client: pg.PoolClient, familyId: string, now: Date): Promise<LockedRow | null> {
   const { rows } = await client.query<LockedRow>(
-    `SELECT d.id AS "deliveryId", d.reminder_id AS "reminderId", d.attempts,
-            r.health_profile_id AS "profileId", r.scheduled_at AS "scheduledAt",
+    `SELECT d.id AS "deliveryId", COALESCE(d.reminder_id, d.revisit_reminder_id) AS "reminderId", d.attempts,
+            CASE WHEN d.revisit_reminder_id IS NULL THEN 'medication' ELSE 'revisit' END AS kind,
+            COALESCE(r.health_profile_id, v.health_profile_id) AS "profileId",
+            COALESCE(r.scheduled_at, v.scheduled_at) AS "scheduledAt",
             s.id AS "deviceId", s.account_id AS "accountId", s.endpoint, s.endpoint_hash AS "endpointHash",
             s.p256dh, s.auth
        FROM reminder_deliveries d
-       JOIN reminders r ON r.id = d.reminder_id AND r.family_id = d.family_id
+       LEFT JOIN reminders r ON r.id = d.reminder_id AND r.family_id = d.family_id
+       LEFT JOIN revisit_reminders v ON v.id = d.revisit_reminder_id AND v.family_id = d.family_id
        LEFT JOIN push_subscriptions s ON s.id = d.push_subscription_id AND s.family_id = d.family_id
       WHERE d.family_id = $1 AND d.status = 'pending' AND d.next_attempt_at <= $2
       ORDER BY d.next_attempt_at, d.id
@@ -57,6 +61,7 @@ async function toCandidate(
       ? { id: deviceId, accountId, subscription: { endpoint, keys: { p256dh, auth } } }
       : null;
   return {
+    kind: row.kind,
     deliveryId: row.deliveryId,
     reminderId: row.reminderId,
     profileId: row.profileId,

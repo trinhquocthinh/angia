@@ -1,9 +1,13 @@
+import { createTimelineRepository } from '@src/features/timeline/infrastructure/createTimelineRepository.js';
+import { createPrescriptionChainRepository } from '@src/features/prescriptions/infrastructure/createPrescriptionChainRepository.js';
+import { createRevisitRepository } from '@src/features/prescriptions/infrastructure/createRevisitRepository.js';
 import { createStubScanQuotaDeps } from './createStubScanQuotaDeps.js';
 import { createStubAiBillingDeps } from './createStubAiBillingDeps.js';
 import { createStubAiRoutingDeps } from './createStubAiRoutingDeps.js';
 import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
 import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
 import { createMyConsentRepository } from '@src/features/myConsent/infrastructure/createMyConsentRepository.js';
+import { createMyRevisitReminderRepository } from '@src/features/myRevisitReminders/infrastructure/createMyRevisitReminderRepository.js';
 import { createMyReminderRepository } from '@src/features/myReminders/infrastructure/createMyReminderRepository.js';
 import { createReminderRecipientRepository } from '@src/features/reminders/infrastructure/createReminderRecipientRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
@@ -65,8 +69,12 @@ const healthDataRepositories = (database: Database) => ({
   medications: createMedicationRepository(database),
   adherence: createAdherenceRepository(database),
   doseSlots: createDoseSlotRepository(database),
+  revisits: createRevisitRepository(database),
+  prescriptionChain: createPrescriptionChainRepository(database),
+  timeline: createTimelineRepository(database),
   reminderRecipients: createReminderRecipientRepository(database),
   myReminders: createMyReminderRepository(database),
+  myRevisitReminders: createMyRevisitReminderRepository(database),
   myConsent: createMyConsentRepository(database),
   visitSummary: createVisitSummaryRepository(database),
 });

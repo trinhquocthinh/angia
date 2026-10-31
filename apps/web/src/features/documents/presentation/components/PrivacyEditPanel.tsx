@@ -27,7 +27,7 @@ export function PrivacyEditPanel({ state, dispatch, src, onImageError, onNext, o
       onInputPending={setInputPending}
     >
       {(toolbar, fields) => (
-        <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_240px] xl:grid-cols-[minmax(0,1fr)_260px]">
+        <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_280px] xl:grid-cols-[minmax(0,1fr)_320px]">
           <section className="flex min-w-0 flex-col gap-4 rounded-2xl bg-white p-4 shadow-sm lg:p-6">
             <PrivacyStudioHeading />
             <PrivacyCanvas

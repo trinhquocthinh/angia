@@ -24,11 +24,13 @@ export function ScanQuotaGrantForm({ initial, pending, onSave }: ScanQuotaGrantF
       }}
     >
       <fieldset disabled={pending} className="m-0 grid min-w-0 gap-3 border-0 p-0 disabled:opacity-70">
-        <legend className="mb-3 text-sm font-semibold">Duyệt lượt tháng {initial.month}</legend>
-        <p className="m-0 text-[12px] leading-5">
-          Chọn thủ công tối đa 100 gia đình. Nhập tổng lượt sau khi duyệt, không phải số tăng thêm. Không giảm
-          tổng đã cấp; dùng thử chuyển thành đã duyệt và giữ số đã dùng, đang giữ. Tháng mới cần duyệt lại;
-          không tự gia hạn.
+        <legend className="mb-2 text-sm font-semibold text-[#131d1d]">
+          Duyệt lượt tháng {initial.month}
+        </legend>
+        <p className="m-0 rounded-xl bg-[#eaf6f5]/70 px-3 py-2 text-[12px] leading-5 text-[#404945]">
+          Mọi gia đình tự có lượt mặc định mỗi tháng, không cần duyệt. Chỉ chọn gia đình cần nhiều lượt hơn,
+          tối đa 100 gia đình. Nhập tổng lượt sau khi duyệt, không phải số tăng thêm; không giảm tổng đã cấp.
+          Lượt riêng không tự gia hạn sang tháng sau.
         </p>
         {initial.families.map((family) => (
           <ScanQuotaGrantRow
@@ -49,14 +51,14 @@ export function ScanQuotaGrantForm({ initial, pending, onSave }: ScanQuotaGrantF
         )}
         {initial.families.length === 0 && <p className="m-0 text-[12px]">Chưa có gia đình để cấp lượt.</p>}
         <button
-          className="admin-button min-h-10 w-full rounded-xl border-0 bg-[#286958] px-4 py-2 text-[12px] font-semibold text-white shadow-sm transition-colors hover:bg-[#004135] disabled:cursor-wait disabled:opacity-60"
+          className="admin-button min-h-11 w-full cursor-pointer rounded-xl border-0 bg-[#004135] px-4 py-2 text-[13px] font-semibold text-white shadow-sm transition-colors enabled:hover:bg-[#20594b] disabled:cursor-wait disabled:opacity-60"
           type="submit"
         >
           {pending ? 'Đang xử lý…' : 'Duyệt các gia đình đã chọn'}
         </button>
-        <p className="m-0 text-[12px] text-[#707975]">
-          Máy chủ kiểm tra lại phiên bản và ngân sách cho toàn bộ lựa chọn. Nếu một dòng không hợp lệ, không
-          dòng nào được cấp.
+        <p className="m-0 text-[12px] leading-5 text-[#55615f]">
+          Máy chủ kiểm tra lại ngân sách cho toàn bộ lựa chọn. Nếu một dòng không hợp lệ, không dòng nào được
+          cấp.
         </p>
       </fieldset>
     </form>

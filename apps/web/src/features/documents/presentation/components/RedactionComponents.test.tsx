@@ -50,6 +50,12 @@ describe('Bước xác nhận bản sẽ tải lên (E11-S3-T2)', () => {
     expect(text).toContain('Quay lại che');
   });
 
+  it('chip số vùng che chỉ đếm vùng đã vẽ, không tuyên bố ảnh đã sạch định danh', () => {
+    expect(confirm({ maskCount: 3 })).toContain('Đã che 3 vùng');
+    expect(confirm({ maskCount: 0 })).toContain('Chưa có vùng che');
+    expect(confirm({ maskCount: 0 })).not.toContain('Đã che');
+  });
+
   it('TC-430 hết lượt tự động nhận diện → nhãn "Xếp hàng chờ tự động nhận diện" kèm giải thích', () => {
     const text = confirm({ aiExhausted: true, aiReason: 'budget_exhausted' });
     expect(text).toContain('Xếp hàng chờ tự động nhận diện');

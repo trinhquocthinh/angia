@@ -1,6 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
 import type { components } from '@src/shared/api/schema.gen';
+import '@src/shared/ui/modal-motion.css';
 import { nextDocumentId } from '../../application/reviewQueue';
+import { reviewItemState } from '../../application/reviewQueuePolling';
 import type { ReviewRepository, SourceDocument } from '../../application/reviewPorts';
 import { useDocumentReview } from '../../application/useReviewWorkspace';
 import { DocumentImagePanel } from './DocumentImagePanel';
@@ -40,8 +42,8 @@ export function ReviewDetail({ repository, session, documentId, queue, profileNa
   const { document, extraction } = review.data;
   const profileName = profileNames.get(document.healthProfileId) ?? 'Hồ sơ';
   return (
-    <div className="flex flex-col gap-4">
-      <ReviewDetailHeading profileName={profileName} />
+    <div key={document.id} className="angia-modal-reveal flex flex-col gap-4">
+      <ReviewDetailHeading profileName={profileName} state={reviewItemState(document)} />
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <DocumentImagePanel key={`${document.id}:${document.status}`} document={document} />
         <ReviewFormColumn

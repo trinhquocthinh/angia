@@ -8,6 +8,7 @@ const request = {
   data: {
     type: 'prescription',
     issuedDate: '2026-10-01',
+    revisitDate: null,
     facility: null,
     diagnosis: null,
     items: [

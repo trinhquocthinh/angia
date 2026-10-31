@@ -32,7 +32,12 @@ describe('TC-446 — tab theo độ tuổi', () => {
         />,
       );
       expect(html.includes('Diễn biến sức khỏe')).toBe(visible);
-      for (const label of ['Thuốc điều trị', 'Kết quả xét nghiệm', 'Hồ sơ &amp; Giấy tờ khám'])
+      for (const label of [
+        'Thuốc điều trị',
+        'Kết quả xét nghiệm',
+        'Hồ sơ &amp; Giấy tờ khám',
+        'Lịch tái khám',
+      ])
         expect(html).toContain(label);
     } finally {
       vi.useRealTimers();

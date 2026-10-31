@@ -27,6 +27,7 @@ interface PrescriptionItemDraft {
 export interface PrescriptionDraft {
   type: 'prescription';
   issuedDate: string | null;
+  revisitDate?: string | null;
   facility: string | null;
   diagnosis: string | null;
   items: PrescriptionItemDraft[];

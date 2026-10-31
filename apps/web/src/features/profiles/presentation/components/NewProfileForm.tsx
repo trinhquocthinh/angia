@@ -1,5 +1,7 @@
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { useProfileConsentForm } from '../useProfileConsentForm';
 import { ConsentFields } from './ConsentFields';
+import { NewProfileSubmit } from './NewProfileSubmit';
 import { ProfileFormFields } from './ProfileFormFields';
 import { useProfileForm } from '../useProfileForm';
 import type { LinkableAccount, ProfileRequest } from '../../application/ports';
@@ -31,9 +33,9 @@ export function NewProfileForm({
         event.preventDefault();
         void save(event.currentTarget);
       }}
-      className="max-w-[640px] rounded-[20px] bg-white p-6 sm:p-8"
+      className="min-h-0 flex-1 overflow-y-auto border-t border-[#e4f0f0] px-6 pt-5 max-md:px-5"
     >
-      <fieldset disabled={pending} className="space-y-6">
+      <fieldset disabled={pending} className="space-y-5">
         <ProfileFormFields
           errors={errors}
           accounts={accounts}
@@ -48,7 +50,10 @@ export function NewProfileForm({
           profileName={consent.state.displayName}
           onChange={consent.setDraft}
         />
-        <p className="text-sm leading-6 text-[#55615f]">
+        <p className="flex items-start gap-2 px-1 text-xs leading-5 text-[#55615f]">
+          <span className="mt-0.5 shrink-0 text-[#707975]">
+            <AdminIcon name="info" size={16} />
+          </span>
           {consent.mode === 'invitation'
             ? 'Sau khi tạo, hãy mở thẻ hồ sơ trên Trang chủ để tạo link gửi chính người thân xác nhận.'
             : 'Bạn có thể bỏ tick và tạo hồ sơ trước; chỉ ghi được dữ liệu sức khỏe sau khi xác nhận đồng ý.'}
@@ -58,13 +63,7 @@ export function NewProfileForm({
             {error}
           </p>
         )}
-        <button
-          type="submit"
-          disabled={pending || consent.result.body === null}
-          className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-[#004135] px-5 py-3 text-center text-sm font-semibold text-white cursor-pointer disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958] w-full"
-        >
-          {pending ? 'Đang lưu…' : 'Tạo hồ sơ'}
-        </button>
+        <NewProfileSubmit disabled={pending || consent.result.body === null} pending={pending} />
       </fieldset>
     </form>
   );
