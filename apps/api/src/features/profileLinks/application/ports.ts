@@ -1,4 +1,5 @@
 import type {
+  AdminProfileLink,
   ConsentPatch,
   LinkAccount,
   LinkDecision,
@@ -14,8 +15,11 @@ export interface ProfileLinkTokenCodec {
 }
 interface LinkEvent {
   profileId: string;
+  action: 'link' | 'unlink' | 'transfer';
   actorAccountId: string;
-  toAccountId: string;
+  actorRole: 'invitee' | 'owner' | 'admin';
+  fromAccountId: string | null;
+  toAccountId: string | null;
   at: Date;
 }
 // Chạy trong withFamilyScope; luôn khóa hồ sơ trước link để các luồng tạo/thu hồi/xác nhận không khóa chéo.
@@ -30,6 +34,8 @@ export interface ProfileLinkStore {
   markDecided(invitationId: string, accountId: string, decision: LinkDecision, at: Date): Promise<void>;
   applyConsent(profileId: string, patch: ConsentPatch): Promise<void>;
   linkAccount(accountId: string, profileId: string): Promise<void>;
+  unlinkAccount(accountId: string): Promise<void>;
+  listProfileLinks(): Promise<AdminProfileLink[]>;
   clearReminderRecipients(profileId: string): Promise<void>;
   revokeConsentInvitations(profileId: string, at: Date): Promise<void>;
   recordLinkEvent(event: LinkEvent): Promise<void>;

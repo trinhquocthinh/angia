@@ -3,6 +3,7 @@ import { accounts, healthProfiles, profileLinkInvitations } from '@src/shared/db
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import type { ProfileLinkStore } from '../application/ports.js';
 import type { ProfileLinkClaims } from '../domain/ProfileLink.js';
+import { listProfileLinks } from './listProfileLinks.js';
 
 // Phần đọc/khóa của store; khóa hồ sơ trước link để các luồng không khóa chéo.
 export function createProfileLinkReads(
@@ -10,7 +11,7 @@ export function createProfileLinkReads(
   familyId: string,
 ): Pick<
   ProfileLinkStore,
-  'lockProfile' | 'findLinkedAccount' | 'lockInvitation' | 'lockAccount' | 'accountName'
+  'lockProfile' | 'findLinkedAccount' | 'lockInvitation' | 'lockAccount' | 'accountName' | 'listProfileLinks'
 > {
   const profileWhere = (id: string) => and(eq(healthProfiles.id, id), eq(healthProfiles.familyId, familyId));
   const accountWhere = (id: string) => and(eq(accounts.id, id), eq(accounts.familyId, familyId));
@@ -53,6 +54,7 @@ export function createProfileLinkReads(
         ? ((await tx.select({ name: accounts.displayName }).from(accounts).where(accountWhere(id)))[0]
             ?.name ?? null)
         : null,
+    listProfileLinks: () => listProfileLinks(tx, familyId),
   };
 }
 

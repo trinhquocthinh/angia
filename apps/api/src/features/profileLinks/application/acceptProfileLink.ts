@@ -33,7 +33,10 @@ export async function acceptProfileLink(
       await store.clearReminderRecipients(profile.id);
       await store.recordLinkEvent({
         profileId: profile.id,
+        action: 'link',
         actorAccountId: account.id,
+        actorRole: 'invitee',
+        fromAccountId: null,
         toAccountId: account.id,
         at,
       });

@@ -32,6 +32,22 @@ export const profileLinkReceiptSchema = z
     consentStatus: z.enum(['pending', 'invited', 'declined', 'confirmed', 'withdrawn']),
   })
   .meta({ id: 'ProfileLinkReceipt' });
+// SPEC-050: chủ hồ sơ tự gỡ và quản trị chuyển/gỡ; quản trị chỉ thấy id và tên (ngoại lệ hẹp BR-003).
+export const unlinkProfileRequestSchema = z
+  .object({ confirm: z.literal(true) })
+  .strict()
+  .meta({ id: 'UnlinkProfileRequest' });
+export const adminProfileLinkSchema = z
+  .object({
+    id: z.uuid(),
+    displayName: z.string(),
+    linkedAccount: z.object({ id: z.uuid(), displayName: z.string() }).nullable(),
+  })
+  .meta({ id: 'AdminProfileLink' });
+export const setLinkedAccountRequestSchema = z
+  .object({ accountId: z.uuid().nullable() })
+  .strict()
+  .meta({ id: 'SetLinkedAccountRequest' });
 export type CreatedHealthProfile = z.infer<typeof createdHealthProfileSchema>;
 export type ProfileLinkCreated = z.infer<typeof profileLinkCreatedSchema>;
 export type ProfileLinkView = z.infer<typeof profileLinkViewSchema>;

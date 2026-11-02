@@ -29,16 +29,8 @@ export function createProfileLinkEffects(
           ),
         );
     },
-    recordLinkEvent: async ({ profileId, actorAccountId, toAccountId, at }) => {
-      await tx.insert(profileLinkEvents).values({
-        familyId,
-        profileId,
-        action: 'link',
-        actorAccountId,
-        actorRole: 'invitee',
-        toAccountId,
-        createdAt: at,
-      });
+    recordLinkEvent: async ({ at, ...event }) => {
+      await tx.insert(profileLinkEvents).values({ familyId, ...event, createdAt: at });
     },
   };
 }

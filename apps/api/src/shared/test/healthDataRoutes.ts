@@ -83,6 +83,11 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   // F07: tài khoản liên kết đọc/rút đồng thuận của hồ sơ mình; chỉ tên, trạng thái, không trả dữ liệu sức khỏe.
   'GET /api/me/consent',
   'POST /api/me/consent/withdraw',
+  // SPEC-050: chỉ đổi liên kết tài khoản, hồ sơ lấy từ phiên.
+  'POST /api/me/profile-link/unlink',
+  // SPEC-050: ngoại lệ hẹp BR-003, chỉ id và tên; TC-564 so khóa JSON chính xác.
+  'GET /api/admin/families/:familyId/profiles',
+  'PUT /api/admin/families/:familyId/profiles/:profileId/linked-account',
   'GET /api/admin/families',
   'POST /api/admin/families',
   'GET /api/admin/accounts',

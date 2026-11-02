@@ -7,6 +7,7 @@ import { createProfileLink } from '../application/createProfileLink.js';
 import type { ProfileLinkDependencies } from '../application/ports.js';
 import { revokeProfileLink } from '../application/revokeProfileLink.js';
 import { viewProfileLink } from '../application/viewProfileLink.js';
+import { registerLinkManagementRoutes } from './registerLinkManagementRoutes.js';
 import {
   acceptProfileLinkRoute,
   createProfileLinkRoute,
@@ -21,6 +22,7 @@ export function registerProfileLinkRoutes(app: OpenAPIHono<AppEnv>, deps: Profil
   });
   // E14: thay thế link đồng thuận ẩn danh nên đường dẫn cũ nhận 410 từ cùng điểm đăng ký.
   registerInvitationRoutes(app);
+  registerLinkManagementRoutes(app, deps);
   app.use('/api/me/link-invitations/*', async (c, next) => {
     c.header('Cache-Control', 'no-store');
     c.header('Referrer-Policy', 'no-referrer');

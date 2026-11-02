@@ -10,7 +10,8 @@ import {
   type RouteOfKind,
 } from './healthDataRoutes.js';
 
-const SELF_PATH = ' /api/me/profile';
+// Khớp đúng /api/me/profile và /api/me/profile/*, không gồm /api/me/profile-link/* (SPEC-050).
+const SELF_PATH = / \/api\/me\/profile(\/|$)/;
 
 interface SourceFile {
   path: string;
@@ -52,8 +53,8 @@ describe('Kiểm kê route cho NFR-4', () => {
 
   it('TC-570: mọi route /api/me/profile/* khai báo nhóm self và không bị chặn như route main', () => {
     const selfRoutes: RouteOfKind<'self'>[] = [];
-    expect(registered().filter((route) => route.includes(SELF_PATH))).toEqual(selfRoutes);
-    expect(MEMBER_BLOCKED_SESSION_ROUTES.filter((route) => route.includes(SELF_PATH))).toEqual([]);
+    expect(registered().filter((route) => SELF_PATH.test(route))).toEqual(selfRoutes);
+    expect(MEMBER_BLOCKED_SESSION_ROUTES.filter((route) => SELF_PATH.test(route))).toEqual([]);
   });
 
   it('TC-570: không có code tự xem nào gọi withFamilyScope', () => {

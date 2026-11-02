@@ -25,6 +25,12 @@ export interface LinkProfile {
   consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed' | 'withdrawn';
   consentWithdrawnAt: Date | null;
 }
+// SPEC-050, ngoại lệ hẹp BR-003: quản trị chỉ thấy id và tên, không năm sinh/đồng thuận/sức khỏe.
+export interface AdminProfileLink {
+  id: string;
+  displayName: string;
+  linkedAccount: { id: string; displayName: string } | null;
+}
 export type ConsentPatch =
   | {
       consentStatus: 'confirmed';

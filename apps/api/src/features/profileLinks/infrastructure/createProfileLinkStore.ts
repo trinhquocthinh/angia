@@ -39,5 +39,8 @@ export function createProfileLinkStore(tx: FamilyScopedTx, familyId: string): Pr
     linkAccount: async (accountId, profileId) => {
       await tx.update(accounts).set({ healthProfileId: profileId }).where(accountWhere(accountId));
     },
+    unlinkAccount: async (accountId) => {
+      await tx.update(accounts).set({ healthProfileId: null }).where(accountWhere(accountId));
+    },
   };
 }
