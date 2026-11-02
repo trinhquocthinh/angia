@@ -1,13 +1,12 @@
-import { useLocation } from '@tanstack/react-router';
 import { InvitationLayout } from './components/InvitationLayout';
-import { readInvitationToken } from '../application/readInvitationToken';
-import { InvitationPageContent } from './components/InvitationPageContent';
+import { InvitationNotice } from './components/InvitationNotice';
+// SPEC-040: link đồng thuận cũ đã ngừng; giữ tuyến để người cầm link cũ biết phải xin link mới.
 export function ConsentInvitePage() {
-  const { hash } = useLocation();
-  const token = readInvitationToken(`#${hash}`);
   return (
     <InvitationLayout>
-      <InvitationPageContent key={token} token={token} />
+      <InvitationNotice title="Link không còn dùng">
+        Link này không còn dùng. Hãy nhờ người quản lý gia đình gửi link liên kết mới.
+      </InvitationNotice>
     </InvitationLayout>
   );
 }

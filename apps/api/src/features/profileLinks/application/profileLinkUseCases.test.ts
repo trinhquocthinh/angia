@@ -69,7 +69,7 @@ function setup(profile: Partial<LinkProfile> = {}, accountOverride: Partial<Link
   const create = async () => {
     const r = await createProfileLink(deps, familyId, profileId, 'acc-main');
     if (!r.ok) throw new Error(r.code);
-    return r.value.url.split('#')[1]!;
+    return r.value.url.split('#token=')[1]!;
   };
   return { state, deps, create };
 }
@@ -81,7 +81,7 @@ describe('Link liên kết kiêm đồng thuận (SPEC-040)', () => {
       const { state, deps } = setup({ consentStatus });
       const r = await createProfileLink(deps, familyId, profileId, 'acc-main');
       expect(r).toMatchObject({ ok: true, value: { expiresAt: new Date(at.getTime() + 7 * 86400000) } });
-      expect(r.ok && r.value.url).toMatch(/^http:\/\/app\.test\/link-invite#v1\./);
+      expect(r.ok && r.value.url).toMatch(/^http:\/\/app\.test\/link-invite#token=v1\./);
       expect(state.profile.consentStatus).toBe(consentStatus);
       expect(state.invitations[0]!.tokenHash).toMatch(/^hash:v1\./);
     },

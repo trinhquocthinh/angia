@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { ProfilesRepository, ProfileSession } from './ports';
-import type { InvitationManagerState } from './manageConsentInvitation';
-import { manageConsentInvitation } from './manageConsentInvitation';
+import type { InvitationManagerState } from './manageProfileLink';
+import { manageProfileLink } from './manageProfileLink';
 const session: ProfileSession = {
   account: { id: 'a', displayName: 'An', isSystemAdmin: false, healthProfileId: null },
   family: { id: 'f', name: 'Nhà An' },
@@ -15,7 +15,10 @@ function repository(): ProfilesRepository {
     create: vi.fn(),
     update: vi.fn(),
     confirmConsent: vi.fn(),
-    createInvitation: vi.fn(async () => ({ token: 'v1.current', expiresAt: '2026-10-13T00:00:00Z' })),
+    createInvitation: vi.fn(async () => ({
+      url: 'https://app/link-invite#token=v1.current',
+      expiresAt: '2026-10-13T00:00:00Z',
+    })),
     revokeInvitation: vi.fn(async () => undefined),
     remove: vi.fn(async () => undefined),
     logout: vi.fn(),
@@ -40,12 +43,12 @@ describe('TC-106 — Trạng thái link khi tạo lại, thu hồi hoặc mất 
       };
       let state: InvitationManagerState = {
         invitationState: 'active',
-        created: { token: 'v1.old', expiresAt: '2026-10-13T00:00:00Z' },
+        created: { url: 'https://app/link-invite#token=v1.old', expiresAt: '2026-10-13T00:00:00Z' },
         pending: false,
         error: null,
         message: '',
       };
-      const task = manageConsentInvitation(repo, session, 'p', operation, (next) => {
+      const task = manageProfileLink(repo, session, 'p', operation, (next) => {
         state = next;
       });
       expect(state.created).toBeNull();
@@ -60,14 +63,14 @@ describe('TC-106 — Trạng thái link khi tạo lại, thu hồi hoặc mất 
   );
   it('thu hồi thành công chuyển none để không hiện nút thu hồi hoặc Tạo lại', async () => {
     const update = vi.fn();
-    expect(await manageConsentInvitation(repository(), session, 'p', 'revoke', update)).toBe(true);
+    expect(await manageProfileLink(repository(), session, 'p', 'revoke', update)).toBe(true);
     expect(update).toHaveBeenLastCalledWith(
       expect.objectContaining({ invitationState: 'none', created: null, pending: false }),
     );
   });
   it('chỉ giữ raw token sau phản hồi tạo thành công', async () => {
     const update = vi.fn();
-    await manageConsentInvitation(repository(), session, 'p', 'create', update);
+    await manageProfileLink(repository(), session, 'p', 'create', update);
     expect(update).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({ created: null, invitationState: 'uncertain' }),
@@ -75,7 +78,7 @@ describe('TC-106 — Trạng thái link khi tạo lại, thu hồi hoặc mất 
     expect(update).toHaveBeenLastCalledWith(
       expect.objectContaining({
         invitationState: 'active',
-        created: { token: 'v1.current', expiresAt: '2026-10-13T00:00:00Z' },
+        created: { url: 'https://app/link-invite#token=v1.current', expiresAt: '2026-10-13T00:00:00Z' },
       }),
     );
   });

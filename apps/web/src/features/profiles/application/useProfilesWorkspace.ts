@@ -28,6 +28,8 @@ export function useProfilesWorkspace(
     ]);
   };
   const create = useMutation({
+    // Phản hồi có thể chứa link một lần; không giữ lại trong cache sau khi đã trao cho màn hình.
+    gcTime: 0,
     mutationFn: (body: ProfileRequest) => {
       if (!enabled) throw new Error('Chỉ người chăm sóc chính có thể tạo hồ sơ.');
       return repository.create(body, session!.csrfToken);

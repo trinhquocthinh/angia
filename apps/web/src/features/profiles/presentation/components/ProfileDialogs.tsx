@@ -1,5 +1,6 @@
 import type { ProfileListItem, ProfilesRepository, ProfileSession } from '../../application/ports';
 import { DeleteProfileDialog } from './DeleteProfileDialog';
+import { InvitationManagerDialog } from './InvitationManagerDialog';
 import { ProfileConsentDialog } from './ProfileConsentDialog';
 // Dialog chỉ mở cho hồ sơ thuộc gia đình của phiên hiện tại; key theo phiên để đổi tài khoản là dựng lại.
 export function ProfileDialogs({
@@ -7,16 +8,20 @@ export function ProfileDialogs({
   repository,
   profiles,
   consent,
+  linking,
   deleting,
   closeConsent,
+  closeLink,
   closeDelete,
 }: {
   session: ProfileSession;
   repository: ProfilesRepository;
   profiles: ProfileListItem[];
   consent: ProfileListItem | null;
+  linking: ProfileListItem | null;
   deleting: ProfileListItem | null;
   closeConsent: () => void;
+  closeLink: () => void;
   closeDelete: () => void;
 }) {
   const family = session.family;
@@ -34,6 +39,15 @@ export function ProfileDialogs({
           session={session}
           repository={repository}
           onClose={closeConsent}
+        />
+      )}
+      {linking && linking.familyId === family.id && (
+        <InvitationManagerDialog
+          key={key(linking)}
+          profile={linking}
+          session={session}
+          repository={repository}
+          onClose={closeLink}
         />
       )}
       {deleting && deleting.familyId === family.id && (

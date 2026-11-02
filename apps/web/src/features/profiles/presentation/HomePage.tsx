@@ -25,6 +25,7 @@ export function HomePage() {
   const workspace = useProfilesWorkspace(repository, session.data);
   const queue = useReviewQueue(reviewRepository, session.data);
   const [selected, setSelected] = useState<ProfileListItem | null>(null);
+  const [linking, setLinking] = useState<ProfileListItem | null>(null);
   const [deleting, setDeleting] = useState<ProfileListItem | null>(null);
   const [withdrawing, setWithdrawing] = useState(false);
   useProfileSessionRecovery(workspace.profiles.error ?? workspace.accounts.error ?? workspace.create.error);
@@ -54,6 +55,7 @@ export function HomePage() {
           error={workspace.profiles.isError}
           retry={() => void workspace.profiles.refetch()}
           onConsent={setSelected}
+          onLink={setLinking}
           onDelete={setDeleting}
           ownProfileId={session.data.account.healthProfileId}
           onWithdraw={() => setWithdrawing(true)}
@@ -67,8 +69,10 @@ export function HomePage() {
           repository={repository}
           profiles={profiles}
           consent={selected}
+          linking={linking}
           deleting={deleting}
           closeConsent={() => setSelected(null)}
+          closeLink={() => setLinking(null)}
           closeDelete={() => setDeleting(null)}
         />
       )}

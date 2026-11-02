@@ -13,6 +13,7 @@ const session: ProfileSession = {
 const profile = {
   consentAction: 'attestation' as const,
   consentConfirmedByName: null,
+  hasLinkedAccount: false,
   id: 'p',
   familyId: 'f',
   displayName: 'Mẹ',
@@ -36,7 +37,10 @@ function repository(fail = false): ProfilesRepository {
     }),
     update: vi.fn(),
     confirmConsent: vi.fn(),
-    createInvitation: vi.fn(async () => ({ token: 'opaque', expiresAt: '2026-10-13T00:00:00Z' })),
+    createInvitation: vi.fn(async () => ({
+      url: 'https://app/link-invite#token=opaque',
+      expiresAt: '2026-10-13T00:00:00Z',
+    })),
     revokeInvitation: vi.fn(async () => undefined),
     remove: vi.fn(async () => undefined),
     logout: vi.fn(async () => undefined),

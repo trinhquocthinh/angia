@@ -3,10 +3,12 @@ import type { InvitationRepository, InvitationView } from './invitationPorts';
 import { InvitationRequestError } from './InvitationRequestError';
 import { loadInvitation } from './loadInvitation';
 const view: InvitationView = {
-  profileDisplayName: 'Mẹ',
-  inviterDisplayName: 'An',
+  profileName: 'Mẹ',
+  inviterName: 'An',
   expiresAt: '2026-10-13T00:00:00Z',
-  status: 'pending',
+  canAccept: true,
+  reason: null,
+  consentNote: null,
 };
 describe('TC-106 — Tải lời mời không ghi đè state của token mới', () => {
   it('request cũ hoàn tất sau token mới không thay nội dung hiện tại', async () => {
@@ -15,9 +17,7 @@ describe('TC-106 — Tải lời mời không ghi đè state của token mới',
       finish = resolve;
     });
     const repository: InvitationRepository = {
-      view: vi.fn((token) =>
-        token === 'old' ? old : Promise.resolve({ ...view, profileDisplayName: 'Ba' }),
-      ),
+      view: vi.fn((token) => (token === 'old' ? old : Promise.resolve({ ...view, profileName: 'Ba' }))),
       respond: vi.fn(),
     };
     const update = vi.fn();
@@ -28,7 +28,7 @@ describe('TC-106 — Tải lời mời không ghi đè state của token mới',
     finish(view);
     await pending;
     expect(update).toHaveBeenCalledTimes(1);
-    expect(update).toHaveBeenCalledWith({ state: 'ready', view: { ...view, profileDisplayName: 'Ba' } });
+    expect(update).toHaveBeenCalledWith({ state: 'ready', view: { ...view, profileName: 'Ba' } });
     expect(repository.respond).not.toHaveBeenCalled();
   });
   it.each([404, 500])('HTTP %s hiển thị unavailable hoặc retry, không lỗi server', async (status) => {

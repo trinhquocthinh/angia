@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ConsentInviteRouteImport } from './routes/consent-invite'
+import { Route as LinkInviteRouteImport } from './routes/link-invite'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as UploadRouteImport } from './routes/upload'
@@ -46,6 +47,11 @@ const AdminRoute = AdminRouteImport.update({
 const ConsentInviteRoute = ConsentInviteRouteImport.update({
   id: '/consent-invite',
   path: '/consent-invite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LinkInviteRoute = LinkInviteRouteImport.update({
+  id: '/link-invite',
+  path: '/link-invite',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/consent-invite': typeof ConsentInviteRoute
+  '/link-invite': typeof LinkInviteRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/upload': typeof UploadRoute
@@ -188,6 +195,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/consent-invite': typeof ConsentInviteRoute
+  '/link-invite': typeof LinkInviteRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/upload': typeof UploadRoute
@@ -214,6 +222,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/consent-invite': typeof ConsentInviteRoute
+  '/link-invite': typeof LinkInviteRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/upload': typeof UploadRoute
@@ -241,6 +250,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/consent-invite'
+    | '/link-invite'
     | '/login'
     | '/notifications'
     | '/upload'
@@ -266,6 +276,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/consent-invite'
+    | '/link-invite'
     | '/login'
     | '/notifications'
     | '/upload'
@@ -291,6 +302,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/consent-invite'
+    | '/link-invite'
     | '/login'
     | '/notifications'
     | '/upload'
@@ -317,6 +329,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   ConsentInviteRoute: typeof ConsentInviteRoute
+  LinkInviteRoute: typeof LinkInviteRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
   UploadRoute: typeof UploadRoute
@@ -360,6 +373,13 @@ declare module '@tanstack/react-router' {
       path: '/consent-invite'
       fullPath: '/consent-invite'
       preLoaderRoute: typeof ConsentInviteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/link-invite': {
+      id: '/link-invite'
+      path: '/link-invite'
+      fullPath: '/link-invite'
+      preLoaderRoute: typeof LinkInviteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -509,6 +529,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   ConsentInviteRoute: ConsentInviteRoute,
+  LinkInviteRoute: LinkInviteRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
   UploadRoute: UploadRoute,

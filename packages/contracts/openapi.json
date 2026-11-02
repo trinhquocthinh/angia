@@ -1011,6 +1011,9 @@
               null
             ]
           },
+          "hasLinkedAccount": {
+            "type": "boolean"
+          },
           "consentConfirmedByName": {
             "type": [
               "string",
@@ -1032,6 +1035,7 @@
           "consentRespondentName",
           "createdAt",
           "consentAction",
+          "hasLinkedAccount",
           "consentConfirmedByName"
         ]
       },

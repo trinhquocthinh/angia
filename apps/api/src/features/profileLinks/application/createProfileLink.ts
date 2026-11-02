@@ -26,6 +26,6 @@ export async function createProfileLink(
       revokedAt: null,
       acceptedAt: null,
     });
-    return { ok: true, value: { url: `${deps.appBaseUrl}/link-invite#${token}`, expiresAt } };
+    return { ok: true, value: { url: `${deps.appBaseUrl}/link-invite#token=${token}`, expiresAt } };
   });
 }

@@ -15,6 +15,7 @@ const props = {
   error: false,
   retry: () => undefined,
   onConsent: () => undefined,
+  onLink: () => undefined,
   onDelete: () => undefined,
 };
 describe('Trang Nhà: rỗng, tải và lỗi', () => {

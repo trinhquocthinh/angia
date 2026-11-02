@@ -5,4 +5,5 @@ type MyConsentWithdrawn = components['schemas']['MyConsentWithdrawn'];
 export interface MyConsentRepository {
   get(signal?: AbortSignal): Promise<MyConsent>;
   withdraw(csrfToken: string): Promise<MyConsentWithdrawn>;
+  unlink(csrfToken: string): Promise<void>;
 }

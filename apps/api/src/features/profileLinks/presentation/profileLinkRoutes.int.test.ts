@@ -21,7 +21,7 @@ describe('SPEC-040: link liên kết kiêm đồng thuận — PostgreSQL thật
   it('TC-450/451: xem không tiêu thụ; xác nhận gắn tài khoản, nâng nguồn self, xóa người nhận nhắc', async () => {
     const { f, profile, member, link } = await setup();
     expect(new Date(link.expiresAt).getTime() - Date.now()).toBeGreaterThan(7 * 86400000 - 10000);
-    expect(link.url).toBe(`http://localhost:5173/link-invite#${link.token}`);
+    expect(link.url).toBe(`http://localhost:5173/link-invite#token=${link.token}`);
     await t.owner.query(
       'INSERT INTO reminder_recipients(health_profile_id,family_id,account_id) VALUES($1,$2,$3)',
       [profile.id, f.familyId, f.main.accountId],

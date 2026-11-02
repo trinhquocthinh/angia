@@ -7,11 +7,12 @@ import type { ProfileListItem } from '../../application/ports';
 type ProfileCardProps = {
   profile: ProfileListItem;
   onConsent: (profile: ProfileListItem) => void;
+  onLink: (profile: ProfileListItem) => void;
   onDelete: (profile: ProfileListItem) => void;
   onWithdraw?: (() => void) | undefined;
 };
 
-export function ProfileCard({ profile, onConsent, onDelete, onWithdraw }: ProfileCardProps) {
+export function ProfileCard({ profile, onConsent, onLink, onDelete, onWithdraw }: ProfileCardProps) {
   const action = profile.consentAction;
   return (
     <article className="flex flex-col rounded-2xl border border-[#bfc9c4]/30 bg-white p-5 shadow-sm transition-all duration-200 hover:border-[#bfc9c4]/50 hover:shadow-md lg:rounded-3xl lg:p-6">
@@ -42,16 +43,20 @@ export function ProfileCard({ profile, onConsent, onDelete, onWithdraw }: Profil
         <ProfileBasisBadge basis={profile.consentBasis} />
       </div>
       <ProfileConsentStatus profile={profile} />
-      {action && (
+      {(action === 'attestation' || action === 'self') && (
         <button
-          className="mt-4 inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl bg-[#004135] px-5 py-2.5 text-center text-sm font-semibold text-white disabled:cursor-default disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
+          className="mt-4 inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl px-5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958] bg-[#004135] text-white"
           onClick={() => onConsent(profile)}
         >
-          {action !== 'invitation'
-            ? 'Xác nhận đồng ý'
-            : profile.consentStatus === 'invited'
-              ? 'Quản lý link xác nhận'
-              : 'Tạo link mời người thân'}
+          Xác nhận đồng ý
+        </button>
+      )}
+      {!profile.hasLinkedAccount && (
+        <button
+          className="mt-4 inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl px-5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958] bg-[#e4f0f0] text-[#004135]"
+          onClick={() => onLink(profile)}
+        >
+          Tạo link liên kết tài khoản
         </button>
       )}
       <ProfileCardActions

@@ -7,7 +7,7 @@ export interface InvitationManagerState {
   error: Error | null;
   message: string;
 }
-export async function manageConsentInvitation(
+export async function manageProfileLink(
   repository: ProfilesRepository,
   session: ProfileSession,
   profileId: string,
@@ -26,7 +26,7 @@ export async function manageConsentInvitation(
     update({
       ...state,
       pending: false,
-      error: new Error('Chỉ người chăm sóc chính có thể quản lý link đồng thuận.'),
+      error: new Error('Chỉ người chăm sóc chính có thể quản lý link liên kết.'),
     });
     return false;
   }
@@ -36,7 +36,12 @@ export async function manageConsentInvitation(
       update({ ...state, invitationState: 'active', created, pending: false });
     } else {
       await repository.revokeInvitation(profileId, session.csrfToken);
-      update({ ...state, invitationState: 'none', pending: false, message: 'Đã thu hồi link chờ phản hồi.' });
+      update({
+        ...state,
+        invitationState: 'none',
+        pending: false,
+        message: 'Không còn link liên kết nào đang chờ.',
+      });
     }
     return true;
   } catch (cause) {

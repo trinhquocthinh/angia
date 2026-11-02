@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import {
-  isReminderPath,
+  isReturnPath,
   saveReminderReturnPath,
   takeReminderReturnPath,
 } from '@src/features/myReminders/application/reminderReturnPath';
@@ -35,8 +35,8 @@ export function AuthBoundary({ children }: { children: ReactNode }) {
   const hasFamily = Boolean(session.data?.family);
 
   useEffect(() => {
-    // SPEC-035: mở link lời nhắc khi chưa đăng nhập → nhớ đường dẫn; OIDC xong quay về / rồi khôi phục.
-    if (destination === '/login' && isReminderPath(pathname)) saveReminderReturnPath(pathname);
+    // SPEC-035, SPEC-040: mở link khi chưa đăng nhập → nhớ đường dẫn (không có fragment); OIDC xong quay về / rồi khôi phục.
+    if (destination === '/login' && isReturnPath(pathname)) saveReminderReturnPath(pathname);
     if (destination) {
       void navigate({ to: destination, replace: true });
       return;

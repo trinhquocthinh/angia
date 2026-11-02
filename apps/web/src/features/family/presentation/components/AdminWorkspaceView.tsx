@@ -51,6 +51,7 @@ export function AdminWorkspaceView(props: AdminWorkspaceViewProps) {
       <AdminDataContent
         {...{ workspace, aiBudget, aiRouting, aiBilling, scanQuota }}
         currentAccountId={session.account.id}
+        csrfToken={session.csrfToken}
         onTask={openTask}
         accountQuery={accountQuery}
         onAccountQuery={setAccountQuery}

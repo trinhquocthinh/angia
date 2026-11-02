@@ -5622,6 +5622,7 @@ export interface components {
       createdAt: string;
       /** @enum {string|null} */
       consentAction: 'attestation' | 'self' | 'invitation' | null;
+      hasLinkedAccount: boolean;
       consentConfirmedByName: string | null;
     };
     LinkableAccount: {

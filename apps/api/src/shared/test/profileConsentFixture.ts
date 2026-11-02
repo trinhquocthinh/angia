@@ -11,7 +11,7 @@ export const ATTESTATION = {
   respondentName: '  Mẹ  ',
 } as const;
 export const attestationPath = (id: string) => `${PROFILE_BASE}/${id}/consent-attestation`;
-export const linkToken = (link: ProfileLinkCreated) => link.url.split('#')[1]!;
+export const linkToken = (link: ProfileLinkCreated) => link.url.split('#token=')[1]!;
 // SPEC-040: xem/xác nhận link cần phiên của người được mời; token đi trong Authorization.
 export const linkCall = (t: ProfileTestApp, user: SeededSession, token: string, body?: unknown) =>
   t.app.request(`/api/me/link-invitations/${body === undefined ? 'view' : 'accept'}`, {

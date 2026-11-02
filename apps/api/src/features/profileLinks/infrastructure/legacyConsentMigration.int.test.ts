@@ -97,7 +97,7 @@ describe('Migration đồng thuận: giữ audit cũ và đóng gate cũ', () =>
     const created = await createProfileLink(deps, familyId, profileId, accountId);
     if (!created.ok) throw new Error('Không tạo được link fixture');
     expect(
-      await acceptProfileLink(deps, created.value.url.split('#')[1]!, memberId, 'accepted'),
+      await acceptProfileLink(deps, created.value.url.split('#token=')[1]!, memberId, 'accepted'),
     ).toMatchObject({ ok: true, value: { outcome: 'linked' } });
     expect(
       (await owner.query('SELECT * FROM consent_legacy_attestations WHERE profile_id=$1', [profileId]))

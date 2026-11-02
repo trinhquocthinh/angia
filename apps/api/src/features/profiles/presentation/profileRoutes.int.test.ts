@@ -45,7 +45,7 @@ describe('Hồ sơ: route thật, transaction và RLS', () => {
       t.call(other, 'POST', `${base}/${randomUUID()}/link-invitations`, {}),
     );
     expect(await (await t.call(main, 'GET', base)).json()).toEqual([
-      { ...profile, consentAction: 'attestation', consentConfirmedByName: null },
+      { ...profile, consentAction: 'attestation', hasLinkedAccount: false, consentConfirmedByName: null },
     ]);
     expect(await (await t.call(other, 'GET', base)).json()).toEqual([]);
     expect((await t.pool.query('SELECT count(*)::int AS n FROM health_profiles')).rows[0].n).toBe(0);
@@ -91,7 +91,7 @@ describe('Hồ sơ: route thật, transaction và RLS', () => {
     expect(response.status).toBe(409);
     expect(await response.json()).toMatchObject({ error: { code: 'ERR_CONSENT_INVITATION_REQUIRED' } });
     expect(await (await t.call(main, 'GET', base)).json()).toEqual([
-      { ...profile, consentAction: 'attestation', consentConfirmedByName: null },
+      { ...profile, consentAction: 'attestation', hasLinkedAccount: false, consentConfirmedByName: null },
     ]);
   });
   it('member, admin không phải main và phiên thiếu CSRF bị chặn trước validate', async () => {

@@ -55,7 +55,7 @@ export function NewProfileForm({
             <AdminIcon name="info" size={16} />
           </span>
           {consent.mode === 'invitation'
-            ? 'Sau khi tạo, hãy mở thẻ hồ sơ trên Trang chủ để tạo link gửi chính người thân xác nhận.'
+            ? 'Sau khi tạo, AN GIA hiện link để bạn gửi cho chính người này. Hồ sơ chỉ gắn với tài khoản khi họ xác nhận.'
             : 'Bạn có thể bỏ tick và tạo hồ sơ trước; chỉ ghi được dữ liệu sức khỏe sau khi xác nhận đồng ý.'}
         </p>
         {error && (
