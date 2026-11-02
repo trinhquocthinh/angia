@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { check, date, index, integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
-import { createdAtColumn, familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
+import { createdAtColumn, familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
 import { healthProfiles } from './healthProfiles.js';
 import { uploadBatches } from './uploadBatches.js';
 
@@ -65,6 +65,6 @@ export const sourceDocuments = pgTable(
       'source_documents_approved_has_date',
       sql`${table.status} <> 'approved' OR ${table.documentDate} IS NOT NULL`,
     ),
-    familyIsolationPolicy(),
+    selfIsolationPolicy('health_profile_id'),
   ],
 );

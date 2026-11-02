@@ -33,3 +33,5 @@ export * from './scanQuotaAudit.js';
 export * from './scanQuotaPolicyAudit.js';
 export { ocrOperations } from './ocrOperations.js';
 export { objectPurges } from './objectPurges.js';
+export { profileLinkInvitations } from './profileLinkInvitations.js';
+export { profileLinkEvents } from './profileLinkEvents.js';

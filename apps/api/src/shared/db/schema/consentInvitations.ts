@@ -2,7 +2,7 @@ import { sql } from 'drizzle-orm';
 import { check, foreignKey, index, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
 import { healthProfiles } from './healthProfiles.js';
-import { createdAtColumn, familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
+import { createdAtColumn, familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
 
 export const consentInvitations = pgTable(
   'consent_invitations',
@@ -38,6 +38,6 @@ export const consentInvitations = pgTable(
       'consent_invitations_name_valid',
       sql`${t.respondentName} IS NULL OR (char_length(btrim(${t.respondentName})) BETWEEN 1 AND 60 AND ${t.respondentName} = btrim(${t.respondentName}))`,
     ),
-    familyIsolationPolicy(),
+    selfIsolationPolicy('profile_id'),
   ],
 );

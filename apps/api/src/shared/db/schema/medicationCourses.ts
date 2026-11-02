@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { check, date, foreignKey, index, numeric, pgTable, text, uuid } from 'drizzle-orm/pg-core';
-import { familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
+import { familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
 import { healthProfiles } from './healthProfiles.js';
 import { prescriptionItems } from './prescriptionItems.js';
 
@@ -55,6 +55,6 @@ export const medicationCourses = pgTable(
       sql`${t.endDate} IS NULL OR ${t.endDate} >= ${t.startDate} OR (${t.status} IN ('replaced', 'stopped') AND ${t.endDate} = ${t.startDate} - 1)`,
     ),
     check('medication_courses_terminal_has_end', sql`${t.status} = 'active' OR ${t.endDate} IS NOT NULL`),
-    familyIsolationPolicy(),
+    selfIsolationPolicy('health_profile_id'),
   ],
 );

@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { check, date, foreignKey, index, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
-import { createdAtColumn, familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
+import { createdAtColumn, familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
 import { healthProfiles } from './healthProfiles.js';
 
 // BR-051: một nhắc cho mọi đơn của cùng hồ sơ/ngày hẹn/mốc; không gắn FK tới một đơn cụ thể.
@@ -33,6 +33,6 @@ export const revisitReminders = pgTable(
       sql`(${t.offsetKind} = 'two_days_before' AND ${t.sendDate} = ${t.revisitDate} - 2)
         OR (${t.offsetKind} = 'same_day' AND ${t.sendDate} = ${t.revisitDate})`,
     ),
-    familyIsolationPolicy(),
+    selfIsolationPolicy('health_profile_id'),
   ],
 );

@@ -12,7 +12,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
-import { createdAtColumn, familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
+import { createdAtColumn, familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
 
 // Đồng thuận (BR-009): pending mặc định; confirmed cần receipt hợp lệ theo từng nguồn.
 // Trigger chặn đổi family_id (BR-002) nằm trong migration SQL tự viết.
@@ -83,6 +83,6 @@ export const healthProfiles = pgTable(
         AND ${table.consentRespondentName} IS NOT NULL
       )`,
     ),
-    familyIsolationPolicy(),
+    selfIsolationPolicy('id'),
   ],
 );

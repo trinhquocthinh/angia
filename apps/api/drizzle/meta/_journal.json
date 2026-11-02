@@ -253,6 +253,13 @@
       "when": 1793335818713,
       "tag": "0035_revisit_reminders",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1793579549745,
+      "tag": "0036_profile_links_self_scope",
+      "breakpoints": true
     }
   ]
 }

@@ -3,7 +3,7 @@ import type { Database } from './createDatabase.js';
 
 export type FamilyScopedTx = Parameters<Parameters<Database['transaction']>[0]>[0];
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // Bọc mọi truy vấn dữ liệu sức khỏe (SPEC-006, Tech Spec §3): gán app.family_id cục bộ trong
 // transaction để RLS lọc theo nhóm. set_config(..., true) tương đương SET LOCAL nhưng nhận tham số.

@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { boolean, check, date, index, pgTable, text, uuid } from 'drizzle-orm/pg-core';
-import { createdAtColumn, familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
+import { createdAtColumn, familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
 import { healthProfiles } from './healthProfiles.js';
 import { sourceDocuments } from './sourceDocuments.js';
 
@@ -38,6 +38,6 @@ export const prescriptions = pgTable(
       'prescriptions_has_source',
       sql`${t.sourceDocumentId} IS NOT NULL OR ${t.manualWithoutSource} = true`,
     ),
-    familyIsolationPolicy(),
+    selfIsolationPolicy('health_profile_id'),
   ],
 );

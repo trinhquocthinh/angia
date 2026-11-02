@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { check, foreignKey, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { healthProfiles } from './healthProfiles.js';
-import { familyIdColumn, familyIsolationPolicy } from './columns.js';
+import { familyIdColumn, selfIsolationPolicy } from './columns.js';
 
 // Lưu dấu xác nhận cũ bằng migration; runtime không ghi vào bảng này.
 export const consentLegacyAttestations = pgTable(
@@ -20,6 +20,6 @@ export const consentLegacyAttestations = pgTable(
       name: 'consent_legacy_attestations_profile_family_fk',
     }).onDelete('cascade'),
     check('consent_legacy_attestations_basis_valid', sql`${t.basis} IN ('self', 'guardian')`),
-    familyIsolationPolicy(),
+    selfIsolationPolicy('profile_id'),
   ],
 );

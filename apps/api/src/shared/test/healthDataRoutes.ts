@@ -3,6 +3,7 @@
 //  - scoped: nhắm tài nguyên của gia đình qua ID/token → expectCrossFamilyDenied.
 //  - list:   trả danh sách theo gia đình của phiên → không lẫn dữ liệu gia đình khác.
 //  - uniform: không chạm dữ liệu, mọi ID nhận cùng một phản hồi.
+//  - self:   /api/me/profile/*, phiên chỉ đọc hồ sơ liên kết qua withSelfScope (SPEC-042, TC-570).
 export const HEALTH_DATA_ROUTES = {
   'GET /api/health-profiles': 'list',
   'GET /api/health-profiles/linkable-accounts': 'list',
@@ -51,13 +52,15 @@ export const HEALTH_DATA_ROUTES = {
 
 type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;
 
-// TC-016: route dùng phiên phải chặn member 403. Loại trừ route dùng token mời và /api/me/reminders
-// (SPEC-035: người nhận hợp lệ kể cả member đọc được lời nhắc của mình — TC-344/TC-345 kiểm riêng).
+// TC-016: route dùng phiên phải chặn member 403. Loại trừ route dùng token mời, /api/me/reminders
+// (SPEC-035: người nhận hợp lệ kể cả member đọc được lời nhắc của mình — TC-344/TC-345 kiểm riêng)
+// và route tự xem /api/me/profile (SPEC-042: member liên kết hồ sơ được đọc).
 export const MEMBER_BLOCKED_SESSION_ROUTES = Object.keys(HEALTH_DATA_ROUTES).filter(
   (route) =>
     !route.includes('/consent-invitations/') &&
     !route.startsWith('GET /api/me/reminders/') &&
-    !route.startsWith('GET /api/me/revisit-reminders/'),
+    !route.startsWith('GET /api/me/revisit-reminders/') &&
+    !route.includes(' /api/me/profile'),
 );
 // Record<RouteOfKind<'scoped'>, …> buộc test liệt kê đủ route của nhóm ngay lúc typecheck.
 export type RouteOfKind<Kind extends string> = {
