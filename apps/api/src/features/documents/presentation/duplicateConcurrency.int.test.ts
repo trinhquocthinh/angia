@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
 import { createManualRecords } from '../application/createManualRecords.js';
 import { createReviewRepository } from '../infrastructure/createReviewRepository.js';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { duplicateConcurrencyPayloads as payloads } from '@src/shared/test/duplicateConcurrencyPayloads.js';
 import { holdDuplicateRecordLock } from '@src/shared/test/holdDuplicateRecordLock.js';
@@ -31,7 +31,7 @@ describe('SPEC-012: kiểm trùng đồng thời (E13-S2-T1, nợ #23)', () => {
       displayName: 'Mẹ',
     });
     const profile = (await created.json()) as HealthProfile;
-    await acceptConsentInvitation(t, main, profile.id);
+    await confirmConsentByAttestation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const ids = [
       (await seedPendingDocument(t, owner, data)).documentId,

@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile, VisitSummary } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { manualReading } from '@src/shared/test/healthDataFixtures.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
@@ -24,7 +24,7 @@ describe('API bản tóm tắt tái khám SPEC-024 (E6-S1-T1)', () => {
     const main = await t.session(familyId);
     const created = await t.call(main, 'POST', profiles, { birthYear: 1950, displayName: 'Mẹ' });
     const profile = (await created.json()) as HealthProfile;
-    if (consent) await acceptConsentInvitation(t, main, profile.id);
+    if (consent) await confirmConsentByAttestation(t, main, profile.id);
     return { familyId, main, profile, base: `${profiles}/${profile.id}/visit-summary` };
   };
   type Fixture = Awaited<ReturnType<typeof fixture>>;

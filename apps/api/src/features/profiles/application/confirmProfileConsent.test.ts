@@ -24,6 +24,9 @@ async function fixture(linkedAccountId?: string) {
     'main',
   );
   if (!result.ok) throw new Error(result.code);
+  // SPEC-040 (E14): tài khoản khác chỉ được gắn qua link; fixture gắn trực tiếp như thể họ đã xác nhận.
+  if (linkedAccountId)
+    await repository.withFamily('a', (store) => store.linkAccount(linkedAccountId, result.value.id));
   const confirm = (body: ConsentConfirmation = consent, family = 'a') =>
     confirmProfileConsent(repository, family, 'main', result.value.id, body, () => at);
   return { repository, profile: result.value, confirm };

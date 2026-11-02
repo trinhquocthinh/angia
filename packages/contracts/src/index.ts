@@ -54,6 +54,7 @@ export { consentConfirmationResponseSchema } from './profiles/consentConfirmatio
 export type { ConsentConfirmationResponse } from './profiles/consentConfirmationResponseSchema.js';
 export { linkableAccountSchema } from './profiles/linkableAccountSchema.js';
 export type { LinkableAccount } from './profiles/linkableAccountSchema.js';
+export * from './profiles/profileLinkSchemas.js';
 export {
   consentInvitationCreateRequestSchema,
   consentInvitationCreatedSchema,

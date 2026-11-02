@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { DocumentEntry, DocumentEntryPage, HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { vietnamDate } from '@src/shared/test/createFiniteCourse.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
@@ -58,7 +58,7 @@ describe('API danh mục chứng từ của hồ sơ + RLS (SPEC-028)', () => {
     const profile = (await (
       await t.call(main, 'POST', '/api/health-profiles', { birthYear: 1950, displayName: 'Mẹ' })
     ).json()) as HealthProfile;
-    await acceptConsentInvitation(t, main, profile.id);
+    await confirmConsentByAttestation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const manual = (type: string, data: object) =>
       t.call(main, 'POST', `/api/health-profiles/${profile.id}/manual-records`, { type, data });

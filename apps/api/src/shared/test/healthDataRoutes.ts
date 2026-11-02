@@ -12,10 +12,11 @@ export const HEALTH_DATA_ROUTES = {
   'PATCH /api/health-profiles/:id': 'scoped',
   'POST /api/health-profiles/:id/consent': 'uniform',
   'POST /api/health-profiles/:id/consent-attestation': 'scoped',
-  'POST /api/health-profiles/:id/consent-invitations': 'scoped',
-  'DELETE /api/health-profiles/:id/consent-invitations': 'scoped',
-  'GET /api/consent-invitations/view': 'scoped',
-  'POST /api/consent-invitations/respond': 'scoped',
+  'POST /api/health-profiles/:id/link-invitations': 'scoped',
+  'DELETE /api/health-profiles/:id/link-invitations': 'scoped',
+  // SPEC-040: tài khoản được mời (kể cả member) xem/xác nhận link bằng phiên + token.
+  'GET /api/me/link-invitations/view': 'scoped',
+  'POST /api/me/link-invitations/accept': 'scoped',
   'POST /api/health-profiles/:id/upload-batches': 'scoped',
   'GET /api/source-documents': 'list',
   'GET /api/source-documents/:id/review': 'scoped',
@@ -52,12 +53,12 @@ export const HEALTH_DATA_ROUTES = {
 
 type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;
 
-// TC-016: route dùng phiên phải chặn member 403. Loại trừ route dùng token mời, /api/me/reminders
+// TC-016: route dùng phiên phải chặn member 403. Loại trừ route xác nhận link liên kết, /api/me/reminders
 // (SPEC-035: người nhận hợp lệ kể cả member đọc được lời nhắc của mình — TC-344/TC-345 kiểm riêng)
 // và route tự xem /api/me/profile (SPEC-042: member liên kết hồ sơ được đọc).
 export const MEMBER_BLOCKED_SESSION_ROUTES = Object.keys(HEALTH_DATA_ROUTES).filter(
   (route) =>
-    !route.includes('/consent-invitations/') &&
+    !route.includes('/me/link-invitations/') &&
     !route.startsWith('GET /api/me/reminders/') &&
     !route.startsWith('GET /api/me/revisit-reminders/') &&
     !route.includes(' /api/me/profile'),

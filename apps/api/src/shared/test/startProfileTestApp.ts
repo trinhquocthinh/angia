@@ -12,8 +12,8 @@ import { createMyReminderRepository } from '@src/features/myReminders/infrastruc
 import { createReminderRecipientRepository } from '@src/features/reminders/infrastructure/createReminderRecipientRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
 import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
-import { createInvitationRepository } from '@src/features/consentInvitations/infrastructure/createInvitationRepository.js';
-import { createInvitationTokenCodec } from '@src/features/consentInvitations/infrastructure/createInvitationTokenCodec.js';
+import { createProfileLinkRepository } from '@src/features/profileLinks/infrastructure/createProfileLinkRepository.js';
+import { createProfileLinkTokenCodec } from '@src/features/profileLinks/infrastructure/createProfileLinkTokenCodec.js';
 import { randomUUID } from 'node:crypto';
 import {
   SANITIZE_DOCUMENT_IMAGE_QUEUE,
@@ -102,9 +102,9 @@ function buildApp(
     aiBilling: createStubAiBillingDeps(),
     scanQuota: createStubScanQuotaDeps(),
     profiles: { repository: createProfileRepository(database, boss), storage: memory.profileStorage },
-    consentInvitations: {
-      repository: createInvitationRepository(database),
-      codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
+    profileLinks: {
+      repository: createProfileLinkRepository(database),
+      codec: createProfileLinkTokenCodec(TEST_COOKIE_SECRET),
       now: () => new Date(),
       newId: randomUUID,
       appBaseUrl,
@@ -182,7 +182,7 @@ export async function startProfileTestApp(
     failNthPut: memory.failNthPut,
     holdNextPut: memory.holdNextPut,
     failNextDeletePrefix: memory.failNextDeletePrefix,
-    codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
+    codec: createProfileLinkTokenCodec(TEST_COOKIE_SECRET),
   };
 }
 export type ProfileTestApp = Awaited<ReturnType<typeof startProfileTestApp>>;

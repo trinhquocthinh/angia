@@ -50,6 +50,10 @@ const ERROR_CATALOG = {
     status: 409,
     message: 'Vui lòng tạo link mời để người nhận tự xác nhận đồng thuận.',
   },
+  ERR_CONSENT_INVITATION_RETIRED: {
+    status: 410,
+    message: 'Link này không còn dùng. Hãy nhờ người quản lý gia đình gửi link liên kết mới.',
+  },
   ERR_CONFIRMATION_MISMATCH: {
     status: 422,
     message: 'Tên xác nhận nhập lại không trùng khớp, thao tác xóa đã bị hủy.',

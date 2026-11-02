@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { ApprovedDocumentResponse, HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -55,7 +55,7 @@ describe('Phê duyệt tạo đợt thuốc nguyên tử và cô lập gia đìn
       displayName: 'Mẹ',
     });
     const profile = (await created.json()) as HealthProfile;
-    await acceptConsentInvitation(t, main, profile.id);
+    await confirmConsentByAttestation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const { documentId } = await seedPendingDocument(t, owner, prescription);
     const approve = (data: object = prescription) =>

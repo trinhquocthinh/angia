@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
 import { vietnamDayBounds } from '@src/features/familyQuota/domain/vietnamDayBounds.js';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { seedQuotaDocument } from '@src/shared/test/seedQuotaDocument.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -26,7 +26,7 @@ describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () =>
       displayName: 'Bà',
     });
     const profileId = ((await created.json()) as HealthProfile).id;
-    await acceptConsentInvitation(t, main, profileId);
+    await confirmConsentByAttestation(t, main, profileId);
     const seed = (doc: Parameters<typeof seedQuotaDocument>[2]) =>
       seedQuotaDocument(t, { familyId, profileId, accountId: main.accountId }, doc);
     return { familyId, main, profileId, seed };

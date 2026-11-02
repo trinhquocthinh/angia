@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { ApprovedDocumentResponse, HealthProfile, SourceDocumentPage } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { PENDING_JPEG, seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -47,7 +47,7 @@ describe('Duyệt đơn thuốc/xét nghiệm và phân trang chứng từ: rout
       displayName: 'Mẹ',
     });
     const profile = (await created.json()) as HealthProfile;
-    await acceptConsentInvitation(t, main, profile.id);
+    await confirmConsentByAttestation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const seed = (payload: object) => seedPendingDocument(t, owner, payload);
     return { familyId, main, profile, seed };

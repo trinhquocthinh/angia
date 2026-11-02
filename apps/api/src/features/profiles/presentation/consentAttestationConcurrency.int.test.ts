@@ -3,7 +3,7 @@ import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/start
 import {
   ATTESTATION,
   attestationPath,
-  invitationCall,
+  linkCall,
   profileConsentFixture,
 } from '@src/shared/test/profileConsentFixture.js';
 
@@ -20,7 +20,7 @@ async function waitForProfileWaiters(t: ProfileTestApp, count: number) {
   }
   throw new Error('Request không đi tới khóa hồ sơ');
 }
-describe('LG-02: tranh chấp cam kết và link mời', () => {
+describe('LG-02: tranh chấp cam kết của main và link liên kết (SPEC-040)', () => {
   let t: ProfileTestApp;
   beforeAll(async () => {
     t = await startProfileTestApp();
@@ -29,15 +29,15 @@ describe('LG-02: tranh chấp cam kết và link mời', () => {
     await t?.stop();
   });
   it.each(['attestation', 'invitation'] as const)(
-    'TC-557: %s lấy khóa trước, chỉ một nguồn receipt được ghi',
+    'TC-557: %s lấy khóa trước, kết quả cuối luôn là self gắn tài khoản người được mời',
     async (winner) => {
       const f = await profileConsentFixture(t);
+      const member = await t.session(f.familyId, 'member', 'Chính chủ');
       const profile = await f.create();
       const link = await f.invite(profile.id);
       const calls = {
         attestation: () => t.call(f.main, 'POST', attestationPath(profile.id), ATTESTATION),
-        invitation: () =>
-          invitationCall(t, link.token, { decision: 'accepted', basis: 'self', respondentName: 'Chính chủ' }),
+        invitation: () => linkCall(t, member, link.token, { decision: 'accepted' }),
       };
       const pending: Promise<Response>[] = [];
       await t.owner.query('BEGIN');
@@ -53,25 +53,20 @@ describe('LG-02: tranh chấp cam kết và link mời', () => {
         await Promise.allSettled(pending);
       }
       const responses = await Promise.all(pending);
-      expect(responses.map((r) => r.status)).toEqual(winner === 'attestation' ? [200, 404] : [200, 200]);
-      const saved = await f.snapshot(profile.id);
-      const row = saved.profile;
-      expect(row.consent_status).toBe('confirmed');
-      expect(row.consent_source).toBe(winner === 'attestation' ? 'main_attested' : 'invitation');
-      expect(row.consent_respondent_name).toBe(winner === 'attestation' ? 'Mẹ' : 'Chính chủ');
-      expect(row.consent_confirmed_by).toBe(winner === 'attestation' ? f.main.accountId : null);
-      if (winner === 'attestation') {
-        expect(saved.invitations[0].decision).toBeNull();
-        expect(saved.invitations[0].revoked_at).not.toBeNull();
-      } else {
-        expect(saved.invitations[0].decision).toBe('accepted');
-        expect(saved.invitations[0].revoked_at).toBeNull();
-        expect(await responses[1]!.json()).toMatchObject({
-          consentSource: 'invitation',
-          consentRespondentName: 'Chính chủ',
-          consentConfirmedAt: row.consent_confirmed_at.toISOString(),
-        });
-      }
+      // Cam kết đến sau khi tài khoản đã liên kết thì bị chặn; link đến sau cam kết nâng nguồn lên self.
+      expect(responses.map((r) => r.status)).toEqual(winner === 'attestation' ? [200, 200] : [200, 409]);
+      const row = (await f.snapshot(profile.id)).profile;
+      expect(row).toMatchObject({
+        consent_status: 'confirmed',
+        consent_source: 'self',
+        consent_respondent_name: 'Chính chủ',
+        consent_confirmed_by: member.accountId,
+      });
+      const linked = await t.owner.query('SELECT 1 FROM accounts WHERE id=$1 AND health_profile_id=$2', [
+        member.accountId,
+        profile.id,
+      ]);
+      expect(linked.rowCount).toBe(1);
     },
   );
 });

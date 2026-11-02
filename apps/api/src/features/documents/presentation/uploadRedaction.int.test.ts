@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile, UploadBatchResponse } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -27,7 +27,7 @@ describe('Upload JPEG đã che, receipt và quota (E11-S2-T1)', () => {
       displayName: 'Mẹ',
     });
     const profileId = ((await response.json()) as HealthProfile).id;
-    await acceptConsentInvitation(t, main, profileId);
+    await confirmConsentByAttestation(t, main, profileId);
     return { familyId, main, profileId };
   };
   const upload = (main: SeededSession, profileId: string, files = [JPEG], flags?: string) => {

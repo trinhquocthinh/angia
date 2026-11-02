@@ -48,13 +48,26 @@ describe('Hồ sơ và đồng thuận', () => {
       { id: 'account-a', familyId: 'family-a', displayName: 'Mẹ', healthProfileId: null },
     ]);
     const input = { birthYear: 1950, displayName: 'Mẹ', linkedAccountId: 'account-a' };
-    expect(await createProfile(repository, 'family-a', input, now, 'main')).toMatchObject({ ok: true });
-    expect(await createProfile(repository, 'family-a', input, now, 'main')).toEqual({
+    expect(await createProfile(repository, 'family-a', input, now, 'account-a')).toMatchObject({ ok: true });
+    expect(await createProfile(repository, 'family-a', input, now, 'account-a')).toEqual({
       ok: false,
       code: 'ERR_PROFILE_ALREADY_LINKED',
     });
     expect(await listProfiles(repository, 'family-a', 'main')).toHaveLength(1);
     expect(await listLinkableAccounts(repository, 'family-a')).toEqual([]);
+  });
+  it('TC-576: tài khoản khác chưa được gắn ngay, hồ sơ ở pending chờ tài khoản đó xác nhận qua link', async () => {
+    const repository = createMemoryProfileRepository([
+      { id: 'account-a', familyId: 'family-a', displayName: 'Mẹ', healthProfileId: null },
+    ]);
+    const input = { birthYear: 1950, displayName: 'Mẹ', linkedAccountId: 'account-a' };
+    expect(await createProfile(repository, 'family-a', input, now, 'main')).toMatchObject({
+      ok: true,
+      value: { consentStatus: 'pending' },
+    });
+    expect(await listLinkableAccounts(repository, 'family-a')).toEqual([
+      { id: 'account-a', displayName: 'Mẹ' },
+    ]);
   });
   it('TC-010: tài khoản khác gia đình và không tồn tại đều bị từ chối', async () => {
     const repository = createMemoryProfileRepository([

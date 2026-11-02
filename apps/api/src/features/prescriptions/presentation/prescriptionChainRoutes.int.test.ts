@@ -5,7 +5,7 @@ import { createRevisitFixture } from '@src/shared/test/createRevisitFixture.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { manualPrescription } from '@src/shared/test/healthDataFixtures.js';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 
 describe('Chuỗi đơn và chi tiết (SPEC-045)', () => {
@@ -186,7 +186,7 @@ describe('Chuỗi đơn và chi tiết (SPEC-045)', () => {
         expect(await response.json()).toMatchObject({ error: { code: 'ERR_CONSENT_REQUIRED' } });
       }
     }
-    await acceptConsentInvitation(t, f.main, otherId);
+    await confirmConsentByAttestation(t, f.main, otherId);
     expect((await t.call(f.main, 'GET', `${f.base.replace(f.profile.id, otherId)}/${p.id}`)).status).toBe(
       404,
     );

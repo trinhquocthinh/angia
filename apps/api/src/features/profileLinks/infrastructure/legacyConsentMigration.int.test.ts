@@ -10,10 +10,10 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startTestDatabase, type TestDatabase } from '@src/shared/test/startTestDatabase.js';
 import { runMigrations } from '@src/shared/db/runMigrations.js';
 import { createDatabase } from '@src/shared/db/createDatabase.js';
-import { createInvitationRepository } from './createInvitationRepository.js';
-import { createInvitationTokenCodec } from './createInvitationTokenCodec.js';
-import { createInvitation } from '../application/createInvitation.js';
-import { respondToInvitation } from '../application/respondToInvitation.js';
+import { createProfileLinkRepository } from './createProfileLinkRepository.js';
+import { createProfileLinkTokenCodec } from './createProfileLinkTokenCodec.js';
+import { createProfileLink } from '../application/createProfileLink.js';
+import { acceptProfileLink } from '../application/acceptProfileLink.js';
 
 const migrations = fileURLToPath(new URL('../../../../drizzle', import.meta.url));
 
@@ -82,21 +82,23 @@ describe('Migration đồng thuận: giữ audit cũ và đóng gate cũ', () =>
       confirmed_by_account_id: accountId,
       basis: 'guardian',
     });
+    const memberId = randomUUID();
+    await owner.query(
+      "INSERT INTO accounts(id,oidc_subject,display_name,family_id,family_role) VALUES($1,$2,'Mẹ',$3,'member')",
+      [memberId, randomUUID(), familyId],
+    );
     const deps = {
-      repository: createInvitationRepository(createDatabase(pool)),
-      codec: createInvitationTokenCodec('a'.repeat(48)),
+      repository: createProfileLinkRepository(createDatabase(pool)),
+      codec: createProfileLinkTokenCodec('a'.repeat(48)),
       now: () => new Date(),
       newId: randomUUID,
+      appBaseUrl: 'http://localhost:5173',
     };
-    const created = await createInvitation(deps, familyId, profileId, accountId);
+    const created = await createProfileLink(deps, familyId, profileId, accountId);
     if (!created.ok) throw new Error('Không tạo được link fixture');
     expect(
-      await respondToInvitation(deps, created.value.token, {
-        decision: 'accepted',
-        basis: 'self',
-        respondentName: 'Mẹ',
-      }),
-    ).toMatchObject({ ok: true, value: { outcome: 'recorded' } });
+      await acceptProfileLink(deps, created.value.url.split('#')[1]!, memberId, 'accepted'),
+    ).toMatchObject({ ok: true, value: { outcome: 'linked' } });
     expect(
       (await owner.query('SELECT * FROM consent_legacy_attestations WHERE profile_id=$1', [profileId]))
         .rows[0],

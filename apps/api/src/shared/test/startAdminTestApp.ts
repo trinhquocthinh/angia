@@ -3,7 +3,7 @@ import { createAiBillingRepository } from '@src/features/aiBilling/infrastructur
 import { createAiRoutingRepository } from '@src/features/aiRouting/infrastructure/createAiRoutingRepository.js';
 import { createStubReviewDeps } from './createStubReviewDeps.js';
 import { createStubDocumentDeps } from './createStubDocumentDeps.js';
-import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
+import { createStubProfileLinkDeps } from '@src/shared/test/createStubProfileLinkDeps.js';
 import { createStubProfileDeps } from '@src/shared/test/createStubProfileDeps.js';
 import { randomUUID } from 'node:crypto';
 import { REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS } from '@angia/contracts';
@@ -71,7 +71,7 @@ export async function startAdminTestApp(options: AdminTestOptions = {}) {
   await boss.start();
   await boss.createQueue(REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS);
   const app = createApp({
-    consentInvitations: createStubInvitationDeps(),
+    profileLinks: createStubProfileLinkDeps(),
     documents: createStubDocumentDeps(),
     ...createStubReviewDeps(),
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },

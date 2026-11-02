@@ -6,7 +6,7 @@
   },
   "components": {
     "securitySchemes": {
-      "invitationToken": {
+      "profileLinkToken": {
         "type": "http",
         "scheme": "bearer"
       }
@@ -1051,6 +1051,203 @@
           "displayName"
         ]
       },
+      "CreatedHealthProfile": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "familyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "birthYear": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "vitalsEnabled": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "consentConfirmedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "consentConfirmedBy": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "consentBasis": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "self",
+              "guardian",
+              null
+            ]
+          },
+          "consentStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "invited",
+              "declined",
+              "confirmed",
+              "withdrawn"
+            ]
+          },
+          "consentSource": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "legacy_attestation",
+              "invitation",
+              "main_attested",
+              "self",
+              null
+            ]
+          },
+          "consentRespondentName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "linkInvitation": {
+            "$ref": "#/components/schemas/ProfileLinkCreated"
+          }
+        },
+        "required": [
+          "id",
+          "familyId",
+          "displayName",
+          "birthYear",
+          "vitalsEnabled",
+          "consentConfirmedAt",
+          "consentConfirmedBy",
+          "consentBasis",
+          "consentStatus",
+          "consentSource",
+          "consentRespondentName",
+          "createdAt"
+        ]
+      },
+      "ProfileLinkCreated": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "url",
+          "expiresAt"
+        ]
+      },
+      "CreateHealthProfileRequest": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "birthYear": {
+            "type": "integer",
+            "minimum": 1900
+          },
+          "linkedAccountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "consent": {
+            "$ref": "#/components/schemas/ConsentConfirmation"
+          }
+        },
+        "required": [
+          "displayName",
+          "birthYear"
+        ]
+      },
+      "ConsentConfirmation": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "attestation"
+                ]
+              },
+              "attestation": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              },
+              "basis": {
+                "type": "string",
+                "enum": [
+                  "self",
+                  "guardian"
+                ]
+              },
+              "respondentName": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              }
+            },
+            "required": [
+              "kind",
+              "attestation",
+              "basis",
+              "respondentName"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "self"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          }
+        ]
+      },
       "HealthProfile": {
         "type": "object",
         "properties": {
@@ -1149,84 +1346,6 @@
           "consentSource",
           "consentRespondentName",
           "createdAt"
-        ]
-      },
-      "CreateHealthProfileRequest": {
-        "type": "object",
-        "properties": {
-          "displayName": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 60
-          },
-          "birthYear": {
-            "type": "integer",
-            "minimum": 1900
-          },
-          "linkedAccountId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "consent": {
-            "$ref": "#/components/schemas/ConsentConfirmation"
-          }
-        },
-        "required": [
-          "displayName",
-          "birthYear"
-        ]
-      },
-      "ConsentConfirmation": {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "attestation"
-                ]
-              },
-              "attestation": {
-                "type": "boolean",
-                "enum": [
-                  true
-                ]
-              },
-              "basis": {
-                "type": "string",
-                "enum": [
-                  "self",
-                  "guardian"
-                ]
-              },
-              "respondentName": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 60
-              }
-            },
-            "required": [
-              "kind",
-              "attestation",
-              "basis",
-              "respondentName"
-            ]
-          },
-          {
-            "type": "object",
-            "properties": {
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "self"
-                ]
-              }
-            },
-            "required": [
-              "kind"
-            ]
-          }
         ]
       },
       "UpdateHealthProfileRequest": {
@@ -5128,6 +5247,112 @@
           "decision"
         ],
         "additionalProperties": false
+      },
+      "ProfileLinkCreateRequest": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "ProfileLinkView": {
+        "type": "object",
+        "properties": {
+          "profileName": {
+            "type": "string"
+          },
+          "inviterName": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canAccept": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "account_already_linked",
+              "profile_already_linked",
+              "other_family",
+              null
+            ]
+          },
+          "consentNote": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "withdrawn_before"
+            ]
+          }
+        },
+        "required": [
+          "profileName",
+          "inviterName",
+          "expiresAt",
+          "canAccept",
+          "reason",
+          "consentNote"
+        ]
+      },
+      "ProfileLinkReceipt": {
+        "type": "object",
+        "properties": {
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "linked",
+              "declined"
+            ]
+          },
+          "profileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "profileName": {
+            "type": "string"
+          },
+          "consentStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "invited",
+              "declined",
+              "confirmed",
+              "withdrawn"
+            ]
+          }
+        },
+        "required": [
+          "outcome",
+          "profileId",
+          "profileName",
+          "consentStatus"
+        ]
+      },
+      "ProfileLinkAcceptRequest": {
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "accepted",
+              "declined"
+            ]
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "additionalProperties": false
       }
     },
     "parameters": {}
@@ -6464,11 +6689,11 @@
         },
         "responses": {
           "201": {
-            "description": "Hồ sơ đã tạo",
+            "description": "Hồ sơ đã tạo; kèm linkInvitation khi liên kết tài khoản khác",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HealthProfile"
+                  "$ref": "#/components/schemas/CreatedHealthProfile"
                 }
               }
             }
@@ -9885,6 +10110,7 @@
         "tags": [
           "consent-invitations"
         ],
+        "deprecated": true,
         "parameters": [
           {
             "schema": {
@@ -9937,28 +10163,8 @@
               }
             }
           },
-          "404": {
-            "description": "ERR_NOT_FOUND",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "ERR_CONSENT_ALREADY_CONFIRMED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "ERR_VALIDATION",
+          "410": {
+            "description": "ERR_CONSENT_INVITATION_RETIRED",
             "content": {
               "application/json": {
                 "schema": {
@@ -9973,6 +10179,7 @@
         "tags": [
           "consent-invitations"
         ],
+        "deprecated": true,
         "parameters": [
           {
             "schema": {
@@ -10015,28 +10222,8 @@
               }
             }
           },
-          "404": {
-            "description": "ERR_NOT_FOUND",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "ERR_CONSENT_ALREADY_CONFIRMED",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "ERR_VALIDATION",
+          "410": {
+            "description": "ERR_CONSENT_INVITATION_RETIRED",
             "content": {
               "application/json": {
                 "schema": {
@@ -10053,6 +10240,7 @@
         "tags": [
           "consent-invitations"
         ],
+        "deprecated": true,
         "security": [
           {
             "invitationToken": []
@@ -10069,8 +10257,8 @@
               }
             }
           },
-          "404": {
-            "description": "ERR_NOT_FOUND",
+          "410": {
+            "description": "ERR_CONSENT_INVITATION_RETIRED",
             "content": {
               "application/json": {
                 "schema": {
@@ -10087,6 +10275,7 @@
         "tags": [
           "consent-invitations"
         ],
+        "deprecated": true,
         "security": [
           {
             "invitationToken": []
@@ -10113,8 +10302,68 @@
               }
             }
           },
+          "410": {
+            "description": "ERR_CONSENT_INVITATION_RETIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/link-invitations": {
+      "post": {
+        "tags": [
+          "profile-links"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileLinkCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Link mới, hết hạn sau 7 ngày",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileLinkCreated"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "403": {
-            "description": "ERR_FORBIDDEN: Origin",
+            "description": "ERR_FORBIDDEN",
             "content": {
               "application/json": {
                 "schema": {
@@ -10125,6 +10374,215 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_PROFILE_ALREADY_LINKED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "profile-links"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Đã thu hồi link đang chờ (idempotent)"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_PROFILE_ALREADY_LINKED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/link-invitations/view": {
+      "get": {
+        "tags": [
+          "profile-links"
+        ],
+        "security": [
+          {
+            "profileLinkToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thông tin tối thiểu, không tiêu thụ token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileLinkView"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/link-invitations/accept": {
+      "post": {
+        "tags": [
+          "profile-links"
+        ],
+        "security": [
+          {
+            "profileLinkToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileLinkAcceptRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Kết quả liên kết hoặc từ chối",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileLinkReceipt"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: thiếu CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_PROFILE_ALREADY_LINKED",
             "content": {
               "application/json": {
                 "schema": {

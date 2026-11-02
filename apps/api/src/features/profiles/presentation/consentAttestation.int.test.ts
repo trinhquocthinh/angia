@@ -5,7 +5,7 @@ import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenie
 import {
   ATTESTATION,
   attestationPath,
-  invitationCall,
+  linkCall,
   profileConsentFixture,
 } from '@src/shared/test/profileConsentFixture.js';
 
@@ -18,13 +18,12 @@ describe('LG-02: xác nhận hồ sơ hiện có', () => {
     await t?.stop();
   });
   it.each(['pending', 'invited', 'declined'] as const)(
-    'TC-551: %s chuyển confirmed, link đang chờ bị thu hồi',
+    'TC-551: %s chuyển confirmed, link liên kết đang chờ vẫn dùng được (SPEC-040)',
     async (status) => {
       const f = await profileConsentFixture(t);
       const profile = await f.create();
-      const link = status === 'pending' ? null : await f.invite(profile.id);
-      if (status === 'declined')
-        await invitationCall(t, link!.token, { decision: 'declined', basis: 'self', respondentName: 'An' });
+      const link = await f.invite(profile.id);
+      await t.owner.query('UPDATE health_profiles SET consent_status=$2 WHERE id=$1', [profile.id, status]);
       const response = await t.call(f.main, 'POST', attestationPath(profile.id), ATTESTATION);
       expect(response.status).toBe(200);
       expect(response.headers.get('cache-control')).toBe('no-store');
@@ -35,10 +34,9 @@ describe('LG-02: xác nhận hồ sơ hiện có', () => {
         consentRespondentName: 'Mẹ',
         consentBasis: 'guardian',
       });
-      if (status === 'invited') {
-        expect((await invitationCall(t, link!.token)).status).toBe(404);
-        expect((await f.snapshot(profile.id)).invitations[0].revoked_at).not.toBeNull();
-      }
+      const member = await t.session(f.familyId, 'member');
+      expect((await linkCall(t, member, link.token)).status).toBe(200);
+      expect((await f.snapshot(profile.id)).invitations[0].revoked_at).toBeNull();
     },
   );
   it('TC-553: hồ sơ người khác kể cả confirmed bị chặn trước idempotent, giữ nguyên dữ liệu', async () => {
@@ -46,7 +44,7 @@ describe('LG-02: xác nhận hồ sơ hiện có', () => {
     const member = await t.session(f.familyId, 'member');
     const profile = await f.create({ linkedAccountId: member.accountId });
     const link = await f.invite(profile.id);
-    await invitationCall(t, link.token, { decision: 'accepted', basis: 'self', respondentName: 'An' });
+    expect((await linkCall(t, member, link.token, { decision: 'accepted' })).status).toBe(200);
     const before = await f.snapshot(profile.id);
     for (const body of [ATTESTATION, { kind: 'self' }]) {
       const response = await t.call(f.main, 'POST', attestationPath(profile.id), body);
@@ -81,10 +79,13 @@ describe('LG-02: xác nhận hồ sơ hiện có', () => {
             ? { consent: ATTESTATION }
             : {},
       );
-      if (source === 'invitation') {
-        const link = await f.invite(profile.id);
-        await invitationCall(t, link.token, { decision: 'accepted', basis: 'self', respondentName: 'An' });
-      }
+      // Nguồn 'invitation' chỉ còn trong dữ liệu cũ (link đồng thuận ẩn danh đã ngừng ở E14).
+      if (source === 'invitation')
+        await t.owner.query(
+          `UPDATE health_profiles SET consent_status='confirmed',consent_source='invitation',
+           consent_confirmed_at=now(),consent_basis='self',consent_respondent_name='An' WHERE id=$1`,
+          [profile.id],
+        );
       const before = await f.snapshot(profile.id);
       const body = source === 'self' ? { kind: 'self' } : { ...ATTESTATION, respondentName: 'Tên khác' };
       expect((await t.call(f.main, 'POST', attestationPath(profile.id), body)).status).toBe(200);

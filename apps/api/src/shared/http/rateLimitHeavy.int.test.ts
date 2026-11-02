@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 
@@ -20,7 +20,7 @@ describe('TC-300 — rate limit thao tác nặng theo tài khoản (SPEC-030)', 
       displayName: 'Bà',
     });
     const profileId = ((await created.json()) as HealthProfile).id;
-    await acceptConsentInvitation(t, main, profileId);
+    await confirmConsentByAttestation(t, main, profileId);
     return { main, profileId };
   };
   const upload = (user: SeededSession, profileId: string) => {

@@ -1,6 +1,6 @@
 import { createCipheriv, createDecipheriv, createHash, hkdfSync, randomBytes } from 'node:crypto';
 import { z } from 'zod';
-import type { InvitationTokenCodec } from '../application/ports.js';
+import type { ProfileLinkTokenCodec } from '../application/ports.js';
 
 const payloadSchema = z
   .object({
@@ -10,10 +10,10 @@ const payloadSchema = z
     nonce: z.string().length(43),
   })
   .strict();
-const context = 'angia:consent-invitation:v1';
+const context = 'angia:profile-link:v1';
 
 // Khóa riêng theo context; token chỉ ở fragment/Authorization, DB giữ SHA-256.
-export function createInvitationTokenCodec(secret: string): InvitationTokenCodec {
+export function createProfileLinkTokenCodec(secret: string): ProfileLinkTokenCodec {
   const key = Buffer.from(hkdfSync('sha256', secret, '', context, 32));
   return {
     hash: (token) => createHash('sha256').update(token).digest('hex'),

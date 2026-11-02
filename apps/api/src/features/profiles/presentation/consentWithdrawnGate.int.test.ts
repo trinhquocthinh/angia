@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile, SourceDocumentPage } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { manualReading } from '@src/shared/test/healthDataFixtures.js';
+import { linkAccountToProfile } from '@src/shared/test/profileConsentFixture.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { SEEDED_MEDICATIONS, seedReminder } from '@src/shared/test/seedReminder.js';
@@ -34,9 +35,10 @@ describe('Gate đồng thuận sau khi rút: đọc, ảnh, duyệt (F07 §4.4)'
     const familyId = await t.family();
     const main = await t.session(familyId, 'main', 'Bố');
     const grandma = await t.session(familyId, 'member', 'Bà');
-    const profile = await createProfile(main, { displayName: 'Bà Tư', linkedAccountId: grandma.accountId });
+    const profile = await createProfile(main, { displayName: 'Bà Tư' });
     const control = await createProfile(main, { displayName: 'Ông Năm' });
-    for (const p of [profile, control]) await acceptConsentInvitation(t, main, p.id);
+    await linkAccountToProfile(t, main, grandma, profile.id);
+    await confirmConsentByAttestation(t, main, control.id);
     const base = `${profiles}/${profile.id}`;
     const records = (type: string, data: object) =>
       t.call(main, 'POST', `${base}/manual-records`, { type, data });
@@ -126,11 +128,11 @@ describe('Gate đồng thuận sau khi rút: đọc, ảnh, duyệt (F07 §4.4)'
     expect(removed.status).toBe(204);
   });
 
-  it('TC-380: gửi lại lời mời với attestation vẫn 201 để đồng thuận lại (spec §4.5)', async () => {
+  it('TC-380: hồ sơ đã rút còn liên kết tài khoản thì không tạo link mới (SPEC-040)', async () => {
     const f = await fixture();
     await withdraw(f);
-    const invited = await t.call(f.main, 'POST', `${f.base}/consent-invitations`, { attestation: true });
-    expect(invited.status).toBe(201);
+    const invited = await t.call(f.main, 'POST', `${f.base}/link-invitations`, {});
+    expect(invited.status).toBe(409);
   });
 
   it('TC-380: lời nhắc đã sinh trước khi rút → người nhận GET /api/me/reminders/:id nhận 404', async () => {

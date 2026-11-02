@@ -31,6 +31,7 @@ describe('TC-558 — metadata thao tác đồng thuận theo phiên main', () =>
     );
     if (!result.ok) throw new Error('Không tạo được fixture');
     await repo.withFamily('f', async (store) => {
+      if (linked === 'other') await store.linkAccount('other', result.value.id);
       const profile = (await store.lockProfile(result.value.id))!;
       profile.consentStatus = status;
       profile.consentWithdrawnAt = withdrawn ? new Date(withdrawn) : null;

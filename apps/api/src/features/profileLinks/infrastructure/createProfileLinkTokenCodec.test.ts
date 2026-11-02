@@ -1,10 +1,10 @@
 import { randomUUID } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import { createInvitationTokenCodec } from './createInvitationTokenCodec.js';
+import { createProfileLinkTokenCodec } from './createProfileLinkTokenCodec.js';
 
-describe('Token mời đồng thuận', () => {
+describe('Token link liên kết hồ sơ', () => {
   it('mã hóa phạm vi, ngẫu nhiên mỗi lần và từ chối token sửa đổi hoặc sai khóa', () => {
-    const codec = createInvitationTokenCodec('a'.repeat(48));
+    const codec = createProfileLinkTokenCodec('a'.repeat(48));
     const claims = { familyId: randomUUID(), profileId: randomUUID(), invitationId: randomUUID() };
     const token = codec.issue(claims);
     expect(codec.verify(token)).toEqual(claims);
@@ -14,7 +14,7 @@ describe('Token mời đồng thuận', () => {
     const parts = token.split('.');
     parts[1] = `${parts[1]![0] === 'A' ? 'B' : 'A'}${parts[1]!.slice(1)}`;
     expect(codec.verify(parts.join('.'))).toBeNull();
-    expect(createInvitationTokenCodec('b'.repeat(48)).verify(token)).toBeNull();
+    expect(createProfileLinkTokenCodec('b'.repeat(48)).verify(token)).toBeNull();
     for (const invalid of ['', 'v1.bogus', token + '=', 'x'.repeat(5000)]) {
       expect(codec.verify(invalid)).toBeNull();
     }

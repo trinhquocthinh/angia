@@ -1522,13 +1522,13 @@ export interface paths {
         };
       };
       responses: {
-        /** @description Hồ sơ đã tạo */
+        /** @description Hồ sơ đã tạo; kèm linkInvitation khi liên kết tài khoản khác */
         201: {
           headers: {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['HealthProfile'];
+            'application/json': components['schemas']['CreatedHealthProfile'];
           };
         };
         /** @description ERR_UNAUTHENTICATED */
@@ -4659,6 +4659,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
+    /** @deprecated */
     post: {
       parameters: {
         query?: never;
@@ -4701,26 +4702,8 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_NOT_FOUND */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_CONSENT_ALREADY_CONFIRMED */
-        409: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_VALIDATION */
-        422: {
+        /** @description ERR_CONSENT_INVITATION_RETIRED */
+        410: {
           headers: {
             [name: string]: unknown;
           };
@@ -4730,6 +4713,7 @@ export interface paths {
         };
       };
     };
+    /** @deprecated */
     delete: {
       parameters: {
         query?: never;
@@ -4768,26 +4752,8 @@ export interface paths {
             'application/json': components['schemas']['ErrorResponse'];
           };
         };
-        /** @description ERR_NOT_FOUND */
-        404: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_CONSENT_ALREADY_CONFIRMED */
-        409: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ErrorResponse'];
-          };
-        };
-        /** @description ERR_VALIDATION */
-        422: {
+        /** @description ERR_CONSENT_INVITATION_RETIRED */
+        410: {
           headers: {
             [name: string]: unknown;
           };
@@ -4809,6 +4775,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** @deprecated */
     get: {
       parameters: {
         query?: never;
@@ -4827,8 +4794,8 @@ export interface paths {
             'application/json': components['schemas']['ConsentInvitationView'];
           };
         };
-        /** @description ERR_NOT_FOUND */
-        404: {
+        /** @description ERR_CONSENT_INVITATION_RETIRED */
+        410: {
           headers: {
             [name: string]: unknown;
           };
@@ -4855,6 +4822,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
+    /** @deprecated */
     post: {
       parameters: {
         query?: never;
@@ -4877,7 +4845,66 @@ export interface paths {
             'application/json': components['schemas']['ConsentInvitationReceipt'];
           };
         };
-        /** @description ERR_FORBIDDEN: Origin */
+        /** @description ERR_CONSENT_INVITATION_RETIRED */
+        410: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/link-invitations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['ProfileLinkCreateRequest'];
+        };
+      };
+      responses: {
+        /** @description Link mới, hết hạn sau 7 ngày */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ProfileLinkCreated'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
         403: {
           headers: {
             [name: string]: unknown;
@@ -4888,6 +4915,216 @@ export interface paths {
         };
         /** @description ERR_NOT_FOUND */
         404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_PROFILE_ALREADY_LINKED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Đã thu hồi link đang chờ (idempotent) */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_PROFILE_ALREADY_LINKED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/me/link-invitations/view': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Thông tin tối thiểu, không tiêu thụ token */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ProfileLinkView'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/me/link-invitations/accept': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['ProfileLinkAcceptRequest'];
+        };
+      };
+      responses: {
+        /** @description Kết quả liên kết hoặc từ chối */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ProfileLinkReceipt'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: thiếu CSRF */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_PROFILE_ALREADY_LINKED */
+        409: {
           headers: {
             [name: string]: unknown;
           };
@@ -5165,7 +5402,7 @@ export interface components {
       id: string;
       displayName: string;
     };
-    HealthProfile: {
+    CreatedHealthProfile: {
       /** Format: uuid */
       id: string;
       /** Format: uuid */
@@ -5186,6 +5423,12 @@ export interface components {
       consentRespondentName: string | null;
       /** Format: date-time */
       createdAt: string;
+      linkInvitation?: components['schemas']['ProfileLinkCreated'];
+    };
+    ProfileLinkCreated: {
+      url: string;
+      /** Format: date-time */
+      expiresAt: string;
     };
     CreateHealthProfileRequest: {
       displayName: string;
@@ -5208,6 +5451,28 @@ export interface components {
           /** @enum {string} */
           kind: 'self';
         };
+    HealthProfile: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      familyId: string;
+      displayName: string;
+      birthYear: number | null;
+      vitalsEnabled: boolean | null;
+      /** Format: date-time */
+      consentConfirmedAt: string | null;
+      /** Format: uuid */
+      consentConfirmedBy: string | null;
+      /** @enum {string|null} */
+      consentBasis: 'self' | 'guardian' | null;
+      /** @enum {string} */
+      consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed' | 'withdrawn';
+      /** @enum {string|null} */
+      consentSource: 'legacy_attestation' | 'invitation' | 'main_attested' | 'self' | null;
+      consentRespondentName: string | null;
+      /** Format: date-time */
+      createdAt: string;
+    };
     UpdateHealthProfileRequest: {
       birthYear?: number;
       vitalsEnabled?: boolean;
@@ -6079,6 +6344,31 @@ export interface components {
       respondentName: string;
       /** @enum {string} */
       basis: 'self' | 'guardian';
+      /** @enum {string} */
+      decision: 'accepted' | 'declined';
+    };
+    ProfileLinkCreateRequest: Record<string, never>;
+    ProfileLinkView: {
+      profileName: string;
+      inviterName: string | null;
+      /** Format: date-time */
+      expiresAt: string;
+      canAccept: boolean;
+      /** @enum {string|null} */
+      reason: 'account_already_linked' | 'profile_already_linked' | 'other_family' | null;
+      /** @enum {string|null} */
+      consentNote: 'withdrawn_before' | null;
+    };
+    ProfileLinkReceipt: {
+      /** @enum {string} */
+      outcome: 'linked' | 'declined';
+      /** Format: uuid */
+      profileId: string;
+      profileName: string;
+      /** @enum {string} */
+      consentStatus: 'pending' | 'invited' | 'declined' | 'confirmed' | 'withdrawn';
+    };
+    ProfileLinkAcceptRequest: {
       /** @enum {string} */
       decision: 'accepted' | 'declined';
     };
