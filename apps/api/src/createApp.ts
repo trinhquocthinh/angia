@@ -1,3 +1,4 @@
+import type { SelfProfileRepository } from '@src/features/selfProfile/application/ports.js';
 import type { TimelineRepository } from '@src/features/timeline/application/ports.js';
 import { registerHistoryRoutes } from '@src/registerHistoryRoutes.js';
 import type { PrescriptionChainRepository } from '@src/features/prescriptions/application/prescriptionChainPorts.js';
@@ -87,6 +88,7 @@ export type AppDependencies = {
   revisits: RevisitRepository;
   prescriptionChain: PrescriptionChainRepository;
   timeline: TimelineRepository;
+  selfProfile: SelfProfileRepository;
   reminderRecipients: ReminderRecipientRepository;
   myReminders: MyReminderRepository;
   myRevisitReminders: MyRevisitReminderRepository;

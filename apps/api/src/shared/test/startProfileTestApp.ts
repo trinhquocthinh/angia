@@ -1,3 +1,4 @@
+import { createSelfProfileRepository } from '@src/features/selfProfile/infrastructure/createSelfProfileRepository.js';
 import { createTimelineRepository } from '@src/features/timeline/infrastructure/createTimelineRepository.js';
 import { createPrescriptionChainRepository } from '@src/features/prescriptions/infrastructure/createPrescriptionChainRepository.js';
 import { createRevisitRepository } from '@src/features/prescriptions/infrastructure/createRevisitRepository.js';
@@ -72,6 +73,7 @@ const healthDataRepositories = (database: Database) => ({
   revisits: createRevisitRepository(database),
   prescriptionChain: createPrescriptionChainRepository(database),
   timeline: createTimelineRepository(database),
+  selfProfile: createSelfProfileRepository(database),
   reminderRecipients: createReminderRecipientRepository(database),
   myReminders: createMyReminderRepository(database),
   myRevisitReminders: createMyRevisitReminderRepository(database),

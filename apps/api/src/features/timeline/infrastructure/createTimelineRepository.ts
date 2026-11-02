@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
+import { type FamilyScope, withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import { healthProfiles } from '@src/shared/db/schema/index.js';
 import type { TimelineRepository } from '../application/ports.js';
 import { listTimelinePrescriptions } from './listTimelinePrescriptions.js';
@@ -11,7 +11,10 @@ import { listTimelineStoppedCourses } from './listTimelineStoppedCourses.js';
 import { listTimelineAdherencePeriods } from './listTimelineAdherencePeriods.js';
 import { loadTimelinePrescriptionPairs } from './loadTimelinePrescriptionPairs.js';
 
-export function createTimelineRepository(db: Database): TimelineRepository {
+export function createTimelineRepository(
+  db: Database,
+  scope: FamilyScope = withFamilyScope,
+): TimelineRepository {
   // Cùng ảnh chụp dữ liệu cho sáu nguồn, đồng thuận và so sánh đơn.
   const reader: Pick<Database, 'transaction'> = {
     transaction: (work) =>
@@ -19,7 +22,7 @@ export function createTimelineRepository(db: Database): TimelineRepository {
   };
   return {
     withFamily: (familyId, work) =>
-      withFamilyScope(reader, familyId, (tx) =>
+      scope(reader, familyId, (tx) =>
         work({
           profile: async (id) =>
             (

@@ -1,5 +1,6 @@
 import { resolveReminderRecipients } from '@src/features/reminders/domain/resolveReminderRecipients.js';
 import type { MyReminderActor, MyReminderOutcome, MyReminderRepository } from './ports.js';
+import { toReminderMedication } from './toReminderMedication.js';
 
 // Mọi chuỗi PostgreSQL chấp nhận là uuid; chuỗi khác trả 404 như ID không tồn tại (không lộ khác biệt).
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -30,12 +31,7 @@ export async function getMyReminder(
       slot,
       scheduledAt,
       profileName,
-      medications: medications.map((m) => ({
-        name: m.name,
-        strength: m.strength ?? null,
-        quantityPerDose: m.quantityPerDose ?? null,
-        doseUnit: m.doseUnit ?? null,
-      })),
+      medications: medications.map(toReminderMedication),
     },
   };
 }

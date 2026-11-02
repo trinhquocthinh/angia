@@ -1,6 +1,6 @@
 import { findProfileInFamily } from '@src/features/profiles/infrastructure/findProfileInFamily.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
+import { type FamilyScope, withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import { findProfilePrescription } from '@src/features/prescriptions/infrastructure/findProfilePrescription.js';
 import type { MedicationManagementRepository } from '../application/managementPorts.js';
 import { findMedicationCourse } from './findMedicationCourse.js';
@@ -11,10 +11,13 @@ import { insertMedicationCourses } from './insertMedicationCourses.js';
 import { lockMedicationProfile } from './lockMedicationProfile.js';
 import { replaceMedicationCourses } from './replaceMedicationCourses.js';
 
-export function createMedicationRepository(db: Database): MedicationManagementRepository {
+export function createMedicationRepository(
+  db: Database,
+  scope: FamilyScope = withFamilyScope,
+): MedicationManagementRepository {
   return {
     withFamily: (familyId, work) =>
-      withFamilyScope(db, familyId, (tx) =>
+      scope(db, familyId, (tx) =>
         work({
           findProfile: (id) => findProfileInFamily(tx, familyId, id, 'share'),
           lockMedicationProfile: (id) => lockMedicationProfile(tx, familyId, id),

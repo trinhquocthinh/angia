@@ -1,3 +1,4 @@
+import { createSelfProfileRepository } from '@src/features/selfProfile/infrastructure/createSelfProfileRepository.js';
 import { createTimelineRepository } from '@src/features/timeline/infrastructure/createTimelineRepository.js';
 import { createPrescriptionChainRepository } from '@src/features/prescriptions/infrastructure/createPrescriptionChainRepository.js';
 import { createRevisitRepository } from '@src/features/prescriptions/infrastructure/createRevisitRepository.js';
@@ -165,6 +166,7 @@ const app = createApp({
   revisits: createRevisitRepository(db),
   prescriptionChain: createPrescriptionChainRepository(db),
   timeline: createTimelineRepository(db),
+  selfProfile: createSelfProfileRepository(db),
   reminderRecipients: createReminderRecipientRepository(db),
   myReminders: createMyReminderRepository(db),
   myRevisitReminders: createMyRevisitReminderRepository(db),

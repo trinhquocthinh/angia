@@ -4748,6 +4748,116 @@
           }
         ]
       },
+      "SelfProfile": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "birthYear": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "consentStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "invited",
+              "declined",
+              "confirmed",
+              "withdrawn"
+            ]
+          },
+          "showsVitals": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "birthYear",
+          "consentStatus",
+          "showsVitals"
+        ]
+      },
+      "SelfReminder": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "slot": {
+            "type": "string",
+            "enum": [
+              "morning",
+              "noon",
+              "afternoon",
+              "evening"
+            ]
+          },
+          "scheduledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "medications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyReminderMedication"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "slot",
+          "scheduledAt",
+          "medications"
+        ]
+      },
+      "MyReminderMedication": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "strength": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quantityPerDose": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "doseUnit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "strength",
+          "quantityPerDose",
+          "doseUnit"
+        ]
+      },
       "ReminderRecipients": {
         "type": "object",
         "properties": {
@@ -4855,38 +4965,6 @@
           "scheduledAt",
           "profileName",
           "medications"
-        ]
-      },
-      "MyReminderMedication": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "strength": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "quantityPerDose": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "doseUnit": {
-            "type": [
-              "string",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "name",
-          "strength",
-          "quantityPerDose",
-          "doseUnit"
         ]
       },
       "MyRevisitReminder": {
@@ -9654,6 +9732,560 @@
           },
           "409": {
             "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile": {
+      "get": {
+        "tags": [
+          "self-profile"
+        ],
+        "summary": "Tóm tắt hồ sơ liên kết với tài khoản phiên (SPEC-042)",
+        "responses": {
+          "200": {
+            "description": "Hồ sơ và trạng thái đồng thuận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SelfProfile"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: tài khoản không liên kết hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/reminders": {
+      "get": {
+        "tags": [
+          "self-profile"
+        ],
+        "summary": "Lời nhắc của một ngày, mặc định hôm nay Việt Nam (SPEC-042)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": false,
+            "name": "date",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lời nhắc theo giờ nhắc tăng dần",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SelfReminder"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: tài khoản không liên kết hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/measurements/series": {
+      "get": {
+        "tags": [
+          "self-profile"
+        ],
+        "summary": "Chuỗi số đo của hồ sơ liên kết, 404 khi không hiện số đo (SPEC-042, BR-049)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "blood_pressure",
+                "glucose"
+              ]
+            },
+            "required": true,
+            "name": "kind",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "to",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "mmol/L",
+                "mg/dL"
+              ],
+              "default": "mmol/L"
+            },
+            "required": false,
+            "name": "displayGlucoseUnit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Điểm đo và cờ tuần",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasurementSeries"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: tài khoản không liên kết hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/medications/current": {
+      "get": {
+        "tags": [
+          "self-profile"
+        ],
+        "summary": "Thuốc đang dùng của hồ sơ liên kết (SPEC-042, SPEC-018)",
+        "responses": {
+          "200": {
+            "description": "Thuốc có hiệu lực hôm nay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentMedications"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: tài khoản không liên kết hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/revisits": {
+      "get": {
+        "tags": [
+          "self-profile"
+        ],
+        "summary": "Lịch hẹn từ hôm nay trở đi của hồ sơ liên kết (SPEC-042, SPEC-043)",
+        "responses": {
+          "200": {
+            "description": "Lịch hẹn gộp theo ngày",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisitList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: tài khoản không liên kết hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/timeline": {
+      "get": {
+        "tags": [
+          "self-profile"
+        ],
+        "summary": "Dòng thời gian của hồ sơ liên kết (SPEC-042, SPEC-049)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trang dòng thời gian",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimelinePage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: tài khoản không liên kết hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/lab-result-series": {
+      "get": {
+        "tags": [
+          "self-profile"
+        ],
+        "summary": "Chuỗi xét nghiệm của hồ sơ liên kết (SPEC-042, SPEC-021)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "required": false,
+            "name": "testName",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nhóm chỉ số",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabSeriesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: tài khoản không liên kết hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút",
             "content": {
               "application/json": {
                 "schema": {

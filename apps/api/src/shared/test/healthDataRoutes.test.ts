@@ -52,7 +52,15 @@ describe('Kiểm kê route cho NFR-4', () => {
   });
 
   it('TC-570: mọi route /api/me/profile/* khai báo nhóm self và không bị chặn như route main', () => {
-    const selfRoutes: RouteOfKind<'self'>[] = [];
+    const selfRoutes: RouteOfKind<'self'>[] = [
+      'GET /api/me/profile',
+      'GET /api/me/profile/lab-result-series',
+      'GET /api/me/profile/measurements/series',
+      'GET /api/me/profile/medications/current',
+      'GET /api/me/profile/reminders',
+      'GET /api/me/profile/revisits',
+      'GET /api/me/profile/timeline',
+    ];
     expect(registered().filter((route) => SELF_PATH.test(route))).toEqual(selfRoutes);
     expect(MEMBER_BLOCKED_SESSION_ROUTES.filter((route) => SELF_PATH.test(route))).toEqual([]);
   });

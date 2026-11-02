@@ -5,6 +5,9 @@ export type FamilyScopedTx = Parameters<Parameters<Database['transaction']>[0]>[
 
 export const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// Repository đọc dùng lại ở route tự xem nhận phạm vi qua kiểu này (SPEC-042).
+export type FamilyScope = typeof withFamilyScope;
+
 // Bọc mọi truy vấn dữ liệu sức khỏe (SPEC-006, Tech Spec §3): gán app.family_id cục bộ trong
 // transaction để RLS lọc theo nhóm. set_config(..., true) tương đương SET LOCAL nhưng nhận tham số.
 export async function withFamilyScope<T>(
