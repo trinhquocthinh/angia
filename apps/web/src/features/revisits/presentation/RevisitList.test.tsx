@@ -23,6 +23,14 @@ describe('TC-473 — danh sách lịch tái khám', () => {
     expect(html).toContain('02/10/2026');
     expect(html).not.toContain('null');
   });
+  it('SPEC-042: không truyền onEdit thì chỉ đọc, không có nút sửa', () => {
+    const data = [
+      { revisitDate: '2026-11-20', prescriptions: [{ id: 'a', issuedDate: '2026-10-01', facility: null }] },
+    ];
+    const html = renderToStaticMarkup(<RevisitList data={data} />);
+    expect(html).toContain('20/11/2026');
+    expect(html).not.toContain('Sửa ngày hẹn');
+  });
   it('không có lịch hẹn thì giải thích rõ', () => {
     expect(renderToStaticMarkup(<RevisitList data={[]} onEdit={() => undefined} />)).toContain(
       'Chưa có lịch tái khám từ hôm nay.',

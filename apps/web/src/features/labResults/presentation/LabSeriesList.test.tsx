@@ -34,6 +34,11 @@ const render = (props: Partial<Parameters<typeof LabSeriesList>[0]> = {}) =>
   );
 
 describe('Kết quả cận lâm sàng (Design §6, E5-S2-T1)', () => {
+  it('SPEC-042: chỉ đọc thì trạng thái rỗng không mời tải ảnh', () => {
+    const html = render({ data: [], readOnly: true });
+    expect(html).toContain('Chưa có kết quả xét nghiệm nào.');
+    expect(html).not.toContain('Tải ảnh');
+  });
   it('TC-259 — thẻ từng chỉ số theo thứ tự API, lần mới nhất trên, khoảng tham chiếu nguyên văn phiếu', () => {
     const html = render();
     expect(html.indexOf('30/09/2026')).toBeLessThan(html.indexOf('05/01/2026'));

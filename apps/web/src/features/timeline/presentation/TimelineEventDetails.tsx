@@ -4,7 +4,9 @@ import { formatNumber, readingText } from '@src/features/measurements/applicatio
 import { TimelinePrescription } from './TimelinePrescription';
 import { TimelineLabResults } from './TimelineLabResults';
 
-export function TimelineEventDetails({ event, profileId }: { event: TimelineEvent; profileId: string }) {
+type Props = { event: TimelineEvent; profileId: string | undefined };
+
+export function TimelineEventDetails({ event, profileId }: Props) {
   switch (event.kind) {
     case 'prescription':
       return <TimelinePrescription data={event.data} profileId={profileId} />;
@@ -31,19 +33,21 @@ export function TimelineEventDetails({ event, profileId }: { event: TimelineEven
       return (
         <>
           <p>Lịch hẹn từ {event.data.prescriptionIds.length} đơn thuốc</p>
-          <ul className="flex flex-col items-start gap-1">
-            {event.data.prescriptionIds.map((prescriptionId, index) => (
-              <li key={prescriptionId}>
-                <Link
-                  to="/profiles/$profileId/prescriptions/$prescriptionId"
-                  params={{ profileId, prescriptionId }}
-                  className="inline-flex min-h-11 items-center font-semibold text-[#004135] underline underline-offset-4"
-                >
-                  Xem đơn thuốc {index + 1}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          {profileId && (
+            <ul className="flex flex-col items-start gap-1">
+              {event.data.prescriptionIds.map((prescriptionId, index) => (
+                <li key={prescriptionId}>
+                  <Link
+                    to="/profiles/$profileId/prescriptions/$prescriptionId"
+                    params={{ profileId, prescriptionId }}
+                    className="inline-flex min-h-11 items-center font-semibold text-[#004135] underline underline-offset-4"
+                  >
+                    Xem đơn thuốc {index + 1}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </>
       );
   }

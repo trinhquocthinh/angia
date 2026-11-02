@@ -11,11 +11,13 @@ export function ProfileTopbar({
   hasFamily,
   pendingCount,
   account,
+  personal,
 }: {
   profiles: HealthProfile[];
   hasFamily: boolean;
   pendingCount?: number | undefined;
   account: ReactNode;
+  personal: boolean;
 }) {
   return (
     <header className="fixed inset-x-0 top-0 z-50 hidden bg-[#f0fcfb]/90 shadow-[0_1px_8px_rgba(0,0,0,0.04)] backdrop-blur-xl lg:block">
@@ -30,8 +32,8 @@ export function ProfileTopbar({
           </span>
         </a>
         <div className="flex max-w-2xl flex-1 items-center justify-center gap-3 px-2">
-          <ProfileSearch profiles={profiles} className="w-80 shrink-0" />
-          <TopbarNav pendingCount={pendingCount} />
+          {!personal && <ProfileSearch profiles={profiles} className="w-80 shrink-0" />}
+          <TopbarNav pendingCount={pendingCount} personal={personal} />
         </div>
         <div className="flex shrink-0 items-center gap-3">
           {hasFamily && (

@@ -1,6 +1,7 @@
 import { MyConsentSection } from './components/MyConsentSection';
 import { createMyConsentRepository } from '../infrastructure/createMyConsentRepository';
 import { RecipientNotice } from './components/RecipientNotice';
+import { SelfProfileEntry } from './components/SelfProfileEntry';
 import { useProfileSessionRecovery } from '../application/useProfileSessionRecovery';
 import { useState } from 'react';
 import { useReviewQueue } from '@src/features/documents/application/useReviewWorkspace';
@@ -32,6 +33,7 @@ export function HomePage() {
   if (!session.data) return null;
   const profiles = workspace.profiles.data ?? [];
   const main = session.data.role === 'main';
+  const memberNotice = session.data.account.healthProfileId ? <SelfProfileEntry /> : <RecipientNotice />;
   const subtitle =
     main && workspace.profiles.isSuccess ? `${profiles.length} hồ sơ thành viên` : 'Sổ sức khỏe gia đình';
   return (
@@ -61,7 +63,7 @@ export function HomePage() {
           onWithdraw={() => setWithdrawing(true)}
         />
       ) : (
-        <RecipientNotice />
+        memberNotice
       )}
       {main && (
         <ProfileDialogs

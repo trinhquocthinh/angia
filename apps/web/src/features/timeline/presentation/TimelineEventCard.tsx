@@ -11,7 +11,9 @@ const labels: Record<TimelineEvent['kind'], string> = {
   revisit: 'Lịch tái khám',
 };
 
-export function TimelineEventCard({ event, profileId }: { event: TimelineEvent; profileId: string }) {
+type Props = { event: TimelineEvent; profileId: string | undefined };
+
+export function TimelineEventCard({ event, profileId }: Props) {
   return (
     <article className="min-w-0 rounded-xl border-l-4 border-[#286958] bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
