@@ -9,6 +9,7 @@ import { createAdherenceRepository } from '@src/features/adherence/infrastructur
 import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
 import { createMyConsentRepository } from '@src/features/myConsent/infrastructure/createMyConsentRepository.js';
 import { createMyRevisitReminderRepository } from '@src/features/myRevisitReminders/infrastructure/createMyRevisitReminderRepository.js';
+import { createDoseConfirmationRepository } from '@src/features/doseConfirmations/infrastructure/createDoseConfirmationRepository.js';
 import { createMyReminderRepository } from '@src/features/myReminders/infrastructure/createMyReminderRepository.js';
 import { createReminderRecipientRepository } from '@src/features/reminders/infrastructure/createReminderRecipientRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
@@ -169,6 +170,7 @@ const app = createApp({
   selfProfile: createSelfProfileRepository(db),
   reminderRecipients: createReminderRecipientRepository(db),
   myReminders: createMyReminderRepository(db),
+  doseConfirmations: createDoseConfirmationRepository(db),
   myRevisitReminders: createMyRevisitReminderRepository(db),
   myConsent: createMyConsentRepository(db),
   visitSummary: createVisitSummaryRepository(db),

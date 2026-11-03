@@ -4702,6 +4702,243 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/reminders/{reminderId}/dose-confirmation': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Xác nhận "Đã dùng" cho cả buổi (SPEC-046) */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          reminderId: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': Record<string, never>;
+        };
+      };
+      responses: {
+        /** @description Bản xác nhận; đã có thì trả bản hiện có, không ghi đè */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['DoseConfirmation'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: tài khoản chưa thuộc gia đình hoặc thiếu CSRF */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: không có lời nhắc hoặc tài khoản không được phép */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: dữ liệu sai hoặc lời nhắc không thuộc hôm nay theo giờ Việt Nam */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    /** Hủy xác nhận "Đã dùng" trong ngày của lời nhắc (SPEC-046) */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          reminderId: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Đã hủy; không lưu lịch sử hủy */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: tài khoản chưa thuộc gia đình hoặc thiếu CSRF */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: không có lời nhắc hoặc tài khoản không được phép */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: dữ liệu sai hoặc lời nhắc không thuộc hôm nay theo giờ Việt Nam */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/reminders': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Lời nhắc của một ngày kèm xác nhận, mặc định hôm nay Việt Nam (SPEC-046) */
+    get: {
+      parameters: {
+        query?: {
+          date?: string;
+        };
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Lời nhắc theo giờ nhắc tăng dần */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['SelfReminder'][];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: tài khoản chưa thuộc gia đình hoặc thiếu CSRF */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: không có lời nhắc hoặc tài khoản không được phép */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: dữ liệu sai hoặc lời nhắc không thuộc hôm nay theo giờ Việt Nam */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health-profiles/{id}/reminder-recipients': {
     parameters: {
       query?: never;
@@ -7014,6 +7251,9 @@ export interface components {
       /** Format: date-time */
       scheduledAt: string;
       medications: components['schemas']['MyReminderMedication'][];
+      confirmation: components['schemas']['DoseConfirmation'];
+      canConfirm: boolean;
+      canUndo: boolean;
     };
     MyReminderMedication: {
       name: string;
@@ -7021,6 +7261,23 @@ export interface components {
       quantityPerDose: string | null;
       doseUnit: string | null;
     };
+    DoseConfirmation: {
+      /** Format: uuid */
+      reminderId: string;
+      /** Format: uuid */
+      profileId: string;
+      /** Format: date */
+      date: string;
+      /** @enum {string} */
+      slot: 'morning' | 'noon' | 'afternoon' | 'evening';
+      confirmedBy: {
+        /** Format: uuid */
+        accountId: string | null;
+        displayName: string;
+      };
+      /** Format: date-time */
+      confirmedAt: string;
+    } | null;
     ReminderRecipients: {
       /**
        * @description linked: hồ sơ liên kết tài khoản, người nhận cố định; assigned: main được chỉ định
@@ -7050,6 +7307,9 @@ export interface components {
       scheduledAt: string;
       profileName: string;
       medications: components['schemas']['MyReminderMedication'][];
+      confirmation: components['schemas']['DoseConfirmation'];
+      canConfirm: boolean;
+      canUndo: boolean;
     };
     MyRevisitReminder: {
       /** Format: uuid */

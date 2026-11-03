@@ -1,8 +1,7 @@
-import type { SelfReminder } from '@angia/contracts';
+import type { StoredDayReminder } from '@src/features/doseConfirmations/application/ports.js';
 import type { LabResultRepository } from '@src/features/labResults/application/ports.js';
 import type { MeasurementRepository } from '@src/features/measurements/application/ports.js';
 import type { MedicationManagementRepository } from '@src/features/medications/application/managementPorts.js';
-import type { StoredReminderMedication } from '@src/features/myReminders/application/ports.js';
 import type { RevisitRepository } from '@src/features/prescriptions/application/revisitPorts.js';
 import type { ConsentStatus } from '@src/features/profiles/domain/HealthProfile.js';
 import type { TimelineRepository } from '@src/features/timeline/application/ports.js';
@@ -14,13 +13,10 @@ export interface SelfProfileRow {
   consentStatus: ConsentStatus;
   vitalsEnabled: boolean | null;
 }
-export type StoredSelfReminder = Omit<SelfReminder, 'medications'> & {
-  medications: StoredReminderMedication[];
-};
 interface SelfProfileStore {
   /** null = hồ sơ không thấy được trong phạm vi tự xem của gia đình phiên. */
   profile(): Promise<SelfProfileRow | null>;
-  reminders(date: string): Promise<StoredSelfReminder[]>;
+  reminders(date: string): Promise<StoredDayReminder[]>;
 }
 /** Mọi repository của một hồ sơ đều chạy trong withSelfScope, gồm repository đọc dùng lại của route main. */
 export interface SelfProfileScope {

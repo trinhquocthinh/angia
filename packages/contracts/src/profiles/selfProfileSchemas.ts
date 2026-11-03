@@ -15,7 +15,7 @@ export type SelfProfile = z.infer<typeof selfProfileSchema>;
 
 export const selfReminderQuerySchema = z.object({ date: z.iso.date().optional() });
 
-// Xác nhận "Đã dùng" thêm ở E14-S4-T1 (SPEC-046).
+// Lời nhắc của một ngày kèm xác nhận "Đã dùng"; route tự xem và route `main` dùng chung (SPEC-046).
 const selfReminderSchema = myReminderSchema.omit({ profileName: true }).meta({ id: 'SelfReminder' });
 export type SelfReminder = z.infer<typeof selfReminderSchema>;
 export const selfReminderListSchema = z.array(selfReminderSchema);

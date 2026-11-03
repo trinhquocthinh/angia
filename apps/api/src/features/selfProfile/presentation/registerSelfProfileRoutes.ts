@@ -36,7 +36,9 @@ export function registerSelfProfileRoutes(
     const self = openSelfScope(c, repository);
     if (!self) return c.json(...errorJson('ERR_NOT_FOUND'));
     const { date } = c.req.valid('query');
-    const result = await listSelfReminders(self.scope, self.familyId, date, now);
+    const { account, role } = currentSession(c);
+    const actor = { accountId: account.id, isMain: role === 'main' };
+    const result = await listSelfReminders(self.scope, self.familyId, actor, date, now);
     return result.ok ? c.json(result.value, 200) : c.json(...errorJson(result.code));
   });
   app.openapi(selfMeasurementSeriesRoute, async (c) => {

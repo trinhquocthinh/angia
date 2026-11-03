@@ -25,6 +25,7 @@ export function createStubReviewDeps(): Pick<
   | 'selfProfile'
   | 'reminderRecipients'
   | 'myReminders'
+  | 'doseConfirmations'
   | 'myRevisitReminders'
   | 'myConsent'
   | 'visitSummary'
@@ -49,6 +50,7 @@ export function createStubReviewDeps(): Pick<
     },
     reminderRecipients: { withFamily: notConfigured },
     myReminders: { load: notConfigured },
+    doseConfirmations: { withFamily: notConfigured, withProfileDay: notConfigured },
     myRevisitReminders: { load: notConfigured },
     myConsent: { withFamily: notConfigured },
     visitSummary: { withFamily: notConfigured },

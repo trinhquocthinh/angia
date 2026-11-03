@@ -11,6 +11,7 @@ import { seedPendingDocument } from './seedPendingDocument.js';
 import { seedReminder } from './seedReminder.js';
 import { seedRevisitReminder } from './seedRevisitReminder.js';
 import { snapshotHealthTables } from './snapshotHealthTables.js';
+import { doseConfirmationRouteProbes } from './doseConfirmationRouteProbes.js';
 import { prescriptionRouteProbes } from './prescriptionRouteProbes.js';
 import {
   manualCourse as course,
@@ -111,6 +112,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     'GET /api/me/revisit-reminders/:reminderId': (u, x) =>
       t.call(u, 'GET', `/api/me/revisit-reminders/${x.revisitReminderId}`),
     'GET /api/me/reminders/:reminderId': (u, x) => t.call(u, 'GET', `/api/me/reminders/${x.reminderId}`),
+    ...doseConfirmationRouteProbes((...args) => t.call(...args)),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
         type: 'device_reading',

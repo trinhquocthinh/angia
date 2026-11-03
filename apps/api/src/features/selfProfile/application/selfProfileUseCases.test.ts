@@ -5,6 +5,7 @@ import { listSelfReminders } from './listSelfReminders.js';
 import type { SelfProfileRow, SelfProfileScope } from './ports.js';
 
 const FAMILY = 'family-1';
+const ACTOR = { accountId: 'account-1', isMain: false };
 // 2026-11-01 17:30 UTC đã là 2026-11-02 ở Việt Nam.
 const now = () => new Date('2026-11-01T17:30:00.000Z');
 const adult: SelfProfileRow = {
@@ -20,6 +21,7 @@ const stored = {
   slot: 'morning' as const,
   scheduledAt: '2026-11-02T00:00:00.000Z',
   medications: [{ courseId: 'c', name: 'Canxi', strength: null, quantityPerDose: null, doseUnit: null }],
+  confirmation: null,
 };
 
 function scopeOf(row: SelfProfileRow | null) {
@@ -91,7 +93,7 @@ describe('getSelfProfile', () => {
 describe('listSelfReminders', () => {
   it('mặc định hôm nay theo giờ Việt Nam, không lộ courseId', async () => {
     const { scope, reminders } = scopeOf(adult);
-    const result = await listSelfReminders(scope, FAMILY, undefined, now);
+    const result = await listSelfReminders(scope, FAMILY, ACTOR, undefined, now);
     expect(reminders).toHaveBeenCalledWith('2026-11-02');
     expect(result).toEqual({
       ok: true,
@@ -99,6 +101,8 @@ describe('listSelfReminders', () => {
         {
           ...stored,
           medications: [{ name: 'Canxi', strength: null, quantityPerDose: null, doseUnit: null }],
+          canConfirm: true,
+          canUndo: false,
         },
       ],
     });
@@ -106,7 +110,7 @@ describe('listSelfReminders', () => {
 
   it('TC-571: hồ sơ chưa đồng thuận nhận ERR_CONSENT_REQUIRED, không đọc lời nhắc', async () => {
     const { scope, reminders } = scopeOf({ ...adult, consentStatus: 'withdrawn' });
-    expect(await listSelfReminders(scope, FAMILY, '2026-10-23', now)).toEqual({
+    expect(await listSelfReminders(scope, FAMILY, ACTOR, '2026-10-23', now)).toEqual({
       ok: false,
       code: 'ERR_CONSENT_REQUIRED',
     });

@@ -44,6 +44,9 @@ describe('API lời nhắc cá nhân GET /api/me/reminders/:reminderId (SPEC-035
     scheduledAt: '2026-10-23T00:00:00.000Z',
     profileName,
     medications,
+    confirmation: null,
+    canConfirm: false,
+    canUndo: false,
   });
 
   it('TC-344: member đọc được lời nhắc hồ sơ liên kết của mình, member khác cùng gia đình nhận 404', async () => {

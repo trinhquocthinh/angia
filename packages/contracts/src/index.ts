@@ -197,6 +197,7 @@ export type {
   SetReminderRecipientsRequest,
 } from './reminders/reminderRecipientSchemas.js';
 export { myReminderSchema } from './reminders/myReminderSchemas.js';
+export * from './reminders/doseConfirmationSchemas.js';
 export {
   selfProfileSchema,
   selfReminderListSchema,

@@ -49,6 +49,10 @@ export const HEALTH_DATA_ROUTES = {
   // SPEC-035: người nhận hợp lệ (gồm member liên kết hồ sơ) đọc lời nhắc của mình.
   'GET /api/me/reminders/:reminderId': 'scoped',
   'GET /api/me/revisit-reminders/:reminderId': 'scoped',
+  // SPEC-046: quyền tính từ người nhận/liên kết hiện hành, không requireMain; danh sách của ngày cho `main`.
+  'POST /api/reminders/:reminderId/dose-confirmation': 'scoped',
+  'DELETE /api/reminders/:reminderId/dose-confirmation': 'scoped',
+  'GET /api/health-profiles/:id/reminders': 'scoped',
   // SPEC-042: temperatures và as-needed-doses thêm cùng bảng của chúng ở E15-S1-T3.
   'GET /api/me/profile': 'self',
   'GET /api/me/profile/medications/current': 'self',
@@ -62,14 +66,15 @@ export const HEALTH_DATA_ROUTES = {
 type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;
 
 // TC-016: route dùng phiên phải chặn member 403. Loại trừ route xác nhận link liên kết, /api/me/reminders
-// (SPEC-035: người nhận hợp lệ kể cả member đọc được lời nhắc của mình — TC-344/TC-345 kiểm riêng)
-// và route tự xem /api/me/profile (SPEC-042: member liên kết hồ sơ được đọc).
+// (SPEC-035: người nhận hợp lệ kể cả member đọc được lời nhắc của mình — TC-344/TC-345 kiểm riêng),
+// route tự xem /api/me/profile (SPEC-042: member liên kết hồ sơ được đọc) và /api/reminders (SPEC-046, TC-486/488).
 export const MEMBER_BLOCKED_SESSION_ROUTES = Object.keys(HEALTH_DATA_ROUTES).filter(
   (route) =>
     !route.includes('/me/link-invitations/') &&
     !route.startsWith('GET /api/me/reminders/') &&
     !route.startsWith('GET /api/me/revisit-reminders/') &&
-    !route.includes(' /api/me/profile'),
+    !route.includes(' /api/me/profile') &&
+    !route.includes(' /api/reminders/'),
 );
 // Record<RouteOfKind<'scoped'>, …> buộc test liệt kê đủ route của nhóm ngay lúc typecheck.
 export type RouteOfKind<Kind extends string> = {

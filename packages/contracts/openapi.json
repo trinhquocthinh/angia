@@ -4816,6 +4816,15 @@
               "$ref": "#/components/schemas/MyReminderMedication"
             },
             "minItems": 1
+          },
+          "confirmation": {
+            "$ref": "#/components/schemas/DoseConfirmation"
+          },
+          "canConfirm": {
+            "type": "boolean"
+          },
+          "canUndo": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -4823,7 +4832,10 @@
           "date",
           "slot",
           "scheduledAt",
-          "medications"
+          "medications",
+          "confirmation",
+          "canConfirm",
+          "canUndo"
         ]
       },
       "MyReminderMedication": {
@@ -4856,6 +4868,66 @@
           "strength",
           "quantityPerDose",
           "doseUnit"
+        ]
+      },
+      "DoseConfirmation": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "reminderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "profileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "slot": {
+            "type": "string",
+            "enum": [
+              "morning",
+              "noon",
+              "afternoon",
+              "evening"
+            ]
+          },
+          "confirmedBy": {
+            "type": "object",
+            "properties": {
+              "accountId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "accountId",
+              "displayName"
+            ]
+          },
+          "confirmedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "reminderId",
+          "profileId",
+          "date",
+          "slot",
+          "confirmedBy",
+          "confirmedAt"
         ]
       },
       "ReminderRecipients": {
@@ -4956,6 +5028,15 @@
               "$ref": "#/components/schemas/MyReminderMedication"
             },
             "minItems": 1
+          },
+          "confirmation": {
+            "$ref": "#/components/schemas/DoseConfirmation"
+          },
+          "canConfirm": {
+            "type": "boolean"
+          },
+          "canUndo": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -4964,7 +5045,10 @@
           "slot",
           "scheduledAt",
           "profileName",
-          "medications"
+          "medications",
+          "confirmation",
+          "canConfirm",
+          "canUndo"
         ]
       },
       "MyRevisitReminder": {
@@ -10296,6 +10380,264 @@
           },
           "422": {
             "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reminders/{reminderId}/dose-confirmation": {
+      "post": {
+        "tags": [
+          "reminders"
+        ],
+        "summary": "Xác nhận \"Đã dùng\" cho cả buổi (SPEC-046)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "reminderId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bản xác nhận; đã có thì trả bản hiện có, không ghi đè",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoseConfirmation"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình hoặc thiếu CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: không có lời nhắc hoặc tài khoản không được phép",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: dữ liệu sai hoặc lời nhắc không thuộc hôm nay theo giờ Việt Nam",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "reminders"
+        ],
+        "summary": "Hủy xác nhận \"Đã dùng\" trong ngày của lời nhắc (SPEC-046)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "reminderId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Đã hủy; không lưu lịch sử hủy"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình hoặc thiếu CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: không có lời nhắc hoặc tài khoản không được phép",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: dữ liệu sai hoặc lời nhắc không thuộc hôm nay theo giờ Việt Nam",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/reminders": {
+      "get": {
+        "tags": [
+          "reminders"
+        ],
+        "summary": "Lời nhắc của một ngày kèm xác nhận, mặc định hôm nay Việt Nam (SPEC-046)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": false,
+            "name": "date",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lời nhắc theo giờ nhắc tăng dần",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SelfReminder"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình hoặc thiếu CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: không có lời nhắc hoặc tài khoản không được phép",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: dữ liệu sai hoặc lời nhắc không thuộc hôm nay theo giờ Việt Nam",
             "content": {
               "application/json": {
                 "schema": {

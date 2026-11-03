@@ -1,3 +1,4 @@
+import { listDayReminderRows } from '@src/features/doseConfirmations/infrastructure/listDayReminderRows.js';
 import { createLabResultRepository } from '@src/features/labResults/infrastructure/createLabResultRepository.js';
 import { createMeasurementRepository } from '@src/features/measurements/infrastructure/createMeasurementRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
@@ -8,7 +9,6 @@ import type { FamilyScope } from '@src/shared/db/withFamilyScope.js';
 import { withSelfScope } from '@src/shared/db/withSelfScope.js';
 import type { SelfProfileRepository } from '../application/ports.js';
 import { findSelfProfile } from './findSelfProfile.js';
-import { listSelfReminderRows } from './listSelfReminderRows.js';
 
 export function createSelfProfileRepository(db: Database): SelfProfileRepository {
   return {
@@ -20,7 +20,7 @@ export function createSelfProfileRepository(db: Database): SelfProfileRepository
           scope(db, familyId, (tx) =>
             work({
               profile: () => findSelfProfile(tx, familyId, profileId),
-              reminders: (date) => listSelfReminderRows(tx, familyId, profileId, date),
+              reminders: (date) => listDayReminderRows(tx, familyId, profileId, date),
             }),
           ),
         measurements: createMeasurementRepository(db, scope),

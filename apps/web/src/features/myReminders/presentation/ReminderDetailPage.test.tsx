@@ -23,6 +23,9 @@ const reminder: MyReminder = {
   slot: 'morning',
   scheduledAt: '2026-10-23T00:00:00.000Z',
   profileName: 'Mẹ',
+  confirmation: null,
+  canConfirm: false,
+  canUndo: false,
   medications: [
     { name: 'Amlodipin', strength: '5 mg', quantityPerDose: '1', doseUnit: 'viên' },
     { name: 'Metformin', strength: null, quantityPerDose: '2', doseUnit: 'viên' },

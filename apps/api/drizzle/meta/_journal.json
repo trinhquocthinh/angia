@@ -260,6 +260,13 @@
       "when": 1793579549745,
       "tag": "0036_profile_links_self_scope",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1793608617697,
+      "tag": "0037_dose_confirmations",
+      "breakpoints": true
     }
   ]
 }
