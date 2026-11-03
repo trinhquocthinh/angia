@@ -14,6 +14,7 @@ import { snapshotHealthTables } from './snapshotHealthTables.js';
 import { asNeededDoseRouteProbes } from './asNeededDoseRouteProbes.js';
 import { doseConfirmationRouteProbes } from './doseConfirmationRouteProbes.js';
 import { seedAsNeededDose } from './seedAsNeededDose.js';
+import { seedTemperatureReading } from './seedTemperatureReading.js';
 import { prescriptionRouteProbes } from './prescriptionRouteProbes.js';
 import {
   manualCourse as course,
@@ -143,18 +144,9 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const reminderId = await seedReminder(t.owner, familyId, profile.id, main.accountId);
     const revisitReminderId = await seedRevisitReminder(t.owner, familyId, profile.id);
     const asNeeded = await seedAsNeededDose(t, main, profile.id);
-    return {
-      asNeeded,
-      familyId,
-      main,
-      profile,
-      documentId,
-      token,
-      courseId,
-      prescriptionId,
-      reminderId,
-      revisitReminderId,
-    };
+    const readingId = await seedTemperatureReading(t, main, profile.id);
+    const ids = { documentId, courseId, prescriptionId, reminderId, revisitReminderId, readingId };
+    return { ...ids, asNeeded, familyId, main, profile, token };
   };
   const attackers = async () => {
     const familyId = await t.family();
@@ -166,9 +158,9 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
   it('TC-013, TC-014, TC-015, TC-076: main và Quản trị kiêm main nhóm khác nhận đúng phản hồi của ID không tồn tại, không ghi gì', async () => {
     const victim = await victimFixture();
     const { familyId, main, adminMain } = await attackers();
-    const { documentId, courseId, prescriptionId, reminderId, revisitReminderId } = victim;
+    const { documentId, courseId, prescriptionId, reminderId, revisitReminderId, readingId } = victim;
     const target: Target = {
-      ...{ documentId, courseId, prescriptionId, reminderId, revisitReminderId },
+      ...{ documentId, courseId, prescriptionId, reminderId, revisitReminderId, readingId },
       profileId: victim.profile.id,
       accountId: victim.main.accountId,
       asNeededCourseId: victim.asNeeded.courseId,

@@ -7,6 +7,7 @@ export interface Target {
   courseId: string;
   asNeededCourseId: string;
   doseId: string;
+  readingId: string;
   prescriptionId: string;
   reminderId: string;
   revisitReminderId: string;

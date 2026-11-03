@@ -6,8 +6,7 @@ import type { AppDependencies } from '@src/createApp.js';
 
 const notConfigured = () => Promise.reject(new Error('Kho duyệt/số đo chưa cấu hình trong test này'));
 
-// Sinh OpenAPI hoặc test feature khác: không được gọi hạ tầng duyệt chứng từ và số đo.
-export function createStubReviewDeps(): Pick<
+type StubbedDeps = Pick<
   AppDependencies,
   | 'scanQuota'
   | 'aiBilling'
@@ -19,6 +18,7 @@ export function createStubReviewDeps(): Pick<
   | 'medications'
   | 'adherence'
   | 'asNeededDoses'
+  | 'temperatures'
   | 'doseSlots'
   | 'revisits'
   | 'prescriptionChain'
@@ -32,7 +32,10 @@ export function createStubReviewDeps(): Pick<
   | 'visitSummary'
   | 'familyUsage'
   | 'heavyRateLimit'
-> {
+>;
+
+// Sinh OpenAPI hoặc test feature khác: không được gọi hạ tầng duyệt chứng từ và số đo.
+export function createStubReviewDeps(): StubbedDeps {
   return {
     scanQuota: createStubScanQuotaDeps(),
     aiRouting: createStubAiRoutingDeps(),
@@ -41,6 +44,7 @@ export function createStubReviewDeps(): Pick<
     medications: { withFamily: notConfigured },
     adherence: { withFamily: notConfigured },
     asNeededDoses: { withFamily: notConfigured },
+    temperatures: { withFamily: notConfigured },
     doseSlots: { withFamily: notConfigured },
     revisits: { withFamily: notConfigured },
     prescriptionChain: { withFamily: notConfigured },

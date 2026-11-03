@@ -7,6 +7,7 @@ import { createAiBillingRepository } from '@src/features/aiBilling/infrastructur
 import { createAiRoutingRepository } from '@src/features/aiRouting/infrastructure/createAiRoutingRepository.js';
 import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
 import { createAsNeededDoseRepository } from '@src/features/asNeededDoses/infrastructure/createAsNeededDoseRepository.js';
+import { createTemperatureRepository } from '@src/features/temperatures/infrastructure/createTemperatureRepository.js';
 import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
 import { createMyConsentRepository } from '@src/features/myConsent/infrastructure/createMyConsentRepository.js';
 import { createMyRevisitReminderRepository } from '@src/features/myRevisitReminders/infrastructure/createMyRevisitReminderRepository.js';
@@ -165,6 +166,7 @@ const app = createApp({
   medications: createMedicationRepository(db),
   adherence: createAdherenceRepository(db),
   asNeededDoses: createAsNeededDoseRepository(db),
+  temperatures: createTemperatureRepository(db),
   doseSlots: createDoseSlotRepository(db),
   revisits: createRevisitRepository(db),
   prescriptionChain: createPrescriptionChainRepository(db),
