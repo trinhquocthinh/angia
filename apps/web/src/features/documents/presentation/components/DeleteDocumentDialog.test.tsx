@@ -9,6 +9,7 @@ const impact = {
   measurements: 3,
   medicationCourses: 4,
   activeMedicationCourses: 2,
+  asNeededDoses: 0,
 };
 const render = (value: string, busy = false, data: typeof impact | null = impact) =>
   renderToStaticMarkup(

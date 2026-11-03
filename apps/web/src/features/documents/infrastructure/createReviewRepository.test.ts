@@ -10,6 +10,7 @@ const impact = {
   measurements: 3,
   medicationCourses: 4,
   activeMedicationCourses: 2,
+  asNeededDoses: 0,
 };
 function repository(response: Response, sent: Request[] = []) {
   return createReviewRepository(

@@ -26,6 +26,8 @@ export const prescriptionItems = pgTable(
     note: text('note'),
     // Tổng số lượng in trên đơn, chỉ dùng để gợi ý số ngày có xác nhận (BR-025).
     totalQuantity: numeric('total_quantity'),
+    // Khoảng cách tối thiểu giữa hai liều in trên đơn, nguyên văn (BR-054).
+    minIntervalText: text('min_interval_text'),
   },
   (t) => [
     index('prescription_items_prescription_idx').on(t.prescriptionId),
@@ -42,6 +44,10 @@ export const prescriptionItems = pgTable(
     ),
     check('prescription_items_duration_positive', sql`${t.durationDays} IS NULL OR ${t.durationDays} > 0`),
     check('prescription_items_total_positive', sql`${t.totalQuantity} IS NULL OR ${t.totalQuantity} > 0`),
+    check(
+      'prescription_items_min_interval_valid',
+      sql`${t.minIntervalText} IS NULL OR (char_length(${t.minIntervalText}) BETWEEN 1 AND 100 AND ${t.slots} = ARRAY['as_needed']::text[])`,
+    ),
     // Không có cột hồ sơ nhưng route tự xem cần đọc dòng thuốc: đối chiếu qua đơn cha (Tech Spec §3.9.3).
     selfIsolationPolicyWhen(
       sql`EXISTS (SELECT 1 FROM prescriptions parent WHERE parent.id = prescription_items.prescription_id AND parent.health_profile_id = NULLIF(current_setting('app.self_profile_id', true), '')::uuid)`,

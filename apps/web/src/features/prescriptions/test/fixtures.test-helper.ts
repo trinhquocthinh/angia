@@ -23,6 +23,7 @@ export const item = {
   externalUse: false,
   note: 'Ghi trên đơn',
   totalQuantity: 30,
+  minIntervalText: null,
 } satisfies Prescription['items'][number];
 export const chain: PrescriptionListItem[] = [
   {

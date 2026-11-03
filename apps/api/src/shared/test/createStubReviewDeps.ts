@@ -18,6 +18,7 @@ export function createStubReviewDeps(): Pick<
   | 'documentEntries'
   | 'medications'
   | 'adherence'
+  | 'asNeededDoses'
   | 'doseSlots'
   | 'revisits'
   | 'prescriptionChain'
@@ -39,6 +40,7 @@ export function createStubReviewDeps(): Pick<
     review: { repository: { withFamily: notConfigured }, reader: { get: notConfigured } },
     medications: { withFamily: notConfigured },
     adherence: { withFamily: notConfigured },
+    asNeededDoses: { withFamily: notConfigured },
     doseSlots: { withFamily: notConfigured },
     revisits: { withFamily: notConfigured },
     prescriptionChain: { withFamily: notConfigured },

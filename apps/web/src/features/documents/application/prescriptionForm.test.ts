@@ -170,6 +170,7 @@ describe('Form đối soát đơn thuốc (SPEC-010, BR-025)', () => {
           longTerm: true,
           note: 'sau ăn',
           totalQuantity: null,
+          minIntervalText: null,
         },
       ],
     });

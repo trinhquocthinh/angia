@@ -53,6 +53,7 @@ export async function savePrescription(
       longTerm: item.longTerm,
       note: item.note,
       totalQuantity: item.totalQuantity,
+      minIntervalText: item.minIntervalText ?? null,
       // Dữ liệu lựa chọn chỉ thuộc lệnh lưu, không chép vào PrescriptionItem.
       quantityPerDose: item.quantityPerDose,
       externalUse: item.externalUse,

@@ -18,6 +18,7 @@ const impact = {
   measurements: 3,
   medicationCourses: 4,
   activeMedicationCourses: 2,
+  asNeededDoses: 0,
 };
 const key = ['document-deletion-impact', 'a', 'f', 'd'];
 const repo = () => ({

@@ -8,6 +8,7 @@ const impact = {
   measurements: 0,
   medicationCourses: 2,
   activeMedicationCourses: 1,
+  asNeededDoses: 0,
 };
 
 it('TC-413: chỉ nhận từ khóa xác nhận chính xác XÓA', () => {
@@ -17,7 +18,7 @@ it('TC-413: chỉ nhận từ khóa xác nhận chính xác XÓA', () => {
   }
 });
 
-it('TC-412: cả sáu số đếm bắt buộc là số nguyên không âm', () => {
+it('TC-412: mọi số đếm (kể cả asNeededDoses) bắt buộc là số nguyên không âm', () => {
   expect(documentDeletionImpactSchema.parse(impact)).toEqual(impact);
   for (const key of Object.keys(impact)) {
     expect(documentDeletionImpactSchema.safeParse({ ...impact, [key]: 0 }).success).toBe(true);

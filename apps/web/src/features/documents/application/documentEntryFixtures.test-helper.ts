@@ -42,6 +42,7 @@ export const savedPrescription = {
       longTerm: false,
       note: null,
       totalQuantity: null,
+      minIntervalText: null,
     },
     {
       id: '00000000-0000-4000-8000-0000000000c2',
@@ -55,6 +56,7 @@ export const savedPrescription = {
       longTerm: true,
       note: null,
       totalQuantity: null,
+      minIntervalText: null,
     },
     {
       id: '00000000-0000-4000-8000-0000000000c3',
@@ -68,6 +70,7 @@ export const savedPrescription = {
       longTerm: false,
       note: null,
       totalQuantity: null,
+      minIntervalText: null,
     },
   ],
 };

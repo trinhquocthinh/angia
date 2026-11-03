@@ -13,6 +13,7 @@ const item = (id: string, overrides: Partial<Item>): Item => ({
   longTerm: false,
   note: null,
   totalQuantity: null,
+  minIntervalText: null,
   ...overrides,
 });
 

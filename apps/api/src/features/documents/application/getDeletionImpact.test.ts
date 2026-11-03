@@ -11,6 +11,7 @@ const impact: DocumentDeletionImpact = {
   measurements: 0,
   medicationCourses: 3,
   activeMedicationCourses: 1,
+  asNeededDoses: 0,
 };
 
 function repository(found: { consent: ConsentStatus } | null, locks: boolean[]): DeletionRepository {

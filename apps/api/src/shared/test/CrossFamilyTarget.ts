@@ -5,6 +5,8 @@ export interface Target {
   documentId: string;
   accountId: string;
   courseId: string;
+  asNeededCourseId: string;
+  doseId: string;
   prescriptionId: string;
   reminderId: string;
   revisitReminderId: string;

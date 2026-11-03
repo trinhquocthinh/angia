@@ -18,6 +18,8 @@ const course: CurrentMedicationCourse = {
   endDate: '2026-10-22',
   status: 'active',
   prescriptionIssuedDate: '2026-10-01',
+  lastDoseAt: null,
+  interval: null,
 };
 
 describe('medicationRows — bảng "Thuốc đang dùng" (Design v0.1 §7)', () => {
@@ -35,6 +37,8 @@ describe('medicationRows — bảng "Thuốc đang dùng" (Design v0.1 §7)', ()
           slots: ['morning'],
           endDate: null,
           prescriptionIssuedDate: null,
+          lastDoseAt: null,
+          interval: null,
         },
       ],
       '2026-10-05',

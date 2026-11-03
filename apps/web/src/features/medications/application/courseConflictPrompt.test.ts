@@ -24,6 +24,7 @@ export const request: ApproveDocumentRequest = {
       longTerm: false,
       note: null,
       totalQuantity: null,
+      minIntervalText: null,
     })),
   },
 };

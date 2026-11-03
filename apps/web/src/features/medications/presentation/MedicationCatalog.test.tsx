@@ -17,6 +17,8 @@ const course: CurrentMedicationCourse = {
   endDate: '2026-10-30',
   status: 'active',
   prescriptionIssuedDate: '2026-10-01',
+  lastDoseAt: null,
+  interval: null,
 };
 const supplement: CurrentMedicationCourse = {
   ...course,
@@ -29,6 +31,8 @@ const supplement: CurrentMedicationCourse = {
   slots: ['morning', 'evening'],
   endDate: null,
   prescriptionIssuedDate: null,
+  lastDoseAt: null,
+  interval: null,
 };
 const render = (props: Partial<Parameters<typeof MedicationCatalog>[0]> = {}) =>
   renderToStaticMarkup(

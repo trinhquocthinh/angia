@@ -25,6 +25,7 @@ const prescription = (): Prescription => ({
       longTerm: false,
       note: 'Sau ăn',
       totalQuantity: 30,
+      minIntervalText: null,
     },
   ],
 });

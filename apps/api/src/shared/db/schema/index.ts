@@ -23,6 +23,8 @@ export { reminders } from './reminders.js';
 export { reminderDeliveries } from './reminderDeliveries.js';
 export { revisitReminders } from './revisitReminders.js';
 export { doseConfirmations } from './doseConfirmations.js';
+export { asNeededDoses } from './asNeededDoses.js';
+export { temperatureReadings } from './temperatureReadings.js';
 export { aiRoutingSettings } from './aiRoutingSettings.js';
 export { aiRoutingAudit } from './aiRoutingAudit.js';
 export { aiBillingSources } from './aiBillingSources.js';

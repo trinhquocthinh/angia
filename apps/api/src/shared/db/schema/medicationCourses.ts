@@ -24,6 +24,8 @@ export const medicationCourses = pgTable(
     startDate: date('start_date').notNull(),
     endDate: date('end_date'),
     status: text('status', { enum: ['active', 'ended', 'stopped', 'replaced'] }).notNull(),
+    // Khoảng cách người dùng tự nhập theo nhãn thuốc khi đơn không ghi (BR-054).
+    userIntervalText: text('user_interval_text'),
   },
   (t) => [
     foreignKey({
@@ -53,6 +55,10 @@ export const medicationCourses = pgTable(
     check(
       'medication_courses_dates_valid',
       sql`${t.endDate} IS NULL OR ${t.endDate} >= ${t.startDate} OR (${t.status} IN ('replaced', 'stopped') AND ${t.endDate} = ${t.startDate} - 1)`,
+    ),
+    check(
+      'medication_courses_user_interval_valid',
+      sql`${t.userIntervalText} IS NULL OR (char_length(${t.userIntervalText}) BETWEEN 1 AND 100 AND ${t.slots} = ARRAY['as_needed']::text[] AND ${t.prescriptionItemId} IS NOT NULL)`,
     ),
     check('medication_courses_terminal_has_end', sql`${t.status} = 'active' OR ${t.endDate} IS NOT NULL`),
     selfIsolationPolicy('health_profile_id'),

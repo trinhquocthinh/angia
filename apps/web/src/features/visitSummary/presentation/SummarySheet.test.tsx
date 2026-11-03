@@ -41,6 +41,8 @@ const summary: VisitSummary = {
       endDate: null,
       status: 'active',
       prescriptionIssuedDate: '2026-10-01',
+      lastDoseAt: null,
+      interval: null,
     },
   ],
   measurements: [
