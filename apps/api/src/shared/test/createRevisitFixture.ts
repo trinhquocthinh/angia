@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from './acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from './confirmConsentByAttestation.js';
 import type { ProfileTestApp } from './startProfileTestApp.js';
 
 // Dữ liệu lịch hẹn độc lập với các đợt thuốc; chỉ seed qua owner trong test.
@@ -13,7 +13,7 @@ export async function createRevisitFixture(t: ProfileTestApp, confirmed = true) 
       birthYear: 1950,
     })
   ).json()) as HealthProfile;
-  if (confirmed) await acceptConsentInvitation(t, main, profile.id);
+  if (confirmed) await confirmConsentByAttestation(t, main, profile.id);
   const base = `/api/health-profiles/${profile.id}`;
   const add = async (date: string | null, issuedDate = '2026-01-01', documentId?: string) => {
     const id = randomUUID();

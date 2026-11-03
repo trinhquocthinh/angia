@@ -14,7 +14,7 @@ export function InvitationManagerDialog({
   onClose: () => void;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
-  const manager = useInvitationManager(repository, session, profile.id, profile.consentStatus === 'invited');
+  const manager = useInvitationManager(repository, session, profile.id);
   useEffect(() => {
     const previous = document.activeElement;
     const dialog = ref.current;

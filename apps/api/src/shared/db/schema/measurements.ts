@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { boolean, check, date, index, integer, numeric, pgTable, text, uuid } from 'drizzle-orm/pg-core';
-import { createdAtColumn, familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
+import { createdAtColumn, familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
 import { healthProfiles } from './healthProfiles.js';
 import { sourceDocuments } from './sourceDocuments.js';
 
@@ -44,6 +44,6 @@ export const measurements = pgTable(
       'measurements_blood_glucose_valid',
       sql`${t.kind} <> 'blood_glucose' OR (${t.glucoseValue} IS NOT NULL AND ${t.glucoseUnit} IN ('mmol/L', 'mg/dL'))`,
     ),
-    familyIsolationPolicy(),
+    selfIsolationPolicy('health_profile_id'),
   ],
 );

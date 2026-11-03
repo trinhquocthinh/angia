@@ -33,7 +33,7 @@ export function ReminderDetailPage({ reminderId }: { reminderId: string }) {
           Lời nhắc dùng thuốc
         </h1>
         {reminder.data ? (
-          <ReminderDetailCard reminder={reminder.data} />
+          <ReminderDetailCard reminder={reminder.data} session={session.data} />
         ) : hidden ? (
           <p role="alert" className={notice}>
             Không tìm thấy lời nhắc hoặc bạn không có quyền xem.

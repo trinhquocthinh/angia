@@ -61,17 +61,20 @@ describe('Hồ sơ qua hợp đồng HTTP và bảo vệ phiên', () => {
     },
   );
   it('main tạo và thu hồi link bằng CSRF, không xác nhận thay người nhận', async () => {
-    const { repository, requests } = harness(200, { token: 'opaque', expiresAt: '2026-10-13T00:00:00Z' });
+    const { repository, requests } = harness(200, {
+      url: 'https://app/link-invite#token=opaque',
+      expiresAt: '2026-10-13T00:00:00Z',
+    });
     await repository.createInvitation('p', 'csrf');
     await repository.revokeInvitation('p', 'csrf');
     expect(requests.map((request) => request.method)).toEqual(['POST', 'DELETE']);
     expect(
       requests.every(
-        (request) => new URL(request.url).pathname === '/api/health-profiles/p/consent-invitations',
+        (request) => new URL(request.url).pathname === '/api/health-profiles/p/link-invitations',
       ),
     ).toBe(true);
     expect(requests.every((request) => request.headers.get('X-CSRF-Token') === 'csrf')).toBe(true);
-    expect(await requests[0]!.clone().text()).toBe('{"attestation":true}');
+    expect(await requests[0]!.clone().text()).toBe('{}');
   });
   it.each([401, 403, 409, 500])('HTTP %s không giả lập lưu thành công', async (status) => {
     const { repository } = harness(status, { error: { code: 'ERR_INTERNAL', message: 'SQL secret' } });

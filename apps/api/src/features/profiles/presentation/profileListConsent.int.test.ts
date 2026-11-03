@@ -15,7 +15,8 @@ describe('TC-558 — danh sách metadata trong phiên main, PostgreSQL thật', 
     const member = await t.session(f.familyId, 'member', 'Người thân');
     const unlinked = await f.create();
     const own = await f.create({ linkedAccountId: f.main.accountId });
-    const other = await f.create({ linkedAccountId: member.accountId });
+    const other = await f.create();
+    await t.owner.query('UPDATE accounts SET health_profile_id=$2 WHERE id=$1', [member.accountId, other.id]);
     const confirmed = await f.create({ consent: ATTESTATION });
     const response = await t.call(f.main, 'GET', PROFILE_BASE);
     expect(response.status).toBe(200);

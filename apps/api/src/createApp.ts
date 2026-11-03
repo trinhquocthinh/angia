@@ -1,3 +1,4 @@
+import type { SelfProfileRepository } from '@src/features/selfProfile/application/ports.js';
 import type { TimelineRepository } from '@src/features/timeline/application/ports.js';
 import { registerHistoryRoutes } from '@src/registerHistoryRoutes.js';
 import type { PrescriptionChainRepository } from '@src/features/prescriptions/application/prescriptionChainPorts.js';
@@ -18,16 +19,15 @@ import type { MyConsentRepository } from '@src/features/myConsent/application/po
 import { registerMyConsentRoutes } from '@src/features/myConsent/presentation/registerMyConsentRoutes.js';
 import type { MyRevisitReminderRepository } from '@src/features/myRevisitReminders/application/ports.js';
 import { registerMyRevisitReminderRoutes } from '@src/features/myRevisitReminders/presentation/registerMyRevisitReminderRoutes.js';
+import type { DoseConfirmationRepository } from '@src/features/doseConfirmations/application/ports.js';
 import type { MyReminderRepository } from '@src/features/myReminders/application/ports.js';
 import { registerMyReminderRoutes } from '@src/features/myReminders/presentation/registerMyReminderRoutes.js';
 import type { ReminderRecipientRepository } from '@src/features/reminders/application/recipientPorts.js';
 import { registerReminderRecipientRoutes } from '@src/features/reminders/presentation/registerReminderRecipientRoutes.js';
 import type { MedicationManagementRepository } from '@src/features/medications/application/managementPorts.js';
 import { registerMedicationRoutes } from '@src/features/medications/presentation/registerMedicationRoutes.js';
-import {
-  registerInvitationRoutes,
-  type InvitationRouteDependencies,
-} from '@src/features/consentInvitations/presentation/registerInvitationRoutes.js';
+import type { ProfileLinkDependencies } from '@src/features/profileLinks/application/ports.js';
+import { registerProfileLinkRoutes } from '@src/features/profileLinks/presentation/registerProfileLinkRoutes.js';
 import type { DocumentDependencies } from '@src/features/documents/application/ports.js';
 import { registerDocumentRoutes } from '@src/features/documents/presentation/registerDocumentRoutes.js';
 import { registerDeletionRoutes } from '@src/features/documents/presentation/registerDeletionRoutes.js';
@@ -77,7 +77,7 @@ export type AppDependencies = {
   aiBilling: AiBillingDependencies;
   scanQuota: ScanQuotaDependencies;
   profiles: ProfileDependencies;
-  consentInvitations: InvitationRouteDependencies;
+  profileLinks: ProfileLinkDependencies;
   documents: DocumentDependencies;
   review: ReviewDependencies;
   measurements: MeasurementRepository;
@@ -89,8 +89,10 @@ export type AppDependencies = {
   revisits: RevisitRepository;
   prescriptionChain: PrescriptionChainRepository;
   timeline: TimelineRepository;
+  selfProfile: SelfProfileRepository;
   reminderRecipients: ReminderRecipientRepository;
   myReminders: MyReminderRepository;
+  doseConfirmations: DoseConfirmationRepository;
   myRevisitReminders: MyRevisitReminderRepository;
   myConsent: MyConsentRepository;
   visitSummary: VisitSummaryRepository;
@@ -146,7 +148,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerAiRoutingRoutes(app, deps.aiRouting);
   registerAiBillingRoutes(app, deps.aiBilling);
   registerFamilyUsageRoute(app, deps.familyUsage);
-  registerProfileRoutes(app, { ...deps.profiles, logger: deps.auth.logger }, deps.auth.login.now);
+  registerProfileRoutes(app, deps);
   // Một limiter dùng chung cho mọi thao tác nặng; khóa tách theo tài khoản + thao tác.
   const heavyLimiter = createSlidingWindowLimiter({
     limit: deps.heavyRateLimit.perMinute,
@@ -165,10 +167,10 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerDoseSlotRoutes(app, deps.doseSlots);
   registerHistoryRoutes(app, deps, deps.auth.login.now);
   registerReminderRecipientRoutes(app, deps.reminderRecipients);
-  registerMyReminderRoutes(app, deps.myReminders);
+  registerMyReminderRoutes(app, deps.myReminders, deps.auth.login.now);
   registerMyRevisitReminderRoutes(app, deps.myRevisitReminders);
   registerMyConsentRoutes(app, deps.myConsent, deps.auth.login.now);
   registerVisitSummaryRoute(app, deps.visitSummary, deps.auth.login.now);
-  registerInvitationRoutes(app, deps.consentInvitations);
+  registerProfileLinkRoutes(app, deps.profileLinks);
   return app;
 }

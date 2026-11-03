@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { linkAccountToProfile } from '@src/shared/test/profileConsentFixture.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { seedAccount, seedSession } from '@src/shared/test/seedAuthFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -24,10 +24,15 @@ describe('API rút đồng thuận /api/me/consent (SPEC-036)', () => {
       await t.call(dad, 'POST', '/api/health-profiles', {
         birthYear: 1950,
         displayName: 'Bà Tư',
-        linkedAccountId: grandma.accountId,
       })
     ).json()) as HealthProfile;
-    if (confirm) await acceptConsentInvitation(t, dad, profile.id);
+    // Chưa đồng thuận: gắn thẳng tài khoản (như dữ liệu trước E14); đã đồng thuận: đi đúng luồng link (SPEC-040).
+    if (confirm) await linkAccountToProfile(t, dad, grandma, profile.id);
+    else
+      await t.owner.query('UPDATE accounts SET health_profile_id=$2 WHERE id=$1', [
+        grandma.accountId,
+        profile.id,
+      ]);
     return { familyId, dad, grandma, uncle, profile };
   };
   const row = async (id: string) =>

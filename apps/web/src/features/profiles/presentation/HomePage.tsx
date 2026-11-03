@@ -1,6 +1,7 @@
 import { MyConsentSection } from './components/MyConsentSection';
 import { createMyConsentRepository } from '../infrastructure/createMyConsentRepository';
 import { RecipientNotice } from './components/RecipientNotice';
+import { SelfProfileEntry } from './components/SelfProfileEntry';
 import { useProfileSessionRecovery } from '../application/useProfileSessionRecovery';
 import { useState } from 'react';
 import { useReviewQueue } from '@src/features/documents/application/useReviewWorkspace';
@@ -25,12 +26,14 @@ export function HomePage() {
   const workspace = useProfilesWorkspace(repository, session.data);
   const queue = useReviewQueue(reviewRepository, session.data);
   const [selected, setSelected] = useState<ProfileListItem | null>(null);
+  const [linking, setLinking] = useState<ProfileListItem | null>(null);
   const [deleting, setDeleting] = useState<ProfileListItem | null>(null);
   const [withdrawing, setWithdrawing] = useState(false);
   useProfileSessionRecovery(workspace.profiles.error ?? workspace.accounts.error ?? workspace.create.error);
   if (!session.data) return null;
   const profiles = workspace.profiles.data ?? [];
   const main = session.data.role === 'main';
+  const memberNotice = session.data.account.healthProfileId ? <SelfProfileEntry /> : <RecipientNotice />;
   const subtitle =
     main && workspace.profiles.isSuccess ? `${profiles.length} hồ sơ thành viên` : 'Sổ sức khỏe gia đình';
   return (
@@ -54,12 +57,13 @@ export function HomePage() {
           error={workspace.profiles.isError}
           retry={() => void workspace.profiles.refetch()}
           onConsent={setSelected}
+          onLink={setLinking}
           onDelete={setDeleting}
           ownProfileId={session.data.account.healthProfileId}
           onWithdraw={() => setWithdrawing(true)}
         />
       ) : (
-        <RecipientNotice />
+        memberNotice
       )}
       {main && (
         <ProfileDialogs
@@ -67,8 +71,10 @@ export function HomePage() {
           repository={repository}
           profiles={profiles}
           consent={selected}
+          linking={linking}
           deleting={deleting}
           closeConsent={() => setSelected(null)}
+          closeLink={() => setLinking(null)}
           closeDelete={() => setDeleting(null)}
         />
       )}

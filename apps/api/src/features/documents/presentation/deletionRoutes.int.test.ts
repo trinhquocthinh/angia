@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { ApprovedDocumentResponse, DocumentDeletionImpact, HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { vietnamDate } from '@src/shared/test/createFiniteCourse.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -39,7 +39,7 @@ describe('API xóa chứng từ và xem trước tác động (SPEC-037, BR-048)
     const profile = (await (
       await t.call(main, 'POST', '/api/health-profiles', { birthYear: 1950, displayName: 'Mẹ' })
     ).json()) as HealthProfile;
-    await acceptConsentInvitation(t, main, profile.id);
+    await confirmConsentByAttestation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const { documentId, key } = await seedPendingDocument(t, owner, prescription);
     const approved = await t.call(main, 'POST', `/api/source-documents/${documentId}/approve`, {

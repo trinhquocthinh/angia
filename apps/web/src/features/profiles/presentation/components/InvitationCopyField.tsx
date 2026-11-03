@@ -1,11 +1,10 @@
 import { InvitationLinkInput } from './InvitationLinkInput';
-import { invitationLink } from '../invitationLink';
 import { useState } from 'react';
 import type { InvitationCreated } from '../../application/invitationPorts';
 import { InvitationIcon } from './InvitationIcon';
 export function InvitationCopyField({ created }: { created: InvitationCreated }) {
   const [message, setMessage] = useState('');
-  const url = invitationLink(window.location.origin, created.token);
+  const { url } = created;
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(url);
@@ -23,7 +22,7 @@ export function InvitationCopyField({ created }: { created: InvitationCreated })
     <div className="mt-6">
       <div className="flex items-center justify-between gap-3">
         <label htmlFor="invitation-link" className="text-xs font-medium">
-          Link mời mới
+          Link liên kết mới
         </label>
         <span className="flex items-center gap-1.5 text-[11px] text-[#286958]">
           <span

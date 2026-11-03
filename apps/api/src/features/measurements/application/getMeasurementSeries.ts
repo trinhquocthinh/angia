@@ -4,12 +4,12 @@ import type { Measurement, MeasurementKind } from '../domain/Measurement.js';
 import { summarizeWeeks, type MeasurementWeek } from '../domain/summarizeWeeks.js';
 import type { MeasurementRepository } from './ports.js';
 
-interface MeasurementSeries {
+export interface MeasurementSeries {
   points: Measurement[];
   weeks: MeasurementWeek[];
   periods: AdherencePeriod[];
 }
-type SeriesOutcome =
+export type SeriesOutcome =
   { ok: true; value: MeasurementSeries } | { ok: false; code: 'ERR_NOT_FOUND' | 'ERR_CONSENT_REQUIRED' };
 
 // SPEC-020: điểm đo trong [from, to] (≤ 366 ngày, kiểm ở hợp đồng) cùng cờ tuần BR-023.

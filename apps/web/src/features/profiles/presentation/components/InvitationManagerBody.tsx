@@ -31,7 +31,7 @@ export function InvitationManagerBody({
       <div className="flex-1 p-6 sm:p-8">
         <InvitationManagerHeader name={name} onClose={close} />
         <InvitationManagerNote />
-        {created && <InvitationCopyField key={created.token} created={created} />}
+        {created && <InvitationCopyField key={created.url} created={created} />}
         <InvitationManagerActions
           invitationState={invitationState}
           pending={pending}
@@ -53,7 +53,9 @@ export function InvitationManagerBody({
         </span>
         <div>
           <p className="text-xs font-semibold">Quyền riêng tư trong An Gia</p>
-          <p className="mt-1 text-[11px] leading-5">Danh tính người phản hồi chưa được xác minh.</p>
+          <p className="mt-1 text-[11px] leading-5">
+            Người xác nhận phải đăng nhập bằng chính tài khoản của họ.
+          </p>
         </div>
       </footer>
     </div>

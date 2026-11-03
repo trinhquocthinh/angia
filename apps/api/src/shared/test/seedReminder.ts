@@ -13,12 +13,13 @@ export async function seedReminder(
   familyId: string,
   profileId: string,
   recipientAccountId?: string,
+  date = '2026-10-23',
 ): Promise<string> {
   const id = randomUUID();
   await owner.query(
     `INSERT INTO reminders(id,family_id,health_profile_id,date,slot,scheduled_at,medications)
-     VALUES ($1,$2,$3,'2026-10-23','morning','2026-10-23T00:00:00.000Z',$4::jsonb)`,
-    [id, familyId, profileId, JSON.stringify(SEEDED_MEDICATIONS)],
+     VALUES ($1,$2,$3,$4,'morning','2026-10-23T00:00:00.000Z',$5::jsonb)`,
+    [id, familyId, profileId, date, JSON.stringify(SEEDED_MEDICATIONS)],
   );
   if (recipientAccountId)
     await owner.query(

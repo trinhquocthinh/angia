@@ -26,6 +26,7 @@ export function ProfileFrame({
 }) {
   const queue = useReviewQueue(reviewRepository, session);
   const pendingCount = queue.data?.pages.reduce((sum, page) => sum + page.items.length, 0);
+  const personal = session.role !== 'main' && Boolean(session.account.healthProfileId);
   const account = (
     <AccountMenu
       session={session}
@@ -41,11 +42,12 @@ export function ProfileFrame({
         hasFamily={Boolean(session.family)}
         pendingCount={pendingCount}
         account={account}
+        personal={personal}
       />
       <MobileTopbar title={mobileTitle} hasFamily={Boolean(session.family)} account={account} />
       <main className="mx-auto w-full max-w-7xl min-w-0 flex-1 px-4 pt-3 lg:px-8 lg:py-12">{children}</main>
       <ProfileFooter />
-      <MobileBottomNav pendingCount={pendingCount} />
+      <MobileBottomNav pendingCount={pendingCount} personal={personal} />
     </div>
   );
 }

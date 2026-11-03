@@ -26,6 +26,7 @@ const profile: ProfileListItem = {
   createdAt: '2026-10-27T00:00:00Z',
   consentAction: 'attestation',
   consentConfirmedByName: null,
+  hasLinkedAccount: false,
 };
 const body = { kind: 'attestation', attestation: true, basis: 'guardian', respondentName: 'Mẹ' } as const;
 function mount(confirmConsent: ProfilesRepository['confirmConsent'], context = session, item = profile) {

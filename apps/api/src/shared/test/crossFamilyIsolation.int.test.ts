@@ -1,8 +1,8 @@
-import { ATTESTATION, attestationPath, invitationCall } from './profileConsentFixture.js';
+import { ATTESTATION, attestationPath, linkCall, linkToken } from './profileConsentFixture.js';
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from './acceptConsentInvitation.js';
+import type { HealthProfile, ProfileLinkCreated } from '@angia/contracts';
+import { confirmConsentByAttestation } from './confirmConsentByAttestation.js';
 import { expectCrossFamilyDenied } from './expectCrossFamilyDenied.js';
 import { MEMBER_BLOCKED_SESSION_ROUTES, type RouteOfKind } from './healthDataRoutes.js';
 import type { SeededSession } from './seedAuthFixtures.js';
@@ -11,6 +11,7 @@ import { seedPendingDocument } from './seedPendingDocument.js';
 import { seedReminder } from './seedReminder.js';
 import { seedRevisitReminder } from './seedRevisitReminder.js';
 import { snapshotHealthTables } from './snapshotHealthTables.js';
+import { doseConfirmationRouteProbes } from './doseConfirmationRouteProbes.js';
 import { prescriptionRouteProbes } from './prescriptionRouteProbes.js';
 import {
   manualCourse as course,
@@ -19,7 +20,7 @@ import {
 } from './healthDataFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from './startProfileTestApp.js';
 
-const respondBody = { decision: 'accepted', basis: 'self', respondentName: 'Lén' };
+const acceptBody = { decision: 'accepted' };
 const profiles = '/api/health-profiles';
 const documents = '/api/source-documents';
 const adherence = { medicationName: 'Canxi', status: 'taking', fromDate: '2026-10-01' };
@@ -52,12 +53,12 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'PATCH', `${profiles}/${x.profileId}`, { birthYear: 2020, vitalsEnabled: true }),
     'POST /api/health-profiles/:id/consent-attestation': (u, x) =>
       t.call(u, 'POST', attestationPath(x.profileId), ATTESTATION),
-    'POST /api/health-profiles/:id/consent-invitations': (u, x) =>
-      t.call(u, 'POST', `${profiles}/${x.profileId}/consent-invitations`, { attestation: true }),
-    'DELETE /api/health-profiles/:id/consent-invitations': (u, x) =>
-      t.call(u, 'DELETE', `${profiles}/${x.profileId}/consent-invitations`),
-    'GET /api/consent-invitations/view': (_u, x) => invitationCall(t, x.token),
-    'POST /api/consent-invitations/respond': (_u, x) => invitationCall(t, x.token, respondBody),
+    'POST /api/health-profiles/:id/link-invitations': (u, x) =>
+      t.call(u, 'POST', `${profiles}/${x.profileId}/link-invitations`, {}),
+    'DELETE /api/health-profiles/:id/link-invitations': (u, x) =>
+      t.call(u, 'DELETE', `${profiles}/${x.profileId}/link-invitations`),
+    'GET /api/me/link-invitations/view': (u, x) => linkCall(t, u, x.token),
+    'POST /api/me/link-invitations/accept': (u, x) => linkCall(t, u, x.token, acceptBody),
     'POST /api/health-profiles/:id/upload-batches': (u, x) => upload(u, x.profileId),
     'GET /api/source-documents/:id/review': (u, x) => t.call(u, 'GET', `${documents}/${x.documentId}/review`),
     'GET /api/source-documents/:id/image': (u, x) => t.call(u, 'GET', `${documents}/${x.documentId}/image`),
@@ -111,6 +112,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     'GET /api/me/revisit-reminders/:reminderId': (u, x) =>
       t.call(u, 'GET', `/api/me/revisit-reminders/${x.revisitReminderId}`),
     'GET /api/me/reminders/:reminderId': (u, x) => t.call(u, 'GET', `/api/me/reminders/${x.reminderId}`),
+    ...doseConfirmationRouteProbes((...args) => t.call(...args)),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
         type: 'device_reading',
@@ -118,13 +120,15 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       }),
   };
 
-  // Gia đình nạn nhân: hồ sơ đã đồng thuận, chứng từ chờ duyệt có ảnh, link mời đã dùng.
+  // Gia đình nạn nhân: hồ sơ đã đồng thuận, chứng từ chờ duyệt có ảnh, link liên kết đang chờ.
   const victimFixture = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
     const created = await t.call(main, 'POST', profiles, { birthYear: 1950, displayName: 'Mẹ' });
     const profile = (await created.json()) as HealthProfile;
-    const token = await acceptConsentInvitation(t, main, profile.id);
+    await confirmConsentByAttestation(t, main, profile.id);
+    const linked = await t.call(main, 'POST', `${profiles}/${profile.id}/link-invitations`, {});
+    const token = linkToken((await linked.json()) as ProfileLinkCreated);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const { documentId } = await seedPendingDocument(t, owner, reading);
     const started = await t.call(main, 'POST', `${profiles}/${profile.id}/medication-courses`, course);
@@ -188,7 +192,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
         });
       }
     }
-    // Hồ sơ "Lén" không được tạo; dữ liệu nạn nhân (gồm link mời, chứng từ, số đo) giữ nguyên.
+    // Hồ sơ "Lén" không được tạo; dữ liệu nạn nhân (gồm link liên kết, chứng từ, số đo) giữ nguyên.
     expect(await snapshotHealthTables(t.owner)).toEqual(before);
   });
 

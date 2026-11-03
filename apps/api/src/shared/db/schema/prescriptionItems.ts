@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { boolean, check, index, integer, numeric, pgTable, text, uuid } from 'drizzle-orm/pg-core';
-import { familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
+import { familyIdColumn, idColumn, selfIsolationPolicyWhen } from './columns.js';
 import { prescriptions } from './prescriptions.js';
 
 export const prescriptionItems = pgTable(
@@ -42,6 +42,9 @@ export const prescriptionItems = pgTable(
     ),
     check('prescription_items_duration_positive', sql`${t.durationDays} IS NULL OR ${t.durationDays} > 0`),
     check('prescription_items_total_positive', sql`${t.totalQuantity} IS NULL OR ${t.totalQuantity} > 0`),
-    familyIsolationPolicy(),
+    // Không có cột hồ sơ nhưng route tự xem cần đọc dòng thuốc: đối chiếu qua đơn cha (Tech Spec §3.9.3).
+    selfIsolationPolicyWhen(
+      sql`EXISTS (SELECT 1 FROM prescriptions parent WHERE parent.id = prescription_items.prescription_id AND parent.health_profile_id = NULLIF(current_setting('app.self_profile_id', true), '')::uuid)`,
+    ),
   ],
 );

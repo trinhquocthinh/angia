@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isReminderPath, saveReminderReturnPath, takeReminderReturnPath } from './reminderReturnPath';
+import { isReturnPath, saveReminderReturnPath, takeReminderReturnPath } from './reminderReturnPath';
 
 const id = '3f2b8c1e-9a4d-4e6f-8b7a-1c2d3e4f5a6b';
 const KEY = 'angia.returnTo';
@@ -26,8 +26,8 @@ function brokenStorage(): Storage {
 
 describe('Quay lại lời nhắc sau đăng nhập (SPEC-035)', () => {
   it('chỉ nhận đường dẫn /reminders/<uuid> cùng origin', () => {
-    expect(isReminderPath(`/reminders/${id}`)).toBe(true);
-    expect(isReminderPath(`/reminders/${id.toUpperCase()}`)).toBe(true);
+    expect(isReturnPath(`/reminders/${id}`)).toBe(true);
+    expect(isReturnPath(`/reminders/${id.toUpperCase()}`)).toBe(true);
     for (const path of [
       `/reminders/${id}?x=1`,
       '//evil.test',
@@ -36,12 +36,12 @@ describe('Quay lại lời nhắc sau đăng nhập (SPEC-035)', () => {
       `/reminders/${id}/`,
       '/',
     ])
-      expect(isReminderPath(path)).toBe(false);
+      expect(isReturnPath(path)).toBe(false);
   });
   it('SPEC-044: chỉ nhận đường dẫn tái khám hợp lệ và khôi phục một lần', () => {
     const path = `/revisit-reminders/${id}`;
     const storage = memoryStorage();
-    expect(isReminderPath(path)).toBe(true);
+    expect(isReturnPath(path)).toBe(true);
     saveReminderReturnPath(path, storage);
     expect(takeReminderReturnPath(storage)).toBe(path);
     expect(takeReminderReturnPath(storage)).toBeNull();
@@ -53,7 +53,7 @@ describe('Quay lại lời nhắc sau đăng nhập (SPEC-035)', () => {
       'https://evil.test' + path,
       '/revisit-reminders/' + id.toUpperCase(),
     ])
-      expect(isReminderPath(bad)).toBe(false);
+      expect(isReturnPath(bad)).toBe(false);
   });
   it('lưu đường dẫn hợp lệ rồi lấy ra đúng một lần và xóa khóa', () => {
     const storage = memoryStorage();
@@ -82,5 +82,24 @@ describe('Quay lại lời nhắc sau đăng nhập (SPEC-035)', () => {
   });
   it('môi trường không có sessionStorage: trả null', () => {
     expect(takeReminderReturnPath()).toBeNull();
+  });
+});
+
+describe('TC-559 — Quay lại trang link liên kết sau đăng nhập (SPEC-040)', () => {
+  it('chỉ lưu đúng /link-invite', () => {
+    const storage = memoryStorage();
+    saveReminderReturnPath('/link-invite', storage);
+    expect(storage.getItem(KEY)).toBe('/link-invite');
+    expect(takeReminderReturnPath(storage)).toBe('/link-invite');
+  });
+  it.each([
+    '/link-invite#token=v1.bimat',
+    '/link-invite?token=v1.bimat',
+    '/link-invite/',
+    '//evil/link-invite',
+  ])('không lưu %s, token không vào storage', (path) => {
+    const storage = memoryStorage();
+    saveReminderReturnPath(path, storage);
+    expect(storage.length).toBe(0);
   });
 });

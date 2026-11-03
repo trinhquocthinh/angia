@@ -1,6 +1,6 @@
 import { foreignKey, pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
-import { createdAtColumn, familyIdColumn, familyIsolationPolicy } from './columns.js';
+import { createdAtColumn, familyIdColumn, selfIsolationPolicy } from './columns.js';
 import { healthProfiles } from './healthProfiles.js';
 
 // BR-039/SPEC-026: tài khoản `main` được chỉ định nhận nhắc cho hồ sơ không liên kết tài khoản.
@@ -23,6 +23,6 @@ export const reminderRecipients = pgTable(
       columns: [t.healthProfileId, t.familyId],
       foreignColumns: [healthProfiles.id, healthProfiles.familyId],
     }).onDelete('cascade'),
-    familyIsolationPolicy(),
+    selfIsolationPolicy('health_profile_id'),
   ],
 );

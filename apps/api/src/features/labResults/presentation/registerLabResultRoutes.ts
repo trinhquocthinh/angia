@@ -4,7 +4,7 @@ import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { errorJson } from '@src/shared/http/errorResponse.js';
 import { getLabSeries } from '../application/getLabSeries.js';
 import type { LabResultRepository } from '../application/ports.js';
-import { toLabResultResponse } from './toLabResultResponse.js';
+import { toLabSeriesResponse } from './toLabSeriesResponse.js';
 
 const error = (description: string) => ({
   description,
@@ -39,10 +39,6 @@ export function registerLabResultRoutes(app: OpenAPIHono<AppEnv>, repository: La
       testName: c.req.valid('query').testName,
     });
     if (!result.ok) return c.json(...errorJson(result.code));
-    const series = result.value.map((group) => ({
-      testName: group.testName,
-      results: group.results.map(toLabResultResponse),
-    }));
-    return c.json(series, 200);
+    return c.json(toLabSeriesResponse(result.value), 200);
   });
 }

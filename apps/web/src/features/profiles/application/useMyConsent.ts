@@ -19,5 +19,14 @@ export function useMyConsent(repository: MyConsentRepository, session: ProfileSe
     mutationFn: () => repository.withdraw(csrf),
     onSuccess: () => client.invalidateQueries({ queryKey: profileScopeKey(session) }),
   });
-  return { consent, withdraw };
+  // SPEC-050: phiên đổi health_profile_id nên phải làm mới cả phiên.
+  const unlink = useMutation({
+    mutationFn: () => repository.unlink(csrf),
+    onSuccess: () =>
+      Promise.all([
+        client.invalidateQueries({ queryKey: profileScopeKey(session) }),
+        client.invalidateQueries({ queryKey: ['current-session'] }),
+      ]),
+  });
+  return { consent, withdraw, unlink };
 }

@@ -17,7 +17,12 @@ describe('LG-02: receipt và thu hồi lời mời nguyên tử', () => {
   it('TC-551: lỗi thu hồi link rollback cả receipt, không ghi dữ liệu một phần', async () => {
     const f = await profileConsentFixture(t);
     const profile = await f.create();
-    await f.invite(profile.id);
+    // Dữ liệu cũ: link đồng thuận ẩn danh chưa dùng (migration E14 thu hồi, nhưng cam kết vẫn dọn nếu còn).
+    await t.owner.query(
+      `INSERT INTO consent_invitations(id,family_id,profile_id,token_hash,expires_at)
+       VALUES(gen_random_uuid(),$1,$2,'legacy-hash',now() + interval '1 day')`,
+      [f.familyId, profile.id],
+    );
     const before = await f.snapshot(profile.id);
     await t.owner.query(`CREATE FUNCTION reject_test_revocation() RETURNS trigger LANGUAGE plpgsql AS $$
       BEGIN RAISE EXCEPTION 'Lỗi giả lập khi thu hồi link'; END; $$;

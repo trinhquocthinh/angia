@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { SelfProfileMenuItem } from './SelfProfileMenuItem';
 import { SoonMenuItem } from './SoonMenuItem';
 import type { ProfileSession } from '../../application/ports';
 import { roleLabel } from './roleLabel';
@@ -29,6 +30,7 @@ export function AccountMenuPanel({
         </span>
       </div>
       <div className="flex flex-col py-1">
+        {session.account.healthProfileId && <SelfProfileMenuItem className={item} />}
         <SoonMenuItem icon="account_circle" label="Hồ sơ cá nhân" className={item} />
         {session.account.isSystemAdmin && (
           <Link to="/admin" className={`${item} justify-between`}>

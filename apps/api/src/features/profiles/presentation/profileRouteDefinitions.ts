@@ -1,6 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi';
 import {
   confirmConsentRequestSchema,
+  createdHealthProfileSchema,
   createHealthProfileRequestSchema,
   deleteHealthProfileRequestSchema,
   errorResponseSchema,
@@ -45,7 +46,10 @@ export const createProfileRoute = createRoute({
   summary: 'Tạo hồ sơ, tùy chọn cam kết hoặc tự xác nhận đồng thuận',
   request: { body: { required: true, content: json(createHealthProfileRequestSchema) } },
   responses: {
-    201: { description: 'Hồ sơ đã tạo', content: json(healthProfileSchema) },
+    201: {
+      description: 'Hồ sơ đã tạo; kèm linkInvitation khi liên kết tài khoản khác',
+      content: json(createdHealthProfileSchema),
+    },
     ...guards,
     404: error('ERR_NOT_FOUND: tài khoản không thuộc nhóm'),
     409: error('ERR_PROFILE_ALREADY_LINKED'),

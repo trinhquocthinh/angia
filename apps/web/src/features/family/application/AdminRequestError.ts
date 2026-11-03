@@ -12,6 +12,7 @@ const messages: Record<string, string> = {
   ERR_NOT_FOUND: 'Tài khoản hoặc nhóm không còn tồn tại. Vui lòng tải lại danh sách.',
   ERR_ACCOUNT_ALREADY_IN_FAMILY: 'Tài khoản đã thuộc một nhóm. Vui lòng tải lại danh sách.',
   ERR_FIRST_ACCOUNT_MUST_BE_MAIN: 'Tài khoản đầu tiên của nhóm phải là Quản trị chính.',
+  ERR_PROFILE_ALREADY_LINKED: 'Tài khoản đã liên kết với một hồ sơ. Vui lòng tải lại danh sách.',
   ERR_LAST_MAIN: 'Nhóm phải còn ít nhất một Quản trị chính. Hãy bổ sung người thay thế trước.',
 };
 

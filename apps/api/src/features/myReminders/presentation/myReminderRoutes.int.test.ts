@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
+import { linkAccountToProfile } from '@src/shared/test/profileConsentFixture.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { seedAccount, seedSession } from '@src/shared/test/seedAuthFixtures.js';
 import { SEEDED_MEDICATIONS, seedReminder } from '@src/shared/test/seedReminder.js';
@@ -24,14 +25,15 @@ describe('API lời nhắc cá nhân GET /api/me/reminders/:reminderId (SPEC-035
     const mom = await t.session(familyId, 'main', 'Mẹ');
     const grandma = await t.session(familyId, 'member', 'Bà');
     const uncle = await t.session(familyId, 'member', 'Chú');
-    const create = async (body: object, recipient?: string) => {
+    const create = async (body: object, recipient?: string, member?: typeof grandma) => {
       const profile = (await (
         await t.call(dad, 'POST', '/api/health-profiles', { birthYear: 1950, ...body })
       ).json()) as HealthProfile;
-      await acceptConsentInvitation(t, dad, profile.id);
+      if (member) await linkAccountToProfile(t, dad, member, profile.id);
+      else await confirmConsentByAttestation(t, dad, profile.id);
       return { profile, reminderId: await seedReminder(t.owner, familyId, profile.id, recipient) };
     };
-    const linked = await create({ displayName: 'Bà Tư', linkedAccountId: grandma.accountId });
+    const linked = await create({ displayName: 'Bà Tư' }, undefined, grandma);
     const child = await create({ displayName: 'Bé An' }, dad.accountId);
     return { familyId, dad, mom, grandma, uncle, linked, child };
   };
@@ -42,6 +44,9 @@ describe('API lời nhắc cá nhân GET /api/me/reminders/:reminderId (SPEC-035
     scheduledAt: '2026-10-23T00:00:00.000Z',
     profileName,
     medications,
+    confirmation: null,
+    canConfirm: false,
+    canUndo: false,
   });
 
   it('TC-344: member đọc được lời nhắc hồ sơ liên kết của mình, member khác cùng gia đình nhận 404', async () => {

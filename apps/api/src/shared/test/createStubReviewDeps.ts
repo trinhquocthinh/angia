@@ -22,8 +22,10 @@ export function createStubReviewDeps(): Pick<
   | 'revisits'
   | 'prescriptionChain'
   | 'timeline'
+  | 'selfProfile'
   | 'reminderRecipients'
   | 'myReminders'
+  | 'doseConfirmations'
   | 'myRevisitReminders'
   | 'myConsent'
   | 'visitSummary'
@@ -41,8 +43,14 @@ export function createStubReviewDeps(): Pick<
     revisits: { withFamily: notConfigured },
     prescriptionChain: { withFamily: notConfigured },
     timeline: { withFamily: notConfigured },
+    selfProfile: {
+      forProfile: () => {
+        throw new Error('Kho tự xem chưa cấu hình trong test này');
+      },
+    },
     reminderRecipients: { withFamily: notConfigured },
     myReminders: { load: notConfigured },
+    doseConfirmations: { withFamily: notConfigured, withProfileDay: notConfigured },
     myRevisitReminders: { load: notConfigured },
     myConsent: { withFamily: notConfigured },
     visitSummary: { withFamily: notConfigured },

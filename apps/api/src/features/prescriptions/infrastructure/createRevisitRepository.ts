@@ -3,16 +3,19 @@ import { lockMedicationProfile } from '@src/features/medications/infrastructure/
 import { findProfileInFamily } from '@src/features/profiles/infrastructure/findProfileInFamily.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { prescriptions } from '@src/shared/db/schema/index.js';
-import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
+import { type FamilyScope, withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { RevisitRepository, RevisitStore } from '../application/revisitPorts.js';
 import { cleanRevisitReminders } from './cleanRevisitReminders.js';
 import { ensureRevisitReminder } from './ensureRevisitReminder.js';
 import { listProfileRevisits } from './listProfileRevisits.js';
 
-export function createRevisitRepository(db: Database): RevisitRepository {
+export function createRevisitRepository(
+  db: Database,
+  scope: FamilyScope = withFamilyScope,
+): RevisitRepository {
   return {
     withFamily: (familyId, work) =>
-      withFamilyScope(db, familyId, (tx) =>
+      scope(db, familyId, (tx) =>
         work({
           findProfile: (id) => findProfileInFamily(tx, familyId, id, 'share'),
           lockProfile: (id) => lockMedicationProfile(tx, familyId, id),

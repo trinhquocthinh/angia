@@ -3,7 +3,8 @@ import { TimelineEventCard } from './TimelineEventCard';
 import { TimelineLoadState } from './TimelineLoadState';
 
 type Props = {
-  profileId: string;
+  /** undefined: tự xem, không có link sang đơn (SPEC-042). */
+  profileId: string | undefined;
   items: TimelineEvent[] | undefined;
   loading: boolean;
   error: unknown;

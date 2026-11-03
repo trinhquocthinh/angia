@@ -22,6 +22,18 @@ export interface AdminRepository {
   ): Promise<Account>;
 }
 
+// SPEC-050: quản trị chỉ thấy id và tên hồ sơ/tài khoản (ngoại lệ hẹp BR-003).
+export type AdminProfileLink = components['schemas']['AdminProfileLink'];
+export interface ProfileLinkAdminRepository {
+  list(familyId: string, signal?: AbortSignal): Promise<AdminProfileLink[]>;
+  setLinkedAccount(
+    familyId: string,
+    profileId: string,
+    accountId: string | null,
+    csrfToken: string,
+  ): Promise<AdminProfileLink>;
+}
+
 // SPEC-013: trần ngân sách AI toàn hệ thống của tháng hiện tại (giờ Việt Nam).
 export interface AiBudgetRepository {
   get(signal?: AbortSignal): Promise<AiBudget>;

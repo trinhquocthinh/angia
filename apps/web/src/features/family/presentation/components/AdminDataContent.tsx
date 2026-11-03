@@ -11,6 +11,7 @@ import { AdminLoadError } from './AdminLoadError';
 import { AdminLoading } from './AdminLoading';
 import { AccountsPanel } from './AccountsPanel';
 import { FamilyCards } from './FamilyCards';
+import { ProfileLinksCard } from './ProfileLinksCard';
 import { PendingAccountsCard } from './PendingAccountsCard';
 import { FamilyAccessCard } from './FamilyAccessCard';
 
@@ -21,6 +22,7 @@ type AdminDataContentProps = {
   aiBilling: ReturnType<typeof useAiBilling>;
   scanQuota: ReturnType<typeof useAdminScanQuota>;
   currentAccountId: string;
+  csrfToken: string;
   onTask: (task: AdminTask) => void;
   accountQuery: string;
   onAccountQuery: (query: string) => void;
@@ -36,6 +38,7 @@ export function AdminDataContent({
   aiBilling,
   scanQuota,
   currentAccountId,
+  csrfToken,
   onTask,
   accountQuery,
   onAccountQuery,
@@ -59,6 +62,7 @@ export function AdminDataContent({
           onSearch={onAccountQuery}
         />
         <FamilyCards families={families.data} accounts={accounts.data} currentFamilyId={currentFamilyId} />
+        <ProfileLinksCard families={families.data} accounts={accounts.data} csrfToken={csrfToken} />
         <ScanQuotaCard key={currentAccountId} state={scanQuota} />
         <FamilyAccessCard />
       </div>

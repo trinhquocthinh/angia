@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { HealthProfile, SourceDocumentPage, UploadBatchResponse } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -72,7 +72,7 @@ describe('Tải chứng từ đơn lẻ/theo lô: route thật, transaction và 
       displayName: 'Mẹ',
     });
     const profile = (await created.json()) as HealthProfile;
-    if (consented) await acceptConsentInvitation(t, main, profile.id);
+    if (consented) await confirmConsentByAttestation(t, main, profile.id);
     return { familyId, main, profile };
   };
   it('TC-011 → TC-012 → TC-020: chặn khi chưa đồng thuận, sau khi người nhận đồng ý thì lưu ảnh 3 MB', async () => {
@@ -83,7 +83,7 @@ describe('Tải chứng từ đơn lẻ/theo lô: route thật, transaction và 
     expect(await blocked.json()).toMatchObject({ error: { code: 'ERR_CONSENT_REQUIRED' } });
     expect(await counts()).toEqual(before);
 
-    await acceptConsentInvitation(t, main, profile.id);
+    await confirmConsentByAttestation(t, main, profile.id);
     const response = await upload(main, profile.id, [{ name: 'Nguyen Van A.jpg', bytes: image(3 * MiB) }], {
       declaredType: 'prescription',
     });

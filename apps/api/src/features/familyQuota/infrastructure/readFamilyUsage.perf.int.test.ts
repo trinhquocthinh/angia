@@ -26,12 +26,14 @@ describe('Đo truy vấn mức dùng gia đình với 1.000 chứng từ (SPEC-0
       [familyId, profileId, main.accountId],
     );
     await t.owner.query(
-      `INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,status,original_key,mime_type,size_bytes,created_at)
+      `INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,status,image_key,image_sha256,privacy_approved_by,privacy_approved_at,mime_type,size_bytes,created_at)
        SELECT gen_random_uuid(), $1::uuid, $2::uuid, $3::uuid,
-              (ARRAY['uploaded','rejected','pending_review','manual_entry'])[1 + i % 4],
-              'families/' || $1::text || '/k/' || i, 'image/jpeg', 3000000, now() - (i || ' seconds')::interval
+              (ARRAY['uploaded','awaiting_budget','pending_review','manual_entry'])[1 + i % 4],
+              'families/' || $1::text || '/k/' || i,
+              CASE WHEN i % 4 = 0 THEN NULL ELSE repeat('a', 64) END,
+              $4::uuid, now(), 'image/jpeg', 3000000, now() - (i || ' seconds')::interval
        FROM generate_series(1, ${DOCUMENTS}) AS i`,
-      [familyId, profileId, batch.rows[0].id],
+      [familyId, profileId, batch.rows[0].id, main.accountId],
     );
     await t.owner.query('ANALYZE source_documents');
   });

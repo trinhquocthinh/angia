@@ -1,3 +1,4 @@
+import { createSelfProfileRepository } from '@src/features/selfProfile/infrastructure/createSelfProfileRepository.js';
 import { createTimelineRepository } from '@src/features/timeline/infrastructure/createTimelineRepository.js';
 import { createPrescriptionChainRepository } from '@src/features/prescriptions/infrastructure/createPrescriptionChainRepository.js';
 import { createRevisitRepository } from '@src/features/prescriptions/infrastructure/createRevisitRepository.js';
@@ -8,12 +9,13 @@ import { createAdherenceRepository } from '@src/features/adherence/infrastructur
 import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
 import { createMyConsentRepository } from '@src/features/myConsent/infrastructure/createMyConsentRepository.js';
 import { createMyRevisitReminderRepository } from '@src/features/myRevisitReminders/infrastructure/createMyRevisitReminderRepository.js';
+import { createDoseConfirmationRepository } from '@src/features/doseConfirmations/infrastructure/createDoseConfirmationRepository.js';
 import { createMyReminderRepository } from '@src/features/myReminders/infrastructure/createMyReminderRepository.js';
 import { createReminderRecipientRepository } from '@src/features/reminders/infrastructure/createReminderRecipientRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
 import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
-import { createInvitationRepository } from '@src/features/consentInvitations/infrastructure/createInvitationRepository.js';
-import { createInvitationTokenCodec } from '@src/features/consentInvitations/infrastructure/createInvitationTokenCodec.js';
+import { createProfileLinkRepository } from '@src/features/profileLinks/infrastructure/createProfileLinkRepository.js';
+import { createProfileLinkTokenCodec } from '@src/features/profileLinks/infrastructure/createProfileLinkTokenCodec.js';
 import { randomUUID } from 'node:crypto';
 import {
   SANITIZE_DOCUMENT_IMAGE_QUEUE,
@@ -72,8 +74,10 @@ const healthDataRepositories = (database: Database) => ({
   revisits: createRevisitRepository(database),
   prescriptionChain: createPrescriptionChainRepository(database),
   timeline: createTimelineRepository(database),
+  selfProfile: createSelfProfileRepository(database),
   reminderRecipients: createReminderRecipientRepository(database),
   myReminders: createMyReminderRepository(database),
+  doseConfirmations: createDoseConfirmationRepository(database),
   myRevisitReminders: createMyRevisitReminderRepository(database),
   myConsent: createMyConsentRepository(database),
   visitSummary: createVisitSummaryRepository(database),
@@ -102,9 +106,9 @@ function buildApp(
     aiBilling: createStubAiBillingDeps(),
     scanQuota: createStubScanQuotaDeps(),
     profiles: { repository: createProfileRepository(database, boss), storage: memory.profileStorage },
-    consentInvitations: {
-      repository: createInvitationRepository(database),
-      codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
+    profileLinks: {
+      repository: createProfileLinkRepository(database),
+      codec: createProfileLinkTokenCodec(TEST_COOKIE_SECRET),
       now: () => new Date(),
       newId: randomUUID,
       appBaseUrl,
@@ -182,7 +186,7 @@ export async function startProfileTestApp(
     failNthPut: memory.failNthPut,
     holdNextPut: memory.holdNextPut,
     failNextDeletePrefix: memory.failNextDeletePrefix,
-    codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
+    codec: createProfileLinkTokenCodec(TEST_COOKIE_SECRET),
   };
 }
 export type ProfileTestApp = Awaited<ReturnType<typeof startProfileTestApp>>;

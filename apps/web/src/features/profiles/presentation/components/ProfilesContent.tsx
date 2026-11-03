@@ -8,6 +8,7 @@ type ProfilesContentProps = {
   error: boolean;
   retry: () => void;
   onConsent: (profile: ProfileListItem) => void;
+  onLink: (profile: ProfileListItem) => void;
   onDelete: (profile: ProfileListItem) => void;
   ownProfileId?: string | null;
   onWithdraw?: () => void;
@@ -18,6 +19,7 @@ export function ProfilesContent({
   error,
   retry,
   onConsent,
+  onLink,
   onDelete,
   ownProfileId,
   onWithdraw,
@@ -61,6 +63,7 @@ export function ProfilesContent({
             key={profile.id}
             profile={profile}
             onConsent={onConsent}
+            onLink={onLink}
             onDelete={onDelete}
             onWithdraw={profile.id === ownProfileId ? onWithdraw : undefined}
           />

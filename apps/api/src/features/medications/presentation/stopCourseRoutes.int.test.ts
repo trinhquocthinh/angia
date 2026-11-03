@@ -122,8 +122,8 @@ describe('API dừng đợt thuốc + RLS (SPEC-017)', () => {
       await t.call(f.main, 'POST', '/api/health-profiles', { birthYear: 1950, displayName: 'Mẹ' })
     ).json()) as { id: string };
     // Đồng thuận hồ sơ thứ hai rồi thử ID đợt của hồ sơ thứ nhất.
-    const { acceptConsentInvitation } = await import('@src/shared/test/acceptConsentInvitation.js');
-    await acceptConsentInvitation(t, f.main, otherProfile.id);
+    const { confirmConsentByAttestation } = await import('@src/shared/test/confirmConsentByAttestation.js');
+    await confirmConsentByAttestation(t, f.main, otherProfile.id);
     expect(
       (
         await t.call(

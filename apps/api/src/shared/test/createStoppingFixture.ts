@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { HealthProfile, MedicationCourse } from '@angia/contracts';
 import { expect } from 'vitest';
-import { acceptConsentInvitation } from './acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from './confirmConsentByAttestation.js';
 import type { ProfileTestApp } from './startProfileTestApp.js';
 import { createFiniteCourse } from './createFiniteCourse.js';
 export async function createStoppingFixture(t: ProfileTestApp, consent = true, finite = false) {
@@ -10,7 +10,7 @@ export async function createStoppingFixture(t: ProfileTestApp, consent = true, f
   const profile = (await (
     await t.call(main, 'POST', '/api/health-profiles', { birthYear: 1950, displayName: 'Bà ngoại' })
   ).json()) as HealthProfile;
-  if (consent) await acceptConsentInvitation(t, main, profile.id);
+  if (consent) await confirmConsentByAttestation(t, main, profile.id);
   const collection = `/api/health-profiles/${profile.id}/medication-courses`;
   let course: MedicationCourse;
   if (finite) {

@@ -41,4 +41,26 @@ describe('TC-386 — useMyConsent', () => {
     expect(client.getQueryState(myConsentKey(session))?.isInvalidated).toBe(true);
     client.clear();
   });
+  it('TC-560: gỡ liên kết làm mới danh sách hồ sơ và cả phiên', async () => {
+    const client = new QueryClient();
+    const listKey = [...profileScopeKey(session), 'list'];
+    client.setQueryData(listKey, []);
+    client.setQueryData(['current-session'], session);
+    const repo = { get: vi.fn(), withdraw: vi.fn(), unlink: vi.fn(async () => undefined) };
+    let hook: ReturnType<typeof useMyConsent> | undefined;
+    function Probe() {
+      hook = useMyConsent(repo, session);
+      return null;
+    }
+    renderToStaticMarkup(
+      <QueryClientProvider client={client}>
+        <Probe />
+      </QueryClientProvider>,
+    );
+    await hook!.unlink.mutateAsync();
+    expect(repo.unlink).toHaveBeenCalledWith('csrf');
+    expect(client.getQueryState(listKey)?.isInvalidated).toBe(true);
+    expect(client.getQueryState(['current-session'])?.isInvalidated).toBe(true);
+    client.clear();
+  });
 });

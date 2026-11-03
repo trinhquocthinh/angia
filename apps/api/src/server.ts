@@ -1,3 +1,4 @@
+import { createSelfProfileRepository } from '@src/features/selfProfile/infrastructure/createSelfProfileRepository.js';
 import { createTimelineRepository } from '@src/features/timeline/infrastructure/createTimelineRepository.js';
 import { createPrescriptionChainRepository } from '@src/features/prescriptions/infrastructure/createPrescriptionChainRepository.js';
 import { createRevisitRepository } from '@src/features/prescriptions/infrastructure/createRevisitRepository.js';
@@ -8,11 +9,12 @@ import { createAdherenceRepository } from '@src/features/adherence/infrastructur
 import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
 import { createMyConsentRepository } from '@src/features/myConsent/infrastructure/createMyConsentRepository.js';
 import { createMyRevisitReminderRepository } from '@src/features/myRevisitReminders/infrastructure/createMyRevisitReminderRepository.js';
+import { createDoseConfirmationRepository } from '@src/features/doseConfirmations/infrastructure/createDoseConfirmationRepository.js';
 import { createMyReminderRepository } from '@src/features/myReminders/infrastructure/createMyReminderRepository.js';
 import { createReminderRecipientRepository } from '@src/features/reminders/infrastructure/createReminderRecipientRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
-import { createInvitationRepository } from '@src/features/consentInvitations/infrastructure/createInvitationRepository.js';
-import { createInvitationTokenCodec } from '@src/features/consentInvitations/infrastructure/createInvitationTokenCodec.js';
+import { createProfileLinkRepository } from '@src/features/profileLinks/infrastructure/createProfileLinkRepository.js';
+import { createProfileLinkTokenCodec } from '@src/features/profileLinks/infrastructure/createProfileLinkTokenCodec.js';
 import { createDocumentRepository } from '@src/features/documents/infrastructure/createDocumentRepository.js';
 import { createSanitizeQueue } from '@src/features/documents/infrastructure/createSanitizeQueue.js';
 import { createDeletionRepository } from '@src/features/documents/infrastructure/createDeletionRepository.js';
@@ -140,9 +142,9 @@ const app = createApp({
     repository: createProfileRepository(db, boss),
     storage: createProfileObjectStorage(s3, config.S3_BUCKET),
   },
-  consentInvitations: {
-    repository: createInvitationRepository(db),
-    codec: createInvitationTokenCodec(config.SESSION_COOKIE_SECRET),
+  profileLinks: {
+    repository: createProfileLinkRepository(db),
+    codec: createProfileLinkTokenCodec(config.SESSION_COOKIE_SECRET),
     now: () => new Date(),
     newId: randomUUID,
     appBaseUrl: config.APP_BASE_URL,
@@ -165,8 +167,10 @@ const app = createApp({
   revisits: createRevisitRepository(db),
   prescriptionChain: createPrescriptionChainRepository(db),
   timeline: createTimelineRepository(db),
+  selfProfile: createSelfProfileRepository(db),
   reminderRecipients: createReminderRecipientRepository(db),
   myReminders: createMyReminderRepository(db),
+  doseConfirmations: createDoseConfirmationRepository(db),
   myRevisitReminders: createMyRevisitReminderRepository(db),
   myConsent: createMyConsentRepository(db),
   visitSummary: createVisitSummaryRepository(db),

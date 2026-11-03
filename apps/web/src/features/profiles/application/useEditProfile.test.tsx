@@ -29,6 +29,7 @@ const profile: ProfileListItem = {
   ...healthProfile,
   consentAction: 'attestation',
   consentConfirmedByName: null,
+  hasLinkedAccount: false,
 };
 function mount(update: ProfilesRepository['update'], context = session, item = profile) {
   const client = new QueryClient();

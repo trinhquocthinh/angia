@@ -25,6 +25,7 @@ const loaded = (overrides: Partial<LoadedMyReminder['reminder']> = {}, assigned:
     medications: [{ ...medication, courseId: 'course-1' }],
     profileId: 'grandma-profile',
     consentConfirmed: true,
+    confirmation: null,
     ...overrides,
   },
   familyAccounts: accounts,
@@ -42,8 +43,14 @@ const repositoryOf = (result: LoadedMyReminder | null) => {
   return { repository, calls };
 };
 const read = (result: LoadedMyReminder | null, accountId: string, reminderId = REMINDER_ID) =>
-  getMyReminder(repositoryOf(result).repository, { familyId: FAMILY_ID, accountId }, reminderId);
+  getMyReminder(
+    repositoryOf(result).repository,
+    { familyId: FAMILY_ID, accountId, isMain: accounts.find((a) => a.id === accountId)?.role === 'main' },
+    reminderId,
+    now,
+  );
 const notFound = { ok: false, code: 'ERR_NOT_FOUND' };
+const now = () => new Date('2026-10-23T02:00:00.000Z');
 
 describe('getMyReminder (SPEC-035, BR-039)', () => {
   it('TC-344: member liên kết đúng hồ sơ đọc được lời nhắc, thuốc không còn courseId', async () => {
@@ -56,6 +63,9 @@ describe('getMyReminder (SPEC-035, BR-039)', () => {
         scheduledAt: '2026-10-23T00:00:00.000Z',
         profileName: 'Bà',
         medications: [medication],
+        confirmation: null,
+        canConfirm: true,
+        canUndo: false,
       },
     });
   });
@@ -75,13 +85,26 @@ describe('getMyReminder (SPEC-035, BR-039)', () => {
   it('hồ sơ chưa đồng thuận nhận ERR_NOT_FOUND kể cả với tài khoản liên kết', async () => {
     expect(await read(loaded({ consentConfirmed: false }), 'grandma')).toEqual(notFound);
   });
+  it('TC-486: lời nhắc đã xác nhận trả bản xác nhận và canUndo cho người đã bấm', async () => {
+    const stored = {
+      profileId: 'grandma-profile',
+      date: '2026-10-23',
+      slot: 'morning' as const,
+      confirmedBy: { accountId: 'grandma', displayName: 'Bà' },
+      confirmedAt: '2026-10-23T01:00:00.000Z',
+    };
+    expect(await read(loaded({ confirmation: stored }), 'grandma')).toMatchObject({
+      ok: true,
+      value: { confirmation: { ...stored, reminderId: REMINDER_ID }, canConfirm: false, canUndo: true },
+    });
+  });
   it('không tìm thấy lời nhắc trong gia đình nhận ERR_NOT_FOUND', async () => {
     expect(await read(null, 'grandma')).toEqual(notFound);
   });
   it('TC-344: reminderId không phải UUID nhận ERR_NOT_FOUND, không chạm kho', async () => {
     const { repository, calls } = repositoryOf(loaded());
-    const actor = { familyId: FAMILY_ID, accountId: 'grandma' };
-    expect(await getMyReminder(repository, actor, 'not-a-uuid')).toEqual(notFound);
+    const actor = { familyId: FAMILY_ID, accountId: 'grandma', isMain: false };
+    expect(await getMyReminder(repository, actor, 'not-a-uuid', now)).toEqual(notFound);
     expect(calls).toEqual([]);
   });
 });

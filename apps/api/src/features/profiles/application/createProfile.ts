@@ -35,7 +35,8 @@ export async function createProfile(
     );
     if (!receipt.ok) return receipt;
     const profile = await store.insertProfile({ ...input, displayName }, receipt.value);
-    if (input.linkedAccountId) await store.linkAccount(input.linkedAccountId, profile.id);
+    // SPEC-004 (E14): chỉ gắn ngay tài khoản của chính người tạo; tài khoản khác phải tự xác nhận qua link (SPEC-040).
+    if (input.linkedAccountId === actorId) await store.linkAccount(actorId, profile.id);
     return { ok: true, value: profile };
   });
 }

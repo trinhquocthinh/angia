@@ -1,9 +1,11 @@
 import type { MyReminder } from '@angia/contracts';
+import { DoseConfirmationControl } from '@src/features/doseConfirmations/presentation/DoseConfirmationControl';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
 import { describeReminderSchedule } from '../application/describeReminderSchedule';
 import { reminderMedicationLine } from '../application/reminderMedicationLine';
 
-// Thẻ nội dung lời nhắc: hồ sơ, buổi/ngày/giờ và danh sách thuốc. Không nút xác nhận, không nhận định (BR-033).
-export function ReminderDetailCard({ reminder }: { reminder: MyReminder }) {
+// Thẻ nội dung lời nhắc: hồ sơ, buổi/ngày/giờ, danh sách thuốc và xác nhận cả buổi. Không nhận định (BR-033).
+export function ReminderDetailCard({ reminder, session }: { reminder: MyReminder; session: ProfileSession }) {
   const schedule = describeReminderSchedule(reminder);
   return (
     <section
@@ -29,6 +31,7 @@ export function ReminderDetailCard({ reminder }: { reminder: MyReminder }) {
           </li>
         ))}
       </ul>
+      <DoseConfirmationControl reminder={reminder} session={session} />
     </section>
   );
 }

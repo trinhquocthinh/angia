@@ -6,7 +6,14 @@ const item =
 const active = { className: 'font-semibold text-[#004135]' };
 
 // Thanh điều hướng đáy màn hình cho di động/máy tính bảng (< lg), thay cho điều hướng trên header.
-export function MobileBottomNav({ pendingCount }: { pendingCount?: number | undefined }) {
+// Khung cá nhân (Design §9.1): member đã liên kết không có mục Thêm mới/Chờ duyệt.
+export function MobileBottomNav({
+  pendingCount,
+  personal = false,
+}: {
+  pendingCount?: number | undefined;
+  personal?: boolean;
+}) {
   return (
     <nav
       aria-label="Điều hướng chính"
@@ -17,21 +24,30 @@ export function MobileBottomNav({ pendingCount }: { pendingCount?: number | unde
           <AdminIcon name="home_health" size={24} />
           Trang chủ
         </Link>
-        <Link to="/upload" className={`group -mt-4 gap-1 ${item}`}>
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#004135] text-white shadow-[0_4px_12px_rgba(0,65,53,0.3)] transition-transform group-active:scale-95">
-            <AdminIcon name="add" size={28} />
-          </span>
-          Thêm mới
-        </Link>
-        <Link to="/review" className={`relative gap-0.5 ${item}`} activeProps={active}>
-          <AdminIcon name="pending_actions" size={24} />
-          Chờ duyệt
-          {pendingCount ? (
-            <span className="absolute top-1 right-[calc(50%-18px)] h-1.5 w-1.5 rounded-full bg-[#833b00]">
-              <span className="sr-only">, {pendingCount} giấy tờ</span>
-            </span>
-          ) : null}
-        </Link>
+        {personal ? (
+          <Link to="/my-profile" className={`gap-0.5 ${item}`} activeProps={active}>
+            <AdminIcon name="person" size={24} />
+            Hồ sơ của tôi
+          </Link>
+        ) : (
+          <>
+            <Link to="/upload" className={`group -mt-4 gap-1 ${item}`}>
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#004135] text-white shadow-[0_4px_12px_rgba(0,65,53,0.3)] transition-transform group-active:scale-95">
+                <AdminIcon name="add" size={28} />
+              </span>
+              Thêm mới
+            </Link>
+            <Link to="/review" className={`relative gap-0.5 ${item}`} activeProps={active}>
+              <AdminIcon name="pending_actions" size={24} />
+              Chờ duyệt
+              {pendingCount ? (
+                <span className="absolute top-1 right-[calc(50%-18px)] h-1.5 w-1.5 rounded-full bg-[#833b00]">
+                  <span className="sr-only">, {pendingCount} giấy tờ</span>
+                </span>
+              ) : null}
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   );

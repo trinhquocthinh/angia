@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { ApprovedDocumentResponse, HealthProfile, ManualRecordsResponse } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 
@@ -51,7 +51,7 @@ describe('Nhập liệu thủ công: route thật + RLS (SPEC-011, E3-S4-T1)', (
       displayName: 'Mẹ',
     });
     const profile = (await created.json()) as HealthProfile;
-    if (consent) await acceptConsentInvitation(t, main, profile.id);
+    if (consent) await confirmConsentByAttestation(t, main, profile.id);
     return { familyId, main, profile };
   };
 

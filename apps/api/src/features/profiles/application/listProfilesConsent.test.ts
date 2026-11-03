@@ -31,11 +31,15 @@ describe('TC-558 — metadata thao tác đồng thuận theo phiên main', () =>
     );
     if (!result.ok) throw new Error('Không tạo được fixture');
     await repo.withFamily('f', async (store) => {
+      if (linked === 'other') await store.linkAccount('other', result.value.id);
       const profile = (await store.lockProfile(result.value.id))!;
       profile.consentStatus = status;
       profile.consentWithdrawnAt = withdrawn ? new Date(withdrawn) : null;
     });
-    expect((await listProfiles(repo, 'f', 'main'))[0]).toMatchObject({ consentAction: action });
+    expect((await listProfiles(repo, 'f', 'main'))[0]).toMatchObject({
+      consentAction: action,
+      hasLinkedAccount: linked !== null,
+    });
   });
   it('phân biệt tên người cam kết và tên người đồng ý; không lộ tên tài khoản đã rời nhóm', async () => {
     const actor = { id: 'main', familyId: 'f', displayName: 'Cha', healthProfileId: null };

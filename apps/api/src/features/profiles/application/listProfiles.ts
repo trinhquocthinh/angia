@@ -12,6 +12,7 @@ export function listProfiles(repository: ProfileRepository, familyId: string, ac
     return profiles.map((profile) => ({
       ...profile,
       consentAction: profileConsentAction(profile, linked.get(profile.id) ?? null, actorId),
+      hasLinkedAccount: linked.has(profile.id),
       consentConfirmedByName: profile.consentConfirmedBy
         ? (names.get(profile.consentConfirmedBy) ?? null)
         : null,

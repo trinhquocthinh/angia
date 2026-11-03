@@ -54,6 +54,7 @@ export { consentConfirmationResponseSchema } from './profiles/consentConfirmatio
 export type { ConsentConfirmationResponse } from './profiles/consentConfirmationResponseSchema.js';
 export { linkableAccountSchema } from './profiles/linkableAccountSchema.js';
 export type { LinkableAccount } from './profiles/linkableAccountSchema.js';
+export * from './profiles/profileLinkSchemas.js';
 export {
   consentInvitationCreateRequestSchema,
   consentInvitationCreatedSchema,
@@ -196,6 +197,13 @@ export type {
   SetReminderRecipientsRequest,
 } from './reminders/reminderRecipientSchemas.js';
 export { myReminderSchema } from './reminders/myReminderSchemas.js';
+export * from './reminders/doseConfirmationSchemas.js';
+export {
+  selfProfileSchema,
+  selfReminderListSchema,
+  selfReminderQuerySchema,
+} from './profiles/selfProfileSchemas.js';
+export type { SelfProfile, SelfReminder } from './profiles/selfProfileSchemas.js';
 export type { MyReminder } from './reminders/myReminderSchemas.js';
 export {
   documentEntryPageSchema,

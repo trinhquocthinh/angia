@@ -58,7 +58,7 @@ export function ProfileConsentStatus({ profile }: Props) {
             : profile.consentAction === 'self'
               ? 'Bạn có thể xác nhận đồng ý cho hồ sơ của chính mình.'
               : profile.consentAction === 'invitation'
-                ? 'Gửi liên kết để chính người thân xác nhận đồng ý.'
+                ? 'Người có tài khoản liên kết cần tự gỡ liên kết trước khi nhận link mới.'
                 : 'Hồ sơ chưa thể ghi dữ liệu sức khỏe khi chưa có đồng thuận.'}
           {profile.consentSource === 'legacy_attestation' && ' Xác nhận cũ cần được xác nhận lại.'}
         </p>

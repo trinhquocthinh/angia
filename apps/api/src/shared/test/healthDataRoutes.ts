@@ -3,6 +3,7 @@
 //  - scoped: nhắm tài nguyên của gia đình qua ID/token → expectCrossFamilyDenied.
 //  - list:   trả danh sách theo gia đình của phiên → không lẫn dữ liệu gia đình khác.
 //  - uniform: không chạm dữ liệu, mọi ID nhận cùng một phản hồi.
+//  - self:   /api/me/profile/*, phiên chỉ đọc hồ sơ liên kết qua withSelfScope (SPEC-042, TC-570).
 export const HEALTH_DATA_ROUTES = {
   'GET /api/health-profiles': 'list',
   'GET /api/health-profiles/linkable-accounts': 'list',
@@ -11,10 +12,11 @@ export const HEALTH_DATA_ROUTES = {
   'PATCH /api/health-profiles/:id': 'scoped',
   'POST /api/health-profiles/:id/consent': 'uniform',
   'POST /api/health-profiles/:id/consent-attestation': 'scoped',
-  'POST /api/health-profiles/:id/consent-invitations': 'scoped',
-  'DELETE /api/health-profiles/:id/consent-invitations': 'scoped',
-  'GET /api/consent-invitations/view': 'scoped',
-  'POST /api/consent-invitations/respond': 'scoped',
+  'POST /api/health-profiles/:id/link-invitations': 'scoped',
+  'DELETE /api/health-profiles/:id/link-invitations': 'scoped',
+  // SPEC-040: tài khoản được mời (kể cả member) xem/xác nhận link bằng phiên + token.
+  'GET /api/me/link-invitations/view': 'scoped',
+  'POST /api/me/link-invitations/accept': 'scoped',
   'POST /api/health-profiles/:id/upload-batches': 'scoped',
   'GET /api/source-documents': 'list',
   'GET /api/source-documents/:id/review': 'scoped',
@@ -47,17 +49,32 @@ export const HEALTH_DATA_ROUTES = {
   // SPEC-035: người nhận hợp lệ (gồm member liên kết hồ sơ) đọc lời nhắc của mình.
   'GET /api/me/reminders/:reminderId': 'scoped',
   'GET /api/me/revisit-reminders/:reminderId': 'scoped',
+  // SPEC-046: quyền tính từ người nhận/liên kết hiện hành, không requireMain; danh sách của ngày cho `main`.
+  'POST /api/reminders/:reminderId/dose-confirmation': 'scoped',
+  'DELETE /api/reminders/:reminderId/dose-confirmation': 'scoped',
+  'GET /api/health-profiles/:id/reminders': 'scoped',
+  // SPEC-042: temperatures và as-needed-doses thêm cùng bảng của chúng ở E15-S1-T3.
+  'GET /api/me/profile': 'self',
+  'GET /api/me/profile/medications/current': 'self',
+  'GET /api/me/profile/reminders': 'self',
+  'GET /api/me/profile/revisits': 'self',
+  'GET /api/me/profile/timeline': 'self',
+  'GET /api/me/profile/measurements/series': 'self',
+  'GET /api/me/profile/lab-result-series': 'self',
 } as const;
 
 type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;
 
-// TC-016: route dùng phiên phải chặn member 403. Loại trừ route dùng token mời và /api/me/reminders
-// (SPEC-035: người nhận hợp lệ kể cả member đọc được lời nhắc của mình — TC-344/TC-345 kiểm riêng).
+// TC-016: route dùng phiên phải chặn member 403. Loại trừ route xác nhận link liên kết, /api/me/reminders
+// (SPEC-035: người nhận hợp lệ kể cả member đọc được lời nhắc của mình — TC-344/TC-345 kiểm riêng),
+// route tự xem /api/me/profile (SPEC-042: member liên kết hồ sơ được đọc) và /api/reminders (SPEC-046, TC-486/488).
 export const MEMBER_BLOCKED_SESSION_ROUTES = Object.keys(HEALTH_DATA_ROUTES).filter(
   (route) =>
-    !route.includes('/consent-invitations/') &&
+    !route.includes('/me/link-invitations/') &&
     !route.startsWith('GET /api/me/reminders/') &&
-    !route.startsWith('GET /api/me/revisit-reminders/'),
+    !route.startsWith('GET /api/me/revisit-reminders/') &&
+    !route.includes(' /api/me/profile') &&
+    !route.includes(' /api/reminders/'),
 );
 // Record<RouteOfKind<'scoped'>, …> buộc test liệt kê đủ route của nhóm ngay lúc typecheck.
 export type RouteOfKind<Kind extends string> = {
@@ -79,6 +96,11 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   // F07: tài khoản liên kết đọc/rút đồng thuận của hồ sơ mình; chỉ tên, trạng thái, không trả dữ liệu sức khỏe.
   'GET /api/me/consent',
   'POST /api/me/consent/withdraw',
+  // SPEC-050: chỉ đổi liên kết tài khoản, hồ sơ lấy từ phiên.
+  'POST /api/me/profile-link/unlink',
+  // SPEC-050: ngoại lệ hẹp BR-003, chỉ id và tên; TC-564 so khóa JSON chính xác.
+  'GET /api/admin/families/:familyId/profiles',
+  'PUT /api/admin/families/:familyId/profiles/:profileId/linked-account',
   'GET /api/admin/families',
   'POST /api/admin/families',
   'GET /api/admin/accounts',

@@ -1,12 +1,14 @@
 // SPEC-035: chỉ nhớ đường dẫn lời nhắc cùng origin để quay lại sau đăng nhập; không nhận return URL từ query.
 const REMINDER_PATH = /^\/reminders\/[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 const REVISIT_PATH = /^\/revisit-reminders\/[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;
+// SPEC-040: chỉ đường dẫn; token ở fragment không bao giờ vào storage.
+const LINK_INVITE_PATH = /^\/link-invite$/;
 const KEY = 'angia.returnTo';
 
 type ReturnStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 
-export function isReminderPath(path: string): boolean {
-  return REMINDER_PATH.test(path) || REVISIT_PATH.test(path);
+export function isReturnPath(path: string): boolean {
+  return REMINDER_PATH.test(path) || REVISIT_PATH.test(path) || LINK_INVITE_PATH.test(path);
 }
 
 // Truy cập sessionStorage có thể ném (chế độ riêng tư, bị chặn) hoặc không tồn tại (SSR/test).
@@ -22,7 +24,7 @@ export function saveReminderReturnPath(
   path: string,
   storage: ReturnStorage | undefined = sessionStore(),
 ): void {
-  if (!isReminderPath(path)) return;
+  if (!isReturnPath(path)) return;
   try {
     storage?.setItem(KEY, path);
   } catch {
@@ -35,7 +37,7 @@ export function takeReminderReturnPath(storage: ReturnStorage | undefined = sess
   try {
     const path = storage?.getItem(KEY) ?? null;
     storage?.removeItem(KEY);
-    return path !== null && isReminderPath(path) ? path : null;
+    return path !== null && isReturnPath(path) ? path : null;
   } catch {
     return null;
   }

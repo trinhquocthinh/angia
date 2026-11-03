@@ -41,6 +41,19 @@ const render = (props: Partial<Parameters<typeof MedicationCatalog>[0]> = {}) =>
     />,
   );
 describe('Danh mục thuốc theo buổi (Design §6, E4-S4-T1)', () => {
+  it('SPEC-042: chỉ đọc thì trạng thái rỗng không mời tải ảnh', () => {
+    const html = renderToStaticMarkup(
+      <MedicationCatalog
+        data={{ today: '2026-10-15', courses: [] }}
+        loading={false}
+        error={false}
+        retry={() => undefined}
+        readOnly
+      />,
+    );
+    expect(html).toContain('Chưa có thuốc đang dùng hôm nay.');
+    expect(html).not.toContain('Tải ảnh');
+  });
   it('TC-239: nhóm Sáng/Tối, nhãn "Còn N ngày"/"Dài hạn", liều và nguồn gốc', () => {
     const html = render();
     expect(html.indexOf('>Sáng<')).toBeLessThan(html.indexOf('>Tối<'));

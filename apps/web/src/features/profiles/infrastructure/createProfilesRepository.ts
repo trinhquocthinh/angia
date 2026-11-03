@@ -32,15 +32,15 @@ export function createProfilesRepository(client = apiClient): ProfilesRepository
       ),
     createInvitation: async (id, csrfToken) =>
       readProfileResponse(
-        await client.POST('/api/health-profiles/{id}/consent-invitations', {
+        await client.POST('/api/health-profiles/{id}/link-invitations', {
           params: { path: { id } },
-          body: { attestation: true },
+          body: {},
           headers: { 'X-CSRF-Token': csrfToken },
         }),
       ),
     revokeInvitation: async (id, csrfToken) => {
       await readProfileResponse(
-        await client.DELETE('/api/health-profiles/{id}/consent-invitations', {
+        await client.DELETE('/api/health-profiles/{id}/link-invitations', {
           params: { path: { id } },
           headers: { 'X-CSRF-Token': csrfToken },
         }),

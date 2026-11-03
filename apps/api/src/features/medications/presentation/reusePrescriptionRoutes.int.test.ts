@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile, ManualRecordsResponse, MedicationCourse } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { vietnamDate } from '@src/shared/test/createFiniteCourse.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -34,7 +34,7 @@ describe('API Dùng lại đơn thuốc + RLS (SPEC-029)', () => {
         await t.call(main, 'POST', '/api/health-profiles', { birthYear: 1950, displayName: name })
       ).json()) as HealthProfile;
     const profile = await create('Bà ngoại');
-    await acceptConsentInvitation(t, main, profile.id);
+    await confirmConsentByAttestation(t, main, profile.id);
     const saved = (await (
       await t.call(main, 'POST', `/api/health-profiles/${profile.id}/manual-records`, {
         type: 'prescription',
@@ -171,7 +171,7 @@ describe('API Dùng lại đơn thuốc + RLS (SPEC-029)', () => {
       () => f.reuse(body, randomUUID(), randomUUID(), attacker),
     );
     const sibling = await f.create('Ông ngoại');
-    await acceptConsentInvitation(t, f.main, sibling.id);
+    await confirmConsentByAttestation(t, f.main, sibling.id);
     expect((await f.reuse(body, sibling.id)).status).toBe(404);
     const member = await t.session(f.familyId, 'member', 'Thành viên');
     expect((await f.reuse(body, f.profile.id, f.prescription.id, member)).status).toBe(403);

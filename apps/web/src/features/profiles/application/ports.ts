@@ -3,6 +3,7 @@ import type { components } from '@src/shared/api/schema.gen';
 export type ProfileListItem = components['schemas']['ProfileListItem'];
 export type ConsentConfirmation = components['schemas']['ConsentConfirmation'];
 export type HealthProfile = components['schemas']['HealthProfile'];
+type CreatedProfile = components['schemas']['CreatedHealthProfile'];
 export type ProfileRequest = components['schemas']['CreateHealthProfileRequest'];
 export type UpdateProfileRequest = components['schemas']['UpdateHealthProfileRequest'];
 export type LinkableAccount = components['schemas']['LinkableAccount'];
@@ -10,7 +11,7 @@ export type ProfileSession = components['schemas']['MeContextResponse'];
 export interface ProfilesRepository {
   list(signal?: AbortSignal): Promise<ProfileListItem[]>;
   linkableAccounts(signal?: AbortSignal): Promise<LinkableAccount[]>;
-  create(body: ProfileRequest, csrfToken: string): Promise<HealthProfile>;
+  create(body: ProfileRequest, csrfToken: string): Promise<CreatedProfile>;
   update(id: string, body: UpdateProfileRequest, csrfToken: string): Promise<HealthProfile>;
   confirmConsent(id: string, body: ConsentConfirmation, csrfToken: string): Promise<HealthProfile>;
   createInvitation(id: string, csrfToken: string): Promise<InvitationCreated>;

@@ -1,47 +1,53 @@
 import { InvitationSummary } from './InvitationSummary';
 import { InvitationExpiry } from './InvitationExpiry';
-import type { useConsentInvitation } from '../../application/useConsentInvitation';
-import { InvitationResponseForm } from './InvitationResponseForm';
+import type { useLinkInvitation } from '../../application/useLinkInvitation';
+import { InvitationBlocked } from './InvitationBlocked';
+import { InvitationLoadError } from './InvitationLoadError';
+import { InvitationNotice } from './InvitationNotice';
+import { InvitationResponseActions } from './InvitationResponseActions';
 import { InvitationTerminal } from './InvitationTerminal';
-export function InvitationContent({ workspace }: { workspace: ReturnType<typeof useConsentInvitation> }) {
+export function InvitationContent({
+  workspace,
+  accountName,
+}: {
+  workspace: ReturnType<typeof useLinkInvitation>;
+  accountName: string;
+}) {
   const { loaded, receipt, error, pending, respond, retry } = workspace;
   if (loaded.state === 'loading')
     return (
       <p role="status" className="text-sm">
-        Đang mở lời mời…
+        Đang mở link…
       </p>
+    );
+  if (loaded.state === 'missing')
+    return (
+      <InvitationNotice title="Hãy mở lại link">
+        Bạn đang đăng nhập là <strong>{accountName}</strong>. Hãy mở lại link được gửi cho bạn để tiếp tục.
+      </InvitationNotice>
     );
   if (loaded.state === 'unavailable')
     return (
-      <section>
-        <h2 className="auth-heading text-2xl text-[#004135]">Link không còn khả dụng</h2>
-        <p className="mt-4 text-sm leading-7">
-          Link có thể đã hết hạn hoặc bị thu hồi. Bạn có thể liên hệ người mời để nhận link mới.
-        </p>
-      </section>
+      <InvitationNotice title="Link không còn khả dụng">
+        Link có thể đã được dùng, đã hết hạn hoặc bị thu hồi. Hãy nhờ người quản lý gia đình gửi link mới.
+      </InvitationNotice>
     );
-  if (loaded.state === 'error')
-    return (
-      <div role="alert">
-        <p className="text-sm leading-7">Không thể mở lời mời. Vui lòng kiểm tra kết nối SIT/Tailscale.</p>
-        <button
-          onClick={retry}
-          className="mt-4 min-h-11 rounded-xl bg-[#004135] px-5 py-3 text-sm text-white"
-        >
-          Thử lại
-        </button>
-      </div>
-    );
+  if (loaded.state === 'error') return <InvitationLoadError onRetry={retry} />;
   const view = loaded.view;
-  const terminal = receipt?.decision ?? (view.status === 'pending' ? null : view.status);
+  if (receipt) return <InvitationTerminal receipt={receipt} />;
   return (
     <section>
       <InvitationSummary view={view} />
       <InvitationExpiry expiresAt={view.expiresAt} />
-      {terminal ? (
-        <InvitationTerminal status={terminal} receipt={receipt} />
+      {view.canAccept ? (
+        <InvitationResponseActions
+          view={view}
+          accountName={accountName}
+          pending={pending}
+          onDecision={(decision) => void respond(decision)}
+        />
       ) : (
-        <InvitationResponseForm pending={pending} onRespond={respond} />
+        <InvitationBlocked reason={view.reason} />
       )}
       {error && (
         <p role="alert" className="mt-4 text-sm leading-6 text-[#b42318]">

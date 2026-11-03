@@ -38,6 +38,13 @@ const props = {
   loadMore: vi.fn(),
 };
 describe('TC-503/504/505 — giao diện dòng thời gian', () => {
+  it('SPEC-042: tự xem không truyền profileId thì giữ dữ liệu, không có link sang đơn', () => {
+    const html = renderToStaticMarkup(<TimelineFeed {...props} profileId={undefined} />);
+    expect(html).toContain('2 dòng thuốc');
+    expect(html).toContain('Lịch hẹn từ');
+    expect(html).not.toContain('Xem đơn thuốc');
+    expect(html).not.toContain('<a ');
+  });
   it('hiện sáu loại theo thứ tự, dữ liệu gốc và liên kết đơn; không có nhận định', () => {
     const html = renderToStaticMarkup(<TimelineFeed {...props} />);
     const labels = [

@@ -8,6 +8,7 @@ export function toProfileListItem(
   return {
     ...toProfileResponse(profile),
     consentAction: profile.consentAction,
+    hasLinkedAccount: profile.hasLinkedAccount,
     consentConfirmedByName: profile.consentConfirmedByName,
   };
 }

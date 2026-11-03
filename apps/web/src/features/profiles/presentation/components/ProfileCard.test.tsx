@@ -11,6 +11,7 @@ vi.mock('@tanstack/react-router', () => ({
 const profile: ProfileListItem = {
   consentAction: 'attestation',
   consentConfirmedByName: null,
+  hasLinkedAccount: false,
   id: 'p',
   familyId: 'f',
   displayName: 'Mẹ',
@@ -34,6 +35,7 @@ describe('TC-558 — thẻ hồ sơ chọn đúng thao tác đồng thuận', ()
           consentSource: 'legacy_attestation',
         }}
         onConsent={() => undefined}
+        onLink={() => undefined}
         onDelete={() => undefined}
       />,
     );
@@ -48,6 +50,7 @@ describe('TC-558 — thẻ hồ sơ chọn đúng thao tác đồng thuận', ()
       <ProfileCard
         profile={{ ...profile, consentStatus: status }}
         onConsent={() => undefined}
+        onLink={() => undefined}
         onDelete={() => undefined}
       />,
     );
@@ -63,8 +66,10 @@ describe('TC-558 — thẻ hồ sơ chọn đúng thao tác đồng thuận', ()
           consentAction: null,
           consentSource: 'invitation',
           consentRespondentName: 'An',
+          hasLinkedAccount: true,
         }}
         onConsent={() => undefined}
+        onLink={() => undefined}
         onDelete={() => undefined}
       />,
     );
@@ -75,26 +80,42 @@ describe('TC-558 — thẻ hồ sơ chọn đúng thao tác đồng thuận', ()
     expect(html.match(/<button/g)).toHaveLength(1);
     expect(html).not.toContain('link');
   });
-  it('TC-387: hồ sơ withdrawn có nhãn rút đồng thuận và nút tạo link mời', () => {
+  it('TC-387: hồ sơ withdrawn còn liên kết có nhãn rút đồng thuận, cần chủ hồ sơ tự gỡ trước', () => {
     const html = renderToStaticMarkup(
       <ProfileCard
-        profile={{ ...profile, consentStatus: 'withdrawn', consentAction: 'invitation' }}
+        profile={{
+          ...profile,
+          consentStatus: 'withdrawn',
+          consentAction: 'invitation',
+          hasLinkedAccount: true,
+        }}
         onConsent={() => undefined}
+        onLink={() => undefined}
         onDelete={() => undefined}
       />,
     );
     expect(html).toContain('Người thân đã rút đồng thuận');
-    expect(html).toContain('Tạo link mời người thân');
+    expect(html).not.toContain('Tạo link');
   });
   it('SPEC-007: thẻ hồ sơ có nút chữ "Xóa hồ sơ" ở cuối', () => {
     const html = renderToStaticMarkup(
-      <ProfileCard profile={profile} onConsent={() => undefined} onDelete={() => undefined} />,
+      <ProfileCard
+        profile={profile}
+        onConsent={() => undefined}
+        onLink={() => undefined}
+        onDelete={() => undefined}
+      />,
     );
     expect(html).toMatch(/Xóa hồ sơ<\/button>(<\/div>)+<\/article>$/);
   });
   it('TC-393 — tên hồ sơ và nút "Xem hồ sơ" dẫn tới /profiles/{id}, kể cả hồ sơ chưa đồng thuận', () => {
     const html = renderToStaticMarkup(
-      <ProfileCard profile={profile} onConsent={() => undefined} onDelete={() => undefined} />,
+      <ProfileCard
+        profile={profile}
+        onConsent={() => undefined}
+        onLink={() => undefined}
+        onDelete={() => undefined}
+      />,
     );
     expect(html.match(/href="\/profiles\/p"/g)).toHaveLength(2);
     expect(html).toMatch(/href="\/profiles\/p"[^>]*>[^]*Mẹ[^]*<\/a>/);
@@ -105,27 +126,63 @@ describe('TC-558 — thẻ hồ sơ chọn đúng thao tác đồng thuận', ()
     ['invited', 'attestation', 'Xác nhận đồng ý'],
     ['declined', 'attestation', 'Xác nhận đồng ý'],
     ['pending', 'self', 'Xác nhận đồng ý'],
-    ['pending', 'invitation', 'Tạo link mời người thân'],
-    ['invited', 'invitation', 'Quản lý link xác nhận'],
-    ['withdrawn', 'invitation', 'Tạo link mời người thân'],
   ] as const)('TC-558: %s/action %s có nút %s', (consentStatus, consentAction, label) => {
     const html = renderToStaticMarkup(
       <ProfileCard
         profile={{ ...profile, consentStatus, consentAction }}
         onConsent={() => undefined}
+        onLink={() => undefined}
         onDelete={() => undefined}
       />,
     );
     expect(html).toContain(label);
-    if (consentAction !== 'invitation') expect(html).not.toContain('link');
   });
+  it.each([
+    ['pending', 'attestation'],
+    ['confirmed', null],
+    ['declined', 'attestation'],
+    ['withdrawn', null],
+  ] as const)('SPEC-040: %s chưa liên kết có nút tạo link', (consentStatus, consentAction) => {
+    const html = renderToStaticMarkup(
+      <ProfileCard
+        profile={{ ...profile, consentStatus, consentAction }}
+        onConsent={() => undefined}
+        onLink={() => undefined}
+        onDelete={() => undefined}
+      />,
+    );
+    expect(html).toContain('Tạo link liên kết tài khoản');
+  });
+  it.each(['pending', 'withdrawn'] as const)(
+    'SPEC-040: %s đã liên kết không có nút tạo link, không còn link đồng thuận cũ',
+    (consentStatus) => {
+      const html = renderToStaticMarkup(
+        <ProfileCard
+          profile={{ ...profile, consentStatus, consentAction: 'invitation', hasLinkedAccount: true }}
+          onConsent={() => undefined}
+          onLink={() => undefined}
+          onDelete={() => undefined}
+        />,
+      );
+      expect(html).not.toContain('Tạo link');
+      expect(html).not.toContain('Xác nhận đồng ý');
+      expect(html).toContain('tự gỡ liên kết');
+    },
+  );
   it.each(['main_attested', 'self', 'invitation'] as const)(
     'TC-558: confirmed/%s không yêu cầu xác nhận lại',
     (consentSource) => {
       const html = renderToStaticMarkup(
         <ProfileCard
-          profile={{ ...profile, consentSource, consentStatus: 'confirmed', consentAction: null }}
+          profile={{
+            ...profile,
+            consentSource,
+            consentStatus: 'confirmed',
+            consentAction: null,
+            hasLinkedAccount: true,
+          }}
           onConsent={() => undefined}
+          onLink={() => undefined}
           onDelete={() => undefined}
         />,
       );
@@ -133,17 +190,19 @@ describe('TC-558 — thẻ hồ sơ chọn đúng thao tác đồng thuận', ()
       expect(html.match(/<button/g)).toHaveLength(1);
     },
   );
-  it('TC-558: withdrawn không liên kết chỉ còn xóa; không cam kết hay gửi link', () => {
+  // SPEC-040 (E14): hồ sơ withdrawn chưa liên kết nhận được link để chính chủ thể đồng ý lại; main vẫn không cam kết thay.
+  it('TC-558: withdrawn không liên kết không có cam kết, chỉ có link liên kết và xóa', () => {
     const html = renderToStaticMarkup(
       <ProfileCard
         profile={{ ...profile, consentStatus: 'withdrawn', consentAction: null }}
         onConsent={() => undefined}
+        onLink={() => undefined}
         onDelete={() => undefined}
       />,
     );
-    expect(html.match(/<button/g)).toHaveLength(1);
+    expect(html.match(/<button/g)).toHaveLength(2);
     expect(html).not.toContain('Xác nhận đồng ý');
-    expect(html).not.toContain('link');
+    expect(html).toContain('Tạo link liên kết tài khoản');
   });
 });
 describe('TC-382 — nút rút đồng thuận nằm trên thẻ hồ sơ của chính tài khoản', () => {
@@ -153,6 +212,7 @@ describe('TC-382 — nút rút đồng thuận nằm trên thẻ hồ sơ của 
       <ProfileCard
         profile={item}
         onConsent={() => undefined}
+        onLink={() => undefined}
         onDelete={() => undefined}
         onWithdraw={onWithdraw}
       />,

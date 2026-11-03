@@ -25,6 +25,21 @@ function harness() {
   return { handlers, notices, opened };
 }
 describe('Service worker AN GIA', () => {
+  it('TC-493: nhắc thuốc giữ nội dung chung, không có nút xác nhận "Đã dùng"', async () => {
+    const h = harness();
+    let work: unknown;
+    h.handlers.get('push')!({
+      data: {
+        json: () => ({ type: 'medication-reminder', reminderId: '3f2b8c1e-9a4d-4e6f-8b7a-1c2d3e4f5a6b' }),
+      },
+      waitUntil: (p: unknown) => {
+        work = p;
+      },
+    });
+    await work;
+    expect(h.notices[0]).toMatchObject(['AN GIA', { body: 'Đến giờ dùng thuốc' }]);
+    expect(h.notices[0]?.[1]).not.toHaveProperty('actions');
+  });
   it('TC-477: nhắc tái khám hiện nội dung chung và mở đúng trang cùng origin', async () => {
     const id = '3f2b8c1e-9a4d-4e6f-8b7a-1c2d3e4f5a6b';
     const h = harness();

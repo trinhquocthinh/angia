@@ -4,7 +4,8 @@ import type { RevisitPrescription } from '../application/ports';
 
 type Props = {
   data: RevisitGroups;
-  onEdit: (prescription: RevisitPrescription, revisitDate: string) => void;
+  /** Không truyền: chỉ đọc (tự xem, SPEC-042). */
+  onEdit?: (prescription: RevisitPrescription, revisitDate: string) => void;
 };
 export function RevisitList({ data, onEdit }: Props) {
   if (!data.length)
@@ -26,14 +27,16 @@ export function RevisitList({ data, onEdit }: Props) {
                     {prescription.facility || 'Đơn không ghi nơi khám'}
                   </p>
                 </div>
-                <button
-                  id={`revisit-edit-${prescription.id}`}
-                  type="button"
-                  onClick={() => onEdit(prescription, group.revisitDate)}
-                  className="min-h-11 rounded-full border border-[#286958] px-4 text-sm font-semibold text-[#004135]"
-                >
-                  Sửa ngày hẹn
-                </button>
+                {onEdit && (
+                  <button
+                    id={`revisit-edit-${prescription.id}`}
+                    type="button"
+                    onClick={() => onEdit(prescription, group.revisitDate)}
+                    className="min-h-11 rounded-full border border-[#286958] px-4 text-sm font-semibold text-[#004135]"
+                  >
+                    Sửa ngày hẹn
+                  </button>
+                )}
               </li>
             ))}
           </ul>
