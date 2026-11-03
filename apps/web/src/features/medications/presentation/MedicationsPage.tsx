@@ -1,3 +1,4 @@
+import { ProfileDayReminders } from '@src/features/doseConfirmations/presentation/ProfileDayReminders';
 import { ProfileHealthHeader } from '@src/features/measurements/presentation/components/ProfileHealthHeader';
 import { ProfileSectionPage } from '@src/features/profiles/presentation/components/ProfileSectionPage';
 import { DoseSlotsLink } from '@src/features/reminders/presentation/DoseSlotsLink';
@@ -45,12 +46,15 @@ function MedicationsContent({
           Hồ sơ chưa được đồng ý lưu dữ liệu.
         </p>
       ) : (
-        <MedicationCatalog
-          data={medications.data}
-          loading={medications.isPending}
-          error={medications.isError}
-          retry={() => void medications.refetch()}
-        />
+        <>
+          <MedicationCatalog
+            data={medications.data}
+            loading={medications.isPending}
+            error={medications.isError}
+            retry={() => void medications.refetch()}
+          />
+          <ProfileDayReminders profile={profile} session={session} />
+        </>
       )}
     </div>
   );

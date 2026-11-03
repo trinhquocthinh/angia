@@ -52,6 +52,9 @@ function render(session: typeof linked | typeof unlinked, seed: Partial<SelfProf
           slot: 'morning',
           scheduledAt: `${today}T00:00:00.000Z`,
           medications: [{ name: 'Amlodipin', strength: '5mg', quantityPerDose: '1', doseUnit: 'viên' }],
+          confirmation: null,
+          canConfirm: true,
+          canUndo: false,
         },
       ],
     );
@@ -92,6 +95,9 @@ describe('SPEC-042, Design §9.5 — trang "Hồ sơ của tôi"', () => {
       'Bệnh viện A',
     ])
       expect(html).toContain(text);
+  });
+  it('TC-486: tài khoản liên kết xác nhận được buổi của lời nhắc', () => {
+    expect(render(linked).html).toContain('>Đã dùng</button>');
   });
   it('BR-005: chỉ đọc, không có hành động ghi và không có lối sang chứng từ hay route hồ sơ gia đình', () => {
     const { html } = render(linked);

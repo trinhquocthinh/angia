@@ -56,7 +56,7 @@ function seedError(client: QueryClient, error: Error) {
 }
 
 describe('Trang lời nhắc dùng thuốc của người nhận (SPEC-035)', () => {
-  it('hiển thị hồ sơ, buổi, ngày, giờ Việt Nam và từng thuốc; không có nút thao tác', () => {
+  it('hiển thị hồ sơ, buổi, ngày, giờ Việt Nam và từng thuốc; không có quyền thì không có nút', () => {
     const html = render((client) => client.setQueryData(['my-reminder', id], reminder));
     expect(html).toContain('Lời nhắc dùng thuốc');
     expect(html).toContain('Mẹ');
@@ -69,6 +69,13 @@ describe('Trang lời nhắc dùng thuốc của người nhận (SPEC-035)', ()
     expect(html.match(/<li/g)).toHaveLength(3);
     expect(html).not.toContain('<button');
     expect(html).not.toContain('null');
+  });
+  it('TC-486: người nhận có quyền thấy "Đã dùng" cho cả buổi, không theo từng thuốc', () => {
+    const html = render((client) =>
+      client.setQueryData(['my-reminder', id], { ...reminder, canConfirm: true }),
+    );
+    expect(html.match(/<button/g)).toHaveLength(1);
+    expect(html).toContain('>Đã dùng</button>');
   });
   it.each([404, 403])('HTTP %s: thông điệp chung, không lộ lý do', (status) => {
     const html = render((client) => seedError(client, new MedicationRequestError('Chi tiết', status)));
