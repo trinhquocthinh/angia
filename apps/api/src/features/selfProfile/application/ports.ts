@@ -5,6 +5,8 @@ import type { MedicationManagementRepository } from '@src/features/medications/a
 import type { RevisitRepository } from '@src/features/prescriptions/application/revisitPorts.js';
 import type { ConsentStatus } from '@src/features/profiles/domain/HealthProfile.js';
 import type { TimelineRepository } from '@src/features/timeline/application/ports.js';
+import type { AsNeededDoseRepository } from '@src/features/asNeededDoses/application/ports.js';
+import type { TemperatureRepository } from '@src/features/temperatures/application/ports.js';
 
 export interface SelfProfileRow {
   id: string;
@@ -26,6 +28,8 @@ export interface SelfProfileScope {
   medications: MedicationManagementRepository;
   revisits: RevisitRepository;
   timeline: TimelineRepository;
+  asNeededDoses: AsNeededDoseRepository;
+  temperatures: TemperatureRepository;
 }
 export interface SelfProfileRepository {
   /** profileId lấy từ accounts.health_profile_id của phiên, không bao giờ từ request. */

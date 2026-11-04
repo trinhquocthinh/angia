@@ -60,7 +60,7 @@ export const HEALTH_DATA_ROUTES = {
   'POST /api/reminders/:reminderId/dose-confirmation': 'scoped',
   'DELETE /api/reminders/:reminderId/dose-confirmation': 'scoped',
   'GET /api/health-profiles/:id/reminders': 'scoped',
-  // SPEC-042: temperatures và as-needed-doses thêm cùng bảng của chúng ở E15-S1-T3.
+  // SPEC-042: mọi route tự xem lấy hồ sơ từ phiên, không nhận profileId từ request.
   'GET /api/me/profile': 'self',
   'GET /api/me/profile/medications/current': 'self',
   'GET /api/me/profile/reminders': 'self',
@@ -68,6 +68,8 @@ export const HEALTH_DATA_ROUTES = {
   'GET /api/me/profile/timeline': 'self',
   'GET /api/me/profile/measurements/series': 'self',
   'GET /api/me/profile/lab-result-series': 'self',
+  'GET /api/me/profile/temperatures': 'self',
+  'GET /api/me/profile/as-needed-doses': 'self',
 } as const;
 
 type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;

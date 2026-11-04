@@ -9,6 +9,7 @@ import { listSelfReminders } from '../application/listSelfReminders.js';
 import type { SelfProfileRepository } from '../application/ports.js';
 import { openSelfScope } from './openSelfScope.js';
 import { registerSelfHistoryRoutes } from './registerSelfHistoryRoutes.js';
+import { registerSelfObservationRoutes } from './registerSelfObservationRoutes.js';
 import {
   selfMeasurementSeriesRoute,
   selfProfileRoute,
@@ -51,4 +52,5 @@ export function registerSelfProfileRoutes(
     return c.json(toSeriesResponse(result.value, displayGlucoseUnit), 200);
   });
   registerSelfHistoryRoutes(app, repository, now);
+  registerSelfObservationRoutes(app, repository);
 }

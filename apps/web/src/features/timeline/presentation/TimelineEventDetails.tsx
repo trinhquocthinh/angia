@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { formatNumber, readingText } from '@src/features/measurements/application/formatMeasurement';
 import { TimelinePrescription } from './TimelinePrescription';
 import { TimelineLabResults } from './TimelineLabResults';
+import { TimelineAsNeededDose } from './TimelineAsNeededDose';
 
 type Props = { event: TimelineEvent; profileId: string | undefined };
 
@@ -23,6 +24,10 @@ export function TimelineEventDetails({ event, profileId }: Props) {
       );
     case 'course_stopped':
       return <p>{event.data.name}</p>;
+    case 'temperature':
+      return <p>{formatNumber(event.data.celsius)} °C</p>;
+    case 'as_needed_dose':
+      return <TimelineAsNeededDose data={event.data} />;
     case 'adherence_period':
       return (
         <p>

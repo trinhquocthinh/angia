@@ -4700,6 +4700,113 @@
               "kind": {
                 "type": "string",
                 "enum": [
+                  "temperature"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "celsius": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "celsius"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "as_needed_dose"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "courseId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "courseId",
+                  "name",
+                  "quantity",
+                  "unit"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
                   "course_stopped"
                 ]
               },
@@ -5012,6 +5119,68 @@
           "confirmedAt"
         ]
       },
+      "TemperatureList": {
+        "type": "object",
+        "properties": {
+          "readings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TemperatureReading"
+            }
+          }
+        },
+        "required": [
+          "readings"
+        ]
+      },
+      "TemperatureReading": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "celsius": {
+            "type": "number"
+          },
+          "measuredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "recordedBy": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "celsius",
+          "measuredAt",
+          "recordedBy",
+          "recordedAt"
+        ]
+      },
+      "AsNeededDoseList": {
+        "type": "object",
+        "properties": {
+          "doses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AsNeededDose"
+            }
+          }
+        },
+        "required": [
+          "doses"
+        ]
+      },
       "AsNeededDose": {
         "type": "object",
         "properties": {
@@ -5097,20 +5266,6 @@
         ],
         "additionalProperties": false
       },
-      "AsNeededDoseList": {
-        "type": "object",
-        "properties": {
-          "doses": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AsNeededDose"
-            }
-          }
-        },
-        "required": [
-          "doses"
-        ]
-      },
       "CourseInterval": {
         "type": "object",
         "properties": {
@@ -5144,40 +5299,6 @@
         ],
         "additionalProperties": false
       },
-      "TemperatureReading": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "celsius": {
-            "type": "number"
-          },
-          "measuredAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "recordedBy": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "uuid"
-          },
-          "recordedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "required": [
-          "id",
-          "celsius",
-          "measuredAt",
-          "recordedBy",
-          "recordedAt"
-        ]
-      },
       "RecordTemperatureRequest": {
         "type": "object",
         "properties": {
@@ -5200,20 +5321,6 @@
           "measuredAt"
         ],
         "additionalProperties": false
-      },
-      "TemperatureList": {
-        "type": "object",
-        "properties": {
-          "readings": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TemperatureReading"
-            }
-          }
-        },
-        "required": [
-          "readings"
-        ]
       },
       "ReminderRecipients": {
         "type": "object",
@@ -10619,6 +10726,195 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LabSeriesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: tài khoản không liên kết hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/temperatures": {
+      "get": {
+        "tags": [
+          "self-profile"
+        ],
+        "summary": "Nhiệt độ của hồ sơ liên kết, cũ nhất trước (SPEC-042, SPEC-048)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Danh sách nhiệt độ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemperatureList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: tài khoản không liên kết hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/as-needed-doses": {
+      "get": {
+        "tags": [
+          "self-profile"
+        ],
+        "summary": "Liều Khi cần của hồ sơ liên kết, cũ nhất trước (SPEC-042, SPEC-047)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "name": "courseId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Danh sách liều",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsNeededDoseList"
                 }
               }
             }

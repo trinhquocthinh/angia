@@ -6,6 +6,8 @@ const labels: Record<TimelineEvent['kind'], string> = {
   prescription: 'Đơn thuốc',
   lab_result: 'Phiếu xét nghiệm',
   measurement: 'Số đo',
+  temperature: 'Nhiệt độ',
+  as_needed_dose: 'Liều Khi cần',
   course_stopped: 'Dừng thuốc',
   adherence_period: 'Giai đoạn thực tế',
   revisit: 'Lịch tái khám',

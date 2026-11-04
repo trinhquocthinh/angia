@@ -4702,6 +4702,175 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/me/profile/temperatures': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Nhiệt độ của hồ sơ liên kết, cũ nhất trước (SPEC-042, SPEC-048) */
+    get: {
+      parameters: {
+        query: {
+          from: string;
+          to: string;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Danh sách nhiệt độ */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['TemperatureList'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: tài khoản chưa thuộc gia đình */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: tài khoản không liên kết hồ sơ */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/me/profile/as-needed-doses': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Liều Khi cần của hồ sơ liên kết, cũ nhất trước (SPEC-042, SPEC-047) */
+    get: {
+      parameters: {
+        query: {
+          courseId?: string;
+          from: string;
+          to: string;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Danh sách liều */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AsNeededDoseList'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: tài khoản chưa thuộc gia đình */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: tài khoản không liên kết hồ sơ */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/reminders/{reminderId}/dose-confirmation': {
     parameters: {
       query?: never;
@@ -7784,6 +7953,32 @@ export interface components {
           date: string;
           time: string | null;
           /** @enum {string} */
+          kind: 'temperature';
+          data: {
+            celsius: number;
+          };
+        }
+      | {
+          id: string;
+          /** Format: date */
+          date: string;
+          time: string | null;
+          /** @enum {string} */
+          kind: 'as_needed_dose';
+          data: {
+            /** Format: uuid */
+            courseId: string;
+            name: string;
+            quantity: number | null;
+            unit: string | null;
+          };
+        }
+      | {
+          id: string;
+          /** Format: date */
+          date: string;
+          time: string | null;
+          /** @enum {string} */
           kind: 'course_stopped';
           data: {
             /** Format: uuid */
@@ -7861,6 +8056,23 @@ export interface components {
       /** Format: date-time */
       confirmedAt: string;
     } | null;
+    TemperatureList: {
+      readings: components['schemas']['TemperatureReading'][];
+    };
+    TemperatureReading: {
+      /** Format: uuid */
+      id: string;
+      celsius: number;
+      /** Format: date-time */
+      measuredAt: string;
+      /** Format: uuid */
+      recordedBy: string | null;
+      /** Format: date-time */
+      recordedAt: string;
+    };
+    AsNeededDoseList: {
+      doses: components['schemas']['AsNeededDose'][];
+    };
     AsNeededDose: {
       /** Format: uuid */
       id: string;
@@ -7885,9 +8097,6 @@ export interface components {
       /** @default null */
       unit: string | null;
     };
-    AsNeededDoseList: {
-      doses: components['schemas']['AsNeededDose'][];
-    };
     CourseInterval: {
       /** Format: uuid */
       courseId: string;
@@ -7896,26 +8105,12 @@ export interface components {
     SetCourseIntervalRequest: {
       text: string | null;
     };
-    TemperatureReading: {
-      /** Format: uuid */
-      id: string;
-      celsius: number;
-      /** Format: date-time */
-      measuredAt: string;
-      /** Format: uuid */
-      recordedBy: string | null;
-      /** Format: date-time */
-      recordedAt: string;
-    };
     RecordTemperatureRequest: {
       celsius: number;
       /** Format: date-time */
       measuredAt: string;
       /** @default false */
       confirmOutOfRange: boolean;
-    };
-    TemperatureList: {
-      readings: components['schemas']['TemperatureReading'][];
     };
     ReminderRecipients: {
       /**

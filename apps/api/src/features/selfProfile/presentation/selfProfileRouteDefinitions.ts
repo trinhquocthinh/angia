@@ -12,6 +12,10 @@ import {
   selfReminderQuerySchema,
   timelinePageSchema,
   timelineQuerySchema,
+  asNeededDoseListSchema,
+  asNeededDoseQuerySchema,
+  temperatureListSchema,
+  temperatureQuerySchema,
 } from '@angia/contracts';
 
 const error = (description: string) => ({
@@ -99,6 +103,32 @@ export const selfLabSeriesRoute = createRoute({
   request: { query: labSeriesQuerySchema },
   responses: {
     200: ok('Nhóm chỉ số', labSeriesResponseSchema),
+    ...gated,
+    422: error('ERR_VALIDATION'),
+  },
+});
+
+export const selfTemperaturesRoute = createRoute({
+  method: 'get',
+  path: '/api/me/profile/temperatures',
+  tags,
+  summary: 'Nhiệt độ của hồ sơ liên kết, cũ nhất trước (SPEC-042, SPEC-048)',
+  request: { query: temperatureQuerySchema },
+  responses: {
+    200: ok('Danh sách nhiệt độ', temperatureListSchema),
+    ...gated,
+    422: error('ERR_VALIDATION'),
+  },
+});
+
+export const selfAsNeededDosesRoute = createRoute({
+  method: 'get',
+  path: '/api/me/profile/as-needed-doses',
+  tags,
+  summary: 'Liều Khi cần của hồ sơ liên kết, cũ nhất trước (SPEC-042, SPEC-047)',
+  request: { query: asNeededDoseQuerySchema },
+  responses: {
+    200: ok('Danh sách liều', asNeededDoseListSchema),
     ...gated,
     422: error('ERR_VALIDATION'),
   },

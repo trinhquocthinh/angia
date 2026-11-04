@@ -12,6 +12,7 @@ import { seedAccount, seedSession } from '@src/shared/test/seedAuthFixtures.js';
 import {
   linkAccount,
   SELF_REMINDER_DATE,
+  SELF_EXTRA_QUERY,
   SELF_SERIES_QUERY,
   seedSelfProfileData,
 } from '@src/shared/test/seedSelfProfileData.js';
@@ -26,6 +27,8 @@ const PATHS: Record<RouteOfKind<'self'>, string> = {
   'GET /api/me/profile/timeline': `${BASE}/timeline`,
   'GET /api/me/profile/measurements/series': `${BASE}/measurements/series?${SELF_SERIES_QUERY}`,
   'GET /api/me/profile/lab-result-series': `${BASE}/lab-result-series`,
+  'GET /api/me/profile/temperatures': `${BASE}/temperatures?${SELF_EXTRA_QUERY}`,
+  'GET /api/me/profile/as-needed-doses': `${BASE}/as-needed-doses?${SELF_EXTRA_QUERY}`,
 };
 const paths = Object.values(PATHS);
 
@@ -54,6 +57,8 @@ describe('Hồ sơ của tôi: route tự xem (SPEC-042, E14-S3-T1)', () => {
     'GET /api/me/profile/timeline': f.mother.marker.lab,
     'GET /api/me/profile/measurements/series': f.mother.marker.measurement,
     'GET /api/me/profile/lab-result-series': f.mother.marker.lab,
+    'GET /api/me/profile/temperatures': f.mother.marker.temperature,
+    'GET /api/me/profile/as-needed-doses': f.mother.marker.dose,
   });
   const expectOnlyMother = async (f: Fixture) => {
     const own = ownMarkers(f);
@@ -152,6 +157,40 @@ describe('Hồ sơ của tôi: route tự xem (SPEC-042, E14-S3-T1)', () => {
     await linkAccount(t, f.main.accountId, f.father.profile.id);
     const summary = await t.call(f.main, 'GET', BASE);
     expect(await summary.json()).toMatchObject({ id: f.father.profile.id });
+    for (const suffix of ['temperatures', 'as-needed-doses']) {
+      const self = await t.call(f.main, 'GET', `${BASE}/${suffix}?${SELF_EXTRA_QUERY}`);
+      const main = await t.call(
+        f.main,
+        'GET',
+        `/api/health-profiles/${f.father.profile.id}/${suffix}?${SELF_EXTRA_QUERY}`,
+      );
+      expect(self.status).toBe(200);
+      expect(await self.json()).toEqual(await main.json());
+    }
+  });
+
+  it('TC-502/566: tự xem liều và nhiệt độ không bị ẩn theo số đo, giữ bộ lọc và validation', async () => {
+    const f = await setup();
+    await t.owner.query('UPDATE health_profiles SET birth_year=2021 WHERE id=$1', [f.mother.profile.id]);
+    for (const suffix of ['temperatures', 'as-needed-doses']) {
+      const path = `${BASE}/${suffix}`;
+      const valid = await t.call(f.member, 'GET', `${path}?${SELF_EXTRA_QUERY}`);
+      expect(valid.status).toBe(200);
+      expect(await valid.text()).toContain(
+        suffix === 'temperatures' ? f.mother.marker.temperature : f.mother.marker.dose,
+      );
+      const empty = await t.call(f.member, 'GET', `${path}?from=2020-01-01&to=2020-01-01`);
+      expect(await empty.json()).toEqual(suffix === 'temperatures' ? { readings: [] } : { doses: [] });
+      for (const query of ['', '?from=2026-10-02&to=2026-10-01', '?from=2020-01-01&to=2026-01-01'])
+        expect((await t.call(f.member, 'GET', `${path}${query}`)).status).toBe(422);
+      expect((await t.app.request(`${path}?${SELF_EXTRA_QUERY}`)).status).toBe(401);
+    }
+    const response = await t.call(
+      f.member,
+      'GET',
+      `${BASE}/as-needed-doses?${SELF_EXTRA_QUERY}&courseId=${f.father.profile.id}`,
+    );
+    expect(await response.json()).toEqual({ doses: [] });
   });
 
   it('tài khoản chưa thuộc gia đình nhận 403; ngày sai định dạng nhận 422', async () => {

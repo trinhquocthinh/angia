@@ -37,4 +37,27 @@ describe('Hợp đồng dòng thời gian (SPEC-049)', () => {
       expect(timelineCursorSchema.safeParse({ ...cursor, ...extra }).success).toBe(false);
     }
   });
+
+  it.each([
+    { kind: 'temperature', data: { celsius: 38.5 } },
+    {
+      kind: 'as_needed_dose',
+      data: {
+        courseId: '00000000-0000-4000-8000-000000000002',
+        name: 'Paracetamol',
+        quantity: 0.5,
+        unit: 'gói',
+      },
+    },
+  ])('TC-503/504: nhận sự kiện và cursor $kind', ({ kind, data }) => {
+    const key = {
+      id: '00000000-0000-4000-8000-000000000001',
+      date: '2026-10-30',
+      time: '00:01',
+      kind,
+    };
+    expect(timelineEventSchema.parse({ ...key, data })).toEqual({ ...key, data });
+    expect(timelineCursorSchema.parse(key)).toEqual(key);
+    expect(timelineEventSchema.safeParse({ ...key, data: {} }).success).toBe(false);
+  });
 });

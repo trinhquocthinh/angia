@@ -1,24 +1,16 @@
 import type { OpenAPIHono } from '@hono/zod-openapi';
-import { temperatureReadingSchema, type TemperatureReading as TemperatureResponse } from '@angia/contracts';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { errorJson } from '@src/shared/http/errorResponse.js';
 import { deleteTemperature } from '../application/deleteTemperature.js';
 import { listTemperatures } from '../application/listTemperatures.js';
 import type { TemperatureClock, TemperatureRepository } from '../application/ports.js';
 import { recordTemperature } from '../application/recordTemperature.js';
-import type { TemperatureReading } from '../domain/TemperatureReading.js';
+import { toTemperatureResponse } from './toTemperatureResponse.js';
 import {
   deleteTemperatureRoute,
   listTemperaturesRoute,
   recordTemperatureRoute,
 } from './temperatureRouteDefinitions.js';
-
-const toResponse = (reading: TemperatureReading): TemperatureResponse =>
-  temperatureReadingSchema.parse({
-    ...reading,
-    measuredAt: reading.measuredAt.toISOString(),
-    recordedAt: reading.recordedAt.toISOString(),
-  });
 
 // requireSession/CSRF toàn API; requireMain + no-store gắn trước tại registerProfileRoutes (BR-055: main ghi).
 export function registerTemperatureRoutes(
@@ -44,13 +36,13 @@ export function registerTemperatureRoutes(
       return result.code === 'ERR_OUT_OF_RANGE_UNCONFIRMED'
         ? c.json(...errorJson(result.code, { fields: result.fields }))
         : c.json(...errorJson(result.code));
-    return c.json(toResponse(result.value), 201);
+    return c.json(toTemperatureResponse(result.value), 201);
   });
   app.openapi(listTemperaturesRoute, async (c) => {
     const target = { familyId: c.get('session')!.family!.id, profileId: c.req.valid('param').id };
     const result = await listTemperatures(repository, { ...target, ...c.req.valid('query') });
     if (!result.ok) return c.json(...errorJson(result.code));
-    return c.json({ readings: result.value.map(toResponse) }, 200);
+    return c.json({ readings: result.value.map(toTemperatureResponse) }, 200);
   });
   app.openapi(deleteTemperatureRoute, async (c) => {
     const { id, readingId } = c.req.valid('param');

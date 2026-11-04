@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
-import type { CurrentMedications } from '@angia/contracts';
+import type { CurrentMedications, CurrentMedicationCourse } from '@angia/contracts';
+import type { ReactNode } from 'react';
 import { groupMedicationsBySlot } from '../application/groupMedicationsBySlot';
 import { MedicationSlotSection } from './MedicationSlotSection';
 
@@ -10,10 +11,18 @@ type Props = {
   retry: () => void;
   /** Tự xem (SPEC-042): trạng thái rỗng không mời ghi dữ liệu. */
   readOnly?: boolean;
+  renderCourseActions?: (course: CurrentMedicationCourse) => ReactNode;
 };
 
 // Design §6 "Danh mục thuốc": nhóm theo buổi, 2 cột ở desktop; khung xương thẻ thuốc, thẻ lỗi, trạng thái rỗng.
-export function MedicationCatalog({ data, loading, error, retry, readOnly = false }: Props) {
+export function MedicationCatalog({
+  data,
+  loading,
+  error,
+  retry,
+  readOnly = false,
+  renderCourseActions,
+}: Props) {
   if (loading)
     return (
       <div role="status" aria-label="Đang tải danh mục thuốc" className="grid gap-4 md:grid-cols-2">
@@ -57,7 +66,7 @@ export function MedicationCatalog({ data, loading, error, retry, readOnly = fals
   return (
     <div className="grid items-start gap-4 md:grid-cols-2">
       {groups.map((group) => (
-        <MedicationSlotSection key={group.slot} group={group} today={data.today} />
+        <MedicationSlotSection key={group.slot} {...{ group, today: data.today, renderCourseActions }} />
       ))}
     </div>
   );

@@ -1,7 +1,17 @@
 import type { MedicationSlotGroup } from '../application/groupMedicationsBySlot';
+import type { CurrentMedicationCourse } from '@angia/contracts';
+import type { ReactNode } from 'react';
 import { MedicationCard } from './MedicationCard';
 
-export function MedicationSlotSection({ group, today }: { group: MedicationSlotGroup; today: string }) {
+export function MedicationSlotSection({
+  group,
+  today,
+  renderCourseActions,
+}: {
+  group: MedicationSlotGroup;
+  today: string;
+  renderCourseActions?: ((course: CurrentMedicationCourse) => ReactNode) | undefined;
+}) {
   const headingId = `medication-slot-${group.slot}`;
   return (
     <section aria-labelledby={headingId} className="flex flex-col gap-3 rounded-xl bg-white p-5 shadow-sm">
@@ -14,7 +24,7 @@ export function MedicationSlotSection({ group, today }: { group: MedicationSlotG
       <ul className="flex flex-col gap-2">
         {group.courses.map((course) => (
           <li key={course.id}>
-            <MedicationCard course={course} today={today} />
+            <MedicationCard course={course} today={today} actions={renderCourseActions?.(course)} />
           </li>
         ))}
       </ul>

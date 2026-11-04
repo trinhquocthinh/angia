@@ -2,17 +2,20 @@ import { and, eq } from 'drizzle-orm';
 import { findProfileInFamily } from '@src/features/profiles/infrastructure/findProfileInFamily.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { asNeededDoses, medicationCourses } from '@src/shared/db/schema/index.js';
-import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
+import { type FamilyScope, withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { AsNeededDoseRepository } from '../application/ports.js';
 import { findAsNeededCourse } from './findAsNeededCourse.js';
 import { insertAsNeededDose } from './insertAsNeededDose.js';
 import { listStoredAsNeededDoses } from './listStoredAsNeededDoses.js';
 
 // RLS qua withFamilyScope; điều kiện family_id/hồ sơ bổ sung phòng thủ theo chiều sâu.
-export function createAsNeededDoseRepository(db: Database): AsNeededDoseRepository {
+export function createAsNeededDoseRepository(
+  db: Database,
+  scope: FamilyScope = withFamilyScope,
+): AsNeededDoseRepository {
   return {
     withFamily: (familyId, work) =>
-      withFamilyScope(db, familyId, (tx) => {
+      scope(db, familyId, (tx) => {
         const ofProfile = <T extends typeof asNeededDoses | typeof medicationCourses>(
           table: T,
           profileId: string,

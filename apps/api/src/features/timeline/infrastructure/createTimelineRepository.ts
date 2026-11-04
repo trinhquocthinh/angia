@@ -10,12 +10,14 @@ import { listTimelineLabResults } from './listTimelineLabResults.js';
 import { listTimelineStoppedCourses } from './listTimelineStoppedCourses.js';
 import { listTimelineAdherencePeriods } from './listTimelineAdherencePeriods.js';
 import { loadTimelinePrescriptionPairs } from './loadTimelinePrescriptionPairs.js';
+import { listTimelineTemperatures } from './listTimelineTemperatures.js';
+import { listTimelineAsNeededDoses } from './listTimelineAsNeededDoses.js';
 
 export function createTimelineRepository(
   db: Database,
   scope: FamilyScope = withFamilyScope,
 ): TimelineRepository {
-  // Cùng ảnh chụp dữ liệu cho sáu nguồn, đồng thuận và so sánh đơn.
+  // Cùng ảnh chụp dữ liệu cho tám nguồn, đồng thuận và so sánh đơn.
   const reader: Pick<Database, 'transaction'> = {
     transaction: (work) =>
       db.transaction(work, { isolationLevel: 'repeatable read', accessMode: 'read only' }),
@@ -44,6 +46,8 @@ export function createTimelineRepository(
               await listTimelineLabResults(scope, query),
               await listTimelineStoppedCourses(scope, query),
               await listTimelineAdherencePeriods(scope, query),
+              await listTimelineTemperatures(scope, query),
+              await listTimelineAsNeededDoses(scope, query),
               includeMeasurements ? await listTimelineMeasurements(scope, query) : [],
             ];
           },

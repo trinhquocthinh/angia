@@ -2,7 +2,7 @@ import { and, asc, eq, gte, lt } from 'drizzle-orm';
 import { findProfileInFamily } from '@src/features/profiles/infrastructure/findProfileInFamily.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { temperatureReadings } from '@src/shared/db/schema/index.js';
-import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
+import { type FamilyScope, withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { TemperatureRepository } from '../application/ports.js';
 import type { TemperatureReading } from '../domain/TemperatureReading.js';
 
@@ -20,10 +20,13 @@ const toReading = (row: Omit<TemperatureReading, 'celsius'> & { celsius: string 
 });
 
 // RLS qua withFamilyScope; điều kiện family_id/hồ sơ bổ sung phòng thủ theo chiều sâu.
-export function createTemperatureRepository(db: Database): TemperatureRepository {
+export function createTemperatureRepository(
+  db: Database,
+  scope: FamilyScope = withFamilyScope,
+): TemperatureRepository {
   return {
     withFamily: (familyId, work) =>
-      withFamilyScope(db, familyId, (tx) => {
+      scope(db, familyId, (tx) => {
         const ofProfile = (profileId: string) =>
           and(eq(temperatureReadings.familyId, familyId), eq(temperatureReadings.healthProfileId, profileId));
         return work({
