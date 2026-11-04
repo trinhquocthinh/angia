@@ -25,6 +25,7 @@ it('giữ nguyên bản đã gửi khi bên gọi sửa đối tượng lệnh s
           longTerm: false,
           note: null,
           totalQuantity: null,
+          minIntervalText: null,
         },
       ],
     },

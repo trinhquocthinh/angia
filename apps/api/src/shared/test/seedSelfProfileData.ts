@@ -2,11 +2,15 @@ import { randomUUID } from 'node:crypto';
 import type { HealthProfile } from '@angia/contracts';
 import { confirmConsentByAttestation } from './confirmConsentByAttestation.js';
 import { manualCourse } from './healthDataFixtures.js';
+import { asNeededItem, seedAsNeededDose } from './seedAsNeededDose.js';
+import { seedTemperatureReading } from './seedTemperatureReading.js';
+import { vietnamDate } from './createFiniteCourse.js';
 import type { SeededSession } from './seedAuthFixtures.js';
 import type { ProfileTestApp } from './startProfileTestApp.js';
 
 export const SELF_REMINDER_DATE = '2026-10-23';
 export const SELF_SERIES_QUERY = 'kind=blood_pressure&from=2026-10-01&to=2026-10-31';
+export const SELF_EXTRA_QUERY = `from=${vietnamDate(-1)}&to=${vietnamDate()}`;
 
 async function createConfirmedProfile(
   t: ProfileTestApp,
@@ -29,6 +33,11 @@ export async function seedSelfProfileData(
   birthYear?: number,
 ) {
   const profile = await createConfirmedProfile(t, main, name, birthYear);
+  const { doseId } = await seedAsNeededDose(t, main, profile.id, {
+    ...asNeededItem,
+    name: `Khi cần-${name}`,
+  });
+  const temperatureId = await seedTemperatureReading(t, main, profile.id);
   const [prescriptionId, measurementId, reminderId] = [randomUUID(), randomUUID(), randomUUID()];
   const marker = {
     course: `Thuốc-${name}`,
@@ -36,6 +45,8 @@ export async function seedSelfProfileData(
     facility: `Phòng khám-${name}`,
     measurement: measurementId,
     lab: `Chỉ số-${name}`,
+    dose: doseId,
+    temperature: temperatureId,
   };
   await t.call(main, 'POST', `/api/health-profiles/${profile.id}/medication-courses`, {
     ...manualCourse,

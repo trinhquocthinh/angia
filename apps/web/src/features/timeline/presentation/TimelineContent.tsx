@@ -1,4 +1,5 @@
 import { ProfileHealthHeader } from '@src/features/measurements/presentation/components/ProfileHealthHeader';
+import { TemperatureWorkspace } from '@src/features/temperatures/presentation/TemperatureWorkspace';
 import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
 import { useProfileTimeline } from '../application/useProfileTimeline';
 import { createTimelineRepository } from '../infrastructure/createTimelineRepository';
@@ -22,18 +23,21 @@ export function TimelineContent({ profile, session }: { profile: HealthProfile; 
           Hồ sơ chưa được đồng ý lưu dữ liệu.
         </p>
       ) : (
-        <TimelineFeed
-          profileId={profile.id}
-          items={query.data?.pages.flatMap((page) => page.items)}
-          loading={!query.data && !query.isError}
-          error={query.error}
-          fetchingMore={query.isFetchingNextPage}
-          hasNextPage={query.hasNextPage}
-          retry={() => void query.refetch()}
-          loadMore={() => {
-            if (!query.isFetching && query.hasNextPage) void query.fetchNextPage();
-          }}
-        />
+        <>
+          <TemperatureWorkspace key={profile.id} session={session} profileId={profile.id} />
+          <TimelineFeed
+            profileId={profile.id}
+            items={query.data?.pages.flatMap((page) => page.items)}
+            loading={!query.data && !query.isError}
+            error={query.error}
+            fetchingMore={query.isFetchingNextPage}
+            hasNextPage={query.hasNextPage}
+            retry={() => void query.refetch()}
+            loadMore={() => {
+              if (!query.isFetching && query.hasNextPage) void query.fetchNextPage();
+            }}
+          />
+        </>
       )}
     </div>
   );

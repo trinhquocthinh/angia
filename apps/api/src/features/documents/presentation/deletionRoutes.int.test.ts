@@ -79,6 +79,7 @@ describe('API xóa chứng từ và xem trước tác động (SPEC-037, BR-048)
       measurements: 0,
       medicationCourses: 2,
       activeMedicationCourses: 1,
+      asNeededDoses: 0,
     });
   });
 

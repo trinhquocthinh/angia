@@ -11,6 +11,8 @@ const SNAPSHOT_TABLES = [
   'prescriptions',
   'prescription_items',
   'medication_courses',
+  'as_needed_doses',
+  'temperature_readings',
   'lab_results',
   'adherence_periods',
   'dose_slots',

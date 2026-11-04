@@ -11,7 +11,10 @@ import { seedPendingDocument } from './seedPendingDocument.js';
 import { seedReminder } from './seedReminder.js';
 import { seedRevisitReminder } from './seedRevisitReminder.js';
 import { snapshotHealthTables } from './snapshotHealthTables.js';
+import { asNeededDoseRouteProbes } from './asNeededDoseRouteProbes.js';
 import { doseConfirmationRouteProbes } from './doseConfirmationRouteProbes.js';
+import { seedAsNeededDose } from './seedAsNeededDose.js';
+import { seedTemperatureReading } from './seedTemperatureReading.js';
 import { prescriptionRouteProbes } from './prescriptionRouteProbes.js';
 import {
   manualCourse as course,
@@ -113,6 +116,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       t.call(u, 'GET', `/api/me/revisit-reminders/${x.revisitReminderId}`),
     'GET /api/me/reminders/:reminderId': (u, x) => t.call(u, 'GET', `/api/me/reminders/${x.reminderId}`),
     ...doseConfirmationRouteProbes((...args) => t.call(...args)),
+    ...asNeededDoseRouteProbes((...args) => t.call(...args)),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
         type: 'device_reading',
@@ -139,17 +143,10 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const { id: prescriptionId } = ((await saved.json()) as { prescription: { id: string } }).prescription;
     const reminderId = await seedReminder(t.owner, familyId, profile.id, main.accountId);
     const revisitReminderId = await seedRevisitReminder(t.owner, familyId, profile.id);
-    return {
-      familyId,
-      main,
-      profile,
-      documentId,
-      token,
-      courseId,
-      prescriptionId,
-      reminderId,
-      revisitReminderId,
-    };
+    const asNeeded = await seedAsNeededDose(t, main, profile.id);
+    const readingId = await seedTemperatureReading(t, main, profile.id);
+    const ids = { documentId, courseId, prescriptionId, reminderId, revisitReminderId, readingId };
+    return { ...ids, asNeeded, familyId, main, profile, token };
   };
   const attackers = async () => {
     const familyId = await t.family();
@@ -161,26 +158,20 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
   it('TC-013, TC-014, TC-015, TC-076: main và Quản trị kiêm main nhóm khác nhận đúng phản hồi của ID không tồn tại, không ghi gì', async () => {
     const victim = await victimFixture();
     const { familyId, main, adminMain } = await attackers();
+    const { documentId, courseId, prescriptionId, reminderId, revisitReminderId, readingId } = victim;
     const target: Target = {
+      ...{ documentId, courseId, prescriptionId, reminderId, revisitReminderId, readingId },
       profileId: victim.profile.id,
-      documentId: victim.documentId,
       accountId: victim.main.accountId,
-      courseId: victim.courseId,
-      prescriptionId: victim.prescriptionId,
-      reminderId: victim.reminderId,
-      revisitReminderId: victim.revisitReminderId,
+      asNeededCourseId: victim.asNeeded.courseId,
+      doseId: victim.asNeeded.doseId,
       token: t.codec.issue({ ...t.codec.verify(victim.token)!, familyId }),
     };
-    const missing: Target = {
-      profileId: randomUUID(),
-      documentId: randomUUID(),
-      accountId: randomUUID(),
-      courseId: randomUUID(),
-      prescriptionId: randomUUID(),
-      reminderId: randomUUID(),
-      revisitReminderId: randomUUID(),
+    const ids = Object.keys(target).filter((key) => key !== 'token');
+    const missing = {
+      ...Object.fromEntries(ids.map((key) => [key, randomUUID()])),
       token: 'bogus',
-    };
+    } as Target;
     const before = await snapshotHealthTables(t.owner);
     for (const user of [main, adminMain]) {
       for (const [route, probe] of Object.entries(probes)) {

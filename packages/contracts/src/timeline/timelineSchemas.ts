@@ -6,6 +6,8 @@ const timelineKindSchema = z.enum([
   'prescription',
   'lab_result',
   'measurement',
+  'temperature',
+  'as_needed_dose',
   'course_stopped',
   'adherence_period',
   'revisit',
@@ -16,7 +18,7 @@ const timeSchema = z
   .nullable();
 const key = { id: z.string().min(1), date: z.iso.date(), time: timeSchema };
 
-// E13-S5-T1: sáu nguồn hiện có; nhiệt độ/liều Khi cần bổ sung ở E15.
+// SPEC-049: tám nguồn đã ghi nhận; không thêm nhận định sức khỏe.
 export const timelineEventSchema = z
   .discriminatedUnion('kind', [
     z.object({
@@ -46,6 +48,21 @@ export const timelineEventSchema = z
       }),
     }),
     z.object({ ...key, kind: z.literal('measurement'), data: measurementSchema }),
+    z.object({
+      ...key,
+      kind: z.literal('temperature'),
+      data: z.object({ celsius: z.number() }),
+    }),
+    z.object({
+      ...key,
+      kind: z.literal('as_needed_dose'),
+      data: z.object({
+        courseId: z.uuid(),
+        name: z.string(),
+        quantity: z.number().nullable(),
+        unit: z.string().nullable(),
+      }),
+    }),
     z.object({
       ...key,
       kind: z.literal('course_stopped'),

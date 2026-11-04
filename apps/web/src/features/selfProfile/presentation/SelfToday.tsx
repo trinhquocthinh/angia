@@ -1,4 +1,5 @@
 import { MedicationCatalog } from '@src/features/medications/presentation/MedicationCatalog';
+import { AsNeededDoseActions } from '@src/features/asNeededDoses/presentation/AsNeededDoseActions';
 import type { ProfileSession } from '@src/features/profiles/application/ports';
 import { useSelfQuery } from '../application/useSelfQuery';
 import { selfProfileRepository as repository } from './selfProfileRepository';
@@ -20,6 +21,7 @@ export function SelfToday({ session }: { session: ProfileSession }) {
           error={medications.isError}
           retry={() => void medications.refetch()}
           readOnly
+          renderCourseActions={(course) => <AsNeededDoseActions course={course} session={session} readOnly />}
         />
       </section>
       <section className="flex flex-col gap-3">

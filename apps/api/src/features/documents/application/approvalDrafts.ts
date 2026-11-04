@@ -20,6 +20,7 @@ interface PrescriptionItemDraft {
   longTerm: boolean;
   note: string | null;
   totalQuantity: number | null;
+  minIntervalText?: string | null;
   resolution?: CourseResolution | undefined;
   expectedConflictCourseIds?: string[] | undefined;
 }

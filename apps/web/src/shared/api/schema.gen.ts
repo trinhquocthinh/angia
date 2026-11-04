@@ -4702,6 +4702,175 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/me/profile/temperatures': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Nhiệt độ của hồ sơ liên kết, cũ nhất trước (SPEC-042, SPEC-048) */
+    get: {
+      parameters: {
+        query: {
+          from: string;
+          to: string;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Danh sách nhiệt độ */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['TemperatureList'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: tài khoản chưa thuộc gia đình */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: tài khoản không liên kết hồ sơ */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/me/profile/as-needed-doses': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Liều Khi cần của hồ sơ liên kết, cũ nhất trước (SPEC-042, SPEC-047) */
+    get: {
+      parameters: {
+        query: {
+          courseId?: string;
+          from: string;
+          to: string;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Danh sách liều */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AsNeededDoseList'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: tài khoản chưa thuộc gia đình */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: tài khoản không liên kết hồ sơ */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/reminders/{reminderId}/dose-confirmation': {
     parameters: {
       query?: never;
@@ -4934,6 +5103,573 @@ export interface paths {
     put?: never;
     post?: never;
     delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/as-needed-doses': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Liều "Khi cần" trong khoảng ngày Việt Nam (tối đa 366 ngày), cũ nhất trước */
+    get: {
+      parameters: {
+        query: {
+          courseId?: string;
+          from: string;
+          to: string;
+        };
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Danh sách liều */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AsNeededDoseList'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    /** Ghi một liều "Khi cần" (SPEC-047); không tính giờ liều tiếp */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['RecordAsNeededDoseRequest'];
+        };
+      };
+      responses: {
+        /** @description Liều đã ghi */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AsNeededDose'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: đợt không phải "Khi cần" từ đơn, hết hiệu lực, hoặc giờ ở tương lai */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/as-needed-doses/{doseId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Xóa liều ghi nhầm */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+          doseId: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Đã xóa */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ hoặc liều không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/medication-courses/{courseId}/interval': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Khoảng cách tối thiểu do người dùng nhập theo nhãn thuốc; giá trị trên đơn vẫn được ưu tiên */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+          courseId: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['SetCourseIntervalRequest'];
+        };
+      };
+      responses: {
+        /** @description Khoảng cách hiệu lực sau khi lưu */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['CourseInterval'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: đợt không phải "Khi cần" từ đơn */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/temperatures': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Nhiệt độ trong khoảng ngày Việt Nam (tối đa 366 ngày), cũ nhất trước */
+    get: {
+      parameters: {
+        query: {
+          from: string;
+          to: string;
+        };
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Danh sách nhiệt độ */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['TemperatureList'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    /** Ghi nhiệt độ cơ thể (SPEC-048); ngoài 34,0–43,0 °C cần confirmOutOfRange */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['RecordTemperatureRequest'];
+        };
+      };
+      responses: {
+        /** @description Nhiệt độ đã ghi, làm tròn tới 0,1 */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['TemperatureReading'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields = ["celsius"]); ERR_VALIDATION: ngoài 25–50 °C hoặc giờ ở tương lai */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/health-profiles/{id}/temperatures/{readingId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Xóa nhiệt độ ghi nhầm */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+          readingId: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Đã xóa */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ hoặc bản ghi không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
     options?: never;
     head?: never;
     patch?: never;
@@ -6654,6 +7390,7 @@ export interface components {
         longTerm: boolean;
         note: string | null;
         totalQuantity: number | null;
+        minIntervalText: string | null;
       }[];
     } | null;
     LabResult: {
@@ -6750,6 +7487,8 @@ export interface components {
               longTerm: boolean;
               note: string | null;
               totalQuantity: number | null;
+              /** @default null */
+              minIntervalText: string | null;
               /** @enum {string} */
               resolution?: 'replace' | 'parallel';
               expectedConflictCourseIds?: string[];
@@ -6782,6 +7521,7 @@ export interface components {
       measurements: number;
       medicationCourses: number;
       activeMedicationCourses: number;
+      asNeededDoses: number;
     };
     DeleteDocumentRequest: {
       /** @enum {string} */
@@ -6935,7 +7675,15 @@ export interface components {
       status: 'active' | 'ended' | 'stopped' | 'replaced';
       /** Format: date */
       prescriptionIssuedDate: string | null;
+      /** Format: date-time */
+      lastDoseAt: string | null;
+      interval: components['schemas']['DoseInterval'];
     };
+    DoseInterval: {
+      text: string;
+      /** @enum {string} */
+      source: 'prescription' | 'user';
+    } | null;
     ReusePrescriptionResponse: {
       courses: components['schemas']['MedicationCourse'][];
     };
@@ -7048,6 +7796,7 @@ export interface components {
           longTerm: boolean;
           note: string | null;
           totalQuantity: number | null;
+          minIntervalText: string | null;
         }[];
       }[];
       removed: {
@@ -7065,6 +7814,7 @@ export interface components {
           longTerm: boolean;
           note: string | null;
           totalQuantity: number | null;
+          minIntervalText: string | null;
         }[];
       }[];
       changed: {
@@ -7128,6 +7878,7 @@ export interface components {
                 longTerm: boolean;
                 note: string | null;
                 totalQuantity: number | null;
+                minIntervalText: string | null;
               }[];
               after: {
                 /** Format: uuid */
@@ -7142,6 +7893,7 @@ export interface components {
                 longTerm: boolean;
                 note: string | null;
                 totalQuantity: number | null;
+                minIntervalText: string | null;
               }[];
             }
         )[];
@@ -7194,6 +7946,32 @@ export interface components {
           /** @enum {string} */
           kind: 'measurement';
           data: components['schemas']['Measurement'];
+        }
+      | {
+          id: string;
+          /** Format: date */
+          date: string;
+          time: string | null;
+          /** @enum {string} */
+          kind: 'temperature';
+          data: {
+            celsius: number;
+          };
+        }
+      | {
+          id: string;
+          /** Format: date */
+          date: string;
+          time: string | null;
+          /** @enum {string} */
+          kind: 'as_needed_dose';
+          data: {
+            /** Format: uuid */
+            courseId: string;
+            name: string;
+            quantity: number | null;
+            unit: string | null;
+          };
         }
       | {
           id: string;
@@ -7278,6 +8056,62 @@ export interface components {
       /** Format: date-time */
       confirmedAt: string;
     } | null;
+    TemperatureList: {
+      readings: components['schemas']['TemperatureReading'][];
+    };
+    TemperatureReading: {
+      /** Format: uuid */
+      id: string;
+      celsius: number;
+      /** Format: date-time */
+      measuredAt: string;
+      /** Format: uuid */
+      recordedBy: string | null;
+      /** Format: date-time */
+      recordedAt: string;
+    };
+    AsNeededDoseList: {
+      doses: components['schemas']['AsNeededDose'][];
+    };
+    AsNeededDose: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      courseId: string;
+      /** Format: date-time */
+      givenAt: string;
+      quantity: number | null;
+      unit: string | null;
+      /** Format: uuid */
+      recordedBy: string | null;
+      /** Format: date-time */
+      recordedAt: string;
+    };
+    RecordAsNeededDoseRequest: {
+      /** Format: uuid */
+      courseId: string;
+      /** Format: date-time */
+      givenAt: string;
+      /** @default null */
+      quantity: number | null;
+      /** @default null */
+      unit: string | null;
+    };
+    CourseInterval: {
+      /** Format: uuid */
+      courseId: string;
+      interval: components['schemas']['DoseInterval'];
+    };
+    SetCourseIntervalRequest: {
+      text: string | null;
+    };
+    RecordTemperatureRequest: {
+      celsius: number;
+      /** Format: date-time */
+      measuredAt: string;
+      /** @default false */
+      confirmOutOfRange: boolean;
+    };
     ReminderRecipients: {
       /**
        * @description linked: hồ sơ liên kết tài khoản, người nhận cố định; assigned: main được chỉ định

@@ -172,6 +172,8 @@ export {
   type CurrentMedicationCourse,
   type CurrentMedications,
 } from './medications/currentMedicationSchemas.js';
+export * from './medications/asNeededDoseSchemas.js';
+export * from './measurements/temperatureSchemas.js';
 export {
   adherencePeriodListSchema,
   adherencePeriodSchema,

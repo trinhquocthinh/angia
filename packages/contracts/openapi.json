@@ -2085,6 +2085,12 @@
                     "number",
                     "null"
                   ]
+                },
+                "minIntervalText": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "required": [
@@ -2098,7 +2104,8 @@
                 "durationDays",
                 "longTerm",
                 "note",
-                "totalQuantity"
+                "totalQuantity",
+                "minIntervalText"
               ]
             }
           }
@@ -2550,6 +2557,14 @@
                           "exclusiveMinimum": 0,
                           "maximum": 100000
                         },
+                        "minIntervalText": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "maxLength": 100,
+                          "default": null
+                        },
                         "resolution": {
                           "type": "string",
                           "enum": [
@@ -2715,6 +2730,10 @@
           "activeMedicationCourses": {
             "type": "integer",
             "minimum": 0
+          },
+          "asNeededDoses": {
+            "type": "integer",
+            "minimum": 0
           }
         },
         "required": [
@@ -2723,7 +2742,8 @@
           "labResults",
           "measurements",
           "medicationCourses",
-          "activeMedicationCourses"
+          "activeMedicationCourses",
+          "asNeededDoses"
         ]
       },
       "DeleteDocumentRequest": {
@@ -3343,6 +3363,16 @@
               "null"
             ],
             "format": "date"
+          },
+          "lastDoseAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "interval": {
+            "$ref": "#/components/schemas/DoseInterval"
           }
         },
         "required": [
@@ -3358,7 +3388,31 @@
           "startDate",
           "endDate",
           "status",
-          "prescriptionIssuedDate"
+          "prescriptionIssuedDate",
+          "lastDoseAt",
+          "interval"
+        ]
+      },
+      "DoseInterval": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "prescription",
+              "user"
+            ]
+          }
+        },
+        "required": [
+          "text",
+          "source"
         ]
       },
       "ReusePrescriptionResponse": {
@@ -3843,6 +3897,12 @@
                           "number",
                           "null"
                         ]
+                      },
+                      "minIntervalText": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       }
                     },
                     "required": [
@@ -3856,7 +3916,8 @@
                       "durationDays",
                       "longTerm",
                       "note",
-                      "totalQuantity"
+                      "totalQuantity",
+                      "minIntervalText"
                     ]
                   },
                   "minItems": 1
@@ -3943,6 +4004,12 @@
                           "number",
                           "null"
                         ]
+                      },
+                      "minIntervalText": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       }
                     },
                     "required": [
@@ -3956,7 +4023,8 @@
                       "durationDays",
                       "longTerm",
                       "note",
-                      "totalQuantity"
+                      "totalQuantity",
+                      "minIntervalText"
                     ]
                   },
                   "minItems": 1
@@ -4261,6 +4329,12 @@
                                     "number",
                                     "null"
                                   ]
+                                },
+                                "minIntervalText": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
                                 }
                               },
                               "required": [
@@ -4274,7 +4348,8 @@
                                 "durationDays",
                                 "longTerm",
                                 "note",
-                                "totalQuantity"
+                                "totalQuantity",
+                                "minIntervalText"
                               ]
                             }
                           },
@@ -4344,6 +4419,12 @@
                                     "number",
                                     "null"
                                   ]
+                                },
+                                "minIntervalText": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
                                 }
                               },
                               "required": [
@@ -4357,7 +4438,8 @@
                                 "durationDays",
                                 "longTerm",
                                 "note",
-                                "totalQuantity"
+                                "totalQuantity",
+                                "minIntervalText"
                               ]
                             }
                           }
@@ -4587,6 +4669,113 @@
               },
               "data": {
                 "$ref": "#/components/schemas/Measurement"
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "temperature"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "celsius": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "celsius"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "as_needed_dose"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "courseId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "courseId",
+                  "name",
+                  "quantity",
+                  "unit"
+                ]
               }
             },
             "required": [
@@ -4929,6 +5118,209 @@
           "confirmedBy",
           "confirmedAt"
         ]
+      },
+      "TemperatureList": {
+        "type": "object",
+        "properties": {
+          "readings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TemperatureReading"
+            }
+          }
+        },
+        "required": [
+          "readings"
+        ]
+      },
+      "TemperatureReading": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "celsius": {
+            "type": "number"
+          },
+          "measuredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "recordedBy": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "celsius",
+          "measuredAt",
+          "recordedBy",
+          "recordedAt"
+        ]
+      },
+      "AsNeededDoseList": {
+        "type": "object",
+        "properties": {
+          "doses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AsNeededDose"
+            }
+          }
+        },
+        "required": [
+          "doses"
+        ]
+      },
+      "AsNeededDose": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "courseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "givenAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "recordedBy": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "courseId",
+          "givenAt",
+          "quantity",
+          "unit",
+          "recordedBy",
+          "recordedAt"
+        ]
+      },
+      "RecordAsNeededDoseRequest": {
+        "type": "object",
+        "properties": {
+          "courseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "givenAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0,
+            "maximum": 1000,
+            "default": null
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 20,
+            "default": null
+          }
+        },
+        "required": [
+          "courseId",
+          "givenAt"
+        ],
+        "additionalProperties": false
+      },
+      "CourseInterval": {
+        "type": "object",
+        "properties": {
+          "courseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "interval": {
+            "$ref": "#/components/schemas/DoseInterval"
+          }
+        },
+        "required": [
+          "courseId",
+          "interval"
+        ]
+      },
+      "SetCourseIntervalRequest": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "RecordTemperatureRequest": {
+        "type": "object",
+        "properties": {
+          "celsius": {
+            "type": "number",
+            "minimum": 25,
+            "maximum": 50
+          },
+          "measuredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "confirmOutOfRange": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "required": [
+          "celsius",
+          "measuredAt"
+        ],
+        "additionalProperties": false
       },
       "ReminderRecipients": {
         "type": "object",
@@ -10391,6 +10783,195 @@
         }
       }
     },
+    "/api/me/profile/temperatures": {
+      "get": {
+        "tags": [
+          "self-profile"
+        ],
+        "summary": "Nhiệt độ của hồ sơ liên kết, cũ nhất trước (SPEC-042, SPEC-048)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Danh sách nhiệt độ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemperatureList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: tài khoản không liên kết hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/as-needed-doses": {
+      "get": {
+        "tags": [
+          "self-profile"
+        ],
+        "summary": "Liều Khi cần của hồ sơ liên kết, cũ nhất trước (SPEC-042, SPEC-047)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "name": "courseId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Danh sách liều",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsNeededDoseList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: tài khoản chưa thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: tài khoản không liên kết hồ sơ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED: hồ sơ chưa đồng thuận hoặc đã rút",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/reminders/{reminderId}/dose-confirmation": {
       "post": {
         "tags": [
@@ -10638,6 +11219,657 @@
           },
           "422": {
             "description": "ERR_VALIDATION: dữ liệu sai hoặc lời nhắc không thuộc hôm nay theo giờ Việt Nam",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/as-needed-doses": {
+      "post": {
+        "tags": [
+          "as-needed-doses"
+        ],
+        "summary": "Ghi một liều \"Khi cần\" (SPEC-047); không tính giờ liều tiếp",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordAsNeededDoseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Liều đã ghi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsNeededDose"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: đợt không phải \"Khi cần\" từ đơn, hết hiệu lực, hoặc giờ ở tương lai",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "as-needed-doses"
+        ],
+        "summary": "Liều \"Khi cần\" trong khoảng ngày Việt Nam (tối đa 366 ngày), cũ nhất trước",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "name": "courseId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Danh sách liều",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsNeededDoseList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/as-needed-doses/{doseId}": {
+      "delete": {
+        "tags": [
+          "as-needed-doses"
+        ],
+        "summary": "Xóa liều ghi nhầm",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "doseId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Đã xóa"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ hoặc liều không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/medication-courses/{courseId}/interval": {
+      "put": {
+        "tags": [
+          "as-needed-doses"
+        ],
+        "summary": "Khoảng cách tối thiểu do người dùng nhập theo nhãn thuốc; giá trị trên đơn vẫn được ưu tiên",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "courseId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetCourseIntervalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Khoảng cách hiệu lực sau khi lưu",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseInterval"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: đợt không phải \"Khi cần\" từ đơn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/temperatures": {
+      "post": {
+        "tags": [
+          "temperatures"
+        ],
+        "summary": "Ghi nhiệt độ cơ thể (SPEC-048); ngoài 34,0–43,0 °C cần confirmOutOfRange",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordTemperatureRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Nhiệt độ đã ghi, làm tròn tới 0,1",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemperatureReading"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields = [\"celsius\"]); ERR_VALIDATION: ngoài 25–50 °C hoặc giờ ở tương lai",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "temperatures"
+        ],
+        "summary": "Nhiệt độ trong khoảng ngày Việt Nam (tối đa 366 ngày), cũ nhất trước",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": true,
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Danh sách nhiệt độ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemperatureList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/temperatures/{readingId}": {
+      "delete": {
+        "tags": [
+          "temperatures"
+        ],
+        "summary": "Xóa nhiệt độ ghi nhầm",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "readingId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Đã xóa"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ hoặc bản ghi không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
             "content": {
               "application/json": {
                 "schema": {

@@ -125,6 +125,8 @@ export function toPrescriptionApproval(form: PrescriptionFormValues): Prescripti
       longTerm: item.longTerm,
       note: orNull(item.note),
       totalQuantity: item.totalQuantity.trim() === '' ? null : toNumber(item.totalQuantity),
+      // Form chưa có ô khoảng cách "Khi cần" (SPEC-047); gửi null như đơn không ghi.
+      minIntervalText: null,
     })),
   };
 }

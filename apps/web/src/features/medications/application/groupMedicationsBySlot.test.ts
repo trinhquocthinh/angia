@@ -19,6 +19,8 @@ const course = (
   endDate: null,
   status: 'active',
   prescriptionIssuedDate: null,
+  lastDoseAt: null,
+  interval: null,
 });
 describe('Nhóm danh mục thuốc theo buổi (Design §6, E4-S4-T1)', () => {
   it('TC-239: theo thứ tự Sáng/Trưa/Chiều/Tối, thuốc nhiều buổi có mặt ở từng buổi, bỏ buổi trống', () => {

@@ -23,6 +23,8 @@ const course = (id: string, startDate: string, endDate: string | null): CurrentM
   endDate,
   status: 'active',
   prescriptionIssuedDate: null,
+  lastDoseAt: null,
+  interval: null,
 });
 const measurement = (day: number): Measurement => ({
   id: `m${day}`,

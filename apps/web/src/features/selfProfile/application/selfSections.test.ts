@@ -9,12 +9,14 @@ describe('SPEC-042 — các mục "Hồ sơ của tôi"', () => {
       'timeline',
       'health',
       'lab-results',
+      'temperatures',
     ]);
     expect(selfSections(false).map((item) => item.key)).toEqual([
       'today',
       'revisits',
       'timeline',
       'lab-results',
+      'temperatures',
     ]);
   });
   it('sửa URL sang mục bị ẩn hoặc không có thì về trang đầu', () => {

@@ -24,6 +24,8 @@ const BY_PROFILE = [
   'lab_results',
   'medication_courses',
   'adherence_periods',
+  'as_needed_doses',
+  'temperature_readings',
   'dose_slots',
   'reminder_recipients',
   'reminders',

@@ -13,6 +13,8 @@ import { registerAiRoutingRoutes } from '@src/features/aiRouting/presentation/re
 import { HTTPException } from 'hono/http-exception';
 import type { AdherenceRepository } from '@src/features/adherence/application/ports.js';
 import { registerAdherenceRoutes } from '@src/features/adherence/presentation/registerAdherenceRoutes.js';
+import type { AsNeededDoseRepository } from '@src/features/asNeededDoses/application/ports.js';
+import type { TemperatureRepository } from '@src/features/temperatures/application/ports.js';
 import type { DoseSlotRepository } from '@src/features/reminders/application/ports.js';
 import { registerDoseSlotRoutes } from '@src/features/reminders/presentation/registerDoseSlotRoutes.js';
 import type { MyConsentRepository } from '@src/features/myConsent/application/ports.js';
@@ -85,6 +87,8 @@ export type AppDependencies = {
   documentEntries: DocumentEntryRepository;
   medications: MedicationManagementRepository;
   adherence: AdherenceRepository;
+  asNeededDoses: AsNeededDoseRepository;
+  temperatures: TemperatureRepository;
   doseSlots: DoseSlotRepository;
   revisits: RevisitRepository;
   prescriptionChain: PrescriptionChainRepository;

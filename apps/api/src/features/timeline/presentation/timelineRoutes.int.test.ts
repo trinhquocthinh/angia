@@ -3,10 +3,12 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { timelinePageSchema, type TimelinePage } from '@angia/contracts';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 import { seedTimelineData } from '@src/shared/test/seedTimelineData.js';
+import { seedTimelineExtraData } from '@src/shared/test/seedTimelineExtraData.js';
+import { linkAccount } from '@src/shared/test/seedSelfProfileData.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 
-describe('API dòng thời gian sáu nguồn (E13-S5-T1)', () => {
+describe('API dòng thời gian tám nguồn (SPEC-049)', () => {
   let t: ProfileTestApp;
   beforeAll(async () => {
     t = await startProfileTestApp();
@@ -20,7 +22,7 @@ describe('API dòng thời gian sáu nguồn (E13-S5-T1)', () => {
     return timelinePageSchema.parse(await response.json());
   };
 
-  it('TC-503: đủ sáu loại, đúng thứ tự và dữ liệu; gộp phiếu/lịch hẹn trước phân trang', async () => {
+  it('TC-503: đủ tám loại, đúng thứ tự và dữ liệu; gộp phiếu/lịch hẹn trước phân trang', async () => {
     const f = await setup();
     const second = await f.add('2026-10-30', '2026-10-02');
     const group1 = await f.labs('2026-10-30T00:00:00.000001Z');
@@ -28,17 +30,22 @@ describe('API dòng thời gian sáu nguồn (E13-S5-T1)', () => {
     const m1 = await f.measure('09:00');
     const m2 = await f.measure('08:00');
     const m3 = await f.measure(null);
+    const extra = await seedTimelineExtraData(t, f);
     const page = await read(f);
     expect([...new Set(page.items.map((e) => e.kind))].sort()).toEqual([
       'adherence_period',
+      'as_needed_dose',
       'course_stopped',
       'lab_result',
       'measurement',
       'prescription',
       'revisit',
+      'temperature',
     ]);
     expect(page.items.map((e) => e.id)).toEqual([
+      extra.doseId,
       m1,
+      extra.temperatureId,
       m2,
       expect.any(String),
       f.courseId,
@@ -54,19 +61,33 @@ describe('API dòng thời gian sáu nguồn (E13-S5-T1)', () => {
     for (const event of page.items.filter((e) => e.kind === 'lab_result'))
       expect(event.data.results).toHaveLength(2);
     expect(page.items.find((e) => e.id === f.prescriptionId)).toMatchObject({
-      data: { itemCount: 1, diffSummary: null },
+      data: { itemCount: 2, diffSummary: null },
     });
     expect(page.items.find((e) => e.id === second)).toMatchObject({
-      data: { diffSummary: { added: 0, removed: 1, changed: 0 } },
+      data: { diffSummary: { added: 0, removed: 2, changed: 0 } },
     });
     expect(page.nextCursor).toBeNull();
-    expect((await read(f, '?limit=1')).items[0]!.id).toBe(m1);
+    expect(page.items.find((e) => e.id === extra.temperatureId)).toEqual({
+      id: extra.temperatureId,
+      kind: 'temperature',
+      date: '2026-10-30',
+      time: '09:00',
+      data: { celsius: 38.5 },
+    });
+    expect(page.items.find((e) => e.id === extra.doseId)).toEqual({
+      id: extra.doseId,
+      kind: 'as_needed_dose',
+      date: '2026-10-30',
+      time: '09:00',
+      data: { courseId: extra.courseId, name: 'Paracetamol', quantity: 0.5, unit: 'gói' },
+    });
+    expect((await read(f, '?limit=1')).items[0]!.id).toBe(extra.doseId);
     const cursor = Buffer.from(
       JSON.stringify({ date: '2026-10-30', time: null, kind: 'revisit', id: '2026-10-30' }),
     ).toString('base64url');
     expect((await read(f, `?limit=1&cursor=${cursor}`)).items[0]).toMatchObject({
       id: second,
-      data: { diffSummary: { removed: 1 } },
+      data: { diffSummary: { removed: 2 } },
     });
     // Một sự kiện mỗi trang buộc cursor đi qua mọi ranh giới kind và cả phiếu XN.
     const singles: TimelinePage['items'] = [];
@@ -106,9 +127,10 @@ describe('API dòng thời gian sáu nguồn (E13-S5-T1)', () => {
     );
     const hidden = await f.measure('10:00', '2026-10-30', documentId);
     const hiddenPrescription = await f.add('2026-10-30', '2026-10-03', documentId);
+    const extra = await seedTimelineExtraData(t, { ...f, prescriptionId: hiddenPrescription });
     await f.labs('2026-10-30T01:00:00Z', documentId);
     let page = await read(f);
-    const hiddenIds = new Set<string>([hidden, hiddenPrescription, documentId]);
+    const hiddenIds = new Set<string>([hidden, hiddenPrescription, documentId, extra.doseId]);
     expect(page.items.some((e) => hiddenIds.has(e.id))).toBe(false);
     expect(page.items.find((e) => e.kind === 'revisit')?.data).toEqual({
       prescriptionIds: [f.prescriptionId],
@@ -119,16 +141,41 @@ describe('API dòng thời gian sáu nguồn (E13-S5-T1)', () => {
     );
     page = await read(f);
     expect(page.items.some((e) => e.id === hidden)).toBe(true);
+    expect(page.items.some((e) => e.id === extra.doseId)).toBe(true);
     expect(page.items.find((e) => e.id === documentId)).toMatchObject({
       kind: 'lab_result',
       data: { results: expect.any(Array) },
     });
   });
 
+  it('TC-502/503: nhiệt độ và liều dùng ngày giờ Việt Nam qua nửa đêm, giữ lượng null', async () => {
+    const f = await setup();
+    const extra = await seedTimelineExtraData(t, f);
+    await t.owner.query("UPDATE temperature_readings SET measured_at='2026-10-29T17:00:01Z' WHERE id=$1", [
+      extra.temperatureId,
+    ]);
+    await t.owner.query(
+      "UPDATE as_needed_doses SET given_at='2026-10-29T17:00:59Z',quantity=NULL,unit=NULL WHERE id=$1",
+      [extra.doseId],
+    );
+    const page = await read(f);
+    expect(page.items.find((e) => e.id === extra.temperatureId)).toMatchObject({
+      date: '2026-10-30',
+      time: '00:00',
+      data: { celsius: 38.5 },
+    });
+    expect(page.items.find((e) => e.id === extra.doseId)).toMatchObject({
+      date: '2026-10-30',
+      time: '00:00',
+      data: { quantity: null, unit: null },
+    });
+  });
+
   it('TC-504: 120 sự kiện nhiều khóa trùng, ba trang không trùng/sót, cursor còn dùng sau xóa', async () => {
     const f = await setup();
+    await seedTimelineExtraData(t, f);
     const ids: string[] = [];
-    for (let i = 0; i < 116; i++) ids.push(await f.measure(i < 55 ? '08:00' : null));
+    for (let i = 0; i < 114; i++) ids.push(await f.measure(i < 55 ? '08:00' : null));
     const pages: TimelinePage[] = [];
     let cursor: string | null = null;
     do {
@@ -152,11 +199,21 @@ describe('API dòng thời gian sáu nguồn (E13-S5-T1)', () => {
 
   it('TC-505: ẩn số đo trẻ em, bật lại vẫn giữ các loại khác', async () => {
     const f = await setup();
+    const extra = await seedTimelineExtraData(t, f);
+    const member = await t.session(f.familyId, 'member');
+    await linkAccount(t, member.accountId, f.profile.id);
     await f.measure('08:00');
     await t.owner.query('UPDATE health_profiles SET birth_year=2020 WHERE id=$1', [f.profile.id]);
-    expect((await read(f)).items.map((e) => e.kind)).not.toContain('measurement');
+    const hidden = await read(f);
+    expect(hidden.items.map((e) => e.kind)).not.toContain('measurement');
+    expect(hidden.items.map((e) => e.id)).toEqual(
+      expect.arrayContaining([extra.doseId, extra.temperatureId]),
+    );
+    expect(await (await t.call(member, 'GET', '/api/me/profile/timeline')).json()).toEqual(hidden);
     await t.owner.query('UPDATE health_profiles SET vitals_enabled=true WHERE id=$1', [f.profile.id]);
-    expect((await read(f)).items.map((e) => e.kind)).toContain('measurement');
+    const shown = await read(f);
+    expect(shown.items.map((e) => e.kind)).toContain('measurement');
+    expect(await (await t.call(member, 'GET', '/api/me/profile/timeline')).json()).toEqual(shown);
   });
 
   it('TC-503: cách ly gia đình, quyền main, xác thực, đồng thuận và input', async () => {

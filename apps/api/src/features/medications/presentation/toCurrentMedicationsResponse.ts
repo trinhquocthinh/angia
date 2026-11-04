@@ -5,7 +5,11 @@ export function toCurrentMedicationsResponse(list: { today: string; courses: Cur
   return {
     today: list.today,
     courses: list.courses.map((course) =>
-      currentMedicationCourseSchema.parse({ ...course, strength: course.strength ?? null }),
+      currentMedicationCourseSchema.parse({
+        ...course,
+        strength: course.strength ?? null,
+        lastDoseAt: course.lastDoseAt?.toISOString() ?? null,
+      }),
     ),
   };
 }

@@ -18,6 +18,8 @@ const course = {
   endDate: null,
   status: 'active',
   prescriptionIssuedDate: null,
+  lastDoseAt: null,
+  interval: null,
 };
 const repositoryFor = (respond: (request: Request) => Response) =>
   createMedicationCatalogRepository(

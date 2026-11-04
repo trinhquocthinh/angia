@@ -31,6 +31,7 @@ export function toPrescription(row: PrescriptionRow, itemRows: PrescriptionItemR
         longTerm: item.longTerm,
         note: item.note,
         totalQuantity: fromNumeric(item.totalQuantity),
+        minIntervalText: item.minIntervalText,
       })),
   };
 }

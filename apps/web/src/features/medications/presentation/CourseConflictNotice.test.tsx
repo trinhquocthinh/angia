@@ -24,6 +24,7 @@ const prompt: CourseConflictPrompt = {
           longTerm: false,
           note: null,
           totalQuantity: null,
+          minIntervalText: null,
         },
       ],
     },

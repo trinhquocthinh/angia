@@ -12,6 +12,7 @@ export const documentDeletionImpactSchema = z
     measurements: z.number().int().nonnegative(),
     medicationCourses: z.number().int().nonnegative(),
     activeMedicationCourses: z.number().int().nonnegative(),
+    asNeededDoses: z.number().int().nonnegative(),
   })
   .meta({ id: 'DocumentDeletionImpact' });
 

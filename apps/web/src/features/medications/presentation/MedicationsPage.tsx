@@ -1,4 +1,5 @@
 import { ProfileDayReminders } from '@src/features/doseConfirmations/presentation/ProfileDayReminders';
+import { AsNeededDoseActions } from '@src/features/asNeededDoses/presentation/AsNeededDoseActions';
 import { ProfileHealthHeader } from '@src/features/measurements/presentation/components/ProfileHealthHeader';
 import { ProfileSectionPage } from '@src/features/profiles/presentation/components/ProfileSectionPage';
 import { DoseSlotsLink } from '@src/features/reminders/presentation/DoseSlotsLink';
@@ -52,6 +53,7 @@ function MedicationsContent({
             loading={medications.isPending}
             error={medications.isError}
             retry={() => void medications.refetch()}
+            renderCourseActions={(course) => <AsNeededDoseActions course={course} session={session} />}
           />
           <ProfileDayReminders profile={profile} session={session} />
         </>

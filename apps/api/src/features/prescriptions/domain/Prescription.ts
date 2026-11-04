@@ -14,6 +14,8 @@ interface PrescriptionItem {
   longTerm: boolean;
   note: string | null;
   totalQuantity: number | null;
+  // Nguyên văn trên đơn, chỉ dòng "Khi cần" (BR-054).
+  minIntervalText: string | null;
 }
 
 export interface Prescription {

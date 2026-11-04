@@ -1,4 +1,5 @@
 import { LabSeriesList } from '@src/features/labResults/presentation/LabSeriesList';
+import { TemperatureWorkspace } from '@src/features/temperatures/presentation/TemperatureWorkspace';
 import type { ProfileSession } from '@src/features/profiles/application/ports';
 import type { SelfSectionKey } from '../application/selfSections';
 import { useSelfQuery } from '../application/useSelfQuery';
@@ -22,6 +23,15 @@ export function SelfSection({ session, section }: Props) {
       return <SelfHealth session={session} />;
     case 'lab-results':
       return <SelfLabResults session={session} />;
+    case 'temperatures':
+      return (
+        <TemperatureWorkspace
+          key={session.account.healthProfileId}
+          session={session}
+          profileId={session.account.healthProfileId!}
+          readOnly
+        />
+      );
   }
 }
 

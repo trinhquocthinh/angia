@@ -267,6 +267,13 @@
       "when": 1793608617697,
       "tag": "0037_dose_confirmations",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1793699707423,
+      "tag": "0038_as_needed_and_temperature",
+      "breakpoints": true
     }
   ]
 }

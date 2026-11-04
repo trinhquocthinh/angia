@@ -23,6 +23,7 @@ const request = {
         longTerm: false,
         note: null,
         totalQuantity: null,
+        minIntervalText: null,
         resolution: 'replace',
         expectedConflictCourseIds: [id],
       },

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { timelineEventSchema } from '@angia/contracts';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import { events, profileId } from '../test/fixtures.test-helper';
@@ -38,6 +39,44 @@ const props = {
   loadMore: vi.fn(),
 };
 describe('TC-503/504/505 — giao diện dòng thời gian', () => {
+  it('TC-502/503: hiện nhiệt độ và liều Khi cần, giữ giá trị null và không thêm nhận định', () => {
+    const key = { id: profileId, date: '2026-10-30', time: '14:00' };
+    const items = [
+      { ...key, kind: 'temperature', data: { celsius: 38.5 } },
+      {
+        ...key,
+        kind: 'as_needed_dose',
+        data: { courseId: profileId, name: 'Paracetamol', quantity: 0.5, unit: 'gói' },
+      },
+      {
+        ...key,
+        kind: 'as_needed_dose',
+        data: { courseId: profileId, name: 'Thuốc ghi ba số lẻ', quantity: 1.125, unit: null },
+      },
+      {
+        ...key,
+        id: '00000000-0000-4000-8000-000000000099',
+        kind: 'as_needed_dose',
+        data: { courseId: profileId, name: 'Thuốc chưa ghi lượng', quantity: null, unit: null },
+      },
+    ].map((event) => timelineEventSchema.parse(event));
+    for (const self of [false, true]) {
+      const html = renderToStaticMarkup(
+        <TimelineFeed {...props} profileId={self ? undefined : profileId} items={items} />,
+      );
+      for (const text of [
+        'Nhiệt độ',
+        '38,5 °C',
+        'Liều Khi cần',
+        'Paracetamol',
+        '0,5 gói',
+        '1,125',
+        'Thuốc chưa ghi lượng',
+      ])
+        expect(html).toContain(text);
+      expect(html).not.toMatch(/null|undefined|sốt|bất thường|liều tiếp|Đã dùng/);
+    }
+  });
   it('SPEC-042: tự xem không truyền profileId thì giữ dữ liệu, không có link sang đơn', () => {
     const html = renderToStaticMarkup(<TimelineFeed {...props} profileId={undefined} />);
     expect(html).toContain('2 dòng thuốc');

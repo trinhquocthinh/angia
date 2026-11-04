@@ -10,6 +10,7 @@ const SKELETON_TABLES = [
   'ai_provider_charges',
   'ai_routing_audit',
   'ai_routing_settings',
+  'as_needed_doses',
   'consent_invitations',
   'consent_legacy_attestations',
   'dose_confirmations',
@@ -41,12 +42,14 @@ const SKELETON_TABLES = [
   'scan_quota_policy_audit',
   'sessions',
   'source_documents',
+  'temperature_readings',
   'upload_batches',
 ];
 // Bảng dữ liệu sức khỏe bắt buộc RLS (Tech Spec §3); families/accounts/sessions phục vụ xác thực,
 // extraction_spend là bảng quản trị ngân sách phi y tế (E3-S6-T1).
 const RLS_TABLES = [
   'adherence_periods',
+  'as_needed_doses',
   'consent_invitations',
   'consent_legacy_attestations',
   'dose_confirmations',
@@ -72,6 +75,7 @@ const RLS_TABLES = [
   'revisit_reminders',
   'scan_quota_audit',
   'source_documents',
+  'temperature_readings',
   'upload_batches',
 ];
 
@@ -84,6 +88,7 @@ const selfPolicy = (column: string) =>
   `(${SAME_FAMILY} AND (${NOT_SELF} OR (${column} = (${SETTING('self_profile_id')})::uuid)))`;
 const EXPECTED_POLICIES: Record<string, string> = {
   adherence_periods: selfPolicy('health_profile_id'),
+  as_needed_doses: selfPolicy('health_profile_id'),
   consent_invitations: selfPolicy('profile_id'),
   consent_legacy_attestations: selfPolicy('profile_id'),
   dose_confirmations: selfPolicy('health_profile_id'),
@@ -111,6 +116,7 @@ const EXPECTED_POLICIES: Record<string, string> = {
   revisit_reminders: selfPolicy('health_profile_id'),
   scan_quota_audit: FAMILY_ONLY_POLICY,
   source_documents: selfPolicy('health_profile_id'),
+  temperature_readings: selfPolicy('health_profile_id'),
   upload_batches: selfPolicy('health_profile_id'),
 };
 
