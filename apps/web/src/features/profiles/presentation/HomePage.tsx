@@ -43,7 +43,7 @@ export function HomePage() {
         session={session.data}
         open={withdrawing}
         setOpen={setWithdrawing}
-        showCard={!main}
+        showCard
       />
       {main && <ProfileSearch profiles={profiles} className="mb-3 lg:hidden" />}
       <HomeHeading familyName={session.data.family?.name} subtitle={subtitle} canCreate={main} />
