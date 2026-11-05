@@ -36,3 +36,36 @@ it('TC-419: PNG và WebP không phải JPEG nên không được gửi AI', asyn
     );
   }
 });
+
+it.each(['flat', 'nested'] as const)(
+  'Hồi quy migration 0033: PNG OCR legacy %s giữ nguyên byte, hash và MIME',
+  async (shape) => {
+    const uuid = '11111111-1111-4111-8111-111111111111';
+    const key =
+      shape === 'flat'
+        ? `families/${uuid}/documents/${uuid}/ocr.png`
+        : `families/${uuid}/profiles/${uuid}/documents/${uuid}/ocr/${uuid}/${uuid}.png`;
+    const bytes = await sharp({ create: { width: 2, height: 2, channels: 3, background: '#ffffff' } })
+      .png()
+      .toBuffer();
+    await expect(createDocumentImageReader({ get: async () => bytes }).get(key)).resolves.toEqual({
+      bytes,
+      mimeType: 'image/png',
+      sha256: createHash('sha256').update(bytes).digest('hex'),
+    });
+  },
+);
+
+it('Hồi quy legacy: PNG có metadata hoặc nằm ở khóa JPEG vẫn bị từ chối', async () => {
+  const uuid = '11111111-1111-4111-8111-111111111111';
+  const key = `families/${uuid}/documents/${uuid}/ocr.png`;
+  const image = sharp({ create: { width: 2, height: 2, channels: 3, background: '#ffffff' } });
+  const dirty = await image.clone().withMetadata().png().toBuffer();
+  await expect(createDocumentImageReader({ get: async () => dirty }).get(key)).rejects.toThrow(
+    'image_unusable',
+  );
+  const clean = await image.png().toBuffer();
+  await expect(
+    createDocumentImageReader({ get: async () => clean }).get(key.replace('/ocr.png', '/upload.jpg')),
+  ).rejects.toThrow('image_unusable');
+});

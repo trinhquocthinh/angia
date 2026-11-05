@@ -4,6 +4,8 @@ const SNAPSHOT_TABLES = [
   'health_profiles',
   'accounts',
   'consent_invitations',
+  'profile_link_invitations',
+  'profile_link_events',
   'upload_batches',
   'source_documents',
   'extractions',
@@ -18,6 +20,8 @@ const SNAPSHOT_TABLES = [
   'dose_slots',
   'reminder_recipients',
   'reminders',
+  'revisit_reminders',
+  'dose_confirmations',
   'reminder_deliveries',
 ];
 

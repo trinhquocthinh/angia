@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { DocumentEntryPage, HealthProfile } from '@angia/contracts';
 import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
@@ -78,5 +78,42 @@ describe('TC-408/TC-409: API một ảnh và ngừng luồng riêng tư cũ', ()
       (await t.owner.query('SELECT status,image_key FROM source_documents WHERE id=$1', [f.documentId])).rows,
     ).toEqual([{ status: 'pending_review', image_key: f.key }]);
     expect(t.objects.get(f.key)?.body).toEqual(PENDING_JPEG);
+  });
+  it('TC-408: PNG OCR legacy trả đúng MIME, nguyên byte và vẫn cô lập gia đình', async () => {
+    const f = await fixture();
+    const id = randomUUID();
+    const key = `families/${f.familyId}/profiles/${f.profile.id}/documents/${id}/ocr/${randomUUID()}/${randomUUID()}.png`;
+    const bytes = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/hZkAAAAASUVORK5CYII=',
+      'base64',
+    );
+    await t.owner.query(
+      `INSERT INTO source_documents(id,family_id,health_profile_id,batch_id,status,
+        image_key,image_sha256,mime_type,size_bytes,privacy_approved_by,privacy_approved_at)
+       SELECT $1,family_id,health_profile_id,batch_id,'pending_review',
+        $2,$3,'image/jpeg',$4,$5,now() FROM source_documents WHERE id=$6`,
+      [
+        id,
+        key,
+        createHash('sha256').update(bytes).digest('hex'),
+        bytes.length,
+        f.main.accountId,
+        f.documentId,
+      ],
+    );
+    t.objects.set(key, { body: bytes, contentType: 'application/octet-stream' });
+    const response = await t.call(f.main, 'GET', `/api/source-documents/${id}/image`);
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toBe('image/png');
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    expect(response.headers.get('x-content-type-options')).toBe('nosniff');
+    expect(new Uint8Array(await response.arrayBuffer())).toEqual(new Uint8Array(bytes));
+    const other = await t.session(await t.family());
+    await expectCrossFamilyDenied(
+      () => t.call(other, 'GET', `/api/source-documents/${id}/image`),
+      () => t.call(other, 'GET', `/api/source-documents/${randomUUID()}/image`),
+    );
+    const member = await t.session(f.familyId, 'member', 'Thành viên');
+    expect((await t.call(member, 'GET', `/api/source-documents/${id}/image`)).status).toBe(403);
   });
 });
