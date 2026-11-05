@@ -13,8 +13,8 @@ interface VisitSummaryStore {
   findMedicationHistory(profileId: string): Promise<CurrentMedicationCourse[]>;
   /** Số đo mọi loại có ngày đo trong [from, to], cũ nhất trước. */
   listMeasurementsBetween(profileId: string, from: string, to: string): Promise<Measurement[]>;
-  /** Mọi kết quả xét nghiệm của hồ sơ; bên gọi chọn bản mới nhất từng chỉ số. */
-  listLabResults(profileId: string): Promise<LabResult[]>;
+  /** Bản mới nhất từng tên chuẩn hóa có ngày ≤ to; không giới hạn đầu from. */
+  listLabResults(profileId: string, to: string): Promise<LabResult[]>;
   /** SPEC-023: giai đoạn dùng thuốc giao với [from, to], theo tên chuẩn hóa rồi mốc tăng dần. */
   listAdherencePeriodsBetween(profileId: string, from: string, to: string): Promise<AdherencePeriod[]>;
 }

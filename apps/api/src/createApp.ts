@@ -65,6 +65,7 @@ import { requireSession } from '@src/shared/auth/presentation/requireSession.js'
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { createSlidingWindowLimiter } from '@src/shared/http/createSlidingWindowLimiter.js';
 import { errorResponse } from '@src/shared/http/errorResponse.js';
+import { limitRequestBody } from '@src/shared/http/limitRequestBody.js';
 
 import type { PushDependencies } from '@src/features/pushSubscriptions/application/ports.js';
 import { registerPushRoutes } from '@src/features/pushSubscriptions/presentation/registerPushRoutes.js';
@@ -140,7 +141,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
       loadSession(deps.auth.login, cookies),
     ),
   );
-  app.use('/api/*', except(PUBLIC_PATHS, requireSession()));
+  app.use('/api/*', except(PUBLIC_PATHS, requireSession()), limitRequestBody());
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth);
   registerMeRoute(app);

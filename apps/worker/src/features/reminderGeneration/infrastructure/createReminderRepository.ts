@@ -11,7 +11,11 @@ type CourseRow = Omit<CourseSnapshot, 'quantityPerDose'> & {
 
 function groupBy<T extends { profileId: string }>(rows: T[]): Map<string, T[]> {
   const groups = new Map<string, T[]>();
-  for (const row of rows) groups.set(row.profileId, [...(groups.get(row.profileId) ?? []), row]);
+  for (const row of rows) {
+    const group = groups.get(row.profileId);
+    if (group) group.push(row);
+    else groups.set(row.profileId, [row]);
+  }
   return groups;
 }
 

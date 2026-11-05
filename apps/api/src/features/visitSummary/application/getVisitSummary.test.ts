@@ -79,7 +79,10 @@ function setup(profile: Awaited<ReturnType<VisitSummaryStore['findProfile']>> | 
       course('Ended', '2026-09-01', '2026-10-15'),
     ]),
     listMeasurementsBetween: vi.fn(async () => Array.from({ length: 10 }, (_, i) => measurement(i + 1))),
-    listLabResults: vi.fn(async () => [hba1c('old', '2026-07-01'), hba1c('new', '2026-09-20')]),
+    listLabResults: vi.fn(async (_profileId: string, _to: string) => [
+      hba1c('old', '2026-07-01'),
+      hba1c('new', '2026-09-20'),
+    ]),
     listAdherencePeriodsBetween: vi.fn(async () => [period]),
   } satisfies VisitSummaryStore;
   const repository: VisitSummaryRepository = { withFamily: async (_familyId, work) => work(store) };
@@ -104,6 +107,7 @@ describe('Kết xuất bản tóm tắt tái khám (SPEC-024, E6-S1-T1)', () => 
     expect(summary.disclaimer).toBe('Tài liệu tổng hợp từ gia đình, không phải chỉ định y khoa.');
     expect(VISIT_SUMMARY_DISCLAIMER).toBe(summary.disclaimer);
     expect(store.listMeasurementsBetween).toHaveBeenCalledWith('p', '2026-07-16', '2026-10-16');
+    expect(store.listLabResults).toHaveBeenCalledWith('p', '2026-10-16');
     expect(store.listAdherencePeriodsBetween).toHaveBeenCalledWith('p', '2026-07-16', '2026-10-16');
   });
 
