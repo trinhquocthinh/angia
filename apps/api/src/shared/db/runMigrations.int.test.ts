@@ -154,14 +154,31 @@ describe('runMigrations trên PostgreSQL rỗng', () => {
     );
     expect(rows.map((row) => row.relname)).toEqual(RLS_TABLES);
 
-    const policies = await owner.query<{ tablename: string; qual: string }>(
-      `SELECT tablename, qual FROM pg_policies
-       WHERE schemaname = 'public' AND policyname = 'family_isolation_policy' AND cmd = 'ALL'
-       ORDER BY tablename`,
+    const policies = await owner.query<{
+      tablename: string;
+      policyname: string;
+      permissive: string;
+      roles: string[];
+      cmd: string;
+      qual: string;
+      withCheck: string | null;
+    }>(
+      `SELECT tablename, policyname, permissive, roles::text[] AS roles,
+              cmd, qual, with_check AS "withCheck"
+       FROM pg_policies
+       WHERE schemaname = 'public'
+       ORDER BY tablename, policyname`,
     );
-    expect(policies.rows.map((row) => row.tablename)).toEqual(RLS_TABLES);
-    expect(Object.fromEntries(policies.rows.map((row) => [row.tablename, row.qual]))).toEqual(
-      EXPECTED_POLICIES,
+    expect(policies.rows).toEqual(
+      RLS_TABLES.map((tablename) => ({
+        tablename,
+        policyname: 'family_isolation_policy',
+        permissive: 'PERMISSIVE',
+        roles: ['public'],
+        cmd: 'ALL',
+        qual: EXPECTED_POLICIES[tablename],
+        withCheck: null,
+      })),
     );
   });
 
