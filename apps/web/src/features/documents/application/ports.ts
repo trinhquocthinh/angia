@@ -6,7 +6,8 @@ export type RejectedFileCode = UploadBatchResponse['rejectedFiles'][number]['cod
 interface UploadRequest {
   profileId: string;
   // Tên tệp multipart do client đặt, duy nhất trong lô, để gắn `rejectedFiles` về đúng ảnh.
-  files: Array<{ fileName: string; file: File }>;
+  // sendToAi theo từng tệp: thiếu hoặc false = tự nhập, không bao giờ ngầm gửi AI.
+  files: Array<{ fileName: string; file: File; sendToAi: boolean }>;
   declaredType: DocumentType | null;
   csrfToken: string;
   onProgress(percent: number): void;
@@ -14,8 +15,6 @@ interface UploadRequest {
 export interface DocumentUploader {
   upload(request: UploadRequest): Promise<UploadBatchResponse>;
 }
-// Nén/chuyển định dạng ảnh trước khi gửi; trả chính tệp gốc khi không cần hoặc không xử lý được.
-export type ImagePreparer = (file: File) => Promise<File>;
 export interface FamilyUsageRepository {
   get(signal?: AbortSignal): Promise<FamilyUsage>;
 }

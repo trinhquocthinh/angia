@@ -19,7 +19,10 @@ export function useAiBudget(repository: AiBudgetRepository, csrfToken: string | 
       if (!csrfToken) throw new AdminRequestError('ERR_UNAUTHENTICATED', 401);
       return repository.setCap(monthlyCapUsd, csrfToken);
     },
-    onSuccess: (saved) => client.setQueryData(BUDGET_KEY, saved),
+    onSuccess: async (saved) => {
+      client.setQueryData(BUDGET_KEY, saved);
+      await client.invalidateQueries({ queryKey: ['admin', 'scan-quotas'] });
+    },
     onError: async (error) => {
       if (error instanceof AdminRequestError && (error.status === 401 || error.status === 403)) {
         await client.invalidateQueries({ queryKey: ['current-session'] });

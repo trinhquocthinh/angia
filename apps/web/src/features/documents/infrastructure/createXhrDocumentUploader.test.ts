@@ -34,8 +34,8 @@ const start = (declaredType: 'lab_result' | null = 'lab_result') => {
   const promise = createXhrDocumentUploader(() => xhr as unknown as XMLHttpRequest).upload({
     profileId: 'p-1',
     files: [
-      { fileName: 'anh-01.jpg', file },
-      { fileName: 'anh-02.jpg', file },
+      { fileName: 'anh-01.jpg', file, sendToAi: true },
+      { fileName: 'anh-02.jpg', file, sendToAi: false },
     ],
     declaredType,
     csrfToken: 'csrf',
@@ -60,6 +60,11 @@ describe('Adapter XHR tải ảnh chứng từ', () => {
     Object.assign(xhr, { status: 201, response: body });
     xhr.onload!();
     await expect(promise).resolves.toEqual(body);
+  });
+  it('TC-433: gửi sendToAi là chuỗi JSON mảng boolean đúng thứ tự tệp', () => {
+    const form = start().xhr.sent!;
+    expect(form.get('sendToAi')).toBe('[true,false]');
+    expect((form.getAll('files') as File[]).map((part) => part.name)).toEqual(['anh-01.jpg', 'anh-02.jpg']);
   });
   it('không gửi declaredType khi chưa chọn loại', () => {
     expect(start(null).xhr.sent!.has('declaredType')).toBe(false);

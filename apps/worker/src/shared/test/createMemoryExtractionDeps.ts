@@ -18,7 +18,6 @@ type FakeResult =
 interface Options {
   status?: DocumentToExtract['status'];
   declaredType?: DocumentType;
-  mimeType?: string;
   result: FakeResult | Error;
   documentId?: string;
   familyId?: string;
@@ -37,15 +36,8 @@ type SavedExtraction = Parameters<ExtractionStore['savePendingReview']>[1];
 // ngân sách mặc định đã dùng $0 / trần $5, ước tính $0.02.
 export function createMemoryExtractionDeps(options: Options) {
   const { documentId = 'doc-1', familyId: ownerFamilyId = 'family-a' } = options;
-  const { document, originalBytes, approvedBytes, ocrKey } = createDocumentFixture(
-    options,
-    documentId,
-    ownerFamilyId,
-  );
-  const objects = new Map([
-    [document.originalKey, originalBytes],
-    [ocrKey, approvedBytes],
-  ]);
+  const { document, approvedBytes, imageKey } = createDocumentFixture(options, documentId, ownerFamilyId);
+  const objects = new Map([[imageKey, approvedBytes]]);
   const statusHistory: string[] = [];
   const extractions: (SavedExtraction & { documentId: string })[] = [];
   const extractorCalls: ExtractorImage[] = [];
@@ -60,6 +52,7 @@ export function createMemoryExtractionDeps(options: Options) {
         work({
           findDocument: async (id) =>
             familyId === ownerFamilyId && id === document.id ? { ...document } : null,
+          hasLiveExtractionJob: async () => false,
           markExtracting: () => setStatus('extracting'),
           markManualEntry: () => setStatus('manual_entry'),
           markAwaitingBudget: () => setStatus('awaiting_budget'),
@@ -71,15 +64,10 @@ export function createMemoryExtractionDeps(options: Options) {
         }),
     },
     budget: {
-      estimatedCostUsd: 0.02,
       defaultMonthlyCapUsd: 5,
-      defaultFamilyCapUsd: 0.5,
+      defaultMonthlyScans: 0,
       now: () => MEMORY_NOW,
     },
-    storage: {
-      get: async (key) => getMemoryObject(objects, key),
-    },
-    images: { heicToJpeg: async () => new Uint8Array([0xff, 0xd8]) },
     ocrImages: createMemoryOcrImages(objects),
     extractor: createFakeExtractor(options.result, extractorCalls),
   };
@@ -90,9 +78,8 @@ export function createMemoryExtractionDeps(options: Options) {
     extractorCalls,
     ledger,
     objects,
-    originalBytes,
     approvedBytes,
-    ocrKey,
+    imageKey,
   };
 }
 
@@ -108,7 +95,8 @@ function createMemoryOcrImages(objects: Map<string, Uint8Array>): ExtractionDepe
 
 function createFakeExtractor(result: Options['result'], calls: ExtractorImage[]): DocumentExtractor {
   return {
-    extract: async (image) => {
+    extract: async (image, beforeDispatch) => {
+      await beforeDispatch?.();
       calls.push(image);
       if (result instanceof Error) throw result;
       return { ...result, provider: 'openrouter', model: 'google/gemini-3.1-flash-lite', costUsd: 0.001 };
@@ -117,28 +105,17 @@ function createFakeExtractor(result: Options['result'], calls: ExtractorImage[])
 }
 
 function createDocumentFixture(options: Options, documentId: string, ownerFamilyId: string) {
-  const ORIGINAL_KEY = `families/${ownerFamilyId}/profiles/me/documents/${documentId}/original.jpg`;
-  const originalBytes = new Uint8Array([1, 2, 3]);
+  const imageKey = `families/${ownerFamilyId}/profiles/me/documents/${documentId}/images/image.jpg`;
   const approvedBytes = new Uint8Array([0xff, 0xd8]);
-  const ocrKey = ORIGINAL_KEY + '.ocr.jpg';
   const document: DocumentToExtract = {
     id: documentId,
     status: options.status ?? 'extracting',
     declaredType: options.declaredType ?? null,
-    originalKey: ORIGINAL_KEY,
-    previewKey: null,
-    ocrImageKey: ocrKey,
-    ocrImageSha256: createHash('sha256').update(approvedBytes).digest('hex'),
+    imageKey,
+    imageSha256: createHash('sha256').update(approvedBytes).digest('hex'),
     privacyApprovedBy: 'account-main',
     privacyApprovedAt: new Date('2026-10-08T00:00:00Z'),
-    mimeType: options.mimeType ?? 'image/jpeg',
     profileConsentConfirmed: options.profileConsentConfirmed ?? true,
   };
-  return { document, originalBytes, approvedBytes, ocrKey };
-}
-
-function getMemoryObject(objects: Map<string, Uint8Array>, key: string): Uint8Array {
-  const bytes = objects.get(key);
-  if (!bytes) throw new Error('Không có object');
-  return bytes;
+  return { document, approvedBytes, imageKey };
 }

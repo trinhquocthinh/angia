@@ -15,7 +15,13 @@ vi.mock('@src/features/medications/presentation/SelfReportedCourseAction', () =>
   SelfReportedCourseAction: () => null,
 }));
 
-const { list, series } = vi.hoisted(() => ({ list: vi.fn(), series: vi.fn() }));
+const { list, series, navigate } = vi.hoisted(() => ({ list: vi.fn(), series: vi.fn(), navigate: vi.fn() }));
+vi.mock('@tanstack/react-router', () => ({
+  Navigate: (props: unknown) => {
+    navigate(props);
+    return null;
+  },
+}));
 vi.mock('../infrastructure/createMeasurementsRepository', () => ({
   createMeasurementsRepository: () => ({ list, series }),
 }));
@@ -31,6 +37,7 @@ const profileOf = (consentStatus: HealthProfile['consentStatus']): HealthProfile
   familyId: 'family',
   displayName: 'Mẹ',
   birthYear: null,
+  vitalsEnabled: null,
   consentConfirmedAt: null,
   consentConfirmedBy: null,
   consentBasis: null,
@@ -39,10 +46,10 @@ const profileOf = (consentStatus: HealthProfile['consentStatus']): HealthProfile
   consentRespondentName: null,
   createdAt: '2026-10-01T00:00:00Z',
 });
-function render(consentStatus: HealthProfile['consentStatus']) {
+function render(consentStatus: HealthProfile['consentStatus'], patch: Partial<HealthProfile> = {}) {
   const client = new QueryClient();
   client.setQueryData(['current-session'], session);
-  client.setQueryData(['profiles', 'account', 'family', 'list'], [profileOf(consentStatus)]);
+  client.setQueryData(['profiles', 'account', 'family', 'list'], [{ ...profileOf(consentStatus), ...patch }]);
   const html = renderToStaticMarkup(
     <QueryClientProvider client={client}>
       <ProfileHealthPage profileId="p1" />
@@ -70,5 +77,33 @@ describe('TC-388 — trang Diễn biến sức khỏe với hồ sơ chưa đồ
     expect(html).not.toContain('Hồ sơ chưa được đồng ý lưu dữ liệu.');
     expect(html).toContain('Bảng số đo chi tiết');
     expect(html).toContain('Diễn biến huyết áp');
+  });
+});
+
+describe('TC-446 — link cũ của hồ sơ trẻ', () => {
+  it('chuyển replace sang Thuốc và vô hiệu hóa cả hai truy vấn số đo', () => {
+    navigate.mockClear();
+    const { html, queries } = render('confirmed', { birthYear: new Date().getFullYear() - 5 });
+    expect(navigate).toHaveBeenCalledWith({
+      to: '/profiles/$profileId/medications',
+      params: { profileId: 'p1' },
+      replace: true,
+    });
+    expect(html).not.toContain('Bảng số đo chi tiết');
+    expect(queries).toHaveLength(0);
+    expect(list).not.toHaveBeenCalled();
+    expect(series).not.toHaveBeenCalled();
+  });
+  it.each([null, new Date().getFullYear() - 40])('giữ trang số đo khi năm sinh là %s', (birthYear) => {
+    navigate.mockClear();
+    const { html } = render('confirmed', { birthYear });
+    expect(navigate).not.toHaveBeenCalled();
+    expect(html).toContain('Bảng số đo chi tiết');
+  });
+  it('trẻ được bật theo dõi vẫn xem số đo', () => {
+    navigate.mockClear();
+    const { html } = render('confirmed', { birthYear: new Date().getFullYear() - 5, vitalsEnabled: true });
+    expect(navigate).not.toHaveBeenCalled();
+    expect(html).toContain('Bảng số đo chi tiết');
   });
 });

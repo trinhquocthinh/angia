@@ -1,30 +1,21 @@
 import { initialPrivacyEditor } from './initialPrivacyEditor';
-import { privacyRemoteState } from './privacyRemoteState';
-import type { PrivacyDraft, PrivacyEdits, PrivacyRectangle } from '@angia/contracts';
+import type { PrivacyEdits, PrivacyRectangle } from '@angia/contracts';
 export type PrivacyEditorState = {
   edits: PrivacyEdits;
-  revision: number;
-  candidate: PrivacyDraft;
-  candidateRevision: number;
-  loaded: string | null;
-  checked: boolean;
   history: PrivacyEdits[];
 };
 export type PrivacyEditorAction =
-  | { type: 'reset' | 'rotate' | 'undo' | 'image-failed' | 'invalidate' }
+  | { type: 'reset' | 'rotate' | 'undo' }
   | { type: 'crop' | 'mask'; rectangle: PrivacyRectangle }
   | { type: 'set-mask'; index: number; rectangle: PrivacyRectangle }
-  | { type: 'remove-mask'; index: number }
-  | { type: 'remote'; revision: number; draft: PrivacyDraft }
-  | { type: 'loaded'; draftId: string; sha256: string }
-  | { type: 'check'; checked: boolean };
+  | { type: 'remove-mask'; index: number };
 const fullCrop = (): PrivacyRectangle => ({ left: 0, top: 0, width: 1_000_000, height: 1_000_000 });
 function changeEdits(
   state: PrivacyEditorState,
   edits: PrivacyEdits,
   history = [...state.history.slice(-49), state.edits],
 ): PrivacyEditorState {
-  return { ...state, edits, history, revision: state.revision + 1, loaded: null, checked: false };
+  return { edits, history };
 }
 export function privacyEditorReducer(
   state: PrivacyEditorState,
@@ -33,8 +24,6 @@ export function privacyEditorReducer(
   switch (action.type) {
     case 'reset':
       return initialPrivacyEditor();
-    case 'invalidate':
-      return { ...state, revision: state.revision + 1, loaded: null, checked: false };
     case 'crop':
       return changeEdits(state, { ...state.edits, crop: action.rectangle });
     case 'mask':
@@ -61,11 +50,5 @@ export function privacyEditorReducer(
       return state.history.length
         ? changeEdits(state, state.history[state.history.length - 1]!, state.history.slice(0, -1))
         : state;
-    case 'remote':
-    case 'loaded':
-    case 'check':
-      return privacyRemoteState(state, action);
-    case 'image-failed':
-      return { ...state, loaded: null, checked: false };
   }
 }

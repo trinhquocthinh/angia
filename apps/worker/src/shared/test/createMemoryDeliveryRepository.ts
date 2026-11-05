@@ -2,6 +2,7 @@ import type {
   DeliveryCandidate,
   DeliveryRepository,
   FanOutStore,
+  ReminderKind,
 } from '@src/features/reminderDelivery/application/ports.js';
 import type {
   DeliveryStatus,
@@ -15,6 +16,7 @@ interface MemoryProfile {
   assignedAccountIds: string[];
 }
 interface MemoryReminder {
+  kind?: ReminderKind;
   reminderId: string;
   profileId: string;
   scheduledAt: Date;
@@ -55,6 +57,7 @@ function createFanOutStore(data: MemoryDeliveryFamily, calls: unknown[][]): FanO
       data.reminders
         .filter((r) => r.sentAt === null && r.scheduledAt.getTime() <= now.getTime())
         .map((r) => ({
+          kind: r.kind ?? 'medication',
           reminderId: r.reminderId,
           profileId: r.profileId,
           scheduledAt: r.scheduledAt,
@@ -91,6 +94,7 @@ function toCandidate(data: MemoryDeliveryFamily, row: MemoryDelivery): DeliveryC
   const profile = data.profiles.find((p) => p.profileId === reminder.profileId);
   const device = data.devices.find((d) => d.id === row.deviceId) ?? null;
   return {
+    kind: reminder.kind ?? 'medication',
     deliveryId: row.id,
     reminderId: row.reminderId,
     profileId: reminder.profileId,

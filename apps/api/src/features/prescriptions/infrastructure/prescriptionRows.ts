@@ -12,6 +12,7 @@ export function toPrescription(row: PrescriptionRow, itemRows: PrescriptionItemR
     healthProfileId: row.healthProfileId,
     sourceDocumentId: row.sourceDocumentId,
     issuedDate: row.issuedDate,
+    revisitDate: row.revisitDate,
     facility: row.facility,
     diagnosis: row.diagnosis,
     manualWithoutSource: row.manualWithoutSource,
@@ -30,6 +31,7 @@ export function toPrescription(row: PrescriptionRow, itemRows: PrescriptionItemR
         longTerm: item.longTerm,
         note: item.note,
         totalQuantity: fromNumeric(item.totalQuantity),
+        minIntervalText: item.minIntervalText,
       })),
   };
 }

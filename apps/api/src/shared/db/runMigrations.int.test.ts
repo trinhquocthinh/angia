@@ -6,51 +6,119 @@ import { runMigrations } from './runMigrations.js';
 const SKELETON_TABLES = [
   'accounts',
   'adherence_periods',
+  'ai_billing_sources',
+  'ai_provider_charges',
+  'ai_routing_audit',
+  'ai_routing_settings',
+  'as_needed_doses',
   'consent_invitations',
   'consent_legacy_attestations',
+  'dose_confirmations',
   'dose_slots',
   'extraction_reservations',
   'extraction_spend',
   'extractions',
   'families',
   'family_extraction_spend',
+  'family_scan_quotas',
   'health_profiles',
   'lab_results',
   'measurements',
   'medication_courses',
+  'object_purges',
+  'ocr_operations',
   'prescription_items',
   'prescriptions',
+  'profile_link_events',
+  'profile_link_invitations',
   'push_subscriptions',
   'reminder_deliveries',
   'reminder_recipients',
   'reminders',
+  'revisit_reminders',
+  'scan_quota_audit',
+  'scan_quota_months',
+  'scan_quota_policy',
+  'scan_quota_policy_audit',
   'sessions',
   'source_documents',
+  'temperature_readings',
   'upload_batches',
 ];
 // Bảng dữ liệu sức khỏe bắt buộc RLS (Tech Spec §3); families/accounts/sessions phục vụ xác thực,
 // extraction_spend là bảng quản trị ngân sách phi y tế (E3-S6-T1).
 const RLS_TABLES = [
   'adherence_periods',
+  'as_needed_doses',
   'consent_invitations',
   'consent_legacy_attestations',
+  'dose_confirmations',
   'dose_slots',
   'extraction_reservations',
   'extractions',
   'family_extraction_spend',
+  'family_scan_quotas',
   'health_profiles',
   'lab_results',
   'measurements',
   'medication_courses',
+  'object_purges',
+  'ocr_operations',
   'prescription_items',
   'prescriptions',
+  'profile_link_events',
+  'profile_link_invitations',
   'push_subscriptions',
   'reminder_deliveries',
   'reminder_recipients',
   'reminders',
+  'revisit_reminders',
+  'scan_quota_audit',
   'source_documents',
+  'temperature_readings',
   'upload_batches',
 ];
+
+// TC-569: mỗi bảng RLS thuộc đúng một dạng policy (Tech Spec §3.9.3), so khớp nguyên văn sau khi PostgreSQL chuẩn hóa.
+const SETTING = (name: string) => `NULLIF(current_setting('app.${name}'::text, true), ''::text)`;
+const SAME_FAMILY = `(family_id = (${SETTING('family_id')})::uuid)`;
+const NOT_SELF = `(${SETTING('self_profile_id')} IS NULL)`;
+const FAMILY_ONLY_POLICY = `(${SAME_FAMILY} AND ${NOT_SELF})`;
+const selfPolicy = (column: string) =>
+  `(${SAME_FAMILY} AND (${NOT_SELF} OR (${column} = (${SETTING('self_profile_id')})::uuid)))`;
+const EXPECTED_POLICIES: Record<string, string> = {
+  adherence_periods: selfPolicy('health_profile_id'),
+  as_needed_doses: selfPolicy('health_profile_id'),
+  consent_invitations: selfPolicy('profile_id'),
+  consent_legacy_attestations: selfPolicy('profile_id'),
+  dose_confirmations: selfPolicy('health_profile_id'),
+  dose_slots: selfPolicy('health_profile_id'),
+  extraction_reservations: FAMILY_ONLY_POLICY,
+  extractions: FAMILY_ONLY_POLICY,
+  family_extraction_spend: FAMILY_ONLY_POLICY,
+  family_scan_quotas: FAMILY_ONLY_POLICY,
+  health_profiles: selfPolicy('id'),
+  lab_results: selfPolicy('health_profile_id'),
+  measurements: selfPolicy('health_profile_id'),
+  medication_courses: selfPolicy('health_profile_id'),
+  object_purges: FAMILY_ONLY_POLICY,
+  ocr_operations: FAMILY_ONLY_POLICY,
+  prescription_items: `(${SAME_FAMILY} AND (${NOT_SELF} OR (EXISTS ( SELECT 1
+   FROM prescriptions parent
+  WHERE ((parent.id = prescription_items.prescription_id) AND (parent.health_profile_id = (${SETTING('self_profile_id')})::uuid))))))`,
+  prescriptions: selfPolicy('health_profile_id'),
+  profile_link_events: selfPolicy('profile_id'),
+  profile_link_invitations: selfPolicy('profile_id'),
+  push_subscriptions: FAMILY_ONLY_POLICY,
+  reminder_deliveries: FAMILY_ONLY_POLICY,
+  reminder_recipients: selfPolicy('health_profile_id'),
+  reminders: selfPolicy('health_profile_id'),
+  revisit_reminders: selfPolicy('health_profile_id'),
+  scan_quota_audit: FAMILY_ONLY_POLICY,
+  source_documents: selfPolicy('health_profile_id'),
+  temperature_readings: selfPolicy('health_profile_id'),
+  upload_batches: selfPolicy('health_profile_id'),
+};
 
 describe('runMigrations trên PostgreSQL rỗng', () => {
   let db: TestDatabase;
@@ -86,15 +154,32 @@ describe('runMigrations trên PostgreSQL rỗng', () => {
     );
     expect(rows.map((row) => row.relname)).toEqual(RLS_TABLES);
 
-    const policies = await owner.query<{ tablename: string; qual: string }>(
-      `SELECT tablename, qual FROM pg_policies
-       WHERE schemaname = 'public' AND policyname = 'family_isolation_policy' AND cmd = 'ALL'
-       ORDER BY tablename`,
+    const policies = await owner.query<{
+      tablename: string;
+      policyname: string;
+      permissive: string;
+      roles: string[];
+      cmd: string;
+      qual: string;
+      withCheck: string | null;
+    }>(
+      `SELECT tablename, policyname, permissive, roles::text[] AS roles,
+              cmd, qual, with_check AS "withCheck"
+       FROM pg_policies
+       WHERE schemaname = 'public'
+       ORDER BY tablename, policyname`,
     );
-    expect(policies.rows.map((row) => row.tablename)).toEqual(RLS_TABLES);
-    for (const policy of policies.rows) {
-      expect(policy.qual).toContain("NULLIF(current_setting('app.family_id'::text, true), ''::text)");
-    }
+    expect(policies.rows).toEqual(
+      RLS_TABLES.map((tablename) => ({
+        tablename,
+        policyname: 'family_isolation_policy',
+        permissive: 'PERMISSIVE',
+        roles: ['public'],
+        cmd: 'ALL',
+        qual: EXPECTED_POLICIES[tablename],
+        withCheck: null,
+      })),
+    );
   });
 
   it('role app đọc/ghi được bảng mới nhờ default privileges', async () => {
@@ -106,6 +191,7 @@ describe('runMigrations trên PostgreSQL rỗng', () => {
       );
       expect(rows[0]?.bypass).toBe(false);
       await expect(app.query('SELECT count(*) FROM health_profiles')).resolves.toBeDefined();
+      await expect(app.query('SELECT count(*) FROM object_purges')).resolves.toBeDefined();
     } finally {
       await app.end();
     }

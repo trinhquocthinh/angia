@@ -1,4 +1,5 @@
 import { and, eq, sql } from 'drizzle-orm';
+import { listDoseConfirmations } from '@src/features/doseConfirmations/infrastructure/listDoseConfirmations.js';
 import { listFamilyAccounts } from '@src/features/reminders/infrastructure/listFamilyAccounts.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { healthProfiles, reminderRecipients, reminders } from '@src/shared/db/schema/index.js';
@@ -36,12 +37,14 @@ export function createMyReminderRepository(db: Database): MyReminderRepository {
             ),
           );
         const { consentStatus, scheduledAt, medications, ...reminder } = row;
+        const confirmations = await listDoseConfirmations(tx, row.profileId, row.date);
         return {
           reminder: {
             ...reminder,
             scheduledAt: scheduledAt.toISOString(),
             medications: medications as StoredReminderMedication[],
             consentConfirmed: consentStatus === 'confirmed',
+            confirmation: confirmations.find((c) => c.slot === row.slot) ?? null,
           },
           familyAccounts: await listFamilyAccounts(tx, familyId),
           assignedAccountIds: assigned.map((r) => r.accountId),

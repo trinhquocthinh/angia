@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { budgetMonth, REQUEUE_AWAITING_BUDGET_QUEUE } from '@angia/contracts';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { seedAccount, seedSession } from '@src/shared/test/seedAuthFixtures.js';
@@ -84,5 +85,11 @@ describe('API trần ngân sách AI: SPEC-013 (E3-S6-T2)', () => {
       expect(await response.json()).toMatchObject({ error: { code: 'ERR_VALIDATION' } });
     }
     expect(await capInDb()).toBeUndefined();
+  });
+
+  it('TC-654: route trần USD gia đình cũ đã gỡ → 404 với phiên Admin', async () => {
+    expect((await t.call(t.admin, 'GET', '/api/admin/family-extraction-caps')).status).toBe(404);
+    const capPath = `/api/admin/families/${randomUUID()}/extraction-cap`;
+    expect((await t.call(t.admin, 'PUT', capPath, { capUsd: 1 })).status).toBe(404);
   });
 });

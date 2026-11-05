@@ -1,0 +1,39 @@
+/* Chuyển động riêng của màn duyệt; xuất hiện và bật dấu chọn dùng chung shared/ui/modal-motion.css. */
+.review-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.review-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.7), transparent);
+  animation: review-shimmer 1400ms ease-in-out infinite;
+}
+/* Xóa dòng: thẻ thu nhẹ rồi mờ đi, các thẻ còn lại trượt về chỗ mới. */
+::view-transition-group(.review-row) {
+  animation-duration: 240ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+::view-transition-old(.review-row):only-child {
+  animation: review-row-leave 160ms ease-in both;
+}
+@keyframes review-row-leave {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+@keyframes review-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .review-shimmer::after {
+    display: none;
+  }
+}

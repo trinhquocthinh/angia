@@ -1,6 +1,7 @@
 import type { Account, Family } from '../../application/ports';
 import type { AdminTask } from '../AdminTask';
 import { AccountActions } from './AccountActions';
+import { AccountFamilyBadge } from './AccountFamilyBadge';
 import { AdminIcon } from './AdminIcon';
 
 export function AccountRow({
@@ -17,7 +18,7 @@ export function AccountRow({
   return (
     <tr>
       <td>
-        <div className="flex items-center gap-[10px] min-w-[130px]">
+        <div className="flex items-center gap-[10px] min-w-[110px]">
           <span
             className={`w-8 h-8 rounded-full bg-[#aef0da] text-[#055141] inline-flex items-center justify-center text-[12px] font-semibold shrink-0 ${account.isSystemAdmin ? 'bg-[#20594b]! text-[#95cebc]!' : ''}`}
           >
@@ -30,26 +31,24 @@ export function AccountRow({
         </div>
       </td>
       <td>
-        {account.familyId ? (
-          <span className="inline-flex py-0.5 px-2 rounded-[6px] bg-[#e4f0f0] text-[11px] leading-[14px] text-[#131d1d] whitespace-nowrap">
-            {families.find((family) => family.id === account.familyId)?.name ?? 'Nhóm chưa tải được'}
-          </span>
-        ) : (
-          <span className="text-[#753400] bg-[#ffdbc9] py-0.5 px-2 rounded-[6px] text-[11px] whitespace-nowrap">
-            Chờ gán nhóm
-          </span>
-        )}
+        <AccountFamilyBadge
+          name={
+            account.familyId
+              ? (families.find((family) => family.id === account.familyId)?.name ?? 'Nhóm chưa tải được')
+              : null
+          }
+        />
       </td>
       <td>
         {account.role ? (
           <span
-            className={`inline-flex items-center gap-1 py-0.5 px-[10px] rounded-full bg-[#e4f0f0] text-[#404945] text-[11px] leading-[14px] font-semibold whitespace-nowrap ${account.role === 'main' ? 'bg-[#aef0da]! text-[#2f6f5e]!' : ''}`}
+            className={`inline-flex items-center gap-1 py-1 px-2.5 rounded-full bg-white text-[#404945] text-xs leading-4 font-semibold whitespace-nowrap ${account.role === 'main' ? 'bg-[#aef0da]! text-[#004135]!' : ''}`}
           >
             <AdminIcon name={account.role === 'main' ? 'verified_user' : 'person'} size={13} />
             {account.role === 'main' ? 'Quản trị chính' : 'Thành viên'}
           </span>
         ) : (
-          '—'
+          <span className="text-[#707975]">—</span>
         )}
       </td>
       <td>

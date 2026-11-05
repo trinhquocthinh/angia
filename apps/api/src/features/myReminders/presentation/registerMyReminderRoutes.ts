@@ -8,7 +8,11 @@ import { getMyReminderRoute } from './myReminderRouteDefinitions.js';
 
 // requireSession toàn API; không requireMain (member nhận nhắc của hồ sơ liên kết). Guard family + no-store
 // gắn riêng vì middleware /api/me/* chỉ có khi push bật; chạy lặp khi push bật vẫn vô hại.
-export function registerMyReminderRoutes(app: OpenAPIHono<AppEnv>, repository: MyReminderRepository): void {
+export function registerMyReminderRoutes(
+  app: OpenAPIHono<AppEnv>,
+  repository: MyReminderRepository,
+  now: () => Date,
+): void {
   app.use('/api/me/reminders/*', async (c, next) => {
     c.header('Cache-Control', 'no-store');
     if (!currentSession(c).family) return errorResponse(c, 'ERR_FORBIDDEN');
@@ -16,8 +20,12 @@ export function registerMyReminderRoutes(app: OpenAPIHono<AppEnv>, repository: M
   });
   app.openapi(getMyReminderRoute, async (c) => {
     const session = currentSession(c);
-    const actor = { familyId: session.family!.id, accountId: session.account.id };
-    const result = await getMyReminder(repository, actor, c.req.valid('param').reminderId);
+    const actor = {
+      familyId: session.family!.id,
+      accountId: session.account.id,
+      isMain: session.role === 'main',
+    };
+    const result = await getMyReminder(repository, actor, c.req.valid('param').reminderId, now);
     if (!result.ok) return c.json(...errorJson(result.code));
     return c.json(result.value, 200);
   });

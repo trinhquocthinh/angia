@@ -14,17 +14,33 @@ export function createProfilesRepository(client = apiClient): ProfilesRepository
       readProfileResponse(
         await client.POST('/api/health-profiles', { body, headers: { 'X-CSRF-Token': csrfToken } }),
       ),
+    update: async (id, body, csrfToken) =>
+      readProfileResponse(
+        await client.PATCH('/api/health-profiles/{id}', {
+          params: { path: { id } },
+          body,
+          headers: { 'X-CSRF-Token': csrfToken },
+        }),
+      ),
+    confirmConsent: async (id, body, csrfToken) =>
+      readProfileResponse(
+        await client.POST('/api/health-profiles/{id}/consent-attestation', {
+          params: { path: { id } },
+          body,
+          headers: { 'X-CSRF-Token': csrfToken },
+        }),
+      ),
     createInvitation: async (id, csrfToken) =>
       readProfileResponse(
-        await client.POST('/api/health-profiles/{id}/consent-invitations', {
+        await client.POST('/api/health-profiles/{id}/link-invitations', {
           params: { path: { id } },
-          body: { attestation: true },
+          body: {},
           headers: { 'X-CSRF-Token': csrfToken },
         }),
       ),
     revokeInvitation: async (id, csrfToken) => {
       await readProfileResponse(
-        await client.DELETE('/api/health-profiles/{id}/consent-invitations', {
+        await client.DELETE('/api/health-profiles/{id}/link-invitations', {
           params: { path: { id } },
           headers: { 'X-CSRF-Token': csrfToken },
         }),

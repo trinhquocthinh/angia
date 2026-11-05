@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 
@@ -17,9 +17,9 @@ describe('API giai đoạn dùng thuốc thực tế + RLS (SPEC-022)', () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
     const profile = (await (
-      await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' })
+      await t.call(main, 'POST', '/api/health-profiles', { birthYear: 1950, displayName: 'Mẹ' })
     ).json()) as HealthProfile;
-    if (consent) await acceptConsentInvitation(t, main, profile.id);
+    if (consent) await confirmConsentByAttestation(t, main, profile.id);
     const path = `/api/health-profiles/${profile.id}/adherence-periods`;
     const record = (body: object) => t.call(main, 'POST', path, body);
     const rows = async () =>

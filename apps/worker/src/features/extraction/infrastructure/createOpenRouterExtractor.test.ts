@@ -22,7 +22,7 @@ describe('Adapter OpenRouter cho DocumentExtractor (SPEC-009)', () => {
     const fetchFn = vi.fn<typeof fetch>().mockResolvedValue(reply(JSON.stringify(prescription)));
     expect(await createOpenRouterExtractor(options, fetchFn).extract(image)).toEqual({
       ok: true,
-      content: prescription,
+      content: { ...prescription, revisitDate: null },
       provider: 'openrouter',
       model: 'google/gemini-3.1-flash-lite',
       costUsd: 0.0011,

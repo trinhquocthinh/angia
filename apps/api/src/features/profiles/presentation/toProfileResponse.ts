@@ -8,6 +8,7 @@ export function toProfileResponse(profile: HealthProfile): ProfileResponse {
     familyId: profile.familyId,
     displayName: profile.displayName,
     birthYear: profile.birthYear,
+    vitalsEnabled: profile.vitalsEnabled,
     consentConfirmedAt: profile.consentConfirmedAt?.toISOString() ?? null,
     consentConfirmedBy: profile.consentConfirmedBy,
     consentBasis: profile.consentBasis,

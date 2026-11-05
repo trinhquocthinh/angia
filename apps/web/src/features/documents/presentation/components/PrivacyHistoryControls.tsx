@@ -7,7 +7,7 @@ type Props = {
   dispatch: (action: PrivacyEditorAction) => void;
 };
 const button =
-  'flex min-h-11 items-center gap-1.5 rounded-xl bg-white px-3 text-xs font-semibold text-[#004135] disabled:opacity-40';
+  'flex min-h-11 items-center gap-1.5 rounded-xl bg-[#e4f0f0] px-3 text-xs font-semibold text-[#131d1d] transition-colors enabled:hover:bg-[#deebea] disabled:opacity-40';
 export function PrivacyHistoryControls({ disabled, canUndo, setSelected, dispatch }: Props) {
   return (
     <div className="flex flex-wrap gap-2">

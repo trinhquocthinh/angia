@@ -19,7 +19,7 @@ export interface MembershipStore {
 }
 
 export interface FamilyAdminRepository {
-  createFamily(name: string): Promise<Family>;
+  createFamily(name: string, context?: { actorId: string; now: Date; recheckNow?(): Date }): Promise<Family>;
   listFamilies(): Promise<Family[]>;
   listAccounts(): Promise<MemberAccount[]>;
   inTransaction<T>(work: (store: MembershipStore) => Promise<T>): Promise<T>;

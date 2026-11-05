@@ -58,7 +58,6 @@ export function PrivacyEditorControls({
       <PrivacyRectangleFields
         key={`${reset}:${index}:${state.edits.rotation}:${Object.values(rectangle).join(':')}`}
         kind={index < 0 ? 'crop' : 'mask'}
-        onBegin={() => dispatch({ type: 'invalidate' })}
         onPendingChange={onInputPending}
         label={index < 0 ? 'Vùng cắt' : `Vùng che ${index + 1}`}
         rectangle={rectangle}

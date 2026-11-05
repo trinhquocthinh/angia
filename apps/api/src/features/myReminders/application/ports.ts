@@ -1,12 +1,14 @@
 import type { MyReminder } from '@angia/contracts';
+import type { StoredDoseConfirmation } from '@src/features/doseConfirmations/application/ports.js';
 import type { FamilyAccount } from '@src/features/reminders/domain/ReminderRecipient.js';
 
 // Thuốc như ảnh chụp trong reminders.medications; courseId bị bỏ khi trả ra ngoài.
 export type StoredReminderMedication = MyReminder['medications'][number] & { courseId?: string };
 
 interface LoadedMyReminder {
-  reminder: Omit<MyReminder, 'medications'> & {
+  reminder: Pick<MyReminder, 'id' | 'date' | 'slot' | 'scheduledAt' | 'profileName'> & {
     medications: StoredReminderMedication[];
+    confirmation: StoredDoseConfirmation | null;
     profileId: string;
     consentConfirmed: boolean;
   };
@@ -24,6 +26,7 @@ export interface MyReminderRepository {
 export interface MyReminderActor {
   familyId: string;
   accountId: string;
+  isMain: boolean;
 }
 
 export type MyReminderOutcome = { ok: true; value: MyReminder } | { ok: false; code: 'ERR_NOT_FOUND' };

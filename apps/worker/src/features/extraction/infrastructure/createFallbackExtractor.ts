@@ -1,3 +1,5 @@
+import { OcrGuardChangedError } from '../application/OcrGuardChangedError.js';
+import { OcrGateBlockedError } from '../application/OcrGateBlockedError.js';
 import type { DocumentExtractor } from '../application/ports.js';
 
 /**
@@ -11,11 +13,12 @@ export function createFallbackExtractor(
   fallback: DocumentExtractor,
 ): DocumentExtractor {
   return {
-    extract: async (image) => {
+    extract: async (image, beforeDispatch) => {
       try {
-        return await primary.extract(image);
-      } catch {
-        return fallback.extract(image);
+        return await primary.extract(image, beforeDispatch);
+      } catch (error) {
+        if (error instanceof OcrGateBlockedError || error instanceof OcrGuardChangedError) throw error;
+        return fallback.extract(image, beforeDispatch);
       }
     },
   };

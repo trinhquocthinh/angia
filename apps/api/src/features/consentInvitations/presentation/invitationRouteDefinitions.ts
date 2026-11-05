@@ -12,18 +12,19 @@ import {
 const json = <T extends z.ZodType>(schema: T) => ({ 'application/json': { schema } });
 const error = (description: string) => ({ description, content: json(errorResponseSchema) });
 const params = z.object({ id: z.uuid() });
+// SPEC-040 (E14): link đồng thuận không cần đăng nhập đã ngừng; mọi route trả 410 thay cho chức năng cũ.
+const retired = error('ERR_CONSENT_INVITATION_RETIRED');
 const mainErrors = {
   401: error('ERR_UNAUTHENTICATED'),
   403: error('ERR_FORBIDDEN'),
-  404: error('ERR_NOT_FOUND'),
-  409: error('ERR_CONSENT_ALREADY_CONFIRMED'),
-  422: error('ERR_VALIDATION'),
+  410: retired,
 };
 const mainPath = '/api/health-profiles/{id}/consent-invitations';
 export const createInvitationRoute = createRoute({
   method: 'post',
   path: mainPath,
   tags: ['consent-invitations'],
+  deprecated: true,
   request: { params, body: { required: true, content: json(consentInvitationCreateRequestSchema) } },
   responses: {
     201: { description: 'Link mới, hết hạn sau 7 ngày', content: json(consentInvitationCreatedSchema) },
@@ -34,6 +35,7 @@ export const revokeInvitationRoute = createRoute({
   method: 'delete',
   path: mainPath,
   tags: ['consent-invitations'],
+  deprecated: true,
   request: { params },
   responses: {
     200: { description: 'Đã thu hồi link đang chờ', content: json(consentInvitationRevokedSchema) },
@@ -44,19 +46,21 @@ export const viewInvitationRoute = createRoute({
   method: 'get',
   path: '/api/consent-invitations/view',
   tags: ['consent-invitations'],
+  deprecated: true,
   security: [{ invitationToken: [] }],
   responses: {
     200: {
       description: 'Thông tin tối thiểu, không tiêu thụ token',
       content: json(consentInvitationViewSchema),
     },
-    404: error('ERR_NOT_FOUND'),
+    410: retired,
   },
 });
 export const respondInvitationRoute = createRoute({
   method: 'post',
   path: '/api/consent-invitations/respond',
   tags: ['consent-invitations'],
+  deprecated: true,
   security: [{ invitationToken: [] }],
   request: { body: { required: true, content: json(consentInvitationRespondRequestSchema) } },
   responses: {
@@ -64,8 +68,6 @@ export const respondInvitationRoute = createRoute({
       description: 'Giữ quyết định và metadata phản hồi đầu',
       content: json(consentInvitationReceiptSchema),
     },
-    403: error('ERR_FORBIDDEN: Origin'),
-    404: error('ERR_NOT_FOUND'),
-    422: error('ERR_VALIDATION'),
+    410: retired,
   },
 });

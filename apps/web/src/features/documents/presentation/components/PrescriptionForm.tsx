@@ -15,6 +15,7 @@ import type { ReviewRequestError } from '../../application/ReviewRequestError';
 import { AddRowButton } from './AddRowButton';
 import { PrescriptionGeneralFields } from './PrescriptionGeneralFields';
 import { PrescriptionItemCard } from './PrescriptionItemCard';
+import { ReviewSectionTitle } from './ReviewSectionTitle';
 import { ReviewSubmitBar } from './ReviewSubmitBar';
 import { RowErrorSummary } from './RowErrorSummary';
 
@@ -56,14 +57,13 @@ export function PrescriptionForm({
   );
   return (
     <form noValidate onSubmit={(event) => void submit(event)} className="flex flex-col gap-6">
-      <PrescriptionGeneralFields form={form} aiDate={manual || Boolean(payload?.issuedDate)} />
-      <section
-        aria-labelledby="rx-items-title"
-        className="flex flex-col gap-4 rounded-[20px] bg-white p-5 lg:p-6"
-      >
-        <h2 id="rx-items-title" className="text-xs font-semibold uppercase tracking-wider text-[#286958]">
-          Danh sách thuốc ({items.fields.length} loại)
-        </h2>
+      <PrescriptionGeneralFields form={form} payload={payload} manual={manual} />
+      <section aria-labelledby="rx-items-title" className="flex flex-col gap-4">
+        <ReviewSectionTitle
+          id="rx-items-title"
+          title="Danh sách thuốc"
+          count={`${items.fields.length} loại`}
+        />
         {payload === null && !manual && (
           <p className="text-sm text-[#55615f]">Chưa có dữ liệu tự động nhận diện, vui lòng nhập theo ảnh.</p>
         )}

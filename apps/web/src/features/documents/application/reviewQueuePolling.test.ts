@@ -24,11 +24,6 @@ describe('Hàng đợi khi AI đang đọc ảnh', () => {
   });
 });
 
-it('TC-155: awaiting_privacy vẫn hiển thị chờ riêng tư, không polling như AI đang đọc', () => {
-  expect(reviewItemState(doc('awaiting_privacy'))).toBe('privacy');
-  expect(reviewPollInterval([doc('awaiting_privacy')])).toBe(false);
-});
-
 it('E3-S6-T2: awaiting_budget hiện "Chờ ngân sách AI", không polling; vẫn nhập tay được (SPEC-011)', () => {
   expect(reviewItemState(doc('awaiting_budget'))).toBe('budget');
   expect(reviewPollInterval([doc('awaiting_budget')])).toBe(false);

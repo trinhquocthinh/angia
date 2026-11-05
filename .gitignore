@@ -17,6 +17,7 @@ coverage/
 .env
 .env.*
 !.env.example
+!.env.e2e.example
 
 # Công cụ
 .eslintcache
@@ -38,4 +39,7 @@ fixtures/heic/*
 .claude/launch.json
 .codex
 ._*
+
+# E2E: phiên, ảnh thật và báo cáo chỉ lưu cục bộ/private CI
+.playwright/
 

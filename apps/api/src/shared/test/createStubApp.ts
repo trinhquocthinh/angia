@@ -3,7 +3,7 @@ import { createApp } from '@src/createApp.js';
 import { createFakeFamilyAdminRepository } from './createFakeFamilyAdminRepository.js';
 import { createStubAuthDeps } from './createStubAuthDeps.js';
 import { createStubDocumentDeps } from './createStubDocumentDeps.js';
-import { createStubInvitationDeps } from './createStubInvitationDeps.js';
+import { createStubProfileLinkDeps } from './createStubProfileLinkDeps.js';
 import { createStubProfileDeps } from './createStubProfileDeps.js';
 import { createStubReviewDeps } from './createStubReviewDeps.js';
 
@@ -15,7 +15,7 @@ const noopProbe = () => Promise.resolve();
 export function createStubApp() {
   return createApp({
     push: createStubPushDeps(),
-    consentInvitations: createStubInvitationDeps(),
+    profileLinks: createStubProfileLinkDeps(),
     documents: createStubDocumentDeps(),
     ...createStubReviewDeps(),
     healthProbes: { db: noopProbe, storage: noopProbe },

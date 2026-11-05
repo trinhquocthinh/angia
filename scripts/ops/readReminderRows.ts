@@ -1,6 +1,9 @@
 import pg from 'pg';
 
+export type ReminderAuditKind = 'medication' | 'revisit';
+
 export interface ReminderRow {
+  kind: ReminderAuditKind;
   reminderId: string;
   profileId: string;
   date: string;
@@ -10,6 +13,7 @@ export interface ReminderRow {
 }
 
 export interface DeliveryRow {
+  kind: ReminderAuditKind;
   deliveryId: string;
   reminderId: string;
   status: string;
@@ -27,18 +31,26 @@ export interface ReminderAuditRows {
 // không chứa dữ liệu sức khỏe. Bảng có RLS nên đọc từng gia đình trong transaction chỉ đọc kèm
 // set_config('app.family_id', ..., true) như withFamilyScope; role app không bypass RLS.
 const REMINDERS_SQL = `
-  SELECT id, health_profile_id, date::text AS date, slot, scheduled_at, sent_at
-  FROM reminders
-  WHERE scheduled_at >= $1 AND scheduled_at <= $2
+  SELECT 'medication' AS kind, id, health_profile_id, date::text AS date, slot, scheduled_at, sent_at
+  FROM reminders WHERE scheduled_at >= $1 AND scheduled_at <= $2
+  UNION ALL
+  SELECT 'revisit' AS kind, id, health_profile_id, send_date::text AS date, offset_kind AS slot, scheduled_at, sent_at
+  FROM revisit_reminders WHERE scheduled_at >= $1 AND scheduled_at <= $2
   ORDER BY scheduled_at`;
 
 const DELIVERIES_SQL = `
-  SELECT d.id, d.reminder_id, d.status, d.attempts, d.last_error, d.accepted_at
+  SELECT 'medication' AS kind, d.id, d.reminder_id, d.status, d.attempts, d.last_error, d.accepted_at
   FROM reminder_deliveries d
   JOIN reminders r ON r.id = d.reminder_id AND r.family_id = d.family_id
+  WHERE r.scheduled_at >= $1 AND r.scheduled_at <= $2
+  UNION ALL
+  SELECT 'revisit' AS kind, d.id, d.revisit_reminder_id AS reminder_id, d.status, d.attempts, d.last_error, d.accepted_at
+  FROM reminder_deliveries d
+  JOIN revisit_reminders r ON r.id = d.revisit_reminder_id AND r.family_id = d.family_id
   WHERE r.scheduled_at >= $1 AND r.scheduled_at <= $2`;
 
 interface RawReminder {
+  kind: ReminderAuditKind;
   id: string;
   health_profile_id: string;
   date: string;
@@ -48,6 +60,7 @@ interface RawReminder {
 }
 
 interface RawDelivery {
+  kind: ReminderAuditKind;
   id: string;
   reminder_id: string;
   status: string;
@@ -83,6 +96,7 @@ export async function readReminderRows(
       const rows = await readFamily(client, id, since, until);
       result.reminders.push(
         ...rows.reminders.map((row) => ({
+          kind: row.kind,
           reminderId: row.id,
           profileId: row.health_profile_id,
           date: row.date,
@@ -93,6 +107,7 @@ export async function readReminderRows(
       );
       result.deliveries.push(
         ...rows.deliveries.map((row) => ({
+          kind: row.kind,
           deliveryId: row.id,
           reminderId: row.reminder_id,
           status: row.status,

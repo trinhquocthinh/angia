@@ -1,4 +1,4 @@
-import type { DeliveryRow, ReminderRow } from './readReminderRows.js';
+import type { DeliveryRow, ReminderRow, ReminderAuditKind } from './readReminderRows.js';
 import { summarizeDurations, type DurationSummary } from './summarizeDurations.js';
 
 /** TC-096/NFR-6: ≥ 99% lượt gửi được push service tiếp nhận trong ±5 phút so với giờ dự kiến, 7 ngày liên tục. */
@@ -20,6 +20,7 @@ interface ProfileSummary {
 }
 
 export interface ReminderTimingVerdict {
+  byKind: { kind: ReminderAuditKind; eligible: number; onTime: number }[];
   passed: boolean;
   reasons: string[];
   /** Lượt gửi tính vào mẫu số: mọi đích thiết bị trừ `revoked` (người nhận không còn hợp lệ, đúng là không gửi). */
@@ -49,7 +50,7 @@ const isOnTime = (delivery: DeliveryRow, reminder: ReminderRow | undefined) =>
 
 const countDuplicateSlots = (reminders: readonly ReminderRow[]) => {
   const counts: Record<string, number> = {};
-  for (const r of reminders) increment(counts, `${r.profileId}|${r.date}|${r.slot}`);
+  for (const r of reminders) increment(counts, `${r.kind}|${r.profileId}|${r.date}|${r.slot}`);
   return Object.values(counts).filter((count) => count > 1).length;
 };
 
@@ -78,7 +79,7 @@ export function assessReminderTiming(
   reminders: readonly ReminderRow[],
   deliveries: readonly DeliveryRow[],
 ): ReminderTimingVerdict {
-  const byId = new Map(reminders.map((r) => [r.reminderId, r]));
+  const byId = new Map(reminders.map((r) => [`${r.kind}|${r.reminderId}`, r]));
   const days = new Map<string, DaySummary>();
   for (const r of reminders) {
     const day = days.get(r.date) ?? { date: r.date, reminders: 0, eligible: 0, onTime: 0 };
@@ -87,31 +88,42 @@ export function assessReminderTiming(
   const statuses: Record<string, number> = {};
   const failedByCode: Record<string, number> = {};
   const acceptLags: number[] = [];
+  const byKind = (['medication', 'revisit'] as const).map((kind) => ({ kind, eligible: 0, onTime: 0 }));
   let eligible = 0;
   let onTime = 0;
   for (const d of deliveries) {
     increment(statuses, d.status);
     if (d.status === 'failed') increment(failedByCode, d.lastError ?? 'unknown');
-    const reminder = byId.get(d.reminderId);
+    const reminder = byId.get(`${d.kind}|${d.reminderId}`);
     if (d.status === 'accepted' && d.acceptedAt && reminder)
       acceptLags.push(d.acceptedAt.getTime() - reminder.scheduledAt.getTime());
     if (d.status === 'revoked') continue;
     const hit = isOnTime(d, reminder);
     eligible += 1;
     onTime += hit ? 1 : 0;
+    const group = byKind.find((g) => g.kind === d.kind)!;
+    group.eligible += 1;
+    group.onTime += hit ? 1 : 0;
     const day = reminder && days.get(reminder.date);
     if (day) Object.assign(day, { eligible: day.eligible + 1, onTime: day.onTime + (hit ? 1 : 0) });
   }
-  const withDevices = new Set(deliveries.map((d) => d.reminderId));
+  const withDevices = new Set(deliveries.map((d) => `${d.kind}|${d.reminderId}`));
   const duplicateSlots = countDuplicateSlots(reminders);
   const reasons = verdictReasons(eligible, onTime, duplicateSlots, days.size);
+  for (const group of byKind) {
+    if (group.eligible > 0 && group.onTime / group.eligible < REQUIRED_RATIO)
+      reasons.push(
+        `Loại ${group.kind}: tỷ lệ đúng giờ ${((group.onTime / group.eligible) * 100).toFixed(1)}% < ${REQUIRED_RATIO * 100}%`,
+      );
+  }
   return {
+    byKind,
     passed: reasons.length === 0,
     reasons,
     eligible,
     onTime,
     duplicateSlots,
-    remindersWithoutDevices: reminders.filter((r) => !withDevices.has(r.reminderId)).length,
+    remindersWithoutDevices: reminders.filter((r) => !withDevices.has(`${r.kind}|${r.reminderId}`)).length,
     statuses,
     failedByCode,
     acceptLag: summarizeDurations(acceptLags),

@@ -8,6 +8,9 @@ const reminder = {
   slot: 'morning',
   scheduledAt: '2026-10-23T00:00:00.000Z',
   profileName: 'Mẹ',
+  confirmation: null,
+  canConfirm: true,
+  canUndo: false,
   medications: [
     { name: 'Canxi', strength: '500 mg', quantityPerDose: '1', doseUnit: 'viên' },
     { name: 'Vitamin D', strength: null, quantityPerDose: null, doseUnit: null },

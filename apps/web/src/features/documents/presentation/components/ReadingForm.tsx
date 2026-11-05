@@ -13,6 +13,7 @@ import { OutOfRangeConfirm } from './OutOfRangeConfirm';
 import { ReadingField } from './ReadingField';
 import { ReadingKindPicker } from './ReadingKindPicker';
 import { ReadingValueFields } from './ReadingValueFields';
+import { ReviewSectionTitle } from './ReviewSectionTitle';
 import { ReviewSubmitBar } from './ReviewSubmitBar';
 
 type ReadingFormProps = {
@@ -39,10 +40,8 @@ export function ReadingForm({ payload, manual = false, pending, error, onSubmit 
   const submit = form.handleSubmit((values) => onSubmit(toApproveRequest(values, confirmed)));
   return (
     <form noValidate onSubmit={(event) => void submit(event)} className="flex flex-col gap-6">
-      <section className="flex flex-col gap-5 rounded-[20px] bg-white p-5 lg:p-6">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-[#286958]">
-          Thông tin trên máy đo
-        </h2>
+      <section className="flex flex-col gap-5 rounded-[20px] bg-white p-5 shadow-card lg:p-6">
+        <ReviewSectionTitle title="Thông tin trên máy đo" />
         <div className="grid gap-4 sm:grid-cols-2">
           <ReadingField
             id="measuredAt"

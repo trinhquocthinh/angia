@@ -1,25 +1,38 @@
+import type { SelfProfileRepository } from '@src/features/selfProfile/application/ports.js';
+import type { TimelineRepository } from '@src/features/timeline/application/ports.js';
+import { registerHistoryRoutes } from '@src/registerHistoryRoutes.js';
+import type { PrescriptionChainRepository } from '@src/features/prescriptions/application/prescriptionChainPorts.js';
+import type { RevisitRepository } from '@src/features/prescriptions/application/revisitPorts.js';
+import { registerScanQuotaHeaders } from '@src/features/scanQuota/presentation/registerScanQuotaHeaders.js';
+import type { ScanQuotaDependencies } from '@src/features/scanQuota/application/ports.js';
+import { registerScanQuotaRoutes } from '@src/features/scanQuota/presentation/registerScanQuotaRoutes.js';
+import type { AiBillingDependencies } from '@src/features/aiBilling/application/ports.js';
+import { registerAiBillingRoutes } from '@src/features/aiBilling/presentation/registerAiBillingRoutes.js';
+import type { AiRoutingDependencies } from '@src/features/aiRouting/application/ports.js';
+import { registerAiRoutingRoutes } from '@src/features/aiRouting/presentation/registerAiRoutingRoutes.js';
 import { HTTPException } from 'hono/http-exception';
 import type { AdherenceRepository } from '@src/features/adherence/application/ports.js';
 import { registerAdherenceRoutes } from '@src/features/adherence/presentation/registerAdherenceRoutes.js';
+import type { AsNeededDoseRepository } from '@src/features/asNeededDoses/application/ports.js';
+import type { TemperatureRepository } from '@src/features/temperatures/application/ports.js';
 import type { DoseSlotRepository } from '@src/features/reminders/application/ports.js';
 import { registerDoseSlotRoutes } from '@src/features/reminders/presentation/registerDoseSlotRoutes.js';
 import type { MyConsentRepository } from '@src/features/myConsent/application/ports.js';
 import { registerMyConsentRoutes } from '@src/features/myConsent/presentation/registerMyConsentRoutes.js';
+import type { MyRevisitReminderRepository } from '@src/features/myRevisitReminders/application/ports.js';
+import { registerMyRevisitReminderRoutes } from '@src/features/myRevisitReminders/presentation/registerMyRevisitReminderRoutes.js';
+import type { DoseConfirmationRepository } from '@src/features/doseConfirmations/application/ports.js';
 import type { MyReminderRepository } from '@src/features/myReminders/application/ports.js';
 import { registerMyReminderRoutes } from '@src/features/myReminders/presentation/registerMyReminderRoutes.js';
 import type { ReminderRecipientRepository } from '@src/features/reminders/application/recipientPorts.js';
 import { registerReminderRecipientRoutes } from '@src/features/reminders/presentation/registerReminderRecipientRoutes.js';
 import type { MedicationManagementRepository } from '@src/features/medications/application/managementPorts.js';
 import { registerMedicationRoutes } from '@src/features/medications/presentation/registerMedicationRoutes.js';
-import { registerPrivacyHeaders } from '@src/features/documentPrivacy/presentation/registerPrivacyHeaders.js';
-import type { PrivacyDependencies } from '@src/features/documentPrivacy/application/ports.js';
-import { registerPrivacyRoutes } from '@src/features/documentPrivacy/presentation/registerPrivacyRoutes.js';
-import {
-  registerInvitationRoutes,
-  type InvitationRouteDependencies,
-} from '@src/features/consentInvitations/presentation/registerInvitationRoutes.js';
+import type { ProfileLinkDependencies } from '@src/features/profileLinks/application/ports.js';
+import { registerProfileLinkRoutes } from '@src/features/profileLinks/presentation/registerProfileLinkRoutes.js';
 import type { DocumentDependencies } from '@src/features/documents/application/ports.js';
 import { registerDocumentRoutes } from '@src/features/documents/presentation/registerDocumentRoutes.js';
+import { registerDeletionRoutes } from '@src/features/documents/presentation/registerDeletionRoutes.js';
 import { registerManualRecordRoutes } from '@src/features/documents/presentation/registerManualRecordRoutes.js';
 import {
   registerReviewRoutes,
@@ -41,8 +54,6 @@ import type { FamilyAdminRepository } from '@src/features/family/application/por
 import { registerAdminRoutes } from '@src/features/family/presentation/registerAdminRoutes.js';
 import type { AiBudgetDependencies } from '@src/features/family/application/aiBudgetPorts.js';
 import { registerAiBudgetRoutes } from '@src/features/family/presentation/registerAiBudgetRoutes.js';
-import type { FamilyCapDependencies } from '@src/features/family/application/familyCapPorts.js';
-import { registerFamilyCapRoutes } from '@src/features/family/presentation/registerFamilyCapRoutes.js';
 import type { FamilyUsageDependencies } from '@src/features/familyQuota/application/ports.js';
 import { registerFamilyUsageRoute } from '@src/features/familyQuota/presentation/registerFamilyUsageRoute.js';
 import type { HealthProbes } from '@src/features/health/application/ports.js';
@@ -64,23 +75,32 @@ export type AppDependencies = {
   auth: AuthRouteDeps;
   familyAdmin: FamilyAdminRepository;
   aiBudget: AiBudgetDependencies;
+  aiRouting: AiRoutingDependencies;
+  aiBilling: AiBillingDependencies;
+  scanQuota: ScanQuotaDependencies;
   profiles: ProfileDependencies;
-  consentInvitations: InvitationRouteDependencies;
+  profileLinks: ProfileLinkDependencies;
   documents: DocumentDependencies;
   review: ReviewDependencies;
-  privacy: PrivacyDependencies;
   measurements: MeasurementRepository;
   labResults: LabResultRepository;
   documentEntries: DocumentEntryRepository;
   medications: MedicationManagementRepository;
   adherence: AdherenceRepository;
+  asNeededDoses: AsNeededDoseRepository;
+  temperatures: TemperatureRepository;
   doseSlots: DoseSlotRepository;
+  revisits: RevisitRepository;
+  prescriptionChain: PrescriptionChainRepository;
+  timeline: TimelineRepository;
+  selfProfile: SelfProfileRepository;
   reminderRecipients: ReminderRecipientRepository;
   myReminders: MyReminderRepository;
+  doseConfirmations: DoseConfirmationRepository;
+  myRevisitReminders: MyRevisitReminderRepository;
   myConsent: MyConsentRepository;
   visitSummary: VisitSummaryRepository;
   familyUsage: FamilyUsageDependencies;
-  familyCaps: FamilyCapDependencies;
   // F03b: nhịp thao tác nặng mỗi tài khoản/thao tác trong 60 s (đếm trong tiến trình).
   heavyRateLimit: { perMinute: number; now(): number };
 };
@@ -107,7 +127,12 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
     deps.auth.logger.error({ reason: error.name }, 'Lỗi chưa xử lý');
     return errorResponse(c, 'ERR_INTERNAL');
   });
-  registerPrivacyHeaders(app);
+  app.use('/api/source-documents/*', async (c, next) => {
+    c.header('Cache-Control', 'no-store');
+    c.header('X-Content-Type-Options', 'nosniff');
+    await next();
+  });
+  registerScanQuotaHeaders(app);
   app.use(
     '/api/*',
     except(
@@ -121,11 +146,13 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerMeRoute(app);
   if (deps.push)
     registerPushRoutes(app, deps.push, { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies });
-  registerAdminRoutes(app, deps.familyAdmin);
+  registerAdminRoutes(app, deps.familyAdmin, deps.scanQuota.now);
+  registerScanQuotaRoutes(app, deps.scanQuota);
   registerAiBudgetRoutes(app, deps.aiBudget);
+  registerAiRoutingRoutes(app, deps.aiRouting);
+  registerAiBillingRoutes(app, deps.aiBilling);
   registerFamilyUsageRoute(app, deps.familyUsage);
-  registerFamilyCapRoutes(app, deps.familyCaps);
-  registerProfileRoutes(app, { ...deps.profiles, logger: deps.auth.logger }, deps.auth.login.now);
+  registerProfileRoutes(app, deps);
   // Một limiter dùng chung cho mọi thao tác nặng; khóa tách theo tài khoản + thao tác.
   const heavyLimiter = createSlidingWindowLimiter({
     limit: deps.heavyRateLimit.perMinute,
@@ -134,18 +161,20 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   });
   registerDocumentRoutes(app, deps.documents, heavyLimiter);
   registerReviewRoutes(app, deps.review);
+  registerDeletionRoutes(app, deps.documents, deps.auth.logger);
   registerManualRecordRoutes(app, deps.review.repository);
-  registerPrivacyRoutes(app, deps.privacy, heavyLimiter);
   registerMeasurementRoutes(app, deps.measurements);
   registerLabResultRoutes(app, deps.labResults);
   registerDocumentEntryRoutes(app, deps.documentEntries);
   registerMedicationRoutes(app, deps.medications, deps.auth.login.now);
   registerAdherenceRoutes(app, deps.adherence, deps.auth.login.now);
   registerDoseSlotRoutes(app, deps.doseSlots);
+  registerHistoryRoutes(app, deps, deps.auth.login.now);
   registerReminderRecipientRoutes(app, deps.reminderRecipients);
-  registerMyReminderRoutes(app, deps.myReminders);
+  registerMyReminderRoutes(app, deps.myReminders, deps.auth.login.now);
+  registerMyRevisitReminderRoutes(app, deps.myRevisitReminders);
   registerMyConsentRoutes(app, deps.myConsent, deps.auth.login.now);
   registerVisitSummaryRoute(app, deps.visitSummary, deps.auth.login.now);
-  registerInvitationRoutes(app, deps.consentInvitations);
+  registerProfileLinkRoutes(app, deps.profileLinks);
   return app;
 }

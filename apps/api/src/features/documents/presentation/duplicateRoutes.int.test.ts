@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -53,9 +53,12 @@ describe('Kiểm trùng chứng từ: route thật + RLS (SPEC-012, BR-017, E3-S
   const familyFixture = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' });
+    const created = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Mẹ',
+    });
     const profile = (await created.json()) as HealthProfile;
-    await acceptConsentInvitation(t, main, profile.id);
+    await confirmConsentByAttestation(t, main, profile.id);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const seed = async (payload: { type: string }) =>
       (await seedPendingDocument(t, owner, payload)).documentId;
@@ -111,9 +114,12 @@ describe('Kiểm trùng chứng từ: route thật + RLS (SPEC-012, BR-017, E3-S
     const mother = await familyFixture();
     const content = prescription(['Amlodipin', 'Metformin']);
     expect((await approve(mother.main, await mother.seed(content), content)).status).toBe(200);
-    const created = await t.call(mother.main, 'POST', '/api/health-profiles', { displayName: 'Ba' });
+    const created = await t.call(mother.main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Ba',
+    });
     const father = (await created.json()) as HealthProfile;
-    await acceptConsentInvitation(t, mother.main, father.id);
+    await confirmConsentByAttestation(t, mother.main, father.id);
     expect((await manual(mother.main, father.id, content)).status).toBe(200);
     const other = await familyFixture();
     expect((await approve(other.main, await other.seed(content), content)).status).toBe(200);

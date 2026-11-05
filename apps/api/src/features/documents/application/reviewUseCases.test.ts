@@ -14,10 +14,10 @@ const doc = (id: string, overrides: Partial<SourceDocument> = {}): SourceDocumen
   type: 'device_reading',
   status: 'pending_review',
   documentDate: null,
-  originalKey: `k/${id}/original.heic`,
-  previewKey: null,
-  ocrImageKey: null,
-  mimeType: 'image/heic',
+  imageKey: `k/${id}/image.jpg`,
+  imageSha256: 'a'.repeat(64),
+  privacyApprovedBy: null,
+  mimeType: 'image/jpeg',
   sizeBytes: 10,
   createdAt: new Date('2026-10-06T00:00:00Z'),
   ...overrides,
@@ -56,10 +56,9 @@ describe('TC-380: hồ sơ đã rút đồng thuận', () => {
     };
     const blocked = { ok: false, code: 'ERR_CONSENT_REQUIRED' };
     expect(await getDocumentReview(repository, 'family-a', 'a')).toEqual(blocked);
-    for (const variant of ['preview', 'original', 'ocr'] as const)
-      expect(
-        await openDocumentImage(repository, spyReader, { familyId: 'family-a', documentId: 'a', variant }),
-      ).toEqual(blocked);
+    expect(await openDocumentImage(repository, spyReader, { familyId: 'family-a', documentId: 'a' })).toEqual(
+      blocked,
+    );
     expect(extractionReads).toBe(0);
     expect(imageReads).toBe(0);
   });
@@ -95,18 +94,16 @@ describe('Đọc hàng đợi và chứng từ để duyệt (SPEC-006, SPEC-010
     });
   });
 
-  it('ảnh gốc giữ MIME đã nhận diện; preview chưa có thì dùng ảnh gốc', async () => {
+  it('TC-408: trả JPEG duy nhất; chứng từ nhóm khác → ERR_NOT_FOUND', async () => {
     const image = await openDocumentImage(memory.repository, reader, {
       familyId: 'family-a',
       documentId: 'a',
-      variant: 'preview',
     });
-    expect(image).toMatchObject({ ok: true, value: { contentType: 'image/heic' } });
+    expect(image).toMatchObject({ ok: true, value: { contentType: 'image/jpeg' } });
     expect(
       await openDocumentImage(memory.repository, reader, {
         familyId: 'family-a',
         documentId: 'c',
-        variant: 'original',
       }),
     ).toEqual({ ok: false, code: 'ERR_NOT_FOUND' });
   });

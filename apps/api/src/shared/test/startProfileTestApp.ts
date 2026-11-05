@@ -1,23 +1,31 @@
+import { createSelfProfileRepository } from '@src/features/selfProfile/infrastructure/createSelfProfileRepository.js';
+import { createTimelineRepository } from '@src/features/timeline/infrastructure/createTimelineRepository.js';
+import { createPrescriptionChainRepository } from '@src/features/prescriptions/infrastructure/createPrescriptionChainRepository.js';
+import { createRevisitRepository } from '@src/features/prescriptions/infrastructure/createRevisitRepository.js';
+import { createStubScanQuotaDeps } from './createStubScanQuotaDeps.js';
+import { createStubAiBillingDeps } from './createStubAiBillingDeps.js';
+import { createStubAiRoutingDeps } from './createStubAiRoutingDeps.js';
 import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
+import { createAsNeededDoseRepository } from '@src/features/asNeededDoses/infrastructure/createAsNeededDoseRepository.js';
+import { createTemperatureRepository } from '@src/features/temperatures/infrastructure/createTemperatureRepository.js';
 import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
 import { createMyConsentRepository } from '@src/features/myConsent/infrastructure/createMyConsentRepository.js';
+import { createMyRevisitReminderRepository } from '@src/features/myRevisitReminders/infrastructure/createMyRevisitReminderRepository.js';
+import { createDoseConfirmationRepository } from '@src/features/doseConfirmations/infrastructure/createDoseConfirmationRepository.js';
 import { createMyReminderRepository } from '@src/features/myReminders/infrastructure/createMyReminderRepository.js';
 import { createReminderRecipientRepository } from '@src/features/reminders/infrastructure/createReminderRecipientRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
 import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
-import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
-import { createPrivacyQueue } from '@src/features/documentPrivacy/infrastructure/createPrivacyQueue.js';
-import { hashPrivacyPng } from '@src/features/documentPrivacy/infrastructure/hashPrivacyPng.js';
-import { createInvitationRepository } from '@src/features/consentInvitations/infrastructure/createInvitationRepository.js';
-import { createInvitationTokenCodec } from '@src/features/consentInvitations/infrastructure/createInvitationTokenCodec.js';
+import { createProfileLinkRepository } from '@src/features/profileLinks/infrastructure/createProfileLinkRepository.js';
+import { createProfileLinkTokenCodec } from '@src/features/profileLinks/infrastructure/createProfileLinkTokenCodec.js';
 import { randomUUID } from 'node:crypto';
 import {
-  CONVERT_HEIC_QUEUE,
-  CONVERT_HEIC_QUEUE_OPTIONS,
-  PREPARE_OCR_IMAGE_QUEUE,
-  PREPARE_OCR_IMAGE_QUEUE_OPTIONS,
+  SANITIZE_DOCUMENT_IMAGE_QUEUE,
+  SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS,
   PURGE_PROFILE_OBJECTS_QUEUE,
   PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS,
+  PURGE_PENDING_OBJECTS_QUEUE,
+  PURGE_PENDING_OBJECTS_QUEUE_OPTIONS,
   ensureExtractDocumentQueues,
 } from '@angia/contracts';
 import pg from 'pg';
@@ -29,7 +37,9 @@ import { createLabResultRepository } from '@src/features/labResults/infrastructu
 import { createDocumentEntryRepository } from '@src/features/documents/infrastructure/createDocumentEntryRepository.js';
 import { createVisitSummaryRepository } from '@src/features/visitSummary/infrastructure/createVisitSummaryRepository.js';
 import { createMeasurementRepository } from '@src/features/measurements/infrastructure/createMeasurementRepository.js';
-import { createPreviewQueue } from '@src/features/documents/infrastructure/createPreviewQueue.js';
+import { createSanitizeQueue } from '@src/features/documents/infrastructure/createSanitizeQueue.js';
+import { createDeletionRepository } from '@src/features/documents/infrastructure/createDeletionRepository.js';
+import { createPurgeQueue } from '@src/features/documents/infrastructure/createPurgeQueue.js';
 import { newId } from '@src/shared/db/schema/newId.js';
 import { createProfileRepository } from '@src/features/profiles/infrastructure/createProfileRepository.js';
 import { createSessionRepository } from '@src/shared/auth/infrastructure/createSessionRepository.js';
@@ -38,7 +48,6 @@ import { runMigrations } from '@src/shared/db/runMigrations.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { createFamilyUsageRepository } from '@src/features/familyQuota/infrastructure/createFamilyUsageRepository.js';
 import type { QuotaLimits } from '@src/features/familyQuota/domain/FamilyQuota.js';
-import { createFamilyCapRepository } from '@src/features/family/infrastructure/createFamilyCapRepository.js';
 import { TEST_AI_POLICY, TEST_HEAVY_RATE_LIMIT, TEST_QUOTA_POLICY } from './testQuotaPolicy.js';
 import { createMemoryObjectStorage } from './createMemoryObjectStorage.js';
 import { createSilentLogger } from './createSilentLogger.js';
@@ -63,9 +72,17 @@ const healthDataRepositories = (database: Database) => ({
   documentEntries: createDocumentEntryRepository(database),
   medications: createMedicationRepository(database),
   adherence: createAdherenceRepository(database),
+  asNeededDoses: createAsNeededDoseRepository(database),
+  temperatures: createTemperatureRepository(database),
   doseSlots: createDoseSlotRepository(database),
+  revisits: createRevisitRepository(database),
+  prescriptionChain: createPrescriptionChainRepository(database),
+  timeline: createTimelineRepository(database),
+  selfProfile: createSelfProfileRepository(database),
   reminderRecipients: createReminderRecipientRepository(database),
   myReminders: createMyReminderRepository(database),
+  doseConfirmations: createDoseConfirmationRepository(database),
+  myRevisitReminders: createMyRevisitReminderRepository(database),
   myConsent: createMyConsentRepository(database),
   visitSummary: createVisitSummaryRepository(database),
 });
@@ -79,7 +96,6 @@ function buildApp(
 ) {
   const quota = { ...TEST_QUOTA_POLICY, limits: { ...TEST_QUOTA_POLICY.limits, ...options.quota } };
   const stub = createStubAuthDeps();
-  const privacyQueue = createPrivacyQueue(boss);
   return createApp({
     ...(options.push ? { push: options.push(database) } : {}),
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
@@ -90,39 +106,29 @@ function buildApp(
     },
     familyAdmin: createFakeFamilyAdminRepository().repository,
     aiBudget: createStubAiBudgetDeps(),
+    aiRouting: createStubAiRoutingDeps(),
+    aiBilling: createStubAiBillingDeps(),
+    scanQuota: createStubScanQuotaDeps(),
     profiles: { repository: createProfileRepository(database, boss), storage: memory.profileStorage },
-    consentInvitations: {
-      repository: createInvitationRepository(database),
-      codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
+    profileLinks: {
+      repository: createProfileLinkRepository(database),
+      codec: createProfileLinkTokenCodec(TEST_COOKIE_SECRET),
       now: () => new Date(),
       newId: randomUUID,
       appBaseUrl,
     },
     documents: {
-      repository: createDocumentRepository(database, createPreviewQueue(boss)),
+      repository: createDocumentRepository(database, createSanitizeQueue(boss)),
       newId,
       storage: memory.storage,
       quota,
+      deletion: { repository: createDeletionRepository(database), purgeQueue: createPurgeQueue(boss) },
     },
     review: { repository: createReviewRepository(database), reader: memory.reader },
-    privacy: {
-      repository: createPrivacyRepository(database, privacyQueue),
-      reader: memory.reader,
-      queue: privacyQueue,
-      hashPng: hashPrivacyPng,
-      newId: randomUUID,
-      now: () => new Date(),
-      quota,
-      ai: TEST_AI_POLICY,
-    },
+
     ...healthDataRepositories(database),
     familyUsage: { repository: createFamilyUsageRepository(database), quota, ai: TEST_AI_POLICY },
     heavyRateLimit: options.heavyRateLimit ?? TEST_HEAVY_RATE_LIMIT,
-    familyCaps: {
-      repository: createFamilyCapRepository(database, boss),
-      defaultFamilyCapUsd: 0.5,
-      now: () => new Date(),
-    },
   });
 }
 
@@ -141,10 +147,10 @@ export async function startProfileTestApp(
   // pg-boss thật trên role app (migrate:false) như server.ts; job chỉ được gửi, không có worker xử lý.
   const boss = createPgBoss(db.appUrl, createSilentLogger());
   await boss.start();
-  await boss.createQueue(CONVERT_HEIC_QUEUE, CONVERT_HEIC_QUEUE_OPTIONS);
-  await boss.createQueue(PREPARE_OCR_IMAGE_QUEUE, PREPARE_OCR_IMAGE_QUEUE_OPTIONS);
+  await boss.createQueue(SANITIZE_DOCUMENT_IMAGE_QUEUE, SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS);
   await ensureExtractDocumentQueues(boss);
   await boss.createQueue(PURGE_PROFILE_OBJECTS_QUEUE, PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS);
+  await boss.createQueue(PURGE_PENDING_OBJECTS_QUEUE, PURGE_PENDING_OBJECTS_QUEUE_OPTIONS);
   const app = buildApp(database, appBaseUrl, memory, boss, options);
   const family = async () => {
     const id = randomUUID();
@@ -184,7 +190,7 @@ export async function startProfileTestApp(
     failNthPut: memory.failNthPut,
     holdNextPut: memory.holdNextPut,
     failNextDeletePrefix: memory.failNextDeletePrefix,
-    codec: createInvitationTokenCodec(TEST_COOKIE_SECRET),
+    codec: createProfileLinkTokenCodec(TEST_COOKIE_SECRET),
   };
 }
 export type ProfileTestApp = Awaited<ReturnType<typeof startProfileTestApp>>;

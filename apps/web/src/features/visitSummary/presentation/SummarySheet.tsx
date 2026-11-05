@@ -15,7 +15,7 @@ import { SummaryMedications } from './SummaryMedications';
 // ngày tạo lặp mỗi trang in (BR-035). Khung là bảng trình bày để trình duyệt lặp tfoot khi in.
 export function SummarySheet({ summary }: { summary: VisitSummary }) {
   const created = vietnamDate(new Date(summary.createdAt));
-  const rows = measurementRows(summary.measurements);
+  const rows = summary.showsVitals ? measurementRows(summary.measurements) : [];
   const measurements = <SummaryMeasurements rows={rows} />;
   const side = (
     <>
@@ -32,7 +32,9 @@ export function SummarySheet({ summary }: { summary: VisitSummary }) {
               <div className="summary-content">
                 <SheetHeader summary={summary} createdYear={Number(created.slice(0, 4))} />
                 <SummaryMedications rows={medicationRows(summary.currentMedications, created)} />
-                {rows.length > NARROW_CAPACITY ? (
+                {!summary.showsVitals ? (
+                  <div className="summary-grid summary-grid--even">{side}</div>
+                ) : rows.length > NARROW_CAPACITY ? (
                   <>
                     <div className="summary-grid summary-grid--even">{side}</div>
                     {measurements}

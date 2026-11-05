@@ -21,10 +21,11 @@ describe('Form duyệt kết quả xét nghiệm (SPEC-010, BR-022)', () => {
     const html = renderToStaticMarkup(<LabResultForm {...props} payload={payload} />);
     expect(html).toContain('Ngày trả kết quả *');
     expect(html).toContain('name="facility"');
-    expect(html).toContain('Danh sách chỉ số (2 chỉ số)');
+    expect(html).toContain('Danh sách chỉ số');
+    expect(html).toContain('2 chỉ số');
     for (const field of ['testName', 'value', 'unit', 'referenceRange'])
       expect(html).toContain(`name="items.1.${field}"`);
-    expect(html).toContain('+ Thêm chỉ số');
+    expect(html).toContain('Thêm chỉ số');
     expect(html).toContain('Xóa dòng 2');
   });
 

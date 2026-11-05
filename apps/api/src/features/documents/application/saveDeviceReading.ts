@@ -17,6 +17,7 @@ export async function saveDeviceReading(
   const values = pickMeasurementValues(data);
   const check = checkMeasurement(values, confirm.outOfRange);
   if (!check.ok) return check;
+  await store.lockDuplicateRecord(target.healthProfileId, 'device_reading', measuredAt);
   const reading = { values, measuredOn: measuredAt, measuredTime };
   const duplicate = confirm.duplicate
     ? null

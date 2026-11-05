@@ -14,8 +14,8 @@ export function AccountsTable({
   onTask: (task: AdminTask) => void;
 }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="admin-table w-full border-collapse text-[13px] leading-[20px] [&_th]:p-3 [&_th]:bg-[#eaf6f5] [&_th]:text-[#404945] [&_th]:text-left [&_th]:text-[12px] [&_th]:leading-[16px] [&_th]:font-semibold [&_th]:uppercase [&_th]:tracking-[0.02em] [&_th]:whitespace-nowrap [&_th:first-child]:pl-4 [&_td:first-child]:pl-4 [&_th:last-child]:text-right [&_th:last-child]:pr-4 [&_td]:py-[10px] [&_td]:px-3 [&_td]:border-b [&_td]:border-[#e4f0f0] [&_td]:align-middle [&_tbody_tr]:h-13 [&_tbody_tr]:transition-[background-color] [&_tbody_tr]:duration-150 [&_tbody_tr]:ease-[ease] [&_tbody_tr:hover]:bg-[#e3efea99] [&_tbody_tr:last-child_td]:border-b-0 [&_strong]:block [&_strong]:text-[14px] [&_strong]:leading-[20px] [&_strong]:font-semibold [&_small]:block [&_small]:text-[10px] [&_small]:leading-[14px] [&_small]:text-[#707975] max-[600px]:min-w-170">
+    <div className="overflow-x-auto px-4 pb-4">
+      <table className="admin-table w-full border-separate border-spacing-y-1.5 text-[13px] leading-[20px] [&_th]:px-2 [&_th]:py-1.5 [&_th]:text-[#404945] [&_th]:text-left [&_th]:text-xs [&_th]:leading-4 [&_th]:font-semibold [&_th]:whitespace-nowrap [&_th:last-child]:text-right [&_td]:py-2.5 [&_td]:px-2 [&_td]:align-middle [&_td]:bg-[#eaf6f5]/70 [&_td]:transition-colors [&_td]:duration-150 [&_td:first-child]:rounded-l-xl [&_td:last-child]:rounded-r-xl [&_tbody_tr:hover_td]:bg-[#e4f0f0] [&_strong]:block [&_strong]:text-[14px] [&_strong]:leading-[20px] [&_strong]:font-semibold [&_small]:block [&_small]:text-[11px] [&_small]:leading-[14px] [&_small]:text-[#55615f] max-[600px]:min-w-170">
         <caption className="sr-only">Danh sách tài khoản và vai trò trong nhóm</caption>
         <thead>
           <tr>
@@ -38,7 +38,7 @@ export function AccountsTable({
         </tbody>
       </table>
       {accounts.length === 0 && (
-        <p className="py-4 px-5 m-0 text-[#707975] text-[13px] leading-[20px]">Không có tài khoản phù hợp.</p>
+        <p className="py-3 m-0 text-[#55615f] text-[13px] leading-[20px]">Không có tài khoản phù hợp.</p>
       )}
     </div>
   );

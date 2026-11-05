@@ -1,11 +1,12 @@
 import { z } from 'zod';
+import { observeVisionCharge, type VisionBillingObserver } from './observeVisionCharge.js';
 
 interface TokenUsage {
   promptTokens: number;
   completionTokens: number;
 }
 
-export interface VisionRequest {
+export interface VisionRequest extends VisionBillingObserver {
   baseUrl: string;
   apiKey: string;
   model: string;
@@ -13,6 +14,7 @@ export interface VisionRequest {
   image: { mimeType: string; base64: string };
   /** Gửi `reasoning: { enabled: false }` cho model bật suy luận mặc định (Kimi K2.6). */
   disableReasoning?: boolean;
+  beforeDispatch?: (() => Promise<void>) | undefined;
 }
 
 export interface VisionResponse {
@@ -40,7 +42,8 @@ export const callVisionModel = async (
   fetchFn: typeof fetch = fetch,
 ): Promise<VisionResponse> => {
   const startedAt = performance.now();
-  const response = await fetchFn(`${request.baseUrl.replace(/\/+$/, '')}/chat/completions`, {
+  const url = `${request.baseUrl.replace(/\/+$/, '')}/chat/completions`;
+  const init: RequestInit = {
     method: 'POST',
     headers: { authorization: `Bearer ${request.apiKey}`, 'content-type': 'application/json' },
     body: JSON.stringify({
@@ -60,14 +63,18 @@ export const callVisionModel = async (
       provider: PRIVACY_ROUTING,
       ...(request.disableReasoning ? { reasoning: { enabled: false } } : {}),
     }),
-  });
+  };
+  await request.beforeDispatch?.();
+  const response = await fetchFn(url, init);
   if (!response.ok) {
     // Không đọc nội dung lỗi nhà cung cấp: có thể chứa thông tin trong ảnh/prompt.
     await response.body?.cancel().catch(() => undefined);
     throw new Error(`HTTP ${response.status}`);
   }
 
-  const completion = completionSchema.parse(await response.json());
+  const raw: unknown = await response.json();
+  await observeVisionCharge(raw, request);
+  const completion = completionSchema.parse(raw);
   return {
     content: completion.choices[0]?.message.content ?? '',
     usage: {

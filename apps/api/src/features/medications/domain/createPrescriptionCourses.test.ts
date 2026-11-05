@@ -7,6 +7,7 @@ const prescription = (): Prescription => ({
   healthProfileId: 'profile-1',
   sourceDocumentId: 'doc-1',
   issuedDate: '2026-10-01',
+  revisitDate: null,
   facility: null,
   diagnosis: null,
   manualWithoutSource: false,
@@ -24,6 +25,7 @@ const prescription = (): Prescription => ({
       longTerm: false,
       note: 'Sau ăn',
       totalQuantity: 30,
+      minIntervalText: null,
     },
   ],
 });

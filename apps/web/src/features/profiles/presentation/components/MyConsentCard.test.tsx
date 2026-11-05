@@ -5,30 +5,33 @@ import { MyConsentCard } from './MyConsentCard';
 import { WithdrawConsentDialog } from './WithdrawConsentDialog';
 const base: MyConsentProfile = { id: 'p', displayName: 'Mẹ', consentStatus: 'confirmed', withdrawnAt: null };
 const render = (profile: MyConsentProfile | null) =>
-  renderToStaticMarkup(<MyConsentCard profile={profile} onWithdraw={() => undefined} />);
+  renderToStaticMarkup(
+    <MyConsentCard profile={profile} onWithdraw={() => undefined} onUnlink={() => undefined} />,
+  );
 describe('TC-382 — thẻ đồng thuận của tài khoản liên kết', () => {
   it('confirmed: có tên hồ sơ và nút "Rút đồng thuận"', () => {
     const html = render(base);
     expect(html).toContain('Đồng thuận lưu thông tin sức khỏe');
     expect(html).toContain('Mẹ');
     expect(html).toContain('Rút đồng thuận');
-    expect(html.match(/<button/g)).toHaveLength(1);
+    expect(html.match(/<button/g)).toHaveLength(2);
   });
   it('withdrawn: hiện giờ rút theo giờ Việt Nam và không có nút', () => {
     const html = render({ ...base, consentStatus: 'withdrawn', withdrawnAt: '2026-10-24T03:05:00Z' });
     expect(html).toContain('Bạn đã rút đồng thuận lúc 10:05, 24/10/2026.');
-    expect(html).not.toContain('<button');
+    expect(html.match(/<button/g)).toHaveLength(1);
+    expect(html).toContain('Gỡ liên kết');
   });
   it.each([
     ['pending', 'Chưa có đồng thuận lưu thông tin sức khỏe cho hồ sơ này.'],
     ['invited', 'Đang chờ phản hồi lời mời đồng thuận.'],
     ['declined', 'Lời mời đồng thuận đã bị từ chối.'],
-  ] as const)('TC-392: %s: hiện câu trung tính, không nút', (status, text) => {
+  ] as const)('TC-392: %s: hiện câu trung tính, chỉ có nút gỡ liên kết', (status, text) => {
     const html = render({ ...base, consentStatus: status });
     expect(html).toContain('Mẹ');
     expect(html).toContain(text);
     expect(html).not.toContain('người thân');
-    expect(html).not.toContain('<button');
+    expect(html.match(/<button/g)).toHaveLength(1);
     expect(html).not.toContain('Rút đồng thuận');
   });
   it('profile null: không render gì', () => {

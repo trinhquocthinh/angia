@@ -20,7 +20,7 @@ function LabResultsContent({ profile, session }: { profile: HealthProfile; sessi
   const series = useLabSeries(labResultsRepository, session, profile);
   return (
     <div className="flex flex-col gap-6">
-      <ProfileHealthHeader profile={profile} active="lab-results" />
+      <ProfileHealthHeader session={session} profile={profile} active="lab-results" />
       <div className="rounded-xl bg-white px-5 py-4 shadow-sm">
         <h2 className="text-lg font-semibold text-[#004135]">Lịch sử kết quả xét nghiệm qua các lần khám</h2>
       </div>

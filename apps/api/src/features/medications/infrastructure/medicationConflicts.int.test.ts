@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 
@@ -36,9 +36,12 @@ describe('API xử lý xung đột đợt thuốc (SPEC-015)', () => {
   async function fixture(startDate = '2026-09-01', count = 1) {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const response = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Mẹ' });
+    const response = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Mẹ',
+    });
     const profile = (await response.json()) as HealthProfile;
-    await acceptConsentInvitation(t, main, profile.id);
+    await confirmConsentByAttestation(t, main, profile.id);
     const oldIds: string[] = [];
     for (let n = 0; n < count; n++) {
       const id = randomUUID();

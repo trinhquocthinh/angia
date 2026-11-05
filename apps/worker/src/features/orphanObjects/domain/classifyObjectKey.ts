@@ -1,10 +1,12 @@
-export type ObjectKind = 'original' | 'preview' | 'ocr' | 'unknown';
+export type ObjectKind = 'image' | 'original' | 'preview' | 'ocr' | 'unknown';
 
 // Chỉ uuid không phân biệt hoa thường; phần chữ cố định và đuôi tệp phải đúng chữ thường như hệ thống ghi.
 const UUID = '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}';
 const DOCUMENT = `profiles/${UUID}/documents/${UUID}`;
-// Dạng khóa trùng documentObjectKey (API), prepareDocumentPreview và prepareOcrImage (worker).
+// Nhận khóa JPEG hiện hành và mẫu legacy để vét object còn sót.
 const PATTERNS: [Exclude<ObjectKind, 'unknown'>, RegExp][] = [
+  ['image', new RegExp(`^${DOCUMENT}/upload\\.jpg$`)],
+  ['image', new RegExp(`^${DOCUMENT}/images/${UUID}\\.jpg$`)],
   ['original', new RegExp(`^${DOCUMENT}/original\\.(jpg|png|webp|heic)$`)],
   ['preview', new RegExp(`^${DOCUMENT}/previews/${UUID}\\.webp$`)],
   ['ocr', new RegExp(`^${DOCUMENT}/ocr/${UUID}/${UUID}\\.png$`)],

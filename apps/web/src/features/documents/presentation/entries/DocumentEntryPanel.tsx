@@ -1,13 +1,27 @@
+import type { ProfileSession } from '@src/features/profiles/application/ports';
+import type { ReviewRepository } from '../../application/reviewPorts';
+import { DeleteDocumentControl } from '../components/DeleteDocumentControl';
 import type { DocumentEntry } from '@angia/contracts';
 import { SidePanel } from '@src/shared/ui/SidePanel';
 import { entryDateLabel, entryStatusLabel, entryTitle } from '../../application/entryPresentation';
 import { EntryImage } from './EntryImage';
 import { EntryRecordSummary } from './EntryRecordSummary';
 
-type Props = { entry: DocumentEntry; canReuse: boolean; onReuse: () => void; onClose: () => void };
+type Props = {
+  deletion?: {
+    repository: ReviewRepository;
+    session: ProfileSession;
+    profileId: string;
+    onDeleted: () => void;
+  };
+  entry: DocumentEntry;
+  canReuse: boolean;
+  onReuse: () => void;
+  onClose: () => void;
+};
 
 // Ngăn chi tiết chỉ đọc: bản ghi đầy đủ + ảnh; nút "Dùng lại đơn này" với đơn đã lưu (SPEC-029).
-export function DocumentEntryPanel({ entry, canReuse, onReuse, onClose }: Props) {
+export function DocumentEntryPanel({ entry, canReuse, onReuse, onClose, deletion }: Props) {
   const prescription = entry.records.prescription;
   return (
     <SidePanel
@@ -35,7 +49,10 @@ export function DocumentEntryPanel({ entry, canReuse, onReuse, onClose }: Props)
             Dùng lại đơn này
           </button>
         )}
-        {entry.origin === 'document' && <EntryImage documentId={entry.id} hasOcrImage={entry.hasOcrImage} />}
+        {entry.origin === 'document' && deletion && (
+          <DeleteDocumentControl key={entry.id} {...deletion} documentId={entry.id} />
+        )}
+        {entry.origin === 'document' && <EntryImage documentId={entry.id} hasImage={entry.hasImage} />}
       </div>
     </SidePanel>
   );

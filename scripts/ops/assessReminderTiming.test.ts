@@ -7,6 +7,7 @@ const at = (date: string, minutes = 0) =>
   new Date(new Date(`${date}T01:00:00Z`).getTime() + minutes * MINUTE);
 
 const reminder = (id: string, date: string, overrides: Partial<ReminderRow> = {}): ReminderRow => ({
+  kind: 'medication',
   reminderId: id,
   profileId: 'profile-a',
   date,
@@ -16,6 +17,7 @@ const reminder = (id: string, date: string, overrides: Partial<ReminderRow> = {}
   ...overrides,
 });
 const delivery = (reminderId: string, overrides: Partial<DeliveryRow> = {}): DeliveryRow => ({
+  kind: 'medication',
   deliveryId: `${reminderId}-d${Math.random()}`,
   reminderId,
   status: 'accepted',
@@ -37,6 +39,42 @@ const weekReminders = () => week.map((date) => reminder(`${date}-r`, date));
 const weekDeliveries = () => week.map((date) => delivery(`${date}-r`));
 
 describe('assessReminderTiming', () => {
+  it('TC-480: nhiều lượt thuốc đúng giờ không che tỷ lệ tái khám dưới 99%', () => {
+    const reminders = [...weekReminders(), reminder('r', week[0]!, { kind: 'revisit' })];
+    const deliveries = [
+      ...weekDeliveries(),
+      ...Array.from({ length: 200 }, () => delivery(`${week[0]}-r`)),
+      delivery('r', { kind: 'revisit', status: 'gone', acceptedAt: null }),
+    ];
+    const verdict = assessReminderTiming(reminders, deliveries);
+    expect(verdict.onTime / verdict.eligible).toBeGreaterThan(0.99);
+    expect(verdict.passed).toBe(false);
+    expect(verdict.reasons).toContain('Loại revisit: tỷ lệ đúng giờ 0.0% < 99%');
+  });
+  it('TC-480: phân biệt loại khi kiểm trùng và tính tỷ lệ riêng, gộp loại trừ revoked', () => {
+    const medication = reminder('m', week[0]!, { kind: 'medication' });
+    const revisit = reminder('r', week[0]!, { kind: 'revisit' });
+    const verdict = assessReminderTiming(
+      [medication, revisit],
+      [
+        delivery('m', { acceptedAt: at(week[0]!, 1) }),
+        delivery('r', { kind: 'revisit', status: 'gone', acceptedAt: null }),
+        delivery('r', { kind: 'revisit', status: 'revoked', acceptedAt: null }),
+      ],
+    );
+    expect(verdict.duplicateSlots).toBe(0);
+    expect(verdict).toMatchObject({
+      eligible: 2,
+      onTime: 1,
+      byKind: [
+        { kind: 'medication', eligible: 1, onTime: 1 },
+        { kind: 'revisit', eligible: 1, onTime: 0 },
+      ],
+    });
+    expect(assessReminderTiming([revisit, { ...revisit, reminderId: 'duplicate' }], []).duplicateSlots).toBe(
+      1,
+    );
+  });
   it('TC-096 đạt khi đủ 7 ngày, không trùng buổi và mọi lượt gửi được tiếp nhận trong ±5 phút', () => {
     const verdict = assessReminderTiming(weekReminders(), weekDeliveries());
     expect(verdict.passed).toBe(true);

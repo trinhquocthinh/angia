@@ -8,6 +8,7 @@ const profile: HealthProfile = {
   familyId: '4f2b8c1e-9a4d-4e6f-8b7a-1c2d3e4f5a6b',
   displayName: 'Mẹ',
   birthYear: 1950,
+  vitalsEnabled: null,
   consentConfirmedAt: null,
   consentConfirmedBy: null,
   consentBasis: null,
@@ -20,6 +21,11 @@ const profile: HealthProfile = {
 };
 
 describe('TC-389 — phản hồi hồ sơ khớp đúng hợp đồng', () => {
+  it.each([null, true])('TC-442: giữ nguyên vitalsEnabled = %s trong hợp đồng', (vitalsEnabled) => {
+    const response = toProfileResponse({ ...profile, vitalsEnabled });
+    expect(response.vitalsEnabled).toBe(vitalsEnabled);
+    expect(healthProfileSchema.safeParse(response).success).toBe(true);
+  });
   it('không lộ consentWithdrawnAt/consentWithdrawnBy và chỉ có đúng các trường của schema', () => {
     const response = toProfileResponse(profile);
     expect(response).not.toHaveProperty('consentWithdrawnAt');

@@ -27,3 +27,26 @@ describe('Form nhập tay (SPEC-011, BR-016)', () => {
     }
   });
 });
+
+describe('TC-448 — loại nhập tay bị ẩn', () => {
+  it.each([null, 'device_reading'] as const)(
+    'không hiện loại hoặc form số đo, kể cả ban đầu là %s',
+    (initialType) => {
+      const html = renderToStaticMarkup(
+        <ManualEntryForm {...props} initialType={initialType} allowReading={false} />,
+      );
+      expect(html).not.toContain('Máy đo cá nhân');
+      expect(html).not.toContain('type="submit"');
+      expect(html).toContain('Đơn thuốc');
+      expect(html).toContain('Xét nghiệm');
+    },
+  );
+});
+
+it.each(['prescription', 'lab_result'] as const)('TC-448 — ẩn số đo vẫn cho nhập %s', (initialType) => {
+  const html = renderToStaticMarkup(
+    <ManualEntryForm {...props} initialType={initialType} allowReading={false} />,
+  );
+  expect(html).toContain('type="submit"');
+  expect(html).not.toContain('Máy đo cá nhân');
+});

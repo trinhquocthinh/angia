@@ -11,7 +11,7 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { createdAtColumn, familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
+import { createdAtColumn, familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
 import { healthProfiles } from './healthProfiles.js';
 
 // SPEC-027/BR-037: tối đa một lời nhắc cho mỗi hồ sơ/ngày/buổi; job generate-reminders ghi ON CONFLICT DO NOTHING.
@@ -48,6 +48,6 @@ export const reminders = pgTable(
       'reminders_medications_nonempty',
       sql`jsonb_typeof(${t.medications}) = 'array' AND jsonb_array_length(${t.medications}) >= 1`,
     ),
-    familyIsolationPolicy(),
+    selfIsolationPolicy('health_profile_id'),
   ],
 );

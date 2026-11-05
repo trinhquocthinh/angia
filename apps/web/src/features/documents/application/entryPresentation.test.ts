@@ -8,10 +8,9 @@ describe('TC-282 trình bày mục danh mục chứng từ', () => {
     const label = (status: string) => entryStatusLabel(entry({ status: status as DocumentEntry['status'] }));
     expect(label('approved')).toBe('Đã lưu vào sổ');
     expect(label('pending_review')).toBe('Chờ duyệt');
-    for (const status of ['uploaded', 'awaiting_privacy', 'extracting', 'awaiting_budget'])
+    for (const status of ['uploaded', 'extracting', 'awaiting_budget'])
       expect(label(status)).toBe('Đang xử lý');
     expect(label('manual_entry')).toBe('Cần nhập tay');
-    expect(label('rejected')).toBe('Đã loại');
     expect(label('manual_record')).toBe('Nhập tay, không có ảnh');
   });
 
@@ -22,13 +21,12 @@ describe('TC-282 trình bày mục danh mục chứng từ', () => {
     expect(entryTitle(entry({ type: null }))).toBe('Chưa phân loại');
   });
 
-  it('hành động: đã lưu → chi tiết; chờ duyệt/cần nhập tay/chờ ngân sách → duyệt; đã loại → ảnh; đang xử lý → không', () => {
+  it('hành động: đã lưu → chi tiết; chờ duyệt/cần nhập tay/chờ ngân sách → duyệt; đang xử lý → không', () => {
     expect(entryAction(entry({ status: 'approved' }))).toBe('detail');
     expect(entryAction(entry({ origin: 'manual', status: 'manual_record' }))).toBe('detail');
     for (const status of ['pending_review', 'manual_entry', 'awaiting_budget'] as const)
       expect(entryAction(entry({ status }))).toBe('review');
-    expect(entryAction(entry({ status: 'rejected' }))).toBe('image');
-    for (const status of ['uploaded', 'awaiting_privacy', 'extracting'] as const)
+    for (const status of ['uploaded', 'extracting'] as const)
       expect(entryAction(entry({ status }))).toBe('none');
   });
 

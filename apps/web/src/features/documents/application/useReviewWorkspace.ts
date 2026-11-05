@@ -1,5 +1,7 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { components } from '@src/shared/api/schema.gen';
+import { invalidateRevisitData } from '@src/features/revisits/application/invalidateRevisitData';
+import { invalidatePrescriptionData } from '@src/features/prescriptions/application/invalidatePrescriptionData';
 import { isReading, reviewPollInterval } from './reviewQueuePolling';
 import type { ApproveDocumentRequest, ReviewRepository } from './reviewPorts';
 
@@ -50,21 +52,10 @@ export function useApproveDocument(
       await Promise.all([
         client.invalidateQueries({ queryKey: reviewScopeKey(session) }),
         client.invalidateQueries({ queryKey: ['measurements'] }),
+        invalidateRevisitData(client, session),
+        invalidatePrescriptionData(client, session),
       ]);
     },
-  });
-}
-
-// Loại bỏ chứng từ chờ duyệt/chờ nhập tay; ảnh gốc giữ nguyên, chứng từ rời hàng đợi.
-export function useRejectDocument(
-  repository: ReviewRepository,
-  session: Session | null | undefined,
-  id: string,
-) {
-  const client = useQueryClient();
-  return useMutation({
-    mutationFn: () => repository.reject(id, session?.csrfToken ?? ''),
-    onSuccess: () => client.invalidateQueries({ queryKey: reviewScopeKey(session) }),
   });
 }
 
@@ -78,6 +69,12 @@ export function useCreateManualRecords(
   return useMutation({
     mutationFn: (body: ApproveDocumentRequest) =>
       repository.createManualRecords(profileId, body, session?.csrfToken ?? ''),
-    onSuccess: () => client.invalidateQueries({ queryKey: ['measurements'] }),
+    onSuccess: async () => {
+      await Promise.all([
+        client.invalidateQueries({ queryKey: ['measurements'] }),
+        invalidateRevisitData(client, session, profileId),
+        invalidatePrescriptionData(client, session, profileId),
+      ]);
+    },
   });
 }

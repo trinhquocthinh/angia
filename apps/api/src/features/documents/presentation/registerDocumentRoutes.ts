@@ -15,6 +15,7 @@ import { checkUploadTarget } from '../application/checkUploadTarget.js';
 import { uploadDocument } from '../application/uploadDocument.js';
 import { MAX_FILE_BYTES, MAX_FILES_PER_UPLOAD } from '../domain/SourceDocument.js';
 import { uploadBatchRoute } from './documentRouteDefinitions.js';
+import { parseSendToAi } from './parseSendToAi.js';
 import { toUploadBatchResponse } from './toUploadBatchResponse.js';
 
 // Tệp quá ngưỡng chỉ ghi tới ngưỡng + 1 byte nhưng phần thừa vẫn đi qua mạng; trần body chặn lạm dụng
@@ -73,6 +74,8 @@ async function handleUpload(c: Context<AppEnv>, deps: DocumentDependencies, prof
   try {
     const declaredType = declaredTypeSchema.safeParse(spooled.value.fields.declaredType);
     if (!declaredType.success) return errorResponse(c, 'ERR_VALIDATION');
+    const sendToAi = parseSendToAi(spooled.value.fields.sendToAi, spooled.value.files.length);
+    if (!sendToAi) return errorResponse(c, 'ERR_VALIDATION');
     const session = c.get('session')!;
     const result = await uploadDocument(deps, {
       familyId: session.family!.id,
@@ -80,6 +83,7 @@ async function handleUpload(c: Context<AppEnv>, deps: DocumentDependencies, prof
       profileId,
       declaredType: declaredType.data,
       files: spooled.value.files,
+      sendToAi,
     });
     if (result.ok) return c.json(toUploadBatchResponse(result.value), 201);
     return 'details' in result

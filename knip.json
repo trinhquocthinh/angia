@@ -3,25 +3,25 @@
   "ignore": ["**/*.gen.ts"],
   "workspaces": {
     ".": {
-      "entry": ["tooling/**/*.test.ts", "scripts/**/*.test.ts", "scripts/heic-spike/measureOne.ts"],
-      "project": ["tooling/**/*.ts", "scripts/**/*.ts"]
+      "entry": [
+        "tooling/**/*.test.ts",
+        "scripts/**/*.test.ts",
+        "scripts/heic-spike/measureOne.ts",
+        "e2e/**/*.spec.ts"
+      ],
+      "project": ["tooling/**/*.ts", "scripts/**/*.ts", "e2e/**/*.ts"]
     },
     "apps/api": {
-      "entry": ["src/server.ts!", "src/shared/db/migrate.ts!"],
+      "entry": ["src/{server,shared/db/migrate}.ts!"],
       "project": ["src/**/*.ts!", "!src/shared/test/**!", "scripts/**/*.ts"]
     },
     "apps/worker": {
-      "entry": [
-        "src/worker.ts!",
-        "src/features/extraction/infrastructure/heicConversionChild.ts!",
-        "src/features/extraction/infrastructure/documentPreviewChild.ts!",
-        "src/features/documentPrivacy/infrastructure/privacyPngChild.ts!"
-      ],
+      "entry": ["src/{worker,features/documentSanitize/infrastructure/sanitizeJpegChild}.ts!"],
       "project": ["src/**/*.ts!", "!src/shared/test/**!", "!src/**/*.test-helper.ts!"]
     },
     "apps/web": {
       "entry": ["src/app/routes/**/*.tsx!"],
-      "project": ["src/**/*.{ts,tsx,css}!", "!src/**/*.test-helper.ts!"],
+      "project": ["src/**/*.{ts,tsx,css}!", "!src/**/*.test-helper.ts!", "!src/features/scanQuota/test/**!"],
       "ignoreDependencies": ["@fontsource/be-vietnam-pro", "@fontsource/newsreader"]
     },
     "packages/contracts": {

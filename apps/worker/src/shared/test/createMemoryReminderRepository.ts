@@ -26,6 +26,7 @@ export function createMemoryReminderRepository(families: Record<string, FamilyDa
       if (familyId === faults.failingFamilyId) throw Object.assign(new Error('denied'), { code: '42501' });
       const data = families[familyId] ?? { accounts: [], profiles: [] };
       return work({
+        generateRevisitReminders: async () => ({ created: 0, existing: 0 }),
         listFamilyAccounts: async () => data.accounts,
         listProfiles: async () => data.profiles,
         insertReminders: async (reminders) => {

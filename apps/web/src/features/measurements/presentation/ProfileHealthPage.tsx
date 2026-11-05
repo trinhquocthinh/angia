@@ -1,6 +1,5 @@
-import { StopCourseAction } from '@src/features/medications/presentation/StopCourseAction';
-import { SelfReportedCourseAction } from '@src/features/medications/presentation/SelfReportedCourseAction';
-import { useState } from 'react';
+import { Navigate } from '@tanstack/react-router';
+import { profileShowsVitals } from '@src/features/profiles/application/profileShowsVitals';
 import { useCurrentSession } from '@src/features/auth/application/useCurrentSession';
 import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
 import { useProfileSessionRecovery } from '@src/features/profiles/application/useProfileSessionRecovery';
@@ -9,32 +8,21 @@ import { createProfilesRepository } from '@src/features/profiles/infrastructure/
 import { ProfileFrame } from '@src/features/profiles/presentation/components/ProfileFrame';
 import { RecipientNotice } from '@src/features/profiles/presentation/components/RecipientNotice';
 import '@src/features/profiles/presentation/profiles.css';
-import type { MeasurementKind } from '../application/ports';
-import type { WeekSpan } from '../application/seriesRange';
-import { useMeasurementSeries } from '../application/useMeasurementSeries';
-import { useProfileMeasurements } from '../application/useProfileMeasurements';
-import { createMeasurementsRepository } from '../infrastructure/createMeasurementsRepository';
-import { ProfileHealthSections } from './components/ProfileHealthSections';
-import { HealthTrendToolbar } from './components/HealthTrendToolbar';
-import { ProfileHealthHeader } from './components/ProfileHealthHeader';
+import { ProfileHealthContent } from './components/ProfileHealthContent';
 
 const profilesRepository = createProfilesRepository();
-const measurementsRepository = createMeasurementsRepository();
-// Tab "Diễn biến sức khỏe": biểu đồ N tuần (E5-S1-T2) + nền giai đoạn thuốc (E5-S3-T2) và bảng số đo đã duyệt (E2-S6-T1).
+
+// Chặn hiển thị theo tuổi trước khi khởi tạo các truy vấn số đo (BR-049).
 export function ProfileHealthPage({ profileId }: { profileId: string }) {
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(profilesRepository, session.data);
-  const [kind, setKind] = useState<MeasurementKind>('blood_pressure');
-  const [weeks, setWeeks] = useState<WeekSpan>(12);
-  const [medication, setMedication] = useState<string | null>(null);
   const profiles = workspace.profiles.data ?? [];
   const profile = profiles.find((item) => item.id === profileId);
-  const measurements = useProfileMeasurements(measurementsRepository, session.data, profileId, kind, profile);
-  const series = useMeasurementSeries(measurementsRepository, session.data, profileId, kind, weeks, profile);
   useProfileSessionRecovery(workspace.profiles.error);
   if (!session.data) return null;
   const main = session.data.role === 'main';
-  const rows = measurements.data?.pages.flatMap((page) => page.items) ?? [];
+  if (main && profile && !profileShowsVitals(profile))
+    return <Navigate to="/profiles/$profileId/medications" params={{ profileId }} replace />;
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
       {!main ? (
@@ -44,38 +32,7 @@ export function ProfileHealthPage({ profileId }: { profileId: string }) {
           Không tìm thấy hồ sơ này trong gia đình.
         </p>
       ) : (
-        <div className="flex flex-col gap-6">
-          {profile && (
-            <ProfileHealthHeader
-              profile={profile}
-              latest={rows[0] ?? null}
-              actions={
-                <>
-                  <SelfReportedCourseAction profile={profile} session={session.data} />
-                  <StopCourseAction profile={profile} session={session.data} />
-                </>
-              }
-            />
-          )}
-          <HealthTrendToolbar
-            kind={kind}
-            weeks={weeks}
-            onKindChange={setKind}
-            onWeeksChange={setWeeks}
-            profile={profile}
-            session={session.data}
-            onMedicationSaved={setMedication}
-          />
-          <ProfileHealthSections
-            profile={profile}
-            kind={kind}
-            weeks={weeks}
-            series={series}
-            measurements={measurements}
-            medication={medication}
-            onMedicationChange={setMedication}
-          />
-        </div>
+        profile && <ProfileHealthContent key={profile.id} profile={profile} session={session.data} />
       )}
     </ProfileFrame>
   );

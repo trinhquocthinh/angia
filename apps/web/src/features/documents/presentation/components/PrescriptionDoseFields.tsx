@@ -25,7 +25,7 @@ export function PrescriptionDoseFields({ form, index }: DoseFieldsProps) {
   return (
     <div className="@container flex flex-col gap-4">
       <SwitchField
-        className="self-start"
+        className="w-full flex-row-reverse justify-between"
         {...form.register(`items.${index}.externalUse`, {
           onChange: () => void form.trigger(`items.${index}.quantityPerDose`),
         })}

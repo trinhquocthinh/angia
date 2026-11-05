@@ -10,9 +10,11 @@ const statusText: Record<Exclude<MyConsentProfile['consentStatus'], 'withdrawn' 
 export function MyConsentCard({
   profile,
   onWithdraw,
+  onUnlink,
 }: {
   profile: MyConsentProfile | null;
   onWithdraw: () => void;
+  onUnlink: () => void;
 }) {
   if (!profile) return null;
   const { consentStatus, withdrawnAt } = profile;
@@ -38,6 +40,13 @@ export function MyConsentCard({
           Rút đồng thuận
         </button>
       )}
+      <button
+        type="button"
+        className="mt-4 ml-3 inline-flex min-h-[52px] items-center justify-center rounded-xl px-3 py-3 text-sm font-semibold text-[#404945] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
+        onClick={onUnlink}
+      >
+        Gỡ liên kết
+      </button>
     </section>
   );
 }

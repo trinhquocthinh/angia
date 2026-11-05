@@ -17,14 +17,17 @@ const PNG = bytes([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 const WEBP = bytes([...ascii('RIFF'), 1, 2, 3, 4, ...ascii('WEBP')]);
 
 describe('Phân loại tệp tải lên (SPEC-008, BR-011)', () => {
+  it('TC-404: chỉ nhận JPEG theo magic bytes', () => {
+    expect(classifyFile(JPEG)).toEqual({ ok: true, mimeType: 'image/jpeg', extension: 'jpg' });
+  });
+
   it.each([
-    ['JPEG', JPEG, 'image/jpeg', 'jpg'],
-    ['PNG', PNG, 'image/png', 'png'],
-    ['WebP', WEBP, 'image/webp', 'webp'],
-    ['HEIC iPhone', ftyp('heic', 'mif1', 'heic'), 'image/heic', 'heic'],
-    ['HEIF mif1 kèm brand heic', ftyp('mif1', 'mif1', 'heic'), 'image/heic', 'heic'],
-  ])('TC-020/TC-025: nhận diện %s theo magic bytes', (_name, data, mimeType, extension) => {
-    expect(classifyFile(data)).toEqual({ ok: true, mimeType, extension });
+    ['PNG', PNG],
+    ['WebP', WEBP],
+    ['HEIC', ftyp('heic', 'mif1', 'heic')],
+    ['HEIF', ftyp('mif1', 'mif1', 'heic')],
+  ])('TC-404: từ chối %s dù là ảnh', (_name, data) => {
+    expect(classifyFile(data)).toEqual({ ok: false, code: 'ERR_UNSUPPORTED_FILE' });
   });
 
   it.each([
@@ -51,9 +54,9 @@ describe('Phân loại tệp tải lên (SPEC-008, BR-011)', () => {
     expect(classifyFile(JPEG, MAX_FILE_BYTES + 1)).toEqual({ ok: false, code: 'ERR_FILE_TOO_LARGE' });
   });
 
-  it('khóa ảnh gốc theo tiền tố families/<f>/profiles/<p>/documents/<id>/', () => {
-    expect(documentObjectKey({ familyId: 'f', healthProfileId: 'p', documentId: 'd' }, 'heic')).toBe(
-      'families/f/profiles/p/documents/d/original.heic',
+  it('TC-404: khóa ảnh tải lên theo tiền tố families/<f>/profiles/<p>/documents/<id>/', () => {
+    expect(documentObjectKey({ familyId: 'f', healthProfileId: 'p', documentId: 'd' })).toBe(
+      'families/f/profiles/p/documents/d/upload.jpg',
     );
   });
 });

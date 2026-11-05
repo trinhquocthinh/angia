@@ -1,7 +1,7 @@
 import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
 import { createStubReviewDeps } from '@src/shared/test/createStubReviewDeps.js';
 import { createStubDocumentDeps } from '@src/shared/test/createStubDocumentDeps.js';
-import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
+import { createStubProfileLinkDeps } from '@src/shared/test/createStubProfileLinkDeps.js';
 import { createStubProfileDeps } from '@src/shared/test/createStubProfileDeps.js';
 import { randomUUID } from 'node:crypto';
 import pg from 'pg';
@@ -56,7 +56,7 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
     pool = new pg.Pool({ connectionString: db.appUrl });
     const stub = createStubAuthDeps();
     app = createApp({
-      consentInvitations: createStubInvitationDeps(),
+      profileLinks: createStubProfileLinkDeps(),
       documents: createStubDocumentDeps(),
       ...createStubReviewDeps(),
       healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },

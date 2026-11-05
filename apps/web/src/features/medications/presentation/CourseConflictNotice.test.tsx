@@ -9,6 +9,7 @@ const prompt: CourseConflictPrompt = {
     data: {
       type: 'prescription',
       issuedDate: '2026-10-01',
+      revisitDate: null,
       facility: null,
       diagnosis: null,
       items: [
@@ -23,6 +24,7 @@ const prompt: CourseConflictPrompt = {
           longTerm: false,
           note: null,
           totalQuantity: null,
+          minIntervalText: null,
         },
       ],
     },

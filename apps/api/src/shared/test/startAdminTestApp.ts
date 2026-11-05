@@ -1,13 +1,15 @@
+import { createScanQuotaRepository } from '@src/features/scanQuota/infrastructure/createScanQuotaRepository.js';
+import { createAiBillingRepository } from '@src/features/aiBilling/infrastructure/createAiBillingRepository.js';
+import { createAiRoutingRepository } from '@src/features/aiRouting/infrastructure/createAiRoutingRepository.js';
 import { createStubReviewDeps } from './createStubReviewDeps.js';
 import { createStubDocumentDeps } from './createStubDocumentDeps.js';
-import { createStubInvitationDeps } from '@src/shared/test/createStubInvitationDeps.js';
+import { createStubProfileLinkDeps } from '@src/shared/test/createStubProfileLinkDeps.js';
 import { createStubProfileDeps } from '@src/shared/test/createStubProfileDeps.js';
 import { randomUUID } from 'node:crypto';
 import { REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS } from '@angia/contracts';
 import pg from 'pg';
 import { createApp } from '@src/createApp.js';
 import { createAiBudgetRepository } from '@src/features/family/infrastructure/createAiBudgetRepository.js';
-import { createFamilyCapRepository } from '@src/features/family/infrastructure/createFamilyCapRepository.js';
 import { createFamilyAdminRepository } from '@src/features/family/infrastructure/createFamilyAdminRepository.js';
 import { createSessionRepository } from '@src/shared/auth/infrastructure/createSessionRepository.js';
 import { createDatabase, type Database } from '@src/shared/db/createDatabase.js';
@@ -26,21 +28,38 @@ interface MembershipRow {
 }
 
 // App thật trên PostgreSQL Testcontainers (role app NOBYPASSRLS) cho test route /api/admin/*.
-// Ngân sách AI toàn hệ thống (SPEC-013) và trần theo gia đình (SPEC-031) trên DB + pg-boss thật.
+// Ngân sách AI toàn hệ thống (SPEC-013) trên DB + pg-boss thật.
 const budgetAdminDeps = (database: Database, boss: PgBoss) => ({
   aiBudget: {
     repository: createAiBudgetRepository(database, boss),
     defaultMonthlyCapUsd: 5,
     now: () => new Date(),
   },
-  familyCaps: {
-    repository: createFamilyCapRepository(database, boss),
-    defaultFamilyCapUsd: 0.5,
-    now: () => new Date(),
-  },
 });
 
-export async function startAdminTestApp() {
+// Lượt mặc định 0 và dự toán 0.1 USD/lượt, dự phòng 0 giữ phép tính của các ca CP5.3; ca CP5.5 truyền riêng.
+export const TEST_SCAN_QUOTA_DEFAULTS = {
+  monthlyScans: 0,
+  reserveBasisPoints: 0,
+  initialCostPerScanUsd: '0.1',
+};
+const scanQuotaAdminDeps = (
+  database: Database,
+  boss: PgBoss,
+  now: () => Date = () => new Date(),
+  defaults = TEST_SCAN_QUOTA_DEFAULTS,
+) => ({
+  repository: createScanQuotaRepository(database, defaults, boss),
+  now,
+  defaultMonthlyCapUsd: 5,
+});
+
+interface AdminTestOptions {
+  aiBillingNow?: () => Date;
+  scanQuotaNow?: () => Date;
+  scanQuotaDefaults?: typeof TEST_SCAN_QUOTA_DEFAULTS;
+}
+export async function startAdminTestApp(options: AdminTestOptions = {}) {
   const db = await startTestDatabase();
   await runMigrations(db.ownerUrl);
   const owner = new pg.Client({ connectionString: db.ownerUrl });
@@ -52,7 +71,7 @@ export async function startAdminTestApp() {
   await boss.start();
   await boss.createQueue(REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS);
   const app = createApp({
-    consentInvitations: createStubInvitationDeps(),
+    profileLinks: createStubProfileLinkDeps(),
     documents: createStubDocumentDeps(),
     ...createStubReviewDeps(),
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
@@ -63,7 +82,13 @@ export async function startAdminTestApp() {
     },
     profiles: createStubProfileDeps(),
     familyAdmin: createFamilyAdminRepository(database),
+    scanQuota: scanQuotaAdminDeps(database, boss, options.scanQuotaNow, options.scanQuotaDefaults),
     ...budgetAdminDeps(database, boss),
+    aiBilling: {
+      repository: createAiBillingRepository(pool),
+      now: options.aiBillingNow ?? (() => new Date()),
+    },
+    aiRouting: { repository: createAiRoutingRepository(database), now: () => new Date() },
   });
 
   const call = (session: SeededSession, method: string, path: string, body?: unknown) =>
@@ -96,7 +121,7 @@ export async function startAdminTestApp() {
     await db.container.stop();
   };
 
-  return { app, owner, admin, call, seedFamily, membershipOf, stop };
+  return { app, owner, pool, database, admin, call, seedFamily, membershipOf, stop };
 }
 
 export type AdminTestApp = Awaited<ReturnType<typeof startAdminTestApp>>;

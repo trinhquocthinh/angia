@@ -11,14 +11,13 @@ export const sourceDocumentSchema = z
     type: documentTypeSchema.nullable(),
     status: z.enum([
       'uploaded',
-      'awaiting_privacy',
       'extracting',
       'pending_review',
       'approved',
-      'rejected',
       'manual_entry',
       'awaiting_budget',
     ]),
+    hasImage: z.boolean(),
     documentDate: z.iso.date().nullable(),
     mimeType: z.string(),
     sizeBytes: z.number().int(),
@@ -40,10 +39,11 @@ export type UploadBatchResponse = z.infer<typeof uploadBatchResponseSchema>;
 
 const binaryFileSchema = z.file().meta({ type: 'string', format: 'binary' });
 
-// Multipart: trường `files` lặp lại (1–10 tệp), `declaredType` tùy chọn.
+// Multipart: sendToAi là chuỗi JSON mảng boolean theo đúng thứ tự files.
 export const uploadBatchRequestSchema = z
   .object({
     files: z.union([binaryFileSchema, z.array(binaryFileSchema)]),
     declaredType: documentTypeSchema.optional(),
+    sendToAi: z.string().optional(),
   })
   .meta({ id: 'UploadBatchRequest' });

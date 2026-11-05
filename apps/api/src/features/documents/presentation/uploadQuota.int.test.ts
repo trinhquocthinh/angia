@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
 import { vietnamDayBounds } from '@src/features/familyQuota/domain/vietnamDayBounds.js';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { seedQuotaDocument } from '@src/shared/test/seedQuotaDocument.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
@@ -21,9 +21,12 @@ describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () =>
   const household = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Bà' });
+    const created = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Bà',
+    });
     const profileId = ((await created.json()) as HealthProfile).id;
-    await acceptConsentInvitation(t, main, profileId);
+    await confirmConsentByAttestation(t, main, profileId);
     const seed = (doc: Parameters<typeof seedQuotaDocument>[2]) =>
       seedQuotaDocument(t, { familyId, profileId, accountId: main.accountId }, doc);
     return { familyId, main, profileId, seed };
@@ -43,7 +46,7 @@ describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () =>
 
   it('TC-295: hai lô đồng thời sát trần dung lượng → đúng một lô 201, lô kia 413 và không để lại object', async () => {
     const home = await household();
-    await home.seed({ status: 'rejected', sizeBytes: 70 });
+    await home.seed({ status: 'manual_entry', sizeBytes: 70 });
     const objectsBefore = t.objects.size;
     const responses = await Promise.all([
       upload(home.main, home.profileId),
@@ -61,7 +64,7 @@ describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () =>
 
   it('TC-295: lô B phải chờ khóa quota khi lô A đang ghi dở, rồi bị từ chối theo mức dùng đã commit của A', async () => {
     const home = await household();
-    await home.seed({ status: 'rejected', sizeBytes: 70 });
+    await home.seed({ status: 'manual_entry', sizeBytes: 70 });
     const held = t.holdNextPut();
     const first = upload(home.main, home.profileId);
     await held.arrived;
@@ -75,7 +78,7 @@ describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () =>
 
   it('TC-295: hai lô đồng thời sát trần ảnh/ngày → 201 và 429 kèm Retry-After tới 0 giờ giờ VN', async () => {
     const home = await household();
-    for (let i = 0; i < 3; i += 1) await home.seed({ status: 'rejected', sizeBytes: 1 });
+    for (let i = 0; i < 3; i += 1) await home.seed({ status: 'manual_entry', sizeBytes: 1 });
     const responses = await Promise.all([
       upload(home.main, home.profileId),
       upload(home.main, home.profileId),
@@ -92,7 +95,7 @@ describe('Quota tài nguyên gia đình khi tải lô (SPEC-030, BR-043)', () =>
     const home = await household();
     const yesterday = new Date(vietnamDayBounds(new Date()).start.getTime() - 60_000);
     for (let i = 0; i < 4; i += 1)
-      await home.seed({ status: 'rejected', sizeBytes: 1, createdAt: yesterday });
+      await home.seed({ status: 'manual_entry', sizeBytes: 1, createdAt: yesterday });
     expect((await upload(home.main, home.profileId)).status).toBe(201);
   });
 

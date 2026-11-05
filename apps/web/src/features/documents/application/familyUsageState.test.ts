@@ -1,6 +1,7 @@
 import type { FamilyUsage } from '@angia/contracts';
 import { describe, expect, it } from 'vitest';
 import {
+  aiQueueBlockReason,
   formatAiUsage,
   formatStorageUsage,
   remainingUploadSlots,
@@ -21,21 +22,30 @@ describe('TC-302 — trạng thái mức sử dụng của gia đình trên tran
     expect(usageBlockReason(usage({ storage: 1, daily: 99, pending: 9 }))).toBeNull();
   });
 
-  it('nêu lý do khóa theo thứ tự dung lượng → ảnh/ngày → chờ xử lý', () => {
+  it('nêu lý do khóa chọn ảnh theo thứ tự dung lượng → ảnh/ngày', () => {
     expect(usageBlockReason(usage({ storage: 2 * 1024 ** 3, daily: 100, pending: 10 }))).toBe(
       'Gia đình đã dùng hết dung lượng lưu ảnh. Liên hệ quản trị viên để nâng dung lượng; bạn vẫn có thể nhập tay không kèm ảnh.',
     );
     expect(usageBlockReason(usage({ daily: 100, pending: 10 }))).toBe(
       'Hôm nay gia đình đã tải đủ 100 ảnh. Bạn có thể tải tiếp từ 0 giờ ngày mai.',
     );
-    expect(usageBlockReason(usage({ pending: 10 }))).toBe(
-      'Đang có 10 ảnh chờ xử lý. Vui lòng đợi xử lý xong rồi gửi tiếp.',
-    );
   });
 
-  it('số ảnh còn gửi được = min(lượt còn trong ngày, chỗ còn trong hàng đợi), không âm', () => {
-    expect(remainingUploadSlots(usage({ daily: 95, pending: 7 }))).toBe(3);
-    expect(remainingUploadSlots(usage({ daily: 100, pending: 12 }))).toBe(0);
+  it('BR-043: hàng chờ tự động nhận diện đủ không khóa chọn ảnh (ảnh tự nhập không tính)', () => {
+    expect(usageBlockReason(usage({ pending: 10 }))).toBeNull();
+  });
+
+  it('BR-043: khóa gửi tự động nhận diện khi chờ worker + ảnh gửi AI đã che chưa gửi chạm trần', () => {
+    expect(aiQueueBlockReason(usage({ pending: 9 }), 0)).toBeNull();
+    const full =
+      'Hàng chờ tự động nhận diện của gia đình đã đủ 10 ảnh. Bạn vẫn có thể chọn “Tôi tự nhập”, hoặc đợi xử lý xong rồi gửi tiếp.';
+    expect(aiQueueBlockReason(usage({ pending: 9 }), 1)).toBe(full);
+    expect(aiQueueBlockReason(usage({ pending: 10 }), 0)).toBe(full);
+  });
+
+  it('số ảnh còn gửi được hôm nay = lượt còn trong ngày, không âm', () => {
+    expect(remainingUploadSlots(usage({ daily: 95, pending: 10 }))).toBe(5);
+    expect(remainingUploadSlots(usage({ daily: 101 }))).toBe(0);
   });
 
   it('định dạng dung lượng GiB kiểu Việt Nam, một chữ số thập phân', () => {

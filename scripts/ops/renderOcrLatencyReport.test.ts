@@ -16,17 +16,20 @@ const render = () =>
     generatedAt: '2026-10-19T08:00:00.000Z',
     since: '2026-10-18T00:00:00.000Z',
     verdict: assessOcrLatency(samples),
-    preparation: summarizeDurations([800, 1_200]),
+    sanitization: summarizeDurations([800, 1_200]),
     samples,
   });
 
 describe('renderOcrLatencyReport', () => {
-  it('TC-095 ghi kết luận, trung vị theo giây và định nghĩa khoảng đo', () => {
+  it('TC-439 ghi kết luận và khoảng đo từ làm sạch tới OCR, không còn tên job cũ', () => {
     const report = render();
     expect(report).toContain('**ĐẠT**');
     expect(report).toContain('| Có bản trích xuất (pending_review) | 20 | 7.0 s |');
-    expect(report).toContain('duyệt riêng tư');
-    expect(report).toContain('| Chuẩn bị ảnh OCR (prepare-ocr-image) | 2 | 1.0 s |');
+    expect(report).toContain('`created_on` của job `sanitize-document-image`');
+    expect(report).toContain('`completed_on` của job `extract-document` đầu tiên');
+    expect(report).toContain('| Thời gian làm sạch (sanitize-document-image) | 2 | 1.0 s |');
+    expect(report).toContain('Thử lại OCR | Chờ hàng đợi OCR');
+    expect(report).not.toContain('prepare-ocr-image');
   });
 
   it('TC-095 bảng chi tiết chỉ hiện 8 ký tự cuối mã chứng từ (UUIDv7 trùng phần đầu), kèm số lần thử lại', () => {
@@ -41,11 +44,11 @@ describe('renderOcrLatencyReport', () => {
       generatedAt: '2026-10-19T08:00:00.000Z',
       since: '2026-10-18T00:00:00.000Z',
       verdict: assessOcrLatency([]),
-      preparation: summarizeDurations([]),
+      sanitization: summarizeDurations([]),
       samples: [],
     });
     expect(report).toContain('**KHÔNG ĐẠT**');
     expect(report).toContain('- Mới có 0/20 chứng từ có bản trích xuất');
-    expect(report).toContain('| Chuẩn bị ảnh OCR (prepare-ocr-image) | 0 | — |');
+    expect(report).toContain('| Thời gian làm sạch (sanitize-document-image) | 0 | — |');
   });
 });

@@ -3,7 +3,7 @@ import { assessReminderTiming } from './assessReminderTiming.js';
 import { readReminderRows } from './readReminderRows.js';
 import { renderReminderAuditReport } from './renderReminderAuditReport.js';
 
-// E9-S3-T3/TC-096: đối soát lời nhắc thuốc 7 ngày trên SIT/Production từ reminders + reminder_deliveries.
+// TC-096/480: đối soát cả nhắc thuốc và tái khám 7 ngày trên SIT/Production, tách loại và gộp.
 // Cách dùng: `yarn ops:reminder-audit [--since ISO] [--until ISO]`, kết nối qua REMINDER_AUDIT_DATABASE_URL
 // (role app của môi trường; script đặt phiên chỉ đọc). Mặc định `until` lùi 60 phút để mọi lời nhắc
 // đã hết cửa sổ gửi. Mã thoát 1 khi chưa đạt.

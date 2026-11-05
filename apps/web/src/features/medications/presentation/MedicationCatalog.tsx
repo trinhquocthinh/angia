@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
-import type { CurrentMedications } from '@angia/contracts';
+import type { CurrentMedications, CurrentMedicationCourse } from '@angia/contracts';
+import type { ReactNode } from 'react';
 import { groupMedicationsBySlot } from '../application/groupMedicationsBySlot';
 import { MedicationSlotSection } from './MedicationSlotSection';
 
@@ -8,10 +9,20 @@ type Props = {
   loading: boolean;
   error: boolean;
   retry: () => void;
+  /** Tự xem (SPEC-042): trạng thái rỗng không mời ghi dữ liệu. */
+  readOnly?: boolean;
+  renderCourseActions?: (course: CurrentMedicationCourse) => ReactNode;
 };
 
 // Design §6 "Danh mục thuốc": nhóm theo buổi, 2 cột ở desktop; khung xương thẻ thuốc, thẻ lỗi, trạng thái rỗng.
-export function MedicationCatalog({ data, loading, error, retry }: Props) {
+export function MedicationCatalog({
+  data,
+  loading,
+  error,
+  retry,
+  readOnly = false,
+  renderCourseActions,
+}: Props) {
   if (loading)
     return (
       <div role="status" aria-label="Đang tải danh mục thuốc" className="grid gap-4 md:grid-cols-2">
@@ -38,20 +49,24 @@ export function MedicationCatalog({ data, loading, error, retry }: Props) {
     return (
       <div className="flex flex-col items-center gap-3 rounded-[20px] border-2 border-dashed border-[#d9e5e4] bg-white px-6 py-12 text-center">
         <p className="text-sm font-semibold text-[#131d1d]">
-          Chưa có thuốc. Hãy tải đơn thuốc hoặc thêm thuốc bổ, vitamin.
+          {readOnly
+            ? 'Chưa có thuốc đang dùng hôm nay.'
+            : 'Chưa có thuốc. Hãy tải đơn thuốc hoặc thêm thuốc bổ, vitamin.'}
         </p>
-        <Link
-          to="/upload"
-          className="min-h-11 content-center rounded-full bg-[#004135] px-5 text-sm font-semibold text-white"
-        >
-          Tải ảnh đơn thuốc
-        </Link>
+        {!readOnly && (
+          <Link
+            to="/upload"
+            className="min-h-11 content-center rounded-full bg-[#004135] px-5 text-sm font-semibold text-white"
+          >
+            Tải ảnh đơn thuốc
+          </Link>
+        )}
       </div>
     );
   return (
     <div className="grid items-start gap-4 md:grid-cols-2">
       {groups.map((group) => (
-        <MedicationSlotSection key={group.slot} group={group} today={data.today} />
+        <MedicationSlotSection key={group.slot} {...{ group, today: data.today, renderCourseActions }} />
       ))}
     </div>
   );

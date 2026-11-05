@@ -13,14 +13,6 @@ export type { CreateFamilyRequest, Family } from './family/familySchema.js';
 export { aiBudgetSchema, updateAiBudgetRequestSchema } from './family/aiBudgetSchemas.js';
 export type { AiBudget, UpdateAiBudgetRequest } from './family/aiBudgetSchemas.js';
 export { familyUsageSchema } from './family/familyUsageSchema.js';
-export {
-  familyExtractionCapSchema,
-  updateFamilyExtractionCapRequestSchema,
-} from './family/familyExtractionCapSchemas.js';
-export type {
-  FamilyExtractionCap,
-  UpdateFamilyExtractionCapRequest,
-} from './family/familyExtractionCapSchemas.js';
 export type { FamilyUsage } from './family/familyUsageSchema.js';
 export { budgetMonth } from './budget/budgetMonth.js';
 export {
@@ -39,22 +31,30 @@ export {
 export type { PurgeProfileObjectsJob } from './jobs/purgeProfileObjectsJob.js';
 export { healthResponseSchema } from './health/healthResponseSchema.js';
 export type { HealthResponse } from './health/healthResponseSchema.js';
+export { consentConfirmationSchema } from './profiles/consentConfirmationSchema.js';
+export type { ConsentConfirmation } from './profiles/consentConfirmationSchema.js';
+export { profileListItemSchema } from './profiles/profileListItemSchema.js';
+export type { ProfileListItem } from './profiles/profileListItemSchema.js';
 export { healthProfileSchema } from './profiles/healthProfileSchema.js';
 export type { HealthProfile } from './profiles/healthProfileSchema.js';
 export {
   createHealthProfileRequestSchema,
+  updateHealthProfileRequestSchema,
   confirmConsentRequestSchema,
   deleteHealthProfileRequestSchema,
 } from './profiles/profileRequests.js';
 export type {
   CreateHealthProfileRequest,
+  UpdateHealthProfileRequest,
   ConfirmConsentRequest,
   DeleteHealthProfileRequest,
 } from './profiles/profileRequests.js';
+export { CHILD_AGE_LIMIT, showsVitals } from './profiles/showsVitals.js';
 export { consentConfirmationResponseSchema } from './profiles/consentConfirmationResponseSchema.js';
 export type { ConsentConfirmationResponse } from './profiles/consentConfirmationResponseSchema.js';
 export { linkableAccountSchema } from './profiles/linkableAccountSchema.js';
 export type { LinkableAccount } from './profiles/linkableAccountSchema.js';
+export * from './profiles/profileLinkSchemas.js';
 export {
   consentInvitationCreateRequestSchema,
   consentInvitationCreatedSchema,
@@ -128,31 +128,28 @@ export {
   extractDocumentJobSchema,
 } from './jobs/extractDocumentJob.js';
 export type { ExtractDocumentJob } from './jobs/extractDocumentJob.js';
+export { privacyRectangleSchema, privacyEditsSchema } from './documents/privacySchemas.js';
+export type { PrivacyRectangle, PrivacyEdits } from './documents/privacySchemas.js';
+
 export {
-  CONVERT_HEIC_QUEUE,
-  CONVERT_HEIC_QUEUE_OPTIONS,
-  convertHeicJobSchema,
-} from './jobs/convertHeicJob.js';
-export type { ConvertHeicJob } from './jobs/convertHeicJob.js';
+  deleteDocumentRequestSchema,
+  documentDeletionImpactSchema,
+} from './documents/documentDeletionSchemas.js';
+export type { DeleteDocumentRequest, DocumentDeletionImpact } from './documents/documentDeletionSchemas.js';
+
 export {
-  privacyRectangleSchema,
-  createPrivacyDraftRequestSchema,
-  approvePrivacyRequestSchema,
-  privacyDraftSchema,
-} from './documents/privacySchemas.js';
-export type {
-  PrivacyRectangle,
-  PrivacyEdits,
-  CreatePrivacyDraftRequest,
-  ApprovePrivacyRequest,
-  PrivacyDraft,
-} from './documents/privacySchemas.js';
+  SANITIZE_DOCUMENT_IMAGE_QUEUE,
+  SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS,
+  sanitizeDocumentImageJobSchema,
+} from './jobs/sanitizeDocumentImageJob.js';
+export type { SanitizeDocumentImageJob } from './jobs/sanitizeDocumentImageJob.js';
+
 export {
-  PREPARE_OCR_IMAGE_QUEUE,
-  PREPARE_OCR_IMAGE_QUEUE_OPTIONS,
-  prepareOcrImageJobSchema,
-} from './jobs/prepareOcrImageJob.js';
-export type { PrepareOcrImageJob } from './jobs/prepareOcrImageJob.js';
+  PURGE_PENDING_OBJECTS_QUEUE,
+  PURGE_PENDING_OBJECTS_QUEUE_OPTIONS,
+  purgePendingObjectsJobSchema,
+} from './jobs/purgePendingObjectsJob.js';
+export type { PurgePendingObjectsJob } from './jobs/purgePendingObjectsJob.js';
 export {
   createSelfReportedCourseRequestSchema,
   medicationCourseSchema,
@@ -175,6 +172,8 @@ export {
   type CurrentMedicationCourse,
   type CurrentMedications,
 } from './medications/currentMedicationSchemas.js';
+export * from './medications/asNeededDoseSchemas.js';
+export * from './measurements/temperatureSchemas.js';
 export {
   adherencePeriodListSchema,
   adherencePeriodSchema,
@@ -200,6 +199,13 @@ export type {
   SetReminderRecipientsRequest,
 } from './reminders/reminderRecipientSchemas.js';
 export { myReminderSchema } from './reminders/myReminderSchemas.js';
+export * from './reminders/doseConfirmationSchemas.js';
+export {
+  selfProfileSchema,
+  selfReminderListSchema,
+  selfReminderQuerySchema,
+} from './profiles/selfProfileSchemas.js';
+export type { SelfProfile, SelfReminder } from './profiles/selfProfileSchemas.js';
 export type { MyReminder } from './reminders/myReminderSchemas.js';
 export {
   documentEntryPageSchema,
@@ -221,3 +227,34 @@ export type { VisitSummary } from './visitSummary/visitSummarySchemas.js';
 export { pushSubscriptionSchema, pushConfigSchema } from './push/pushSchemas.js';
 export { myConsentSchema, myConsentWithdrawnSchema } from './profiles/myConsentSchemas.js';
 export type { MyConsent, MyConsentWithdrawn } from './profiles/myConsentSchemas.js';
+
+export { OPENROUTER_OCR_MODELS } from './aiRouting/aiModelCatalog.js';
+export { DEFAULT_AI_ROUTING_SETTINGS } from './aiRouting/aiRoutingDefaults.js';
+export {
+  aiRoutingSettingsSchema,
+  aiRoutingViewSchema,
+  updateAiRoutingRequestSchema,
+} from './aiRouting/aiRoutingSchemas.js';
+export type {
+  AiRoutingSettings,
+  AiRoutingView,
+  UpdateAiRoutingRequest,
+} from './aiRouting/aiRoutingSchemas.js';
+export { aiBillingViewSchema } from './aiBilling/aiBillingSchema.js';
+export type { AiBillingView } from './aiBilling/aiBillingSchema.js';
+
+export * from './scanQuota/scanQuotaSchemas.js';
+export { revisitQuerySchema, setRevisitDateSchema, revisitListSchema } from './documents/revisitSchemas.js';
+export type { RevisitList } from './documents/revisitSchemas.js';
+
+export { myRevisitReminderSchema } from './reminders/myRevisitReminderSchemas.js';
+export type { MyRevisitReminder } from './reminders/myRevisitReminderSchemas.js';
+
+export { prescriptionDiffSchema } from './prescriptions/prescriptionDiffSchema.js';
+export type { PrescriptionDiff } from './prescriptions/prescriptionDiffSchema.js';
+export {
+  prescriptionListItemSchema,
+  prescriptionDetailSchema,
+} from './prescriptions/prescriptionChainSchemas.js';
+export type { PrescriptionListItem, PrescriptionDetail } from './prescriptions/prescriptionChainSchemas.js';
+export * from './timeline/timelineSchemas.js';

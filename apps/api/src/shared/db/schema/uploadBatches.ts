@@ -1,6 +1,6 @@
 import { index, pgTable, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
-import { createdAtColumn, familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
+import { createdAtColumn, familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
 import { healthProfiles } from './healthProfiles.js';
 
 export const uploadBatches = pgTable(
@@ -18,6 +18,6 @@ export const uploadBatches = pgTable(
   },
   (table) => [
     index('upload_batches_health_profile_id_idx').on(table.healthProfileId),
-    familyIsolationPolicy(),
+    selfIsolationPolicy('health_profile_id'),
   ],
 );

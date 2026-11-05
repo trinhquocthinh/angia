@@ -7,6 +7,13 @@ const D = '0199a000-0000-7000-8000-000000000003';
 const U = '0199a000-0000-7000-8000-000000000004';
 const base = `families/${F}/profiles/${P}/documents/${D}`;
 
+it('TC-423: nhận JPEG tải lên và ảnh sạch, chỉ nhận UUID và đuôi chữ thường', () => {
+  expect(classifyObjectKey(`${base}/upload.jpg`, F)).toBe('image');
+  expect(classifyObjectKey(`${base}/images/${U}.jpg`, F)).toBe('image');
+  for (const key of [`${base}/images/image.jpg`, `${base}/upload.JPG`, `${base}/images/${U}.png`])
+    expect(classifyObjectKey(key, F)).toBe('unknown');
+});
+
 it('TC-312: nhận đúng ảnh gốc, preview WebP và PNG OCR của gia đình', () => {
   for (const ext of ['jpg', 'png', 'webp', 'heic'])
     expect(classifyObjectKey(`${base}/original.${ext}`, F)).toBe('original');

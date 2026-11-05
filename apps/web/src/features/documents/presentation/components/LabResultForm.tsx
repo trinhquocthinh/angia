@@ -14,6 +14,7 @@ import { summarizeRowErrors } from '../../application/rowErrors';
 import { AddRowButton } from './AddRowButton';
 import { LabResultGeneralFields } from './LabResultGeneralFields';
 import { LabResultItemCard } from './LabResultItemCard';
+import { ReviewSectionTitle } from './ReviewSectionTitle';
 import { ReviewSubmitBar } from './ReviewSubmitBar';
 import { RowErrorSummary } from './RowErrorSummary';
 
@@ -41,14 +42,17 @@ export function LabResultForm({ payload, manual = false, pending, error, onSubmi
   );
   return (
     <form noValidate onSubmit={(event) => void submit(event)} className="flex flex-col gap-6">
-      <LabResultGeneralFields form={form} aiDate={manual || Boolean(payload?.resultDate)} />
-      <section
-        aria-labelledby="lab-items-title"
-        className="flex flex-col gap-4 rounded-[20px] bg-white p-5 lg:p-6"
-      >
-        <h2 id="lab-items-title" className="text-xs font-semibold uppercase tracking-wider text-[#286958]">
-          Danh sách chỉ số ({items.fields.length} chỉ số)
-        </h2>
+      <LabResultGeneralFields
+        form={form}
+        aiDate={manual || Boolean(payload?.resultDate)}
+        autoRead={Boolean(payload) && !manual}
+      />
+      <section aria-labelledby="lab-items-title" className="flex flex-col gap-4">
+        <ReviewSectionTitle
+          id="lab-items-title"
+          title="Danh sách chỉ số"
+          count={`${items.fields.length} chỉ số`}
+        />
         {payload === null && !manual && (
           <p className="text-sm text-[#55615f]">Chưa có dữ liệu tự động nhận diện, vui lòng nhập theo ảnh.</p>
         )}

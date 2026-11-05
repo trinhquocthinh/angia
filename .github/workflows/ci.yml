@@ -36,6 +36,8 @@ jobs:
       - name: Hợp đồng OpenAPI khớp với mã đã commit
         run: yarn check:api
       - run: yarn typecheck
+      - name: Thu thập đủ bộ Playwright (không đăng nhập hoặc gọi SIT)
+        run: yarn test:e2e --list
       - run: yarn lint
       - run: yarn format:check
       - run: yarn dup

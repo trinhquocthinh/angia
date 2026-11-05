@@ -2,6 +2,8 @@ import type { DailyReminder, DailySlot, ProfileSnapshot } from '../domain/DailyR
 import type { FamilyAccount } from '@src/shared/domain/FamilyAccount.js';
 
 export interface ReminderFamilyStore {
+  /** Sinh mốc tái khám của ngày D, không phụ thuộc người nhận nhắc thuốc. */
+  generateRevisitReminders(date: string): Promise<{ created: number; existing: number }>;
   listFamilyAccounts(): Promise<FamilyAccount[]>;
   /** Đợt thuốc chỉ gồm đợt còn hiệu lực ở ngày date. */
   listProfiles(date: string): Promise<ProfileSnapshot[]>;

@@ -28,7 +28,12 @@ function repository(): ProfilesRepository {
     list: vi.fn(),
     linkableAccounts: vi.fn(),
     create: vi.fn(),
-    createInvitation: vi.fn(async () => ({ token: 'raw-secret', expiresAt: '2026-10-13T00:00:00Z' })),
+    update: vi.fn(),
+    confirmConsent: vi.fn(),
+    createInvitation: vi.fn(async () => ({
+      url: 'https://app/link-invite#token=raw-secret',
+      expiresAt: '2026-10-13T00:00:00Z',
+    })),
     revokeInvitation: vi.fn(async () => undefined),
     remove: vi.fn(async () => undefined),
     logout: vi.fn(),
@@ -77,7 +82,7 @@ describe('TC-106 — Main quản lý lời mời không cache raw token', () => 
     });
     repo.createInvitation = vi.fn(async () => {
       await wait;
-      return { token: 'raw-secret', expiresAt: '2026-10-13T00:00:00Z' };
+      return { url: 'https://app/link-invite#token=raw-secret', expiresAt: '2026-10-13T00:00:00Z' };
     });
     const manager = mount(client, repo);
     expect(repo.createInvitation).not.toHaveBeenCalled();

@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { check, date, foreignKey, index, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
-import { createdAtColumn, familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
+import { createdAtColumn, familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
 import { healthProfiles } from './healthProfiles.js';
 
 // BR-031/032. Ràng buộc loại trừ chống chồng lấn (btree_gist, TC-089) drizzle-kit không mô tả được:
@@ -35,6 +35,6 @@ export const adherencePeriods = pgTable(
     ),
     check('adherence_periods_status_valid', sql`${t.status} IN ('taking', 'stopped')`),
     check('adherence_periods_dates_valid', sql`${t.toDate} IS NULL OR ${t.toDate} >= ${t.fromDate}`),
-    familyIsolationPolicy(),
+    selfIsolationPolicy('health_profile_id'),
   ],
 );

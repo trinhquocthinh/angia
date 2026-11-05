@@ -17,6 +17,7 @@ const item = {
 const expected: ExtractionPayload = {
   type: 'prescription',
   issuedDate: '2026-10-01',
+  revisitDate: null,
   facility: 'Bệnh viện Đa khoa Tỉnh',
   diagnosis: null,
   items: [item],
@@ -26,6 +27,10 @@ const expected: ExtractionPayload = {
 const FIELDS_PER_ONE_ITEM = 10;
 
 describe('scoreExtraction', () => {
+  it('TC-573: chưa chấm ngày tái khám khi bộ đáp án golden chưa gán nhãn', () => {
+    const actual = { ...expected, revisitDate: '2026-10-31' };
+    expect(scoreExtraction(expected, actual)).toMatchObject({ correct: 10, total: FIELDS_PER_ONE_ITEM });
+  });
   it('chấm đủ điểm khi khớp sau chuẩn hóa', () => {
     const actual = { ...expected, facility: 'BỆNH VIỆN  ĐA KHOA TỈNH' };
     expect(scoreExtraction(expected, actual)).toEqual({
