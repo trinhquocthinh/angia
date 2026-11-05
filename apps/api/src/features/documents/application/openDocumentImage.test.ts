@@ -62,3 +62,18 @@ describe('TC-408: đọc ảnh chứng từ duy nhất', () => {
     });
   });
 });
+
+// Hồi quy: migration 0033 giữ PNG OCR đã duyệt, không đổi byte/hash.
+it('Hồi quy migration 0033: ảnh OCR PNG legacy trả đúng MIME và nguyên byte', async () => {
+  const uuid = '11111111-1111-4111-8111-111111111111';
+  const imageKey = `families/${uuid}/documents/${uuid}/ocr.png`;
+  const memory = createMemoryReviewRepository([reviewDocument({ imageKey })]);
+  const bytes = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
+  const reader: ObjectReader = {
+    get: async () => ({ body: new Blob([bytes]).stream(), contentType: 'application/octet-stream' }),
+  };
+  const result = await openDocumentImage(memory.repository, reader, request);
+  expect(result).toMatchObject({ ok: true, value: { contentType: 'image/png' } });
+  if (!result.ok) throw new Error('Không đọc được ảnh');
+  expect(new Uint8Array(await new Response(result.value.body).arrayBuffer())).toEqual(bytes);
+});
