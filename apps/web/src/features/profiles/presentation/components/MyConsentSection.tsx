@@ -5,7 +5,7 @@ import { useMyConsent } from '../../application/useMyConsent';
 import { MyConsentCard } from './MyConsentCard';
 import { UnlinkProfileDialog } from './UnlinkProfileDialog';
 import { WithdrawConsentDialog } from './WithdrawConsentDialog';
-// Người chăm sóc chính rút từ thẻ hồ sơ của mình (showCard=false); thành viên không có lưới hồ sơ nên vẫn thấy thẻ riêng.
+// Thẻ hồ sơ liên kết dùng cho cả main/member để chính chủ luôn có lối tự gỡ liên kết.
 export function MyConsentSection({
   repository,
   session,
