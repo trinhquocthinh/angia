@@ -16,6 +16,8 @@ const base: CurrentMedicationCourse = {
   endDate: null,
   status: 'active',
   prescriptionIssuedDate: null,
+  lastDoseAt: null,
+  interval: null,
 };
 const history: CurrentMedicationCourse[] = [
   base,

@@ -2,8 +2,14 @@ import { currentVietnamYear } from '../application/currentVietnamYear';
 import { ProfileRequestError } from '../application/ProfileRequestError';
 import { useRef, useState } from 'react';
 import type { ProfileRequest } from '../application/ports';
+import { readConsentDraft, type ConsentDraft } from '../application/readConsentDraft';
 import { readProfileDraft } from '../application/readProfileDraft';
-export function useProfileForm(pending: boolean, onSave: (body: ProfileRequest) => Promise<unknown>) {
+export function useProfileForm(
+  pending: boolean,
+  onSave: (body: ProfileRequest) => Promise<unknown>,
+  currentAccountId: string,
+  consentDraft: ConsentDraft,
+) {
   const [errors, setErrors] = useState<{
     displayName?: string;
     birthYear?: string;
@@ -15,6 +21,13 @@ export function useProfileForm(pending: boolean, onSave: (body: ProfileRequest) 
     if (pending || sending.current) return;
     const data = new FormData(form);
     const year = currentVietnamYear();
+    const linkedAccountId = String(data.get('linkedAccountId') ?? '');
+    const mode = !linkedAccountId
+      ? 'attestation'
+      : linkedAccountId === currentAccountId
+        ? 'self'
+        : 'invitation';
+    const consent = readConsentDraft(consentDraft, mode);
     const draft = readProfileDraft(
       String(data.get('displayName') ?? ''),
       String(data.get('birthYear') ?? ''),
@@ -23,10 +36,13 @@ export function useProfileForm(pending: boolean, onSave: (body: ProfileRequest) 
     );
     setErrors(draft.errors);
     setError('');
-    if (!draft.body) return;
+    if (!draft.body || consent.body === null) {
+      setError(consent.error);
+      return;
+    }
     sending.current = true;
     try {
-      await onSave(draft.body);
+      await onSave({ ...draft.body, ...(consent.body ? { consent: consent.body } : {}) });
     } catch (cause) {
       if (
         cause instanceof ProfileRequestError &&

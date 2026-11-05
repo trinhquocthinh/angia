@@ -1,8 +1,8 @@
-import { createHash, randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile, SourceDocumentPage } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { manualReading } from '@src/shared/test/healthDataFixtures.js';
+import { linkAccountToProfile } from '@src/shared/test/profileConsentFixture.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { SEEDED_MEDICATIONS, seedReminder } from '@src/shared/test/seedReminder.js';
@@ -17,7 +17,6 @@ const lab = {
   items: [{ testName: 'HbA1c-Zeta', value: '7,2', unit: '%', referenceRange: null }],
 };
 const profiles = '/api/health-profiles';
-const png = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 7]);
 
 describe('Gate đồng thuận sau khi rút: đọc, ảnh, duyệt (F07 §4.4)', () => {
   let t: ProfileTestApp;
@@ -29,16 +28,17 @@ describe('Gate đồng thuận sau khi rút: đọc, ảnh, duyệt (F07 §4.4)'
   });
 
   const createProfile = async (main: SeededSession, body: object) =>
-    (await (await t.call(main, 'POST', profiles, body)).json()) as HealthProfile;
+    (await (await t.call(main, 'POST', profiles, { birthYear: 1950, ...body })).json()) as HealthProfile;
 
   // Hồ sơ Bà Tư đã đồng thuận kèm đủ dữ liệu, liên kết tài khoản Bà; hồ sơ đối chứng của cùng gia đình.
   const fixture = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId, 'main', 'Bố');
     const grandma = await t.session(familyId, 'member', 'Bà');
-    const profile = await createProfile(main, { displayName: 'Bà Tư', linkedAccountId: grandma.accountId });
+    const profile = await createProfile(main, { displayName: 'Bà Tư' });
     const control = await createProfile(main, { displayName: 'Ông Năm' });
-    for (const p of [profile, control]) await acceptConsentInvitation(t, main, p.id);
+    await linkAccountToProfile(t, main, grandma, profile.id);
+    await confirmConsentByAttestation(t, main, control.id);
     const base = `${profiles}/${profile.id}`;
     const records = (type: string, data: object) =>
       t.call(main, 'POST', `${base}/manual-records`, { type, data });
@@ -51,26 +51,13 @@ describe('Gate đồng thuận sau khi rút: đọc, ảnh, duyệt (F07 §4.4)'
     const pending = await seedPendingDocument(t, owner, reading);
     const controlOwner = { ...owner, profileId: control.id };
     const controlDoc = await seedPendingDocument(t, controlOwner, reading);
-    const privacy = await seedPrivacyDocument(owner);
     const reminderId = await seedReminder(t.owner, familyId, profile.id, grandma.accountId);
     // Người nhận seed bằng role owner (route PUT dành cho hồ sơ không liên kết); đảm bảo dữ liệu thật sự có để rò.
     const recipients = await t.call(main, 'GET', `${base}/reminder-recipients`);
     expect(await recipients.text()).toContain('Bà');
     const slots = await t.call(main, 'GET', `${base}/dose-slots`);
     expect(await slots.text()).toContain('07:00');
-    return { familyId, main, grandma, profile, control, base, pending, controlDoc, privacy, reminderId };
-  };
-  const seedPrivacyDocument = async (owner: { familyId: string; profileId: string; accountId: string }) => {
-    const { documentId } = await seedPendingDocument(t, owner, reading);
-    const draftId = randomUUID();
-    const key = `families/${owner.familyId}/profiles/${owner.profileId}/documents/${documentId}/ocr/${draftId}/${randomUUID()}.png`;
-    t.objects.set(key, { body: png, contentType: 'image/png' });
-    await t.owner.query(
-      `UPDATE source_documents SET status='awaiting_privacy', privacy_draft_id=$1,
-         privacy_draft_status='ready', ocr_image_key=$2, ocr_image_sha256=$4 WHERE id=$3`,
-      [draftId, key, documentId, createHash('sha256').update(png).digest('hex')],
-    );
-    return { documentId, draftId };
+    return { familyId, main, grandma, profile, control, base, pending, controlDoc, reminderId };
   };
   const withdraw = async (f: Awaited<ReturnType<typeof fixture>>) =>
     expect((await t.call(f.grandma, 'POST', '/api/me/consent/withdraw', {})).status).toBe(200);
@@ -86,7 +73,6 @@ describe('Gate đồng thuận sau khi rút: đọc, ảnh, duyệt (F07 §4.4)'
     const f = await fixture();
     await withdraw(f);
     const doc = `/api/source-documents/${f.pending.documentId}`;
-    const privacyDoc = `/api/source-documents/${f.privacy.documentId}`;
     const reads = [
       `${f.base}/measurements`,
       `${f.base}/measurements/series?kind=blood_pressure&from=2026-10-01&to=2026-10-31`,
@@ -97,8 +83,6 @@ describe('Gate đồng thuận sau khi rút: đọc, ảnh, duyệt (F07 §4.4)'
       `${doc}/review`,
       `${doc}/image`,
       `${doc}/image?variant=original`,
-      `${privacyDoc}/privacy-draft`,
-      `${privacyDoc}/privacy-drafts/${f.privacy.draftId}/image`,
     ];
     for (const path of reads) await expectBlocked(await t.call(f.main, 'GET', path));
     const approve = await t.call(f.main, 'POST', `${doc}/approve`, { type: 'device_reading', data: reading });
@@ -144,11 +128,11 @@ describe('Gate đồng thuận sau khi rút: đọc, ảnh, duyệt (F07 §4.4)'
     expect(removed.status).toBe(204);
   });
 
-  it('TC-380: gửi lại lời mời với attestation vẫn 201 để đồng thuận lại (spec §4.5)', async () => {
+  it('TC-380: hồ sơ đã rút còn liên kết tài khoản thì không tạo link mới (SPEC-040)', async () => {
     const f = await fixture();
     await withdraw(f);
-    const invited = await t.call(f.main, 'POST', `${f.base}/consent-invitations`, { attestation: true });
-    expect(invited.status).toBe(201);
+    const invited = await t.call(f.main, 'POST', `${f.base}/link-invitations`, {});
+    expect(invited.status).toBe(409);
   });
 
   it('TC-380: lời nhắc đã sinh trước khi rút → người nhận GET /api/me/reminders/:id nhận 404', async () => {

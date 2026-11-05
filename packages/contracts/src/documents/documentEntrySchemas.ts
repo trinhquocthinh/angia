@@ -22,7 +22,7 @@ export const documentEntrySchema = z
     entryDate: z.iso.date(),
     dateKnown: z.boolean(),
     createdAt: z.iso.datetime(),
-    hasOcrImage: z.boolean(),
+    hasImage: z.boolean(),
     records: z.object({
       prescription: prescriptionSchema.nullable(),
       labResults: z.array(labResultSchema),

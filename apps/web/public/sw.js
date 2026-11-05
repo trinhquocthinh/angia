@@ -13,12 +13,17 @@ self.addEventListener('push', (event) => {
       ? payload.reminderId
       : null;
   const test = payload.type === 'test';
+  const revisit = payload.type === 'revisit-reminder';
   event.waitUntil(
     self.registration.showNotification('AN GIA', {
-      body: test ? 'Đây là thông báo thử từ AN GIA.' : 'Đến giờ dùng thuốc',
+      body: test
+        ? 'Đây là thông báo thử từ AN GIA.'
+        : revisit
+          ? 'Sắp đến lịch tái khám'
+          : 'Đến giờ dùng thuốc',
       icon: '/icon-192.png',
       tag: reminderId ? `angia-reminder-${reminderId}` : 'angia-push-test',
-      data: { reminderId, test },
+      data: { reminderId, test, revisit },
     }),
   );
 });
@@ -30,6 +35,6 @@ self.addEventListener('notificationclick', (event) => {
     /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(data.reminderId)
       ? data.reminderId
       : null;
-  const path = id ? `/reminders/${id}` : '/notifications';
+  const path = id ? `${data.revisit === true ? '/revisit-reminders' : '/reminders'}/${id}` : '/notifications';
   event.waitUntil(self.clients.openWindow(new URL(path, self.location.origin).href));
 });

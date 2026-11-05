@@ -5,10 +5,18 @@ import { runUpload } from './runUpload';
 import type { UploadAction, UploadItem } from './uploadQueue';
 import { isSessionError, uploadErrorMessage } from './uploadErrorMessage';
 
-const item = (id: string, name: string, upload: File | null = null): UploadItem => ({
+const item = (
+  id: string,
+  name: string,
+  upload: File | null = { name: `${id}.jpg` } as File,
+  sendToAi = false,
+): UploadItem => ({
   id,
   file: { name } as File,
   upload,
+  edits: null,
+  sendToAi,
+  thumbnailUrl: null,
   profileId: 'me',
   declaredType: 'prescription',
   status: 'queued',
@@ -18,8 +26,8 @@ const item = (id: string, name: string, upload: File | null = null): UploadItem 
   error: null,
   previewUrl: null,
 });
-const compressed = { name: 'IMG_1.jpg' } as File;
-const items = [item('i1', 'IMG_1.HEIC', compressed)];
+const exported = { name: 'i1.jpg' } as File;
+const items = [item('i1', 'IMG_1.HEIC', exported, true)];
 const sleeps: number[] = [];
 const timing = {
   sleep: async (ms: number) => {
@@ -40,7 +48,7 @@ const documents = (...docIds: string[]) =>
 const batch: UploadBatchResponse = { id: 'b', documents: documents('doc-1'), rejectedFiles: [] };
 
 describe('Gửi một lô ảnh và cập nhật trạng thái từng ô', () => {
-  it('TC-020: gửi bản đã nén, đúng hồ sơ/loại/CSRF, báo tiến trình rồi xong', async () => {
+  it('TC-020/TC-432: gửi bản JPEG đã che kèm sendToAi, đúng hồ sơ/loại/CSRF, báo tiến trình rồi xong', async () => {
     const upload = vi.fn<DocumentUploader['upload']>(async (request) => {
       request.onProgress(64);
       return batch;
@@ -50,7 +58,7 @@ describe('Gửi một lô ảnh và cập nhật trạng thái từng ô', () =>
       profileId: 'me',
       declaredType: 'prescription',
       csrfToken: 'csrf',
-      files: [{ fileName: 'anh-01.jpg', file: compressed }],
+      files: [{ fileName: 'anh-01.jpg', file: exported, sendToAi: true }],
     });
     expect(actions).toEqual([
       { type: 'start', ids: ['i1'] },
@@ -71,12 +79,20 @@ describe('Gửi một lô ảnh và cập nhật trạng thái từng ô', () =>
     expect(upload.mock.calls[0]![0].files.map((f) => f.fileName)).toEqual([
       'anh-01.jpg',
       'anh-02.jpg',
-      'anh-03.png',
+      'anh-03.jpg',
     ]);
     expect(actions.slice(1)).toEqual([
       { type: 'done', id: 'i1', documentId: 'doc-1' },
       { type: 'fail', ids: ['i2'], message: expect.stringMatching(/JPG, PNG, HEIC, WebP/) },
       { type: 'done', id: 'i3', documentId: 'doc-3' },
+    ]);
+  });
+  it('không bao giờ gửi ảnh gốc: mục chưa có bản đã che làm cả lô lỗi, không gọi API', async () => {
+    const upload = vi.fn<DocumentUploader['upload']>(async () => batch);
+    const { actions } = await run(upload, [item('i1', 'IMG_1.jpg'), item('i2', 'IMG_2.jpg', null)]);
+    expect(upload).not.toHaveBeenCalled();
+    expect(actions).toEqual([
+      { type: 'fail', ids: ['i1', 'i2'], message: 'Ảnh chưa được che. Mở ảnh để che rồi gửi lại.' },
     ]);
   });
   it('TC-011: hồ sơ chưa đồng thuận → thông điệp hướng dẫn gửi link mời', async () => {

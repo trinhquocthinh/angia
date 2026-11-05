@@ -2,7 +2,7 @@ import type { FamilyUsage } from '@angia/contracts';
 import { remainingUploadSlots, usageBlockReason } from '../../application/familyUsageState';
 import { MAX_FILES_PER_PICK } from '../../application/uploadQueue';
 
-const ALERT = 'rounded-xl bg-[#ffdad6]/60 p-3 text-sm text-[#93000a]';
+const ALERT = 'angia-modal-reveal rounded-2xl bg-[#ffdad6]/60 p-3 text-sm text-[#93000a]';
 
 // Cảnh báo dưới vùng chọn ảnh: quá số ảnh mỗi lần chọn, hoặc số ảnh chờ gửi vượt chỗ còn lại (SPEC-030).
 export function UploadPickNotices({

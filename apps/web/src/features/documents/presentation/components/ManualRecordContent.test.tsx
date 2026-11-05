@@ -50,3 +50,11 @@ describe('Nhập trực tiếp không kèm ảnh (SPEC-011, BR-014)', () => {
     expect(html).toContain('Không tìm thấy hồ sơ này trong gia đình.');
   });
 });
+
+it('TC-448 — nhập trực tiếp cho trẻ ẩn số đo, giữ đơn thuốc và xét nghiệm', () => {
+  const child = { ...profile('confirmed'), birthYear: new Date().getFullYear() - 5, vitalsEnabled: null };
+  const html = renderToStaticMarkup(<ManualRecordContent {...props} profile={child} />);
+  expect(html).not.toContain('Máy đo cá nhân');
+  expect(html).toContain('Đơn thuốc');
+  expect(html).toContain('Xét nghiệm');
+});

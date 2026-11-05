@@ -1,3 +1,4 @@
+import { showsVitals } from '@angia/contracts';
 import type {
   CurrentMedicationCourse,
   MedicationClock,
@@ -29,6 +30,7 @@ export function getVisitSummary(
     const found = await store.findProfile(request.profileId);
     if (!found) return { ok: false, code: 'ERR_NOT_FOUND' };
     if (found.consentStatus !== 'confirmed') return { ok: false, code: 'ERR_CONSENT_REQUIRED' };
+    const includeVitals = showsVitals(found, Number(today.slice(0, 4)));
     const profile = { id: found.id, displayName: found.displayName, birthYear: found.birthYear };
     const profileId = profile.id;
     return {
@@ -38,8 +40,9 @@ export function getVisitSummary(
         createdAt,
         from,
         to,
+        showsVitals: includeVitals,
         currentMedications: getActiveMedications(await store.findMedicationHistory(profileId), today),
-        measurements: await store.listMeasurementsBetween(profileId, from, to),
+        measurements: includeVitals ? await store.listMeasurementsBetween(profileId, from, to) : [],
         latestLabResults: pickLatestLabResults(await store.listLabResults(profileId), to),
         adherencePeriods: await store.listAdherencePeriodsBetween(profileId, from, to),
         disclaimer: VISIT_SUMMARY_DISCLAIMER,

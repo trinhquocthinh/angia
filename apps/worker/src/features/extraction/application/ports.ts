@@ -1,3 +1,4 @@
+import type { OcrGateReason } from './OcrGateBlockedError.js';
 import type { DocumentToExtract, DocumentType, ExtractedContent } from '../domain/ExtractionDocument.js';
 
 type SavedExtraction = {
@@ -11,30 +12,33 @@ type SavedExtraction = {
 /** Tháng ngân sách và tham số cấu hình của một lần giữ chỗ/quyết toán (BR-018). */
 export interface BudgetCall {
   month: string;
-  estimatedCostUsd: number;
   defaultMonthlyCapUsd: number;
-  /** SPEC-031: trần mỗi gia đình/tháng khi families.extraction_cap_usd để trống. */
-  defaultFamilyCapUsd: number;
+  /** CP5.5: số lượt hệ thống tự cấp cho gia đình chưa có dòng quota tháng. */
+  defaultMonthlyScans: number;
 }
 export interface ExtractionStore {
   findDocument(id: string): Promise<DocumentToExtract | null>;
+  hasLiveExtractionJob(id: string): Promise<boolean>;
   markExtracting(id: string): Promise<void>;
   markManualEntry(id: string): Promise<void>;
-  markAwaitingBudget(id: string): Promise<void>;
+  markAwaitingBudget(id: string, reason?: OcrGateReason): Promise<void>;
   savePendingReview(id: string, extraction: SavedExtraction): Promise<void>;
-  /** Giữ chỗ nguyên tử trên trần gia đình rồi trần tổng; chứng từ đã có chỗ giữ thì dùng lại. false = hết một trong hai. */
+  /** Giữ lượt quét khi còn quota và phí đối soát dưới trần; cổng đóng ném OcrGateBlockedError. */
   reserveBudget(id: string, call: BudgetCall): Promise<boolean>;
-  /** Xóa chỗ giữ rồi ghi chi phí thực vào đúng tháng đã giữ, trên cả dòng gia đình và dòng tổng; chạy lặp không tính trùng. */
+  dispatchBudget(id: string, call: BudgetCall): Promise<void>;
+  /** Trả lượt còn giữ; không hoàn lượt đã gửi, không cộng chi phí OCR vào phí đã đối soát. */
   settleBudget(id: string, costUsd: number, call: BudgetCall): Promise<void>;
 }
 export interface ExtractionRepository {
+  runExclusive?<T>(
+    familyId: string,
+    documentId: string,
+    work: (repository: ExtractionRepository) => Promise<T>,
+  ): Promise<T | null>;
   withFamily<T>(familyId: string, work: (store: ExtractionStore) => Promise<T>): Promise<T>;
 }
 export interface ObjectReader {
   get(key: string): Promise<Uint8Array>;
-}
-export interface ImageConverter {
-  heicToJpeg(bytes: Uint8Array): Promise<Uint8Array>;
 }
 export interface ExtractorImage {
   bytes: Uint8Array;
@@ -50,34 +54,27 @@ export type ExtractorResult =
   | (ExtractorCall & { ok: false; reason: 'invalid_json' | 'schema_mismatch' });
 /** Lỗi mạng/HTTP ném exception để pg-boss thử lại; phản hồi sai định dạng trả `ok: false`. */
 export interface DocumentExtractor {
-  extract(image: ExtractorImage): Promise<ExtractorResult>;
+  extract(image: ExtractorImage, beforeDispatch?: () => Promise<void>): Promise<ExtractorResult>;
 }
 export interface BudgetPolicy {
-  estimatedCostUsd: number;
   defaultMonthlyCapUsd: number;
-  defaultFamilyCapUsd: number;
+  defaultMonthlyScans: number;
   now(): Date;
 }
 export interface ExtractionDependencies {
   repository: ExtractionRepository;
   budget: BudgetPolicy;
-  storage: ObjectReader;
-  images: ImageConverter;
   extractor: DocumentExtractor;
-  ocrImages: ApprovedOcrImageReader;
+  ocrImages: DocumentImageReader;
 }
 
-export interface PreviewImageConverter {
-  toWebp(bytes: Uint8Array, mimeType: string): Promise<Uint8Array>;
-}
-
-export interface ApprovedOcrImageReader {
+export interface DocumentImageReader {
   get(key: string): Promise<ExtractorImage & { sha256: string }>;
 }
 
 /** Duyệt gia đình (bảng families không áp RLS) rồi trong withFamilyScope chuyển + enqueue cùng transaction. */
 export interface BudgetRequeueRepository {
   listFamilyIds(): Promise<string[]>;
-  /** Gia đình còn hết trần riêng tháng này (SPEC-031) → 0, không đổi gì. */
+  /** Chỉ enqueue khi đủ quota hoặc operation đã dùng lượt và cổng phí thực cho phép. */
   requeueFamily(familyId: string, call: BudgetCall): Promise<number>;
 }

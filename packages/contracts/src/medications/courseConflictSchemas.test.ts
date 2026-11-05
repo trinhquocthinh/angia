@@ -8,6 +8,7 @@ const request = {
   data: {
     type: 'prescription',
     issuedDate: '2026-10-01',
+    revisitDate: null,
     facility: null,
     diagnosis: null,
     items: [
@@ -22,6 +23,7 @@ const request = {
         longTerm: false,
         note: null,
         totalQuantity: null,
+        minIntervalText: null,
         resolution: 'replace',
         expectedConflictCourseIds: [id],
       },

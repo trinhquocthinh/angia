@@ -40,6 +40,9 @@ async function generateForFamily(
   }
   report.created = reminders.length > 0 ? await store.insertReminders(reminders) : 0;
   report.existing = reminders.length - report.created;
+  const revisits = await store.generateRevisitReminders(date);
+  report.created += revisits.created;
+  report.existing += revisits.existing;
   return report;
 }
 

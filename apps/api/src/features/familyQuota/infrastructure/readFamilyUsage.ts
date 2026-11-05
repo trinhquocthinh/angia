@@ -8,22 +8,21 @@ interface UsageRow extends Record<string, unknown> {
   pending_jobs: number;
 }
 
-// Job preview (convert-heic) không có dead-letter: hết lượt (≈ 3 × 300 s + giãn cách) thì chứng từ kẹt ở uploaded.
+// Job sanitize-document-image không có dead-letter: hết lượt (≈ 3 × 300 s + giãn cách) thì chứng từ kẹt ở uploaded.
 // Quá mốc này không tính "chờ worker" để chứng từ kẹt không khóa gia đình mãi (SPEC-030, owner duyệt 2026-10-19).
 const STUCK_UPLOAD_AFTER = '1 hour';
 
-// SPEC-030: đếm từ source_documents (RLS + family_id phòng thủ). Dung lượng chỉ tính ảnh gốc, mọi trạng thái;
-// "chờ worker" = chứng từ có job preview/OCR hoặc bản kiểm tra đang chuẩn bị (mỗi chứng từ tính một lần).
+// SPEC-030: chỉ tính byte của ảnh còn tồn tại; tự nhập không chiếm quota chờ AI.
 export async function readFamilyUsage(
   tx: FamilyScopedTx,
   familyId: string,
   dayStart: Date,
 ): Promise<UsageCounts> {
   const result = await tx.execute<UsageRow>(sql`
-    SELECT COALESCE(SUM(size_bytes), 0)::bigint AS storage_bytes,
+    SELECT COALESCE(SUM(size_bytes) FILTER (WHERE image_key IS NOT NULL), 0)::bigint AS storage_bytes,
            (COUNT(*) FILTER (WHERE created_at >= ${dayStart.toISOString()}))::int AS uploads_today,
-           (COUNT(*) FILTER (WHERE (status = 'uploaded' AND created_at > now() - ${STUCK_UPLOAD_AFTER}::interval)
-              OR status = 'extracting' OR privacy_draft_status = 'pending'))::int AS pending_jobs
+           (COUNT(*) FILTER (WHERE (status = 'uploaded' AND privacy_approved_by IS NOT NULL AND created_at > now() - ${STUCK_UPLOAD_AFTER}::interval)
+              OR status = 'extracting'))::int AS pending_jobs
     FROM source_documents WHERE family_id = ${familyId}`);
   const row = result.rows[0]!;
   return {

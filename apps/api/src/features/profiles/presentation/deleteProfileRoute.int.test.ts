@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import {
   manualCourse as course,
@@ -9,7 +8,8 @@ import {
   manualReading,
 } from '@src/shared/test/healthDataFixtures.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
-import { seedAccount } from '@src/shared/test/seedAuthFixtures.js';
+import { seedAccount, seedSession } from '@src/shared/test/seedAuthFixtures.js';
+import { linkAccountToProfile } from '@src/shared/test/profileConsentFixture.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { seedReminder } from '@src/shared/test/seedReminder.js';
 import { snapshotHealthTables } from '@src/shared/test/snapshotHealthTables.js';
@@ -24,6 +24,8 @@ const BY_PROFILE = [
   'lab_results',
   'medication_courses',
   'adherence_periods',
+  'as_needed_doses',
+  'temperature_readings',
   'dose_slots',
   'reminder_recipients',
   'reminders',
@@ -59,12 +61,10 @@ describe('SPEC-007: xóa triệt để hồ sơ qua route thật, RLS và pg-bos
     const familyId = await t.family();
     const main = await t.session(familyId);
     const linked = await seedAccount(t.owner, { familyId, familyRole: 'member', displayName: 'Mẹ' });
-    const create = async (displayName: string, linkedAccountId?: string) =>
-      (await (
-        await t.call(main, 'POST', base, { displayName, ...(linkedAccountId ? { linkedAccountId } : {}) })
-      ).json()) as HealthProfile;
-    const [mother, father] = [await create('Mẹ', linked), await create('Bố')];
-    await acceptConsentInvitation(t, main, mother.id);
+    const create = async (displayName: string) =>
+      (await (await t.call(main, 'POST', base, { birthYear: 1950, displayName })).json()) as HealthProfile;
+    const [mother, father] = [await create('Mẹ'), await create('Bố')];
+    await linkAccountToProfile(t, main, await seedSession(t.owner, linked), mother.id);
     const owner = { familyId, profileId: mother.id, accountId: main.accountId };
     for (let i = 0; i < 5; i++) {
       const { key } = await seedPendingDocument(t, owner, manualReading);

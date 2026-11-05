@@ -2,6 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { EXTRACTION_PROMPT } from './extractionPrompt.js';
 
 describe('EXTRACTION_PROMPT', () => {
+  it('TC-573: yêu cầu chép ngày hẹn cụ thể, không tự cộng ngày từ thời hạn tái khám', () => {
+    expect(EXTRACTION_PROMPT).toContain('"revisitDate":"YYYY-MM-DD"|null');
+    expect(EXTRACTION_PROMPT).toContain('tái khám sau 1 tháng');
+    expect(EXTRACTION_PROMPT).toContain('không tự cộng ngày');
+  });
   it('mô tả đủ 3 loại chứng từ của SDD §2.1', () => {
     for (const type of ['prescription', 'lab_result', 'device_reading'])
       expect(EXTRACTION_PROMPT).toContain(type);

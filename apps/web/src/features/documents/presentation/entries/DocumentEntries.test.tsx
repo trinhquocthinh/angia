@@ -92,24 +92,21 @@ describe('TC-285 tab Hồ sơ & Giấy tờ khám', () => {
     expect(list({ error: true })).toContain('Không tải được giấy tờ khám.');
   });
 
-  it('ngăn chi tiết: ảnh gốc mặc định kèm chú thích lưu riêng; bản đã che nằm trong mục mở rộng', () => {
+  it('TC-434: ngăn chi tiết chỉ hiện một bản đã che; ảnh đã xóa thì báo, không có <img>', () => {
     const panel = (value: DocumentEntry) =>
       renderToStaticMarkup(
         <DocumentEntryPanel entry={value} canReuse onReuse={() => undefined} onClose={() => undefined} />,
       );
-    const masked = panel(entry({ hasOcrImage: true }));
-    expect(masked).toContain('chỉ lưu trong kho riêng của gia đình');
-    expect(masked).toMatch(/<details[^>]*><summary[^>]*>Xem bản đã che gửi tự động nhận diện/);
-    expect(masked).not.toMatch(/<details[^>]*open/);
-    expect(masked).toContain('variant=ocr');
-    expect(masked).not.toContain('aria-pressed');
-    expect(masked).not.toContain('Dùng lại đơn này');
-    const plain = panel(entry());
-    expect(plain).toContain('chỉ lưu trong kho riêng của gia đình');
-    expect(plain).not.toContain('<details');
-    // Ảnh gốc HEIC trình duyệt không hiển thị được: dùng bản xem trước WebP như màn duyệt.
-    expect(plain).toContain('variant=preview');
-    expect(plain).not.toContain('variant=original');
+    const shown = panel(entry());
+    expect(shown.match(/<img/g)).toHaveLength(1);
+    expect(shown).toContain(`src="/api/source-documents/${entry().id}/image"`);
+    expect(shown).toContain('Đây là bản đã che. AN GIA không lưu ảnh chưa che.');
+    expect(shown).not.toContain('<details');
+    expect(shown).not.toContain('variant=');
+    expect(shown).not.toContain('Dùng lại đơn này');
+    const purged = panel(entry({ hasImage: false }));
+    expect(purged).toContain('Ảnh đã được xóa để bảo vệ riêng tư');
+    expect(purged).not.toContain('<img');
     const rx = panel(items[1]!);
     expect(rx).toContain('Dùng lại đơn này');
     expect(rx).not.toContain('<img');

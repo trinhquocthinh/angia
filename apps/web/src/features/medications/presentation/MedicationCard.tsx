@@ -1,11 +1,21 @@
 import type { CurrentMedicationCourse } from '@angia/contracts';
+import type { ReactNode } from 'react';
+import { AsNeededDoseDetails } from '@src/features/asNeededDoses/presentation/AsNeededDoseDetails';
 import { medicationSourceLabel } from '../application/medicationSourceLabel';
 import { remainingDaysLabel } from '../application/remainingDaysLabel';
 import { doseLabel } from '../application/doseLabel';
 
 // Thẻ thuốc trong một buổi: tên + hàm lượng, liều mỗi lần, thời hạn ("Còn N ngày"/"Dài hạn"), nguồn gốc.
 // Chỉ mô tả dữ liệu đã lưu, không nhận định (BR-033).
-export function MedicationCard({ course, today }: { course: CurrentMedicationCourse; today: string }) {
+export function MedicationCard({
+  course,
+  today,
+  actions,
+}: {
+  course: CurrentMedicationCourse;
+  today: string;
+  actions?: ReactNode;
+}) {
   const longTerm = course.endDate === null;
   return (
     <article className="flex flex-col gap-2 rounded-xl bg-[#f6fbfa] p-4">
@@ -26,6 +36,8 @@ export function MedicationCard({ course, today }: { course: CurrentMedicationCou
       </div>
       <p className="text-sm text-[#404945]">{doseLabel(course.quantityPerDose, course.doseUnit)}</p>
       <p className="text-xs text-[#707975]">{medicationSourceLabel(course)}</p>
+      <AsNeededDoseDetails course={course} />
+      {actions}
     </article>
   );
 }

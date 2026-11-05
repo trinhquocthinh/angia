@@ -10,6 +10,7 @@ export const request: ApproveDocumentRequest = {
   data: {
     type: 'prescription',
     issuedDate: '2026-10-01',
+    revisitDate: null,
     facility: null,
     diagnosis: null,
     items: ['5mg', '10mg'].map((strength) => ({
@@ -23,6 +24,7 @@ export const request: ApproveDocumentRequest = {
       longTerm: false,
       note: null,
       totalQuantity: null,
+      minIntervalText: null,
     })),
   },
 };

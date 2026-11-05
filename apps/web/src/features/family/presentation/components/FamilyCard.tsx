@@ -1,6 +1,10 @@
 import type { Account, Family } from '../../application/ports';
 import { AdminIcon } from './AdminIcon';
 
+const names = (accounts: Account[], empty: string) =>
+  accounts.map((account) => account.displayName).join(', ') || empty;
+
+// BR-003: chỉ hiện số liệu tài khoản; không đếm hồ sơ, chứng từ hay đơn thuốc của gia đình.
 export function FamilyCard({
   family,
   accounts,
@@ -11,37 +15,48 @@ export function FamilyCard({
   currentFamilyId: string | null;
 }) {
   const members = accounts.filter((account) => account.familyId === family.id);
+  const mains = members.filter((account) => account.role === 'main');
   return (
-    <article className="admin-family-card p-4 bg-[#eaf6f5] rounded-[12px] flex flex-col gap-2 transition-[transform,background-color] duration-[180ms] ease-[ease] [&:hover]:bg-[#e4f0f0] [&:hover]:-translate-y-0.5 [&_p]:m-0 [&_p]:text-[12px] [&_p]:leading-[20px] [&_p]:text-[#707975] motion-reduce:[&:hover]:transform-none">
-      <div className="admin-family-title flex items-center justify-between gap-2 [&_h3]:m-0 [&_h3]:text-[#004135] [&_h3]:text-[18px] [&_h3]:leading-[24px] [&_h3]:font-semibold [&_h3]:[overflow-wrap:anywhere]">
-        <h3>{family.name}</h3>
-        <span
-          className={`py-0.5 px-2 rounded-full bg-[#ffdbc9] text-[#753400] text-[10px] leading-[14px] font-semibold whitespace-nowrap ${currentFamilyId === family.id ? 'bg-[#20594b]! text-white!' : ''}`}
-        >
-          {currentFamilyId === family.id ? 'Nhóm của bạn' : 'Gia đình'}
+    <article className="flex flex-col gap-3 rounded-xl bg-[#eaf6f5]/70 p-4">
+      <div className="flex items-center gap-3">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#004135] text-white shadow-sm">
+          <AdminIcon name="home_health" size={24} />
         </span>
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="auth-heading m-0 text-xl leading-7 font-semibold text-[#004135] [overflow-wrap:anywhere]">
+              {family.name}
+            </h3>
+            {currentFamilyId === family.id && (
+              <span className="rounded-full bg-[#aef0da] px-2 py-0.5 text-[11px] leading-4 font-semibold text-[#004135]">
+                Nhóm của bạn
+              </span>
+            )}
+          </div>
+          <p className="m-0 text-xs leading-5 text-[#55615f]">
+            Tạo ngày{' '}
+            {new Date(family.createdAt).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}
+          </p>
+        </div>
       </div>
-      <p className="">
-        Tạo ngày {new Date(family.createdAt).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}
-      </p>
-      <div className="admin-family-stats flex flex-wrap gap-[6px] pt-1 [&_>_span]:inline-flex [&_>_span]:items-center [&_>_span]:gap-1 [&_>_span]:py-0.5 [&_>_span]:px-2 [&_>_span]:rounded-[4px] [&_>_span]:bg-white [&_>_span]:text-[11px] [&_>_span]:leading-[16px] [&_.admin-icon]:text-[#286958]">
-        <span>
-          <AdminIcon name="group" size={14} />
-          {members.length} tài khoản
-        </span>
-        <span>
-          <AdminIcon name="verified_user" size={14} />
-          {members.filter((account) => account.role === 'main').length} Quản trị chính
-        </span>
-      </div>
-      <p className="admin-family-members [&_strong]:text-[#131d1d] [&_strong]:font-medium">
-        Thành viên:{' '}
-        <strong>{members.map((member) => member.displayName).join(', ') || 'Chưa có thành viên'}</strong>
-      </p>
-      <div className="flex items-center gap-1 pt-3 text-[11px] leading-[14px] text-[#286958] mt-auto">
-        <AdminIcon name="family_restroom" size={16} />
-        <span>Nhóm gia đình</span>
-      </div>
+      <dl className="m-0 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div className="min-w-0 rounded-lg bg-white p-3">
+          <dt className="flex items-center gap-1 text-xs leading-4 text-[#404945]">
+            <AdminIcon name="group" size={14} /> {members.length} tài khoản
+          </dt>
+          <dd className="m-0 mt-1 text-[13px] leading-5 font-medium text-[#131d1d] [overflow-wrap:anywhere]">
+            {names(members, 'Chưa có thành viên')}
+          </dd>
+        </div>
+        <div className="min-w-0 rounded-lg bg-white p-3">
+          <dt className="flex items-center gap-1 text-xs leading-4 text-[#404945]">
+            <AdminIcon name="verified_user" size={14} /> {mains.length} Quản trị chính
+          </dt>
+          <dd className="m-0 mt-1 text-[13px] leading-5 font-medium text-[#131d1d] [overflow-wrap:anywhere]">
+            {names(mains, 'Chưa có Quản trị chính')}
+          </dd>
+        </div>
+      </dl>
     </article>
   );
 }

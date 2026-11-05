@@ -1,38 +1,23 @@
+import type { PrivacyEdits } from '@angia/contracts';
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import type { DocumentType, DocumentUploader, ImagePreparer } from './ports';
-import { prepareUpload } from './prepareUpload';
+import type { DocumentType, DocumentUploader } from './ports';
 import { runUpload } from './runUpload';
 import { FAMILY_USAGE_KEY } from './useFamilyUsage';
+import { useObjectUrls } from './useObjectUrls';
 import { isSessionError } from './uploadErrorMessage';
-import { nextBatch, nextPreparing, planUpload, summarizeQueue, uploadQueueReducer } from './uploadQueue';
+import { nextBatch, planUpload, summarizeQueue, uploadQueueReducer } from './uploadQueue';
 
-// Ảnh được nén ngay khi thêm (lần lượt từng tấm), chỉ gửi sau submit ("Xong") theo lô ≤ 10 ảnh/request.
+// Ảnh chỉ gửi sau khi đã che hết và bấm "Xong", theo lô ≤ 10 ảnh/request.
 // Không hủy request khi unmount: StrictMode giả lập unmount sẽ làm ảnh kẹt "đang tải".
-export function useUploadQueue(
-  uploader: DocumentUploader,
-  prepare: ImagePreparer,
-  csrfToken: string | undefined,
-) {
+export function useUploadQueue(uploader: DocumentUploader, csrfToken: string | undefined) {
   const client = useQueryClient();
   const [items, dispatch] = useReducer(uploadQueueReducer, []);
   const started = useRef(new Set<string>());
-  const previews = useRef(new Map<string, string>());
+  // Khóa URL: ảnh gốc để che (`id`) và bản đã xuất (`id:thumb`).
+  const { create, revoke } = useObjectUrls();
 
-  // StrictMode chạy effect hai lần trước khi state kịp áp dụng: khóa theo id (nén) và id:lượt (gửi).
-  useEffect(() => {
-    const item = nextPreparing(items);
-    if (!item || started.current.has(`prepare:${item.id}`)) return;
-    started.current.add(`prepare:${item.id}`);
-    void prepareUpload(item.file, prepare).then((result) =>
-      dispatch(
-        result.ok
-          ? { type: 'prepared', id: item.id, upload: result.upload }
-          : { type: 'reject', id: item.id, problem: result.problem },
-      ),
-    );
-  }, [items, prepare]);
-
+  // StrictMode chạy effect hai lần trước khi state kịp áp dụng: khóa theo id:lượt.
   useEffect(() => {
     const batch = csrfToken ? nextBatch(items) : [];
     const key = batch.map((item) => `${item.id}:${item.attempt}`).join(',');
@@ -45,33 +30,41 @@ export function useUploadQueue(
     });
   }, [items, csrfToken, uploader, client]);
 
-  // Hook gắn từ lúc mở trang (chưa có ảnh) nên lần unmount giả của StrictMode không thu hồi nhầm URL.
+  // KH-2 §3.6: ảnh gốc chỉ giữ trong tab tới khi đã tải lên.
   useEffect(() => {
-    const urls = previews.current;
-    return () => urls.forEach((url) => URL.revokeObjectURL(url));
-  }, []);
+    for (const item of items) if (item.status === 'done') revoke(item.id);
+  }, [items, revoke]);
 
-  // Mọi ảnh hợp lệ đều thử xem trước (kể cả HEIC: Safari hiển thị được); trình duyệt không đọc được thì ô ảnh tự đổi sang biểu tượng.
-  const add = useCallback((files: File[]) => {
-    const planned = planUpload(files, () => crypto.randomUUID());
-    if (!planned.ok) return false;
-    const withPreview = planned.items.map((item) => {
-      if (item.status === 'rejected') return item;
-      const previewUrl = URL.createObjectURL(item.file);
-      previews.current.set(item.id, previewUrl);
-      return { ...item, previewUrl };
-    });
-    dispatch({ type: 'add', items: withPreview });
-    return true;
-  }, []);
+  const add = useCallback(
+    (files: File[]) => {
+      const planned = planUpload(files, () => crypto.randomUUID());
+      if (!planned.ok) return false;
+      const withPreview = planned.items.map((item) =>
+        item.status === 'rejected' ? item : { ...item, previewUrl: create(item.id, item.file) },
+      );
+      dispatch({ type: 'add', items: withPreview });
+      return true;
+    },
+    [create],
+  );
+  const redact = useCallback(
+    (id: string, blob: Blob, edits: PrivacyEdits, sendToAi: boolean) => {
+      const upload = new File([blob], `${id}.jpg`, { type: 'image/jpeg' });
+      const thumbnailUrl = create(`${id}:thumb`, upload);
+      dispatch({ type: 'redacted', id, upload, edits, sendToAi, thumbnailUrl });
+    },
+    [create],
+  );
   const submit = useCallback((profileId: string, declaredType: DocumentType | null) => {
     dispatch({ type: 'submit', profileId, declaredType });
   }, []);
-  const remove = useCallback((id: string) => {
-    const url = previews.current.get(id);
-    if (url) URL.revokeObjectURL(url);
-    previews.current.delete(id);
-    dispatch({ type: 'remove', id });
-  }, []);
-  return { items, summary: summarizeQueue(items), add, submit, remove, dispatch };
+  const remove = useCallback(
+    (id: string) => {
+      revoke(id);
+      revoke(`${id}:thumb`);
+      dispatch({ type: 'remove', id });
+    },
+    [revoke],
+  );
+  return { items, summary: summarizeQueue(items), add, redact, submit, remove, dispatch };
 }

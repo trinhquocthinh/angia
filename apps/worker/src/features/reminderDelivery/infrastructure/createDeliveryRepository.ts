@@ -1,18 +1,21 @@
 import type pg from 'pg';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
-import type { DeliveryRepository, FanOutStore, UnsentReminder } from '../application/ports.js';
+import type { DeliveryRepository, FanOutStore, ReminderKind, UnsentReminder } from '../application/ports.js';
 import { processNextDelivery } from './processNextDelivery.js';
+import { REMINDER_SOURCES } from './reminderSources.js';
 import { queryFamilyAccounts } from './queryFamilyAccounts.js';
 
 async function insertPending(
   client: pg.PoolClient,
   familyId: string,
   reminderId: string,
+  kind: ReminderKind,
   deviceIds: string[],
   now: Date,
   newId: () => string,
 ): Promise<void> {
   if (deviceIds.length === 0) return;
+  const { key } = REMINDER_SOURCES[kind];
   const values: unknown[] = [familyId, reminderId, now];
   const tuples = deviceIds.map((deviceId) => {
     values.push(newId(), deviceId);
@@ -21,28 +24,35 @@ async function insertPending(
   });
   await client.query(
     `INSERT INTO reminder_deliveries
-       (id, family_id, reminder_id, push_subscription_id, status, attempts, next_attempt_at, created_at, updated_at)
+       (id, family_id, ${key}, push_subscription_id, status, attempts, next_attempt_at, created_at, updated_at)
      VALUES ${tuples.join(', ')}
-     ON CONFLICT (reminder_id, push_subscription_id) DO NOTHING`,
+     ON CONFLICT (${key}, push_subscription_id) DO NOTHING`,
     values,
   );
 }
 
 function createFanOutStore(client: pg.PoolClient, familyId: string, newId: () => string): FanOutStore {
   return {
-    listUnsentDue: async (now) =>
-      (
-        await client.query<UnsentReminder>(
+    listUnsentDue: async (now) => {
+      const due: UnsentReminder[] = [];
+      for (const kind of ['medication', 'revisit'] as const) {
+        const { table } = REMINDER_SOURCES[kind];
+        const result = await client.query<Omit<UnsentReminder, 'kind'>>(
           `SELECT r.id AS "reminderId", r.health_profile_id AS "profileId", r.scheduled_at AS "scheduledAt",
                   COALESCE(p.consent_status = 'confirmed', false) AS "consentConfirmed"
-             FROM reminders r
+             FROM ${table} r
              LEFT JOIN health_profiles p ON p.id = r.health_profile_id AND p.family_id = r.family_id
             WHERE r.family_id = $1 AND r.sent_at IS NULL AND r.scheduled_at <= $2
-            ORDER BY r.scheduled_at, r.id
-            FOR UPDATE OF r SKIP LOCKED`,
+            ORDER BY r.scheduled_at, r.id FOR UPDATE OF r SKIP LOCKED`,
           [familyId, now],
-        )
-      ).rows,
+        );
+        due.push(...result.rows.map((r) => ({ ...r, kind })));
+      }
+      return due.sort(
+        (a, b) =>
+          a.scheduledAt.getTime() - b.scheduledAt.getTime() || a.reminderId.localeCompare(b.reminderId),
+      );
+    },
     listFamilyAccounts: () => queryFamilyAccounts(client, familyId),
     listAssignments: async () =>
       (
@@ -60,9 +70,10 @@ function createFanOutStore(client: pg.PoolClient, familyId: string, newId: () =>
       );
       return rows.map((row) => row.id);
     },
-    markFannedOut: async (reminderId, deviceIds, now) => {
-      await insertPending(client, familyId, reminderId, deviceIds, now, newId);
-      await client.query('UPDATE reminders SET sent_at = $3 WHERE id = $1 AND family_id = $2', [
+    markFannedOut: async (reminderId, deviceIds, now, kind) => {
+      await insertPending(client, familyId, reminderId, kind, deviceIds, now, newId);
+      const { table } = REMINDER_SOURCES[kind];
+      await client.query(`UPDATE ${table} SET sent_at = $3 WHERE id = $1 AND family_id = $2`, [
         reminderId,
         familyId,
         now,

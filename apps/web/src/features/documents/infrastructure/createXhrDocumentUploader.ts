@@ -32,6 +32,7 @@ export function createXhrDocumentUploader(
         xhr.onerror = () => reject(new DocumentUploadError(0));
         const form = new FormData();
         for (const { fileName, file } of request.files) form.append('files', file, fileName);
+        form.append('sendToAi', JSON.stringify(request.files.map((file) => file.sendToAi)));
         if (request.declaredType) form.append('declaredType', request.declaredType);
         xhr.send(form);
       }),

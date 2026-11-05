@@ -77,11 +77,10 @@ const familyColumns = { id: families.id, name: families.name, createdAt: familie
 // families/accounts không áp RLS (cấu trúc nhóm, không phải dữ liệu sức khỏe) nên chạy thẳng trên role app.
 export function createFamilyAdminRepository(db: Database): FamilyAdminRepository {
   return {
+    // CP5.5: không cấp lượt dùng thử; gia đình mới tự có lượt mặc định tháng ở lần nhận diện đầu.
     async createFamily(name) {
       const [row] = await db.insert(families).values({ name }).returning(familyColumns);
-      if (!row) {
-        throw new Error('INSERT families không trả về dòng nào');
-      }
+      if (!row) throw new Error('INSERT families không trả về dòng nào');
       return row;
     },
 

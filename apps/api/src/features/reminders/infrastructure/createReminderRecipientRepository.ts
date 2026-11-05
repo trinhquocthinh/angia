@@ -1,6 +1,7 @@
+import { findProfileInFamily } from '@src/features/profiles/infrastructure/findProfileInFamily.js';
 import { and, eq } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { healthProfiles, reminderRecipients } from '@src/shared/db/schema/index.js';
+import { reminderRecipients } from '@src/shared/db/schema/index.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { ReminderRecipientRepository } from '../application/recipientPorts.js';
 import { listFamilyAccounts } from './listFamilyAccounts.js';
@@ -14,14 +15,7 @@ export function createReminderRecipientRepository(db: Database): ReminderRecipie
         const ofProfile = (profileId: string) =>
           and(eq(reminderRecipients.healthProfileId, profileId), eq(reminderRecipients.familyId, familyId));
         return work({
-          findProfile: async (id) =>
-            (
-              await tx
-                .select({ consentStatus: healthProfiles.consentStatus })
-                .from(healthProfiles)
-                .where(and(eq(healthProfiles.id, id), eq(healthProfiles.familyId, familyId)))
-                .for('update')
-            )[0] ?? null,
+          findProfile: (id) => findProfileInFamily(tx, familyId, id, 'update'),
           listFamilyAccounts: () => listFamilyAccounts(tx, familyId),
           listRecipientIds: async (profileId) =>
             (

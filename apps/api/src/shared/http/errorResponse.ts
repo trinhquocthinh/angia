@@ -3,6 +3,19 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_SCAN_QUOTA_CONFLICT: {
+    status: 409,
+    message: 'Quota quét đã thay đổi hoặc đã sang tháng mới. Vui lòng tải lại trước khi duyệt.',
+  },
+  ERR_SCAN_QUOTA_UNAVAILABLE: {
+    status: 409,
+    message: 'Chưa thể cấp thêm lượt quét với cấu hình và phí đã xác nhận hiện tại.',
+  },
+  ERR_SCAN_QUOTA_DECREASE: { status: 409, message: 'Không thể giảm tổng lượt quét đã cấp trong cùng tháng.' },
+  ERR_AI_ROUTING_CONFLICT: {
+    status: 409,
+    message: 'Cấu hình OCR đã được thay đổi. Vui lòng tải lại trước khi lưu.',
+  },
   ERR_PUSH_DISABLED: { status: 503, message: 'Tính năng thông báo chưa được bật trên máy chủ.' },
   ERR_PUSH_CONFLICT: {
     status: 409,
@@ -36,6 +49,10 @@ const ERROR_CATALOG = {
   ERR_CONSENT_INVITATION_REQUIRED: {
     status: 409,
     message: 'Vui lòng tạo link mời để người nhận tự xác nhận đồng thuận.',
+  },
+  ERR_CONSENT_INVITATION_RETIRED: {
+    status: 410,
+    message: 'Link này không còn dùng. Hãy nhờ người quản lý gia đình gửi link liên kết mới.',
   },
   ERR_CONFIRMATION_MISMATCH: {
     status: 422,

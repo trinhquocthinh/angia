@@ -3,6 +3,7 @@ import type { SourceDocument } from '../../application/reviewPorts';
 import { DocumentIcon } from './DocumentIcon';
 import { MoreButton } from './MoreButton';
 import { ReviewQueueItem } from './ReviewQueueItem';
+import './review-motion.css';
 
 type ReviewQueueProps = {
   documents: SourceDocument[];
@@ -21,7 +22,7 @@ export function ReviewQueue(props: ReviewQueueProps) {
   return (
     <section
       aria-labelledby="review-queue-title"
-      className="flex flex-col overflow-hidden rounded-[20px] bg-white"
+      className="flex flex-col overflow-hidden rounded-[20px] bg-white shadow-card"
     >
       <div className="flex flex-col gap-1 bg-[#eaf6f5]/60 p-4">
         <div className="flex items-center justify-between gap-2">
@@ -56,7 +57,7 @@ function QueueBody({ documents, profileNames, activeId, loading, error, retry }:
     return (
       <div role="status" aria-label="Đang tải hàng đợi" className="flex flex-col gap-2">
         {[0, 1, 2].map((key) => (
-          <div key={key} className="h-20 animate-pulse rounded-xl bg-[#eaf6f5] motion-reduce:animate-none" />
+          <div key={key} className="review-shimmer h-20 rounded-xl bg-[#eaf6f5]" />
         ))}
       </div>
     );
@@ -75,7 +76,10 @@ function QueueBody({ documents, profileNames, activeId, loading, error, retry }:
     );
   if (documents.length === 0)
     return (
-      <p className="rounded-xl bg-[#eaf6f5] p-6 text-center text-sm text-[#55615f]">
+      <p className="flex flex-col items-center gap-2 rounded-xl bg-[#eaf6f5] p-6 text-center text-sm text-[#55615f]">
+        <span className="text-[#286958]">
+          <DocumentIcon name="checkCircle" size={28} />
+        </span>
         Không còn giấy tờ nào chờ kiểm tra.
       </p>
     );

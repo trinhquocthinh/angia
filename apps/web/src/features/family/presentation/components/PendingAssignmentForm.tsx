@@ -17,7 +17,7 @@ export function PendingAssignmentForm(props: PendingAssignmentProps) {
         });
       }}
     >
-      <div className="admin-pending-account flex items-start gap-2 [&_strong]:block [&_strong]:text-[14px] [&_strong]:leading-[20px] [&_strong]:font-semibold [&_p]:text-[12px] [&_p]:leading-[18px] [&_p]:text-[#707975] [&_p]:mt-0.5 [&_p]:mx-0 [&_p]:mb-0">
+      <div className="admin-pending-account flex items-center gap-2.5 rounded-xl bg-[#eaf6f5]/70 p-3 [&_strong]:block [&_strong]:text-[14px] [&_strong]:leading-[20px] [&_strong]:font-semibold [&_p]:text-xs [&_p]:leading-[18px] [&_p]:text-[#55615f] [&_p]:m-0">
         <span className="w-9 h-9 rounded-full bg-[#aef0da] text-[#055141] inline-flex items-center justify-center text-[14px] font-semibold shrink-0">
           {account.displayName.slice(0, 1).toLocaleUpperCase('vi')}
         </span>

@@ -20,6 +20,7 @@ interface PrescriptionItemDraft {
   longTerm: boolean;
   note: string | null;
   totalQuantity: number | null;
+  minIntervalText?: string | null;
   resolution?: CourseResolution | undefined;
   expectedConflictCourseIds?: string[] | undefined;
 }
@@ -27,6 +28,7 @@ interface PrescriptionItemDraft {
 export interface PrescriptionDraft {
   type: 'prescription';
   issuedDate: string | null;
+  revisitDate?: string | null;
   facility: string | null;
   diagnosis: string | null;
   items: PrescriptionItemDraft[];

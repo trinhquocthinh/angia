@@ -4,9 +4,8 @@ import { requeueAwaitingBudget } from './requeueAwaitingBudget.js';
 
 const call: BudgetCall = {
   month: '2026-11',
-  estimatedCostUsd: 0.02,
   defaultMonthlyCapUsd: 5,
-  defaultFamilyCapUsd: 0.5,
+  defaultMonthlyScans: 0,
 };
 
 function repository(counts: Record<string, number>) {

@@ -1,4 +1,6 @@
+import { profileShowsVitals } from '@src/features/profiles/application/profileShowsVitals';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
+import { revealStyle } from '@src/shared/ui/revealStyle';
 import type { DocumentType } from '../../application/ports';
 import { DocumentTypePicker } from './DocumentTypePicker';
 import { ProfilePicker } from './ProfilePicker';
@@ -40,10 +42,18 @@ export function ProfileChoices({
       </div>
     );
   }
+  const profile = profiles.find((item) => item.id === profileId);
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div
+      className="angia-modal-reveal grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]"
+      style={revealStyle(3)}
+    >
       <ProfilePicker profiles={profiles} selectedId={profileId} locked={locked} onSelect={onProfile} />
-      <DocumentTypePicker value={declaredType} onChange={onType} />
+      <DocumentTypePicker
+        value={declaredType}
+        onChange={onType}
+        allowDeviceReading={!profile || profileShowsVitals(profile)}
+      />
     </div>
   );
 }

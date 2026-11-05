@@ -1,15 +1,17 @@
 import type { UseFormReturn } from 'react-hook-form';
 import type { LabResultFormValues } from '../../application/labResultForm';
+import { AutoReadLabel } from './AutoReadLabel';
 import { ReadingField } from './ReadingField';
+import { ReviewSectionTitle } from './ReviewSectionTitle';
 
-type GeneralFieldsProps = { form: UseFormReturn<LabResultFormValues>; aiDate: boolean };
+type GeneralFieldsProps = { form: UseFormReturn<LabResultFormValues>; aiDate: boolean; autoRead: boolean };
 
 // Thông tin chung của phiếu: ngày trả kết quả bắt buộc (SPEC-010), nơi xét nghiệm chép nguyên văn.
-export function LabResultGeneralFields({ form, aiDate }: GeneralFieldsProps) {
+export function LabResultGeneralFields({ form, aiDate, autoRead }: GeneralFieldsProps) {
   const errors = form.formState.errors;
   return (
-    <section className="flex flex-col gap-5 rounded-[20px] bg-white p-5 lg:p-6">
-      <h2 className="text-xs font-semibold uppercase tracking-wider text-[#286958]">Thông tin chung</h2>
+    <section className="flex flex-col gap-5 rounded-[20px] bg-white p-5 shadow-card lg:p-6">
+      <ReviewSectionTitle title="Thông tin chung" aside={autoRead && <AutoReadLabel />} />
       <div className="grid gap-4 sm:grid-cols-2">
         <ReadingField
           id="resultDate"
@@ -24,6 +26,7 @@ export function LabResultGeneralFields({ form, aiDate }: GeneralFieldsProps) {
           label="Nơi xét nghiệm"
           autoComplete="off"
           compact
+          icon="hospital"
           {...form.register('facility')}
         />
       </div>

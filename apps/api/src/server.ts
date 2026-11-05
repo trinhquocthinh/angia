@@ -1,16 +1,26 @@
+import { createSelfProfileRepository } from '@src/features/selfProfile/infrastructure/createSelfProfileRepository.js';
+import { createTimelineRepository } from '@src/features/timeline/infrastructure/createTimelineRepository.js';
+import { createPrescriptionChainRepository } from '@src/features/prescriptions/infrastructure/createPrescriptionChainRepository.js';
+import { createRevisitRepository } from '@src/features/prescriptions/infrastructure/createRevisitRepository.js';
+import { createScanQuotaRepository } from '@src/features/scanQuota/infrastructure/createScanQuotaRepository.js';
+import { createAiBillingRepository } from '@src/features/aiBilling/infrastructure/createAiBillingRepository.js';
+import { createAiRoutingRepository } from '@src/features/aiRouting/infrastructure/createAiRoutingRepository.js';
 import { createAdherenceRepository } from '@src/features/adherence/infrastructure/createAdherenceRepository.js';
+import { createAsNeededDoseRepository } from '@src/features/asNeededDoses/infrastructure/createAsNeededDoseRepository.js';
+import { createTemperatureRepository } from '@src/features/temperatures/infrastructure/createTemperatureRepository.js';
 import { createDoseSlotRepository } from '@src/features/reminders/infrastructure/createDoseSlotRepository.js';
 import { createMyConsentRepository } from '@src/features/myConsent/infrastructure/createMyConsentRepository.js';
+import { createMyRevisitReminderRepository } from '@src/features/myRevisitReminders/infrastructure/createMyRevisitReminderRepository.js';
+import { createDoseConfirmationRepository } from '@src/features/doseConfirmations/infrastructure/createDoseConfirmationRepository.js';
 import { createMyReminderRepository } from '@src/features/myReminders/infrastructure/createMyReminderRepository.js';
 import { createReminderRecipientRepository } from '@src/features/reminders/infrastructure/createReminderRecipientRepository.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
-import { createPrivacyRepository } from '@src/features/documentPrivacy/infrastructure/createPrivacyRepository.js';
-import { createPrivacyQueue } from '@src/features/documentPrivacy/infrastructure/createPrivacyQueue.js';
-import { hashPrivacyPng } from '@src/features/documentPrivacy/infrastructure/hashPrivacyPng.js';
-import { createInvitationRepository } from '@src/features/consentInvitations/infrastructure/createInvitationRepository.js';
-import { createInvitationTokenCodec } from '@src/features/consentInvitations/infrastructure/createInvitationTokenCodec.js';
+import { createProfileLinkRepository } from '@src/features/profileLinks/infrastructure/createProfileLinkRepository.js';
+import { createProfileLinkTokenCodec } from '@src/features/profileLinks/infrastructure/createProfileLinkTokenCodec.js';
 import { createDocumentRepository } from '@src/features/documents/infrastructure/createDocumentRepository.js';
-import { createPreviewQueue } from '@src/features/documents/infrastructure/createPreviewQueue.js';
+import { createSanitizeQueue } from '@src/features/documents/infrastructure/createSanitizeQueue.js';
+import { createDeletionRepository } from '@src/features/documents/infrastructure/createDeletionRepository.js';
+import { createPurgeQueue } from '@src/features/documents/infrastructure/createPurgeQueue.js';
 import { createReviewRepository } from '@src/features/documents/infrastructure/createReviewRepository.js';
 import { createS3ObjectReader } from '@src/features/documents/infrastructure/createS3ObjectReader.js';
 import { createS3ObjectStorage } from '@src/features/documents/infrastructure/createS3ObjectStorage.js';
@@ -23,20 +33,19 @@ import { createProfileObjectStorage } from '@src/features/profiles/infrastructur
 import { randomBytes, randomUUID } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import {
-  CONVERT_HEIC_QUEUE,
-  CONVERT_HEIC_QUEUE_OPTIONS,
-  PREPARE_OCR_IMAGE_QUEUE,
-  PREPARE_OCR_IMAGE_QUEUE_OPTIONS,
+  SANITIZE_DOCUMENT_IMAGE_QUEUE,
+  SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS,
   REQUEUE_AWAITING_BUDGET_QUEUE,
   REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS,
   PURGE_PROFILE_OBJECTS_QUEUE,
   PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS,
+  PURGE_PENDING_OBJECTS_QUEUE,
+  PURGE_PENDING_OBJECTS_QUEUE_OPTIONS,
   ensureExtractDocumentQueues,
 } from '@angia/contracts';
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
 import { createApp } from '@src/createApp.js';
-import { createFamilyCapRepository } from '@src/features/family/infrastructure/createFamilyCapRepository.js';
 import { createFamilyUsageRepository } from '@src/features/familyQuota/infrastructure/createFamilyUsageRepository.js';
 import { createFamilyAdminRepository } from '@src/features/family/infrastructure/createFamilyAdminRepository.js';
 import { createAiBudgetRepository } from '@src/features/family/infrastructure/createAiBudgetRepository.js';
@@ -64,16 +73,15 @@ const db = createDatabase(pool);
 const s3 = createS3Client(config);
 const boss = createPgBoss(config.DATABASE_URL, logger);
 await boss.start();
-// Idempotent: worker cũng tạo queue này; bên nào khởi động trước đều gửi được job.
-await boss.createQueue(CONVERT_HEIC_QUEUE, CONVERT_HEIC_QUEUE_OPTIONS);
+// Tạo queue idempotent để API gửi được job trước khi worker khởi động.
+await boss.createQueue(SANITIZE_DOCUMENT_IMAGE_QUEUE, SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS);
 
-await boss.createQueue(PREPARE_OCR_IMAGE_QUEUE, PREPARE_OCR_IMAGE_QUEUE_OPTIONS);
 await ensureExtractDocumentQueues(boss);
 await boss.createQueue(REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS);
 await boss.createQueue(PURGE_PROFILE_OBJECTS_QUEUE, PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS);
-const privacyQueue = createPrivacyQueue(boss);
+await boss.createQueue(PURGE_PENDING_OBJECTS_QUEUE, PURGE_PENDING_OBJECTS_QUEUE_OPTIONS);
 
-// F03b (SPEC-030): ngưỡng quota dùng chung cho upload, bước riêng tư và route mức đã dùng.
+// F03b (SPEC-030): ngưỡng quota dùng chung cho upload và route mức đã dùng.
 const quotaPolicy = {
   limits: {
     storageBytes: config.QUOTA_FAMILY_STORAGE_BYTES,
@@ -82,12 +90,17 @@ const quotaPolicy = {
   },
   now: () => new Date(),
 };
-// SPEC-031: tham số ngân sách AI dùng chung cho duyệt riêng tư và mức dùng (trùng env worker).
+// SPEC-031: tham số ngân sách AI cho mức dùng (trùng env worker).
 const aiPolicy = {
-  estimatedCostUsd: config.AI_ESTIMATED_COST_USD,
   defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,
-  defaultFamilyCapUsd: config.AI_DEFAULT_FAMILY_MONTHLY_CAP_USD,
+  defaultMonthlyScans: config.SCAN_QUOTA_DEFAULT_MONTHLY,
   now: () => new Date(),
+};
+// CP5.5: lượt mặc định/tháng và thông số dự toán lấy từ env thay form chính sách.
+const scanQuotaDefaults = {
+  monthlyScans: config.SCAN_QUOTA_DEFAULT_MONTHLY,
+  reserveBasisPoints: Math.round(config.SCAN_QUOTA_RESERVE_PERCENT * 100),
+  initialCostPerScanUsd: config.SCAN_QUOTA_INITIAL_COST_PER_SCAN_USD,
 };
 const app = createApp({
   push: createPushDependencies(db, config),
@@ -115,6 +128,13 @@ const app = createApp({
     logger,
   },
   familyAdmin: createFamilyAdminRepository(db),
+  scanQuota: {
+    repository: createScanQuotaRepository(db, scanQuotaDefaults, boss),
+    now: () => new Date(),
+    defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,
+  },
+  aiBilling: { repository: createAiBillingRepository(pool), now: () => new Date() },
+  aiRouting: { repository: createAiRoutingRepository(db), now: () => new Date() },
   aiBudget: {
     repository: createAiBudgetRepository(db, boss),
     defaultMonthlyCapUsd: config.AI_DEFAULT_MONTHLY_CAP_USD,
@@ -124,46 +144,41 @@ const app = createApp({
     repository: createProfileRepository(db, boss),
     storage: createProfileObjectStorage(s3, config.S3_BUCKET),
   },
-  consentInvitations: {
-    repository: createInvitationRepository(db),
-    codec: createInvitationTokenCodec(config.SESSION_COOKIE_SECRET),
+  profileLinks: {
+    repository: createProfileLinkRepository(db),
+    codec: createProfileLinkTokenCodec(config.SESSION_COOKIE_SECRET),
     now: () => new Date(),
     newId: randomUUID,
     appBaseUrl: config.APP_BASE_URL,
   },
   documents: {
-    repository: createDocumentRepository(db, createPreviewQueue(boss)),
+    repository: createDocumentRepository(db, createSanitizeQueue(boss)),
     storage: createS3ObjectStorage(s3, config.S3_BUCKET),
     newId,
     quota: quotaPolicy,
+    deletion: { repository: createDeletionRepository(db), purgeQueue: createPurgeQueue(boss) },
   },
   review: { repository: createReviewRepository(db), reader: createS3ObjectReader(s3, config.S3_BUCKET) },
-  privacy: {
-    repository: createPrivacyRepository(db, privacyQueue),
-    queue: privacyQueue,
-    reader: createS3ObjectReader(s3, config.S3_BUCKET),
-    hashPng: hashPrivacyPng,
-    newId: randomUUID,
-    now: () => new Date(),
-    quota: quotaPolicy,
-    ai: aiPolicy,
-  },
+
   measurements: createMeasurementRepository(db),
   labResults: createLabResultRepository(db),
   documentEntries: createDocumentEntryRepository(db),
   medications: createMedicationRepository(db),
   adherence: createAdherenceRepository(db),
+  asNeededDoses: createAsNeededDoseRepository(db),
+  temperatures: createTemperatureRepository(db),
   doseSlots: createDoseSlotRepository(db),
+  revisits: createRevisitRepository(db),
+  prescriptionChain: createPrescriptionChainRepository(db),
+  timeline: createTimelineRepository(db),
+  selfProfile: createSelfProfileRepository(db),
   reminderRecipients: createReminderRecipientRepository(db),
   myReminders: createMyReminderRepository(db),
+  doseConfirmations: createDoseConfirmationRepository(db),
+  myRevisitReminders: createMyRevisitReminderRepository(db),
   myConsent: createMyConsentRepository(db),
   visitSummary: createVisitSummaryRepository(db),
   familyUsage: { repository: createFamilyUsageRepository(db), quota: quotaPolicy, ai: aiPolicy },
-  familyCaps: {
-    repository: createFamilyCapRepository(db, boss),
-    defaultFamilyCapUsd: config.AI_DEFAULT_FAMILY_MONTHLY_CAP_USD,
-    now: () => new Date(),
-  },
   heavyRateLimit: { perMinute: config.RATE_LIMIT_HEAVY_PER_MINUTE, now: () => Date.now() },
 });
 

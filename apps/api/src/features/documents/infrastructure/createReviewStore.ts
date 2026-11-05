@@ -1,3 +1,4 @@
+import { findProfileInFamily } from '@src/features/profiles/infrastructure/findProfileInFamily.js';
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import { lockMedicationProfile } from '@src/features/medications/infrastructure/lockMedicationProfile.js';
 import { findMedicationCourses } from '@src/features/medications/infrastructure/findMedicationCourses.js';
@@ -12,11 +13,12 @@ import {
 } from '@src/features/measurements/infrastructure/measurementRows.js';
 import { findPrescriptionsOn } from '@src/features/prescriptions/infrastructure/findPrescriptionsOn.js';
 import { insertPrescription } from '@src/features/prescriptions/infrastructure/insertPrescription.js';
-import { extractions, healthProfiles, measurements, sourceDocuments } from '@src/shared/db/schema/index.js';
+import { extractions, measurements, sourceDocuments } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import type { ReviewStore } from '../application/reviewPorts.js';
 import { findDocumentWithConsent } from './findDocumentWithConsent.js';
 import { listDocumentPage } from './listDocumentPage.js';
+import { lockDuplicateRecord } from './lockDuplicateRecord.js';
 
 // Chạy trong transaction đã SET LOCAL app.family_id; bộ lọc family_id bổ sung phòng thủ theo chiều sâu.
 export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewStore {
@@ -41,6 +43,7 @@ export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewS
     insertPrescription: (input) => insertPrescription(tx, familyId, input),
     insertMedicationCourses: (inputs) => insertMedicationCourses(tx, familyId, inputs),
     lockMedicationProfile: (profileId) => lockMedicationProfile(tx, familyId, profileId),
+    lockDuplicateRecord: (profileId, type, date) => lockDuplicateRecord(tx, familyId, profileId, type, date),
     findMedicationCourses: (profileId) => findMedicationCourses(tx, familyId, profileId),
     replaceMedicationCourses: (profileId, ids, endDate) =>
       replaceMedicationCourses(tx, familyId, profileId, ids, endDate),
@@ -48,14 +51,7 @@ export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewS
     findPrescriptionsOn: (profileId, date) => findPrescriptionsOn(tx, familyId, profileId, date),
     findLabResultsOn: (profileId, date) => findLabResultsOn(tx, familyId, profileId, date),
     findMeasurementsOn: (profileId, kind, date) => findMeasurementsOn(tx, familyId, profileId, kind, date),
-    findProfile: async (id) =>
-      (
-        await tx
-          .select({ consentStatus: healthProfiles.consentStatus })
-          .from(healthProfiles)
-          .where(and(eq(healthProfiles.id, id), eq(healthProfiles.familyId, familyId)))
-          .for('share')
-      )[0] ?? null,
+    findProfile: (id) => findProfileInFamily(tx, familyId, id, 'share'),
     markApproved: async (id, changes, from) => {
       const [row] = await tx
         .update(sourceDocuments)
@@ -63,15 +59,6 @@ export function createReviewStore(tx: FamilyScopedTx, familyId: string): ReviewS
         .where(and(owned(id), inArray(sourceDocuments.status, [...from])))
         .returning();
       if (!row) throw new Error('Chứng từ không còn ở trạng thái được duyệt');
-      return row;
-    },
-    markRejected: async (id, from) => {
-      const [row] = await tx
-        .update(sourceDocuments)
-        .set({ status: 'rejected' })
-        .where(and(owned(id), inArray(sourceDocuments.status, [...from])))
-        .returning();
-      if (!row) throw new Error('Chứng từ không còn ở trạng thái được loại bỏ');
       return row;
     },
   };

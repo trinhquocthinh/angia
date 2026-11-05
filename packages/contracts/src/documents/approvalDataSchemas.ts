@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { doseSlotSchema, isMixedAsNeeded } from '../prescriptions/prescriptionSchema.js';
+import { doseSlotSchema, isAsNeededOnly, isMixedAsNeeded } from '../prescriptions/prescriptionSchema.js';
 
 // Bản đối soát người dùng gửi lên. Trường ngày được phép null để API trả ERR_DOCUMENT_DATE_REQUIRED;
 // liều/buổi/số ngày được phép trống để API trả ERR_DOSE_INFO_MISSING chỉ đúng dòng (SPEC-010, BR-025).
@@ -22,32 +22,40 @@ export const deviceReadingApprovalSchema = z.object({
   glucoseUnit: z.enum(['mmol/L', 'mg/dL']).nullable(),
 });
 
-const prescriptionItemApprovalSchema = z.object({
-  name: requiredText(200),
-  strength: optionalText(100),
-  quantityPerDose: z.number().positive().max(1000).nullable(),
-  // Thuốc bôi / dùng ngoài: người duyệt bật, cho phép trống liều mỗi lần (BR-025).
-  externalUse: z.boolean().default(false),
-  doseUnit: optionalText(50),
-  slots: z
-    .array(doseSlotSchema)
-    .max(4)
-    .refine((slots) => new Set(slots).size === slots.length, 'Buổi dùng bị lặp')
-    .refine((slots) => !isMixedAsNeeded(slots), '"Khi cần" không đi cùng buổi khác'),
-  durationDays: z.number().int().positive().max(3650).nullable(),
-  longTerm: z.boolean(),
-  note: optionalText(500),
-  totalQuantity: z.number().positive().max(100000).nullable(),
-  resolution: z.enum(['replace', 'parallel']).optional(),
-  expectedConflictCourseIds: z
-    .array(z.uuid())
-    .refine((ids) => new Set(ids).size === ids.length, 'Đợt thuốc bị lặp')
-    .optional(),
-});
+const prescriptionItemApprovalSchema = z
+  .object({
+    name: requiredText(200),
+    strength: optionalText(100),
+    quantityPerDose: z.number().positive().max(1000).nullable(),
+    // Thuốc bôi / dùng ngoài: người duyệt bật, cho phép trống liều mỗi lần (BR-025).
+    externalUse: z.boolean().default(false),
+    doseUnit: optionalText(50),
+    slots: z
+      .array(doseSlotSchema)
+      .max(4)
+      .refine((slots) => new Set(slots).size === slots.length, 'Buổi dùng bị lặp')
+      .refine((slots) => !isMixedAsNeeded(slots), '"Khi cần" không đi cùng buổi khác'),
+    durationDays: z.number().int().positive().max(3650).nullable(),
+    longTerm: z.boolean(),
+    note: optionalText(500),
+    totalQuantity: z.number().positive().max(100000).nullable(),
+    // Khoảng cách tối thiểu in trên đơn, giữ nguyên văn; chỉ dòng "Khi cần" (BR-054).
+    minIntervalText: optionalText(100).default(null),
+    resolution: z.enum(['replace', 'parallel']).optional(),
+    expectedConflictCourseIds: z
+      .array(z.uuid())
+      .refine((ids) => new Set(ids).size === ids.length, 'Đợt thuốc bị lặp')
+      .optional(),
+  })
+  .refine((item) => item.minIntervalText === null || isAsNeededOnly(item.slots), {
+    message: 'Khoảng cách giữa hai liều chỉ dành cho thuốc "Khi cần"',
+    path: ['minIntervalText'],
+  });
 
 export const prescriptionApprovalSchema = z.object({
   type: z.literal('prescription'),
   issuedDate: z.iso.date().nullable(),
+  revisitDate: z.iso.date().nullable().default(null),
   facility: optionalText(200),
   diagnosis: optionalText(500),
   items: z.array(prescriptionItemApprovalSchema).min(1).max(50),

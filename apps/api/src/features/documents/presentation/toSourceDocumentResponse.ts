@@ -1,7 +1,7 @@
 import type { SourceDocument as SourceDocumentResponse } from '@angia/contracts';
 import type { SourceDocument } from '../domain/SourceDocument.js';
 
-// Không trả khóa S3 (originalKey/previewKey): ảnh chỉ đọc qua route stream có kiểm tra gia đình.
+// Không trả khóa S3: ảnh chỉ đọc qua route stream có kiểm tra gia đình.
 export function toSourceDocumentResponse(document: SourceDocument): SourceDocumentResponse {
   return {
     id: document.id,
@@ -9,6 +9,7 @@ export function toSourceDocumentResponse(document: SourceDocument): SourceDocume
     batchId: document.batchId,
     type: document.type,
     status: document.status,
+    hasImage: document.imageKey !== null,
     documentDate: document.documentDate,
     mimeType: document.mimeType,
     sizeBytes: document.sizeBytes,

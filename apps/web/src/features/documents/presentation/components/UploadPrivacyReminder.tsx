@@ -1,3 +1,4 @@
+import '@src/shared/ui/modal-motion.css';
 import { useEffect, useRef, useState } from 'react';
 import { PrivacyExampleIllustration } from './PrivacyExampleIllustration';
 
@@ -28,7 +29,7 @@ export function UploadPrivacyReminder({ onClose }: Props) {
         event.preventDefault();
         onClose(dontRemind);
       }}
-      className="m-auto max-h-[calc(100dvh-32px)] w-[min(560px,calc(100vw-32px))] overflow-y-auto rounded-[20px] border-0 bg-white p-6 text-[#131d1d] shadow-[0_24px_80px_#00413526] backdrop:bg-[#00201959] max-[600px]:p-5"
+      className="angia-modal m-auto max-h-[calc(100dvh-32px)] w-[min(560px,calc(100vw-32px))] overflow-y-auto rounded-[20px] border-0 bg-white p-6 text-[#131d1d] shadow-[0_24px_80px_#00413526] backdrop:bg-[#00201959] max-[600px]:p-5"
     >
       <div className="flex flex-col gap-4">
         <h2 id="upload-privacy-title" className="auth-heading text-2xl font-semibold text-[#004135]">

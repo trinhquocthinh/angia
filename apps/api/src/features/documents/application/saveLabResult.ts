@@ -12,6 +12,7 @@ export async function saveLabResult(
 ): Promise<SaveOutcome> {
   const { resultDate, facility } = data;
   if (!resultDate) return DATE_REQUIRED;
+  await store.lockDuplicateRecord(target.healthProfileId, 'lab_result', resultDate);
   const duplicate = confirmDuplicate
     ? null
     : await findLabResultDuplicate(store, target.healthProfileId, { ...data, resultDate });

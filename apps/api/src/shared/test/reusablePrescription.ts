@@ -13,6 +13,7 @@ const item = (id: string, overrides: Partial<Item>): Item => ({
   longTerm: false,
   note: null,
   totalQuantity: null,
+  minIntervalText: null,
   ...overrides,
 });
 
@@ -23,6 +24,7 @@ export function reusablePrescription(issuedDate = '2026-09-01'): Prescription {
     healthProfileId: 'profile-1',
     sourceDocumentId: null,
     issuedDate,
+    revisitDate: null,
     facility: null,
     diagnosis: null,
     manualWithoutSource: true,

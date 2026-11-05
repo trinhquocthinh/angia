@@ -8,6 +8,7 @@ const profile: HealthProfile = {
   familyId: 'f',
   displayName: 'Mẹ',
   birthYear: null,
+  vitalsEnabled: null,
   consentStatus: 'confirmed',
   consentConfirmedBy: null,
   consentConfirmedAt: null,

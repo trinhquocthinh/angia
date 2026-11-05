@@ -8,39 +8,13 @@ export const privacyRectangleSchema = z
     (rect) => rect.left + rect.width <= 1_000_000 && rect.top + rect.height <= 1_000_000,
     'Vùng chọn phải nằm trong ảnh',
   );
-export const createPrivacyDraftRequestSchema = z
+export const privacyEditsSchema = z
   .object({
     rotation: z.union([z.literal(0), z.literal(90), z.literal(180), z.literal(270)]),
     crop: privacyRectangleSchema,
     masks: z.array(privacyRectangleSchema).max(32),
   })
   .strict()
-  .meta({ id: 'CreatePrivacyDraftRequest' });
-export const approvePrivacyRequestSchema = z
-  .object({
-    draftId: z.uuid(),
-    sha256: z.string().regex(/^[0-9a-f]{64}$/),
-    confirmed: z.literal(true),
-  })
-  .strict()
-  .meta({ id: 'ApprovePrivacyRequest' });
-export const privacyDraftSchema = z
-  .discriminatedUnion('state', [
-    z.object({ state: z.literal('none') }).strict(),
-    z.object({ state: z.literal('pending'), draftId: z.uuid() }).strict(),
-    z.object({ state: z.literal('failed'), draftId: z.uuid() }).strict(),
-    z
-      .object({
-        state: z.literal('ready'),
-        draftId: z.uuid(),
-        sha256: z.string().regex(/^[0-9a-f]{64}$/),
-        imageUrl: z.string(),
-      })
-      .strict(),
-  ])
-  .meta({ id: 'PrivacyDraft' });
+  .meta({ id: 'PrivacyEdits' });
 export type PrivacyRectangle = z.infer<typeof privacyRectangleSchema>;
-export type PrivacyEdits = z.infer<typeof createPrivacyDraftRequestSchema>;
-export type CreatePrivacyDraftRequest = PrivacyEdits;
-export type ApprovePrivacyRequest = z.infer<typeof approvePrivacyRequestSchema>;
-export type PrivacyDraft = z.infer<typeof privacyDraftSchema>;
+export type PrivacyEdits = z.infer<typeof privacyEditsSchema>;

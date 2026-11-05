@@ -1,41 +1,43 @@
+import type { useAdminScanQuota } from '@src/features/scanQuota/application/useAdminScanQuota';
+import type { useAiBilling } from '@src/features/aiBilling/application/useAiBilling';
+import type { useAiRouting } from '@src/features/aiRouting/application/useAiRouting';
 import { useState } from 'react';
 import type { useAdminWorkspace } from '../../application/useAdminWorkspace';
 import type { useAiBudget } from '../../application/useAiBudget';
-import type { useFamilyCaps } from '../../application/useFamilyCaps';
 import type { AdminTask } from '../AdminTask';
 import type { AdminSession } from '../AdminSession';
-import { AdminFrame } from './AdminFrame';
+import { AdminFrame, type AdminFrameShell } from './AdminFrame';
 import { AdminHeading } from './AdminHeading';
 import { AdminDataContent } from './AdminDataContent';
 import { ActionDialog } from './ActionDialog';
 
 type AdminWorkspaceViewProps = {
   session: AdminSession;
+  shell: AdminFrameShell;
   workspace: ReturnType<typeof useAdminWorkspace>;
   aiBudget: ReturnType<typeof useAiBudget>;
-  familyCaps: ReturnType<typeof useFamilyCaps>;
+  aiRouting: ReturnType<typeof useAiRouting>;
+  aiBilling: ReturnType<typeof useAiBilling>;
+  scanQuota: ReturnType<typeof useAdminScanQuota>;
 };
 
-export function AdminWorkspaceView({ session, workspace, aiBudget, familyCaps }: AdminWorkspaceViewProps) {
+export function AdminWorkspaceView(props: AdminWorkspaceViewProps) {
+  const { session, shell, workspace, aiBudget, aiRouting, aiBilling, scanQuota } = props;
   const { families, accounts, action } = workspace;
   const [task, setTask] = useState<AdminTask | null>(null);
   const [accountQuery, setAccountQuery] = useState('');
-  const findAccount = (name: string) => {
-    setAccountQuery(name);
-    document.getElementById('accounts-title')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
   const openTask = (next: AdminTask) => {
     action.reset();
     setTask(next);
   };
-  const unavailable =
-    action.isPending || families.isPending || accounts.isPending || families.isError || accounts.isError;
+  const busy = action.isPending || [families, accounts].some((query) => query.isPending || query.isError);
   return (
-    <AdminFrame session={session} accounts={accounts.data ?? []} onFindAccount={findAccount}>
+    <AdminFrame session={session} shell={shell}>
       <AdminHeading
         families={families.data?.length ?? 0}
         accounts={accounts.data?.length ?? 0}
-        disabled={unavailable}
+        waiting={accounts.data?.filter((account) => !account.familyId).length ?? 0}
+        disabled={busy}
         onCreate={() => openTask({ kind: 'create' })}
       />
       {action.isSuccess && !task && (
@@ -47,9 +49,9 @@ export function AdminWorkspaceView({ session, workspace, aiBudget, familyCaps }:
         </p>
       )}
       <AdminDataContent
-        workspace={workspace}
-        aiBudget={aiBudget}
-        familyCaps={familyCaps}
+        {...{ workspace, aiBudget, aiRouting, aiBilling, scanQuota }}
+        currentAccountId={session.account.id}
+        csrfToken={session.csrfToken}
         onTask={openTask}
         accountQuery={accountQuery}
         onAccountQuery={setAccountQuery}

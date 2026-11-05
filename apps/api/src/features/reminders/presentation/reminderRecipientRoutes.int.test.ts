@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
+import { linkAccountToProfile } from '@src/shared/test/profileConsentFixture.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 
@@ -19,9 +20,11 @@ describe('API người nhận nhắc thuốc + RLS (SPEC-026)', () => {
     const mom = await t.session(familyId, 'main', 'Mẹ');
     const grandma = await t.session(familyId, 'member', 'Bà');
     const create = async (body: object) =>
-      (await (await t.call(dad, 'POST', '/api/health-profiles', body)).json()) as HealthProfile;
+      (await (
+        await t.call(dad, 'POST', '/api/health-profiles', { birthYear: 1950, ...body })
+      ).json()) as HealthProfile;
     const child = await create({ displayName: 'Bé An' });
-    if (consent) await acceptConsentInvitation(t, dad, child.id);
+    if (consent) await confirmConsentByAttestation(t, dad, child.id);
     const path = (id: string) => `/api/health-profiles/${id}/reminder-recipients`;
     const put = (ids: string[], id = child.id) => t.call(dad, 'PUT', path(id), { recipientAccountIds: ids });
     const rows = async () =>
@@ -67,8 +70,8 @@ describe('API người nhận nhắc thuốc + RLS (SPEC-026)', () => {
   });
   it('hồ sơ liên kết tài khoản: người nhận cố định, PUT trả 422', async () => {
     const f = await fixture();
-    const linked = await f.create({ displayName: 'Bà', linkedAccountId: f.grandma.accountId });
-    await acceptConsentInvitation(t, f.dad, linked.id);
+    const linked = await f.create({ displayName: 'Bà' });
+    await linkAccountToProfile(t, f.dad, f.grandma, linked.id);
     expect(await (await t.call(f.dad, 'GET', f.path(linked.id))).json()).toEqual({
       mode: 'linked',
       recipients: [{ accountId: f.grandma.accountId, displayName: 'Bà' }],

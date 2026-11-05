@@ -13,6 +13,7 @@ import {
 import { createdAtColumn, familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
 import { pushSubscriptions } from './pushSubscriptions.js';
 import { reminders } from './reminders.js';
+import { revisitReminders } from './revisitReminders.js';
 
 // E9-S2-T2: ledger gửi lời nhắc theo từng thiết bị — một dòng cho mỗi (lời nhắc, đăng ký push).
 // Không lưu account_id/endpoint/keys; người nhận kiểm lại qua push_subscriptions mỗi lần gửi.
@@ -23,7 +24,8 @@ export const reminderDeliveries = pgTable(
   {
     id: idColumn(),
     familyId: familyIdColumn(),
-    reminderId: uuid('reminder_id').notNull(),
+    reminderId: uuid('reminder_id'),
+    revisitReminderId: uuid('revisit_reminder_id'),
     pushSubscriptionId: uuid('push_subscription_id').references(() => pushSubscriptions.id, {
       onDelete: 'set null',
     }),
@@ -39,6 +41,13 @@ export const reminderDeliveries = pgTable(
   },
   (t) => [
     unique('reminder_deliveries_reminder_device_unique').on(t.reminderId, t.pushSubscriptionId),
+    unique('reminder_deliveries_revisit_device_unique').on(t.revisitReminderId, t.pushSubscriptionId),
+    foreignKey({
+      name: 'reminder_deliveries_revisit_family_fk',
+      columns: [t.revisitReminderId, t.familyId],
+      foreignColumns: [revisitReminders.id, revisitReminders.familyId],
+    }).onDelete('cascade'),
+    check('reminder_deliveries_one_reminder', sql`num_nonnulls(${t.reminderId}, ${t.revisitReminderId}) = 1`),
     foreignKey({
       name: 'reminder_deliveries_reminder_family_fk',
       columns: [t.reminderId, t.familyId],

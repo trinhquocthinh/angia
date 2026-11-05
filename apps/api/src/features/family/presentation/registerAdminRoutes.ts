@@ -1,3 +1,4 @@
+import { currentSession } from '@src/shared/auth/presentation/currentSession.js';
 import type { OpenAPIHono } from '@hono/zod-openapi';
 import type { Account, Family as FamilyResponse } from '@angia/contracts';
 import { requireAdmin } from '@src/shared/auth/presentation/requireAdmin.js';
@@ -26,7 +27,11 @@ const toFamilyResponse = (family: Family): FamilyResponse => ({
 const toAccountResponse = (account: MemberAccount): Account => ({ ...account });
 
 // Quản trị hệ thống chỉ quản lý cấu trúc nhóm/tài khoản, không đọc dữ liệu sức khỏe (BR-003, BR-006).
-export function registerAdminRoutes(app: OpenAPIHono<AppEnv>, repository: FamilyAdminRepository): void {
+export function registerAdminRoutes(
+  app: OpenAPIHono<AppEnv>,
+  repository: FamilyAdminRepository,
+  now: () => Date = () => new Date(),
+): void {
   app.use('/api/admin/*', requireAdmin());
 
   app.openapi(listFamiliesRoute, async (c) => {
@@ -35,7 +40,11 @@ export function registerAdminRoutes(app: OpenAPIHono<AppEnv>, repository: Family
   });
 
   app.openapi(createFamilyRoute, async (c) => {
-    const family = await createFamily(repository, c.req.valid('json'));
+    const family = await createFamily(repository, c.req.valid('json'), {
+      actorId: currentSession(c).account.id,
+      now: now(),
+      recheckNow: now,
+    });
     return c.json(toFamilyResponse(family), 201);
   });
 

@@ -4,8 +4,8 @@ import type pg from 'pg';
 /** Byte JPEG tối thiểu của ảnh OCR đã duyệt trong integration test; hash được ghi vào chứng từ. */
 export const APPROVED_OCR_BYTES = new Uint8Array([0xff, 0xd8, 0xff]);
 
-// Gia đình + main + hồ sơ + lô + chứng từ bằng role owner. approved = true: đã duyệt riêng tư, trạng thái extracting;
-// false: uploaded, chưa có ảnh OCR.
+// Gia đình + main + hồ sơ + lô + chứng từ bằng role owner. approved = true: đã đồng ý và làm sạch ảnh, trạng thái extracting;
+// false: extracting với ảnh sạch nhưng thiếu receipt đồng ý để kiểm cổng OCR.
 export async function seedExtractingDocument(
   owner: pg.Client,
   declaredType: string | null = null,
@@ -34,18 +34,17 @@ export async function seedExtractingDocument(
   );
   const folder = `families/${familyId}/profiles/${profileId}/documents/${documentId}`;
   await owner.query(
-    `INSERT INTO source_documents(id, family_id, health_profile_id, batch_id, type, status, original_key, mime_type, size_bytes, ocr_image_key, ocr_image_sha256, privacy_approved_by, privacy_approved_at)
-     VALUES ($1, $2, $3, $4, $5, CASE WHEN $8::uuid IS NOT NULL THEN 'extracting' ELSE 'uploaded' END, $9, 'image/jpeg', 3, $6, $7, $8, CASE WHEN $8::uuid IS NOT NULL THEN now() ELSE NULL END)`,
+    `INSERT INTO source_documents(id, family_id, health_profile_id, batch_id, type, status, image_key, mime_type, size_bytes, image_sha256, privacy_approved_by, privacy_approved_at)
+     VALUES ($1, $2, $3, $4, $5, 'extracting', $6, 'image/jpeg', 3, $7, $8, CASE WHEN $8::uuid IS NOT NULL THEN now() ELSE NULL END)`,
     [
       documentId,
       familyId,
       profileId,
       batchId,
       declaredType,
-      approved ? `${folder}/ocr.jpg` : null,
-      approved ? createHash('sha256').update(APPROVED_OCR_BYTES).digest('hex') : null,
+      `${folder}/images/image.jpg`,
+      createHash('sha256').update(APPROVED_OCR_BYTES).digest('hex'),
       approved ? accountId : null,
-      `${folder}/original.jpg`,
     ],
   );
   return { familyId, documentId };

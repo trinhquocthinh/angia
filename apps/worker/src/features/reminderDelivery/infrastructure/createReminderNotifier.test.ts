@@ -13,7 +13,7 @@ describe('createReminderNotifier (SPEC-027 §5.2)', () => {
       },
     });
 
-    const outcome = await notifier.send(SUBSCRIPTION, 'reminder-1', 1800);
+    const outcome = await notifier.send(SUBSCRIPTION, 'reminder-1', 1800, 'medication');
 
     expect(outcome).toEqual({ kind: 'retry', code: 'http_429', retryAfterSeconds: 30 });
     expect(calls).toEqual([

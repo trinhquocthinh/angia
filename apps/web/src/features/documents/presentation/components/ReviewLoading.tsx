@@ -1,8 +1,10 @@
+import './review-motion.css';
+
 export function ReviewLoading() {
   return (
     <div
       role="status"
-      className="h-[480px] animate-pulse rounded-[20px] bg-white motion-reduce:animate-none"
+      className="review-shimmer h-[480px] rounded-[20px] bg-white shadow-card"
       aria-label="Đang tải giấy tờ"
     />
   );

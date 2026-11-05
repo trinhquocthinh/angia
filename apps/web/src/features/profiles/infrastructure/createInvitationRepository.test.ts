@@ -6,42 +6,40 @@ function harness(status = 200) {
   const requests: Request[] = [];
   const client = createClient<paths>({
     baseUrl: 'https://sit.local',
-    credentials: 'omit',
+    credentials: 'same-origin',
     fetch: async (request) => {
       requests.push(request);
-      return Response.json(status === 200 ? { status: 'pending' } : { error: { message: 'secret-token' } }, {
+      return Response.json(status === 200 ? { canAccept: true } : { error: { message: 'secret-token' } }, {
         status,
       });
     },
   });
   return { repo: createInvitationRepository(client), requests };
 }
-describe('API lời mời không cần phiên, không lộ token qua URL/cookie', () => {
-  it('GET chỉ xem với Bearer, no-store/no-referrer, không consume', async () => {
+describe('SPEC-040 — API link liên kết cần phiên, token không qua URL', () => {
+  it('GET gửi Bearer, no-store/no-referrer, kèm cookie phiên', async () => {
     const { repo, requests } = harness();
     await repo.view('opaque');
     const request = requests[0]!;
-    expect(request.url).toBe('https://sit.local/api/consent-invitations/view');
+    expect(request.url).toBe('https://sit.local/api/me/link-invitations/view');
     expect(request.headers.get('Authorization')).toBe('Bearer opaque');
-    expect(request.credentials).toBe('omit');
+    expect(request.credentials).toBe('same-origin');
     expect(request.cache).toBe('no-store');
     expect(request.referrerPolicy).toBe('no-referrer');
-    expect(request.method).toBe('GET');
   });
-  it('POST giữ quyết định rõ ràng, browser tự đặt Origin, không dùng CSRF/cookie', async () => {
+  it('POST gửi quyết định, Bearer và CSRF', async () => {
     const { repo, requests } = harness();
-    const body = { respondentName: 'An', basis: 'guardian' as const, decision: 'declined' as const };
-    await repo.respond('opaque', body);
+    await repo.respond('opaque', 'declined', 'csrf');
     const request = requests[0]!;
+    expect(request.url).toBe('https://sit.local/api/me/link-invitations/accept');
     expect(request.method).toBe('POST');
-    expect(await request.json()).toEqual(body);
+    expect(await request.json()).toEqual({ decision: 'declined' });
     expect(request.headers.get('Authorization')).toBe('Bearer opaque');
-    expect(request.headers.has('X-CSRF-Token')).toBe(false);
-    expect(request.headers.has('Origin')).toBe(false);
-    expect(request.credentials).toBe('omit');
+    expect(request.headers.get('X-CSRF-Token')).toBe('csrf');
   });
   it.each([404, 500])('HTTP %s không đưa token hoặc lỗi server vào UI', async (status) => {
     const { repo } = harness(status);
+    await expect(repo.view('opaque')).rejects.toMatchObject({ status });
     await expect(repo.view('opaque')).rejects.not.toThrow('secret-token');
   });
 });

@@ -6,7 +6,9 @@ import type { VisitSummaryProfile } from '../domain/VisitSummary.js';
 
 // Các bảng lâm sàng chỉ chứa bản ghi đã duyệt; bản trích xuất chờ duyệt nằm riêng ở `extractions` (BR-013).
 interface VisitSummaryStore {
-  findProfile(profileId: string): Promise<(VisitSummaryProfile & { consentStatus: string }) | null>;
+  findProfile(
+    profileId: string,
+  ): Promise<(VisitSummaryProfile & { consentStatus: string; vitalsEnabled: boolean | null }) | null>;
   /** Mọi đợt của hồ sơ, mọi trạng thái; bên gọi lọc theo ngày bằng SPEC-018. */
   findMedicationHistory(profileId: string): Promise<CurrentMedicationCourse[]>;
   /** Số đo mọi loại có ngày đo trong [from, to], cũ nhất trước. */

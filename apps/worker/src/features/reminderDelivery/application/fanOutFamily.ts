@@ -1,7 +1,7 @@
 import { isWithinSendWindow } from '../domain/sendWindow.js';
 import type { FanOutStore, UnsentReminder } from './ports.js';
 import type { FamilyAccount } from '@src/shared/domain/FamilyAccount.js';
-import { resolveRecipientAccountIds } from '@src/shared/domain/resolveRecipientAccountIds.js';
+import { resolveDeliveryRecipientAccountIds } from './resolveDeliveryRecipientAccountIds.js';
 
 export interface FanOutCounts {
   fannedOut: number;
@@ -18,7 +18,12 @@ async function deviceIdsFor(
 ): Promise<string[]> {
   if (!reminder.consentConfirmed) return [];
   const assigned = assignments.filter((a) => a.profileId === reminder.profileId).map((a) => a.accountId);
-  const recipients = resolveRecipientAccountIds(reminder.profileId, accounts, assigned);
+  const recipients = resolveDeliveryRecipientAccountIds(
+    reminder.kind,
+    reminder.profileId,
+    accounts,
+    assigned,
+  );
   return recipients.length > 0 ? store.listDeviceIds(recipients) : [];
 }
 
@@ -32,12 +37,12 @@ export async function fanOutFamily(store: FanOutStore, now: Date): Promise<FanOu
   const assignments = await store.listAssignments();
   for (const reminder of due) {
     if (!isWithinSendWindow(reminder.scheduledAt, now)) {
-      await store.markFannedOut(reminder.reminderId, [], now);
+      await store.markFannedOut(reminder.reminderId, [], now, reminder.kind);
       counts.expiredReminderIds.push(reminder.reminderId);
       continue;
     }
     const deviceIds = await deviceIdsFor(store, reminder, accounts, assignments);
-    await store.markFannedOut(reminder.reminderId, deviceIds, now);
+    await store.markFannedOut(reminder.reminderId, deviceIds, now, reminder.kind);
     counts.fannedOut += 1;
   }
   return counts;

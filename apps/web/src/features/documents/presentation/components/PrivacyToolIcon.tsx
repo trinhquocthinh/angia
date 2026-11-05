@@ -1,4 +1,4 @@
-type Name = 'crop' | 'mask' | 'add' | 'rotate' | 'undo' | 'shield' | 'keyboard' | 'info' | 'pointer';
+type Name = 'crop' | 'mask' | 'add' | 'rotate' | 'undo' | 'shield' | 'keyboard' | 'info' | 'pointer' | 'eye';
 const paths: Record<Name, string> = {
   crop: 'M6 3v15h15M3 6h15v15M9 6h9v9',
   mask: 'M4 5h16v14H4zM8 12h8',
@@ -9,6 +9,7 @@ const paths: Record<Name, string> = {
   keyboard: 'M3 6h18v12H3zM6 10h1m3 0h1m3 0h1m3 0h1M7 14h10',
   info: 'M12 8h.01M12 11v5M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18',
   pointer: 'M8 12V5a2 2 0 0 1 4 0v6l4-1 4 3-2 8H9l-5-7 2-2z',
+  eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6',
 };
 export function PrivacyToolIcon({ name }: { name: Name }) {
   return (

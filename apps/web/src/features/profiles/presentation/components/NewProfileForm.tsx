@@ -1,6 +1,19 @@
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { useProfileConsentForm } from '../useProfileConsentForm';
+import { ConsentFields } from './ConsentFields';
+import { NewProfileSubmit } from './NewProfileSubmit';
 import { ProfileFormFields } from './ProfileFormFields';
 import { useProfileForm } from '../useProfileForm';
 import type { LinkableAccount, ProfileRequest } from '../../application/ports';
+type NewProfileFormProps = {
+  currentAccountId: string;
+  accounts: LinkableAccount[];
+  accountsLoading: boolean;
+  accountsError: boolean;
+  retry: () => void;
+  pending: boolean;
+  onSave: (body: ProfileRequest) => Promise<unknown>;
+};
 export function NewProfileForm({
   accounts,
   accountsLoading,
@@ -8,47 +21,49 @@ export function NewProfileForm({
   retry,
   pending,
   onSave,
-}: {
-  accounts: LinkableAccount[];
-  accountsLoading: boolean;
-  accountsError: boolean;
-  retry: () => void;
-  pending: boolean;
-  onSave: (body: ProfileRequest) => Promise<unknown>;
-}) {
-  const { errors, error, save } = useProfileForm(pending, onSave);
+  currentAccountId,
+}: NewProfileFormProps) {
+  const consent = useProfileConsentForm(currentAccountId);
+  const { errors, error, save } = useProfileForm(pending, onSave, currentAccountId, consent.state.draft);
   return (
     <form
       noValidate
+      onChange={consent.onChange}
       onSubmit={(event) => {
         event.preventDefault();
         void save(event.currentTarget);
       }}
-      className="max-w-[640px] rounded-[20px] bg-white p-6 sm:p-8"
+      className="min-h-0 flex-1 overflow-y-auto border-t border-[#e4f0f0] px-6 pt-5 max-md:px-5"
     >
-      <fieldset disabled={pending} className="space-y-6">
+      <fieldset disabled={pending} className="space-y-5">
         <ProfileFormFields
           errors={errors}
           accounts={accounts}
           accountsLoading={accountsLoading}
           accountsError={accountsError}
           retry={retry}
+          currentAccountId={currentAccountId}
         />
-        <p className="text-sm leading-6 text-[#55615f]">
-          Hồ sơ mới chưa có xác nhận từ người thân. Bạn có thể tạo link gửi người thân xác nhận trên Trang chủ
-          sau khi tạo.
+        <ConsentFields
+          mode={consent.mode}
+          draft={consent.state.draft}
+          profileName={consent.state.displayName}
+          onChange={consent.setDraft}
+        />
+        <p className="flex items-start gap-2 px-1 text-xs leading-5 text-[#55615f]">
+          <span className="mt-0.5 shrink-0 text-[#707975]">
+            <AdminIcon name="info" size={16} />
+          </span>
+          {consent.mode === 'invitation'
+            ? 'Sau khi tạo, AN GIA hiện link để bạn gửi cho chính người này. Hồ sơ chỉ gắn với tài khoản khi họ xác nhận.'
+            : 'Bạn có thể bỏ tick và tạo hồ sơ trước; chỉ ghi được dữ liệu sức khỏe sau khi xác nhận đồng ý.'}
         </p>
         {error && (
           <p role="alert" className="text-sm text-[#b42318]">
             {error}
           </p>
         )}
-        <button
-          type="submit"
-          className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-[#004135] px-5 py-3 text-center text-sm font-semibold text-white cursor-pointer disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958] w-full"
-        >
-          {pending ? 'Đang lưu…' : 'Tạo hồ sơ'}
-        </button>
+        <NewProfileSubmit disabled={pending || consent.result.body === null} pending={pending} />
       </fieldset>
     </form>
   );

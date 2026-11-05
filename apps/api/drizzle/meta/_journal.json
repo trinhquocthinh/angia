@@ -176,6 +176,104 @@
       "when": 1792857844362,
       "tag": "0024_consent_withdrawal",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1793003725229,
+      "tag": "0025_ai_routing_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1793031030235,
+      "tag": "0026_ai_routing_one_to_one",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1793033341748,
+      "tag": "0027_ai_provider_billing",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1793071713410,
+      "tag": "0028_scan_quotas",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1793079521378,
+      "tag": "0029_ocr_scan_runtime",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1793115233733,
+      "tag": "0030_consent_attestation",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1793158777063,
+      "tag": "0031_default_scan_quota",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1793175966916,
+      "tag": "0032_remove_woku",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1793199543978,
+      "tag": "0033_client_side_redaction",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1793283893853,
+      "tag": "0034_profile_vitals_enabled",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1793335818713,
+      "tag": "0035_revisit_reminders",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1793579549745,
+      "tag": "0036_profile_links_self_scope",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1793608617697,
+      "tag": "0037_dose_confirmations",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1793699707423,
+      "tag": "0038_as_needed_and_temperature",
+      "breakpoints": true
     }
   ]
 }

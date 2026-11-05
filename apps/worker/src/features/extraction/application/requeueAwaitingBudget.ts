@@ -1,9 +1,6 @@
 import type { BudgetCall, BudgetRequeueRepository } from './ports.js';
 
-// TC-030/SPEC-009: đầu tháng mới đưa chứng từ awaiting_budget về extracting và enqueue lại; worker kiểm ngân sách
-// lần nữa nên chứng từ vượt trần tháng mới quay về awaiting_budget. Mỗi gia đình một withFamilyScope riêng.
-// SPEC-031: quản trị nâng trần một gia đình → job kèm familyId chỉ xử lý gia đình đó; repository bỏ qua gia đình
-// còn hết trần riêng để không đẩy rồi bật lại awaiting_budget.
+// Quét lại khi cổng có thể đã mở; không cấp quota tự động. Mỗi gia đình có withFamilyScope riêng.
 export async function requeueAwaitingBudget(
   repository: BudgetRequeueRepository,
   input: { familyId?: string | undefined; call: BudgetCall },

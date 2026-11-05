@@ -13,7 +13,7 @@ export function entry(overrides: Partial<DocumentEntry> = {}): DocumentEntry {
     entryDate: '2026-10-01',
     dateKnown: true,
     createdAt: '2026-10-13T08:00:00.000Z',
-    hasOcrImage: false,
+    hasImage: true,
     records: empty,
     ...overrides,
   };
@@ -24,6 +24,7 @@ export const savedPrescription = {
   healthProfileId: PROFILE_ID,
   sourceDocumentId: null,
   issuedDate: '2026-10-01',
+  revisitDate: null,
   facility: 'BV Gia Định',
   diagnosis: null,
   manualWithoutSource: true,
@@ -41,6 +42,7 @@ export const savedPrescription = {
       longTerm: false,
       note: null,
       totalQuantity: null,
+      minIntervalText: null,
     },
     {
       id: '00000000-0000-4000-8000-0000000000c2',
@@ -54,6 +56,7 @@ export const savedPrescription = {
       longTerm: true,
       note: null,
       totalQuantity: null,
+      minIntervalText: null,
     },
     {
       id: '00000000-0000-4000-8000-0000000000c3',
@@ -67,6 +70,7 @@ export const savedPrescription = {
       longTerm: false,
       note: null,
       totalQuantity: null,
+      minIntervalText: null,
     },
   ],
 };

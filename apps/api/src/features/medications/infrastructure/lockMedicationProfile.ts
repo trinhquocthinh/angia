@@ -8,6 +8,6 @@ export async function lockMedicationProfile(
   familyId: string,
   profileId: string,
 ): Promise<void> {
-  const key = `angia:medications:${familyId}:${profileId}`;
+  const key = `angia:medications:${familyId.toLowerCase()}:${profileId.toLowerCase()}`;
   await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${key}, 0))`);
 }

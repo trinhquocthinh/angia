@@ -1,18 +1,25 @@
+import type { PrivacyEdits } from '@angia/contracts';
 import { checkUploadFile, type FileProblem } from './checkUploadFile';
 import type { DocumentType } from './ports';
 
 // SPEC-008: tối đa 10 tệp mỗi lần chọn và mỗi lô gửi (chủ dự án hạ 50 → 20 → 10, 2026-10-07).
 export const MAX_FILES_PER_PICK = 10;
 
-// preparing: đang nén trên trình duyệt. ready: chỉ nằm trên trình duyệt. Chỉ khi bấm "Xong" mới
-// thành queued và được gửi (không sinh rác server).
-type UploadStatus = 'preparing' | 'ready' | 'queued' | 'uploading' | 'done' | 'failed' | 'rejected';
+// needs_redaction: chờ che trên máy (D5: mọi ảnh). ready: đã che, chỉ nằm trên trình duyệt. Chỉ khi
+// bấm "Xong" mới thành queued và được gửi (không sinh rác server).
+type UploadStatus = 'needs_redaction' | 'ready' | 'queued' | 'uploading' | 'done' | 'failed' | 'rejected';
 export interface UploadItem {
   id: string;
-  // Tệp người dùng chọn (tên, dung lượng gốc, xem trước).
+  // Tệp người dùng chọn (tên, dung lượng gốc, ảnh để che); không bao giờ được gửi đi.
   file: File;
-  // Bản sẽ gửi sau khi nén; null khi chưa chuẩn bị xong.
+  // JPEG đã che xuất trên máy (`${id}.jpg`); null khi chưa che.
   upload: File | null;
+  // Vùng cắt/che đã dùng để xuất, giữ lại để mở lại chỉnh trước khi gửi.
+  edits: PrivacyEdits | null;
+  // Lựa chọn ở bước xác nhận: gửi tự động nhận diện hay tự nhập.
+  sendToAi: boolean | null;
+  // Object URL ảnh thu nhỏ của bản đã xuất.
+  thumbnailUrl: string | null;
   // Gắn lúc bấm "Xong" theo hồ sơ/loại đang chọn.
   profileId: string | null;
   declaredType: DocumentType | null;
@@ -31,8 +38,15 @@ export interface UploadItem {
 }
 export type UploadAction =
   | { type: 'add'; items: UploadItem[] }
-  | { type: 'prepared'; id: string; upload: File }
-  | { type: 'reject'; id: string; problem: FileProblem }
+  | {
+      type: 'redacted';
+      id: string;
+      upload: File;
+      edits: PrivacyEdits;
+      sendToAi: boolean;
+      thumbnailUrl: string;
+    }
+  | { type: 'reopen'; id: string }
   | { type: 'submit'; profileId: string; declaredType: DocumentType | null }
   | { type: 'start'; ids: string[] }
   | { type: 'progress'; ids: string[]; percent: number }
@@ -54,9 +68,12 @@ export function planUpload(
       id: newId(),
       file,
       upload: null,
+      edits: null,
+      sendToAi: null,
+      thumbnailUrl: null,
       profileId: null,
       declaredType: null,
-      status: problem ? 'rejected' : 'preparing',
+      status: problem ? 'rejected' : 'needs_redaction',
       attempt: 0,
       progress: 0,
       problem,
@@ -67,7 +84,7 @@ export function planUpload(
   return { ok: true, items };
 }
 
-// Bỏ qua id không còn trong hàng đợi (vd. ảnh đã bỏ trước khi nén xong).
+// Bỏ qua id không còn trong hàng đợi (vd. ảnh đã bỏ trước khi che xong).
 const update = (state: UploadItem[], ids: string | string[], patch: Partial<UploadItem>) => {
   const targets = new Set(typeof ids === 'string' ? [ids] : ids);
   return state.map((item) => (targets.has(item.id) ? { ...item, ...patch } : item));
@@ -77,12 +94,19 @@ export function uploadQueueReducer(state: UploadItem[], action: UploadAction): U
   switch (action.type) {
     case 'add':
       return [...state, ...action.items];
-    case 'prepared':
-      return update(state, action.id, { status: 'ready', upload: action.upload });
-    case 'reject':
-      return update(state, action.id, { status: 'rejected', problem: action.problem });
+    case 'redacted': {
+      const { upload, edits, sendToAi, thumbnailUrl } = action;
+      return update(state, action.id, { status: 'ready', upload, edits, sendToAi, thumbnailUrl });
+    }
+    case 'reopen':
+      return state.map((item) =>
+        item.id === action.id && item.status === 'ready'
+          ? { ...item, status: 'needs_redaction', upload: null, thumbnailUrl: null }
+          : item,
+      );
     case 'submit': {
       const { profileId, declaredType } = action;
+      if (state.some((item) => item.status === 'needs_redaction')) return state;
       return state.map((item) =>
         item.status === 'ready' ? { ...item, status: 'queued', profileId, declaredType } : item,
       );
@@ -116,16 +140,15 @@ export function nextBatch(state: UploadItem[]): UploadItem[] {
   return state.filter((item) => item.status === 'queued' && item.profileId).slice(0, MAX_FILES_PER_PICK);
 }
 
-// Nén lần lượt từng ảnh để không giữ nhiều ảnh đã giải mã trong bộ nhớ (điện thoại yếu).
-export const nextPreparing = (state: UploadItem[]) => state.find((item) => item.status === 'preparing');
-
 export function summarizeQueue(state: UploadItem[]) {
   const count = (...statuses: UploadStatus[]) =>
     state.filter((item) => statuses.includes(item.status)).length;
   return {
-    preparing: count('preparing'),
+    needsRedaction: count('needs_redaction'),
     ready: count('ready'),
-    total: count('preparing', 'ready', 'queued', 'uploading', 'done', 'failed'),
+    // Ảnh gửi tự động nhận diện đã che chưa gửi: chiếm chỗ hàng chờ AI (BR-043).
+    aiReady: state.filter((item) => item.status === 'ready' && item.sendToAi).length,
+    total: count('needs_redaction', 'ready', 'queued', 'uploading', 'done', 'failed'),
     done: count('done'),
     active: count('queued', 'uploading'),
     failed: count('failed'),
@@ -133,3 +156,7 @@ export function summarizeQueue(state: UploadItem[]) {
     firstDocumentId: state.find((item) => item.status === 'done' && item.documentId)?.documentId ?? null,
   };
 }
+
+// Rời trang là mất ảnh trên máy (KH-2 §3.6): cảnh báo khi còn ảnh chưa che, chưa gửi hoặc đang gửi.
+export const shouldWarnOnLeave = (summary: ReturnType<typeof summarizeQueue>) =>
+  summary.needsRedaction + summary.ready + summary.active > 0;

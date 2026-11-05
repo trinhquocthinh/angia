@@ -11,7 +11,7 @@ export function InvitationLinkInput({ url, onCopy }: { url: string; onCopy: () =
       />
       <button
         type="button"
-        aria-label="Sao chép nhanh link mời"
+        aria-label="Sao chép nhanh link liên kết"
         onClick={onCopy}
         className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white text-[#286958] hover:bg-[#f0fcfb]"
       >

@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from '@src/shared/test/acceptConsentInvitation.js';
+import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import type { SeededSession } from '@src/shared/test/seedAuthFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 
@@ -45,9 +45,12 @@ describe('Giới hạn 3 lô tải lên xử lý đồng thời (E3-S1-T1)', () 
   beforeAll(async () => {
     t = await startProfileTestApp();
     main = await t.session(await t.family());
-    const created = await t.call(main, 'POST', '/api/health-profiles', { displayName: 'Bà' });
+    const created = await t.call(main, 'POST', '/api/health-profiles', {
+      birthYear: 1950,
+      displayName: 'Bà',
+    });
     profileId = ((await created.json()) as HealthProfile).id;
-    await acceptConsentInvitation(t, main, profileId);
+    await confirmConsentByAttestation(t, main, profileId);
   });
   afterAll(async () => {
     await t?.stop();

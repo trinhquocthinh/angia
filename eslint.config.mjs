@@ -36,7 +36,7 @@ const crossAppZones = APPS.map((app) => ({
 
 export default defineConfig(
   {
-    ignores: ['**/dist/**', '**/coverage/**', '.yarn/**', 'design/**', '**/*.gen.ts'],
+    ignores: ['**/dist/**', '**/coverage/**', '.yarn/**', 'design/**', '.playwright/**', '**/*.gen.ts'],
   },
   js.configs.recommended,
   tsConfigs.recommended,

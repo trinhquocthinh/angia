@@ -18,3 +18,13 @@ describe('Chọn loại giấy tờ khi tải lô ảnh (SPEC-008 declaredType t
     expect(html).toMatch(/aria-pressed="true"[^>]*>(<[^>]+>)*Đơn thuốc/);
   });
 });
+
+it('TC-447 — ẩn Máy đo cá nhân, giữ tự động nhận diện và các loại còn lại', () => {
+  const html = renderToStaticMarkup(
+    <DocumentTypePicker value={null} onChange={() => undefined} allowDeviceReading={false} />,
+  );
+  expect(html).not.toContain('Máy đo cá nhân');
+  expect(html).toContain('Tự động nhận diện');
+  expect(html).toContain('Đơn thuốc');
+  expect(html).toContain('Xét nghiệm');
+});

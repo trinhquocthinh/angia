@@ -12,6 +12,7 @@ const render = (mode: 'fit' | 'width' | 'custom', scale: number) =>
       onFitPage={noop}
       onFitWidth={noop}
       onZoom={noop}
+      onRotate={noop}
     />,
   );
 
@@ -29,5 +30,6 @@ describe('Thanh phóng to ảnh chứng từ', () => {
     expect(html).toContain('156%');
     expect(html).toContain('aria-label="Phóng to ảnh"');
     expect(html).toContain('aria-label="Thu nhỏ ảnh"');
+    expect(html).toContain('aria-label="Xoay ảnh"');
   });
 });

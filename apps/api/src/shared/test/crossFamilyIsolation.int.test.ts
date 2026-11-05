@@ -1,14 +1,21 @@
+import { ATTESTATION, attestationPath, linkCall, linkToken } from './profileConsentFixture.js';
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { HealthProfile } from '@angia/contracts';
-import { acceptConsentInvitation } from './acceptConsentInvitation.js';
+import type { HealthProfile, ProfileLinkCreated } from '@angia/contracts';
+import { confirmConsentByAttestation } from './confirmConsentByAttestation.js';
 import { expectCrossFamilyDenied } from './expectCrossFamilyDenied.js';
 import { MEMBER_BLOCKED_SESSION_ROUTES, type RouteOfKind } from './healthDataRoutes.js';
 import type { SeededSession } from './seedAuthFixtures.js';
 import type { Target, Probe } from './CrossFamilyTarget.js';
 import { seedPendingDocument } from './seedPendingDocument.js';
 import { seedReminder } from './seedReminder.js';
+import { seedRevisitReminder } from './seedRevisitReminder.js';
 import { snapshotHealthTables } from './snapshotHealthTables.js';
+import { asNeededDoseRouteProbes } from './asNeededDoseRouteProbes.js';
+import { doseConfirmationRouteProbes } from './doseConfirmationRouteProbes.js';
+import { seedAsNeededDose } from './seedAsNeededDose.js';
+import { seedTemperatureReading } from './seedTemperatureReading.js';
+import { prescriptionRouteProbes } from './prescriptionRouteProbes.js';
 import {
   manualCourse as course,
   manualPrescription as prescription,
@@ -16,7 +23,7 @@ import {
 } from './healthDataFixtures.js';
 import { startProfileTestApp, type ProfileTestApp } from './startProfileTestApp.js';
 
-const respondBody = { decision: 'accepted', basis: 'self', respondentName: 'Lén' };
+const acceptBody = { decision: 'accepted' };
 const profiles = '/api/health-profiles';
 const documents = '/api/source-documents';
 const adherence = { medicationName: 'Canxi', status: 'taking', fromDate: '2026-10-01' };
@@ -31,16 +38,6 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     await t?.stop();
   });
 
-  const tokenCall = (path: string, token: string, body?: unknown) =>
-    t.app.request(path, {
-      method: body ? 'POST' : 'GET',
-      headers: {
-        authorization: `Bearer ${token}`,
-        'content-type': 'application/json',
-        origin: 'http://localhost:5173',
-      },
-      ...(body ? { body: JSON.stringify(body) } : {}),
-    });
   const upload = (user: SeededSession, profileId: string) => {
     const form = new FormData();
     form.append('files', new File([new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 9])], 'a.jpg'));
@@ -52,41 +49,29 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
   };
   const probes: Record<RouteOfKind<'scoped'>, Probe> = {
     'POST /api/health-profiles': (u, x) =>
-      t.call(u, 'POST', profiles, { displayName: 'Lén', linkedAccountId: x.accountId }),
+      t.call(u, 'POST', profiles, { birthYear: 1950, displayName: 'Lén', linkedAccountId: x.accountId }),
     'DELETE /api/health-profiles/:id': (u, x) =>
       t.call(u, 'DELETE', `${profiles}/${x.profileId}`, { confirmName: 'Mẹ' }), // tên đúng của nạn nhân
-    'POST /api/health-profiles/:id/consent-invitations': (u, x) =>
-      t.call(u, 'POST', `${profiles}/${x.profileId}/consent-invitations`, { attestation: true }),
-    'DELETE /api/health-profiles/:id/consent-invitations': (u, x) =>
-      t.call(u, 'DELETE', `${profiles}/${x.profileId}/consent-invitations`),
-    'GET /api/consent-invitations/view': (_u, x) => tokenCall('/api/consent-invitations/view', x.token),
-    'POST /api/consent-invitations/respond': (_u, x) =>
-      tokenCall('/api/consent-invitations/respond', x.token, respondBody),
+    'PATCH /api/health-profiles/:id': (u, x) =>
+      t.call(u, 'PATCH', `${profiles}/${x.profileId}`, { birthYear: 2020, vitalsEnabled: true }),
+    'POST /api/health-profiles/:id/consent-attestation': (u, x) =>
+      t.call(u, 'POST', attestationPath(x.profileId), ATTESTATION),
+    'POST /api/health-profiles/:id/link-invitations': (u, x) =>
+      t.call(u, 'POST', `${profiles}/${x.profileId}/link-invitations`, {}),
+    'DELETE /api/health-profiles/:id/link-invitations': (u, x) =>
+      t.call(u, 'DELETE', `${profiles}/${x.profileId}/link-invitations`),
+    'GET /api/me/link-invitations/view': (u, x) => linkCall(t, u, x.token),
+    'POST /api/me/link-invitations/accept': (u, x) => linkCall(t, u, x.token, acceptBody),
     'POST /api/health-profiles/:id/upload-batches': (u, x) => upload(u, x.profileId),
     'GET /api/source-documents/:id/review': (u, x) => t.call(u, 'GET', `${documents}/${x.documentId}/review`),
     'GET /api/source-documents/:id/image': (u, x) => t.call(u, 'GET', `${documents}/${x.documentId}/image`),
-    'POST /api/source-documents/:id/privacy-drafts': (u, x) =>
-      t.call(u, 'POST', `${documents}/${x.documentId}/privacy-drafts`, {
-        rotation: 0,
-        crop: { left: 0, top: 0, width: 1_000_000, height: 1_000_000 },
-        masks: [],
-      }),
-    'GET /api/source-documents/:id/privacy-draft': (u, x) =>
-      t.call(u, 'GET', `${documents}/${x.documentId}/privacy-draft`),
-    'GET /api/source-documents/:id/privacy-drafts/:draftId/image': (u, x) =>
-      t.call(u, 'GET', `${documents}/${x.documentId}/privacy-drafts/${x.accountId}/image`),
-    'POST /api/source-documents/:id/privacy-approval': (u, x) =>
-      t.call(u, 'POST', `${documents}/${x.documentId}/privacy-approval`, {
-        draftId: x.accountId,
-        sha256: 'a'.repeat(64),
-        confirmed: true,
-      }),
-    'POST /api/source-documents/:id/manual-entry': (u, x) =>
-      t.call(u, 'POST', `${documents}/${x.documentId}/manual-entry`),
     'POST /api/source-documents/:id/approve': (u, x) =>
       t.call(u, 'POST', `${documents}/${x.documentId}/approve`, { type: 'device_reading', data: reading }),
-    'POST /api/source-documents/:id/reject': (u, x) =>
-      t.call(u, 'POST', `${documents}/${x.documentId}/reject`),
+    // TC-414 (SPEC-037)
+    'GET /api/source-documents/:id/deletion-impact': (u, x) =>
+      t.call(u, 'GET', `${documents}/${x.documentId}/deletion-impact`),
+    'DELETE /api/source-documents/:id': (u, x) =>
+      t.call(u, 'DELETE', `${documents}/${x.documentId}`, { confirm: 'XÓA' }),
     'GET /api/health-profiles/:id/measurements': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/measurements`),
     'GET /api/health-profiles/:id/measurements/series': (u, x) =>
@@ -126,7 +111,12 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       }),
     'GET /api/health-profiles/:id/visit-summary': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/visit-summary`),
+    ...prescriptionRouteProbes((...args) => t.call(...args)),
+    'GET /api/me/revisit-reminders/:reminderId': (u, x) =>
+      t.call(u, 'GET', `/api/me/revisit-reminders/${x.revisitReminderId}`),
     'GET /api/me/reminders/:reminderId': (u, x) => t.call(u, 'GET', `/api/me/reminders/${x.reminderId}`),
+    ...doseConfirmationRouteProbes((...args) => t.call(...args)),
+    ...asNeededDoseRouteProbes((...args) => t.call(...args)),
     'POST /api/health-profiles/:id/manual-records': (u, x) =>
       t.call(u, 'POST', `${profiles}/${x.profileId}/manual-records`, {
         type: 'device_reading',
@@ -134,13 +124,15 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
       }),
   };
 
-  // Gia đình nạn nhân: hồ sơ đã đồng thuận, chứng từ chờ duyệt có ảnh, link mời đã dùng.
+  // Gia đình nạn nhân: hồ sơ đã đồng thuận, chứng từ chờ duyệt có ảnh, link liên kết đang chờ.
   const victimFixture = async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);
-    const created = await t.call(main, 'POST', profiles, { displayName: 'Mẹ' });
+    const created = await t.call(main, 'POST', profiles, { birthYear: 1950, displayName: 'Mẹ' });
     const profile = (await created.json()) as HealthProfile;
-    const token = await acceptConsentInvitation(t, main, profile.id);
+    await confirmConsentByAttestation(t, main, profile.id);
+    const linked = await t.call(main, 'POST', `${profiles}/${profile.id}/link-invitations`, {});
+    const token = linkToken((await linked.json()) as ProfileLinkCreated);
     const owner = { familyId, profileId: profile.id, accountId: main.accountId };
     const { documentId } = await seedPendingDocument(t, owner, reading);
     const started = await t.call(main, 'POST', `${profiles}/${profile.id}/medication-courses`, course);
@@ -150,7 +142,11 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const saved = await t.call(main, 'POST', `${profiles}/${profile.id}/manual-records`, body);
     const { id: prescriptionId } = ((await saved.json()) as { prescription: { id: string } }).prescription;
     const reminderId = await seedReminder(t.owner, familyId, profile.id, main.accountId);
-    return { familyId, main, profile, documentId, token, courseId, prescriptionId, reminderId };
+    const revisitReminderId = await seedRevisitReminder(t.owner, familyId, profile.id);
+    const asNeeded = await seedAsNeededDose(t, main, profile.id);
+    const readingId = await seedTemperatureReading(t, main, profile.id);
+    const ids = { documentId, courseId, prescriptionId, reminderId, revisitReminderId, readingId };
+    return { ...ids, asNeeded, familyId, main, profile, token };
   };
   const attackers = async () => {
     const familyId = await t.family();
@@ -158,30 +154,25 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const adminMain = await t.session(familyId, 'main', 'Quản trị kiêm main', true);
     return { familyId, main, adminMain };
   };
-  const snapshot = () => snapshotHealthTables(t.owner);
 
   it('TC-013, TC-014, TC-015, TC-076: main và Quản trị kiêm main nhóm khác nhận đúng phản hồi của ID không tồn tại, không ghi gì', async () => {
     const victim = await victimFixture();
     const { familyId, main, adminMain } = await attackers();
+    const { documentId, courseId, prescriptionId, reminderId, revisitReminderId, readingId } = victim;
     const target: Target = {
+      ...{ documentId, courseId, prescriptionId, reminderId, revisitReminderId, readingId },
       profileId: victim.profile.id,
-      documentId: victim.documentId,
       accountId: victim.main.accountId,
-      courseId: victim.courseId,
-      prescriptionId: victim.prescriptionId,
-      reminderId: victim.reminderId,
+      asNeededCourseId: victim.asNeeded.courseId,
+      doseId: victim.asNeeded.doseId,
       token: t.codec.issue({ ...t.codec.verify(victim.token)!, familyId }),
     };
-    const missing: Target = {
-      profileId: randomUUID(),
-      documentId: randomUUID(),
-      accountId: randomUUID(),
-      courseId: randomUUID(),
-      prescriptionId: randomUUID(),
-      reminderId: randomUUID(),
+    const ids = Object.keys(target).filter((key) => key !== 'token');
+    const missing = {
+      ...Object.fromEntries(ids.map((key) => [key, randomUUID()])),
       token: 'bogus',
-    };
-    const before = await snapshot();
+    } as Target;
+    const before = await snapshotHealthTables(t.owner);
     for (const user of [main, adminMain]) {
       for (const [route, probe] of Object.entries(probes)) {
         await expectCrossFamilyDenied(
@@ -192,15 +183,17 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
         });
       }
     }
-    // Hồ sơ "Lén" không được tạo; dữ liệu nạn nhân (gồm link mời, chứng từ, số đo) giữ nguyên.
-    expect(await snapshot()).toEqual(before);
+    // Hồ sơ "Lén" không được tạo; dữ liệu nạn nhân (gồm link liên kết, chứng từ, số đo) giữ nguyên.
+    expect(await snapshotHealthTables(t.owner)).toEqual(before);
   });
 
   it('TC-017: danh sách chỉ gồm dữ liệu gia đình của phiên, không lẫn nhóm khác', async () => {
     const victim = await victimFixture();
-    for (const name of ['Ba', 'Bà']) await t.call(victim.main, 'POST', profiles, { displayName: name });
+    for (const name of ['Ba', 'Bà'])
+      await t.call(victim.main, 'POST', profiles, { birthYear: 1950, displayName: name });
     const { familyId, main } = await attackers();
-    for (const name of ['A', 'B', 'C', 'D']) await t.call(main, 'POST', profiles, { displayName: name });
+    for (const name of ['A', 'B', 'C', 'D'])
+      await t.call(main, 'POST', profiles, { birthYear: 1950, displayName: name });
     const listPaths: Record<RouteOfKind<'list'>, string> = {
       'GET /api/health-profiles': profiles,
       'GET /api/health-profiles/linkable-accounts': `${profiles}/linkable-accounts`,

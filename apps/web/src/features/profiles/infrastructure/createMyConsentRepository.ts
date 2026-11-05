@@ -9,5 +9,13 @@ export function createMyConsentRepository(client = apiClient): MyConsentReposito
       readProfileResponse(
         await client.POST('/api/me/consent/withdraw', { body: {}, headers: { 'X-CSRF-Token': csrfToken } }),
       ),
+    // 204 không có body: chỉ đọc lỗi khi response không ok.
+    unlink: async (csrfToken) => {
+      const result = await client.POST('/api/me/profile-link/unlink', {
+        body: { confirm: true },
+        headers: { 'X-CSRF-Token': csrfToken },
+      });
+      if (!result.response.ok) await readProfileResponse(result);
+    },
   };
 }

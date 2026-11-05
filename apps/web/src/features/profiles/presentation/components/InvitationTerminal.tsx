@@ -1,25 +1,21 @@
+import { Link } from '@tanstack/react-router';
 import type { InvitationReceipt } from '../../application/invitationPorts';
-import { invitationReceiptMessage } from '../invitationReceiptMessage';
-export function InvitationTerminal({
-  status,
-  receipt,
-}: {
-  status: 'accepted' | 'declined';
-  receipt: InvitationReceipt | null;
-}) {
+export function InvitationTerminal({ receipt }: { receipt: InvitationReceipt }) {
+  const linked = receipt.outcome === 'linked';
   return (
-    <section className="mt-6 rounded-xl bg-[#eaf6f5] p-5">
-      <h2 className="text-lg font-semibold text-[#004135]">
-        {status === 'accepted' ? 'Lời mời đã được đồng ý' : 'Lời mời đã bị từ chối'}
-      </h2>
+    <section className="rounded-xl bg-[#eaf6f5] p-5">
+      <h1 className="text-lg font-semibold text-[#004135]">{linked ? 'Đã liên kết hồ sơ' : 'Đã ghi nhận'}</h1>
       <p role="status" aria-live="polite" className="mt-3 break-words text-sm leading-7">
-        {receipt
-          ? invitationReceiptMessage(receipt)
-          : 'Phản hồi đã được ghi nhận. Lời mời này không nhận thêm quyết định.'}
+        {linked
+          ? `Hồ sơ "${receipt.profileName}" đã gắn với tài khoản của bạn.`
+          : `Bạn đã không đồng ý. Hồ sơ "${receipt.profileName}" không gắn với tài khoản của bạn.`}
       </p>
-      <p className="mt-3 text-sm leading-6 text-[#55615f]">
-        Thông tin người phản hồi do người thân tự nhập và chưa được xác minh.
-      </p>
+      <Link
+        to="/"
+        className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-[#004135] px-5 py-3 text-sm font-semibold text-white"
+      >
+        Về Trang chủ
+      </Link>
     </section>
   );
 }
