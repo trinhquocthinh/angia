@@ -25,4 +25,23 @@ describe('checkHealth', () => {
     const report = await checkHealth({ db: hanging, storage: alive }, { timeoutMs: 20 });
     expect(report.db).toBe('down');
   });
+
+  it('hủy probe đang chạy khi hết hạn để không giữ tài nguyên sau phản hồi', async () => {
+    let active = 0;
+    const probe = (signal?: AbortSignal) =>
+      new Promise<void>((_resolve, reject) => {
+        active++;
+        signal?.addEventListener(
+          'abort',
+          () => {
+            active--;
+            reject(signal.reason);
+          },
+          { once: true },
+        );
+      });
+    const report = await checkHealth({ db: probe, storage: probe }, { timeoutMs: 10 });
+    expect(report).toEqual({ status: 'degraded', db: 'down', storage: 'down' });
+    expect(active).toBe(0);
+  });
 });

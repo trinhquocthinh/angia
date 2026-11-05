@@ -3,6 +3,7 @@ import { healthResponseSchema } from '@angia/contracts';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { checkHealth } from '../application/checkHealth.js';
 import type { HealthProbes } from '../application/ports.js';
+import type { HealthReport } from '../domain/HealthReport.js';
 
 const healthRoute = createRoute({
   method: 'get',
@@ -22,8 +23,20 @@ const healthRoute = createRoute({
 });
 
 export function registerHealthRoute(app: OpenAPIHono<AppEnv>, probes: HealthProbes): void {
+  let pending: Promise<HealthReport> | undefined;
+  let cached: { at: number; report: HealthReport } | undefined;
   app.openapi(healthRoute, async (c) => {
-    const report = await checkHealth(probes);
+    if (!pending && (!cached || Date.now() - cached.at >= 250)) {
+      pending = checkHealth(probes)
+        .then((report) => {
+          cached = { at: Date.now(), report };
+          return report;
+        })
+        .finally(() => {
+          pending = undefined;
+        });
+    }
+    const report = pending ? await pending : cached!.report;
     c.header('Cache-Control', 'no-store');
     return report.status === 'ok' ? c.json(report, 200) : c.json(report, 503);
   });
