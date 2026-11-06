@@ -179,3 +179,15 @@ Kiểm chứng: **12/12 integration test, 4 suite PASS** trên PostgreSQL 16 Tes
 Đã bổ sung kiểm kê/probe cho 15 `scoped`, 4 `self`, 11 `self_write`, wiring production/test và sinh OpenAPI/client. Kiểm chứng: 34/34 integration, 229/229 unit PASS; hai suite HTTP mới chạy lại 6/6 PASS với đồng hồ cố định. `verify:fast` và `check:api` PASS trên bản sao sạch; lint PASS, dup 1,35%. Volume gốc vẫn lỗi AppleDouble khi Vitest quét test; knip còn hai export cũ, đối chiếu baseline HEAD cho kết quả giống hệt.
 
 Source và README được commit cùng task; SHA và kết quả hook được ghi riêng trong checkpoint E20 ngoài Git của source. Chưa chạy full verify/integration toàn bộ, chưa push/PR/deploy. Bước tiếp theo **E20-S4-T2**. Bằng chứng, quyết định và giới hạn tại [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md).
+
+## E20-S4-T2 — Integration sổ đau nhức local (2026-11-06)
+
+Đã bổ sung 6 suite nghiệp vụ HTTP và mở rộng suite bảo mật: mở/đọc vấn đề, lần ghi, vòng đời, bài tập, bối cảnh thuốc và cascade. Cùng assertion chạy qua main/tự quản; kiểm audit từ phiên, ngày VN, hợp đồng strict, xung đột, consent, quyền và dữ liệu không đổi khi bị từ chối. Kiểm thêm ID con thuộc sai vấn đề trong cùng hồ sơ, hồ sơ khác cùng gia đình và gia đình khác. TC-687 kiểm xóa vấn đề; TC-718 kiểm xóa hồ sơ dọn đủ 4 bảng, giữ hồ sơ khác; TC-719 kiểm xóa chứng từ đã duyệt giữ nguyên sổ đau nhức. Giữ test đồng thời repository TC-663/679 hiện có.
+
+Owner duyệt riêng các sửa cổng knip: bỏ export nội bộ `actor`, `PainIssueConflict`, `WebPushLibrary`; loại đúng 5 helper test khỏi project production. Không đổi hành vi runtime, schema DB, hợp đồng HTTP hoặc dependency.
+
+**Kiểm chứng:** `yarn verify` PASS trên bản sao sạch, gồm typecheck/lint/format, **2.634 unit/506 suite**, dup **1,35%**, knip thường/production, build và ngân sách bundle **200 KB gzip**. `yarn verify:fast` cuối PASS với **138 unit/10 suite**. SHA-256 source/bản sao khớp **2.457/2.457 tệp** trước cập nhật tài liệu. Volume gốc vẫn lỗi AppleDouble tại `._createS3ObjectReader.test.ts` sau typecheck.
+
+Integration đã có lượt **167/167 test, 15 suite PASS** trước khi thêm hai ca ghép sai ID con và sửa export/knip; suite bảo mật mới nhất chạy riêng **6/6 PASS**, gồm hai ca ID con mới. **Chưa có lượt integration cuối toàn bộ PASS:** các lượt toàn bộ/tuần tự bị lỗi khởi tạo container, gồm `unhealthy`, `container stopped` và timeout. Chẩn đoán PostgreSQL thuần ngoài dự án tái hiện `Failed to connect to Reaper` trước khi PostgreSQL/migration khởi động; các lượt chốt lại bị lỗi hạ tầng đã dừng. Không thay cấu hình Testcontainers trong source.
+
+**Chưa nghiệm thu T2/SIT/Epic; chưa deploy.** Bước tiếp theo: khôi phục kết nối Reaper/Colima, chạy lại integration E20 và toàn bộ, rồi triển khai/nghiệm thu SIT. Trạng thái commit/PR và chi tiết tại [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md).

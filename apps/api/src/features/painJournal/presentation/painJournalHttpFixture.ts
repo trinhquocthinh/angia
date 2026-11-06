@@ -19,16 +19,17 @@ export async function painJournalHttpFixture() {
     await t.owner.query('UPDATE accounts SET health_profile_id=$1 WHERE id=$2', [id, member.accountId]);
     return { familyId, profileId: id, main, member };
   };
-  const issue = async (p: Awaited<ReturnType<typeof profile>>) => {
+  const issue = async (p: Awaited<ReturnType<typeof profile>>, side: 'left' | 'right' = 'left') => {
     const base = `/api/health-profiles/${p.profileId}/pain-issues`;
     const response = await t.call(p.main, 'POST', base, {
       region: 'knee',
-      side: 'left',
+      side,
       firstEntry: { level: 5, recordedAt: '2026-11-05T00:00:00Z' },
     });
     expect(response.status).toBe(201);
     const value = (await response.json()) as PainIssueDetail;
-    await t.call(p.main, 'POST', `${base}/${value.id}/entries`, { level: 4 });
+    const entry = await t.call(p.main, 'POST', `${base}/${value.id}/entries`, { level: 4 });
+    expect(entry.status).toBe(201);
     const exercise = await t.call(p.main, 'POST', `${base}/${value.id}/exercises`, {
       name: 'Duỗi gối',
       source: 'self',

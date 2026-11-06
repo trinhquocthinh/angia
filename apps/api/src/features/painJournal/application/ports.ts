@@ -34,7 +34,7 @@ export interface PainIssueAudit {
   at: Date;
 }
 export type PainIssueClock = () => Date;
-export type PainIssueConflict = {
+type PainIssueConflict = {
   ok: false;
   code: 'ERR_PAIN_ISSUE_EXISTS';
   details: { existingIssueId: string };

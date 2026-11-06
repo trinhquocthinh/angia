@@ -6,7 +6,7 @@ import type { PainIssueRepository, PainIssueStore } from './ports.js';
 export const target = { familyId: 'family-1', profileId: 'profile-1', issueId: 'issue-1' };
 export const session = { ...target, accountId: 'session-account' };
 export const now = () => new Date('2026-11-05T17:30:00.000Z');
-export const actor = { accountId: 'session-account', displayName: 'Thịnh' };
+const actor = { accountId: 'session-account', displayName: 'Thịnh' };
 export const issue: PainIssue = {
   id: 'issue-1',
   healthProfileId: 'profile-1',

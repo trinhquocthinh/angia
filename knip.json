@@ -13,7 +13,16 @@
     },
     "apps/api": {
       "entry": ["src/{server,shared/db/migrate}.ts!"],
-      "project": ["src/**/*.ts!", "!src/shared/test/**!", "scripts/**/*.ts"]
+      "project": [
+        "src/**/*.ts!",
+        "!src/shared/test/**!",
+        "scripts/**/*.ts",
+        "!src/features/painJournal/application/painIssueTestFixture.ts!",
+        "!src/features/painJournal/infrastructure/painRepositoryFixture.ts!",
+        "!src/features/painJournal/infrastructure/waitForPainLocks.ts!",
+        "!src/features/painJournal/presentation/painJournalHttpFixture.ts!",
+        "!src/features/painJournal/presentation/painJournalScenario.ts!"
+      ]
     },
     "apps/worker": {
       "entry": ["src/{worker,features/documentSanitize/infrastructure/sanitizeJpegChild}.ts!"],

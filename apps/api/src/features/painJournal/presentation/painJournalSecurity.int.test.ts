@@ -71,6 +71,60 @@ describe('Bảo mật HTTP sổ đau nhức', () => {
     expect(await snapshotHealthTables(t.owner)).toEqual(before);
   });
 
+  it.each([false, true])('TC-698/699: ID con phải thuộc đúng vấn đề và hồ sơ, self=%s', async (self) => {
+    const own = await t.profile();
+    const parent = await t.issue(own);
+    const sibling = await t.profile(own.familyId);
+    const foreign = await t.profile();
+    const targets = [await t.issue(own, 'right'), await t.issue(sibling), await t.issue(foreign)];
+    const user = self ? own.member : own.main;
+    const base = self ? selfBase : `/api/health-profiles/${own.profileId}/pain-issues`;
+    const before = await snapshotHealthTables(t.owner);
+    for (const target of targets) {
+      for (const [method, suffix, body] of painJournalOperations) {
+        if (!suffix.includes(':entryId') && !suffix.includes(':exerciseId')) continue;
+        const path = painPath(base, suffix, { ...target, issueId: parent.issueId });
+        const response = await t.call(user, method, path, body);
+        expect(response.status, `${method} ${suffix}`).toBe(404);
+        expect(await response.json()).toMatchObject({ error: { code: 'ERR_NOT_FOUND' } });
+        expect(await snapshotHealthTables(t.owner)).toEqual(before);
+      }
+    }
+  });
+
+  it('TC-701: rút đồng thuận chặn mọi route self, DB không đổi', async () => {
+    const own = await t.profile();
+    const target = await t.issue(own);
+    const withdrawn = await t.call(own.member, 'POST', '/api/me/consent/withdraw', {});
+    expect(withdrawn.status).toBe(200);
+    const before = await snapshotHealthTables(t.owner);
+    for (const [method, suffix, body] of painJournalOperations) {
+      const response = await t.call(own.member, method, painPath(selfBase, suffix, target), body);
+      expect(response.status, `${method} ${suffix}`).toBe(409);
+      expect(await response.json()).toMatchObject({ error: { code: 'ERR_CONSENT_REQUIRED' } });
+      expect(response.headers.get('cache-control')).toBe('no-store');
+      expect(await snapshotHealthTables(t.owner)).toEqual(before);
+    }
+  });
+
+  it('TC-702/703: member không liên kết bị 404 ở self; mọi member bị 403 ở main', async () => {
+    const own = await t.profile();
+    const target = await t.issue(own);
+    const unlinked = await t.session(own.familyId, 'member');
+    const mainBase = `/api/health-profiles/${own.profileId}/pain-issues`;
+    const before = await snapshotHealthTables(t.owner);
+    for (const [method, suffix, body] of painJournalOperations) {
+      const selfResponse = await t.call(unlinked, method, painPath(selfBase, suffix, target), body);
+      expect(selfResponse.status, `${method} self ${suffix}`).toBe(404);
+      expect(await selfResponse.json()).toMatchObject({ error: { code: 'ERR_NOT_FOUND' } });
+      for (const member of [unlinked, own.member]) {
+        const response = await t.call(member, method, painPath(mainBase, suffix, target), body);
+        expect(response.status, `${method} main ${suffix}`).toBe(403);
+      }
+      expect(await snapshotHealthTables(t.owner)).toEqual(before);
+    }
+  });
+
   it('TC-735: mọi mutation hai cửa thiếu/sai CSRF bị 403, DB không đổi; mọi phản hồi no-store', async () => {
     const own = await t.profile();
     const target = await t.issue(own);
