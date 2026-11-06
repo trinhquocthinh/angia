@@ -95,3 +95,13 @@ Bốn repository thuốc/lịch hẹn/liều/nhiệt độ có tham số `profil
 TC-707/708/710 và hồi quy TC-565–572 PASS local. Bộ tập trung: 132/132 test, 5/5 suite. Toàn bộ `yarn test:int --maxWorkers=1 --reporter=verbose`: **762/762 integration test / 121/121 suite PASS**, trên PostgreSQL Testcontainers trong bản sao sạch khớp SHA-256 42/42 tệp source đã áp dụng. `yarn verify:fast` PASS trên bản sao sạch (typecheck toàn workspace, --changed không chọn unit test liên quan). Trên thư mục gốc, lệnh nguyên bản typecheck PASS nhưng Vitest lỗi parse metadata AppleDouble `._createS3ObjectReader.test.ts`; thử thêm `--exclude '**/._*'` cũng chưa tránh được lỗi dựng đồ thị import. Không sửa config/dependency hoặc xóa metadata để lấy kết quả PASS. ESLint/Prettier tệp đổi và `git diff --check` PASS. Bằng chứng tạm: `/private/tmp/angia-e19-s2-t2-md84r_gd/` (`red-final.log`, `policy-green-lock-red.log`, `focused-green.log`, `integration.log`, `verify-fast.log`, `verify-fast-applied.log`, `verify-fast-applied-filtered.log`, `generate-check.log`, `applied-source-sha256.json`).
 
 T2 hoàn tất phần source và kiểm chứng local. Chưa chạy `yarn verify` đầy đủ, push/PR/deploy, migrate DB dev/SIT/Production hoặc đóng E19. Nhóm kiểm kê route `self_write`, helper `expectSelfWriteDenied` và phá thử TC-704–706/709 vẫn thuộc E19-S3-T1; đây là bước tiếp theo. Tài liệu dự án ngoài Git được cập nhật riêng với mã commit sau khi hook hoàn tất.
+
+## E19-S3-T1 — Kiểm kê và phá thử quyền ghi tự quản local (2026-11-06)
+
+Đã bổ sung nhóm `self_write`, kiểm kê TC-709, helper `expectSelfWriteDenied` và snapshot đủ bốn bảng sổ đau nhức. Helper kiểm 404, phản hồi đồng nhất và dữ liệu giữ nguyên cho cả hai đích khác hồ sơ cùng gia đình/khác gia đình.
+
+Phá thử trên PostgreSQL Testcontainers riêng: gỡ restrictive `prescriptions` làm ba ca TC-704 đỏ; gỡ điều kiện hồ sơ trên `pain_entries` làm TC-705 và hai ca TC-706 đỏ. Khôi phục migration: 13/13 test mới xanh. Không đổi migration/schema runtime.
+
+Kiểm chứng bản sao sạch khớp SHA-256 6/6 tệp source: `yarn verify:fast` PASS (22/22 unit liên quan / 2 suite), integration toàn bộ **775/775 test / 122/122 suite PASS**; ESLint/Prettier tệp đổi và `git diff --check` PASS. Trên volume gốc, typecheck PASS nhưng Vitest vướng metadata macOS `._createS3ObjectReader.test.ts`.
+
+Theo phạm vi owner duyệt, TC-705/706 hiện dùng probe DB; kiểm PATCH/repository/use case 404 thật và đủ 30 route đích thuộc E20. Source và checkpoint README được commit cùng nhau; mã commit và kết quả hook được cập nhật riêng trong hồ sơ E19 ngoài Git. Chưa push/PR/deploy hoặc chạy `yarn verify` đầy đủ. Bước tiếp theo: E19-S3-T2. Log RED/GREEN và giới hạn tại [hồ sơ E19](../../Docs/angia/acceptance/v0.3/epic19-acceptance.md).
