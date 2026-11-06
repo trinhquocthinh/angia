@@ -232,3 +232,17 @@ TC-720 có assertion RED trước implementation; 4 unit mới và 4/4 ca Playwr
 `yarn verify:fast` và `yarn verify` PASS trên bản sao sạch: 2.663 unit test/513 suite, typecheck, lint/format, dup 1,33%, Knip thường/production, build và ngân sách 200 KB gzip. Build vẫn có cảnh báo chunk > 500 kB. Trên volume gốc, `verify:fast` qua typecheck nhưng exit 1 do metadata AppleDouble `._*`; không sửa cấu hình hoặc xóa metadata để lấy PASS.
 
 Chưa tích hợp vào sheet/route, chưa nghiệm thu trình đọc màn hình thật hoặc SIT/Production, chưa push/PR/deploy; không đóng Epic 21/P21. Không đổi domain, DTO, API hoặc schema DB. README đi cùng commit source; SHA và kết quả hook ghi tại checkpoint trong `Docs/angia` ngoài Git của source. Bằng chứng kiểm chứng trên bản sao sạch nằm tại `/private/tmp/angia-e21-s1-t3/`; volume gốc vẫn vướng metadata AppleDouble `._*` trong Vitest. Bước tiếp theo **E21-S2-T1 — Adapter API, hook và tab Đau nhức**.
+
+## E21-S2-T1 — Adapter, hook và tab Đau nhức local (2026-11-07)
+
+Owner đã duyệt phương án và yêu cầu áp dụng. Đã thêm port `PainJournalApi`, adapter đọc danh sách main/self có `no-store`, kiểm DTO bằng contracts và truyền `AbortSignal`; hook `usePainIssues` khóa cache theo tài khoản/gia đình/hồ sơ/phạm vi/bộ lọc dưới tiền tố `profiles`. Hook kiểm gia đình, quyền và đồng thuận, chặn cả refetch thủ công khi không được phép; ẩn dữ liệu trong lúc làm mới hoặc gặp lỗi và làm mới phiên/hồ sơ khi mất quyền.
+
+Tab "Đau nhức" sau "Dòng thời gian" tại `/profiles/:profileId/pain`, vẫn hiện khi ẩn số đo. Thẻ hiển thị vùng/bên, tên tùy chọn, mức `/10`, thời điểm Việt Nam và số lần ghi; nhóm đang theo dõi trước, giữ thứ tự API trong từng nhóm. Nhóm đã khỏi thu gọn khi còn vấn đề tracking, mở sẵn khi chỉ còn resolved. Có hai thẻ skeleton, trạng thái rỗng/lỗi/thử lại và thông báo đồng thuận. Không thêm nhận định hoặc màu theo mức.
+
+Theo phạm vi trung gian đã được owner duyệt, nút "Thêm vấn đề đau", "Ghi mức" và "Xem vấn đề" chỉ xuất hiện khi được cấp callback; route T1 chưa nối thao tác. Mở mới thuộc S2-T2, ghi nhanh thuộc S3-T1, chi tiết và TC-726 thuộc S4-T1; `/my-profile` thuộc S5-T2. Không ghi TC-726 đã PASS trong checkpoint này. Không đổi domain, DB, DTO, API backend hoặc dependency.
+
+14 unit mới PASS, bao gồm adapter, cache/quyền, refetch thủ công, tab/thẻ/nhóm và lỗi đồng thuận. `yarn verify:fast` PASS trên bản sao sạch (44 test liên quan); `yarn verify` PASS với 2.677 test/516 suite, lint/format, dup 1,33%, Knip thường/production, build và budget 200 KB gzip. Route đau nhức 160,2 KB gzip; `/my-profile` 199,9 KB. Build vẫn có cảnh báo chunk > 500 kB. Source và bản sao khớp byte 2.517/2.517 tệp trước cập nhật README. Trên volume gốc, `verify:fast` qua typecheck rồi exit 1 vì metadata AppleDouble `._usePainIssues.test.tsx`; không sửa cấu hình hoặc xóa metadata.
+
+Smoke route thật với API giả trên bản sao tạm: 22/22 ca Chromium/WebKit PASS, gồm 360/390/768/1440 px không tràn ngang, nhóm đã khỏi thao tác bàn phím, tải/rỗng/lỗi/thử lại, chặn member/chưa đồng thuận và khôi phục khi API báo rút đồng thuận. Đã xem ảnh mobile/desktop; không có lỗi JavaScript trong các ca PASS. Script, ảnh và log nằm ngoài source tại `/private/tmp/angia-e21-s2-t1/`; không coi đây là nghiệm thu API live, SIT, điện thoại hoặc trình đọc màn hình thật.
+
+Đã áp dụng và kiểm chứng local; chưa push/PR/deploy, chưa đóng Epic 21/P21. README đi cùng commit source; SHA và kết quả hook ghi tại checkpoint trong `Docs/angia` ngoài Git của source. Bước tiếp theo **E21-S2-T2 — Mở vấn đề hai bước và xử lý vùng đang theo dõi/409**.
