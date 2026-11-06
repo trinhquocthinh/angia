@@ -135,3 +135,13 @@ Application cấp thời điểm server nhận, ghép PATCH, chuẩn hóa trư�
 TDD: 40 test mới đã RED trước triển khai; GREEN **54/54 test domain** (40 mới + 14 FSM cũ), gồm đồng hồ giả neo VN cho TC-683, logic TC-681/693 và giới hạn lần ghi cuối. Thêm **19/19 test contracts/phân tầng PASS**; typecheck toàn workspace, ESLint/Prettier sáu tệp mới PASS. `yarn verify:fast` **exit 1** tại Vitest vì metadata AppleDouble `apps/worker/src/features/extraction/infrastructure/._createS3ObjectReader.test.ts`. Chạy đích danh bốn tệp test domain thật PASS; không ghi nhận verify:fast PASS.
 
 **Chưa nghiệm thu task:** logic domain chưa thay thế integration HTTP, audit, phân quyền hoặc đồng thời. Chưa chạy full verify, integration hoặc deploy. Bằng chứng và trạng thái commit tại [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md), được cập nhật riêng ngoài Git của source.
+
+## E20-S2-T1 — Application vấn đề đau local (2026-11-06)
+
+Đã áp dụng 8 use case tại `apps/api/src/features/painJournal/application/`: mở kèm lần ghi đầu, danh sách, chi tiết, sửa, đóng, mở lại, tác động xóa và xóa. `ports.ts` quy định transaction theo gia đình/phạm vi tự quản, khóa vấn đề khi ghi, tạo lần ghi đầu nguyên tử, cập nhật trạng thái kèm sự kiện và ánh xạ xung đột vùng/bên. Repository thực thi các cam kết này ở E20-S3-T1.
+
+Application kiểm đối tượng đúng hồ sơ trước consent, rồi hợp đồng và trạng thái; ghép PATCH trước khi kiểm cặp vùng/bên; dùng audit từ phiên và thời điểm nhận lệnh do đồng hồ cấp một lần. Đóng/mở lại dùng FSM hiện có và ngày Việt Nam; DTO chỉ xuất trường trong hợp đồng, giữ người ghi `null` và sắp xếp theo đặc tả. Không đổi domain, schema, API hoặc dependency.
+
+TDD: **67/67 test ban đầu RED** với use case chưa triển khai; GREEN **79/79 test application**, gồm 12 ca bổ sung kiểm phòng vệ khi port trả nhầm đối tượng. Tổng kiểm đích danh domain/application/contracts/phân tầng **157/157 test, 12 suite PASS**; typecheck API và ESLint/Prettier tệp mới PASS. `yarn verify:fast` qua typecheck toàn workspace nhưng **exit 1** tại Vitest do metadata AppleDouble `apps/worker/src/features/extraction/infrastructure/._createS3ObjectReader.test.ts`; không ghi nhận verify:fast PASS.
+
+**Chưa nghiệm thu task/Epic:** TC-691 đã kiểm ba use case đọc của T1; bối cảnh thuốc còn chờ E20-S2-T2. Unit dùng port giả chưa thay thế kiểm chứng transaction, RLS, khóa, cascade, đồng thời hoặc HTTP thật. Chưa chạy full `yarn verify`, integration hoặc push/PR/deploy. Source và README được commit cùng task; SHA và trạng thái hook ghi tại [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md). Bước tiếp theo: E20-S2-T2.
