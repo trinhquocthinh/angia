@@ -121,3 +121,17 @@ Owner yêu cầu cập nhật tài liệu, commit và mở PR vào `sit`. **E19-
 TDD: RED do thiếu module trước triển khai, GREEN **14/14 unit test** (logic TC-684/685/686/688). Typecheck toàn workspace và ESLint/Prettier ba file mới PASS. `yarn verify:fast` **exit 1** tại Vitest vì metadata AppleDouble `apps/worker/src/features/extraction/infrastructure/._createS3ObjectReader.test.ts`; chạy lại với `--exclude '**/._*'` vẫn lỗi. Không sửa config hoặc xóa metadata để lấy PASS.
 
 **Chưa nghiệm thu task:** TC-691 qua các use case đọc chờ E20-S2-T1; các test logic chưa thay thế integration. Chưa chạy full verify, integration hoặc deploy. Hồ sơ và giới hạn: [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md). Tài liệu đặc tả nằm ngoài repository, được cập nhật riêng.
+
+## E20-S1-T2 — Domain lần ghi đau và bài tập local (2026-11-06)
+
+Đã thêm ba hàm thuần trong `apps/api/src/features/painJournal/domain/` theo BR-059–061, SPEC-054/056:
+
+- `preparePainEntry(issue, command, receivedAt)` kiểm mức nguyên 1–10, mặc định thời điểm tạo từ thời điểm server nhận và chặn tương lai. Chỉ tạo khi `tracking`; sửa được cả hai trạng thái, nhưng vấn đề `resolved` không nhận thời điểm sau cuối ngày khỏi theo giờ VN.
+- `checkPainEntryDeletion(entryCount)` chặn xóa lần ghi cuối với `ERR_VALIDATION`, `details.reason = "last_entry"`. Application phải cấp số lượng từ cùng transaction đã khóa hàng vấn đề.
+- `prepareExerciseNote(value, kind)` nhận đủ dữ liệu sau ghép PATCH, kiểm tên/ngày và nguồn/người chỉ định. Tạo `self` có người chỉ định bị từ chối; sửa với nguồn `self` trả `prescriber = null`. Bài tập không bị giới hạn theo trạng thái vấn đề.
+
+Application cấp thời điểm server nhận, ghép PATCH, chuẩn hóa trường tùy chọn của bài tập thành `null`, gắn ID và audit/người ghi từ phiên. Contracts kiểm định dạng/độ dài; repository bảo vệ đồng thời ở E20-S3-T1. Các kiểu domain chỉ chứa giá trị nghiệp vụ, không phải DTO phản hồi có ID/audit. Không thêm dependency, thay schema hoặc hợp đồng API.
+
+TDD: 40 test mới đã RED trước triển khai; GREEN **54/54 test domain** (40 mới + 14 FSM cũ), gồm đồng hồ giả neo VN cho TC-683, logic TC-681/693 và giới hạn lần ghi cuối. Thêm **19/19 test contracts/phân tầng PASS**; typecheck toàn workspace, ESLint/Prettier sáu tệp mới PASS. `yarn verify:fast` **exit 1** tại Vitest vì metadata AppleDouble `apps/worker/src/features/extraction/infrastructure/._createS3ObjectReader.test.ts`. Chạy đích danh bốn tệp test domain thật PASS; không ghi nhận verify:fast PASS.
+
+**Chưa nghiệm thu task:** logic domain chưa thay thế integration HTTP, audit, phân quyền hoặc đồng thời. Chưa chạy full verify, integration hoặc deploy. Bằng chứng và trạng thái commit tại [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md), được cập nhật riêng ngoài Git của source.
