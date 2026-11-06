@@ -29,7 +29,7 @@
       "project": ["src/**/*.ts!", "!src/shared/test/**!", "!src/**/*.test-helper.ts!"]
     },
     "apps/web": {
-      "entry": ["src/app/routes/**/*.tsx!"],
+      "entry": ["src/app/routes/**/*.tsx!", "src/features/painJournal/presentation/BodyMap2D/BodyMap2D.tsx!"],
       "project": ["src/**/*.{ts,tsx,css}!", "!src/**/*.test-helper.ts!", "!src/features/scanQuota/test/**!"],
       "ignoreDependencies": ["@fontsource/be-vietnam-pro", "@fontsource/newsreader"]
     },

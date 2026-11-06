@@ -193,3 +193,15 @@ Owner duyệt riêng các sửa cổng knip: bỏ export nội bộ `actor`, `Pa
 **Nghiệm thu E20/P20: PASS trên SIT ngày 2026-11-06, 7/7 task.** PR #62 đã merge tại `1a8b8ee`; CI của head cuối `242f448` đạt **840/840 integration test, 134/134 suite**, gồm Build & Docker và verify. Smoke trực tiếp ghi nhận **224 request**, đủ **15/15 thao tác mỗi cửa main/self**; bộ riêng 30 route thiếu phiên trả 401/no-store. Digest runtime, role app NOBYPASSRLS, 4 bảng đau nhức bật RLS, 29 bảng cũ/87 policy và cascade/dọn dữ liệu test đều đạt. Đã xóa storage state tạm.
 
 Ca chéo gia đình, rút đồng thuận self và xóa chứng từ dùng bằng chứng CI; không ghi là đã thao tác live SIT. Runtime kiểm trên bản `0e08a88` chứa E20, chỉ thay đổi asset 3D ở các commit kế tiếp. Biên bản, evidence và giới hạn tại [nghiệm thu E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md#nghiệm-thu-và-đóng-e20-trên-sit--2026-11-06). Bước tiếp theo **E21-S1-T1**; UI/v0.3 và Production chưa nghiệm thu.
+
+## E21-S1-T1 — BodyMap2D local (2026-11-07)
+
+Owner đã duyệt và yêu cầu áp dụng. `BodyMap2D` tại `apps/web/src/features/painJournal/presentation/BodyMap2D/` nhận `selected` và `onSelect`, mở mặc định mặt trước, giữ lựa chọn khi chuyển mặt. SVG tự vẽ, trung tính; hai mặt có 29/30 vùng tương tác, hợp thành đủ 35 vị trí của 21 mã SPEC-051. Nhãn lấy từ contracts; trái/phải theo người trong hình, vùng chọn dùng nền nhấn và viền 2 px theo Design §10.4. Không thêm dependency, đổi API, domain hoặc schema DB.
+
+Component chưa gắn vào route/sheet. Knip khai báo riêng `BodyMap2D.tsx` làm entry production cho checkpoint độc lập; bỏ entry này khi `NewPainIssueSheet` sử dụng component ở E21-S2-T2.
+
+Test được viết trước implementation; lượt đầu dừng vì thiếu module, chưa có assertion RED. GREEN **12/12 unit test mới**. Chrome headless trong harness tạm ngoài repo kiểm click đủ **59 vùng trên hai mặt/35 vị trí duy nhất**, đối chiếu callback với snapshot contracts v1; Enter/Space, hướng trái/phải, giữ lựa chọn kể cả vùng không hiện ở mặt còn lại đều đạt. Không có lỗi JavaScript hoặc tràn ngang ở 360/390/768/1440 px.
+
+`yarn verify:fast` và `yarn verify` **PASS trên bản sao sạch**, khớp SHA-256 **2.488/2.488 tệp** trước cập nhật README; full verify có **2.657 unit test/512 suite**, dup **1,34%**, Knip thường/production, build và budget **200 KB gzip** đạt. Build còn cảnh báo kích thước chunk > 500 kB. Trên volume gốc, `verify:fast` qua typecheck nhưng **exit 1** do metadata AppleDouble `._*`; không sửa config hoặc xóa metadata để lấy PASS. Lượt full verify đầu dừng ở format Knip; chuẩn hóa file và chạy lại toàn bộ đã PASS. Log, harness và ảnh kiểm tra: `/private/tmp/angia-e21-s1-t1-c52txdfj/`.
+
+Đây là kiểm chứng local của T1, chưa nghiệm thu SIT/Production. Vùng chạm ≥ 44 px, chấm đang theo dõi và nghiệm thu a11y/TC-721 thuộc **E21-S1-T2**; RegionList/TC-720 thuộc T3. README đi cùng commit source; SHA và kết quả hook được ghi riêng trong checkpoint E21-S1-T1 tại SDD, Test Cases, Design Criteria và master plan ngoài Git của source. Chưa push/PR/deploy. Bước tiếp theo **E21-S1-T2**.
