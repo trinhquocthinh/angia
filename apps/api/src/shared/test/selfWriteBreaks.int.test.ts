@@ -5,8 +5,6 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createDatabase, type Database } from '../db/createDatabase.js';
 import { runMigrations } from '../db/runMigrations.js';
 import { withSelfScope } from '../db/withSelfScope.js';
-import { HEALTH_DATA_ROUTES, type RouteOfKind } from './healthDataRoutes.js';
-import { expectSelfWriteDenied } from './expectSelfWriteDenied.js';
 import { seedTwoFamilies, type TwoFamilies } from './seedTwoFamilies.js';
 import { snapshotHealthTables } from './snapshotHealthTables.js';
 import { startTestDatabase, type TestDatabase } from './startTestDatabase.js';
@@ -173,18 +171,4 @@ describe('Phá thử quyền ghi tự quản trước khi mở route E20', () =>
       expect(await snapshotHealthTables(owner)).toEqual(before);
     },
   );
-
-  it('TC-709: khung probe bắt buộc khai báo đủ route self_write khi E20 đăng ký', async () => {
-    // E19 chưa có route: Record sẽ báo lỗi typecheck ngay khi E20 thêm route mà chưa có probe.
-    const probes: Record<RouteOfKind<'self_write'>, Parameters<typeof expectSelfWriteDenied>[1]> = {};
-    expect(Object.keys(probes).sort()).toEqual(
-      Object.entries(HEALTH_DATA_ROUTES)
-        .filter(([, kind]: [string, string]) => kind === 'self_write')
-        .map(([route]) => route)
-        .sort(),
-    );
-    for (const route of Object.keys(probes) as RouteOfKind<'self_write'>[]) {
-      await expectSelfWriteDenied(route, probes[route]);
-    }
-  });
 });

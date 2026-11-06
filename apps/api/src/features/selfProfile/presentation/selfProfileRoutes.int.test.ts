@@ -20,6 +20,10 @@ import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/start
 
 const BASE = '/api/me/profile';
 const PATHS: Record<RouteOfKind<'self'>, string> = {
+  'GET /api/me/profile/pain-issues': `${BASE}/pain-issues`,
+  'GET /api/me/profile/pain-issues/:issueId': `${BASE}/pain-issues/:issueId`,
+  'GET /api/me/profile/pain-issues/:issueId/context': `${BASE}/pain-issues/:issueId/context`,
+  'GET /api/me/profile/pain-issues/:issueId/deletion-impact': `${BASE}/pain-issues/:issueId/deletion-impact`,
   'GET /api/me/profile': BASE,
   'GET /api/me/profile/medications/current': `${BASE}/medications/current`,
   'GET /api/me/profile/reminders': `${BASE}/reminders?date=${SELF_REMINDER_DATE}`,
@@ -50,6 +54,10 @@ describe('Hồ sơ của tôi: route tự xem (SPEC-042, E14-S3-T1)', () => {
   };
   type Fixture = Awaited<ReturnType<typeof setup>>;
   const ownMarkers = (f: Fixture): Record<RouteOfKind<'self'>, string> => ({
+    'GET /api/me/profile/pain-issues': f.mother.marker.pain,
+    'GET /api/me/profile/pain-issues/:issueId': f.mother.marker.pain,
+    'GET /api/me/profile/pain-issues/:issueId/context': f.mother.marker.course,
+    'GET /api/me/profile/pain-issues/:issueId/deletion-impact': 'entryCount',
     'GET /api/me/profile': f.mother.profile.id,
     'GET /api/me/profile/medications/current': f.mother.marker.course,
     'GET /api/me/profile/reminders': f.mother.marker.reminder,
@@ -63,10 +71,11 @@ describe('Hồ sơ của tôi: route tự xem (SPEC-042, E14-S3-T1)', () => {
   const expectOnlyMother = async (f: Fixture) => {
     const own = ownMarkers(f);
     for (const route of Object.keys(PATHS) as RouteOfKind<'self'>[]) {
-      await expectSelfScopeDenied(() => t.call(f.member, 'GET', PATHS[route]), own[route], [
-        f.father.profile.id,
-        ...f.father.foreign,
-      ]).catch((error: Error) => {
+      await expectSelfScopeDenied(
+        () => t.call(f.member, 'GET', PATHS[route].replace(':issueId', f.mother.marker.pain)),
+        own[route],
+        [f.father.profile.id, ...f.father.foreign],
+      ).catch((error: Error) => {
         throw new Error(`${route}: ${error.message}`);
       });
     }
@@ -76,7 +85,7 @@ describe('Hồ sơ của tôi: route tự xem (SPEC-042, E14-S3-T1)', () => {
     const f = await setup();
     await expectOnlyMother(f);
     for (const path of paths) {
-      const response = await t.call(f.member, 'GET', path);
+      const response = await t.call(f.member, 'GET', path.replace(':issueId', f.mother.marker.pain));
       expect(response.headers.get('cache-control')).toBe('no-store');
     }
     expect(await (await t.call(f.member, 'GET', BASE)).json()).toEqual({
@@ -97,8 +106,8 @@ describe('Hồ sơ của tôi: route tự xem (SPEC-042, E14-S3-T1)', () => {
     const unlinked = await t.session(otherFamily, 'member', 'Chưa liên kết');
     for (const path of paths) {
       await expectCrossFamilyDenied(
-        () => t.call(forged, 'GET', path),
-        () => t.call(unlinked, 'GET', path),
+        () => t.call(forged, 'GET', path.replace(':issueId', f.mother.marker.pain)),
+        () => t.call(unlinked, 'GET', path.replace(':issueId', f.mother.marker.pain)),
       );
     }
   });
@@ -107,7 +116,8 @@ describe('Hồ sơ của tôi: route tự xem (SPEC-042, E14-S3-T1)', () => {
     const f = await setup();
     const unlinked = await t.session(f.familyId, 'member', 'Chưa liên kết');
     for (const user of [unlinked, f.main]) {
-      for (const path of paths) expect((await t.call(user, 'GET', path)).status).toBe(404);
+      for (const path of paths)
+        expect((await t.call(user, 'GET', path.replace(':issueId', f.mother.marker.pain))).status).toBe(404);
     }
   });
 
@@ -118,7 +128,7 @@ describe('Hồ sơ của tôi: route tự xem (SPEC-042, E14-S3-T1)', () => {
     expect(summary.status).toBe(200);
     expect(await summary.json()).toMatchObject({ consentStatus: 'withdrawn' });
     for (const path of paths.filter((p) => p !== BASE)) {
-      const response = await t.call(f.member, 'GET', path);
+      const response = await t.call(f.member, 'GET', path.replace(':issueId', f.mother.marker.pain));
       expect(response.status).toBe(409);
       expect(await response.json()).toMatchObject({ error: { code: 'ERR_CONSENT_REQUIRED' } });
     }

@@ -3,6 +3,10 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_PAIN_ISSUE_EXISTS: {
+    status: 409,
+    message: 'Vùng này đang có một vấn đề đau đang theo dõi. Hãy ghi thêm vào vấn đề đó.',
+  },
   ERR_REQUEST_TOO_LARGE: { status: 413, message: 'Dữ liệu gửi lên vượt quá giới hạn 1 MiB.' },
   ERR_SCAN_QUOTA_CONFLICT: {
     status: 409,

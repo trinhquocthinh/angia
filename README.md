@@ -171,3 +171,11 @@ Kiểm chứng: **12/12 integration test, 4 suite PASS** trên PostgreSQL 16 Tes
 `yarn verify:fast` trên volume gốc qua typecheck toàn workspace nhưng **exit 1** tại Vitest do metadata AppleDouble `apps/worker/src/features/extraction/infrastructure/._createS3ObjectReader.test.ts` chứa NUL. Không sửa config hoặc xóa metadata. Bản sao sạch ngoài dự án khớp SHA-256 2.431/2.431 tệp trước kiểm chứng: `yarn verify:fast` **PASS** (typecheck toàn workspace đạt; `--changed` không chọn unit test, bộ 211 unit đã chạy riêng). Lượt integration song song ban đầu không khởi động được PostgreSQL; Colima còn khoảng 166 MB, chạy tuần tự đã PASS, không dọn Docker ngoài phạm vi.
 
 **Chưa nghiệm thu HTTP/Epic:** các TC trên mới chứng minh use case/repository/DB; mã HTTP và ma trận route thuộc E20-S4. Chưa chạy full `yarn verify`, integration toàn bộ, push/PR/deploy. Source và README được commit cùng task; SHA và kết quả hook ghi trong checkpoint E20 ngoài Git của source. Bước tiếp theo: E20-S4-T1.
+
+## E20-S4-T1 — Route sổ đau nhức hai cửa local (2026-11-06)
+
+Đã nối đủ 30 route (15 thao tác × main/tự quản), dùng lại use case/repository hiện có. Hồ sơ và audit tự quản lấy từ phiên; mọi mutation cần CSRF, mọi phản hồi có `no-store`. Application giữ thứ tự phạm vi → consent → input → trạng thái; body root POST cố chọn `profileId` khác hồ sơ phiên bị chặn `404` theo quyết định owner. Không đổi domain/schema DB/dependency.
+
+Đã bổ sung kiểm kê/probe cho 15 `scoped`, 4 `self`, 11 `self_write`, wiring production/test và sinh OpenAPI/client. Kiểm chứng: 34/34 integration, 229/229 unit PASS; hai suite HTTP mới chạy lại 6/6 PASS với đồng hồ cố định. `verify:fast` và `check:api` PASS trên bản sao sạch; lint PASS, dup 1,35%. Volume gốc vẫn lỗi AppleDouble khi Vitest quét test; knip còn hai export cũ, đối chiếu baseline HEAD cho kết quả giống hệt.
+
+Source và README được commit cùng task; SHA và kết quả hook được ghi riêng trong checkpoint E20 ngoài Git của source. Chưa chạy full verify/integration toàn bộ, chưa push/PR/deploy. Bước tiếp theo **E20-S4-T2**. Bằng chứng, quyết định và giới hạn tại [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md).
