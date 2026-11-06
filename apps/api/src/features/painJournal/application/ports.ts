@@ -1,5 +1,8 @@
 import type {
   BodyLocation,
+  PainEntry as PainEntryDto,
+  ExerciseNote as ExerciseNoteDto,
+  PainContext,
   PainIssueDetail,
   PainIssueSummary,
   PainIssueDeletionImpact,
@@ -7,6 +10,7 @@ import type {
 import type { ConsentStatus } from '@src/features/profiles/domain/HealthProfile.js';
 import type { PainIssue } from '../domain/painIssue.js';
 import type { PainEntry } from '../domain/painEntry.js';
+import type { ExerciseNote } from '../domain/exerciseNote.js';
 
 export interface ProfileTarget {
   familyId: string;
@@ -14,6 +18,12 @@ export interface ProfileTarget {
 }
 export interface IssueTarget extends ProfileTarget {
   issueId: string;
+}
+export interface EntryTarget extends IssueTarget {
+  entryId: string;
+}
+export interface ExerciseTarget extends IssueTarget {
+  exerciseId: string;
 }
 // Presentation cấp các ID này từ phiên; cửa tự quản không nhận profileId từ client.
 export interface PainIssueSession extends ProfileTarget {
@@ -35,7 +45,7 @@ export type PainIssueOutcome<T> =
   | {
       ok: false;
       code: 'ERR_NOT_FOUND' | 'ERR_CONSENT_REQUIRED' | 'ERR_VALIDATION' | 'ERR_INVALID_STATE_TRANSITION';
-      details?: { fields: string[] };
+      details?: { fields: string[] } | { reason: 'last_entry' };
     };
 export interface StoredPainIssue {
   issue: PainIssue;
@@ -78,6 +88,47 @@ export interface PainIssueStore {
     value: PainIssueStatusChange,
   ): Promise<PainIssueWriteResult<PainIssueSummary>>;
   countImpact(profileId: string, issueId: string): Promise<PainIssueDeletionImpact>;
+  /** Mọi thao tác con lọc đồng thời profileId, issueId và ID con; ngoài phạm vi trả null.
+   * Ghi con trong transaction đã khóa vấn đề; giữ createdBy khi sửa và cập nhật audit của con. */
+  findEntry(profileId: string, issueId: string, entryId: string): Promise<PainEntryDto | null>;
+  insertEntry(
+    profileId: string,
+    issueId: string,
+    value: PainEntry,
+    audit: PainIssueAudit,
+  ): Promise<PainEntryDto>;
+  updateEntry(
+    profileId: string,
+    issueId: string,
+    entryId: string,
+    value: PainEntry,
+    audit: PainIssueAudit,
+  ): Promise<PainEntryDto>;
+  deleteEntry(profileId: string, issueId: string, entryId: string): Promise<void>;
+  findExercise(profileId: string, issueId: string, exerciseId: string): Promise<ExerciseNoteDto | null>;
+  insertExercise(
+    profileId: string,
+    issueId: string,
+    value: ExerciseNote,
+    audit: PainIssueAudit,
+  ): Promise<ExerciseNoteDto>;
+  updateExercise(
+    profileId: string,
+    issueId: string,
+    exerciseId: string,
+    value: ExerciseNote,
+    audit: PainIssueAudit,
+  ): Promise<ExerciseNoteDto>;
+  deleteExercise(profileId: string, issueId: string, exerciseId: string): Promise<void>;
+  /** MIN(recorded_at) hiện có của đúng vấn đề/hồ sơ; null nếu không còn vấn đề. */
+  firstRecordedAt(profileId: string, issueId: string): Promise<string | null>;
+  /** Chỉ cùng hồ sơ: liều trong [đầu ngày from, đầu ngày sau to) giờ VN và đợt giao [from,to].
+   * Không ẩn theo BR-049; không phân tích liên hệ với cơn đau. */
+  readContext(
+    profileId: string,
+    from: string,
+    to: string,
+  ): Promise<Pick<PainContext, 'asNeededDoses' | 'courses'>>;
   /** Xóa cha; FK cascade xóa lần ghi, bài tập và sự kiện. */
   deleteIssue(profileId: string, issueId: string): Promise<void>;
 }
