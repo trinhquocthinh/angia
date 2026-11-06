@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, date, foreignKey, index, numeric, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import { familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
@@ -61,6 +62,7 @@ export const medicationCourses = pgTable(
       sql`${t.userIntervalText} IS NULL OR (char_length(${t.userIntervalText}) BETWEEN 1 AND 100 AND ${t.slots} = ARRAY['as_needed']::text[] AND ${t.prescriptionItemId} IS NOT NULL)`,
     ),
     check('medication_courses_terminal_has_end', sql`${t.status} = 'active' OR ${t.endDate} IS NOT NULL`),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('health_profile_id'),
   ],
 );

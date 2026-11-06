@@ -1,6 +1,13 @@
 import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startTestDatabase, type TestDatabase } from '@src/shared/test/startTestDatabase.js';
+import {
+  EXPECTED_POLICIES,
+  NOT_SELF,
+  PAIN_JOURNAL_TABLES,
+  RLS_TABLES,
+  SELF_READ_ONLY_TABLES,
+} from '@src/shared/test/expectedRlsPolicies.js';
 import { runMigrations } from './runMigrations.js';
 
 const SKELETON_TABLES = [
@@ -49,89 +56,6 @@ const SKELETON_TABLES = [
   'temperature_readings',
   'upload_batches',
 ];
-// Bảng dữ liệu sức khỏe bắt buộc RLS (Tech Spec §3); families/accounts/sessions phục vụ xác thực,
-// extraction_spend là bảng quản trị ngân sách phi y tế (E3-S6-T1).
-const RLS_TABLES = [
-  'adherence_periods',
-  'as_needed_doses',
-  'consent_invitations',
-  'consent_legacy_attestations',
-  'dose_confirmations',
-  'dose_slots',
-  'exercise_notes',
-  'extraction_reservations',
-  'extractions',
-  'family_extraction_spend',
-  'family_scan_quotas',
-  'health_profiles',
-  'lab_results',
-  'measurements',
-  'medication_courses',
-  'object_purges',
-  'ocr_operations',
-  'pain_entries',
-  'pain_issue_status_events',
-  'pain_issues',
-  'prescription_items',
-  'prescriptions',
-  'profile_link_events',
-  'profile_link_invitations',
-  'push_subscriptions',
-  'reminder_deliveries',
-  'reminder_recipients',
-  'reminders',
-  'revisit_reminders',
-  'scan_quota_audit',
-  'source_documents',
-  'temperature_readings',
-  'upload_batches',
-];
-
-// TC-569: mỗi bảng RLS thuộc đúng một dạng policy (Tech Spec §3.9.3), so khớp nguyên văn sau khi PostgreSQL chuẩn hóa.
-const SETTING = (name: string) => `NULLIF(current_setting('app.${name}'::text, true), ''::text)`;
-const SAME_FAMILY = `(family_id = (${SETTING('family_id')})::uuid)`;
-const NOT_SELF = `(${SETTING('self_profile_id')} IS NULL)`;
-const FAMILY_ONLY_POLICY = `(${SAME_FAMILY} AND ${NOT_SELF})`;
-const selfPolicy = (column: string) =>
-  `(${SAME_FAMILY} AND (${NOT_SELF} OR (${column} = (${SETTING('self_profile_id')})::uuid)))`;
-const EXPECTED_POLICIES: Record<string, string> = {
-  adherence_periods: selfPolicy('health_profile_id'),
-  as_needed_doses: selfPolicy('health_profile_id'),
-  consent_invitations: selfPolicy('profile_id'),
-  consent_legacy_attestations: selfPolicy('profile_id'),
-  dose_confirmations: selfPolicy('health_profile_id'),
-  dose_slots: selfPolicy('health_profile_id'),
-  exercise_notes: selfPolicy('health_profile_id'),
-  extraction_reservations: FAMILY_ONLY_POLICY,
-  extractions: FAMILY_ONLY_POLICY,
-  family_extraction_spend: FAMILY_ONLY_POLICY,
-  family_scan_quotas: FAMILY_ONLY_POLICY,
-  health_profiles: selfPolicy('id'),
-  lab_results: selfPolicy('health_profile_id'),
-  measurements: selfPolicy('health_profile_id'),
-  medication_courses: selfPolicy('health_profile_id'),
-  object_purges: FAMILY_ONLY_POLICY,
-  ocr_operations: FAMILY_ONLY_POLICY,
-  pain_entries: selfPolicy('health_profile_id'),
-  pain_issue_status_events: selfPolicy('health_profile_id'),
-  pain_issues: selfPolicy('health_profile_id'),
-  prescription_items: `(${SAME_FAMILY} AND (${NOT_SELF} OR (EXISTS ( SELECT 1
-   FROM prescriptions parent
-  WHERE ((parent.id = prescription_items.prescription_id) AND (parent.health_profile_id = (${SETTING('self_profile_id')})::uuid))))))`,
-  prescriptions: selfPolicy('health_profile_id'),
-  profile_link_events: selfPolicy('profile_id'),
-  profile_link_invitations: selfPolicy('profile_id'),
-  push_subscriptions: FAMILY_ONLY_POLICY,
-  reminder_deliveries: FAMILY_ONLY_POLICY,
-  reminder_recipients: selfPolicy('health_profile_id'),
-  reminders: selfPolicy('health_profile_id'),
-  revisit_reminders: selfPolicy('health_profile_id'),
-  scan_quota_audit: FAMILY_ONLY_POLICY,
-  source_documents: selfPolicy('health_profile_id'),
-  temperature_readings: selfPolicy('health_profile_id'),
-  upload_batches: selfPolicy('health_profile_id'),
-};
-
 describe('runMigrations trên PostgreSQL rỗng', () => {
   let db: TestDatabase;
   let owner: pg.Client;
@@ -159,7 +83,7 @@ describe('runMigrations trên PostgreSQL rỗng', () => {
     expect(rows.map((row) => row.tablename)).toEqual(SKELETON_TABLES);
   });
 
-  it('chỉ bật RLS kèm family_isolation_policy trên bảng dữ liệu sức khỏe', async () => {
+  it('TC-708: mỗi bảng RLS thuộc đúng một nhóm và có chính xác các policy đã quy định', async () => {
     const { rows } = await owner.query<{ relname: string }>(
       `SELECT c.relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
        WHERE n.nspname = 'public' AND c.relkind = 'r' AND c.relrowsecurity ORDER BY c.relname`,
@@ -172,7 +96,7 @@ describe('runMigrations trên PostgreSQL rỗng', () => {
       permissive: string;
       roles: string[];
       cmd: string;
-      qual: string;
+      qual: string | null;
       withCheck: string | null;
     }>(
       `SELECT tablename, policyname, permissive, roles::text[] AS roles,
@@ -181,16 +105,34 @@ describe('runMigrations trên PostgreSQL rỗng', () => {
        WHERE schemaname = 'public'
        ORDER BY tablename, policyname`,
     );
+    expect([...PAIN_JOURNAL_TABLES, ...SELF_READ_ONLY_TABLES].sort()).toEqual(RLS_TABLES);
+    expect(new Set([...PAIN_JOURNAL_TABLES, ...SELF_READ_ONLY_TABLES]).size).toBe(RLS_TABLES.length);
+    const expected: typeof policies.rows = RLS_TABLES.map((tablename) => ({
+      tablename,
+      policyname: 'family_isolation_policy',
+      permissive: 'PERMISSIVE',
+      roles: ['public'],
+      cmd: 'ALL',
+      qual: EXPECTED_POLICIES[tablename]!,
+      withCheck: null,
+    }));
+    for (const tablename of SELF_READ_ONLY_TABLES) {
+      for (const cmd of ['INSERT', 'UPDATE', 'DELETE']) {
+        expected.push({
+          tablename,
+          policyname: `self_read_only_${cmd.toLowerCase()}`,
+          permissive: 'RESTRICTIVE',
+          roles: ['public'],
+          cmd,
+          qual: cmd === 'INSERT' ? null : NOT_SELF,
+          withCheck: cmd === 'DELETE' ? null : NOT_SELF,
+        });
+      }
+    }
     expect(policies.rows).toEqual(
-      RLS_TABLES.map((tablename) => ({
-        tablename,
-        policyname: 'family_isolation_policy',
-        permissive: 'PERMISSIVE',
-        roles: ['public'],
-        cmd: 'ALL',
-        qual: EXPECTED_POLICIES[tablename],
-        withCheck: null,
-      })),
+      expected.sort(
+        (a, b) => a.tablename.localeCompare(b.tablename) || a.policyname.localeCompare(b.policyname),
+      ),
     );
   });
 

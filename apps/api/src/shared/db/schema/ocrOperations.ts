@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { familyIdColumn, familyIsolationPolicy } from './columns.js';
@@ -26,6 +27,7 @@ export const ocrOperations = pgTable(
       sql`(${table.state} = 'dispatched' AND ${table.dispatchAttempts} BETWEEN 1 AND 6 AND ${table.dispatchedAt} IS NOT NULL)
     OR (${table.state} <> 'dispatched' AND ${table.dispatchAttempts} = 0 AND ${table.dispatchedAt} IS NULL)`,
     ),
+    ...selfReadOnlyPolicies(),
     familyIsolationPolicy(),
   ],
 );

@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { bigint, check, pgTable, primaryKey, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
@@ -25,6 +26,7 @@ export const familyScanQuotas = pgTable(
       'family_scan_quotas_counts',
       sql`${table.grantedScans} BETWEEN 0 AND 9007199254740991 AND ${table.usedScans} >= 0 AND ${table.heldScans} >= 0 AND ${table.usedScans} + ${table.heldScans} <= ${table.grantedScans}`,
     ),
+    ...selfReadOnlyPolicies(),
     familyIsolationPolicy(),
   ],
 );

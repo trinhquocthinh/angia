@@ -12,6 +12,7 @@ import { listStoredAsNeededDoses } from './listStoredAsNeededDoses.js';
 export function createAsNeededDoseRepository(
   db: Database,
   scope: FamilyScope = withFamilyScope,
+  profileReadLock: 'share' | null = 'share',
 ): AsNeededDoseRepository {
   return {
     withFamily: (familyId, work) =>
@@ -22,7 +23,7 @@ export function createAsNeededDoseRepository(
           id: string,
         ) => and(eq(table.id, id), eq(table.familyId, familyId), eq(table.healthProfileId, profileId));
         return work({
-          findProfile: (id) => findProfileInFamily(tx, familyId, id, 'share'),
+          findProfile: (id) => findProfileInFamily(tx, familyId, id, profileReadLock ?? undefined),
           findCourse: (profileId, courseId) => findAsNeededCourse(tx, familyId, profileId, courseId),
           insertDose: (input) => insertAsNeededDose(tx, familyId, input),
           deleteDose: async (profileId, doseId) =>

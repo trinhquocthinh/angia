@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import {
   type AnyPgColumn,
@@ -83,6 +84,7 @@ export const healthProfiles = pgTable(
         AND ${table.consentRespondentName} IS NOT NULL
       )`,
     ),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('id'),
   ],
 );

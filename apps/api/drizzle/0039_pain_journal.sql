@@ -103,3 +103,48 @@ CREATE POLICY "family_isolation_policy" ON "exercise_notes" AS PERMISSIVE FOR AL
 CREATE POLICY "family_isolation_policy" ON "pain_entries" AS PERMISSIVE FOR ALL TO public USING (family_id = NULLIF(current_setting('app.family_id', true), '')::uuid AND (NULLIF(current_setting('app.self_profile_id', true), '') IS NULL OR health_profile_id = NULLIF(current_setting('app.self_profile_id', true), '')::uuid));--> statement-breakpoint
 CREATE POLICY "family_isolation_policy" ON "pain_issue_status_events" AS PERMISSIVE FOR ALL TO public USING (family_id = NULLIF(current_setting('app.family_id', true), '')::uuid AND (NULLIF(current_setting('app.self_profile_id', true), '') IS NULL OR health_profile_id = NULLIF(current_setting('app.self_profile_id', true), '')::uuid));--> statement-breakpoint
 CREATE POLICY "family_isolation_policy" ON "pain_issues" AS PERMISSIVE FOR ALL TO public USING (family_id = NULLIF(current_setting('app.family_id', true), '')::uuid AND (NULLIF(current_setting('app.self_profile_id', true), '') IS NULL OR health_profile_id = NULLIF(current_setting('app.self_profile_id', true), '')::uuid));
+--> statement-breakpoint
+-- E19-S2-T2: kiểm kê HEAD 74bc8aa không có luồng ghi v0.2 qua withSelfScope; không ngoại lệ.
+-- Danh sách tường minh: bảng RLS mới phải được xếp nhóm trong TC-708.
+DO $$
+DECLARE
+  table_name text;
+  not_self text := 'NULLIF(current_setting(''app.self_profile_id'', true), '''') IS NULL';
+BEGIN
+  FOREACH table_name IN ARRAY ARRAY[
+    'adherence_periods',
+    'as_needed_doses',
+    'consent_invitations',
+    'consent_legacy_attestations',
+    'dose_confirmations',
+    'dose_slots',
+    'extraction_reservations',
+    'extractions',
+    'family_extraction_spend',
+    'family_scan_quotas',
+    'health_profiles',
+    'lab_results',
+    'measurements',
+    'medication_courses',
+    'object_purges',
+    'ocr_operations',
+    'prescription_items',
+    'prescriptions',
+    'profile_link_events',
+    'profile_link_invitations',
+    'push_subscriptions',
+    'reminder_deliveries',
+    'reminder_recipients',
+    'reminders',
+    'revisit_reminders',
+    'scan_quota_audit',
+    'source_documents',
+    'temperature_readings',
+    'upload_batches'
+  ] LOOP
+    EXECUTE format('CREATE POLICY self_read_only_insert ON public.%I AS RESTRICTIVE FOR INSERT TO public WITH CHECK (%s)', table_name, not_self);
+    EXECUTE format('CREATE POLICY self_read_only_update ON public.%I AS RESTRICTIVE FOR UPDATE TO public USING (%s) WITH CHECK (%s)', table_name, not_self, not_self);
+    EXECUTE format('CREATE POLICY self_read_only_delete ON public.%I AS RESTRICTIVE FOR DELETE TO public USING (%s)', table_name, not_self);
+  END LOOP;
+END;
+$$;

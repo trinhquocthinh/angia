@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import {
   check,
@@ -61,6 +62,7 @@ export const reminderDeliveries = pgTable(
       sql`${t.status} IN ('pending', 'accepted', 'gone', 'failed', 'expired', 'revoked')`,
     ),
     check('reminder_deliveries_attempts_valid', sql`${t.attempts} BETWEEN 0 AND 6`),
+    ...selfReadOnlyPolicies(),
     familyIsolationPolicy(),
   ],
 );
