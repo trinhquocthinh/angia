@@ -17,18 +17,21 @@ const loadScene = async (): Promise<Loaded> => {
   return { Scene: BodyModel3DScene, model: await loadBodyGltf() };
 };
 
-type Props = { onSelect: (location: BodyLocation) => void };
+type Props = { onSelect: (location: BodyLocation) => void; onReady?: () => void };
 
-export function BodyModel3D({ onSelect }: Props) {
+export function BodyModel3D({ onSelect, onReady }: Props) {
   const [state, setState] = useState<State>({ status: 'loading' });
   useEffect(() => {
     let active = true;
     void loadBodyModel3D(hasWebGL, loadScene).then((loaded) => {
-      if (active) setState(loaded ? { status: 'ready', ...loaded } : { status: 'unavailable' });
+      if (!active) return;
+      setState(loaded ? { status: 'ready', ...loaded } : { status: 'unavailable' });
+      if (loaded) onReady?.();
     });
     return () => {
       active = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chỉ nạp một lần khi gắn
   }, []);
 
   if (state.status === 'unavailable')
