@@ -73,3 +73,15 @@ Schema kiểm hình dạng payload, cặp vùng/bên, độ dài và khoảng ng
 Kiểm chứng local 2026-11-05 trên bản sao không mang metadata macOS, khớp source đã áp dụng: `yarn verify:fast` và `yarn verify` PASS, **2.427 unit test / 491 suite**; riêng contracts **179 test / 35 suite**, gồm **15 test mới** cho TC-655–659/667/673/694 và các biên hợp đồng. Lượt kiểm đầy đủ gồm sinh OpenAPI, typecheck, lint, format, test, kiểm trùng lặp, Knip, build và bundle budget. Tại volume gốc, `verify:fast` qua typecheck nhưng Vitest vẫn vướng metadata `._*`; không thay cấu hình hoặc xóa metadata. Không có route/API/UI, migration, biến môi trường hay dependency mới trong T1; chưa nghiệm thu SIT/Production.
 
 Checkpoint chi tiết nằm trong `04-sdd.md`, `08-test-cases-specification.md`, `09-design-criteria.md` và `11-master-plan.md` thuộc tài liệu dự án ngoài Git. Bước tiếp theo theo kế hoạch là E19-S2-T1.
+
+## Schema sổ đau nhức — E19-S2-T1
+
+Đã áp dụng local schema Drizzle 4 bảng và migration sinh `0039_pain_journal` cùng snapshot/journal, nối HEAD `0038_as_needed_and_temperature`. Có FK ghép CASCADE, người ghi SET NULL, CHECK, unique theo vùng/bên khi `tracking` và RLS có cột hồ sơ. Snapshot không đổi định nghĩa các bảng cũ; sinh lại không còn schema diff. Không thêm dependency hoặc API.
+
+Kiểm chứng 2026-11-06 trên bản sao sạch khớp 7/7 tệp source đã áp dụng: test tập trung **32/32 PASS**, gồm ràng buộc DB và RLS bằng role app; `yarn verify:fast` PASS (typecheck toàn workspace, không có unit test liên quan theo `--changed`). ESLint/Prettier tệp thay đổi và `git diff --check` PASS. Tại volume gốc, `verify:fast` qua typecheck nhưng lỗi metadata macOS `._*`.
+
+Lịch sử kiểm tra: lượt không giới hạn worker gặp PostgreSQL `53100: No space left on device`; lượt tuần tự tiếp theo bị gián đoạn khi ColimaData không còn mount và Vitest thiếu tệp preload. Không thay cấu hình hoặc dọn Docker để che lỗi.
+
+**Kiểm chứng lại sau khi mount ColimaData (2026-11-06):** `yarn test:int --maxWorkers=1 --reporter=verbose` PASS, **674/674 integration test / 120/120 suite**, trên PostgreSQL Testcontainers trong bản sao sạch khớp 7/7 tệp source đã áp dụng. `yarn verify:fast` chạy lại sau khôi phục cũng PASS trên bản sao sạch (typecheck toàn workspace, không có unit test liên quan theo `--changed`). Không sửa code/config/dependency để lấy kết quả PASS. Lượt mới thay trạng thái integration bị gián đoạn trước đó; bằng chứng: `/private/tmp/angia-e19-s2-t1-51ybduqu/integration-restored.log` và `verify-fast-restored.log` cùng thư mục. E19-S2-T1 hoàn tất phần source và kiểm chứng local; bước tiếp theo là E19-S2-T2. Chưa push/PR/deploy, migrate DB dev/SIT/Production hoặc đóng E19.
+
+Policy RESTRICTIVE cho bảng cũ thuộc E19-S2-T2. Đồng nhất hồ sơ con với vấn đề cha và các bất biến cần transaction thuộc application E20. Chưa chạy `yarn verify` đầy đủ, migrate DB dev/SIT/Production, push/PR/deploy hoặc đóng E19.

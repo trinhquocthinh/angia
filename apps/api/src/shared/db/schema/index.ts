@@ -25,6 +25,7 @@ export { revisitReminders } from './revisitReminders.js';
 export { doseConfirmations } from './doseConfirmations.js';
 export { asNeededDoses } from './asNeededDoses.js';
 export { temperatureReadings } from './temperatureReadings.js';
+export { painIssues, painEntries, exerciseNotes, painIssueStatusEvents } from './painJournal.js';
 export { aiRoutingSettings } from './aiRoutingSettings.js';
 export { aiRoutingAudit } from './aiRoutingAudit.js';
 export { aiBillingSources } from './aiBillingSources.js';
