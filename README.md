@@ -113,3 +113,11 @@ Kiểm chứng source HEAD `d34a043` trên bản sao sạch ngoài dự án (Nod
 Mọi trang đầu đạt ngân sách 200 KB gzip; build còn cảnh báo chunk lớn hơn 500 kB. Không chạy lại integration ở checkpoint này; kết quả gần nhất của T1 trên cùng source là 775/775 test, 122 suite PASS.
 
 Owner yêu cầu cập nhật tài liệu, commit và mở PR vào `sit`. **E19-S3-T2 chưa hoàn tất:** backup SIT + restore-check phải đạt trước merge vì merge vào `sit` tự kích hoạt deploy. Sau deploy cần kiểm RLS/policy bằng role app, đối chiếu SHA/digest/health và hồi quy tài khoản liên kết: “Đã dùng”/hủy, rút đồng thuận, gỡ liên kết, nhận link mới. Chưa nghiệm thu SIT hoặc promote Production. Bằng chứng và giới hạn tại [hồ sơ E19](../../Docs/angia/acceptance/v0.3/epic19-acceptance.md).
+
+## E20-S1-T1 — Domain PainIssue local (2026-11-06)
+
+Đã áp dụng model `PainIssue` và FSM thuần `transitionPainIssue` theo BR-058/060, SPEC-055. Đóng kiểm trạng thái và ngày khỏi; mở lại xóa ngày khỏi, từ chối khi có vấn đề tracking khác cùng hồ sơ/vùng/bên. Không tự đóng/mở, không thêm dependency hoặc thay schema/API. Application cấp ngày VN và kết quả tìm xung đột; repository bảo vệ đồng thời ở E20-S3-T1.
+
+TDD: RED do thiếu module trước triển khai, GREEN **14/14 unit test** (logic TC-684/685/686/688). Typecheck toàn workspace và ESLint/Prettier ba file mới PASS. `yarn verify:fast` **exit 1** tại Vitest vì metadata AppleDouble `apps/worker/src/features/extraction/infrastructure/._createS3ObjectReader.test.ts`; chạy lại với `--exclude '**/._*'` vẫn lỗi. Không sửa config hoặc xóa metadata để lấy PASS.
+
+**Chưa nghiệm thu task:** TC-691 qua các use case đọc chờ E20-S2-T1; các test logic chưa thay thế integration. Chưa chạy full verify, integration hoặc deploy. Hồ sơ và giới hạn: [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md). Tài liệu đặc tả nằm ngoài repository, được cập nhật riêng.
