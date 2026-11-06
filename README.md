@@ -105,3 +105,11 @@ Phá thử trên PostgreSQL Testcontainers riêng: gỡ restrictive `prescriptio
 Kiểm chứng bản sao sạch khớp SHA-256 6/6 tệp source: `yarn verify:fast` PASS (22/22 unit liên quan / 2 suite), integration toàn bộ **775/775 test / 122/122 suite PASS**; ESLint/Prettier tệp đổi và `git diff --check` PASS. Trên volume gốc, typecheck PASS nhưng Vitest vướng metadata macOS `._createS3ObjectReader.test.ts`.
 
 Theo phạm vi owner duyệt, TC-705/706 hiện dùng probe DB; kiểm PATCH/repository/use case 404 thật và đủ 30 route đích thuộc E20. Source và checkpoint README được commit cùng nhau; mã commit và kết quả hook được cập nhật riêng trong hồ sơ E19 ngoài Git. Chưa push/PR/deploy hoặc chạy `yarn verify` đầy đủ. Bước tiếp theo: E19-S3-T2. Log RED/GREEN và giới hạn tại [hồ sơ E19](../../Docs/angia/acceptance/v0.3/epic19-acceptance.md).
+
+## E19-S3-T2 — Kiểm chứng trước PR (2026-11-06)
+
+Kiểm chứng source HEAD `d34a043` trên bản sao sạch ngoài dự án (Node 24.15.0/Yarn 4.18.1): `yarn verify:fast` PASS (typecheck đạt; `--changed` không chọn unit test); `yarn verify` PASS, **2.445/2.445 unit test / 492 suite**, gồm OpenAPI, typecheck, lint, format, jscpd, Knip, build và `perf:budget`. SHA-256 2.359/2.359 tệp được Git theo dõi giữ nguyên; OpenAPI/kiểu client sinh ra khớp bản đã commit. Lượt đầu bị sandbox chặn socket IPC của `tsx`; lượt chạy lại ngoài sandbox được duyệt và PASS.
+
+Mọi trang đầu đạt ngân sách 200 KB gzip; build còn cảnh báo chunk lớn hơn 500 kB. Không chạy lại integration ở checkpoint này; kết quả gần nhất của T1 trên cùng source là 775/775 test, 122 suite PASS.
+
+Owner yêu cầu cập nhật tài liệu, commit và mở PR vào `sit`. **E19-S3-T2 chưa hoàn tất:** backup SIT + restore-check phải đạt trước merge vì merge vào `sit` tự kích hoạt deploy. Sau deploy cần kiểm RLS/policy bằng role app, đối chiếu SHA/digest/health và hồi quy tài khoản liên kết: “Đã dùng”/hủy, rút đồng thuận, gỡ liên kết, nhận link mới. Chưa nghiệm thu SIT hoặc promote Production. Bằng chứng và giới hạn tại [hồ sơ E19](../../Docs/angia/acceptance/v0.3/epic19-acceptance.md).
