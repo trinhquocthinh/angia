@@ -222,3 +222,13 @@ yarn test:e2e:body-map
 `yarn verify:fast` và `yarn verify` **PASS trên bản sao sạch**, gồm **2.659 unit/512 suite**, typecheck cả harness/test, lint/format, dup **1,34%**, Knip thường/production, build và budget **200 KB gzip**. Source/bản sao khớp byte **2.497/2.497 tệp** trước cập nhật README. Volume gốc: `verify:fast` qua typecheck và 2.659 test nhưng **exit 1** do hai tệp AppleDouble `._BodyMap2D.test.tsx`, `._getBodyMapRegions.test.ts` bị đọc như test; không sửa cấu hình hoặc xóa metadata trong task này. Build còn cảnh báo chunk > 500 kB. Bằng chứng local: `/private/tmp/angia-e21-s1-t2/`.
 
 T2 đã áp dụng và kiểm chứng local; component chưa gắn vào sheet/route, chưa nghiệm thu trình đọc màn hình/điện thoại thật hoặc SIT/Production, chưa push/PR/deploy. README đi cùng commit source; SHA và kết quả hook ghi tại checkpoint trong `Docs/angia` ngoài Git của source. Không đóng Epic 21/P21. Bước tiếp theo **E21-S1-T3 — RegionList/TC-720**.
+
+## E21-S1-T3 — RegionList local (2026-11-07)
+
+Owner đã chốt ba nhóm theo Design §10.4 và yêu cầu áp dụng: “Đầu và thân” gồm 7 vùng giữa thân; “Tay” gồm vai đến bàn tay (12 vị trí); “Chân” gồm hông, mông đến bàn chân (16 vị trí). Danh mục và nhãn dùng lại contracts SPEC-051; vùng giữa thân chỉ có một dòng. `RegionList` nhận `selected`/`onSelect`, không chọn sẵn, mỗi dòng là radio HTML có nhãn đầy đủ. Mỗi instance có tên nhóm riêng; Tab vào/ra nhóm, mũi tên chọn và quay vòng xuyên ba nhóm, Enter/Space chọn. Viền focus luôn hiện khi radio có focus, kể cả mũi tên trên WebKit.
+
+TC-720 có assertion RED trước implementation; 4 unit mới và 4/4 ca Playwright Chromium/WebKit PASS. Hồi quy BodyMap2D: 14 unit và 8/8 ca Playwright PASS. Harness dùng dữ liệu giả, không gọi API; chạy bằng `yarn test:e2e:body-map`, riêng danh sách thêm bộ lọc `regionList`. Knip có entry tạm cho component độc lập, bỏ khi sheet sử dụng ở E21-S2-T2.
+
+`yarn verify:fast` và `yarn verify` PASS trên bản sao sạch: 2.663 unit test/513 suite, typecheck, lint/format, dup 1,33%, Knip thường/production, build và ngân sách 200 KB gzip. Build vẫn có cảnh báo chunk > 500 kB. Trên volume gốc, `verify:fast` qua typecheck nhưng exit 1 do metadata AppleDouble `._*`; không sửa cấu hình hoặc xóa metadata để lấy PASS.
+
+Chưa tích hợp vào sheet/route, chưa nghiệm thu trình đọc màn hình thật hoặc SIT/Production, chưa push/PR/deploy; không đóng Epic 21/P21. Không đổi domain, DTO, API hoặc schema DB. README đi cùng commit source; SHA và kết quả hook ghi tại checkpoint trong `Docs/angia` ngoài Git của source. Bằng chứng kiểm chứng trên bản sao sạch nằm tại `/private/tmp/angia-e21-s1-t3/`; volume gốc vẫn vướng metadata AppleDouble `._*` trong Vitest. Bước tiếp theo **E21-S2-T1 — Adapter API, hook và tab Đau nhức**.

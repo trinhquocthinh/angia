@@ -32,6 +32,7 @@
       "entry": [
         "src/app/routes/**/*.tsx!",
         "src/features/painJournal/presentation/BodyMap2D/BodyMap2D.tsx!",
+        "src/features/painJournal/presentation/RegionList/RegionList.tsx!",
         "e2e/bodyMap2DHarness.tsx",
         "e2e/**/*.spec.ts",
         "vite.body-map.config.ts"

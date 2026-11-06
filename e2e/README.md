@@ -88,3 +88,9 @@ yarn test:e2e:body-map
 ```
 
 Lệnh tự mở Vite trên `127.0.0.1:5174` và chạy Chromium cảm ứng/WebKit mô phỏng điện thoại tại viewport 360 px. Kiểm đủ 59 nút hai mặt/35 vị trí: vùng chạm ≥ 44 × 44 px, khoảng cách ≥ 8 px, callback đúng vùng/bên, bàn phím/focus, giữ lựa chọn và chấm theo dõi. Kiểm thêm khung 296 px không tràn ngang. Kết quả local E21-S1-T2: 8/8 PASS; không thay thế nghiệm thu điện thoại thật, trình đọc màn hình hoặc SIT. Báo cáo nằm trong thư mục tạm của hệ điều hành, không ghi dữ liệu thử vào SIT.
+
+## TC-720 — RegionList local
+
+`apps/web/e2e/regionList.spec.ts` dùng chung lệnh `yarn test:e2e:body-map` và harness trên, mở chế độ danh sách qua `?view=list`. Chỉ chạy TC-720: `yarn test:e2e:body-map regionList`.
+
+Kiểm đủ 35 vị trí, ba nhóm “Đầu và thân” (7), “Tay” (12), “Chân” (16), nhãn và trạng thái trong cây accessibility; Tab vào/ra nhóm radio, mũi tên xuống/lên, quay vòng, Enter/Space và cập nhật lựa chọn từ prop. Kết quả local E21-S1-T3: 4/4 PASS trên Chromium/WebKit. Đây là kiểm thử cây accessibility tự động, chưa nghiệm thu trình đọc màn hình thật. Không chạy TC-720/721 trong `yarn verify`; cần chạy lệnh Playwright riêng.
