@@ -1,3 +1,4 @@
+import { createPainJournalDependencies } from '@src/features/painJournal/infrastructure/createPainJournalDependencies.js';
 import { createSelfProfileRepository } from '@src/features/selfProfile/infrastructure/createSelfProfileRepository.js';
 import { createTimelineRepository } from '@src/features/timeline/infrastructure/createTimelineRepository.js';
 import { createPrescriptionChainRepository } from '@src/features/prescriptions/infrastructure/createPrescriptionChainRepository.js';
@@ -60,6 +61,7 @@ import { trackPoolClientClosures } from './trackPoolClientClosures.js';
 import type { PushDependencies } from '@src/features/pushSubscriptions/application/ports.js';
 
 export interface ProfileTestOptions {
+  now?: () => Date;
   push?: (db: Database) => PushDependencies;
   quota?: Partial<QuotaLimits>;
   heavyRateLimit?: { perMinute: number; now(): number };
@@ -79,6 +81,7 @@ const healthDataRepositories = (database: Database) => ({
   prescriptionChain: createPrescriptionChainRepository(database),
   timeline: createTimelineRepository(database),
   selfProfile: createSelfProfileRepository(database),
+  painJournal: createPainJournalDependencies(database),
   reminderRecipients: createReminderRecipientRepository(database),
   myReminders: createMyReminderRepository(database),
   doseConfirmations: createDoseConfirmationRepository(database),
@@ -102,7 +105,11 @@ function buildApp(
     auth: {
       ...stub,
       cookieSecret: TEST_COOKIE_SECRET,
-      login: { ...stub.login, sessions: createSessionRepository(database) },
+      login: {
+        ...stub.login,
+        now: options.now ?? stub.login.now,
+        sessions: createSessionRepository(database),
+      },
     },
     familyAdmin: createFakeFamilyAdminRepository().repository,
     aiBudget: createStubAiBudgetDeps(),

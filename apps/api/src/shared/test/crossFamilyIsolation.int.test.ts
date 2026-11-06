@@ -1,3 +1,5 @@
+import { painJournalRouteProbes } from './painJournalRouteProbes.js';
+import { seedPainJournal } from './seedPainJournal.js';
 import { ATTESTATION, attestationPath, linkCall, linkToken } from './profileConsentFixture.js';
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -48,6 +50,7 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     });
   };
   const probes: Record<RouteOfKind<'scoped'>, Probe> = {
+    ...painJournalRouteProbes((...args) => t.call(...args)),
     'POST /api/health-profiles': (u, x) =>
       t.call(u, 'POST', profiles, { birthYear: 1950, displayName: 'Lén', linkedAccountId: x.accountId }),
     'DELETE /api/health-profiles/:id': (u, x) =>
@@ -159,7 +162,9 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const victim = await victimFixture();
     const { familyId, main, adminMain } = await attackers();
     const { documentId, courseId, prescriptionId, reminderId, revisitReminderId, readingId } = victim;
+    const pain = await seedPainJournal(t, victim.main, victim.profile.id);
     const target: Target = {
+      ...pain,
       ...{ documentId, courseId, prescriptionId, reminderId, revisitReminderId, readingId },
       profileId: victim.profile.id,
       accountId: victim.main.accountId,

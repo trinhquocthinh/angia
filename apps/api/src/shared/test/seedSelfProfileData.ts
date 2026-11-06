@@ -1,3 +1,4 @@
+import { seedPainJournal } from './seedPainJournal.js';
 import { randomUUID } from 'node:crypto';
 import type { HealthProfile } from '@angia/contracts';
 import { confirmConsentByAttestation } from './confirmConsentByAttestation.js';
@@ -40,6 +41,7 @@ export async function seedSelfProfileData(
   const temperatureId = await seedTemperatureReading(t, main, profile.id);
   const [prescriptionId, measurementId, reminderId] = [randomUUID(), randomUUID(), randomUUID()];
   const marker = {
+    pain: (await seedPainJournal(t, main, profile.id)).painIssueId,
     course: `Thuốc-${name}`,
     reminder: reminderId,
     facility: `Phòng khám-${name}`,

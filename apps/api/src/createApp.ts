@@ -1,3 +1,6 @@
+import { registerHealthDataCacheHeaders } from '@src/registerHealthDataCacheHeaders.js';
+import type { PainJournalDependencies } from '@src/features/painJournal/presentation/painJournalDependencies.js';
+import { registerPainJournalRoutes } from '@src/features/painJournal/presentation/painJournalRoutes.js';
 import type { SelfProfileRepository } from '@src/features/selfProfile/application/ports.js';
 import type { TimelineRepository } from '@src/features/timeline/application/ports.js';
 import { registerHistoryRoutes } from '@src/registerHistoryRoutes.js';
@@ -95,6 +98,7 @@ export type AppDependencies = {
   prescriptionChain: PrescriptionChainRepository;
   timeline: TimelineRepository;
   selfProfile: SelfProfileRepository;
+  painJournal: PainJournalDependencies;
   reminderRecipients: ReminderRecipientRepository;
   myReminders: MyReminderRepository;
   doseConfirmations: DoseConfirmationRepository;
@@ -128,11 +132,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
     deps.auth.logger.error({ reason: error.name }, 'Lỗi chưa xử lý');
     return errorResponse(c, 'ERR_INTERNAL');
   });
-  app.use('/api/source-documents/*', async (c, next) => {
-    c.header('Cache-Control', 'no-store');
-    c.header('X-Content-Type-Options', 'nosniff');
-    await next();
-  });
+  registerHealthDataCacheHeaders(app);
   registerScanQuotaHeaders(app);
   app.use(
     '/api/*',
@@ -177,5 +177,6 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerMyConsentRoutes(app, deps.myConsent, deps.auth.login.now);
   registerVisitSummaryRoute(app, deps.visitSummary, deps.auth.login.now);
   registerProfileLinkRoutes(app, deps.profileLinks);
+  registerPainJournalRoutes(app, { ...deps.painJournal, now: deps.auth.login.now });
   return app;
 }

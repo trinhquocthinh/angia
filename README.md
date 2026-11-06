@@ -113,3 +113,81 @@ Kiểm chứng source HEAD `d34a043` trên bản sao sạch ngoài dự án (Nod
 Mọi trang đầu đạt ngân sách 200 KB gzip; build còn cảnh báo chunk lớn hơn 500 kB. Không chạy lại integration ở checkpoint này; kết quả gần nhất của T1 trên cùng source là 775/775 test, 122 suite PASS.
 
 Owner yêu cầu cập nhật tài liệu, commit và mở PR vào `sit`. **E19-S3-T2 chưa hoàn tất:** backup SIT + restore-check phải đạt trước merge vì merge vào `sit` tự kích hoạt deploy. Sau deploy cần kiểm RLS/policy bằng role app, đối chiếu SHA/digest/health và hồi quy tài khoản liên kết: “Đã dùng”/hủy, rút đồng thuận, gỡ liên kết, nhận link mới. Chưa nghiệm thu SIT hoặc promote Production. Bằng chứng và giới hạn tại [hồ sơ E19](../../Docs/angia/acceptance/v0.3/epic19-acceptance.md).
+
+## E20-S1-T1 — Domain PainIssue local (2026-11-06)
+
+Đã áp dụng model `PainIssue` và FSM thuần `transitionPainIssue` theo BR-058/060, SPEC-055. Đóng kiểm trạng thái và ngày khỏi; mở lại xóa ngày khỏi, từ chối khi có vấn đề tracking khác cùng hồ sơ/vùng/bên. Không tự đóng/mở, không thêm dependency hoặc thay schema/API. Application cấp ngày VN và kết quả tìm xung đột; repository bảo vệ đồng thời ở E20-S3-T1.
+
+TDD: RED do thiếu module trước triển khai, GREEN **14/14 unit test** (logic TC-684/685/686/688). Typecheck toàn workspace và ESLint/Prettier ba file mới PASS. `yarn verify:fast` **exit 1** tại Vitest vì metadata AppleDouble `apps/worker/src/features/extraction/infrastructure/._createS3ObjectReader.test.ts`; chạy lại với `--exclude '**/._*'` vẫn lỗi. Không sửa config hoặc xóa metadata để lấy PASS.
+
+**Chưa nghiệm thu task:** TC-691 qua các use case đọc chờ E20-S2-T1; các test logic chưa thay thế integration. Chưa chạy full verify, integration hoặc deploy. Hồ sơ và giới hạn: [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md). Tài liệu đặc tả nằm ngoài repository, được cập nhật riêng.
+
+## E20-S1-T2 — Domain lần ghi đau và bài tập local (2026-11-06)
+
+Đã thêm ba hàm thuần trong `apps/api/src/features/painJournal/domain/` theo BR-059–061, SPEC-054/056:
+
+- `preparePainEntry(issue, command, receivedAt)` kiểm mức nguyên 1–10, mặc định thời điểm tạo từ thời điểm server nhận và chặn tương lai. Chỉ tạo khi `tracking`; sửa được cả hai trạng thái, nhưng vấn đề `resolved` không nhận thời điểm sau cuối ngày khỏi theo giờ VN.
+- `checkPainEntryDeletion(entryCount)` chặn xóa lần ghi cuối với `ERR_VALIDATION`, `details.reason = "last_entry"`. Application phải cấp số lượng từ cùng transaction đã khóa hàng vấn đề.
+- `prepareExerciseNote(value, kind)` nhận đủ dữ liệu sau ghép PATCH, kiểm tên/ngày và nguồn/người chỉ định. Tạo `self` có người chỉ định bị từ chối; sửa với nguồn `self` trả `prescriber = null`. Bài tập không bị giới hạn theo trạng thái vấn đề.
+
+Application cấp thời điểm server nhận, ghép PATCH, chuẩn hóa trường tùy chọn của bài tập thành `null`, gắn ID và audit/người ghi từ phiên. Contracts kiểm định dạng/độ dài; repository bảo vệ đồng thời ở E20-S3-T1. Các kiểu domain chỉ chứa giá trị nghiệp vụ, không phải DTO phản hồi có ID/audit. Không thêm dependency, thay schema hoặc hợp đồng API.
+
+TDD: 40 test mới đã RED trước triển khai; GREEN **54/54 test domain** (40 mới + 14 FSM cũ), gồm đồng hồ giả neo VN cho TC-683, logic TC-681/693 và giới hạn lần ghi cuối. Thêm **19/19 test contracts/phân tầng PASS**; typecheck toàn workspace, ESLint/Prettier sáu tệp mới PASS. `yarn verify:fast` **exit 1** tại Vitest vì metadata AppleDouble `apps/worker/src/features/extraction/infrastructure/._createS3ObjectReader.test.ts`. Chạy đích danh bốn tệp test domain thật PASS; không ghi nhận verify:fast PASS.
+
+**Chưa nghiệm thu task:** logic domain chưa thay thế integration HTTP, audit, phân quyền hoặc đồng thời. Chưa chạy full verify, integration hoặc deploy. Bằng chứng và trạng thái commit tại [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md), được cập nhật riêng ngoài Git của source.
+
+## E20-S2-T1 — Application vấn đề đau local (2026-11-06)
+
+Đã áp dụng 8 use case tại `apps/api/src/features/painJournal/application/`: mở kèm lần ghi đầu, danh sách, chi tiết, sửa, đóng, mở lại, tác động xóa và xóa. `ports.ts` quy định transaction theo gia đình/phạm vi tự quản, khóa vấn đề khi ghi, tạo lần ghi đầu nguyên tử, cập nhật trạng thái kèm sự kiện và ánh xạ xung đột vùng/bên. Repository thực thi các cam kết này ở E20-S3-T1.
+
+Application kiểm đối tượng đúng hồ sơ trước consent, rồi hợp đồng và trạng thái; ghép PATCH trước khi kiểm cặp vùng/bên; dùng audit từ phiên và thời điểm nhận lệnh do đồng hồ cấp một lần. Đóng/mở lại dùng FSM hiện có và ngày Việt Nam; DTO chỉ xuất trường trong hợp đồng, giữ người ghi `null` và sắp xếp theo đặc tả. Không đổi domain, schema, API hoặc dependency.
+
+TDD: **67/67 test ban đầu RED** với use case chưa triển khai; GREEN **79/79 test application**, gồm 12 ca bổ sung kiểm phòng vệ khi port trả nhầm đối tượng. Tổng kiểm đích danh domain/application/contracts/phân tầng **157/157 test, 12 suite PASS**; typecheck API và ESLint/Prettier tệp mới PASS. `yarn verify:fast` qua typecheck toàn workspace nhưng **exit 1** tại Vitest do metadata AppleDouble `apps/worker/src/features/extraction/infrastructure/._createS3ObjectReader.test.ts`; không ghi nhận verify:fast PASS.
+
+**Chưa nghiệm thu task/Epic:** TC-691 đã kiểm ba use case đọc của T1; bối cảnh thuốc còn chờ E20-S2-T2. Unit dùng port giả chưa thay thế kiểm chứng transaction, RLS, khóa, cascade, đồng thời hoặc HTTP thật. Chưa chạy full `yarn verify`, integration hoặc push/PR/deploy. Source và README được commit cùng task; SHA và trạng thái hook ghi tại [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md). Bước tiếp theo: E20-S2-T2.
+
+## E20-S2-T2 — Application lần ghi, bài tập và bối cảnh thuốc local (2026-11-06)
+
+Đã áp dụng 7 use case tại `apps/api/src/features/painJournal/application/`: `createPainEntry`, `updatePainEntry`, `deletePainEntry`, `createExerciseNote`, `updateExerciseNote`, `deleteExerciseNote`, `getPainContext`. Mỗi use case một tệp theo quy tắc dự án; không gom ba tệp như tên đầu ra gợi ý trong master plan. Tái dùng domain và transaction port của T1; không đổi domain, schema DB, DTO API hay dependency.
+
+Ghi khóa hàng vấn đề trước kiểm trạng thái/đếm lần ghi; đối tượng con phải thuộc đúng hồ sơ/vấn đề. Kiểm phạm vi (kể cả ID con) trước consent, hợp đồng và trạng thái; PATCH ghép dữ liệu hiện có trước kiểm domain. Ghi chú đau rỗng thành null; đổi nguồn bài tập sang self xóa người chỉ định. Audit ghi mới/sửa lấy từ phiên và thời điểm server nhận lệnh; giữ createdBy khi sửa. Các DTO được dựng theo danh sách trường hợp đồng, dùng chung ánh xạ lần ghi/bài tập với chi tiết T1.
+
+**Owner chốt trong chat:** context chỉ nhận đủ cặp from/to hoặc bỏ cả hai; chỉ một mốc → ERR_VALIDATION. Khoảng chỉ định từ 1 đến 366 ngày tính cả hai đầu; không tự cắt. Mặc định dùng ngày VN của lần ghi sớm nhất hiện có tới hôm nay VN, cắt còn 366 ngày gần nhất. Reader nhận profileId và khoảng ngày, chỉ trả liều Khi cần cùng hồ sơ trong ngày VN và đợt thuốc giao khoảng; application không thêm nhận định hoặc liên hệ với cơn đau. TC-691 đã được nối thêm vào use case đọc context; các ghi chú chờ T2 ở checkpoint cũ là lịch sử.
+
+Kiểm chứng local: 54 test mới (4 suite); tổng đích danh domain/application/contracts/phân tầng **211/211 test, 16 suite PASS**. ESLint application và Prettier các tệp thay đổi PASS; typecheck toàn workspace PASS trong `yarn verify:fast`. Lần chạy test trước implementation dừng ở 4 suite do thiếu module use case, chưa có assertion RED; không ghi nhận số test RED. `yarn verify:fast` **exit 1** tại Vitest do metadata AppleDouble `apps/worker/src/features/extraction/infrastructure/._createS3ObjectReader.test.ts` chứa NUL; không ghi nhận verify:fast PASS. Không đổi config hoặc xóa metadata để xử lý lỗi ngoài phạm vi.
+
+Unit với port giả chưa chứng minh transaction/RLS/khóa/đồng thời/cascade hoặc HTTP thật. E20-S3-T1 phải hiện thực các thao tác con đã lọc đủ profileId/issueId/ID con, khóa hàng vấn đề trong cùng transaction, đếm lại trước xóa và reader context scoped. Chưa chạy full `yarn verify` hoặc integration; chưa push/PR/deploy hoặc nghiệm thu task/Epic. Source và README được commit cùng task; SHA và trạng thái hook được ghi tại [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md). Bước tiếp theo: E20-S3-T1.
+
+## E20-S3-T1 — Repository sổ đau nhức local (2026-11-06)
+
+Owner đã duyệt và yêu cầu áp dụng. Đã hiện thực `drizzlePainIssueRepository`, `drizzlePainContextReader` và các hàm đọc/ghi tại `apps/api/src/features/painJournal/infrastructure/`. Giữ nguyên domain, application ports, schema DB, hợp đồng API và dependency. Repository mặc định dùng `withFamilyScope`; scope tự quản được gắn `withSelfScope` từ hồ sơ phiên tại infrastructure, cùng một implementation.
+
+Ghi khóa riêng hàng `pain_issues` bằng `FOR UPDATE` trước khi đọc lần ghi muộn nhất, trạng thái hoặc đếm trước xóa. Mọi đối tượng con lọc đủ gia đình/hồ sơ/vấn đề/ID con. Tạo vấn đề kèm lần ghi đầu và chuyển trạng thái kèm sự kiện nguyên tử; ghi giữ người tạo, cập nhật audit từ phiên. Vi phạm `23505` của riêng `pain_issues_tracking_region_unique` rollback savepoint rồi tra `existingIssueId` để trả `ERR_PAIN_ISSUE_EXISTS`; lỗi DB khác được ném và rollback. ActorRef lấy theo ID tham chiếu từ dữ liệu đã scoped, không mất lịch sử khi tài khoản rời gia đình; tài khoản bị xóa trả null.
+
+Reader context lọc cùng hồ sơ, liều trong [đầu ngày from, đầu ngày sau to) giờ Việt Nam và đợt thuốc giao khoảng, không ẩn theo số đo. Chi tiết/danh sách chỉ xuất trường hợp đồng, giữ thứ tự và đếm đúng. Không có route hoặc thay đổi runtime wiring trong checkpoint này.
+
+Kiểm chứng: **12/12 integration test, 4 suite PASS** trên PostgreSQL 16 Testcontainers, runtime role app `NOBYPASSRLS`, chạy tuần tự `--maxWorkers 1`. Gồm TC-663 buộc hai transaction cùng vượt kiểm tra ban đầu; TC-679 chờ khóa thật khi xóa hai lần ghi cuối; TC-682 sai vấn đề; TC-684 đóng vấn đề chờ lệnh thêm commit rồi kiểm lại ngày; CRUD/audit/cascade, rollback ghi con thất bại, unique sửa/mở lại, self scope và bối cảnh ngày Việt Nam. **211/211 unit test, 16 suite PASS** cho domain/application/contracts/phân tầng. ESLint/Prettier tệp mới PASS. Review độc lập phát hiện một lỗi ActorRef sau thay đổi thành viên; regression đã RED (nhận null), sửa xong GREEN; review lại không còn finding. Lượt test trước implementation dừng vì thiếu module repository, không ghi nhận assertion RED cho lượt đó.
+
+`yarn verify:fast` trên volume gốc qua typecheck toàn workspace nhưng **exit 1** tại Vitest do metadata AppleDouble `apps/worker/src/features/extraction/infrastructure/._createS3ObjectReader.test.ts` chứa NUL. Không sửa config hoặc xóa metadata. Bản sao sạch ngoài dự án khớp SHA-256 2.431/2.431 tệp trước kiểm chứng: `yarn verify:fast` **PASS** (typecheck toàn workspace đạt; `--changed` không chọn unit test, bộ 211 unit đã chạy riêng). Lượt integration song song ban đầu không khởi động được PostgreSQL; Colima còn khoảng 166 MB, chạy tuần tự đã PASS, không dọn Docker ngoài phạm vi.
+
+**Chưa nghiệm thu HTTP/Epic:** các TC trên mới chứng minh use case/repository/DB; mã HTTP và ma trận route thuộc E20-S4. Chưa chạy full `yarn verify`, integration toàn bộ, push/PR/deploy. Source và README được commit cùng task; SHA và kết quả hook ghi trong checkpoint E20 ngoài Git của source. Bước tiếp theo: E20-S4-T1.
+
+## E20-S4-T1 — Route sổ đau nhức hai cửa local (2026-11-06)
+
+Đã nối đủ 30 route (15 thao tác × main/tự quản), dùng lại use case/repository hiện có. Hồ sơ và audit tự quản lấy từ phiên; mọi mutation cần CSRF, mọi phản hồi có `no-store`. Application giữ thứ tự phạm vi → consent → input → trạng thái; body root POST cố chọn `profileId` khác hồ sơ phiên bị chặn `404` theo quyết định owner. Không đổi domain/schema DB/dependency.
+
+Đã bổ sung kiểm kê/probe cho 15 `scoped`, 4 `self`, 11 `self_write`, wiring production/test và sinh OpenAPI/client. Kiểm chứng: 34/34 integration, 229/229 unit PASS; hai suite HTTP mới chạy lại 6/6 PASS với đồng hồ cố định. `verify:fast` và `check:api` PASS trên bản sao sạch; lint PASS, dup 1,35%. Volume gốc vẫn lỗi AppleDouble khi Vitest quét test; knip còn hai export cũ, đối chiếu baseline HEAD cho kết quả giống hệt.
+
+Source và README được commit cùng task; SHA và kết quả hook được ghi riêng trong checkpoint E20 ngoài Git của source. Chưa chạy full verify/integration toàn bộ, chưa push/PR/deploy. Bước tiếp theo **E20-S4-T2**. Bằng chứng, quyết định và giới hạn tại [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md).
+
+## E20-S4-T2 — Integration sổ đau nhức local (2026-11-06)
+
+Đã bổ sung 6 suite nghiệp vụ HTTP và mở rộng suite bảo mật: mở/đọc vấn đề, lần ghi, vòng đời, bài tập, bối cảnh thuốc và cascade. Cùng assertion chạy qua main/tự quản; kiểm audit từ phiên, ngày VN, hợp đồng strict, xung đột, consent, quyền và dữ liệu không đổi khi bị từ chối. Kiểm thêm ID con thuộc sai vấn đề trong cùng hồ sơ, hồ sơ khác cùng gia đình và gia đình khác. TC-687 kiểm xóa vấn đề; TC-718 kiểm xóa hồ sơ dọn đủ 4 bảng, giữ hồ sơ khác; TC-719 kiểm xóa chứng từ đã duyệt giữ nguyên sổ đau nhức. Giữ test đồng thời repository TC-663/679 hiện có.
+
+Owner duyệt riêng các sửa cổng knip: bỏ export nội bộ `actor`, `PainIssueConflict`, `WebPushLibrary`; loại đúng 5 helper test khỏi project production. Không đổi hành vi runtime, schema DB, hợp đồng HTTP hoặc dependency.
+
+**Kiểm chứng:** `yarn verify` PASS trên bản sao sạch, gồm typecheck/lint/format, **2.634 unit/506 suite**, dup **1,35%**, knip thường/production, build và ngân sách bundle **200 KB gzip**. `yarn verify:fast` cuối PASS với **138 unit/10 suite**. SHA-256 source/bản sao khớp **2.457/2.457 tệp** trước cập nhật tài liệu. Volume gốc vẫn lỗi AppleDouble tại `._createS3ObjectReader.test.ts` sau typecheck.
+
+Integration đã có lượt **167/167 test, 15 suite PASS** trước khi thêm hai ca ghép sai ID con và sửa export/knip; suite bảo mật mới nhất chạy riêng **6/6 PASS**, gồm hai ca ID con mới. **Chưa có lượt integration cuối toàn bộ PASS:** các lượt toàn bộ/tuần tự bị lỗi khởi tạo container, gồm `unhealthy`, `container stopped` và timeout. Chẩn đoán PostgreSQL thuần ngoài dự án tái hiện `Failed to connect to Reaper` trước khi PostgreSQL/migration khởi động; các lượt chốt lại bị lỗi hạ tầng đã dừng. Không thay cấu hình Testcontainers trong source.
+
+**Chưa nghiệm thu T2/SIT/Epic; chưa deploy.** Bước tiếp theo: khôi phục kết nối Reaper/Colima, chạy lại integration E20 và toàn bộ, rồi triển khai/nghiệm thu SIT. Trạng thái commit/PR và chi tiết tại [checkpoint E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md).
