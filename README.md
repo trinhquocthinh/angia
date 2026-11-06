@@ -205,3 +205,20 @@ Test được viết trước implementation; lượt đầu dừng vì thiếu 
 `yarn verify:fast` và `yarn verify` **PASS trên bản sao sạch**, khớp SHA-256 **2.488/2.488 tệp** trước cập nhật README; full verify có **2.657 unit test/512 suite**, dup **1,34%**, Knip thường/production, build và budget **200 KB gzip** đạt. Build còn cảnh báo kích thước chunk > 500 kB. Trên volume gốc, `verify:fast` qua typecheck nhưng **exit 1** do metadata AppleDouble `._*`; không sửa config hoặc xóa metadata để lấy PASS. Lượt full verify đầu dừng ở format Knip; chuẩn hóa file và chạy lại toàn bộ đã PASS. Log, harness và ảnh kiểm tra: `/private/tmp/angia-e21-s1-t1-c52txdfj/`.
 
 Đây là kiểm chứng local của T1, chưa nghiệm thu SIT/Production. Vùng chạm ≥ 44 px, chấm đang theo dõi và nghiệm thu a11y/TC-721 thuộc **E21-S1-T2**; RegionList/TC-720 thuộc T3. README đi cùng commit source; SHA và kết quả hook được ghi riêng trong checkpoint E21-S1-T1 tại SDD, Test Cases, Design Criteria và master plan ngoài Git của source. Chưa push/PR/deploy. Bước tiếp theo **E21-S1-T2**.
+
+## E21-S1-T2 — Vùng chạm và trợ năng BodyMap2D local (2026-11-07)
+
+Owner đã duyệt và yêu cầu áp dụng. Mỗi vị trí dùng nút HTML thật 44 × 44 px, có nhãn, `aria-pressed` và focus-visible; nút đặt cạnh vùng nhỏ có đường chỉ dẫn về hình. Hình giữ hướng trái/phải theo người trong hình, khung cao 616 px. Prop tùy chọn `trackingLocations` nhận danh sách `(region, side)`; chỉ vị trí khớp cả hai trường hiện chấm `text.secondary` và nhãn “ · đang theo dõi”. Không đổi màu theo mức đau hoặc tự chọn vùng. Callback vẫn chỉ trả vị trí; mở vấn đề đang theo dõi thuộc E21-S2-T2. Không thêm dependency, đổi API, domain hoặc schema DB.
+
+**TC-721: 8/8 ca Playwright PASS**, Chromium cảm ứng và WebKit mô phỏng điện thoại, viewport 360 px: đo đủ 59 nút ở hai mặt/35 vị trí, kích thước ≥ 44 × 44 px, khoảng cách ≥ 8 px, chạm tâm và mép nút trả đúng vùng/bên, Enter/Space/Tab, focus, giữ lựa chọn qua hai mặt, chấm/nhãn cập nhật theo prop. Khung thu còn 296 px vẫn đạt kích thước, khoảng cách và không tràn ngang. Unit hình 2D **14/14 PASS**; có assertion RED trước implementation. Đã xem ảnh hai mặt ở 360 px; không ghi nhận lỗi JavaScript trong lượt chụp.
+
+Harness nằm riêng tại `apps/web/e2e/`, cấu hình Vite không sinh route; không đưa trang kiểm thử vào build ứng dụng. Chạy độc lập, không cần phiên SIT hoặc API:
+
+```bash
+yarn playwright install chromium webkit
+yarn test:e2e:body-map
+```
+
+`yarn verify:fast` và `yarn verify` **PASS trên bản sao sạch**, gồm **2.659 unit/512 suite**, typecheck cả harness/test, lint/format, dup **1,34%**, Knip thường/production, build và budget **200 KB gzip**. Source/bản sao khớp byte **2.497/2.497 tệp** trước cập nhật README. Volume gốc: `verify:fast` qua typecheck và 2.659 test nhưng **exit 1** do hai tệp AppleDouble `._BodyMap2D.test.tsx`, `._getBodyMapRegions.test.ts` bị đọc như test; không sửa cấu hình hoặc xóa metadata trong task này. Build còn cảnh báo chunk > 500 kB. Bằng chứng local: `/private/tmp/angia-e21-s1-t2/`.
+
+T2 đã áp dụng và kiểm chứng local; component chưa gắn vào sheet/route, chưa nghiệm thu trình đọc màn hình/điện thoại thật hoặc SIT/Production, chưa push/PR/deploy. README đi cùng commit source; SHA và kết quả hook ghi tại checkpoint trong `Docs/angia` ngoài Git của source. Không đóng Epic 21/P21. Bước tiếp theo **E21-S1-T3 — RegionList/TC-720**.

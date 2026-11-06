@@ -6,7 +6,7 @@ import { FrontSvg } from './front.svg';
 
 const views = { front: 'Mặt trước', back: 'Mặt sau' } as const;
 
-export function BodyMap2D({ selected, onSelect }: BodyMapProps) {
+export function BodyMap2D({ selected, onSelect, trackingLocations = [] }: BodyMapProps) {
   const [view, setView] = useState<BodyMapView>('front');
   const Figure = view === 'front' ? FrontSvg : BackSvg;
   return (
@@ -28,7 +28,7 @@ export function BodyMap2D({ selected, onSelect }: BodyMapProps) {
         <span>{view === 'front' ? 'Phải' : 'Trái'}</span>
         <span>{view === 'front' ? 'Trái' : 'Phải'}</span>
       </div>
-      <Figure selected={selected} onSelect={onSelect} />
+      <Figure selected={selected} onSelect={onSelect} trackingLocations={trackingLocations} />
       <p className="text-center text-xs text-text-secondary">Trái, phải theo người trong hình</p>
       <p aria-live="polite" aria-atomic="true" className="min-h-6 text-center text-sm">
         {selected ? `Đã chọn: ${describeBodyLocation(selected)}` : 'Chọn một vùng trên hình'}

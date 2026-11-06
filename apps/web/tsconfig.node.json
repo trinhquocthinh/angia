@@ -7,5 +7,5 @@
     "declaration": false,
     "types": ["node"]
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "vite.body-map.config.ts"]
 }

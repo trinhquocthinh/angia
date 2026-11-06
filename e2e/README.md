@@ -77,3 +77,14 @@ Trên macOS, report/results mặc định nằm tại `<os.tmpdir()>/angia-playw
 `timeout-minutes: 8` là giới hạn riêng job E2E, chưa phải bằng chứng toàn pipeline đạt ngân sách tám phút trong Test Cases §CI. Cần đo lần chạy thực tế; build/deploy hiện hành nằm trước E2E.
 
 Tài liệu tham chiếu: [Playwright authentication](https://playwright.dev/docs/auth), [CI](https://playwright.dev/docs/ci-intro), [page.pdf](https://playwright.dev/docs/api/class-page#page-pdf).
+
+## TC-721 — BodyMap2D local
+
+Bộ kiểm tra này nằm tại `apps/web/e2e/bodyMap2D.spec.ts`, dùng cấu hình `playwright.body-map.config.ts` riêng và không chạy trong bộ SIT mặc định hoặc `yarn verify`. Harness chỉ dùng dữ liệu giả, không cần API hoặc phiên đăng nhập.
+
+```bash
+yarn playwright install chromium webkit
+yarn test:e2e:body-map
+```
+
+Lệnh tự mở Vite trên `127.0.0.1:5174` và chạy Chromium cảm ứng/WebKit mô phỏng điện thoại tại viewport 360 px. Kiểm đủ 59 nút hai mặt/35 vị trí: vùng chạm ≥ 44 × 44 px, khoảng cách ≥ 8 px, callback đúng vùng/bên, bàn phím/focus, giữ lựa chọn và chấm theo dõi. Kiểm thêm khung 296 px không tràn ngang. Kết quả local E21-S1-T2: 8/8 PASS; không thay thế nghiệm thu điện thoại thật, trình đọc màn hình hoặc SIT. Báo cáo nằm trong thư mục tạm của hệ điều hành, không ghi dữ liệu thử vào SIT.

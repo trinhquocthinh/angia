@@ -40,10 +40,26 @@ describe('Hình chọn vùng cơ thể 2D', () => {
     const html = renderToStaticMarkup(<Figure selected={{ region: 'knee', side: 'left' }} onSelect={noop} />);
     expect(html).toContain(`aria-label="${shown}"`);
     expect(html).not.toContain(`aria-label="${hidden}"`);
-    expect(html).toMatch(/role="button" tabindex="0" aria-label="Đầu gối · trái" aria-pressed="true"/);
-    const leftKnee = html.match(/<g[^>]+aria-label="Đầu gối · trái"[^>]*>/)?.[0];
+    expect(html).toMatch(/<button[^>]+aria-label="Đầu gối · trái" aria-pressed="true"/);
+    const leftKnee = html.match(/<path[^>]+data-body-region="knee\/left"[^>]*>/)?.[0];
     expect(leftKnee).toBeDefined();
     if (transform) expect(leftKnee).toContain(`transform="${transform}"`);
     else expect(leftKnee).not.toContain('transform=');
+  });
+
+  it('TC-721: chấm và nhãn theo dõi khớp cả vùng lẫn bên, không tự chọn vùng', () => {
+    const html = renderToStaticMarkup(
+      <BodyMap2D selected={null} onSelect={noop} trackingLocations={[{ region: 'knee', side: 'left' }]} />,
+    );
+    expect(html).toContain('aria-label="Đầu gối · trái · đang theo dõi" aria-pressed="false"');
+    expect(html).toContain('aria-label="Đầu gối · phải" aria-pressed="false"');
+    expect(html.match(/data-tracking-dot/g)).toHaveLength(1);
+    expect(html).not.toContain('Đã chọn:');
+  });
+
+  it('TC-721: bỏ prop theo dõi thì không hiện chấm hoặc nhãn trạng thái', () => {
+    const html = renderToStaticMarkup(<BodyMap2D selected={null} onSelect={noop} />);
+    expect(html).not.toContain('data-tracking-dot');
+    expect(html).not.toContain('đang theo dõi');
   });
 });

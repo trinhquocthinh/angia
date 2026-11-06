@@ -29,8 +29,19 @@
       "project": ["src/**/*.ts!", "!src/shared/test/**!", "!src/**/*.test-helper.ts!"]
     },
     "apps/web": {
-      "entry": ["src/app/routes/**/*.tsx!", "src/features/painJournal/presentation/BodyMap2D/BodyMap2D.tsx!"],
-      "project": ["src/**/*.{ts,tsx,css}!", "!src/**/*.test-helper.ts!", "!src/features/scanQuota/test/**!"],
+      "entry": [
+        "src/app/routes/**/*.tsx!",
+        "src/features/painJournal/presentation/BodyMap2D/BodyMap2D.tsx!",
+        "e2e/bodyMap2DHarness.tsx",
+        "e2e/**/*.spec.ts",
+        "vite.body-map.config.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx,css}!",
+        "!src/**/*.test-helper.ts!",
+        "!src/features/scanQuota/test/**!",
+        "e2e/**/*.{ts,tsx}"
+      ],
       "ignoreDependencies": ["@fontsource/be-vietnam-pro", "@fontsource/newsreader"]
     },
     "packages/contracts": {
