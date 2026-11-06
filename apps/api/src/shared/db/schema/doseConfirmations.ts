@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, date, foreignKey, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
@@ -31,6 +32,7 @@ export const doseConfirmations = pgTable(
     }).onDelete('cascade'),
     check('dose_confirmations_slot_valid', sql`${t.slot} IN ('morning', 'noon', 'afternoon', 'evening')`),
     check('dose_confirmations_name_length', sql`char_length(${t.confirmedByName}) BETWEEN 1 AND 60`),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('health_profile_id'),
   ],
 );

@@ -23,6 +23,7 @@ const toReading = (row: Omit<TemperatureReading, 'celsius'> & { celsius: string 
 export function createTemperatureRepository(
   db: Database,
   scope: FamilyScope = withFamilyScope,
+  profileReadLock: 'share' | null = 'share',
 ): TemperatureRepository {
   return {
     withFamily: (familyId, work) =>
@@ -30,7 +31,7 @@ export function createTemperatureRepository(
         const ofProfile = (profileId: string) =>
           and(eq(temperatureReadings.familyId, familyId), eq(temperatureReadings.healthProfileId, profileId));
         return work({
-          findProfile: (id) => findProfileInFamily(tx, familyId, id, 'share'),
+          findProfile: (id) => findProfileInFamily(tx, familyId, id, profileReadLock ?? undefined),
           insertReading: async (input) => {
             const [row] = await tx
               .insert(temperatureReadings)

@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { index, pgTable, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
 import { createdAtColumn, familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
@@ -18,6 +19,7 @@ export const uploadBatches = pgTable(
   },
   (table) => [
     index('upload_batches_health_profile_id_idx').on(table.healthProfileId),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('health_profile_id'),
   ],
 );

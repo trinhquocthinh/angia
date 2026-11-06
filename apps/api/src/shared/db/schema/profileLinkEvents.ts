@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, foreignKey, index, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
@@ -27,6 +28,7 @@ export const profileLinkEvents = pgTable(
     index('profile_link_events_profile_created_idx').on(t.profileId, t.createdAt),
     check('profile_link_events_action_valid', sql`${t.action} IN ('link', 'unlink', 'transfer')`),
     check('profile_link_events_actor_role_valid', sql`${t.actorRole} IN ('invitee', 'owner', 'admin')`),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('profile_id'),
   ],
 );

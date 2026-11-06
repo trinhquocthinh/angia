@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, date, foreignKey, index, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
 import { createdAtColumn, familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
@@ -33,6 +34,7 @@ export const revisitReminders = pgTable(
       sql`(${t.offsetKind} = 'two_days_before' AND ${t.sendDate} = ${t.revisitDate} - 2)
         OR (${t.offsetKind} = 'same_day' AND ${t.sendDate} = ${t.revisitDate})`,
     ),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('health_profile_id'),
   ],
 );

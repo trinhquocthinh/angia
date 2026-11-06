@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { bigint, check, jsonb, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
@@ -23,6 +24,7 @@ export const scanQuotaAudit = pgTable(
   (table) => [
     check('scan_quota_audit_version', sql`${table.version} BETWEEN 1 AND 9007199254740991`),
     check('scan_quota_audit_reason', sql`length(btrim(${table.reason})) BETWEEN 1 AND 500`),
+    ...selfReadOnlyPolicies(),
     familyIsolationPolicy(),
   ],
 );

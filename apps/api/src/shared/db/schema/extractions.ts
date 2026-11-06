@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { index, jsonb, numeric, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import { createdAtColumn, familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
 import { sourceDocuments } from './sourceDocuments.js';
@@ -19,6 +20,7 @@ export const extractions = pgTable(
   },
   (table) => [
     index('extractions_source_document_id_idx').on(table.sourceDocumentId),
+    ...selfReadOnlyPolicies(),
     familyIsolationPolicy(),
   ],
 );

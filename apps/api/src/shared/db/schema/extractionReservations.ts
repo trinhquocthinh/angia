@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, numeric, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { familyIdColumn, familyIsolationPolicy } from './columns.js';
@@ -21,6 +22,7 @@ export const extractionReservations = pgTable(
   },
   (table) => [
     check('extraction_reservations_amount_positive', sql`${table.amountUsd} > 0`),
+    ...selfReadOnlyPolicies(),
     familyIsolationPolicy(),
   ],
 );

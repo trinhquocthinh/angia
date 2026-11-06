@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, foreignKey, index, numeric, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
@@ -36,6 +37,7 @@ export const asNeededDoses = pgTable(
       sql`${t.quantity} IS NULL OR (${t.quantity} > 0 AND ${t.quantity} <= 1000)`,
     ),
     check('as_needed_doses_unit_length', sql`${t.unit} IS NULL OR char_length(${t.unit}) BETWEEN 1 AND 20`),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('health_profile_id'),
   ],
 );

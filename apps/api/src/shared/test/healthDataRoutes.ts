@@ -3,7 +3,9 @@
 //  - scoped: nhắm tài nguyên của gia đình qua ID/token → expectCrossFamilyDenied.
 //  - list:   trả danh sách theo gia đình của phiên → không lẫn dữ liệu gia đình khác.
 //  - uniform: không chạm dữ liệu, mọi ID nhận cùng một phản hồi.
-//  - self:   /api/me/profile/*, phiên chỉ đọc hồ sơ liên kết qua withSelfScope (SPEC-042, TC-570).
+//  - self: GET /api/me/profile/*, đọc hồ sơ liên kết qua withSelfScope (SPEC-042, TC-570).
+//  - self_write: POST/PATCH/DELETE /api/me/profile/pain-issues[/...], kiểm expectSelfWriteDenied.
+export type HealthDataRouteKind = 'scoped' | 'list' | 'uniform' | 'self' | 'self_write';
 export const HEALTH_DATA_ROUTES = {
   'GET /api/health-profiles': 'list',
   'GET /api/health-profiles/linkable-accounts': 'list',
@@ -70,7 +72,7 @@ export const HEALTH_DATA_ROUTES = {
   'GET /api/me/profile/lab-result-series': 'self',
   'GET /api/me/profile/temperatures': 'self',
   'GET /api/me/profile/as-needed-doses': 'self',
-} as const;
+} as const satisfies Record<string, HealthDataRouteKind>;
 
 type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;
 
