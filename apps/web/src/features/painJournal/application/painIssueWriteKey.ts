@@ -1,5 +1,10 @@
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
-export function painIssueWriteKey(session: ProfileSession, profile: HealthProfile, scope: 'main' | 'self') {
+import type { PainProfileContext } from './painProfileContext';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
+export function painIssueWriteKey(
+  session: ProfileSession,
+  profile: PainProfileContext,
+  scope: 'main' | 'self',
+) {
   return JSON.stringify([
     session.account.id,
     session.family?.id,

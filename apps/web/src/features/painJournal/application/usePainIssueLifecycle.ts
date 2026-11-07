@@ -1,6 +1,7 @@
+import type { PainProfileContext } from './painProfileContext';
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
 import type { PainEntryWriter, PainIssueLifecycleApi } from './ports';
 import { canWritePainIssue } from './canWritePainIssue';
 import { painIssueWriteKey } from './painIssueWriteKey';
@@ -12,7 +13,7 @@ export type PainIssueLifecycleAction =
 export function usePainIssueLifecycle(
   api: PainIssueLifecycleApi & Pick<PainEntryWriter, 'reopen'>,
   session: ProfileSession,
-  profile: HealthProfile,
+  profile: PainProfileContext,
   scope: 'main' | 'self',
   issueId: string,
 ) {

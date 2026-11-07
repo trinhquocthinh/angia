@@ -12,6 +12,7 @@
     "e2e",
     "playwright.config.ts",
     "apps/web/e2e/**/*.spec.ts",
-    "playwright.body-map.config.ts"
+    "playwright.body-map.config.ts",
+    "playwright.self-pain.config.ts"
   ]
 }

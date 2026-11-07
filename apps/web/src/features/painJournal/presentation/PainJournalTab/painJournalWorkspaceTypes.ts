@@ -1,10 +1,11 @@
+import type { PainProfileContext } from '../../application/painProfileContext';
 import type { PainIssueSummary } from '@angia/contracts';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
 import type { PainIssueHandoff } from '../../application/painIssueHandoff';
 import type { PainJournalActions } from './painJournalActions';
 export type PainWorkspaceProps = PainJournalActions & {
   session: ProfileSession;
-  profile: HealthProfile;
+  profile: PainProfileContext;
   scope?: 'main' | 'self';
   onContinueIssue?: (handoff: PainIssueHandoff) => void;
 };

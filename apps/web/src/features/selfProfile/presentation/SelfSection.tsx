@@ -1,5 +1,6 @@
 import { LabSeriesList } from '@src/features/labResults/presentation/LabSeriesList';
 import { lazy, Suspense } from 'react';
+import type { SelfProfile } from '@angia/contracts';
 import type { ProfileSession } from '@src/features/profiles/application/ports';
 import type { SelfSectionKey } from '../application/selfSections';
 import { useSelfQuery } from '../application/useSelfQuery';
@@ -15,9 +16,20 @@ const TemperatureWorkspace = lazy(() =>
   })),
 );
 
-type Props = { session: ProfileSession; section: SelfSectionKey };
+const SelfPainJournal = lazy(() =>
+  import('./SelfPainJournal').then((module) => ({
+    default: module.SelfPainJournal,
+  })),
+);
 
-export function SelfSection({ session, section }: Props) {
+type Props = {
+  session: ProfileSession;
+  section: SelfSectionKey;
+  profile: SelfProfile;
+  issueId?: string | undefined;
+};
+
+export function SelfSection({ session, section, profile, issueId }: Props) {
   switch (section) {
     case 'today':
       return <SelfToday session={session} />;
@@ -29,6 +41,12 @@ export function SelfSection({ session, section }: Props) {
       return <SelfHealth session={session} />;
     case 'lab-results':
       return <SelfLabResults session={session} />;
+    case 'pain':
+      return (
+        <Suspense fallback={<p role="status">Đang tải sổ đau nhức…</p>}>
+          <SelfPainJournal session={session} profile={profile} issueId={issueId} />
+        </Suspense>
+      );
     case 'temperatures':
       return (
         <Suspense fallback={<p role="status">Đang tải nhiệt độ…</p>}>

@@ -1,4 +1,5 @@
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { PainProfileContext } from '../../application/painProfileContext';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
 import type {
   PainContextReader,
   ExerciseNoteWriter,
@@ -9,7 +10,7 @@ import type {
 } from '../../application/ports';
 export type PainIssueDetailProps = {
   session: ProfileSession;
-  profile: HealthProfile;
+  profile: PainProfileContext;
   scope: 'main' | 'self';
   issueId: string;
   onBack: () => void;

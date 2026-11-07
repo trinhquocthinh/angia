@@ -1,3 +1,4 @@
+import type { PainProfileContext } from '../../application/painProfileContext';
 import { initialExerciseNoteValues } from '../../application/initialExerciseNoteValues';
 import { changeExerciseNoteValues } from '../../application/changeExerciseNoteValues';
 import { useState } from 'react';
@@ -5,12 +6,12 @@ import type { ExerciseNote } from '@angia/contracts';
 import { ZodError } from 'zod';
 import { exerciseNoteForm, type ExerciseNoteValues } from '../../application/exerciseNoteForm';
 import { useSaveExerciseNote } from '../../application/useSaveExerciseNote';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
 import type { ExerciseNoteWriter } from '../../application/ports';
 export type ExerciseNoteSheetProps = {
   api: ExerciseNoteWriter;
   session: ProfileSession;
-  profile: HealthProfile;
+  profile: PainProfileContext;
   scope: 'main' | 'self';
   issueId: string;
   exercise?: ExerciseNote | undefined;

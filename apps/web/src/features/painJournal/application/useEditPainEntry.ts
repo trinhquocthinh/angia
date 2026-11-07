@@ -1,7 +1,8 @@
+import type { PainProfileContext } from './painProfileContext';
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { UpdatePainEntryRequest } from '@angia/contracts';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
 import type { PainEntryEditor } from './ports';
 import { canWritePainIssue } from './canWritePainIssue';
 import { painIssueWriteKey } from './painIssueWriteKey';
@@ -11,7 +12,7 @@ import { handlePainEntryEditFailure } from './handlePainEntryEditFailure';
 export function useEditPainEntry(
   api: PainEntryEditor,
   session: ProfileSession,
-  profile: HealthProfile,
+  profile: PainProfileContext,
   scope: 'main' | 'self',
   issueId: string,
 ) {

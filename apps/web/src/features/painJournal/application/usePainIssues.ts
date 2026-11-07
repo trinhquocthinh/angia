@@ -1,7 +1,8 @@
+import type { PainProfileContext } from './painProfileContext';
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { PainIssueQuery } from '@angia/contracts';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
 import { profileScopeKey } from '@src/features/profiles/application/profileScopeKey';
 import { selfProfileKey } from '@src/features/selfProfile/application/selfProfileKey';
 import { MedicationRequestError } from '@src/features/medications/application/MedicationRequestError';
@@ -10,7 +11,7 @@ import type { PainJournalApi } from './ports';
 export function usePainIssues(
   api: PainJournalApi,
   session: ProfileSession,
-  profile: HealthProfile,
+  profile: PainProfileContext,
   scope: 'main' | 'self' = 'main',
   status: PainIssueQuery['status'] = 'all',
 ) {

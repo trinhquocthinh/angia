@@ -1,8 +1,9 @@
+import type { PainProfileContext } from './painProfileContext';
 import { painIssueWriteKey } from './painIssueWriteKey';
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { CreatePainIssueRequest } from '@angia/contracts';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
 import { MedicationRequestError } from '@src/features/medications/application/MedicationRequestError';
 import type { PainIssueWriter } from './ports';
 import type { PainIssueHandoff } from './painIssueHandoff';
@@ -13,7 +14,7 @@ import { refreshPainIssueAccess } from './refreshPainIssueAccess';
 export function useNewPainIssue(
   api: PainIssueWriter,
   session: ProfileSession,
-  profile: HealthProfile,
+  profile: PainProfileContext,
   scope: 'main' | 'self',
 ) {
   const client = useQueryClient();

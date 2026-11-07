@@ -167,3 +167,39 @@ mất đồng thuận khi đang xóa/bỏ phản hồi muộn, xóa lỗi và th
 lỗi ngày từ API giữ bản nháp và Escape trả focus về nút mở.
 Kết quả local: 16/16 ca vòng đời, 100/100 cả bộ Chromium/WebKit PASS.
 Không thay thế integration HTTP/DB, thiết bị/trình đọc màn hình thật hoặc SIT.
+
+## E21-S5-T2 — Route sổ đau nhức tự quản local
+
+```bash
+yarn test:e2e:self-pain
+# Hồi quy các component đau nhức:
+yarn test:e2e:body-map
+```
+
+Lệnh đầu build ứng dụng rồi chạy `playwright.self-pain.config.ts`, mở bản build
+bằng Vite preview tại `127.0.0.1:5175`; không dùng harness thay route.
+`apps/web/e2e/selfPainJournal.spec.ts` chạy 8 ca trên mỗi engine Chromium/WebKit
+ở 360 px, mọi API được giả lập bằng dữ liệu thử. Không cần phiên SIT.
+Không chạy hai lượt cấu hình tự quản đồng thời vì dùng chung cổng 5175.
+Bộ riêng này không tự chạy trong `yarn verify` hoặc bộ SIT mặc định.
+
+Kiểm: main/member ghi → khỏi → mở lại; tạo từ rỗng; route chi tiết tải trực tiếp,
+reload/quay về; CSRF/endpoint tự quản và body không có ID hồ sơ;
+không gọi sổ khi chưa liên kết/đồng thuận; mất đồng thuận/đổi liên kết khi ghi;
+giữ mức đã chọn qua lần tải lại hồ sơ khi quay lại ứng dụng;
+xét nghiệm chỉ đọc và Đau nhức vẫn có khi ẩn số đo.
+Kiểm nạp lười bằng yêu cầu script thực tế trước/sau mở mục.
+Kết quả local: 16/16 mới và 100/100 hồi quy PASS; API giả không chứng minh RLS/DB.
+
+### Nghiệm thu SIT còn lại
+
+1. Deploy bản được duyệt lên SIT theo quy trình hiện hành; dùng gia đình thử riêng.
+2. Trên điện thoại thật, với main và tài khoản liên kết, thực hiện mở vấn đề →
+   ghi mức → đánh dấu đã khỏi → mở lại. Kiểm đồng bộ hai tài khoản và người ghi/sửa.
+3. Đo ghi nhanh cho vấn đề đang theo dõi 5 lần, ghi từng thời gian/số chạm,
+   điểm bắt đầu/kết thúc, thiết bị, trình duyệt, mạng và SHA đang deploy;
+   lấy trung vị, so với NFR-8 ≤15 giây/≤4 chạm. Test local bốn chạm bắt đầu từ
+   `/my-profile` đã mở, không thay phép đo đầu cuối trên điện thoại thật.
+4. Kiểm mất liên kết/rút đồng thuận, bàn phím/trình đọc màn hình và nội dung
+   ở 360 px trên thiết bị. Ghi PASS/FAIL và bằng chứng riêng; chưa có kết quả thì
+   giữ E21/P21 và nghiệm thu task ở trạng thái chưa hoàn tất.

@@ -1,11 +1,12 @@
+import type { PainProfileContext } from '../../application/painProfileContext';
 import type { BodyLocation, PainIssueSummary } from '@angia/contracts';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
 import type { PainIssueWriter } from '../../application/ports';
 import type { PainIssueHandoff } from '../../application/painIssueHandoff';
 export type NewPainIssueSheetProps = {
   api: PainIssueWriter;
   session: ProfileSession;
-  profile: HealthProfile;
+  profile: PainProfileContext;
   scope?: 'main' | 'self';
   issues: PainIssueSummary[];
   onClose: () => void;

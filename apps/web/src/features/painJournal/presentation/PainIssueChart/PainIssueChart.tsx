@@ -1,6 +1,7 @@
+import type { PainProfileContext } from '../../application/painProfileContext';
 import { useId, useState } from 'react';
 import type { PainIssueDetail } from '@angia/contracts';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
 import { seriesRange, type WeekSpan } from '@src/features/measurements/application/seriesRange';
 import { SegmentedToggle } from '@src/features/measurements/presentation/components/SegmentedToggle';
 import type { PainContextReader } from '../../application/ports';
@@ -22,7 +23,7 @@ export function PainIssueChart({
 }: {
   api: PainContextReader;
   session: ProfileSession;
-  profile: HealthProfile;
+  profile: PainProfileContext;
   scope: 'main' | 'self';
   issue: PainIssueDetail;
 }) {

@@ -1,7 +1,8 @@
+import type { PainProfileContext } from './painProfileContext';
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { createExerciseNoteRequestSchema, type UpdateExerciseNoteRequest } from '@angia/contracts';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
 import type { ExerciseNoteWriter } from './ports';
 import { canWritePainIssue } from './canWritePainIssue';
 import { painIssueWriteKey } from './painIssueWriteKey';
@@ -10,7 +11,7 @@ import { handleExerciseNoteFailure } from './handleExerciseNoteFailure';
 export function useSaveExerciseNote(
   api: ExerciseNoteWriter,
   session: ProfileSession,
-  profile: HealthProfile,
+  profile: PainProfileContext,
   scope: 'main' | 'self',
   issueId: string,
 ) {

@@ -399,3 +399,60 @@ AppleDouble `._*`; không xóa/sửa metadata hoặc worktree `.claude`.
 Log tại `/private/tmp/angia-e21-s5-t1-*.log`; bản sao tại `/private/tmp/angia-e21-s5-t1.vmyqdjvy/`.
 README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook ghi ở checkpoint trong `Docs/angia` ngoài Git source.
 Chưa push/PR/deploy hoặc đóng E21/P21. Bước tiếp theo **E21-S5-T2**.
+
+## E21-S5-T2 — Sổ đau nhức tự quản local (2026-11-07)
+
+Đã áp dụng local theo phương án owner duyệt: mục “Đau nhức” tại
+`/my-profile?section=pain`, nạp lười qua `lazy/Suspense`; trang chi tiết độc lập
+`/my-profile/pain/:issueId` dùng cùng khung “Hồ sơ của tôi”. Tài khoản liên kết
+`main`/`member` dùng `scope=self`, mọi request đau nhức đi qua
+`/api/me/profile/pain-issues` và đường dẫn con, không gửi `profileId` trong body.
+Tái sử dụng luồng tạo, ghi nhanh, chi tiết, bài tập và quản lý vòng đời đã có.
+Mục vẫn hiện khi ẩn số đo; các mục dữ liệu khác giữ quyền hiện hành.
+
+`PainProfileContext` chỉ lấy `id`, `familyId`, `consentStatus` cần cho sổ đau nhức;
+hồ sơ tự quản lấy từ tóm tắt API và gia đình trong phiên, không ép kiểu hoặc tạo
+metadata hồ sơ giả. Chặn tóm tắt khác liên kết phiên, mất liên kết và đồng thuận.
+Review phát hiện việc dựng skeleton khi tải lại tóm tắt làm mất bản nháp;
+đã tái hiện RED và sửa: tải lại cùng hồ sơ giữ form, kết quả mất quyền vẫn đóng nội dung.
+
+Kiểm chứng trên bản sao sạch: `yarn verify:fast` và full `yarn verify` PASS,
+2.747 unit test/546 suite; lint/format, dup, Knip thường/production, build và
+budget 200 KiB gzip đạt. `/my-profile` và chi tiết tự quản đều 197,5 KiB gzip.
+Manifest ghi `SelfPainJournal` là dynamic entry; test trình duyệt xác nhận chưa tải
+chunk hoặc gọi API đau nhức trước khi mở mục. OpenAPI/kiểu client sinh lại không đổi.
+Build còn cảnh báo chunk lớn vốn có.
+
+Playwright 116/116 PASS Chromium/WebKit ở 360 px (16 ca mới trên route sản phẩm
+với API giả và 100 ca hồi quy, trong đó có ca desktop của biểu đồ).
+Ca mới kiểm main/member ghi → khỏi → mở lại, tạo từ danh sách rỗng,
+đường dẫn trực tiếp/tải lại/quay về, CSRF và endpoint tự quản, mất đồng thuận,
+đổi liên kết, giữ bản nháp khi kiểm lại hồ sơ và mục xét nghiệm vẫn chỉ đọc.
+Rà soát độc lập sau sửa không còn finding cần xử lý.
+
+Volume gốc có metadata AppleDouble `._*`; kiểm chứng dùng bản sao sạch và
+đối chiếu byte trước khi áp dụng, không xóa/sửa metadata hoặc worktree `.claude`.
+Bản sao và log tại `/private/tmp/angia-e21-s5-t2.PrXk0f/`,
+`/private/tmp/angia-e21-s5-t2-*.log`.
+Không chạy lại integration HTTP/DB vì task chỉ thay web.
+
+Chưa push/PR/deploy, chưa nghiệm thu API live, điện thoại/trình đọc màn hình thật
+hoặc SIT. Bốn thao tác trong test bắt đầu từ `/my-profile` đã mở;
+không dùng thời gian API giả làm bằng chứng NFR-8. Còn nghiệm thu luồng
+mở → ghi → khỏi → mở lại trên SIT cho main/tài khoản liên kết và đo 5 lần trên
+điện thoại thật, trung vị ≤15 giây, ≤4 chạm theo NFR-8.
+**Chưa đóng E21/P21 hoặc đánh dấu hoàn tất nghiệm thu E21-S5-T2.**
+
+## Epic 21 — Chuẩn bị PR vào SIT (2026-11-08)
+
+PR từ `feature/v0.3/Epic-21` vào `sit` gom 11 task UI E21-S1-T1 → E21-S5-T2:
+chọn vùng 2D/danh sách, tạo vấn đề, ghi nhanh, chi tiết/biểu đồ/bài tập,
+đóng/mở lại/xóa và sổ tự quản. Mục Nhiệt độ được nạp lười theo quyết định R-v3-7.
+Thay đổi API đi kèm S4-T3 cho phép PATCH bài tập với `endDate: null` để xóa ngày
+kết thúc; cần CI integration kiểm lại thay đổi này, không coi toàn PR chỉ đổi web.
+
+Kiểm chứng local gần nhất: `verify:fast`, full `verify` và 116/116 Playwright
+PASS trên bản sao sạch khớp byte với source; `/my-profile` 197,5 KiB gzip.
+Merge vào `sit` kích hoạt CI và dispatch pipeline build/sign/deploy hiện hành.
+Nghiệm thu API live/điện thoại/trình đọc màn hình và NFR-8 trên SIT vẫn còn chờ;
+PR và deploy thành công chưa đồng nghĩa đóng E21/P21.

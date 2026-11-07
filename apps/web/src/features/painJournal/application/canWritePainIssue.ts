@@ -1,5 +1,10 @@
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
-export function canWritePainIssue(session: ProfileSession, profile: HealthProfile, scope: 'main' | 'self') {
+import type { PainProfileContext } from './painProfileContext';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
+export function canWritePainIssue(
+  session: ProfileSession,
+  profile: PainProfileContext,
+  scope: 'main' | 'self',
+) {
   return (
     Boolean(session.family && session.csrfToken) &&
     session.family?.id === profile.familyId &&

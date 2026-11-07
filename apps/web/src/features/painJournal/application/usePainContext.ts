@@ -1,6 +1,7 @@
+import type { PainProfileContext } from './painProfileContext';
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileSession } from '@src/features/profiles/application/ports';
 import { profileScopeKey } from '@src/features/profiles/application/profileScopeKey';
 import { MedicationRequestError } from '@src/features/medications/application/MedicationRequestError';
 import type { PainContextReader } from './ports';
@@ -9,7 +10,7 @@ import { refreshPainIssueAccess } from './refreshPainIssueAccess';
 export function usePainContext(
   api: PainContextReader,
   session: ProfileSession,
-  profile: HealthProfile,
+  profile: PainProfileContext,
   scope: 'main' | 'self',
   issueId: string,
   range: { from: string; to: string },
