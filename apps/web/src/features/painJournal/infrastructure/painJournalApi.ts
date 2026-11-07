@@ -1,5 +1,6 @@
 import { createPainEntryApi } from './painEntryApi';
 import { createPainEntryEditorApi } from './painEntryEditorApi';
+import { createPainContextApi } from './painContextApi';
 import { painIssueRequestBody } from './painIssueRequestBody';
 import { painIssueDetailSchema, painIssueListSchema } from '@angia/contracts';
 import { apiClient } from '@src/shared/api/apiClient';
@@ -11,14 +12,21 @@ import type {
   PainEntryWriter,
   PainIssueReader,
   PainEntryEditor,
+  PainContextReader,
 } from '../application/ports';
 
 export function createPainJournalApi(
   client = apiClient,
-): PainJournalApi & PainIssueWriter & PainEntryWriter & PainIssueReader & PainEntryEditor {
+): PainJournalApi &
+  PainIssueWriter &
+  PainEntryWriter &
+  PainIssueReader &
+  PainEntryEditor &
+  PainContextReader {
   return {
     ...createPainEntryApi(client),
     ...createPainEntryEditorApi(client),
+    ...createPainContextApi(client),
     create: async (profileId, body, csrf, signal) => {
       const options = {
         body: painIssueRequestBody(body),

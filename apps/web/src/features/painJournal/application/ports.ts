@@ -7,6 +7,8 @@ import type {
   PainEntry,
   PainIssueSummary,
   UpdatePainEntryRequest,
+  PainContext,
+  PainContextQuery,
 } from '@angia/contracts';
 
 export interface PainJournalApi {
@@ -41,6 +43,15 @@ export interface PainEntryWriter {
 }
 export interface PainIssueReader {
   detail(profileId: string | null, issueId: string, signal?: AbortSignal): Promise<PainIssueDetail>;
+}
+
+export interface PainContextReader {
+  context(
+    profileId: string | null,
+    issueId: string,
+    range: PainContextQuery,
+    signal?: AbortSignal,
+  ): Promise<PainContext>;
 }
 
 export interface PainEntryEditor {

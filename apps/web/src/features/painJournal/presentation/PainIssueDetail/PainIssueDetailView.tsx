@@ -1,6 +1,7 @@
 import type { PainEntry, PainIssueDetail } from '@angia/contracts';
 import { PainIssueDetailHeader } from './PainIssueDetailHeader';
 import { PainEntryList } from './PainEntryList';
+import { PainIssueChart } from '../PainIssueChart/PainIssueChart';
 import { PainStatusHistory } from './PainStatusHistory';
 import { InlinePainEntry } from './InlinePainEntry';
 import { EditPainEntrySheet } from './EditPainEntrySheet';
@@ -34,6 +35,7 @@ export function PainIssueDetailView(props: Props) {
           onContinueIssue={(handoff) => props.onOpenIssue(handoff.issueId)}
         />
       )}
+      <PainIssueChart api={api} session={session} profile={profile} scope={scope} issue={issue} />
       <PainEntryList entries={issue.entries} onEdit={allowed ? edit : undefined} />
       <PainStatusHistory events={issue.statusEvents} />
       {props.editing && allowed && (

@@ -308,3 +308,36 @@ Trên volume gốc, `verify:fast` qua typecheck nhưng exit 1 do metadata AppleD
 không sửa/xóa metadata hoặc worktree `.claude` vốn có. Log, ảnh và bản sao sạch tại
 `/private/tmp/angia-e21-s4-t1/`. Hướng dẫn tại [e2e/README.md](e2e/README.md#tc-726--chi-tiết-vấn-đề-đau-local).
 README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook ghi riêng tại checkpoint trong `Docs/angia`. Chưa push/PR/deploy; không đóng Epic 21/P21. Bước tiếp theo **E21-S4-T2 — PainIssueChart**.
+
+## E21-S4-T2 — Biểu đồ vấn đề đau local (2026-11-07)
+
+Owner đã duyệt và yêu cầu áp dụng. Trang chi tiết có `PainIssueChart` trước danh sách lần ghi,
+lọc 4/12/26 tuần (mặc định 12), từ Thứ Hai của tuần cách đây N − 1 tuần đến hôm nay giờ Việt Nam.
+Trục mức cố định 1–10; mọi điểm/nét dùng cùng màu, không nhận định mức hoặc xu hướng.
+Hai lần ghi liên tiếp cách nhau hơn 7 **ngày lịch Việt Nam** ngắt nét hoàn toàn, vẫn giữ mọi điểm;
+đúng 7 ngày lịch vẫn nối, kể cả khi khoảng thời gian thực vượt 168 giờ.
+Dưới 4 lần ghi trong khoảng dùng thẻ mới nhất trước. Bảng dữ liệu ẩn có caption, thời điểm, mức và ghi chú;
+`sr-only` đặt trên phần tử bọc để bảng không gây tràn ngang mobile.
+
+Bối cảnh thuốc dùng endpoint SPEC-053 hiện có, cache tách tài khoản/gia đình/phạm vi/hồ sơ/vấn đề/khoảng ngày,
+kiểm quyền và đồng thuận, truyền AbortSignal. Làn thuốc dùng cùng miền trục thời gian với lần ghi:
+liều “Khi cần” là vạch ngắn có tooltip, đợt thuốc là dải mảnh có tên. Có bản chữ cả khi ít điểm.
+Lỗi bối cảnh giữ lần ghi và cho thử lại. Ghi/sửa/xóa lần ghi làm mới query biểu đồ và bối cảnh.
+ECharts nạp lười khi đủ 4 điểm, dùng chung mô-đun với biểu đồ sinh hiệu; không thêm dependency,
+không đổi backend, contract, domain hoặc DB.
+
+Hướng dẫn kiểm tra tại [e2e/README.md](e2e/README.md#tc-724725--biểu-đồ-vấn-đề-đau-local).
+Kiểm chứng trên bản sao sạch: `verify:fast` PASS (22 test liên quan), full `verify` PASS
+(2.726 unit/535 suite, lint/format, dup 1,46%, Knip thường/production, build và budget).
+Trang chi tiết 169,9 KB gzip; `/my-profile` 196,5 KB, mọi trang đầu dưới 200 KB.
+Manifest xác nhận canvas đau và biểu đồ sinh hiệu dùng chung chunk `installSVGRenderer` chứa ECharts;
+canvas riêng dưới 2 KB gzip. Playwright 68/68 PASS Chromium/WebKit (66 mobile, 2 desktop),
+gồm 12 ca T2 ở mobile 360 px và desktop 1440 px;
+tooltip đặt phía trên điểm để không che vạch liều thuốc khi chuyển thao tác chạm.
+Rà soát độc lập không có finding cần sửa. Build còn cảnh báo chunk lớn vốn có;
+ECharts có cảnh báo instance đã dispose khi chuyển phạm vi/rời trang trong kiểm thử WebKit.
+Trên volume gốc, `verify:fast` qua typecheck nhưng exit 1 do AppleDouble `._*`;
+không sửa/xóa metadata hay worktree `.claude`. Bằng chứng tại `/private/tmp/angia-e21-s4-t2.Umm1vX/`.
+API trong harness là giả; chưa thay thế nghiệm thu thiết bị/trình đọc màn hình thật hoặc SIT.
+README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook ghi riêng tại checkpoint trong `Docs/angia`.
+Chưa push/PR/deploy hoặc đóng E21/P21. Bước tiếp theo **E21-S4-T3 — bài tập**.

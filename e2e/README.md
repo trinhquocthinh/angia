@@ -121,3 +121,26 @@ lịch sử trạng thái, ghi nhanh tại chỗ, sửa/xóa ghi chú, focus bà
 ẩn xóa lần ghi cuối và lỗi cạnh tranh `422 last_entry`, sửa vấn đề đã khỏi và giới hạn ngày khỏi,
 lỗi mạng giữ bản nháp, 404 về danh sách, self endpoint, đổi tài khoản và mất đồng thuận khi đang gửi.
 Không thay thế nghiệm thu điện thoại/trình đọc màn hình thật hoặc API live/SIT.
+
+## TC-724/725 — Biểu đồ vấn đề đau local
+
+Chạy riêng `yarn test:e2e:body-map painIssueChart`; cả hồi quy: `yarn test:e2e:body-map`.
+T2 dùng lại harness `/e2e/painIssueDetail.html`, component/hook/adapter thật và API giả,
+không đưa trang kiểm thử vào build sản phẩm. Đồng hồ cố định ở 20/11/2026 và múi giờ trình duyệt
+America/Los_Angeles để kiểm dữ liệu vẫn hiển thị theo giờ Việt Nam.
+
+Sáu ca mỗi engine Chromium/WebKit kiểm đủ điểm và hai đoạn SVG ngắt qua >7 ngày,
+nhãn đợt thuốc và tooltip khi chạm điểm/liều “Khi cần”, không tràn ngang 360 px,
+lọc 4/12/26 tuần gửi đúng khoảng và endpoint self, ít điểm dùng thẻ/bảng ẩn và không nạp canvas,
+lỗi bối cảnh/thử lại/rút đồng thuận, ghi nhanh từ 3 thẻ sang 4 điểm kèm làm mới bối cảnh.
+Ca desktop 1440 px kiểm chiều cao canvas và chuyển chạm từ điểm đau sang vạch liều thuốc
+mà không bị tooltip che; hồi quy này đã tái hiện lỗi trước khi sửa vị trí tooltip lên phía trên điểm.
+Ca TC-724 lưu ảnh biểu đồ trong output tạm của Playwright.
+
+Unit TC-724 kiểm biên đúng 7 ngày lịch, hơn 7 ngày qua nửa đêm Việt Nam, lọc hai biên ngày và giữ đủ điểm.
+TC-725 kiểm kiểu điểm/nét cố định ở mức 1/10 và quét nội dung hệ thống ở thẻ/danh sách/chi tiết/biểu đồ
+bằng danh sách từ cấm chung; không lọc lời tự ghi của người dùng.
+Không thay thế nghiệm thu điện thoại/trình đọc màn hình thật, bản in hoặc API live/SIT.
+
+Kết quả local E21-S4-T2: 12/12 ca biểu đồ và 68/68 cả bộ Chromium/WebKit PASS (66 mobile, 2 desktop).
+Unit riêng sổ đau nhức 92/92 PASS; full verify 2.726 unit/535 suite PASS trên bản sao sạch.

@@ -28,7 +28,12 @@ test.beforeEach(async ({ page }) => {
   const detail = structuredClone(initial);
   await page.route('**/api/**/pain-issues/**', async (route) => {
     const request = route.request();
-    if (request.method() === 'PATCH') {
+    if (new URL(request.url()).pathname.endsWith('/context')) {
+      const params = new URL(request.url()).searchParams;
+      await route.fulfill({
+        json: { from: params.get('from'), to: params.get('to'), asNeededDoses: [], courses: [] },
+      });
+    } else if (request.method() === 'PATCH') {
       const body = request.postDataJSON();
       const found = detail.entries.find((entry) => request.url().endsWith(entry.id))!;
       Object.assign(found, body, { note: body.note || null });
