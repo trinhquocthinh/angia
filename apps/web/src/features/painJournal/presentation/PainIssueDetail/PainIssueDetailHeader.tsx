@@ -1,6 +1,12 @@
+import type { ReactNode } from 'react';
 import type { PainIssueSummary } from '@angia/contracts';
 import { describeBodyLocation } from '../BodyMap2D/describeBodyLocation';
-export function PainIssueDetailHeader({ issue, onBack }: { issue: PainIssueSummary; onBack: () => void }) {
+type Props = {
+  issue: PainIssueSummary;
+  onBack: () => void;
+  actions?: ReactNode;
+};
+export function PainIssueDetailHeader({ issue, onBack, actions }: Props) {
   return (
     <header className="space-y-2">
       <button type="button" onClick={onBack} className="min-h-11 underline">
@@ -13,6 +19,7 @@ export function PainIssueDetailHeader({ issue, onBack }: { issue: PainIssueSumma
           ? 'Đang theo dõi'
           : `Đã khỏi từ ${issue.resolvedOn?.split('-').reverse().join('/')}`}
       </p>
+      {actions}
     </header>
   );
 }

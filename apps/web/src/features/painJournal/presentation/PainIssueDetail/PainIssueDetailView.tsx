@@ -1,5 +1,6 @@
 import type { PainEntry, PainIssueDetail } from '@angia/contracts';
 import { PainIssueDetailHeader } from './PainIssueDetailHeader';
+import { PainIssueLifecycleActions } from './PainIssueLifecycleActions';
 import { PainEntryList } from './PainEntryList';
 import { ExerciseNotes } from '../ExerciseNoteCard/ExerciseNotes';
 import { PainIssueChart } from '../PainIssueChart/PainIssueChart';
@@ -22,7 +23,15 @@ export function PainIssueDetailView(props: Props) {
   const { issue, api, session, profile, scope, allowed, version, saved, edit } = props;
   return (
     <div className="min-w-0 space-y-6">
-      <PainIssueDetailHeader issue={issue} onBack={props.onBack} />
+      <PainIssueDetailHeader
+        issue={issue}
+        onBack={props.onBack}
+        actions={
+          allowed ? (
+            <PainIssueLifecycleActions {...props} onSaved={saved} onDeleted={props.onBack} />
+          ) : undefined
+        }
+      />
       {props.notice && <p role="status">{props.notice}</p>}
       {allowed && issue.status === 'tracking' && (
         <InlinePainEntry

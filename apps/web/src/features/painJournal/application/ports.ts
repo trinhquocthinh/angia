@@ -12,6 +12,8 @@ import type {
   ExerciseNote,
   CreateExerciseNoteRequest,
   UpdateExerciseNoteRequest,
+  ResolvePainIssueRequest,
+  PainIssueDeletionImpact,
 } from '@angia/contracts';
 
 export interface PainJournalApi {
@@ -91,4 +93,20 @@ export interface ExerciseNoteWriter {
     csrf: string,
     signal?: AbortSignal,
   ): Promise<ExerciseNote>;
+}
+
+export interface PainIssueLifecycleApi {
+  resolve(
+    profileId: string | null,
+    issueId: string,
+    body: ResolvePainIssueRequest,
+    csrf: string,
+    signal?: AbortSignal,
+  ): Promise<PainIssueSummary>;
+  deletionImpact(
+    profileId: string | null,
+    issueId: string,
+    signal?: AbortSignal,
+  ): Promise<PainIssueDeletionImpact>;
+  deleteIssue(profileId: string | null, issueId: string, csrf: string, signal?: AbortSignal): Promise<void>;
 }

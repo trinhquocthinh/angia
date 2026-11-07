@@ -155,3 +155,15 @@ mất đồng thuận/hủy/phản hồi muộn/gửi lặp; kiểm thêm trả 
 nút lưu và cuộn ô ghi chú không bị footer che ở 360 px.
 Kết quả: 16/16 ca bài tập và 84/84 cả bộ Chromium/WebKit PASS local.
 Không thay thế integration HTTP/DB, thiết bị/trình đọc màn hình thật hoặc SIT.
+
+## E21-S5-T1 — Vòng đời vấn đề đau local
+
+Chạy riêng `yarn test:e2e:body-map painIssueLifecycle`; cả hồi quy `yarn test:e2e:body-map`.
+Dùng lại harness chi tiết, component/hook/adapter thật với API giả.
+Tám ca mỗi engine kiểm TC-727 (tác động từ API, hủy không xóa, chỉ xóa sau xác nhận),
+tải tác động lỗi/thử lại, TC-684/688 (ngày Việt Nam, đóng xong ẩn ghi nhanh và hiện lịch sử),
+TC-685 (409 mở lại có liên kết sang vấn đề đang theo dõi), endpoint self và xác nhận mở lại,
+mất đồng thuận khi đang xóa/bỏ phản hồi muộn, xóa lỗi và thử lại tường minh,
+lỗi ngày từ API giữ bản nháp và Escape trả focus về nút mở.
+Kết quả local: 16/16 ca vòng đời, 100/100 cả bộ Chromium/WebKit PASS.
+Không thay thế integration HTTP/DB, thiết bị/trình đọc màn hình thật hoặc SIT.

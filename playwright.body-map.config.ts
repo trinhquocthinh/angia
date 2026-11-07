@@ -12,6 +12,7 @@ export default defineConfig({
     '**/painIssueDetail.spec.ts',
     '**/painIssueChart.spec.ts',
     '**/exerciseNote.spec.ts',
+    '**/painIssueLifecycle.spec.ts',
   ],
   testIgnore: '**/._*',
   forbidOnly: Boolean(process.env.CI),

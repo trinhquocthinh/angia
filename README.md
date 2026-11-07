@@ -372,3 +372,30 @@ Log RED/GREEN, kiểm chứng và ảnh tại `/private/tmp/angia-e21-s4-t3.LuOb
 README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook ghi riêng tại checkpoint trong `Docs/angia`.
 Chưa push/PR/deploy, nghiệm thu thiết bị/trình đọc màn hình thật hoặc SIT; không đóng E21/P21.
 Bước tiếp theo **E21-S5-T1 — đánh dấu đã khỏi, mở lại, xóa vấn đề**.
+
+## E21-S5-T1 — Vòng đời vấn đề đau local (2026-11-07)
+
+Đã áp dụng phương án owner duyệt: menu trên trang chi tiết mở sheet đánh dấu đã khỏi,
+hộp xác nhận mở lại và hộp xóa `alertdialog`. Ngày khỏi mặc định hôm nay theo giờ Việt Nam,
+giới hạn từ ngày lần ghi muộn nhất đến hôm nay; lỗi API giữ ngày đã chọn.
+Mở lại không tự ghi mức; `409 ERR_PAIN_ISSUE_EXISTS` có lối “Mở vấn đề đó”.
+Xóa lấy số lần ghi/bài tập từ `deletion-impact`, khóa xác nhận khi đang tải hoặc tải lỗi,
+chỉ gửi `DELETE { confirm: true }` sau xác nhận. Xóa thành công bỏ cache chi tiết/bối cảnh
+và quay về danh sách; đóng/mở lại làm mới danh sách, chi tiết, biểu đồ và lịch sử.
+
+Giữ quyền `main`/`self`, CSRF, cache theo tài khoản/gia đình/hồ sơ; chống gửi lặp,
+hủy request và bỏ phản hồi muộn khi đổi phạm vi hoặc mất đồng thuận.
+Không đổi backend, contracts, domain, schema DB hoặc dependency.
+“Sửa vùng hoặc tên” không thuộc task này; tích hợp `/my-profile` thuộc E21-S5-T2.
+
+Kiểm chứng trên bản sao sạch: `verify:fast` PASS (25 test liên quan),
+unit sổ đau nhức 110/110 PASS, Playwright Chromium/WebKit 100/100 PASS,
+gồm 16 ca vòng đời mới với API giả. Full `verify` PASS (2.746 unit/546 suite,
+lint/format, dup, Knip thường/production, build và budget 200 KB gzip).
+Build vẫn có cảnh báo chunk lớn. OpenAPI và kiểu client sinh lại không đổi.
+Bộ kiểm trình duyệt không thay thế HTTP/DB,
+điện thoại/trình đọc màn hình thật hoặc SIT. Trên volume gốc, kiểm thử gặp metadata
+AppleDouble `._*`; không xóa/sửa metadata hoặc worktree `.claude`.
+Log tại `/private/tmp/angia-e21-s5-t1-*.log`; bản sao tại `/private/tmp/angia-e21-s5-t1.vmyqdjvy/`.
+README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook ghi ở checkpoint trong `Docs/angia` ngoài Git source.
+Chưa push/PR/deploy hoặc đóng E21/P21. Bước tiếp theo **E21-S5-T2**.

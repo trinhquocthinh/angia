@@ -2,6 +2,7 @@ import type { HealthProfile, ProfileSession } from '@src/features/profiles/appli
 import type {
   PainContextReader,
   ExerciseNoteWriter,
+  PainIssueLifecycleApi,
   PainEntryEditor,
   PainEntryWriter,
   PainIssueReader,
@@ -14,6 +15,11 @@ export type PainIssueDetailProps = {
   onBack: () => void;
   onOpenIssue: (issueId: string) => void;
   api?:
-    | (PainIssueReader & PainEntryWriter & PainEntryEditor & PainContextReader & ExerciseNoteWriter)
+    | (PainIssueReader &
+        PainEntryWriter &
+        PainEntryEditor &
+        PainContextReader &
+        ExerciseNoteWriter &
+        PainIssueLifecycleApi)
     | undefined;
 };
