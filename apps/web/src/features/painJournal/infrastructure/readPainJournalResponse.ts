@@ -1,7 +1,10 @@
 import { z } from 'zod';
 import { errorResponseSchema } from '@angia/contracts';
 import { PainJournalRequestError } from '../application/PainJournalRequestError';
-const detailsSchema = z.object({ existingIssueId: z.uuid() });
+const detailsSchema = z.object({
+  existingIssueId: z.uuid().optional(),
+  reason: z.literal('last_entry').optional(),
+});
 export function readPainJournalResponse(result: { response: Response; data?: unknown; error?: unknown }) {
   if (result.response.ok) return result.data;
   const parsed = errorResponseSchema.safeParse(result.error);
@@ -14,5 +17,6 @@ export function readPainJournalResponse(result: { response: Response; data?: unk
     result.response.status === 409 && error?.code === 'ERR_PAIN_ISSUE_EXISTS' && details.success
       ? details.data.existingIssueId
       : undefined,
+    result.response.status === 422 && details.success ? details.data.reason : undefined,
   );
 }

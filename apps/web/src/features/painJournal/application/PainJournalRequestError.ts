@@ -5,6 +5,7 @@ export class PainJournalRequestError extends MedicationRequestError {
     status: number,
     code?: string,
     public readonly existingIssueId?: string,
+    public readonly reason?: string,
   ) {
     super(message, status, code);
     this.name = 'PainJournalRequestError';

@@ -34,6 +34,7 @@
         "e2e/bodyMap2DHarness.tsx",
         "e2e/newPainIssueHarness.tsx",
         "e2e/quickPainEntryHarness.tsx",
+        "e2e/painIssueDetailHarness.tsx",
         "e2e/**/*.spec.ts",
         "vite.body-map.config.ts"
       ],

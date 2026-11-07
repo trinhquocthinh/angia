@@ -110,3 +110,14 @@ Chạy riêng `yarn test:e2e:body-map quickPainEntry`; chạy cả hồi quy `ya
 Bảy ca mỗi engine kiểm: bốn chạm (tab giả lập → Ghi mức → chấm → Lưu), không chọn sẵn và không cần chọn ngày; phím số/mũi tên, kích thước ≥44 px và bố cục theo vùng chứa 512 px ở viewport 360/480/768/1440; 409 đã khỏi giữ bản nháp và chỉ mở lại sau khi bấm; self/lỗi mạng/thời điểm tương lai; bản nháp từ 409 tạo vấn đề sang sheet không tự ghi; hủy khi mất đồng thuận/khóa đóng khi lưu; đổi tài khoản xóa trạng thái và đóng trả focus. Kết quả local E21-S3-T1: 14/14 mới, 38/38 cả bộ Chromium/WebKit PASS.
 
 Từ T3, workspace có nơi nhận bàn giao mặc định và route hồ sơ hiện nút tạo/ghi khi đủ quyền. Callback ngoài vẫn dùng được cho nơi nhúng riêng. Đây là kiểm chứng local có API giả; chưa nghiệm thu route sản phẩm, thời gian ≤15 giây trên điện thoại thật, trình đọc màn hình hoặc SIT. Bộ này chạy riêng, không nằm trong `yarn verify`.
+
+## TC-726 — Chi tiết vấn đề đau local
+
+Chạy riêng `yarn test:e2e:body-map painIssueDetail`; chạy cả hồi quy `yarn test:e2e:body-map`.
+Harness `/e2e/painIssueDetail.html` dùng component, hook và adapter thật với API giả; không đưa vào build sản phẩm.
+
+Chín ca mỗi engine kiểm người ghi/sửa và tài khoản đã xóa, giờ Việt Nam, thứ tự mới nhất trước,
+lịch sử trạng thái, ghi nhanh tại chỗ, sửa/xóa ghi chú, focus bàn phím, xác nhận xóa,
+ẩn xóa lần ghi cuối và lỗi cạnh tranh `422 last_entry`, sửa vấn đề đã khỏi và giới hạn ngày khỏi,
+lỗi mạng giữ bản nháp, 404 về danh sách, self endpoint, đổi tài khoản và mất đồng thuận khi đang gửi.
+Không thay thế nghiệm thu điện thoại/trình đọc màn hình thật hoặc API live/SIT.

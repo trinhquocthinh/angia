@@ -274,3 +274,37 @@ Playwright local **38/38 PASS Chromium/WebKit**, gồm 14 ca ghi nhanh mới và
 `yarn verify:fast` **PASS** trên bản sao sạch (16 test liên quan); unit riêng sổ đau nhức **68/68 PASS**. Full `yarn verify` **PASS**: 2.702 unit test/524 suite, typecheck, lint, format, dup 1,34%, Knip thường/production, build và budget 200 KB gzip cho mọi trang đầu. Build còn cảnh báo chunk lớn hơn 500 kB. Trên volume gốc, `verify:fast` qua typecheck nhưng exit 1 do AppleDouble `._newPainIssueForm.test.ts`; không coi đó là PASS trực tiếp trên volume gốc. Bản sao khớp byte 2.570/2.570 tệp source/tài liệu trước khi bổ sung đoạn kết quả này.
 
 README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook được ghi riêng trong checkpoint E21-S3-T1 tại `Docs/angia` ngoài Git source. Chưa push/PR/deploy hoặc đóng Epic 21/P21. Bước tiếp theo **E21-S4-T1 — trang chi tiết vấn đề đau**.
+
+## E21-S4-T1 — Chi tiết vấn đề đau local (2026-11-07)
+
+Owner đã duyệt và yêu cầu áp dụng. Trang `/profiles/:profileId/pain/:issueId` mở từ “Xem vấn đề”,
+ghi nhanh tại chỗ bằng picker hiện có, không chọn sẵn mức; danh sách mới nhất trước, giờ Việt Nam,
+ghi chú và “Ghi bởi / sửa bởi”, fallback “Tài khoản đã xóa”; lịch sử trạng thái chỉ hiện khi có sự kiện.
+Route file `profiles.$profileId_.pain_.$issueId.tsx` dùng hậu tố `pain_` để không lồng dưới trang danh sách.
+
+Sheet sửa mức/thời điểm/ghi chú có thể xóa trắng ghi chú, giữ giây gốc nếu không đổi thời điểm;
+sửa/xóa được cả khi đã khỏi, chặn thời điểm sau ngày khỏi. Xóa cần xác nhận; khi còn một lần ghi,
+ẩn thao tác xóa và hiện thông báo BR-060. `422 last_entry` tải lại chi tiết, giữ bản nháp và ẩn xóa.
+Lỗi mạng giữ form để thử lại; 404 chi tiết quay về danh sách. Cache tách tài khoản/gia đình/phạm vi/hồ sơ/vấn đề;
+request đang gửi bị hủy và bỏ phản hồi muộn khi đổi danh tính hoặc mất đồng thuận.
+Refetch chi tiết giữ form đang sửa; dữ liệu bị che khi biết lỗi đọc hoặc không còn quyền.
+Không đổi backend, DTO, domain, DB hoặc dependency. Biểu đồ, bài tập và menu quản lý vấn đề đầy đủ
+lần lượt thuộc S4-T2, S4-T3 và S5-T1; tích hợp `/my-profile` vẫn thuộc S5-T2.
+
+Owner duyệt riêng phương án R-v3-7: nạp lười mục Nhiệt độ trong `SelfSection.tsx` bằng `lazy/Suspense`,
+có trạng thái “Đang tải nhiệt độ…”. Việc này khắc phục bundle chung tăng khi thêm route chi tiết;
+không đổi chức năng hoặc quyền của mục Nhiệt độ.
+
+**Kiểm chứng local:** `yarn verify:fast` PASS trên bản sao sạch, 42 test liên quan;
+full `yarn verify` PASS với 2.714 unit/530 suite, lint/format, dup 1,43%, Knip thường/production,
+build và budget 200 KB gzip cho mọi trang đầu. Trang chi tiết 167,1 KB, danh sách đau nhức 170,3 KB,
+`/my-profile` 196,4 KB. Build còn cảnh báo chunk >500 KB vốn có.
+Playwright 56/56 PASS Chromium/WebKit, gồm 18 ca chi tiết và 38 hồi quy;
+smoke trên bản build xác nhận danh sách → chi tiết → quay về và mở Nhiệt độ sau nạp lười
+trên cả hai engine, không lỗi JavaScript hay tràn ngang trang chi tiết ở 360 px.
+API trong các kiểm thử trình duyệt là giả; chưa nghiệm thu điện thoại/trình đọc màn hình thật hoặc SIT.
+
+Trên volume gốc, `verify:fast` qua typecheck nhưng exit 1 do metadata AppleDouble `._*`;
+không sửa/xóa metadata hoặc worktree `.claude` vốn có. Log, ảnh và bản sao sạch tại
+`/private/tmp/angia-e21-s4-t1/`. Hướng dẫn tại [e2e/README.md](e2e/README.md#tc-726--chi-tiết-vấn-đề-đau-local).
+README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook ghi riêng tại checkpoint trong `Docs/angia`. Chưa push/PR/deploy; không đóng Epic 21/P21. Bước tiếp theo **E21-S4-T2 — PainIssueChart**.

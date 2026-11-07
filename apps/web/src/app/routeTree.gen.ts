@@ -34,6 +34,7 @@ import { Route as ProfilesProfileIdRemindersRouteImport } from './routes/profile
 import { Route as ProfilesProfileIdRevisitsRouteImport } from './routes/profiles.$profileId_.revisits'
 import { Route as ProfilesProfileIdSummaryRouteImport } from './routes/profiles.$profileId_.summary'
 import { Route as ProfilesProfileIdTimelineRouteImport } from './routes/profiles.$profileId_.timeline'
+import { Route as ProfilesProfileIdPainIssueIdRouteImport } from './routes/profiles.$profileId_.pain_.$issueId'
 import { Route as ProfilesProfileIdPrescriptionsIndexRouteImport } from './routes/profiles.$profileId_.prescriptions.index'
 import { Route as ProfilesProfileIdPrescriptionsPrescriptionIdRouteImport } from './routes/profiles.$profileId_.prescriptions.$prescriptionId'
 
@@ -170,6 +171,12 @@ const ProfilesProfileIdTimelineRoute =
     path: '/profiles/$profileId/timeline',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ProfilesProfileIdPainIssueIdRoute =
+  ProfilesProfileIdPainIssueIdRouteImport.update({
+    id: '/profiles/$profileId_/pain_/$issueId',
+    path: '/profiles/$profileId/pain/$issueId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProfilesProfileIdPrescriptionsIndexRoute =
   ProfilesProfileIdPrescriptionsIndexRouteImport.update({
     id: '/profiles/$profileId_/prescriptions/',
@@ -209,6 +216,7 @@ export interface FileRoutesByFullPath {
   '/profiles/$profileId/revisits': typeof ProfilesProfileIdRevisitsRoute
   '/profiles/$profileId/summary': typeof ProfilesProfileIdSummaryRoute
   '/profiles/$profileId/timeline': typeof ProfilesProfileIdTimelineRoute
+  '/profiles/$profileId/pain/$issueId': typeof ProfilesProfileIdPainIssueIdRoute
   '/profiles/$profileId/prescriptions/$prescriptionId': typeof ProfilesProfileIdPrescriptionsPrescriptionIdRoute
   '/profiles/$profileId/prescriptions/': typeof ProfilesProfileIdPrescriptionsIndexRoute
 }
@@ -238,6 +246,7 @@ export interface FileRoutesByTo {
   '/profiles/$profileId/revisits': typeof ProfilesProfileIdRevisitsRoute
   '/profiles/$profileId/summary': typeof ProfilesProfileIdSummaryRoute
   '/profiles/$profileId/timeline': typeof ProfilesProfileIdTimelineRoute
+  '/profiles/$profileId/pain/$issueId': typeof ProfilesProfileIdPainIssueIdRoute
   '/profiles/$profileId/prescriptions/$prescriptionId': typeof ProfilesProfileIdPrescriptionsPrescriptionIdRoute
   '/profiles/$profileId/prescriptions': typeof ProfilesProfileIdPrescriptionsIndexRoute
 }
@@ -268,6 +277,7 @@ export interface FileRoutesById {
   '/profiles/$profileId_/revisits': typeof ProfilesProfileIdRevisitsRoute
   '/profiles/$profileId_/summary': typeof ProfilesProfileIdSummaryRoute
   '/profiles/$profileId_/timeline': typeof ProfilesProfileIdTimelineRoute
+  '/profiles/$profileId_/pain_/$issueId': typeof ProfilesProfileIdPainIssueIdRoute
   '/profiles/$profileId_/prescriptions/$prescriptionId': typeof ProfilesProfileIdPrescriptionsPrescriptionIdRoute
   '/profiles/$profileId_/prescriptions/': typeof ProfilesProfileIdPrescriptionsIndexRoute
 }
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/profiles/$profileId/revisits'
     | '/profiles/$profileId/summary'
     | '/profiles/$profileId/timeline'
+    | '/profiles/$profileId/pain/$issueId'
     | '/profiles/$profileId/prescriptions/$prescriptionId'
     | '/profiles/$profileId/prescriptions/'
   fileRoutesByTo: FileRoutesByTo
@@ -328,6 +339,7 @@ export interface FileRouteTypes {
     | '/profiles/$profileId/revisits'
     | '/profiles/$profileId/summary'
     | '/profiles/$profileId/timeline'
+    | '/profiles/$profileId/pain/$issueId'
     | '/profiles/$profileId/prescriptions/$prescriptionId'
     | '/profiles/$profileId/prescriptions'
   id:
@@ -357,6 +369,7 @@ export interface FileRouteTypes {
     | '/profiles/$profileId_/revisits'
     | '/profiles/$profileId_/summary'
     | '/profiles/$profileId_/timeline'
+    | '/profiles/$profileId_/pain_/$issueId'
     | '/profiles/$profileId_/prescriptions/$prescriptionId'
     | '/profiles/$profileId_/prescriptions/'
   fileRoutesById: FileRoutesById
@@ -387,6 +400,7 @@ export interface RootRouteChildren {
   ProfilesProfileIdRevisitsRoute: typeof ProfilesProfileIdRevisitsRoute
   ProfilesProfileIdSummaryRoute: typeof ProfilesProfileIdSummaryRoute
   ProfilesProfileIdTimelineRoute: typeof ProfilesProfileIdTimelineRoute
+  ProfilesProfileIdPainIssueIdRoute: typeof ProfilesProfileIdPainIssueIdRoute
   ProfilesProfileIdPrescriptionsPrescriptionIdRoute: typeof ProfilesProfileIdPrescriptionsPrescriptionIdRoute
   ProfilesProfileIdPrescriptionsIndexRoute: typeof ProfilesProfileIdPrescriptionsIndexRoute
 }
@@ -568,6 +582,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfilesProfileIdTimelineRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profiles/$profileId_/pain_/$issueId': {
+      id: '/profiles/$profileId_/pain_/$issueId'
+      path: '/profiles/$profileId/pain/$issueId'
+      fullPath: '/profiles/$profileId/pain/$issueId'
+      preLoaderRoute: typeof ProfilesProfileIdPainIssueIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profiles/$profileId_/prescriptions/': {
       id: '/profiles/$profileId_/prescriptions/'
       path: '/profiles/$profileId/prescriptions'
@@ -611,6 +632,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfilesProfileIdRevisitsRoute: ProfilesProfileIdRevisitsRoute,
   ProfilesProfileIdSummaryRoute: ProfilesProfileIdSummaryRoute,
   ProfilesProfileIdTimelineRoute: ProfilesProfileIdTimelineRoute,
+  ProfilesProfileIdPainIssueIdRoute: ProfilesProfileIdPainIssueIdRoute,
   ProfilesProfileIdPrescriptionsPrescriptionIdRoute:
     ProfilesProfileIdPrescriptionsPrescriptionIdRoute,
   ProfilesProfileIdPrescriptionsIndexRoute:

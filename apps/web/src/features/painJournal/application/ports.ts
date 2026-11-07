@@ -6,6 +6,7 @@ import type {
   CreatePainEntryRequest,
   PainEntry,
   PainIssueSummary,
+  UpdatePainEntryRequest,
 } from '@angia/contracts';
 
 export interface PainJournalApi {
@@ -40,4 +41,22 @@ export interface PainEntryWriter {
 }
 export interface PainIssueReader {
   detail(profileId: string | null, issueId: string, signal?: AbortSignal): Promise<PainIssueDetail>;
+}
+
+export interface PainEntryEditor {
+  updateEntry(
+    profileId: string | null,
+    issueId: string,
+    entryId: string,
+    body: UpdatePainEntryRequest,
+    csrf: string,
+    signal?: AbortSignal,
+  ): Promise<PainEntry>;
+  deleteEntry(
+    profileId: string | null,
+    issueId: string,
+    entryId: string,
+    csrf: string,
+    signal?: AbortSignal,
+  ): Promise<void>;
 }

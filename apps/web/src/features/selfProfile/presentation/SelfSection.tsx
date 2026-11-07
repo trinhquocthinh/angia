@@ -1,5 +1,5 @@
 import { LabSeriesList } from '@src/features/labResults/presentation/LabSeriesList';
-import { TemperatureWorkspace } from '@src/features/temperatures/presentation/TemperatureWorkspace';
+import { lazy, Suspense } from 'react';
 import type { ProfileSession } from '@src/features/profiles/application/ports';
 import type { SelfSectionKey } from '../application/selfSections';
 import { useSelfQuery } from '../application/useSelfQuery';
@@ -8,6 +8,12 @@ import { selfProfileRepository as repository } from './selfProfileRepository';
 import { SelfRevisits } from './SelfRevisits';
 import { SelfTimeline } from './SelfTimeline';
 import { SelfToday } from './SelfToday';
+
+const TemperatureWorkspace = lazy(() =>
+  import('@src/features/temperatures/presentation/TemperatureWorkspace').then((module) => ({
+    default: module.TemperatureWorkspace,
+  })),
+);
 
 type Props = { session: ProfileSession; section: SelfSectionKey };
 
@@ -25,12 +31,14 @@ export function SelfSection({ session, section }: Props) {
       return <SelfLabResults session={session} />;
     case 'temperatures':
       return (
-        <TemperatureWorkspace
-          key={session.account.healthProfileId}
-          session={session}
-          profileId={session.account.healthProfileId!}
-          readOnly
-        />
+        <Suspense fallback={<p role="status">Đang tải nhiệt độ…</p>}>
+          <TemperatureWorkspace
+            key={session.account.healthProfileId}
+            session={session}
+            profileId={session.account.healthProfileId!}
+            readOnly
+          />
+        </Suspense>
       );
   }
 }

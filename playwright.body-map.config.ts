@@ -9,6 +9,7 @@ export default defineConfig({
     '**/regionList.spec.ts',
     '**/newPainIssue.spec.ts',
     '**/quickPainEntry.spec.ts',
+    '**/painIssueDetail.spec.ts',
   ],
   testIgnore: '**/._*',
   forbidOnly: Boolean(process.env.CI),

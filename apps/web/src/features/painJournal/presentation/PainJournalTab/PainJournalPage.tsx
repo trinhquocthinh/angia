@@ -1,8 +1,10 @@
 import { ProfileSectionPage } from '@src/features/profiles/presentation/components/ProfileSectionPage';
 import { ProfileHealthHeader } from '@src/features/measurements/presentation/components/ProfileHealthHeader';
 import { PainJournalWorkspace } from './PainJournalWorkspace';
+import { useNavigate } from '@tanstack/react-router';
 
 export function PainJournalPage({ profileId }: { profileId: string }) {
+  const navigate = useNavigate();
   return (
     <ProfileSectionPage profileId={profileId}>
       {(profile, session) => (
@@ -12,6 +14,12 @@ export function PainJournalPage({ profileId }: { profileId: string }) {
             key={`${session.account.id}:${session.family?.id}:${profile.id}`}
             profile={profile}
             session={session}
+            onOpen={(issue) => {
+              void navigate({
+                to: '/profiles/$profileId/pain/$issueId',
+                params: { profileId, issueId: issue.id },
+              });
+            }}
           />
         </div>
       )}
