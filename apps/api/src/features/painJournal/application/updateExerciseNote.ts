@@ -30,7 +30,7 @@ export function updateExerciseNote(
         source: parsed.data.source ?? exercise.source,
         prescriber: parsed.data.prescriber ?? exercise.prescriber,
         startDate: parsed.data.startDate ?? exercise.startDate,
-        endDate: parsed.data.endDate ?? exercise.endDate,
+        endDate: parsed.data.endDate === undefined ? exercise.endDate : parsed.data.endDate,
         note: parsed.data.note ?? exercise.note,
       },
       'update',

@@ -6897,7 +6897,10 @@
             "format": "date"
           },
           "endDate": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date"
           },
           "note": {

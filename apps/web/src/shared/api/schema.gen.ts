@@ -11427,7 +11427,7 @@ export interface components {
       /** Format: date */
       startDate?: string;
       /** Format: date */
-      endDate?: string;
+      endDate?: string | null;
       note?: string;
     };
   };

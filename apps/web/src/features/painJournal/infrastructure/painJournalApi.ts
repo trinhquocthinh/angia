@@ -1,3 +1,4 @@
+import { createExerciseNoteApi } from './exerciseNoteApi';
 import { createPainEntryApi } from './painEntryApi';
 import { createPainEntryEditorApi } from './painEntryEditorApi';
 import { createPainContextApi } from './painContextApi';
@@ -13,6 +14,7 @@ import type {
   PainIssueReader,
   PainEntryEditor,
   PainContextReader,
+  ExerciseNoteWriter,
 } from '../application/ports';
 
 export function createPainJournalApi(
@@ -22,9 +24,11 @@ export function createPainJournalApi(
   PainEntryWriter &
   PainIssueReader &
   PainEntryEditor &
-  PainContextReader {
+  PainContextReader &
+  ExerciseNoteWriter {
   return {
     ...createPainEntryApi(client),
+    ...createExerciseNoteApi(client),
     ...createPainEntryEditorApi(client),
     ...createPainContextApi(client),
     create: async (profileId, body, csrf, signal) => {

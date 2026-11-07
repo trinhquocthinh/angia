@@ -60,6 +60,7 @@ export function PainIssueDetailContent(props: PainIssueDetailProps) {
       version={version}
       allowed={allowed}
       saved={saved}
+      exerciseSaved={setNotice}
       edit={(entry) => {
         setNotice(null);
         setEditing(entry);

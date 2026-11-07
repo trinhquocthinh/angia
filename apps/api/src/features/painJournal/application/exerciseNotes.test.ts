@@ -69,3 +69,39 @@ describe('Application bài tập — SPEC-056', () => {
     expect(store.deleteExercise).toHaveBeenCalledWith(session.profileId, session.issueId, child.exerciseId);
   });
 });
+
+it('TC-694: PATCH null xóa ngày kết thúc, bỏ trường giữ nguyên và vẫn kiểm ngày bắt đầu', async () => {
+  const { repository, store } = painIssueFixture();
+  expect(
+    await updateExerciseNote(repository, child, { endDate: null, startDate: '2026-11-10' }, now),
+  ).toMatchObject({ ok: true });
+  expect(store.updateExercise).toHaveBeenLastCalledWith(
+    session.profileId,
+    session.issueId,
+    child.exerciseId,
+    {
+      name: exercise.name,
+      source: exercise.source,
+      prescriber: exercise.prescriber,
+      startDate: '2026-11-10',
+      endDate: null,
+      note: exercise.note,
+    },
+    audit,
+  );
+  await updateExerciseNote(repository, child, { name: 'Co gối' }, now);
+  expect(store.updateExercise).toHaveBeenLastCalledWith(
+    session.profileId,
+    session.issueId,
+    child.exerciseId,
+    {
+      name: 'Co gối',
+      source: exercise.source,
+      prescriber: exercise.prescriber,
+      startDate: exercise.startDate,
+      endDate: exercise.endDate,
+      note: exercise.note,
+    },
+    audit,
+  );
+});

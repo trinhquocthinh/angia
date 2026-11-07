@@ -144,3 +144,14 @@ Không thay thế nghiệm thu điện thoại/trình đọc màn hình thật, 
 
 Kết quả local E21-S4-T2: 12/12 ca biểu đồ và 68/68 cả bộ Chromium/WebKit PASS (66 mobile, 2 desktop).
 Unit riêng sổ đau nhức 92/92 PASS; full verify 2.726 unit/535 suite PASS trên bản sao sạch.
+
+## E21-S4-T3 — Bài tập local
+
+Chạy riêng `yarn test:e2e:body-map exerciseNote`; cả hồi quy `yarn test:e2e:body-map`.
+Dùng harness chi tiết hiện có và API giả. Tám ca mỗi engine kiểm thẻ/nguồn chữ/ngày/audit,
+nguồn không chọn sẵn và ngày Việt Nam, đổi self xóa người chỉ định, PATCH null xóa ngày,
+tracking/resolved và rỗng, lỗi giữ bản nháp/thử lại/ngày kết thúc, endpoint self/đổi tài khoản,
+mất đồng thuận/hủy/phản hồi muộn/gửi lặp; kiểm thêm trả focus, giữ bản nháp ghi nhanh,
+nút lưu và cuộn ô ghi chú không bị footer che ở 360 px.
+Kết quả: 16/16 ca bài tập và 84/84 cả bộ Chromium/WebKit PASS local.
+Không thay thế integration HTTP/DB, thiết bị/trình đọc màn hình thật hoặc SIT.

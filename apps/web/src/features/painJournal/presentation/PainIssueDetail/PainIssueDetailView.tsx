@@ -1,6 +1,7 @@
 import type { PainEntry, PainIssueDetail } from '@angia/contracts';
 import { PainIssueDetailHeader } from './PainIssueDetailHeader';
 import { PainEntryList } from './PainEntryList';
+import { ExerciseNotes } from '../ExerciseNoteCard/ExerciseNotes';
 import { PainIssueChart } from '../PainIssueChart/PainIssueChart';
 import { PainStatusHistory } from './PainStatusHistory';
 import { InlinePainEntry } from './InlinePainEntry';
@@ -15,6 +16,7 @@ type Props = PainIssueDetailProps & {
   allowed: boolean;
   edit: (entry: PainEntry | null) => void;
   saved: (message: string) => void;
+  exerciseSaved: (message: string) => void;
 };
 export function PainIssueDetailView(props: Props) {
   const { issue, api, session, profile, scope, allowed, version, saved, edit } = props;
@@ -37,6 +39,16 @@ export function PainIssueDetailView(props: Props) {
       )}
       <PainIssueChart api={api} session={session} profile={profile} scope={scope} issue={issue} />
       <PainEntryList entries={issue.entries} onEdit={allowed ? edit : undefined} />
+      <ExerciseNotes
+        api={api}
+        session={session}
+        profile={profile}
+        scope={scope}
+        issueId={issue.id}
+        issue={issue}
+        allowed={allowed}
+        onSaved={props.exerciseSaved}
+      />
       <PainStatusHistory events={issue.statusEvents} />
       {props.editing && allowed && (
         <EditPainEntrySheet

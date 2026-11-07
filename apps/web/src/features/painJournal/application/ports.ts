@@ -9,6 +9,9 @@ import type {
   UpdatePainEntryRequest,
   PainContext,
   PainContextQuery,
+  ExerciseNote,
+  CreateExerciseNoteRequest,
+  UpdateExerciseNoteRequest,
 } from '@angia/contracts';
 
 export interface PainJournalApi {
@@ -70,4 +73,22 @@ export interface PainEntryEditor {
     csrf: string,
     signal?: AbortSignal,
   ): Promise<void>;
+}
+
+export interface ExerciseNoteWriter {
+  createExercise(
+    profileId: string | null,
+    issueId: string,
+    body: CreateExerciseNoteRequest,
+    csrf: string,
+    signal?: AbortSignal,
+  ): Promise<ExerciseNote>;
+  updateExercise(
+    profileId: string | null,
+    issueId: string,
+    exerciseId: string,
+    body: UpdateExerciseNoteRequest,
+    csrf: string,
+    signal?: AbortSignal,
+  ): Promise<ExerciseNote>;
 }

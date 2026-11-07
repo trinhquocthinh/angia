@@ -341,3 +341,34 @@ không sửa/xóa metadata hay worktree `.claude`. Bằng chứng tại `/privat
 API trong harness là giả; chưa thay thế nghiệm thu thiết bị/trình đọc màn hình thật hoặc SIT.
 README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook ghi riêng tại checkpoint trong `Docs/angia`.
 Chưa push/PR/deploy hoặc đóng E21/P21. Bước tiếp theo **E21-S4-T3 — bài tập**.
+
+## E21-S4-T3 — Bài tập local (2026-11-07)
+
+Đã áp dụng theo phương án owner duyệt: thẻ và sheet thêm/sửa bài tập trên trang chi tiết,
+nguồn bằng chữ, ngày, ghi chú và người ghi/sửa. Nguồn mới không chọn sẵn; ngày bắt đầu
+mặc định hôm nay theo giờ Việt Nam. Đổi sang “Tự ghi” xóa người chỉ định trong bản nháp
+và backend; đổi lại không khôi phục giá trị cũ. Thêm/sửa được trên vấn đề đã khỏi.
+Không có xác nhận “Đã tập”, nhắc hay gợi ý bài tập. Giữ bản nháp khi lỗi mạng,
+khóa gửi trùng, hủy request và bỏ phản hồi muộn khi mất phạm vi/đồng thuận.
+Lưu bài tập giữ nguyên bản nháp ghi nhanh; trả focus về nút mở trên Chromium/WebKit.
+Vùng cuộn riêng bảo đảm ô ghi chú không bị footer che ở sheet dài 360 px.
+
+Owner duyệt mở rộng SPEC-056: PATCH `endDate: null` xóa ngày kết thúc; bỏ trường giữ ngày cũ,
+chuỗi rỗng hoặc ngày sai bị từ chối. POST vẫn không nhận `null`. Đã đồng bộ schema contracts,
+use case API, OpenAPI và kiểu client; không đổi domain, schema DB hoặc dependency.
+
+Kiểm chứng trên bản sao sạch: `verify:fast` PASS 83 test liên quan; full `verify` PASS (2.736 unit/540 suite,
+lint/format, dup, Knip thường/production, build và budget 200 KB gzip).
+Playwright 84/84 PASS Chromium/WebKit, gồm 16 ca bài tập ở 360 px.
+Trang chi tiết 171,8 KB gzip; `/my-profile` 196,5 KB. Rà soát độc lập không có finding cần sửa;
+build còn cảnh báo chunk lớn vốn có. API trong harness là giả.
+
+Integration bài tập và ma trận bảo mật đã thử nhưng Testcontainers báo `Failed to connect to Reaper`
+trước PostgreSQL/migration; 10 test bị skip, chưa xác nhận HTTP/DB cho thay đổi mới.
+Trên volume gốc, `verify:fast` qua typecheck nhưng lỗi đọc metadata AppleDouble `._*`;
+không sửa/xóa metadata hoặc worktree `.claude`. Đối chiếu 2.635/2.635 tệp source/tài liệu khớp byte; cấu hình harness trong bản sao
+chỉ bổ sung đường dẫn dependency dùng chung, không áp dụng thay đổi này vào source.
+Log RED/GREEN, kiểm chứng và ảnh tại `/private/tmp/angia-e21-s4-t3.LuObaX/`.
+README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook ghi riêng tại checkpoint trong `Docs/angia`.
+Chưa push/PR/deploy, nghiệm thu thiết bị/trình đọc màn hình thật hoặc SIT; không đóng E21/P21.
+Bước tiếp theo **E21-S5-T1 — đánh dấu đã khỏi, mở lại, xóa vấn đề**.
