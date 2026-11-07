@@ -4,7 +4,12 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './apps/web/e2e',
-  testMatch: ['**/bodyMap2D.spec.ts', '**/regionList.spec.ts', '**/newPainIssue.spec.ts'],
+  testMatch: [
+    '**/bodyMap2D.spec.ts',
+    '**/regionList.spec.ts',
+    '**/newPainIssue.spec.ts',
+    '**/quickPainEntry.spec.ts',
+  ],
   testIgnore: '**/._*',
   forbidOnly: Boolean(process.env.CI),
   retries: 0,

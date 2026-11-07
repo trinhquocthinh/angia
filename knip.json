@@ -33,6 +33,7 @@
         "src/app/routes/**/*.tsx!",
         "e2e/bodyMap2DHarness.tsx",
         "e2e/newPainIssueHarness.tsx",
+        "e2e/quickPainEntryHarness.tsx",
         "e2e/**/*.spec.ts",
         "vite.body-map.config.ts"
       ],

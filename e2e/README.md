@@ -102,3 +102,11 @@ Kiểm đủ 35 vị trí, ba nhóm “Đầu và thân” (7), “Tay” (12), 
 Sáu ca trên mỗi engine Chromium/WebKit kiểm tra: chọn vùng đang theo dõi từ 2D/danh sách không gửi POST; 409 giữ mức 6 và ghi chú qua callback, không tự ghi thêm; đổi vùng/lỗi mạng/409 thiếu ID giữ bản nháp và đóng trả focus bàn phím; tạo qua main/self và bố cục 360/1440 px; mất đồng thuận khi đang lưu bỏ phản hồi muộn; workspace mở sheet qua callback bàn giao. Bộ local đầy đủ có 24 ca, gồm hồi quy TC-720/721; không chạy trong `yarn verify`.
 
 Đây là kiểm chứng ranh giới callback của E21-S2-T2. Nơi nhận `onContinueIssue` phải mở chi tiết/ghi nhanh, giữ `draft` và hiển thị `message` nếu có ở T3/T4. Route thật chưa truyền callback nên chưa hiện nút tạo mặc định; không coi harness là nghiệm thu luồng đầu cuối hoặc 3D/SIT.
+
+## TC-723 — QuickPainEntrySheet local
+
+Chạy riêng `yarn test:e2e:body-map quickPainEntry`; chạy cả hồi quy `yarn test:e2e:body-map`. Harness `/e2e/quickPainEntry.html` dùng workspace thật với dữ liệu/API giả, không đưa vào route hoặc build sản phẩm. Không cần phiên SIT.
+
+Bảy ca mỗi engine kiểm: bốn chạm (tab giả lập → Ghi mức → chấm → Lưu), không chọn sẵn và không cần chọn ngày; phím số/mũi tên, kích thước ≥44 px và bố cục theo vùng chứa 512 px ở viewport 360/480/768/1440; 409 đã khỏi giữ bản nháp và chỉ mở lại sau khi bấm; self/lỗi mạng/thời điểm tương lai; bản nháp từ 409 tạo vấn đề sang sheet không tự ghi; hủy khi mất đồng thuận/khóa đóng khi lưu; đổi tài khoản xóa trạng thái và đóng trả focus. Kết quả local E21-S3-T1: 14/14 mới, 38/38 cả bộ Chromium/WebKit PASS.
+
+Từ T3, workspace có nơi nhận bàn giao mặc định và route hồ sơ hiện nút tạo/ghi khi đủ quyền. Callback ngoài vẫn dùng được cho nơi nhúng riêng. Đây là kiểm chứng local có API giả; chưa nghiệm thu route sản phẩm, thời gian ≤15 giây trên điện thoại thật, trình đọc màn hình hoặc SIT. Bộ này chạy riêng, không nằm trong `yarn verify`.

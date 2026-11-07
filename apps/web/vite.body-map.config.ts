@@ -11,7 +11,7 @@ export default defineConfig({
   resolve: { alias: { '@src': fileURLToPath(new URL('./src', import.meta.url)) } },
   plugins: [react(), tailwindcss()],
   cacheDir: join(tmpdir(), 'angia-body-map-vite'),
-  optimizeDeps: { entries: ['e2e/bodyMap2D.html', 'e2e/newPainIssue.html'] },
+  optimizeDeps: { entries: ['e2e/bodyMap2D.html', 'e2e/newPainIssue.html', 'e2e/quickPainEntry.html'] },
   server: {
     host: '127.0.0.1',
     port: 5174,

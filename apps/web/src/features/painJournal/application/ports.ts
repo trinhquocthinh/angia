@@ -3,6 +3,9 @@ import type {
   PainIssueDetail,
   PainIssueList,
   PainIssueQuery,
+  CreatePainEntryRequest,
+  PainEntry,
+  PainIssueSummary,
 } from '@angia/contracts';
 
 export interface PainJournalApi {
@@ -18,4 +21,23 @@ export interface PainIssueWriter {
     csrf: string,
     signal?: AbortSignal,
   ): Promise<PainIssueDetail>;
+}
+
+export interface PainEntryWriter {
+  record(
+    profileId: string | null,
+    issueId: string,
+    body: CreatePainEntryRequest,
+    csrf: string,
+    signal?: AbortSignal,
+  ): Promise<PainEntry>;
+  reopen(
+    profileId: string | null,
+    issueId: string,
+    csrf: string,
+    signal?: AbortSignal,
+  ): Promise<PainIssueSummary>;
+}
+export interface PainIssueReader {
+  detail(profileId: string | null, issueId: string, signal?: AbortSignal): Promise<PainIssueDetail>;
 }
