@@ -193,3 +193,266 @@ Owner duyệt riêng các sửa cổng knip: bỏ export nội bộ `actor`, `Pa
 **Nghiệm thu E20/P20: PASS trên SIT ngày 2026-11-06, 7/7 task.** PR #62 đã merge tại `1a8b8ee`; CI của head cuối `242f448` đạt **840/840 integration test, 134/134 suite**, gồm Build & Docker và verify. Smoke trực tiếp ghi nhận **224 request**, đủ **15/15 thao tác mỗi cửa main/self**; bộ riêng 30 route thiếu phiên trả 401/no-store. Digest runtime, role app NOBYPASSRLS, 4 bảng đau nhức bật RLS, 29 bảng cũ/87 policy và cascade/dọn dữ liệu test đều đạt. Đã xóa storage state tạm.
 
 Ca chéo gia đình, rút đồng thuận self và xóa chứng từ dùng bằng chứng CI; không ghi là đã thao tác live SIT. Runtime kiểm trên bản `0e08a88` chứa E20, chỉ thay đổi asset 3D ở các commit kế tiếp. Biên bản, evidence và giới hạn tại [nghiệm thu E20](../../Docs/angia/acceptance/v0.3/epic20-acceptance.md#nghiệm-thu-và-đóng-e20-trên-sit--2026-11-06). Bước tiếp theo **E21-S1-T1**; UI/v0.3 và Production chưa nghiệm thu.
+
+## E21-S1-T1 — BodyMap2D local (2026-11-07)
+
+Owner đã duyệt và yêu cầu áp dụng. `BodyMap2D` tại `apps/web/src/features/painJournal/presentation/BodyMap2D/` nhận `selected` và `onSelect`, mở mặc định mặt trước, giữ lựa chọn khi chuyển mặt. SVG tự vẽ, trung tính; hai mặt có 29/30 vùng tương tác, hợp thành đủ 35 vị trí của 21 mã SPEC-051. Nhãn lấy từ contracts; trái/phải theo người trong hình, vùng chọn dùng nền nhấn và viền 2 px theo Design §10.4. Không thêm dependency, đổi API, domain hoặc schema DB.
+
+Component chưa gắn vào route/sheet. Knip khai báo riêng `BodyMap2D.tsx` làm entry production cho checkpoint độc lập; bỏ entry này khi `NewPainIssueSheet` sử dụng component ở E21-S2-T2.
+
+Test được viết trước implementation; lượt đầu dừng vì thiếu module, chưa có assertion RED. GREEN **12/12 unit test mới**. Chrome headless trong harness tạm ngoài repo kiểm click đủ **59 vùng trên hai mặt/35 vị trí duy nhất**, đối chiếu callback với snapshot contracts v1; Enter/Space, hướng trái/phải, giữ lựa chọn kể cả vùng không hiện ở mặt còn lại đều đạt. Không có lỗi JavaScript hoặc tràn ngang ở 360/390/768/1440 px.
+
+`yarn verify:fast` và `yarn verify` **PASS trên bản sao sạch**, khớp SHA-256 **2.488/2.488 tệp** trước cập nhật README; full verify có **2.657 unit test/512 suite**, dup **1,34%**, Knip thường/production, build và budget **200 KB gzip** đạt. Build còn cảnh báo kích thước chunk > 500 kB. Trên volume gốc, `verify:fast` qua typecheck nhưng **exit 1** do metadata AppleDouble `._*`; không sửa config hoặc xóa metadata để lấy PASS. Lượt full verify đầu dừng ở format Knip; chuẩn hóa file và chạy lại toàn bộ đã PASS. Log, harness và ảnh kiểm tra: `/private/tmp/angia-e21-s1-t1-c52txdfj/`.
+
+Đây là kiểm chứng local của T1, chưa nghiệm thu SIT/Production. Vùng chạm ≥ 44 px, chấm đang theo dõi và nghiệm thu a11y/TC-721 thuộc **E21-S1-T2**; RegionList/TC-720 thuộc T3. README đi cùng commit source; SHA và kết quả hook được ghi riêng trong checkpoint E21-S1-T1 tại SDD, Test Cases, Design Criteria và master plan ngoài Git của source. Chưa push/PR/deploy. Bước tiếp theo **E21-S1-T2**.
+
+## E21-S1-T2 — Vùng chạm và trợ năng BodyMap2D local (2026-11-07)
+
+Owner đã duyệt và yêu cầu áp dụng. Mỗi vị trí dùng nút HTML thật 44 × 44 px, có nhãn, `aria-pressed` và focus-visible; nút đặt cạnh vùng nhỏ có đường chỉ dẫn về hình. Hình giữ hướng trái/phải theo người trong hình, khung cao 616 px. Prop tùy chọn `trackingLocations` nhận danh sách `(region, side)`; chỉ vị trí khớp cả hai trường hiện chấm `text.secondary` và nhãn “ · đang theo dõi”. Không đổi màu theo mức đau hoặc tự chọn vùng. Callback vẫn chỉ trả vị trí; mở vấn đề đang theo dõi thuộc E21-S2-T2. Không thêm dependency, đổi API, domain hoặc schema DB.
+
+**TC-721: 8/8 ca Playwright PASS**, Chromium cảm ứng và WebKit mô phỏng điện thoại, viewport 360 px: đo đủ 59 nút ở hai mặt/35 vị trí, kích thước ≥ 44 × 44 px, khoảng cách ≥ 8 px, chạm tâm và mép nút trả đúng vùng/bên, Enter/Space/Tab, focus, giữ lựa chọn qua hai mặt, chấm/nhãn cập nhật theo prop. Khung thu còn 296 px vẫn đạt kích thước, khoảng cách và không tràn ngang. Unit hình 2D **14/14 PASS**; có assertion RED trước implementation. Đã xem ảnh hai mặt ở 360 px; không ghi nhận lỗi JavaScript trong lượt chụp.
+
+Harness nằm riêng tại `apps/web/e2e/`, cấu hình Vite không sinh route; không đưa trang kiểm thử vào build ứng dụng. Chạy độc lập, không cần phiên SIT hoặc API:
+
+```bash
+yarn playwright install chromium webkit
+yarn test:e2e:body-map
+```
+
+`yarn verify:fast` và `yarn verify` **PASS trên bản sao sạch**, gồm **2.659 unit/512 suite**, typecheck cả harness/test, lint/format, dup **1,34%**, Knip thường/production, build và budget **200 KB gzip**. Source/bản sao khớp byte **2.497/2.497 tệp** trước cập nhật README. Volume gốc: `verify:fast` qua typecheck và 2.659 test nhưng **exit 1** do hai tệp AppleDouble `._BodyMap2D.test.tsx`, `._getBodyMapRegions.test.ts` bị đọc như test; không sửa cấu hình hoặc xóa metadata trong task này. Build còn cảnh báo chunk > 500 kB. Bằng chứng local: `/private/tmp/angia-e21-s1-t2/`.
+
+T2 đã áp dụng và kiểm chứng local; component chưa gắn vào sheet/route, chưa nghiệm thu trình đọc màn hình/điện thoại thật hoặc SIT/Production, chưa push/PR/deploy. README đi cùng commit source; SHA và kết quả hook ghi tại checkpoint trong `Docs/angia` ngoài Git của source. Không đóng Epic 21/P21. Bước tiếp theo **E21-S1-T3 — RegionList/TC-720**.
+
+## E21-S1-T3 — RegionList local (2026-11-07)
+
+Owner đã chốt ba nhóm theo Design §10.4 và yêu cầu áp dụng: “Đầu và thân” gồm 7 vùng giữa thân; “Tay” gồm vai đến bàn tay (12 vị trí); “Chân” gồm hông, mông đến bàn chân (16 vị trí). Danh mục và nhãn dùng lại contracts SPEC-051; vùng giữa thân chỉ có một dòng. `RegionList` nhận `selected`/`onSelect`, không chọn sẵn, mỗi dòng là radio HTML có nhãn đầy đủ. Mỗi instance có tên nhóm riêng; Tab vào/ra nhóm, mũi tên chọn và quay vòng xuyên ba nhóm, Enter/Space chọn. Viền focus luôn hiện khi radio có focus, kể cả mũi tên trên WebKit.
+
+TC-720 có assertion RED trước implementation; 4 unit mới và 4/4 ca Playwright Chromium/WebKit PASS. Hồi quy BodyMap2D: 14 unit và 8/8 ca Playwright PASS. Harness dùng dữ liệu giả, không gọi API; chạy bằng `yarn test:e2e:body-map`, riêng danh sách thêm bộ lọc `regionList`. Knip có entry tạm cho component độc lập, bỏ khi sheet sử dụng ở E21-S2-T2.
+
+`yarn verify:fast` và `yarn verify` PASS trên bản sao sạch: 2.663 unit test/513 suite, typecheck, lint/format, dup 1,33%, Knip thường/production, build và ngân sách 200 KB gzip. Build vẫn có cảnh báo chunk > 500 kB. Trên volume gốc, `verify:fast` qua typecheck nhưng exit 1 do metadata AppleDouble `._*`; không sửa cấu hình hoặc xóa metadata để lấy PASS.
+
+Chưa tích hợp vào sheet/route, chưa nghiệm thu trình đọc màn hình thật hoặc SIT/Production, chưa push/PR/deploy; không đóng Epic 21/P21. Không đổi domain, DTO, API hoặc schema DB. README đi cùng commit source; SHA và kết quả hook ghi tại checkpoint trong `Docs/angia` ngoài Git của source. Bằng chứng kiểm chứng trên bản sao sạch nằm tại `/private/tmp/angia-e21-s1-t3/`; volume gốc vẫn vướng metadata AppleDouble `._*` trong Vitest. Bước tiếp theo **E21-S2-T1 — Adapter API, hook và tab Đau nhức**.
+
+## E21-S2-T1 — Adapter, hook và tab Đau nhức local (2026-11-07)
+
+Owner đã duyệt phương án và yêu cầu áp dụng. Đã thêm port `PainJournalApi`, adapter đọc danh sách main/self có `no-store`, kiểm DTO bằng contracts và truyền `AbortSignal`; hook `usePainIssues` khóa cache theo tài khoản/gia đình/hồ sơ/phạm vi/bộ lọc dưới tiền tố `profiles`. Hook kiểm gia đình, quyền và đồng thuận, chặn cả refetch thủ công khi không được phép; ẩn dữ liệu trong lúc làm mới hoặc gặp lỗi và làm mới phiên/hồ sơ khi mất quyền.
+
+Tab "Đau nhức" sau "Dòng thời gian" tại `/profiles/:profileId/pain`, vẫn hiện khi ẩn số đo. Thẻ hiển thị vùng/bên, tên tùy chọn, mức `/10`, thời điểm Việt Nam và số lần ghi; nhóm đang theo dõi trước, giữ thứ tự API trong từng nhóm. Nhóm đã khỏi thu gọn khi còn vấn đề tracking, mở sẵn khi chỉ còn resolved. Có hai thẻ skeleton, trạng thái rỗng/lỗi/thử lại và thông báo đồng thuận. Không thêm nhận định hoặc màu theo mức.
+
+Theo phạm vi trung gian đã được owner duyệt, nút "Thêm vấn đề đau", "Ghi mức" và "Xem vấn đề" chỉ xuất hiện khi được cấp callback; route T1 chưa nối thao tác. Mở mới thuộc S2-T2, ghi nhanh thuộc S3-T1, chi tiết và TC-726 thuộc S4-T1; `/my-profile` thuộc S5-T2. Không ghi TC-726 đã PASS trong checkpoint này. Không đổi domain, DB, DTO, API backend hoặc dependency.
+
+14 unit mới PASS, bao gồm adapter, cache/quyền, refetch thủ công, tab/thẻ/nhóm và lỗi đồng thuận. `yarn verify:fast` PASS trên bản sao sạch (44 test liên quan); `yarn verify` PASS với 2.677 test/516 suite, lint/format, dup 1,33%, Knip thường/production, build và budget 200 KB gzip. Route đau nhức 160,2 KB gzip; `/my-profile` 199,9 KB. Build vẫn có cảnh báo chunk > 500 kB. Source và bản sao khớp byte 2.517/2.517 tệp trước cập nhật README. Trên volume gốc, `verify:fast` qua typecheck rồi exit 1 vì metadata AppleDouble `._usePainIssues.test.tsx`; không sửa cấu hình hoặc xóa metadata.
+
+Smoke route thật với API giả trên bản sao tạm: 22/22 ca Chromium/WebKit PASS, gồm 360/390/768/1440 px không tràn ngang, nhóm đã khỏi thao tác bàn phím, tải/rỗng/lỗi/thử lại, chặn member/chưa đồng thuận và khôi phục khi API báo rút đồng thuận. Đã xem ảnh mobile/desktop; không có lỗi JavaScript trong các ca PASS. Script, ảnh và log nằm ngoài source tại `/private/tmp/angia-e21-s2-t1/`; không coi đây là nghiệm thu API live, SIT, điện thoại hoặc trình đọc màn hình thật.
+
+Đã áp dụng và kiểm chứng local; chưa push/PR/deploy, chưa đóng Epic 21/P21. README đi cùng commit source; SHA và kết quả hook ghi tại checkpoint trong `Docs/angia` ngoài Git của source. Bước tiếp theo **E21-S2-T2 — Mở vấn đề hai bước và xử lý vùng đang theo dõi/409**.
+
+## E21-S2-T2 — Mở vấn đề hai bước, phạm vi callback local (2026-11-07)
+
+Owner đã duyệt và yêu cầu áp dụng phương án bàn giao bằng callback. `NewPainIssueSheet` dùng lại BodyMap2D/RegionList: chọn vùng → tên ngắn và lần ghi đầu; vùng đang theo dõi bàn giao ngay đúng ID, không gửi POST. Form không chọn sẵn mức, giới hạn tên 60/ghi chú 500 ký tự, đổi thời điểm theo giờ Việt Nam và chặn ngày không hợp lệ/tương lai. Mobile dưới 1024 px toàn màn hình; desktop có hai cột ở bước nhập. Dùng ModalDialog hiện có, quản lý focus khi đổi bước, chặn đóng khi đang lưu.
+
+Adapter bổ sung POST main/self với CSRF, no-store, AbortSignal và kiểm DTO strict. Lỗi riêng giữ UUID `existingIssueId` hợp lệ của `409 ERR_PAIN_ISSUE_EXISTS`; 409 thiếu ID giữ form với lỗi, không đoán đích. TC-728 chuyển bản nháp lần ghi (giữ mức, ghi chú, thời điểm) qua callback, **chưa tự ghi thêm**. Hook kiểm quyền/đồng thuận, chống gửi lặp, bỏ phản hồi sau khi unmount/đổi phạm vi/mất đồng thuận và làm mới cache đau nhức của cùng tài khoản/gia đình/hồ sơ cho cả main/self. Không đổi backend, hợp đồng, domain, DB hoặc dependency.
+
+**Ranh giới tích hợp đã duyệt:** `onContinueIssue` nhận `{ kind: 'created', issueId }` hoặc `{ kind: 'existing', issueId, draft?, message? }`. Nơi nhận phải mở chi tiết/ghi nhanh, giữ `draft`, hiển thị `message` và chỉ ghi khi người dùng xác nhận ở T3/T4. Workspace chỉ bật nút tạo mặc định khi caller cung cấp callback, có danh sách và đủ quyền. `PainJournalPage` hiện chưa truyền callback nên route sản phẩm chưa hiện nút tạo; không coi đây là hoàn tất luồng đầu cuối. Form lần ghi đầu dùng radio cơ bản; PainLevelPicker dùng chung/sheet ghi nhanh thuộc E21-S3-T1, trang chi tiết thuộc E21-S4-T1, 3D thuộc E22-S3-T1. Đã bỏ hai entry Knip tạm của BodyMap2D/RegionList vì được sheet sử dụng.
+
+**Kiểm chứng:** RED có assertion thất bại trước implementation cho adapter/application/hook. 14 unit mới; `yarn verify:fast` cuối **PASS 16 test liên quan**, full `yarn verify` **PASS trên bản sao sạch**, gồm **2.691 unit/520 suite**, lint/format, dup 1,33%, Knip thường/production, build và budget 200 KB gzip; route đau nhức **167,0 KB gzip**. Build còn cảnh báo chunk > 500 kB. Playwright **24/24 PASS Chromium/WebKit**: 12 ca mới TC-722/728, main/self, lỗi mạng, bản nháp/focus, phản hồi muộn sau mất đồng thuận, workspace và bố cục 360/1440 px; 12 ca hồi quy TC-720/721. API trong harness là giả lập; chưa nghiệm thu điện thoại, trình đọc màn hình thật, 3D hoặc SIT.
+
+Volume gốc: `yarn verify:fast` qua typecheck nhưng **exit 1** khi Vitest đọc metadata AppleDouble `._newPainIssueForm.test.ts`; không xóa metadata hoặc sửa cấu hình để lấy PASS. Bản sao kiểm chứng loại `._*` và worktree phụ `.claude` vốn có; source gốc giữ nguyên các mục đó. Source/bản sao khớp byte **2.547/2.547 tệp**, gồm code và tài liệu. Log và manifest byte nằm ở `/private/tmp/angia-e21-s2-t2/`. Hướng dẫn chạy test tại [e2e/README.md](e2e/README.md#tc-722728--newpainissuesheet-local).
+
+README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook ghi ở checkpoint trong `Docs/angia` ngoài Git source. Chưa push/PR/deploy, chưa đóng Epic 21/P21. Bước tiếp theo **E21-S3-T1** và nối callback ghi nhanh; hoàn thiện nơi nhận chi tiết ở E21-S4-T1.
+
+## E21-S3-T1 — Picker và sheet ghi nhanh local (2026-11-07)
+
+Owner đã duyệt và yêu cầu áp dụng. `PainLevelPicker` dùng chung cho lần ghi đầu và `QuickPainEntrySheet`: không chọn sẵn, 10 ô cùng màu theo trạng thái, radio bàn phím với phím mũi tên và 1–9/0 (=10). Owner duyệt điều chỉnh Design §10.6: chỉ xếp 10 cột khi **vùng chứa đủ 512 px** (10 × 44 + 9 × 8), còn lại 2 hàng × 5; giữ vùng chạm ≥ 44 px, khoảng cách 8 px và không tràn ngang ở viewport 360–1440 px.
+
+Workspace đã có nơi nhận bàn giao mặc định: nút “Ghi mức” mở sheet; tạo vấn đề thành công chỉ báo đã lưu lần ghi đầu; chọn vùng đang theo dõi hoặc 409 trùng vùng mở sheet nhận `draft`/`message`, không tự gửi lần ghi. Sheet có ghi chú 500 ký tự, giờ Việt Nam mặc định bây giờ (bỏ `recordedAt` để server lấy giờ), đổi thời điểm không ở tương lai, khóa form/đóng khi lưu, thông báo `role=status` và làm mới cache sổ đau/timeline theo tài khoản, gia đình, hồ sơ. Mất quyền/đồng thuận hoặc đổi danh tính hủy request và bỏ phản hồi muộn; vòng đời workspace xóa trạng thái khi đổi phạm vi.
+
+409 đã khỏi giữ bản nháp và cho bấm “Mở lại và ghi”; API mở lại chỉ gọi sau thao tác này. Mở lại và ghi là hai request: nếu mở lại thành công nhưng ghi thất bại, vấn đề vẫn đang theo dõi, bản nháp còn trong sheet để thử Lưu lại. Trùng vùng khi mở lại cho chuyển sang vấn đề hiện có với bản nháp. Chỉ bổ sung adapter cho endpoint hiện có; không đổi dependency, hợp đồng API, domain hoặc schema DB. Trang chi tiết/biểu đồ thuộc E21-S4, hộp thoại quản lý trạng thái đầy đủ thuộc E21-S5; `/my-profile` vẫn thuộc E21-S5-T2.
+
+Playwright local **38/38 PASS Chromium/WebKit**, gồm 14 ca ghi nhanh mới và 24 ca hồi quy TC-720/721/722/728. API trong harness là giả lập; test bốn chạm bắt đầu từ nút tab giả lập trong harness, chưa phải nghiệm thu route sản phẩm, điện thoại/trình đọc màn hình thật hoặc SIT. Hướng dẫn tại [e2e/README.md](e2e/README.md#tc-723--quickpainentrysheet-local). Bằng chứng kiểm chứng và bản sao sạch tại `/private/tmp/angia-e21-s3-t1/`; volume gốc vẫn có metadata AppleDouble `._*` và worktree `.claude` vốn có, không sửa/xóa chúng để lấy PASS.
+
+`yarn verify:fast` **PASS** trên bản sao sạch (16 test liên quan); unit riêng sổ đau nhức **68/68 PASS**. Full `yarn verify` **PASS**: 2.702 unit test/524 suite, typecheck, lint, format, dup 1,34%, Knip thường/production, build và budget 200 KB gzip cho mọi trang đầu. Build còn cảnh báo chunk lớn hơn 500 kB. Trên volume gốc, `verify:fast` qua typecheck nhưng exit 1 do AppleDouble `._newPainIssueForm.test.ts`; không coi đó là PASS trực tiếp trên volume gốc. Bản sao khớp byte 2.570/2.570 tệp source/tài liệu trước khi bổ sung đoạn kết quả này.
+
+README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook được ghi riêng trong checkpoint E21-S3-T1 tại `Docs/angia` ngoài Git source. Chưa push/PR/deploy hoặc đóng Epic 21/P21. Bước tiếp theo **E21-S4-T1 — trang chi tiết vấn đề đau**.
+
+## E21-S4-T1 — Chi tiết vấn đề đau local (2026-11-07)
+
+Owner đã duyệt và yêu cầu áp dụng. Trang `/profiles/:profileId/pain/:issueId` mở từ “Xem vấn đề”,
+ghi nhanh tại chỗ bằng picker hiện có, không chọn sẵn mức; danh sách mới nhất trước, giờ Việt Nam,
+ghi chú và “Ghi bởi / sửa bởi”, fallback “Tài khoản đã xóa”; lịch sử trạng thái chỉ hiện khi có sự kiện.
+Route file `profiles.$profileId_.pain_.$issueId.tsx` dùng hậu tố `pain_` để không lồng dưới trang danh sách.
+
+Sheet sửa mức/thời điểm/ghi chú có thể xóa trắng ghi chú, giữ giây gốc nếu không đổi thời điểm;
+sửa/xóa được cả khi đã khỏi, chặn thời điểm sau ngày khỏi. Xóa cần xác nhận; khi còn một lần ghi,
+ẩn thao tác xóa và hiện thông báo BR-060. `422 last_entry` tải lại chi tiết, giữ bản nháp và ẩn xóa.
+Lỗi mạng giữ form để thử lại; 404 chi tiết quay về danh sách. Cache tách tài khoản/gia đình/phạm vi/hồ sơ/vấn đề;
+request đang gửi bị hủy và bỏ phản hồi muộn khi đổi danh tính hoặc mất đồng thuận.
+Refetch chi tiết giữ form đang sửa; dữ liệu bị che khi biết lỗi đọc hoặc không còn quyền.
+Không đổi backend, DTO, domain, DB hoặc dependency. Biểu đồ, bài tập và menu quản lý vấn đề đầy đủ
+lần lượt thuộc S4-T2, S4-T3 và S5-T1; tích hợp `/my-profile` vẫn thuộc S5-T2.
+
+Owner duyệt riêng phương án R-v3-7: nạp lười mục Nhiệt độ trong `SelfSection.tsx` bằng `lazy/Suspense`,
+có trạng thái “Đang tải nhiệt độ…”. Việc này khắc phục bundle chung tăng khi thêm route chi tiết;
+không đổi chức năng hoặc quyền của mục Nhiệt độ.
+
+**Kiểm chứng local:** `yarn verify:fast` PASS trên bản sao sạch, 42 test liên quan;
+full `yarn verify` PASS với 2.714 unit/530 suite, lint/format, dup 1,43%, Knip thường/production,
+build và budget 200 KB gzip cho mọi trang đầu. Trang chi tiết 167,1 KB, danh sách đau nhức 170,3 KB,
+`/my-profile` 196,4 KB. Build còn cảnh báo chunk >500 KB vốn có.
+Playwright 56/56 PASS Chromium/WebKit, gồm 18 ca chi tiết và 38 hồi quy;
+smoke trên bản build xác nhận danh sách → chi tiết → quay về và mở Nhiệt độ sau nạp lười
+trên cả hai engine, không lỗi JavaScript hay tràn ngang trang chi tiết ở 360 px.
+API trong các kiểm thử trình duyệt là giả; chưa nghiệm thu điện thoại/trình đọc màn hình thật hoặc SIT.
+
+Trên volume gốc, `verify:fast` qua typecheck nhưng exit 1 do metadata AppleDouble `._*`;
+không sửa/xóa metadata hoặc worktree `.claude` vốn có. Log, ảnh và bản sao sạch tại
+`/private/tmp/angia-e21-s4-t1/`. Hướng dẫn tại [e2e/README.md](e2e/README.md#tc-726--chi-tiết-vấn-đề-đau-local).
+README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook ghi riêng tại checkpoint trong `Docs/angia`. Chưa push/PR/deploy; không đóng Epic 21/P21. Bước tiếp theo **E21-S4-T2 — PainIssueChart**.
+
+## E21-S4-T2 — Biểu đồ vấn đề đau local (2026-11-07)
+
+Owner đã duyệt và yêu cầu áp dụng. Trang chi tiết có `PainIssueChart` trước danh sách lần ghi,
+lọc 4/12/26 tuần (mặc định 12), từ Thứ Hai của tuần cách đây N − 1 tuần đến hôm nay giờ Việt Nam.
+Trục mức cố định 1–10; mọi điểm/nét dùng cùng màu, không nhận định mức hoặc xu hướng.
+Hai lần ghi liên tiếp cách nhau hơn 7 **ngày lịch Việt Nam** ngắt nét hoàn toàn, vẫn giữ mọi điểm;
+đúng 7 ngày lịch vẫn nối, kể cả khi khoảng thời gian thực vượt 168 giờ.
+Dưới 4 lần ghi trong khoảng dùng thẻ mới nhất trước. Bảng dữ liệu ẩn có caption, thời điểm, mức và ghi chú;
+`sr-only` đặt trên phần tử bọc để bảng không gây tràn ngang mobile.
+
+Bối cảnh thuốc dùng endpoint SPEC-053 hiện có, cache tách tài khoản/gia đình/phạm vi/hồ sơ/vấn đề/khoảng ngày,
+kiểm quyền và đồng thuận, truyền AbortSignal. Làn thuốc dùng cùng miền trục thời gian với lần ghi:
+liều “Khi cần” là vạch ngắn có tooltip, đợt thuốc là dải mảnh có tên. Có bản chữ cả khi ít điểm.
+Lỗi bối cảnh giữ lần ghi và cho thử lại. Ghi/sửa/xóa lần ghi làm mới query biểu đồ và bối cảnh.
+ECharts nạp lười khi đủ 4 điểm, dùng chung mô-đun với biểu đồ sinh hiệu; không thêm dependency,
+không đổi backend, contract, domain hoặc DB.
+
+Hướng dẫn kiểm tra tại [e2e/README.md](e2e/README.md#tc-724725--biểu-đồ-vấn-đề-đau-local).
+Kiểm chứng trên bản sao sạch: `verify:fast` PASS (22 test liên quan), full `verify` PASS
+(2.726 unit/535 suite, lint/format, dup 1,46%, Knip thường/production, build và budget).
+Trang chi tiết 169,9 KB gzip; `/my-profile` 196,5 KB, mọi trang đầu dưới 200 KB.
+Manifest xác nhận canvas đau và biểu đồ sinh hiệu dùng chung chunk `installSVGRenderer` chứa ECharts;
+canvas riêng dưới 2 KB gzip. Playwright 68/68 PASS Chromium/WebKit (66 mobile, 2 desktop),
+gồm 12 ca T2 ở mobile 360 px và desktop 1440 px;
+tooltip đặt phía trên điểm để không che vạch liều thuốc khi chuyển thao tác chạm.
+Rà soát độc lập không có finding cần sửa. Build còn cảnh báo chunk lớn vốn có;
+ECharts có cảnh báo instance đã dispose khi chuyển phạm vi/rời trang trong kiểm thử WebKit.
+Trên volume gốc, `verify:fast` qua typecheck nhưng exit 1 do AppleDouble `._*`;
+không sửa/xóa metadata hay worktree `.claude`. Bằng chứng tại `/private/tmp/angia-e21-s4-t2.Umm1vX/`.
+API trong harness là giả; chưa thay thế nghiệm thu thiết bị/trình đọc màn hình thật hoặc SIT.
+README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook ghi riêng tại checkpoint trong `Docs/angia`.
+Chưa push/PR/deploy hoặc đóng E21/P21. Bước tiếp theo **E21-S4-T3 — bài tập**.
+
+## E21-S4-T3 — Bài tập local (2026-11-07)
+
+Đã áp dụng theo phương án owner duyệt: thẻ và sheet thêm/sửa bài tập trên trang chi tiết,
+nguồn bằng chữ, ngày, ghi chú và người ghi/sửa. Nguồn mới không chọn sẵn; ngày bắt đầu
+mặc định hôm nay theo giờ Việt Nam. Đổi sang “Tự ghi” xóa người chỉ định trong bản nháp
+và backend; đổi lại không khôi phục giá trị cũ. Thêm/sửa được trên vấn đề đã khỏi.
+Không có xác nhận “Đã tập”, nhắc hay gợi ý bài tập. Giữ bản nháp khi lỗi mạng,
+khóa gửi trùng, hủy request và bỏ phản hồi muộn khi mất phạm vi/đồng thuận.
+Lưu bài tập giữ nguyên bản nháp ghi nhanh; trả focus về nút mở trên Chromium/WebKit.
+Vùng cuộn riêng bảo đảm ô ghi chú không bị footer che ở sheet dài 360 px.
+
+Owner duyệt mở rộng SPEC-056: PATCH `endDate: null` xóa ngày kết thúc; bỏ trường giữ ngày cũ,
+chuỗi rỗng hoặc ngày sai bị từ chối. POST vẫn không nhận `null`. Đã đồng bộ schema contracts,
+use case API, OpenAPI và kiểu client; không đổi domain, schema DB hoặc dependency.
+
+Kiểm chứng trên bản sao sạch: `verify:fast` PASS 83 test liên quan; full `verify` PASS (2.736 unit/540 suite,
+lint/format, dup, Knip thường/production, build và budget 200 KB gzip).
+Playwright 84/84 PASS Chromium/WebKit, gồm 16 ca bài tập ở 360 px.
+Trang chi tiết 171,8 KB gzip; `/my-profile` 196,5 KB. Rà soát độc lập không có finding cần sửa;
+build còn cảnh báo chunk lớn vốn có. API trong harness là giả.
+
+Integration bài tập và ma trận bảo mật đã thử nhưng Testcontainers báo `Failed to connect to Reaper`
+trước PostgreSQL/migration; 10 test bị skip, chưa xác nhận HTTP/DB cho thay đổi mới.
+Trên volume gốc, `verify:fast` qua typecheck nhưng lỗi đọc metadata AppleDouble `._*`;
+không sửa/xóa metadata hoặc worktree `.claude`. Đối chiếu 2.635/2.635 tệp source/tài liệu khớp byte; cấu hình harness trong bản sao
+chỉ bổ sung đường dẫn dependency dùng chung, không áp dụng thay đổi này vào source.
+Log RED/GREEN, kiểm chứng và ảnh tại `/private/tmp/angia-e21-s4-t3.LuObaX/`.
+README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook ghi riêng tại checkpoint trong `Docs/angia`.
+Chưa push/PR/deploy, nghiệm thu thiết bị/trình đọc màn hình thật hoặc SIT; không đóng E21/P21.
+Bước tiếp theo **E21-S5-T1 — đánh dấu đã khỏi, mở lại, xóa vấn đề**.
+
+## E21-S5-T1 — Vòng đời vấn đề đau local (2026-11-07)
+
+Đã áp dụng phương án owner duyệt: menu trên trang chi tiết mở sheet đánh dấu đã khỏi,
+hộp xác nhận mở lại và hộp xóa `alertdialog`. Ngày khỏi mặc định hôm nay theo giờ Việt Nam,
+giới hạn từ ngày lần ghi muộn nhất đến hôm nay; lỗi API giữ ngày đã chọn.
+Mở lại không tự ghi mức; `409 ERR_PAIN_ISSUE_EXISTS` có lối “Mở vấn đề đó”.
+Xóa lấy số lần ghi/bài tập từ `deletion-impact`, khóa xác nhận khi đang tải hoặc tải lỗi,
+chỉ gửi `DELETE { confirm: true }` sau xác nhận. Xóa thành công bỏ cache chi tiết/bối cảnh
+và quay về danh sách; đóng/mở lại làm mới danh sách, chi tiết, biểu đồ và lịch sử.
+
+Giữ quyền `main`/`self`, CSRF, cache theo tài khoản/gia đình/hồ sơ; chống gửi lặp,
+hủy request và bỏ phản hồi muộn khi đổi phạm vi hoặc mất đồng thuận.
+Không đổi backend, contracts, domain, schema DB hoặc dependency.
+“Sửa vùng hoặc tên” không thuộc task này; tích hợp `/my-profile` thuộc E21-S5-T2.
+
+Kiểm chứng trên bản sao sạch: `verify:fast` PASS (25 test liên quan),
+unit sổ đau nhức 110/110 PASS, Playwright Chromium/WebKit 100/100 PASS,
+gồm 16 ca vòng đời mới với API giả. Full `verify` PASS (2.746 unit/546 suite,
+lint/format, dup, Knip thường/production, build và budget 200 KB gzip).
+Build vẫn có cảnh báo chunk lớn. OpenAPI và kiểu client sinh lại không đổi.
+Bộ kiểm trình duyệt không thay thế HTTP/DB,
+điện thoại/trình đọc màn hình thật hoặc SIT. Trên volume gốc, kiểm thử gặp metadata
+AppleDouble `._*`; không xóa/sửa metadata hoặc worktree `.claude`.
+Log tại `/private/tmp/angia-e21-s5-t1-*.log`; bản sao tại `/private/tmp/angia-e21-s5-t1.vmyqdjvy/`.
+README và hướng dẫn E2E đi cùng commit source; SHA/kết quả hook ghi ở checkpoint trong `Docs/angia` ngoài Git source.
+Chưa push/PR/deploy hoặc đóng E21/P21. Bước tiếp theo **E21-S5-T2**.
+
+## E21-S5-T2 — Sổ đau nhức tự quản local (2026-11-07)
+
+Đã áp dụng local theo phương án owner duyệt: mục “Đau nhức” tại
+`/my-profile?section=pain`, nạp lười qua `lazy/Suspense`; trang chi tiết độc lập
+`/my-profile/pain/:issueId` dùng cùng khung “Hồ sơ của tôi”. Tài khoản liên kết
+`main`/`member` dùng `scope=self`, mọi request đau nhức đi qua
+`/api/me/profile/pain-issues` và đường dẫn con, không gửi `profileId` trong body.
+Tái sử dụng luồng tạo, ghi nhanh, chi tiết, bài tập và quản lý vòng đời đã có.
+Mục vẫn hiện khi ẩn số đo; các mục dữ liệu khác giữ quyền hiện hành.
+
+`PainProfileContext` chỉ lấy `id`, `familyId`, `consentStatus` cần cho sổ đau nhức;
+hồ sơ tự quản lấy từ tóm tắt API và gia đình trong phiên, không ép kiểu hoặc tạo
+metadata hồ sơ giả. Chặn tóm tắt khác liên kết phiên, mất liên kết và đồng thuận.
+Review phát hiện việc dựng skeleton khi tải lại tóm tắt làm mất bản nháp;
+đã tái hiện RED và sửa: tải lại cùng hồ sơ giữ form, kết quả mất quyền vẫn đóng nội dung.
+
+Kiểm chứng trên bản sao sạch: `yarn verify:fast` và full `yarn verify` PASS,
+2.747 unit test/546 suite; lint/format, dup, Knip thường/production, build và
+budget 200 KiB gzip đạt. `/my-profile` và chi tiết tự quản đều 197,5 KiB gzip.
+Manifest ghi `SelfPainJournal` là dynamic entry; test trình duyệt xác nhận chưa tải
+chunk hoặc gọi API đau nhức trước khi mở mục. OpenAPI/kiểu client sinh lại không đổi.
+Build còn cảnh báo chunk lớn vốn có.
+
+Playwright 116/116 PASS Chromium/WebKit ở 360 px (16 ca mới trên route sản phẩm
+với API giả và 100 ca hồi quy, trong đó có ca desktop của biểu đồ).
+Ca mới kiểm main/member ghi → khỏi → mở lại, tạo từ danh sách rỗng,
+đường dẫn trực tiếp/tải lại/quay về, CSRF và endpoint tự quản, mất đồng thuận,
+đổi liên kết, giữ bản nháp khi kiểm lại hồ sơ và mục xét nghiệm vẫn chỉ đọc.
+Rà soát độc lập sau sửa không còn finding cần xử lý.
+
+Volume gốc có metadata AppleDouble `._*`; kiểm chứng dùng bản sao sạch và
+đối chiếu byte trước khi áp dụng, không xóa/sửa metadata hoặc worktree `.claude`.
+Bản sao và log tại `/private/tmp/angia-e21-s5-t2.PrXk0f/`,
+`/private/tmp/angia-e21-s5-t2-*.log`.
+Không chạy lại integration HTTP/DB vì task chỉ thay web.
+
+Chưa push/PR/deploy, chưa nghiệm thu API live, điện thoại/trình đọc màn hình thật
+hoặc SIT. Bốn thao tác trong test bắt đầu từ `/my-profile` đã mở;
+không dùng thời gian API giả làm bằng chứng NFR-8. Còn nghiệm thu luồng
+mở → ghi → khỏi → mở lại trên SIT cho main/tài khoản liên kết và đo 5 lần trên
+điện thoại thật, trung vị ≤15 giây, ≤4 chạm theo NFR-8.
+**Chưa đóng E21/P21 hoặc đánh dấu hoàn tất nghiệm thu E21-S5-T2.**
+
+## Epic 21 — Chuẩn bị PR vào SIT (2026-11-08)
+
+PR từ `feature/v0.3/Epic-21` vào `sit` gom 11 task UI E21-S1-T1 → E21-S5-T2:
+chọn vùng 2D/danh sách, tạo vấn đề, ghi nhanh, chi tiết/biểu đồ/bài tập,
+đóng/mở lại/xóa và sổ tự quản. Mục Nhiệt độ được nạp lười theo quyết định R-v3-7.
+Thay đổi API đi kèm S4-T3 cho phép PATCH bài tập với `endDate: null` để xóa ngày
+kết thúc; cần CI integration kiểm lại thay đổi này, không coi toàn PR chỉ đổi web.
+
+Kiểm chứng local gần nhất: `verify:fast`, full `verify` và 116/116 Playwright
+PASS trên bản sao sạch khớp byte với source; `/my-profile` 197,5 KiB gzip.
+Merge vào `sit` kích hoạt CI và dispatch pipeline build/sign/deploy hiện hành.
+Nghiệm thu API live/điện thoại/trình đọc màn hình và NFR-8 trên SIT vẫn còn chờ;
+PR và deploy thành công chưa đồng nghĩa đóng E21/P21.

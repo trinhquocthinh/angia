@@ -116,7 +116,15 @@ describe('SPEC-042, Design §9.5 — trang "Hồ sơ của tôi"', () => {
     expect(html).not.toContain('Thuốc hôm nay');
     expect(sections).toHaveLength(0);
   });
+  it('US-042: không dựng dữ liệu khi hồ sơ tóm tắt khác liên kết trong phiên', () => {
+    const { html } = render(linked, { id: 'old-profile' });
+    expect(html).toContain('Tài khoản chưa liên kết hồ sơ sức khỏe.');
+    expect(html).not.toContain('Đau nhức');
+    expect(html).not.toContain('Mẹ Hoa');
+  });
   it('BR-049: không hiện số đo thì không có mục Diễn biến sức khỏe', () => {
+    expect(render(linked).html).toContain('Đau nhức');
+    expect(render(linked, { showsVitals: false }).html).toContain('Đau nhức');
     expect(render(linked).html).toContain('Diễn biến sức khỏe');
     expect(render(linked, { showsVitals: false }).html).not.toContain('Diễn biến sức khỏe');
   });

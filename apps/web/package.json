@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build && yarn typecheck",
     "preview": "vite preview",
-    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.node.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.node.json && tsc -p tsconfig.e2e.json",
     "generate:api": "openapi-typescript ../../packages/contracts/openapi.json -o src/shared/api/schema.gen.ts && prettier --write src/shared/api/schema.gen.ts"
   },
   "dependencies": {

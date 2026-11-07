@@ -14,10 +14,10 @@ const Notice = ({ text }: { text: string }) => (
 );
 const NOT_LINKED = 'Tài khoản chưa liên kết hồ sơ sức khỏe.';
 
-type Props = { session: ProfileSession; section: SelfSectionKey | undefined };
+type Props = { session: ProfileSession; section: SelfSectionKey | undefined; issueId?: string | undefined };
 
-// Design §9.5: chỉ dựng nội dung sức khỏe khi hồ sơ đã đồng thuận; mọi mục đều chỉ đọc.
-export function SelfProfileContent({ session, section }: Props) {
+// Design §9.5: chỉ dựng nội dung sức khỏe khi hồ sơ đã đồng thuận; Đau nhức tự quản theo §10.2.
+export function SelfProfileContent({ session, section, issueId }: Props) {
   const summary = useSelfProfile(selfProfileRepository, session);
   if (!session.account.healthProfileId) return <Notice text={NOT_LINKED} />;
   if (summary.isError) {
@@ -27,6 +27,7 @@ export function SelfProfileContent({ session, section }: Props) {
   }
   if (!summary.data) return <SelfSkeleton label="hồ sơ của bạn" />;
   const profile = summary.data;
+  if (profile.id !== session.account.healthProfileId) return <Notice text={NOT_LINKED} />;
   const active = resolveSelfSection(section, profile.showsVitals);
   return (
     <div className="flex min-w-0 flex-col gap-6">
@@ -39,7 +40,7 @@ export function SelfProfileContent({ session, section }: Props) {
       {profile.consentStatus === 'confirmed' ? (
         <>
           <SelfTabs active={active} showsVitals={profile.showsVitals} />
-          <SelfSection session={session} section={active} />
+          <SelfSection session={session} section={active} profile={profile} issueId={issueId} />
         </>
       ) : (
         <Notice text="Hồ sơ chưa được đồng ý lưu dữ liệu." />
