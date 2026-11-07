@@ -94,3 +94,11 @@ Lệnh tự mở Vite trên `127.0.0.1:5174` và chạy Chromium cảm ứng/Web
 `apps/web/e2e/regionList.spec.ts` dùng chung lệnh `yarn test:e2e:body-map` và harness trên, mở chế độ danh sách qua `?view=list`. Chỉ chạy TC-720: `yarn test:e2e:body-map regionList`.
 
 Kiểm đủ 35 vị trí, ba nhóm “Đầu và thân” (7), “Tay” (12), “Chân” (16), nhãn và trạng thái trong cây accessibility; Tab vào/ra nhóm radio, mũi tên xuống/lên, quay vòng, Enter/Space và cập nhật lựa chọn từ prop. Kết quả local E21-S1-T3: 4/4 PASS trên Chromium/WebKit. Đây là kiểm thử cây accessibility tự động, chưa nghiệm thu trình đọc màn hình thật. Không chạy TC-720/721 trong `yarn verify`; cần chạy lệnh Playwright riêng.
+
+## TC-722/728 — NewPainIssueSheet local
+
+`apps/web/e2e/newPainIssue.spec.ts` dùng chung cấu hình local phía trên. Chạy riêng: `yarn test:e2e:body-map newPainIssue`. Harness `/e2e/newPainIssue.html` không nằm trong route hoặc build sản phẩm; các phản hồi API đều giả lập, không cần dữ liệu sức khỏe thật hoặc phiên SIT.
+
+Sáu ca trên mỗi engine Chromium/WebKit kiểm tra: chọn vùng đang theo dõi từ 2D/danh sách không gửi POST; 409 giữ mức 6 và ghi chú qua callback, không tự ghi thêm; đổi vùng/lỗi mạng/409 thiếu ID giữ bản nháp và đóng trả focus bàn phím; tạo qua main/self và bố cục 360/1440 px; mất đồng thuận khi đang lưu bỏ phản hồi muộn; workspace mở sheet qua callback bàn giao. Bộ local đầy đủ có 24 ca, gồm hồi quy TC-720/721; không chạy trong `yarn verify`.
+
+Đây là kiểm chứng ranh giới callback của E21-S2-T2. Nơi nhận `onContinueIssue` phải mở chi tiết/ghi nhanh, giữ `draft` và hiển thị `message` nếu có ở T3/T4. Route thật chưa truyền callback nên chưa hiện nút tạo mặc định; không coi harness là nghiệm thu luồng đầu cuối hoặc 3D/SIT.

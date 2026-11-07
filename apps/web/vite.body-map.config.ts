@@ -8,9 +8,10 @@ import { defineConfig } from 'vite';
 
 // Harness riêng, không sinh route hoặc đưa trang kiểm thử vào bản build ứng dụng.
 export default defineConfig({
+  resolve: { alias: { '@src': fileURLToPath(new URL('./src', import.meta.url)) } },
   plugins: [react(), tailwindcss()],
   cacheDir: join(tmpdir(), 'angia-body-map-vite'),
-  optimizeDeps: { entries: ['e2e/bodyMap2D.html'] },
+  optimizeDeps: { entries: ['e2e/bodyMap2D.html', 'e2e/newPainIssue.html'] },
   server: {
     host: '127.0.0.1',
     port: 5174,

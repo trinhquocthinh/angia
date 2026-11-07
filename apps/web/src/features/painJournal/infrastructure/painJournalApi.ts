@@ -1,10 +1,28 @@
-import { painIssueListSchema } from '@angia/contracts';
+import { painIssueRequestBody } from './painIssueRequestBody';
+import { painIssueDetailSchema, painIssueListSchema } from '@angia/contracts';
 import { apiClient } from '@src/shared/api/apiClient';
 import { readStoppingResponse } from '@src/features/medications/infrastructure/readStoppingResponse';
-import type { PainJournalApi } from '../application/ports';
+import { readPainJournalResponse } from './readPainJournalResponse';
+import type { PainIssueWriter, PainJournalApi } from '../application/ports';
 
-export function createPainJournalApi(client = apiClient): PainJournalApi {
+export function createPainJournalApi(client = apiClient): PainJournalApi & PainIssueWriter {
   return {
+    create: async (profileId, body, csrf, signal) => {
+      const options = {
+        body: painIssueRequestBody(body),
+        headers: { 'X-CSRF-Token': csrf },
+        cache: 'no-store' as const,
+        ...(signal ? { signal } : {}),
+      };
+      const result =
+        profileId === null
+          ? await client.POST('/api/me/profile/pain-issues', options)
+          : await client.POST('/api/health-profiles/{id}/pain-issues', {
+              ...options,
+              params: { path: { id: profileId } },
+            });
+      return painIssueDetailSchema.parse(readPainJournalResponse(result));
+    },
     list: async (profileId, query, signal) => {
       const options = { cache: 'no-store' as const, ...(signal ? { signal } : {}) };
       const result =
