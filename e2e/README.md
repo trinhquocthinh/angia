@@ -203,3 +203,36 @@ Kết quả local: 16/16 mới và 100/100 hồi quy PASS; API giả không ch�
 4. Kiểm mất liên kết/rút đồng thuận, bàn phím/trình đọc màn hình và nội dung
    ở 360 px trên thiết bị. Ghi PASS/FAIL và bằng chứng riêng; chưa có kết quả thì
    giữ E21/P21 và nghiệm thu task ở trạng thái chưa hoàn tất.
+
+## Hồi quy khóa cuộn và bố cục modal (2026-11-08)
+
+```bash
+yarn test:e2e:body-map modalLayout
+```
+
+`apps/web/e2e/modalLayout.spec.ts` mở modal chọn vùng thật trong harness local,
+thêm nền dài để kiểm trang phía sau có cuộn hay không. Tám ca mỗi engine kiểm:
+lăn chuột trên backdrop, footer không bị nhãn vùng phủ ở 360/768/930/1440 px,
+cuộn tới bàn chân và dòng đã chọn, modal chồng nhau và giữ vị trí trang khi đóng.
+Lệnh chạy cả bộ `yarn test:e2e:body-map` gồm thêm các ca này.
+
+Riêng tệp này dùng context desktop cho cả Chromium/WebKit vì Playwright không
+hỗ trợ `mouse.wheel` trong WebKit mobile. Viewport hẹp kiểm bố cục responsive;
+không dùng kết quả đó thay nghiệm thu thao tác vuốt trên điện thoại thật.
+Các tệp test khác tiếp tục dùng cấu hình cảm ứng hiện hành. API và dữ liệu của
+harness đều giả; không cần đăng nhập hoặc gọi SIT.
+
+## TC-723 — Hướng dẫn chọn mức đau (2026-11-08)
+
+Chạy `yarn test:e2e:body-map` để kiểm cả hồi quy. Các ca tạo vấn đề, ghi nhanh
+và sửa lần ghi kiểm hướng dẫn ba nhóm 1–3/4–6/7–10 và mốc 10 luôn có sẵn,
+được radiogroup mô tả truy cập. Các ô vẫn mang tên số, không chọn sẵn, không
+thêm trường phân loại vào request; luồng ghi nhanh giữ bốn chạm.
+
+Ca mới trong `quickPainEntry.spec.ts` kiểm ở 360×650 và 1440×650: chọn mức,
+cuộn ô ghi chú vào vùng nhìn thấy phía trên footer và lưu. Ca sửa lần ghi kiểm
+tương tự, cho phép sai số viền/cuộn dưới 2 CSS px trên Chromium.
+Unit kiểm hướng dẫn tĩnh và bộ TC-725 vẫn quét phần trình bày dữ liệu theo bộ
+từ cấm chung; không loại bỏ “nhẹ/nặng” khỏi bộ từ cấm.
+Kết quả local cả bộ: 118/118 Chromium/WebKit PASS với API giả; không thay
+nghiệm thu điện thoại thật, trình đọc màn hình hoặc SIT.

@@ -47,3 +47,13 @@ select:not([multiple]):not([size]) {
   background-size: 1.125rem;
   text-overflow: ellipsis;
 }
+
+/* Modal native khóa trang nền; tự giữ khóa khi còn modal khác đang mở. */
+html:has(dialog:modal),
+body:has(dialog:modal) {
+  overflow: hidden;
+}
+
+dialog:modal {
+  overscroll-behavior: contain;
+}

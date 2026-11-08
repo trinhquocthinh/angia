@@ -28,6 +28,10 @@ test('TC-723 — bốn chạm: tab, ghi mức, chọn mức, lưu; không chọn
   });
   await page.getByRole('button', { name: 'Đau nhức', exact: true }).tap();
   await page.getByRole('button', { name: 'Ghi mức Đầu gối · trái', exact: true }).tap();
+  await expect(page.getByRole('heading', { name: 'Hướng dẫn chọn mức đau' })).toBeVisible();
+  await expect(page.getByRole('radiogroup', { name: 'Mức đau lúc này' })).toHaveAccessibleDescription(
+    /1–3.*Đau nhẹ.*4–6.*Đau trung bình.*7–10.*Đau nặng/,
+  );
   await expect(page.getByRole('radio', { checked: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Lưu', exact: true })).toBeDisabled();
   await expect(page.getByText('Thời điểm: Bây giờ ·')).toBeVisible();
@@ -193,4 +197,26 @@ test('TC-723 — đổi tài khoản xóa bản nháp cũ; đóng sheet trả fo
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await open.click();
   await expect(page.getByRole('radio', { checked: true })).toHaveCount(0);
+});
+
+test('TC-723 — hướng dẫn không che ghi chú hoặc nút Lưu ở màn thấp', async ({ page }) => {
+  for (const width of [360, 1440]) {
+    await page.setViewportSize({ width, height: 650 });
+    await page.getByRole('button', { name: 'Đau nhức', exact: true }).click();
+    await page.getByRole('button', { name: 'Ghi mức Đầu gối · trái', exact: true }).click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByRole('heading', { name: 'Hướng dẫn chọn mức đau' })).toBeVisible();
+    await dialog.getByRole('radio', { name: '6', exact: true }).check();
+    const note = dialog.getByLabel('Ghi chú (tùy chọn)');
+    await note.fill('Ghi thử');
+    await note.scrollIntoViewIfNeeded();
+    const usable = await note.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      const footer = el.closest('dialog')!.querySelector('footer')!.getBoundingClientRect();
+      return r.bottom <= footer.top + 1;
+    });
+    expect(usable).toBe(true);
+    await dialog.getByRole('button', { name: 'Lưu', exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+  }
 });
