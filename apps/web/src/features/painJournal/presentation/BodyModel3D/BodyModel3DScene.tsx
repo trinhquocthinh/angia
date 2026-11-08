@@ -2,13 +2,14 @@ import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import type { Object3D } from 'three';
 import { type BodyLocation, regionFromNodeName } from '../../application/regionFromNodeName';
 import { CameraControls } from './CameraControls';
+import { SelectedRegionHighlight } from './SelectedRegionHighlight';
 
 // Lệch quá ngưỡng (px) giữa nhấn và nhả là thao tác xoay, không phải chạm chọn vùng.
 const TAP_SLOP_PX = 6;
 
-type Props = { model: Object3D; onSelect: (location: BodyLocation) => void };
+type Props = { model: Object3D; selected: BodyLocation | null; onSelect: (location: BodyLocation) => void };
 
-export function BodyModel3DScene({ model, onSelect }: Props) {
+export function BodyModel3DScene({ model, selected, onSelect }: Props) {
   const handleClick = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
     if (event.delta > TAP_SLOP_PX) return;
@@ -26,6 +27,7 @@ export function BodyModel3DScene({ model, onSelect }: Props) {
       <ambientLight intensity={1.6} />
       <directionalLight position={[1, 2, 3]} intensity={1.4} />
       <primitive object={model} onClick={handleClick} />
+      <SelectedRegionHighlight model={model} selected={selected} />
       <CameraControls />
     </Canvas>
   );

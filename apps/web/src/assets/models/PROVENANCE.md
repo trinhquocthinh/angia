@@ -27,6 +27,7 @@ One complete body, suitable for viewing from front, back, and both sides.
 
 1. **E18-S1-T2** (Blender 5.2.3): đối xứng trục X, giảm còn 8 000 tam giác, một vật liệu `body_fill` `#ECE8E2` (`color.body.fill`), không texture/UV.
 2. **E18-S1-T3** (Blender 5.2.3 + `@gltf-transform/cli` 4.5.1): thêm 35 mesh vùng vô hình `region__<code>__<side>` theo `bodyRegions` (SPEC-051), vật liệu `region` alpha 0; nén `EXT_meshopt_compression` + `KHR_mesh_quantization`.
+3. **E22-S3-T1** (cùng công cụ): nới vùng khuỷu tay từ t 0,40–0,50 lên 0,38–0,52 trên trục vai → đầu ngón (SPEC-058); dựng lại từ `body-t2.glb`, mỗi khuỷu 233 → 277 mặt.
 
 Script tái lập nằm trong tài liệu dự án (`model3D/scripts/t2_prepare.py`, `t3_regions.py`); số đo ở `plans/2026-11-06-bodywell-3d-spike.md`.
 
@@ -34,6 +35,6 @@ Script tái lập nằm trong tài liệu dự án (`model3D/scripts/t2_prepare.
 
 | Tệp        | Byte    | SHA-256                                                            |
 | ---------- | ------- | ------------------------------------------------------------------ |
-| `body.glb` | 213 552 | `d06614aa2460c24eb45ecf5f6ab719aadd604a4ab459315421209ecd7533759d` |
+| `body.glb` | 213 628 | `34f54e0744c8bf6a82f7206520489f08fd440eb1c98b9b3f27bc58747b7079df` |
 
 Trục: Y lên (glTF), người nhìn +Z, bên trái người = +X. Node: `body` (hiển thị), `regions` (cha của 35 node vùng).

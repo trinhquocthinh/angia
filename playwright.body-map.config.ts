@@ -9,6 +9,7 @@ export default defineConfig({
     '**/modalLayout.spec.ts',
     '**/regionList.spec.ts',
     '**/newPainIssue.spec.ts',
+    '**/regionPicker3D.spec.ts',
     '**/quickPainEntry.spec.ts',
     '**/painIssueDetail.spec.ts',
     '**/painIssueChart.spec.ts',
