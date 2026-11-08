@@ -11165,6 +11165,60 @@ export interface components {
       measurements: components['schemas']['Measurement'][];
       latestLabResults: components['schemas']['LabResult'][];
       adherencePeriods: components['schemas']['AdherencePeriod'][];
+      painIssues: {
+        /** @enum {string} */
+        region:
+          | 'head'
+          | 'neck'
+          | 'chest'
+          | 'abdomen'
+          | 'upper_back'
+          | 'lower_back'
+          | 'pelvis'
+          | 'shoulder'
+          | 'upper_arm'
+          | 'elbow'
+          | 'forearm'
+          | 'wrist'
+          | 'hand'
+          | 'hip'
+          | 'buttock'
+          | 'thigh'
+          | 'knee'
+          | 'shin'
+          | 'calf'
+          | 'ankle'
+          | 'foot';
+        /** @enum {string} */
+        side: 'left' | 'right' | 'center';
+        title: string | null;
+        /** @enum {string} */
+        status: 'tracking' | 'resolved';
+        /** Format: date */
+        resolvedOn: string | null;
+        entries: {
+          /** Format: date-time */
+          recordedAt: string;
+          level: number;
+          note: string | null;
+          createdBy: {
+            /** Format: uuid */
+            accountId: string;
+            displayName: string;
+          } | null;
+        }[];
+        exercises: {
+          name: string;
+          /** @enum {string} */
+          source: 'prescribed' | 'self';
+          prescriber: string | null;
+          /** Format: date */
+          startDate: string;
+          /** Format: date */
+          endDate: string | null;
+          note: string | null;
+        }[];
+      }[];
       /** @enum {string} */
       disclaimer: 'Tài liệu tổng hợp từ gia đình, không phải chỉ định y khoa.';
     };
