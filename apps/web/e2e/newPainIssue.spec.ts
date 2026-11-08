@@ -132,6 +132,7 @@ test('tạo lần ghi đầu qua main/self, không tràn ngang ở mobile và ha
     await page.getByRole('button', { name: 'Danh sách', exact: true }).click();
     await page.getByRole('radio', { name: 'Đầu gối · phải', exact: true }).check();
     await page.getByRole('button', { name: 'Tiếp tục', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Hướng dẫn chọn mức đau' })).toBeVisible();
     await page.getByRole('radio', { name: '6', exact: true }).check();
     const geometry = await page.getByRole('dialog').evaluate((dialog) => ({
       width: dialog.getBoundingClientRect().width,

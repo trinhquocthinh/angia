@@ -20,25 +20,27 @@ export function QuickPainEntryDialog(props: QuickPainEntryProps) {
         </button>
       </header>
       <form
-        className="flex min-h-0 flex-col"
+        className="flex min-h-0 flex-1 flex-col overflow-hidden"
         onSubmit={(event) => {
           event.preventDefault();
           void state.submit(state.needsReopen);
         }}
       >
-        <fieldset disabled={state.pending} aria-busy={state.pending} className="min-h-0 overflow-y-auto p-5">
-          {props.message && (
-            <p role="status" className="mb-3">
-              {props.message}
-            </p>
-          )}
-          <FirstPainEntryFields values={state.values} onChange={state.change} />
-          {state.error && (
-            <p role="alert" className="mt-3">
-              {state.error}
-            </p>
-          )}
-        </fieldset>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-5">
+          <fieldset disabled={state.pending} aria-busy={state.pending} className="min-w-0">
+            {props.message && (
+              <p role="status" className="mb-3">
+                {props.message}
+              </p>
+            )}
+            <FirstPainEntryFields values={state.values} onChange={state.change} />
+            {state.error && (
+              <p role="alert" className="mt-3">
+                {state.error}
+              </p>
+            )}
+          </fieldset>
+        </div>
         <QuickPainEntryFooter state={state} />
       </form>
     </ModalDialog>

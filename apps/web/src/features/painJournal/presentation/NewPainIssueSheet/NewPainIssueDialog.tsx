@@ -17,7 +17,7 @@ export function NewPainIssueDialog(props: NewPainIssueSheetProps) {
     <ModalDialog labelledBy={id} onCancel={props.onClose} pending={state.pending} width="xl">
       <header
         data-new-pain-issue
-        className="flex items-center justify-between gap-3 border-b border-border px-5 py-3"
+        className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-5 py-3"
       >
         <h2 ref={heading} tabIndex={-1} id={id} className="text-xl font-semibold">
           Thêm vấn đề đau — {state.step === 1 ? 'Chọn vùng' : 'Lần ghi đầu'}
@@ -31,28 +31,34 @@ export function NewPainIssueDialog(props: NewPainIssueSheetProps) {
           event.preventDefault();
           void state.submit();
         }}
-        className="flex min-h-0 flex-col"
+        className="flex min-h-0 flex-1 flex-col overflow-hidden"
       >
-        <fieldset disabled={state.pending} className="min-h-0 overflow-y-auto p-5" aria-busy={state.pending}>
-          {state.step === 1 ? (
-            <NewPainIssueRegionStep selected={state.selected} onSelect={state.select} issues={props.issues} />
-          ) : (
-            state.selected && (
-              <NewPainIssueEntryStep
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-5">
+          <fieldset disabled={state.pending} className="min-w-0" aria-busy={state.pending}>
+            {state.step === 1 ? (
+              <NewPainIssueRegionStep
                 selected={state.selected}
                 onSelect={state.select}
-                values={state.values}
-                onChange={state.change}
-                onChangeRegion={() => state.setStep(1)}
+                issues={props.issues}
               />
-            )
-          )}
-          {state.error && (
-            <p role="alert" className="mt-3 text-sm">
-              {state.error}
-            </p>
-          )}
-        </fieldset>
+            ) : (
+              state.selected && (
+                <NewPainIssueEntryStep
+                  selected={state.selected}
+                  onSelect={state.select}
+                  values={state.values}
+                  onChange={state.change}
+                  onChangeRegion={() => state.setStep(1)}
+                />
+              )
+            )}
+            {state.error && (
+              <p role="alert" className="mt-3 text-sm">
+                {state.error}
+              </p>
+            )}
+          </fieldset>
+        </div>
         <NewPainIssueFooter state={state} />
       </form>
     </ModalDialog>

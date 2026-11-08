@@ -456,3 +456,61 @@ PASS trên bản sao sạch khớp byte với source; `/my-profile` 197,5 KiB gz
 Merge vào `sit` kích hoạt CI và dispatch pipeline build/sign/deploy hiện hành.
 Nghiệm thu API live/điện thoại/trình đọc màn hình và NFR-8 trên SIT vẫn còn chờ;
 PR và deploy thành công chưa đồng nghĩa đóng E21/P21.
+
+## Sửa cuộn nền và bố cục modal — local (2026-11-08)
+
+Đã áp dụng bản sửa owner duyệt trên nhánh `codex/fix-modal-scroll-layout`:
+CSS `html:has(dialog:modal)`/`body:has(dialog:modal)` khóa cuộn trang nền khi
+còn modal native đang mở; đóng modal cuối khôi phục cuộn. Modal chọn vùng đau
+dùng `div` cuộn bên ngoài `fieldset`, form giới hạn chiều cao và header/footer
+không co lại. Hình/nhãn và dòng đã chọn cuộn trong thân modal, không phủ nút
+“Tiếp tục”; giữ kích thước nút chọn vùng hiện hành.
+
+Đã tái hiện RED trên bản sao: backdrop làm trang cuộn 700 px trên Chromium/WebKit,
+và Chromium vẽ nhãn vùng phủ footer. Sau sửa, 16/16 ca modal mới và toàn bộ
+116/116 ca `test:e2e:body-map` PASS; các ca wheel dùng context desktop, kiểm thêm
+viewport 360/768/930/1440 px, cuộn tới bàn chân/dòng đã chọn, modal chồng nhau
+và giữ vị trí trang. Các ca khác giữ cấu hình cảm ứng hiện hành.
+
+`yarn verify:fast` PASS (typecheck và 7 unit liên quan); full `yarn verify` PASS
+(2.747 unit/546 suite, lint/format, dup, Knip thường/production, build và budget).
+`/my-profile` 197,4 KiB gzip, chi tiết tự quản 197,5 KiB; mọi trang đầu đạt trần
+200 KiB. Review độc lập không có finding cần xử lý. Build còn cảnh báo chunk lớn
+vốn có; hồi quy WebKit có cảnh báo ECharts instance đã dispose khi chuyển phạm vi.
+
+Kiểm chứng dùng bản sao sạch tại `/private/tmp/angia-modal-fix.tr2dm4/` và log
+`/private/tmp/angia-modal-fix-*.log`; source được đối chiếu byte với bản đã kiểm.
+Metadata AppleDouble trên volume gốc giữ nguyên. Hướng dẫn chạy riêng test ở
+`e2e/README.md`. Chưa commit/push/deploy hoặc nghiệm thu thao tác vuốt trên
+điện thoại thật/SIT trong bản sửa này.
+
+## Hướng dẫn chọn mức đau — local (2026-11-08)
+
+Đã áp dụng nội dung owner duyệt theo bài
+[MEDLATEC](https://medlatec.vn/tin-tuc/thang-diem-vas-danh-gia-dau-nhung-dieu-nen-biet):
+khối “Hướng dẫn chọn mức đau” luôn hiện trước các ô số, với ba nhóm
+1–3 · Đau nhẹ, 4–6 · Đau trung bình, 7–10 · Đau nặng cùng mô tả đã duyệt,
+mốc 10 “Đau dữ dội nhất bạn có thể hình dung.” và lời nhắc tự chấm theo cảm nhận.
+Component dùng chung cho tạo vấn đề, ghi nhanh, ghi tại chỗ và sửa lần ghi;
+`aria-describedby` nối hướng dẫn với radiogroup. Đây là hướng dẫn nhập tĩnh;
+radio, payload, thông báo lưu, thẻ, danh sách và biểu đồ giữ điểm số người dùng ghi.
+
+Ngoại lệ đã đồng bộ tại BR-063 §2.8.1, SC18, SPEC-054, Design §10.6 và
+TC-723/725 trong `Docs/angia`; bộ từ cấm cho phần trình bày dữ liệu giữ nguyên.
+Giao diện chọn số thuộc NRS; không đổi thang dữ liệu 1–10, không thêm khuyến nghị thuốc.
+Sheet ghi nhanh/sửa dùng cùng vùng cuộn `div` ngoài `fieldset` như bản sửa modal,
+để hướng dẫn dài không làm ghi chú phủ footer ở màn thấp.
+
+Kiểm chứng trên bản sao sạch: `verify:fast` PASS (typecheck, 9 unit liên quan),
+full `verify` PASS (2.748 unit/546 suite, lint/format, dup, Knip, build, budget),
+Playwright `test:e2e:body-map` 118/118 PASS Chromium/WebKit. TC-723 giữ bốn chạm,
+không chọn sẵn; hướng dẫn có mô tả truy cập ở tạo/ghi nhanh/sửa, ghi chú cuộn
+được ở 360×650 và 1440×650. TC-725 giữ kiểm không diễn giải dữ liệu đã ghi.
+Một lượt đầu gặp lỗi DOM bị gỡ trong ca bài tập WebKit; chạy lại riêng và cả bộ
+đều PASS. Review độc lập không có finding cần xử lý.
+
+`/my-profile` 197,4 KiB gzip, chi tiết tự quản 197,5 KiB; mọi trang đầu đạt trần
+200 KiB. Bản sao/log tại `/private/tmp/angia-pain-guidance.xoOr5s/` và
+`/private/tmp/angia-pain-guidance-*.log`; source đối chiếu byte với bản đã kiểm.
+Chưa commit/push/deploy hoặc nghiệm thu điện thoại/trình đọc màn hình thật/SIT
+cho thay đổi này. Các sửa modal trước đó được giữ nguyên trên cùng nhánh.

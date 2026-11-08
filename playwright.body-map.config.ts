@@ -6,6 +6,7 @@ export default defineConfig({
   testDir: './apps/web/e2e',
   testMatch: [
     '**/bodyMap2D.spec.ts',
+    '**/modalLayout.spec.ts',
     '**/regionList.spec.ts',
     '**/newPainIssue.spec.ts',
     '**/quickPainEntry.spec.ts',

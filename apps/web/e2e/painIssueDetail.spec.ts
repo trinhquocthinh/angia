@@ -73,9 +73,24 @@ test('sửa mức/giờ/ghi chú, xóa trắng ghi chú và trả focus', async 
   await open.focus();
   await open.press('Enter');
   const dialog = page.getByRole('dialog');
+  await expect(dialog.getByRole('heading', { name: 'Hướng dẫn chọn mức đau' })).toBeVisible();
+  await expect(dialog.getByRole('radiogroup', { name: 'Mức đau lúc này' })).toHaveAccessibleDescription(
+    /1–3.*4–6.*7–10/,
+  );
   await expect(dialog.getByLabel('Thời điểm (giờ Việt Nam)')).toHaveValue('2026-11-06T01:30');
   await dialog.getByRole('radio', { name: '4', exact: true }).check();
-  await dialog.getByLabel('Ghi chú (tùy chọn)').fill('');
+  const note = dialog.getByLabel('Ghi chú (tùy chọn)');
+  await note.fill('');
+  await note.scrollIntoViewIfNeeded();
+  const geometry = await note.evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    return {
+      bottom: r.bottom,
+      footer: el.closest('dialog')!.querySelector('footer')!.getBoundingClientRect().top,
+    };
+  });
+  // Làm tròn tọa độ cuộn/phần viền dưới có thể lệch dưới 2 CSS px trên Chromium.
+  expect(geometry.bottom).toBeLessThanOrEqual(geometry.footer + 2);
   await dialog.getByRole('button', { name: 'Lưu thay đổi' }).click();
   await expect(dialog).toHaveCount(0);
   await expect(page.getByRole('region', { name: 'Các lần ghi' })).not.toContainText('Lần cũ');

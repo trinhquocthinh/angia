@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import type { KeyboardEvent } from 'react';
 import './painLevelPicker.css';
+import { PainLevelGuidance } from './PainLevelGuidance';
 type Props = { value: number | null; onChange: (level: number) => void; disabled?: boolean };
 export function PainLevelPicker({ value, onChange, disabled = false }: Props) {
   const id = useId();
@@ -19,9 +20,7 @@ export function PainLevelPicker({ value, onChange, disabled = false }: Props) {
   return (
     <fieldset disabled={disabled} className="pain-level-picker space-y-2">
       <legend className="font-medium">Mức đau lúc này</legend>
-      <p id={`${id}-hint`} className="text-sm text-text-secondary">
-        Chấm theo cảm nhận của bạn, từ 1 đến 10.
-      </p>
+      <PainLevelGuidance id={`${id}-hint`} />
       <div
         className="pain-level-grid"
         role="radiogroup"
