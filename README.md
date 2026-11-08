@@ -531,3 +531,32 @@ Quyết định này thay trạng thái chờ nghiệm thu E21 trong các checkp
 [Biên bản và giới hạn](../../Docs/angia/acceptance/v0.3/epic21-acceptance.md).
 Tiếp theo **E22-S1-T1 — Dòng thời gian thêm ba loại**; E18 giữ trạng thái riêng,
 E22/E23 và phát hành v0.3/Production còn mở.
+
+## Nghiệm thu E18 và E22 trên SIT — 2026-11-08
+
+**PASS, đóng E18 (5/5 task, kết luận spike (b)) và E22 (4/4 task) theo xác nhận owner:** “Đã PASS, ghi biên bản”.
+[PR #67](https://github.com/trinhquocthinh/angia/pull/67) đã merge; bản nghiệm thu SIT là `cb16a7b892556aebbaed2b05b94b08a1373d8671`.
+[CI sau merge](https://github.com/trinhquocthinh/angia/actions/runs/42494509977) và
+[pipeline SIT](https://github.com/trinhquocthinh/homelab-deploy/actions/runs/42495136267) PASS; wrapper ghi đúng source SHA và ba digest đang chạy.
+Agent chạy lại `yarn verify` đầy đủ trên `cb16a7b` (PASS) và Playwright body-map 125/126; TC-692 WebKit flaky, chạy riêng 3/3 PASS.
+
+Còn mở sang E23: header CSP không còn trên SIT tối 2026-11-08, cần đặt lại và thêm `'wasm-unsafe-eval'` có review; đo 3D trên iPhone; TC-733.
+Biên bản: [E18](../../Docs/angia/acceptance/v0.3/epic18-acceptance.md), [E22](../../Docs/angia/acceptance/v0.3/epic22-acceptance.md).
+Tiếp theo **E23 — Nghiệm thu v0.3, promote, đóng băng**.
+
+## Kiểm toán E23-S1-T1 — 2026-11-08
+
+**PASS theo owner; E23 hoàn thành 1/4 task.** Bản kiểm `cb16a7b`:
+11 route `self_write` có probe cùng gia đình khác hồ sơ và khác gia đình,
+kiểm `404` và snapshot DB không đổi; 24 unit kiểm kê/helper PASS;
+full integration local **845/845 test, 136/136 suite PASS**.
+API và worker SIT đều dùng `angia_sit_app`, không superuser, không bypass RLS
+và không sở hữu các bảng RLS. Catalog SIT khớp 4 bảng đau nhức bật RLS,
+29 bảng cũ có tổng 87 policy RESTRICTIVE.
+
+`yarn verify:fast` trên bản sao tạm exit 0: typecheck đạt;
+`--changed` không chọn unit test. Các phép phá policy đỏ TC-704/705
+tham chiếu bằng chứng E19, không thực hiện lại trong lượt này.
+[Biên bản E23](../../Docs/angia/acceptance/v0.3/epic23-acceptance.md).
+Tiếp theo **E23-S1-T2** — đo NFR-8, rà SC18 và kiểm SC19.
+E23 chưa đóng; Production vẫn giữ v0.2.
