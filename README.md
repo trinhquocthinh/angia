@@ -514,3 +514,20 @@ Một lượt đầu gặp lỗi DOM bị gỡ trong ca bài tập WebKit; chạ
 `/private/tmp/angia-pain-guidance-*.log`; source đối chiếu byte với bản đã kiểm.
 Chưa commit/push/deploy hoặc nghiệm thu điện thoại/trình đọc màn hình thật/SIT
 cho thay đổi này. Các sửa modal trước đó được giữ nguyên trên cùng nhánh.
+
+## Nghiệm thu E21/P21 trên SIT — 2026-11-08
+
+**PASS, đóng E21/P21 — 11/11 task theo xác nhận owner:** “tôi đã test và pass trên SIT , tiến hành qui trình nghiệm thu”.
+Phạm vi gồm UI sổ đau nhức, tự quản và hai sửa sau review (cuộn/bố cục modal, hướng dẫn chọn mức đau).
+[PR #65](https://github.com/trinhquocthinh/angia/pull/65) và [PR #66](https://github.com/trinhquocthinh/angia/pull/66)
+đã merge; bản nghiệm thu SIT là `6b31d6d90ecd38457e8b286fa2be6b342c65a71e`.
+[CI sau merge](https://github.com/trinhquocthinh/angia/actions/runs/42473486113) và
+[pipeline SIT](https://github.com/trinhquocthinh/homelab-deploy/actions/runs/42474005870) PASS;
+840 integration/134 suite, wrapper ghi đúng source SHA và ba digest đang chạy.
+
+Xác nhận thao tác SIT là của owner; agent đối chiếu GitHub/log pipeline, không chạy lại thao tác người dùng hoặc đo NFR-8 trong lượt nghiệm thu này.
+Số đo 5 lần/trung vị, thiết bị/trình duyệt của TC-733 chưa được cung cấp; phép đo chính thức giữ ở E23.
+Quyết định này thay trạng thái chờ nghiệm thu E21 trong các checkpoint local trước đó.
+[Biên bản và giới hạn](../../Docs/angia/acceptance/v0.3/epic21-acceptance.md).
+Tiếp theo **E22-S1-T1 — Dòng thời gian thêm ba loại**; E18 giữ trạng thái riêng,
+E22/E23 và phát hành v0.3/Production còn mở.

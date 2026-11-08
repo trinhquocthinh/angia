@@ -4,7 +4,11 @@ import { loadBodyModel3D } from '../../application/loadBodyModel3D';
 import type { BodyLocation } from '../../application/regionFromNodeName';
 import { hasWebGL } from './hasWebGL';
 
-type SceneProps = { model: Object3D; onSelect: (location: BodyLocation) => void };
+type SceneProps = {
+  model: Object3D;
+  selected: BodyLocation | null;
+  onSelect: (location: BodyLocation) => void;
+};
 type Loaded = { Scene: ComponentType<SceneProps>; model: Object3D };
 type State = { status: 'loading' } | { status: 'unavailable' } | ({ status: 'ready' } & Loaded);
 
@@ -17,9 +21,14 @@ const loadScene = async (): Promise<Loaded> => {
   return { Scene: BodyModel3DScene, model: await loadBodyGltf() };
 };
 
-type Props = { onSelect: (location: BodyLocation) => void; onReady?: () => void };
+type Props = {
+  selected?: BodyLocation | null;
+  onSelect: (location: BodyLocation) => void;
+  onReady?: () => void;
+  onUnavailable?: () => void;
+};
 
-export function BodyModel3D({ onSelect, onReady }: Props) {
+export function BodyModel3D({ selected = null, onSelect, onReady, onUnavailable }: Props) {
   const [state, setState] = useState<State>({ status: 'loading' });
   useEffect(() => {
     let active = true;
@@ -27,6 +36,7 @@ export function BodyModel3D({ onSelect, onReady }: Props) {
       if (!active) return;
       setState(loaded ? { status: 'ready', ...loaded } : { status: 'unavailable' });
       if (loaded) onReady?.();
+      else onUnavailable?.();
     });
     return () => {
       active = false;
@@ -49,5 +59,5 @@ export function BodyModel3D({ onSelect, onReady }: Props) {
         Đang tải mô hình 3D…
       </div>
     );
-  return <state.Scene model={state.model} onSelect={onSelect} />;
+  return <state.Scene model={state.model} selected={selected} onSelect={onSelect} />;
 }

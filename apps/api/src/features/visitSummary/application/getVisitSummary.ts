@@ -45,6 +45,7 @@ export function getVisitSummary(
         measurements: includeVitals ? await store.listMeasurementsBetween(profileId, from, to) : [],
         latestLabResults: pickLatestLabResults(await store.listLabResults(profileId, to), to),
         adherencePeriods: await store.listAdherencePeriodsBetween(profileId, from, to),
+        painIssues: await store.listPainIssues(profileId, from, to),
         disclaimer: VISIT_SUMMARY_DISCLAIMER,
       },
     };

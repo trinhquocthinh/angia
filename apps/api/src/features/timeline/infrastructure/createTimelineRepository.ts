@@ -12,12 +12,15 @@ import { listTimelineAdherencePeriods } from './listTimelineAdherencePeriods.js'
 import { loadTimelinePrescriptionPairs } from './loadTimelinePrescriptionPairs.js';
 import { listTimelineTemperatures } from './listTimelineTemperatures.js';
 import { listTimelineAsNeededDoses } from './listTimelineAsNeededDoses.js';
+import { listTimelinePainEntries } from './listTimelinePainEntries.js';
+import { listTimelinePainIssueStatuses } from './listTimelinePainIssueStatuses.js';
+import { listTimelineExercisesStarted } from './listTimelineExercisesStarted.js';
 
 export function createTimelineRepository(
   db: Database,
   scope: FamilyScope = withFamilyScope,
 ): TimelineRepository {
-  // Cùng ảnh chụp dữ liệu cho tám nguồn, đồng thuận và so sánh đơn.
+  // Cùng ảnh chụp dữ liệu cho mười một nguồn, đồng thuận và so sánh đơn.
   const reader: Pick<Database, 'transaction'> = {
     transaction: (work) =>
       db.transaction(work, { isolationLevel: 'repeatable read', accessMode: 'read only' }),
@@ -48,6 +51,9 @@ export function createTimelineRepository(
               await listTimelineAdherencePeriods(scope, query),
               await listTimelineTemperatures(scope, query),
               await listTimelineAsNeededDoses(scope, query),
+              await listTimelinePainEntries(scope, query),
+              await listTimelinePainIssueStatuses(scope, query),
+              await listTimelineExercisesStarted(scope, query),
               includeMeasurements ? await listTimelineMeasurements(scope, query) : [],
             ];
           },

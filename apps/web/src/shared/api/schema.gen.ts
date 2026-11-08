@@ -4260,7 +4260,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Dòng thời gian sáu loại sự kiện đã ghi nhận (SPEC-049, E13-S5-T1) */
+    /** Dòng thời gian mười một loại sự kiện đã ghi nhận (SPEC-049, E22-S1-T1) */
     get: {
       parameters: {
         query?: {
@@ -10855,6 +10855,126 @@ export interface components {
           data: {
             prescriptionIds: string[];
           };
+        }
+      | {
+          id: string;
+          /** Format: date */
+          date: string;
+          time: string | null;
+          /** @enum {string} */
+          kind: 'pain_entry';
+          data: {
+            /** Format: uuid */
+            issueId: string;
+            /** @enum {string} */
+            region:
+              | 'head'
+              | 'neck'
+              | 'chest'
+              | 'abdomen'
+              | 'upper_back'
+              | 'lower_back'
+              | 'pelvis'
+              | 'shoulder'
+              | 'upper_arm'
+              | 'elbow'
+              | 'forearm'
+              | 'wrist'
+              | 'hand'
+              | 'hip'
+              | 'buttock'
+              | 'thigh'
+              | 'knee'
+              | 'shin'
+              | 'calf'
+              | 'ankle'
+              | 'foot';
+            /** @enum {string} */
+            side: 'left' | 'right' | 'center';
+            level: number;
+            note: string | null;
+          };
+        }
+      | {
+          id: string;
+          /** Format: date */
+          date: string;
+          time: string | null;
+          /** @enum {string} */
+          kind: 'pain_issue_status';
+          data: {
+            /** Format: uuid */
+            issueId: string;
+            /** @enum {string} */
+            region:
+              | 'head'
+              | 'neck'
+              | 'chest'
+              | 'abdomen'
+              | 'upper_back'
+              | 'lower_back'
+              | 'pelvis'
+              | 'shoulder'
+              | 'upper_arm'
+              | 'elbow'
+              | 'forearm'
+              | 'wrist'
+              | 'hand'
+              | 'hip'
+              | 'buttock'
+              | 'thigh'
+              | 'knee'
+              | 'shin'
+              | 'calf'
+              | 'ankle'
+              | 'foot';
+            /** @enum {string} */
+            side: 'left' | 'right' | 'center';
+            /** @enum {string} */
+            change: 'resolved' | 'reopened';
+          };
+        }
+      | {
+          id: string;
+          /** Format: date */
+          date: string;
+          time: string | null;
+          /** @enum {string} */
+          kind: 'exercise_started';
+          data: {
+            /** Format: uuid */
+            issueId: string;
+            /** @enum {string} */
+            region:
+              | 'head'
+              | 'neck'
+              | 'chest'
+              | 'abdomen'
+              | 'upper_back'
+              | 'lower_back'
+              | 'pelvis'
+              | 'shoulder'
+              | 'upper_arm'
+              | 'elbow'
+              | 'forearm'
+              | 'wrist'
+              | 'hand'
+              | 'hip'
+              | 'buttock'
+              | 'thigh'
+              | 'knee'
+              | 'shin'
+              | 'calf'
+              | 'ankle'
+              | 'foot';
+            /** @enum {string} */
+            side: 'left' | 'right' | 'center';
+            /** Format: uuid */
+            exerciseId: string;
+            name: string;
+            /** @enum {string} */
+            source: 'prescribed' | 'self';
+          };
         };
     SelfProfile: {
       /** Format: uuid */
@@ -11045,6 +11165,60 @@ export interface components {
       measurements: components['schemas']['Measurement'][];
       latestLabResults: components['schemas']['LabResult'][];
       adherencePeriods: components['schemas']['AdherencePeriod'][];
+      painIssues: {
+        /** @enum {string} */
+        region:
+          | 'head'
+          | 'neck'
+          | 'chest'
+          | 'abdomen'
+          | 'upper_back'
+          | 'lower_back'
+          | 'pelvis'
+          | 'shoulder'
+          | 'upper_arm'
+          | 'elbow'
+          | 'forearm'
+          | 'wrist'
+          | 'hand'
+          | 'hip'
+          | 'buttock'
+          | 'thigh'
+          | 'knee'
+          | 'shin'
+          | 'calf'
+          | 'ankle'
+          | 'foot';
+        /** @enum {string} */
+        side: 'left' | 'right' | 'center';
+        title: string | null;
+        /** @enum {string} */
+        status: 'tracking' | 'resolved';
+        /** Format: date */
+        resolvedOn: string | null;
+        entries: {
+          /** Format: date-time */
+          recordedAt: string;
+          level: number;
+          note: string | null;
+          createdBy: {
+            /** Format: uuid */
+            accountId: string;
+            displayName: string;
+          } | null;
+        }[];
+        exercises: {
+          name: string;
+          /** @enum {string} */
+          source: 'prescribed' | 'self';
+          prescriber: string | null;
+          /** Format: date */
+          startDate: string;
+          /** Format: date */
+          endDate: string | null;
+          note: string | null;
+        }[];
+      }[];
       /** @enum {string} */
       disclaimer: 'Tài liệu tổng hợp từ gia đình, không phải chỉ định y khoa.';
     };
