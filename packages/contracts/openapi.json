@@ -4934,6 +4934,287 @@
               "kind",
               "data"
             ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "pain_entry"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "issueId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "region": {
+                    "type": "string",
+                    "enum": [
+                      "head",
+                      "neck",
+                      "chest",
+                      "abdomen",
+                      "upper_back",
+                      "lower_back",
+                      "pelvis",
+                      "shoulder",
+                      "upper_arm",
+                      "elbow",
+                      "forearm",
+                      "wrist",
+                      "hand",
+                      "hip",
+                      "buttock",
+                      "thigh",
+                      "knee",
+                      "shin",
+                      "calf",
+                      "ankle",
+                      "foot"
+                    ]
+                  },
+                  "side": {
+                    "type": "string",
+                    "enum": [
+                      "left",
+                      "right",
+                      "center"
+                    ]
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 10
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "issueId",
+                  "region",
+                  "side",
+                  "level",
+                  "note"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "pain_issue_status"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "issueId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "region": {
+                    "type": "string",
+                    "enum": [
+                      "head",
+                      "neck",
+                      "chest",
+                      "abdomen",
+                      "upper_back",
+                      "lower_back",
+                      "pelvis",
+                      "shoulder",
+                      "upper_arm",
+                      "elbow",
+                      "forearm",
+                      "wrist",
+                      "hand",
+                      "hip",
+                      "buttock",
+                      "thigh",
+                      "knee",
+                      "shin",
+                      "calf",
+                      "ankle",
+                      "foot"
+                    ]
+                  },
+                  "side": {
+                    "type": "string",
+                    "enum": [
+                      "left",
+                      "right",
+                      "center"
+                    ]
+                  },
+                  "change": {
+                    "type": "string",
+                    "enum": [
+                      "resolved",
+                      "reopened"
+                    ]
+                  }
+                },
+                "required": [
+                  "issueId",
+                  "region",
+                  "side",
+                  "change"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "exercise_started"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "issueId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "region": {
+                    "type": "string",
+                    "enum": [
+                      "head",
+                      "neck",
+                      "chest",
+                      "abdomen",
+                      "upper_back",
+                      "lower_back",
+                      "pelvis",
+                      "shoulder",
+                      "upper_arm",
+                      "elbow",
+                      "forearm",
+                      "wrist",
+                      "hand",
+                      "hip",
+                      "buttock",
+                      "thigh",
+                      "knee",
+                      "shin",
+                      "calf",
+                      "ankle",
+                      "foot"
+                    ]
+                  },
+                  "side": {
+                    "type": "string",
+                    "enum": [
+                      "left",
+                      "right",
+                      "center"
+                    ]
+                  },
+                  "exerciseId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string",
+                    "enum": [
+                      "prescribed",
+                      "self"
+                    ]
+                  }
+                },
+                "required": [
+                  "issueId",
+                  "region",
+                  "side",
+                  "exerciseId",
+                  "name",
+                  "source"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
           }
         ]
       },
@@ -11273,7 +11554,7 @@
         "tags": [
           "timeline"
         ],
-        "summary": "Dòng thời gian sáu loại sự kiện đã ghi nhận (SPEC-049, E13-S5-T1)",
+        "summary": "Dòng thời gian mười một loại sự kiện đã ghi nhận (SPEC-049, E22-S1-T1)",
         "parameters": [
           {
             "schema": {

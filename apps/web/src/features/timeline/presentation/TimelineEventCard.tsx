@@ -11,6 +11,9 @@ const labels: Record<TimelineEvent['kind'], string> = {
   course_stopped: 'Dừng thuốc',
   adherence_period: 'Giai đoạn thực tế',
   revisit: 'Lịch tái khám',
+  pain_entry: 'Lần ghi đau',
+  pain_issue_status: 'Vấn đề đau',
+  exercise_started: 'Bắt đầu bài tập',
 };
 
 type Props = { event: TimelineEvent; profileId: string | undefined };
