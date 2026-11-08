@@ -72,6 +72,7 @@ jobs:
       - uses: ./.github/actions/setup
       - run: yarn build
       - run: yarn perf:budget
+      - run: yarn model:check
       - name: Kiểm tra Dockerfile build được (không push)
         run: |
           docker build -f apps/api/Dockerfile -t angia-api:ci . &
