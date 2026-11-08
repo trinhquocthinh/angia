@@ -560,3 +560,28 @@ tham chiếu bằng chứng E19, không thực hiện lại trong lượt này.
 [Biên bản E23](../../Docs/angia/acceptance/v0.3/epic23-acceptance.md).
 Tiếp theo **E23-S1-T2** — đo NFR-8, rà SC18 và kiểm SC19.
 E23 chưa đóng; Production vẫn giữ v0.2.
+
+## Checkpoint E23-S1-T2 — cập nhật 2026-11-09
+
+**Đang thực hiện, chưa nghiệm thu PASS; E23 giữ 1/4 task hoàn tất.**
+Lượt kiểm ngày 2026-11-08 trên source `9acce6b`:
+
+- SC18 (TC-714/725): 9/9 unit test, 3/3 tệp PASS.
+- `yarn perf:budget`: PASS, TC-729 đạt; route lớn nhất 204.748 byte gzip,
+  còn 52 byte dưới ngưỡng 200 KB. Đây là build local, chưa đo lại image SIT.
+- `yarn verify:fast` trên bản sao tạm: exit 0, typecheck đạt;
+  baseline Git sạch nên `--changed` không chọn test.
+- Lighthouse 12.8.2 Mobile Slow 4G, CPU ×4 trên SIT `/` → `/login`:
+  LCP 3,014 / 2,410 / 2,405 / 2,411 / 2,410 giây;
+  trung vị **2,410 giây**, 1/5 lượt vượt 3 giây.
+  Chưa đo các route cũ sau đăng nhập, chưa kết luận SC19 đầy đủ.
+- Đã rà mẫu danh sách/chi tiết trên phiên SIT của tài khoản thử;
+  chưa kết luận SC18 toàn bộ UI/bản in. Bản tóm tắt báo
+  “Không tải được bản tóm tắt.” sau khi thử lại; nút in bị vô hiệu hóa.
+
+Còn lại: 5 số đo điện thoại thật TC-733 (trung vị ≤15 giây, ≤4 chạm),
+xác định/xử lý lỗi tải tóm tắt theo quy trình review và rà bản in,
+hoàn tất SC18 và Lighthouse các route cũ sau đăng nhập.
+CSP SIT và kiểm 3D iPhone/Android tiếp tục theo bàn giao E22.
+[Biên bản E23 và bằng chứng](../../Docs/angia/acceptance/v0.3/epic23-acceptance.md).
+Chưa đóng T2/E23, promote Production hoặc ghi mốc phát hành v0.3.
