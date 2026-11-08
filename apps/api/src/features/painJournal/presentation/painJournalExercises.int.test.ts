@@ -23,6 +23,7 @@ describe.each([false, true])('Bài tập qua HTTP, self=%s', (self) => {
           source: 'prescribed',
           prescriber: 'BS. An',
           startDate: '2026-11-05',
+          endDate: '2026-11-10',
           note: '3 hiệp × 10 lần',
         },
         201,
@@ -36,11 +37,14 @@ describe.each([false, true])('Bài tập qua HTTP, self=%s', (self) => {
         source: 'prescribed',
         prescriber: 'BS. An',
         startDate: '2026-11-05',
-        endDate: null,
+        endDate: '2026-11-10',
         note: '3 hiệp × 10 lần',
         createdBy: { accountId: s.user.accountId },
         updatedBy: { accountId: s.user.accountId },
       });
+      const cleared = await s.send('PATCH', `/${issue.id}/exercises/${exercise.id}`, { endDate: null }, 200);
+      expect(await cleared.json()).toMatchObject({ endDate: null });
+      expect((await s.detail(issue.id)).exercises[0]?.endDate).toBeNull();
       const updated = await s.send('PATCH', `/${issue.id}/exercises/${exercise.id}`, { source: 'self' }, 200);
       expect(await updated.json()).toMatchObject({ source: 'self', prescriber: null });
       await s.send('DELETE', `/${issue.id}/exercises/${exercise.id}`, undefined, 204);

@@ -5,6 +5,7 @@ const SECTIONS = [
   { key: 'health', label: 'Diễn biến sức khỏe' },
   { key: 'lab-results', label: 'Kết quả xét nghiệm' },
   { key: 'temperatures', label: 'Nhiệt độ' },
+  { key: 'pain', label: 'Đau nhức' },
 ] as const;
 
 export type SelfSectionKey = (typeof SECTIONS)[number]['key'];

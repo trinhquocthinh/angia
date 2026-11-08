@@ -83,7 +83,7 @@ export const createExerciseNoteRequestSchema = z
   .meta({ id: 'CreateExerciseNoteRequest' });
 // PATCH phải được ghép với dữ liệu hiện có trước khi kiểm đủ ngày; source=self xóa người chỉ định ở application.
 export const updateExerciseNoteRequestSchema = z
-  .strictObject(exerciseFields)
+  .strictObject({ ...exerciseFields, endDate: z.iso.date().nullable().optional() })
   .partial()
   .refine(({ startDate, endDate }) => !startDate || !endDate || endDate >= startDate, {
     path: ['endDate'],
