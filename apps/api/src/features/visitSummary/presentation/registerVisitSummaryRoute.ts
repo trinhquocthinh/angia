@@ -32,6 +32,7 @@ export function registerVisitSummaryRoute(
         currentMedications: summary.currentMedications.map((course) => ({
           ...course,
           strength: course.strength ?? null,
+          lastDoseAt: course.lastDoseAt?.toISOString() ?? null,
         })),
         measurements: summary.measurements.map(toMeasurementResponse),
         latestLabResults: summary.latestLabResults.map(toLabResultResponse),

@@ -585,3 +585,24 @@ hoàn tất SC18 và Lighthouse các route cũ sau đăng nhập.
 CSP SIT và kiểm 3D iPhone/Android tiếp tục theo bàn giao E22.
 [Biên bản E23 và bằng chứng](../../Docs/angia/acceptance/v0.3/epic23-acceptance.md).
 Chưa đóng T2/E23, promote Production hoặc ghi mốc phát hành v0.3.
+
+## Sửa lỗi chặn nghiệm thu E23 — 2026-11-09
+
+Owner duyệt áp dụng bản sửa trong chat. API tóm tắt chưa chuyển
+`currentMedications[].lastDoseAt` từ `Date` sang chuỗi ISO, khiến hồ sơ có
+liều “Khi cần” trả 500. Đã sửa tại presentation, giữ `null` khi chưa ghi liều;
+không đổi domain, schema DB hoặc hợp đồng API.
+
+- Test hồi quy trên DB tạm: RED đúng lỗi 500 trước sửa; sau sửa,
+  11/11 integration của tóm tắt PASS, gồm ca chặn chéo gia đình.
+- `yarn verify:fast`: PASS, 18 unit được chọn. `yarn verify`: PASS,
+  2.774 unit/552 tệp, typecheck/lint/format/build/budget/model check đạt.
+- Caddy SIT đã khôi phục CSP cho nhánh web, thêm `'wasm-unsafe-eval'` vào
+  `script-src` theo bàn giao E22. Validate/reload đạt; HTTPS trả đúng CSP;
+  mô hình 3D hiển thị trên Chrome desktop sau reload.
+
+Đây là checkpoint source local và cấu hình CSP SIT; chưa chứng minh bản sửa
+API đã deploy. Còn kiểm lại tóm tắt/bản in trên image SIT mới, Lighthouse
+sau đăng nhập, TC-733 điện thoại thật, 3D trên thiết bị thật và backup
+Production đã restore-check/offsite. E23-S1-T2/E23-S2-T1 chưa PASS;
+Production vẫn giữ v0.2.
