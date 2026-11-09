@@ -1,3 +1,4 @@
+import { createPainJournalDependencies } from '@src/features/painJournal/infrastructure/createPainJournalDependencies.js';
 import { createSelfProfileRepository } from '@src/features/selfProfile/infrastructure/createSelfProfileRepository.js';
 import { createTimelineRepository } from '@src/features/timeline/infrastructure/createTimelineRepository.js';
 import { createPrescriptionChainRepository } from '@src/features/prescriptions/infrastructure/createPrescriptionChainRepository.js';
@@ -172,6 +173,7 @@ const app = createApp({
   prescriptionChain: createPrescriptionChainRepository(db),
   timeline: createTimelineRepository(db),
   selfProfile: createSelfProfileRepository(db),
+  painJournal: createPainJournalDependencies(db),
   reminderRecipients: createReminderRecipientRepository(db),
   myReminders: createMyReminderRepository(db),
   doseConfirmations: createDoseConfirmationRepository(db),

@@ -252,9 +252,10 @@ export type { MyRevisitReminder } from './reminders/myRevisitReminderSchemas.js'
 
 export { prescriptionDiffSchema } from './prescriptions/prescriptionDiffSchema.js';
 export type { PrescriptionDiff } from './prescriptions/prescriptionDiffSchema.js';
-export {
-  prescriptionListItemSchema,
-  prescriptionDetailSchema,
-} from './prescriptions/prescriptionChainSchemas.js';
-export type { PrescriptionListItem, PrescriptionDetail } from './prescriptions/prescriptionChainSchemas.js';
+export * from './prescriptions/prescriptionChainSchemas.js';
 export * from './timeline/timelineSchemas.js';
+
+export * from './painJournal/bodyRegions.js';
+export * from './painJournal/limits.js';
+export * from './painJournal/forbiddenWords.js';
+export * from './painJournal/schemas.js';

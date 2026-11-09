@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, foreignKey, index, numeric, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
@@ -26,6 +27,7 @@ export const temperatureReadings = pgTable(
     }).onDelete('cascade'),
     index('temperature_readings_profile_measured_idx').on(t.healthProfileId, t.measuredAt),
     check('temperature_readings_celsius_range', sql`${t.celsius} BETWEEN 25.0 AND 50.0`),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('health_profile_id'),
   ],
 );

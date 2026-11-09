@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, foreignKey, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { healthProfiles } from './healthProfiles.js';
@@ -20,6 +21,7 @@ export const consentLegacyAttestations = pgTable(
       name: 'consent_legacy_attestations_profile_family_fk',
     }).onDelete('cascade'),
     check('consent_legacy_attestations_basis_valid', sql`${t.basis} IN ('self', 'guardian')`),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('profile_id'),
   ],
 );

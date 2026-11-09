@@ -24,14 +24,18 @@ import { Route as RemindersReminderIdRouteImport } from './routes/reminders.$rem
 import { Route as ReviewIndexRouteImport } from './routes/review.index'
 import { Route as ReviewDocumentIdRouteImport } from './routes/review.$documentId'
 import { Route as RevisitRemindersReminderIdRouteImport } from './routes/revisit-reminders.$reminderId'
+import { Route as SpikeBody3dRouteImport } from './routes/spike.body-3d'
+import { Route as MyProfilePainIssueIdRouteImport } from './routes/my-profile_.pain.$issueId'
 import { Route as ProfilesProfileIdDocumentsRouteImport } from './routes/profiles.$profileId_.documents'
 import { Route as ProfilesProfileIdLabResultsRouteImport } from './routes/profiles.$profileId_.lab-results'
 import { Route as ProfilesProfileIdManualRouteImport } from './routes/profiles.$profileId_.manual'
 import { Route as ProfilesProfileIdMedicationsRouteImport } from './routes/profiles.$profileId_.medications'
+import { Route as ProfilesProfileIdPainRouteImport } from './routes/profiles.$profileId_.pain'
 import { Route as ProfilesProfileIdRemindersRouteImport } from './routes/profiles.$profileId_.reminders'
 import { Route as ProfilesProfileIdRevisitsRouteImport } from './routes/profiles.$profileId_.revisits'
 import { Route as ProfilesProfileIdSummaryRouteImport } from './routes/profiles.$profileId_.summary'
 import { Route as ProfilesProfileIdTimelineRouteImport } from './routes/profiles.$profileId_.timeline'
+import { Route as ProfilesProfileIdPainIssueIdRouteImport } from './routes/profiles.$profileId_.pain_.$issueId'
 import { Route as ProfilesProfileIdPrescriptionsIndexRouteImport } from './routes/profiles.$profileId_.prescriptions.index'
 import { Route as ProfilesProfileIdPrescriptionsPrescriptionIdRouteImport } from './routes/profiles.$profileId_.prescriptions.$prescriptionId'
 
@@ -111,6 +115,16 @@ const RevisitRemindersReminderIdRoute =
     path: '/revisit-reminders/$reminderId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const SpikeBody3dRoute = SpikeBody3dRouteImport.update({
+  id: '/spike/body-3d',
+  path: '/spike/body-3d',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyProfilePainIssueIdRoute = MyProfilePainIssueIdRouteImport.update({
+  id: '/my-profile_/pain/$issueId',
+  path: '/my-profile/pain/$issueId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfilesProfileIdDocumentsRoute =
   ProfilesProfileIdDocumentsRouteImport.update({
     id: '/profiles/$profileId_/documents',
@@ -134,6 +148,11 @@ const ProfilesProfileIdMedicationsRoute =
     path: '/profiles/$profileId/medications',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ProfilesProfileIdPainRoute = ProfilesProfileIdPainRouteImport.update({
+  id: '/profiles/$profileId_/pain',
+  path: '/profiles/$profileId/pain',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfilesProfileIdRemindersRoute =
   ProfilesProfileIdRemindersRouteImport.update({
     id: '/profiles/$profileId_/reminders',
@@ -156,6 +175,12 @@ const ProfilesProfileIdTimelineRoute =
   ProfilesProfileIdTimelineRouteImport.update({
     id: '/profiles/$profileId_/timeline',
     path: '/profiles/$profileId/timeline',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ProfilesProfileIdPainIssueIdRoute =
+  ProfilesProfileIdPainIssueIdRouteImport.update({
+    id: '/profiles/$profileId_/pain_/$issueId',
+    path: '/profiles/$profileId/pain/$issueId',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ProfilesProfileIdPrescriptionsIndexRoute =
@@ -186,15 +211,19 @@ export interface FileRoutesByFullPath {
   '/reminders/$reminderId': typeof RemindersReminderIdRoute
   '/review/$documentId': typeof ReviewDocumentIdRoute
   '/revisit-reminders/$reminderId': typeof RevisitRemindersReminderIdRoute
+  '/spike/body-3d': typeof SpikeBody3dRoute
   '/review/': typeof ReviewIndexRoute
+  '/my-profile/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
   '/profiles/$profileId/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId/medications': typeof ProfilesProfileIdMedicationsRoute
+  '/profiles/$profileId/pain': typeof ProfilesProfileIdPainRoute
   '/profiles/$profileId/reminders': typeof ProfilesProfileIdRemindersRoute
   '/profiles/$profileId/revisits': typeof ProfilesProfileIdRevisitsRoute
   '/profiles/$profileId/summary': typeof ProfilesProfileIdSummaryRoute
   '/profiles/$profileId/timeline': typeof ProfilesProfileIdTimelineRoute
+  '/profiles/$profileId/pain/$issueId': typeof ProfilesProfileIdPainIssueIdRoute
   '/profiles/$profileId/prescriptions/$prescriptionId': typeof ProfilesProfileIdPrescriptionsPrescriptionIdRoute
   '/profiles/$profileId/prescriptions/': typeof ProfilesProfileIdPrescriptionsIndexRoute
 }
@@ -213,15 +242,19 @@ export interface FileRoutesByTo {
   '/reminders/$reminderId': typeof RemindersReminderIdRoute
   '/review/$documentId': typeof ReviewDocumentIdRoute
   '/revisit-reminders/$reminderId': typeof RevisitRemindersReminderIdRoute
+  '/spike/body-3d': typeof SpikeBody3dRoute
   '/review': typeof ReviewIndexRoute
+  '/my-profile/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
   '/profiles/$profileId/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId/medications': typeof ProfilesProfileIdMedicationsRoute
+  '/profiles/$profileId/pain': typeof ProfilesProfileIdPainRoute
   '/profiles/$profileId/reminders': typeof ProfilesProfileIdRemindersRoute
   '/profiles/$profileId/revisits': typeof ProfilesProfileIdRevisitsRoute
   '/profiles/$profileId/summary': typeof ProfilesProfileIdSummaryRoute
   '/profiles/$profileId/timeline': typeof ProfilesProfileIdTimelineRoute
+  '/profiles/$profileId/pain/$issueId': typeof ProfilesProfileIdPainIssueIdRoute
   '/profiles/$profileId/prescriptions/$prescriptionId': typeof ProfilesProfileIdPrescriptionsPrescriptionIdRoute
   '/profiles/$profileId/prescriptions': typeof ProfilesProfileIdPrescriptionsIndexRoute
 }
@@ -241,15 +274,19 @@ export interface FileRoutesById {
   '/reminders/$reminderId': typeof RemindersReminderIdRoute
   '/review/$documentId': typeof ReviewDocumentIdRoute
   '/revisit-reminders/$reminderId': typeof RevisitRemindersReminderIdRoute
+  '/spike/body-3d': typeof SpikeBody3dRoute
   '/review/': typeof ReviewIndexRoute
+  '/my-profile_/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId_/documents': typeof ProfilesProfileIdDocumentsRoute
   '/profiles/$profileId_/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId_/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId_/medications': typeof ProfilesProfileIdMedicationsRoute
+  '/profiles/$profileId_/pain': typeof ProfilesProfileIdPainRoute
   '/profiles/$profileId_/reminders': typeof ProfilesProfileIdRemindersRoute
   '/profiles/$profileId_/revisits': typeof ProfilesProfileIdRevisitsRoute
   '/profiles/$profileId_/summary': typeof ProfilesProfileIdSummaryRoute
   '/profiles/$profileId_/timeline': typeof ProfilesProfileIdTimelineRoute
+  '/profiles/$profileId_/pain_/$issueId': typeof ProfilesProfileIdPainIssueIdRoute
   '/profiles/$profileId_/prescriptions/$prescriptionId': typeof ProfilesProfileIdPrescriptionsPrescriptionIdRoute
   '/profiles/$profileId_/prescriptions/': typeof ProfilesProfileIdPrescriptionsIndexRoute
 }
@@ -270,15 +307,19 @@ export interface FileRouteTypes {
     | '/reminders/$reminderId'
     | '/review/$documentId'
     | '/revisit-reminders/$reminderId'
+    | '/spike/body-3d'
     | '/review/'
+    | '/my-profile/pain/$issueId'
     | '/profiles/$profileId/documents'
     | '/profiles/$profileId/lab-results'
     | '/profiles/$profileId/manual'
     | '/profiles/$profileId/medications'
+    | '/profiles/$profileId/pain'
     | '/profiles/$profileId/reminders'
     | '/profiles/$profileId/revisits'
     | '/profiles/$profileId/summary'
     | '/profiles/$profileId/timeline'
+    | '/profiles/$profileId/pain/$issueId'
     | '/profiles/$profileId/prescriptions/$prescriptionId'
     | '/profiles/$profileId/prescriptions/'
   fileRoutesByTo: FileRoutesByTo
@@ -297,15 +338,19 @@ export interface FileRouteTypes {
     | '/reminders/$reminderId'
     | '/review/$documentId'
     | '/revisit-reminders/$reminderId'
+    | '/spike/body-3d'
     | '/review'
+    | '/my-profile/pain/$issueId'
     | '/profiles/$profileId/documents'
     | '/profiles/$profileId/lab-results'
     | '/profiles/$profileId/manual'
     | '/profiles/$profileId/medications'
+    | '/profiles/$profileId/pain'
     | '/profiles/$profileId/reminders'
     | '/profiles/$profileId/revisits'
     | '/profiles/$profileId/summary'
     | '/profiles/$profileId/timeline'
+    | '/profiles/$profileId/pain/$issueId'
     | '/profiles/$profileId/prescriptions/$prescriptionId'
     | '/profiles/$profileId/prescriptions'
   id:
@@ -324,15 +369,19 @@ export interface FileRouteTypes {
     | '/reminders/$reminderId'
     | '/review/$documentId'
     | '/revisit-reminders/$reminderId'
+    | '/spike/body-3d'
     | '/review/'
+    | '/my-profile_/pain/$issueId'
     | '/profiles/$profileId_/documents'
     | '/profiles/$profileId_/lab-results'
     | '/profiles/$profileId_/manual'
     | '/profiles/$profileId_/medications'
+    | '/profiles/$profileId_/pain'
     | '/profiles/$profileId_/reminders'
     | '/profiles/$profileId_/revisits'
     | '/profiles/$profileId_/summary'
     | '/profiles/$profileId_/timeline'
+    | '/profiles/$profileId_/pain_/$issueId'
     | '/profiles/$profileId_/prescriptions/$prescriptionId'
     | '/profiles/$profileId_/prescriptions/'
   fileRoutesById: FileRoutesById
@@ -352,15 +401,19 @@ export interface RootRouteChildren {
   RemindersReminderIdRoute: typeof RemindersReminderIdRoute
   ReviewDocumentIdRoute: typeof ReviewDocumentIdRoute
   RevisitRemindersReminderIdRoute: typeof RevisitRemindersReminderIdRoute
+  SpikeBody3dRoute: typeof SpikeBody3dRoute
   ReviewIndexRoute: typeof ReviewIndexRoute
+  MyProfilePainIssueIdRoute: typeof MyProfilePainIssueIdRoute
   ProfilesProfileIdDocumentsRoute: typeof ProfilesProfileIdDocumentsRoute
   ProfilesProfileIdLabResultsRoute: typeof ProfilesProfileIdLabResultsRoute
   ProfilesProfileIdManualRoute: typeof ProfilesProfileIdManualRoute
   ProfilesProfileIdMedicationsRoute: typeof ProfilesProfileIdMedicationsRoute
+  ProfilesProfileIdPainRoute: typeof ProfilesProfileIdPainRoute
   ProfilesProfileIdRemindersRoute: typeof ProfilesProfileIdRemindersRoute
   ProfilesProfileIdRevisitsRoute: typeof ProfilesProfileIdRevisitsRoute
   ProfilesProfileIdSummaryRoute: typeof ProfilesProfileIdSummaryRoute
   ProfilesProfileIdTimelineRoute: typeof ProfilesProfileIdTimelineRoute
+  ProfilesProfileIdPainIssueIdRoute: typeof ProfilesProfileIdPainIssueIdRoute
   ProfilesProfileIdPrescriptionsPrescriptionIdRoute: typeof ProfilesProfileIdPrescriptionsPrescriptionIdRoute
   ProfilesProfileIdPrescriptionsIndexRoute: typeof ProfilesProfileIdPrescriptionsIndexRoute
 }
@@ -472,6 +525,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RevisitRemindersReminderIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/spike/body-3d': {
+      id: '/spike/body-3d'
+      path: '/spike/body-3d'
+      fullPath: '/spike/body-3d'
+      preLoaderRoute: typeof SpikeBody3dRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-profile_/pain/$issueId': {
+      id: '/my-profile_/pain/$issueId'
+      path: '/my-profile/pain/$issueId'
+      fullPath: '/my-profile/pain/$issueId'
+      preLoaderRoute: typeof MyProfilePainIssueIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profiles/$profileId_/documents': {
       id: '/profiles/$profileId_/documents'
       path: '/profiles/$profileId/documents'
@@ -500,6 +567,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfilesProfileIdMedicationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profiles/$profileId_/pain': {
+      id: '/profiles/$profileId_/pain'
+      path: '/profiles/$profileId/pain'
+      fullPath: '/profiles/$profileId/pain'
+      preLoaderRoute: typeof ProfilesProfileIdPainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profiles/$profileId_/reminders': {
       id: '/profiles/$profileId_/reminders'
       path: '/profiles/$profileId/reminders'
@@ -526,6 +600,13 @@ declare module '@tanstack/react-router' {
       path: '/profiles/$profileId/timeline'
       fullPath: '/profiles/$profileId/timeline'
       preLoaderRoute: typeof ProfilesProfileIdTimelineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profiles/$profileId_/pain_/$issueId': {
+      id: '/profiles/$profileId_/pain_/$issueId'
+      path: '/profiles/$profileId/pain/$issueId'
+      fullPath: '/profiles/$profileId/pain/$issueId'
+      preLoaderRoute: typeof ProfilesProfileIdPainIssueIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profiles/$profileId_/prescriptions/': {
@@ -560,15 +641,19 @@ const rootRouteChildren: RootRouteChildren = {
   RemindersReminderIdRoute: RemindersReminderIdRoute,
   ReviewDocumentIdRoute: ReviewDocumentIdRoute,
   RevisitRemindersReminderIdRoute: RevisitRemindersReminderIdRoute,
+  SpikeBody3dRoute: SpikeBody3dRoute,
   ReviewIndexRoute: ReviewIndexRoute,
+  MyProfilePainIssueIdRoute: MyProfilePainIssueIdRoute,
   ProfilesProfileIdDocumentsRoute: ProfilesProfileIdDocumentsRoute,
   ProfilesProfileIdLabResultsRoute: ProfilesProfileIdLabResultsRoute,
   ProfilesProfileIdManualRoute: ProfilesProfileIdManualRoute,
   ProfilesProfileIdMedicationsRoute: ProfilesProfileIdMedicationsRoute,
+  ProfilesProfileIdPainRoute: ProfilesProfileIdPainRoute,
   ProfilesProfileIdRemindersRoute: ProfilesProfileIdRemindersRoute,
   ProfilesProfileIdRevisitsRoute: ProfilesProfileIdRevisitsRoute,
   ProfilesProfileIdSummaryRoute: ProfilesProfileIdSummaryRoute,
   ProfilesProfileIdTimelineRoute: ProfilesProfileIdTimelineRoute,
+  ProfilesProfileIdPainIssueIdRoute: ProfilesProfileIdPainIssueIdRoute,
   ProfilesProfileIdPrescriptionsPrescriptionIdRoute:
     ProfilesProfileIdPrescriptionsPrescriptionIdRoute,
   ProfilesProfileIdPrescriptionsIndexRoute:

@@ -1,6 +1,7 @@
 import { and, eq } from 'drizzle-orm';
 import { listAdherencePeriodsBetween } from '@src/features/adherence/infrastructure/listAdherencePeriodsBetween.js';
-import { listLabResults } from '@src/features/labResults/infrastructure/listLabResults.js';
+import { listLatestLabResults } from './listLatestLabResults.js';
+import { listSummaryPainIssues } from './listSummaryPainIssues.js';
 import { listMeasurementsBetween } from '@src/features/measurements/infrastructure/listMeasurementsBetween.js';
 import { findMedicationHistory } from '@src/features/medications/infrastructure/findMedicationHistory.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
@@ -31,9 +32,10 @@ export function createVisitSummaryRepository(db: Database): VisitSummaryReposito
           findMedicationHistory: (profileId) => findMedicationHistory(tx, familyId, profileId),
           listMeasurementsBetween: (profileId, from, to) =>
             listMeasurementsBetween(tx, familyId, profileId, undefined, from, to),
-          listLabResults: (profileId) => listLabResults(tx, familyId, profileId, undefined),
+          listLabResults: (profileId, to) => listLatestLabResults(tx, familyId, profileId, to),
           listAdherencePeriodsBetween: (profileId, from, to) =>
             listAdherencePeriodsBetween(tx, familyId, profileId, from, to),
+          listPainIssues: (profileId, from, to) => listSummaryPainIssues(tx, familyId, profileId, from, to),
         }),
       ),
   };

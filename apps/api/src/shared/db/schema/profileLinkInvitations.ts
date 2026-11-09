@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, foreignKey, index, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
@@ -42,6 +43,7 @@ export const profileLinkInvitations = pgTable(
       'profile_link_invitations_undecided_no_account',
       sql`${t.acceptedAt} IS NOT NULL OR ${t.acceptedByAccountId} IS NULL`,
     ),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('profile_id'),
   ],
 );

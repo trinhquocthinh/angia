@@ -10,6 +10,7 @@ describe('SPEC-042 — các mục "Hồ sơ của tôi"', () => {
       'health',
       'lab-results',
       'temperatures',
+      'pain',
     ]);
     expect(selfSections(false).map((item) => item.key)).toEqual([
       'today',
@@ -17,6 +18,7 @@ describe('SPEC-042 — các mục "Hồ sơ của tôi"', () => {
       'timeline',
       'lab-results',
       'temperatures',
+      'pain',
     ]);
   });
   it('sửa URL sang mục bị ẩn hoặc không có thì về trang đầu', () => {
@@ -26,6 +28,8 @@ describe('SPEC-042 — các mục "Hồ sơ của tôi"', () => {
   });
   it('tham số URL lạ không được nhận làm mục', () => {
     expect(parseSelfSection('timeline')).toBe('timeline');
+    expect(parseSelfSection('pain')).toBe('pain');
+    expect(resolveSelfSection(parseSelfSection('pain'), false)).toBe('pain');
     expect(parseSelfSection('documents')).toBeUndefined();
     expect(parseSelfSection(1)).toBeUndefined();
   });

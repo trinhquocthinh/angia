@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { foreignKey, pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
 import { createdAtColumn, familyIdColumn, selfIsolationPolicy } from './columns.js';
@@ -23,6 +24,7 @@ export const reminderRecipients = pgTable(
       columns: [t.healthProfileId, t.familyId],
       foreignColumns: [healthProfiles.id, healthProfiles.familyId],
     }).onDelete('cascade'),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('health_profile_id'),
   ],
 );

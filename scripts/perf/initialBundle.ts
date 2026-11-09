@@ -6,6 +6,7 @@ interface ManifestChunk {
   imports?: string[];
   dynamicImports?: string[];
   css?: string[];
+  assets?: string[];
 }
 
 export type ViteManifest = Record<string, ManifestChunk>;

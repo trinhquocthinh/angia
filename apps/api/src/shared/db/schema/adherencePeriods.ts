@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, date, foreignKey, index, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
@@ -35,6 +36,7 @@ export const adherencePeriods = pgTable(
     ),
     check('adherence_periods_status_valid', sql`${t.status} IN ('taking', 'stopped')`),
     check('adherence_periods_dates_valid', sql`${t.toDate} IS NULL OR ${t.toDate} >= ${t.fromDate}`),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('health_profile_id'),
   ],
 );

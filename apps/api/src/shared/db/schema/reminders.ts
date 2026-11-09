@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import {
   check,
@@ -48,6 +49,7 @@ export const reminders = pgTable(
       'reminders_medications_nonempty',
       sql`jsonb_typeof(${t.medications}) = 'array' AND jsonb_array_length(${t.medications}) >= 1`,
     ),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('health_profile_id'),
   ],
 );

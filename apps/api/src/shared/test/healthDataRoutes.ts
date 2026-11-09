@@ -3,8 +3,40 @@
 //  - scoped: nhắm tài nguyên của gia đình qua ID/token → expectCrossFamilyDenied.
 //  - list:   trả danh sách theo gia đình của phiên → không lẫn dữ liệu gia đình khác.
 //  - uniform: không chạm dữ liệu, mọi ID nhận cùng một phản hồi.
-//  - self:   /api/me/profile/*, phiên chỉ đọc hồ sơ liên kết qua withSelfScope (SPEC-042, TC-570).
+//  - self: GET /api/me/profile/*, đọc hồ sơ liên kết qua withSelfScope (SPEC-042, TC-570).
+//  - self_write: POST/PATCH/DELETE /api/me/profile/pain-issues[/...], kiểm expectSelfWriteDenied.
+export type HealthDataRouteKind = 'scoped' | 'list' | 'uniform' | 'self' | 'self_write';
 export const HEALTH_DATA_ROUTES = {
+  'GET /api/health-profiles/:id/pain-issues': 'scoped',
+  'POST /api/health-profiles/:id/pain-issues': 'scoped',
+  'GET /api/health-profiles/:id/pain-issues/:issueId': 'scoped',
+  'GET /api/health-profiles/:id/pain-issues/:issueId/context': 'scoped',
+  'PATCH /api/health-profiles/:id/pain-issues/:issueId': 'scoped',
+  'POST /api/health-profiles/:id/pain-issues/:issueId/resolve': 'scoped',
+  'POST /api/health-profiles/:id/pain-issues/:issueId/reopen': 'scoped',
+  'GET /api/health-profiles/:id/pain-issues/:issueId/deletion-impact': 'scoped',
+  'DELETE /api/health-profiles/:id/pain-issues/:issueId': 'scoped',
+  'POST /api/health-profiles/:id/pain-issues/:issueId/entries': 'scoped',
+  'PATCH /api/health-profiles/:id/pain-issues/:issueId/entries/:entryId': 'scoped',
+  'DELETE /api/health-profiles/:id/pain-issues/:issueId/entries/:entryId': 'scoped',
+  'POST /api/health-profiles/:id/pain-issues/:issueId/exercises': 'scoped',
+  'PATCH /api/health-profiles/:id/pain-issues/:issueId/exercises/:exerciseId': 'scoped',
+  'DELETE /api/health-profiles/:id/pain-issues/:issueId/exercises/:exerciseId': 'scoped',
+  'GET /api/me/profile/pain-issues': 'self',
+  'POST /api/me/profile/pain-issues': 'self_write',
+  'GET /api/me/profile/pain-issues/:issueId': 'self',
+  'GET /api/me/profile/pain-issues/:issueId/context': 'self',
+  'PATCH /api/me/profile/pain-issues/:issueId': 'self_write',
+  'POST /api/me/profile/pain-issues/:issueId/resolve': 'self_write',
+  'POST /api/me/profile/pain-issues/:issueId/reopen': 'self_write',
+  'GET /api/me/profile/pain-issues/:issueId/deletion-impact': 'self',
+  'DELETE /api/me/profile/pain-issues/:issueId': 'self_write',
+  'POST /api/me/profile/pain-issues/:issueId/entries': 'self_write',
+  'PATCH /api/me/profile/pain-issues/:issueId/entries/:entryId': 'self_write',
+  'DELETE /api/me/profile/pain-issues/:issueId/entries/:entryId': 'self_write',
+  'POST /api/me/profile/pain-issues/:issueId/exercises': 'self_write',
+  'PATCH /api/me/profile/pain-issues/:issueId/exercises/:exerciseId': 'self_write',
+  'DELETE /api/me/profile/pain-issues/:issueId/exercises/:exerciseId': 'self_write',
   'GET /api/health-profiles': 'list',
   'GET /api/health-profiles/linkable-accounts': 'list',
   'POST /api/health-profiles': 'scoped',
@@ -70,7 +102,7 @@ export const HEALTH_DATA_ROUTES = {
   'GET /api/me/profile/lab-result-series': 'self',
   'GET /api/me/profile/temperatures': 'self',
   'GET /api/me/profile/as-needed-doses': 'self',
-} as const;
+} as const satisfies Record<string, HealthDataRouteKind>;
 
 type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;
 

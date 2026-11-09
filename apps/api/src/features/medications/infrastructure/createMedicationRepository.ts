@@ -14,12 +14,13 @@ import { replaceMedicationCourses } from './replaceMedicationCourses.js';
 export function createMedicationRepository(
   db: Database,
   scope: FamilyScope = withFamilyScope,
+  profileReadLock: 'share' | null = 'share',
 ): MedicationManagementRepository {
   return {
     withFamily: (familyId, work) =>
       scope(db, familyId, (tx) =>
         work({
-          findProfile: (id) => findProfileInFamily(tx, familyId, id, 'share'),
+          findProfile: (id) => findProfileInFamily(tx, familyId, id, profileReadLock ?? undefined),
           lockMedicationProfile: (id) => lockMedicationProfile(tx, familyId, id),
           findMedicationCourse: (id, courseId) => findMedicationCourse(tx, familyId, id, courseId),
           findPrescription: (id, prescriptionId) => findProfilePrescription(tx, familyId, id, prescriptionId),

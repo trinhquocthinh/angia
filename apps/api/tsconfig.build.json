@@ -7,6 +7,14 @@
     "tsBuildInfoFile": "dist/.tsbuildinfo"
   },
   "include": ["src"],
-  "exclude": ["src/**/*.test.ts", "src/shared/test/**"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/shared/test/**",
+    "src/features/painJournal/application/painIssueTestFixture.ts",
+    "src/features/painJournal/infrastructure/painRepositoryFixture.ts",
+    "src/features/painJournal/infrastructure/waitForPainLocks.ts",
+    "src/features/painJournal/presentation/painJournalHttpFixture.ts",
+    "src/features/painJournal/presentation/painJournalScenario.ts"
+  ],
   "references": [{ "path": "../../packages/contracts/tsconfig.build.json" }]
 }
