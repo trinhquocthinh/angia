@@ -10,13 +10,15 @@ import { SelfProfileContent } from './SelfProfileContent';
 const profilesRepository = createProfilesRepository();
 
 // Route /my-profile (SPEC-042): main đã liên kết giữ điều hướng gia đình, member dùng khung cá nhân.
-export function SelfProfilePage({ section }: { section: SelfSectionKey | undefined }) {
+type Props = { section: SelfSectionKey | undefined; issueId?: string | undefined };
+
+export function SelfProfilePage({ section, issueId }: Props) {
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(profilesRepository, session.data);
   if (!session.data) return null;
   return (
     <ProfileFrame session={session.data} profiles={workspace.profiles.data ?? []} logout={workspace.logout}>
-      <SelfProfileContent session={session.data} section={section} />
+      <SelfProfileContent session={session.data} section={section} issueId={issueId} />
     </ProfileFrame>
   );
 }

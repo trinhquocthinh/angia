@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, date, index, integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
@@ -65,6 +66,7 @@ export const sourceDocuments = pgTable(
       'source_documents_approved_has_date',
       sql`${table.status} <> 'approved' OR ${table.documentDate} IS NOT NULL`,
     ),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('health_profile_id'),
   ],
 );

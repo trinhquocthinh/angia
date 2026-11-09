@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { labResultSchema } from '../labResults/labResultSchema.js';
 import { measurementSchema } from '../measurements/measurementSchema.js';
+import { bodyRegionSchema, bodySideSchema, exerciseSourceSchema } from '../painJournal/schemas.js';
 
 const timelineKindSchema = z.enum([
   'prescription',
@@ -11,14 +12,18 @@ const timelineKindSchema = z.enum([
   'course_stopped',
   'adherence_period',
   'revisit',
+  'pain_entry',
+  'pain_issue_status',
+  'exercise_started',
 ]);
+const painIssueAt = { issueId: z.uuid(), region: bodyRegionSchema, side: bodySideSchema };
 const timeSchema = z
   .string()
   .regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/)
   .nullable();
 const key = { id: z.string().min(1), date: z.iso.date(), time: timeSchema };
 
-// SPEC-049: tám nguồn đã ghi nhận; không thêm nhận định sức khỏe.
+// SPEC-049: mười một nguồn đã ghi nhận; không thêm nhận định sức khỏe.
 export const timelineEventSchema = z
   .discriminatedUnion('kind', [
     z.object({
@@ -77,6 +82,26 @@ export const timelineEventSchema = z
       }),
     }),
     z.object({ ...key, kind: z.literal('revisit'), data: z.object({ prescriptionIds: z.array(z.uuid()) }) }),
+    z.object({
+      ...key,
+      kind: z.literal('pain_entry'),
+      data: z.object({ ...painIssueAt, level: z.number().int().min(1).max(10), note: z.string().nullable() }),
+    }),
+    z.object({
+      ...key,
+      kind: z.literal('pain_issue_status'),
+      data: z.object({ ...painIssueAt, change: z.enum(['resolved', 'reopened']) }),
+    }),
+    z.object({
+      ...key,
+      kind: z.literal('exercise_started'),
+      data: z.object({
+        ...painIssueAt,
+        exerciseId: z.uuid(),
+        name: z.string(),
+        source: exerciseSourceSchema,
+      }),
+    }),
   ])
   .meta({ id: 'TimelineEvent' });
 

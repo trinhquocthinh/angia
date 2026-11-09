@@ -24,6 +24,7 @@ type StubbedDeps = Pick<
   | 'prescriptionChain'
   | 'timeline'
   | 'selfProfile'
+  | 'painJournal'
   | 'reminderRecipients'
   | 'myReminders'
   | 'doseConfirmations'
@@ -49,6 +50,10 @@ export function createStubReviewDeps(): StubbedDeps {
     revisits: { withFamily: notConfigured },
     prescriptionChain: { withFamily: notConfigured },
     timeline: { withFamily: notConfigured },
+    painJournal: {
+      repository: { withFamily: notConfigured },
+      forProfile: () => ({ withFamily: notConfigured }),
+    },
     selfProfile: {
       forProfile: () => {
         throw new Error('Kho tự xem chưa cấu hình trong test này');

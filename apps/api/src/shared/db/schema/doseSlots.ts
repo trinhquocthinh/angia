@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, foreignKey, pgTable, primaryKey, text, time, uuid } from 'drizzle-orm/pg-core';
 import { createdAtColumn, familyIdColumn, selfIsolationPolicy } from './columns.js';
@@ -22,6 +23,7 @@ export const doseSlots = pgTable(
     }).onDelete('cascade'),
     check('dose_slots_slot_valid', sql`${t.slot} IN ('morning', 'noon', 'afternoon', 'evening')`),
     check('dose_slots_whole_minute', sql`extract(second from ${t.timeOfDay}) = 0`),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('health_profile_id'),
   ],
 );

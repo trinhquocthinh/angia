@@ -4,6 +4,7 @@ import { formatNumber, readingText } from '@src/features/measurements/applicatio
 import { TimelinePrescription } from './TimelinePrescription';
 import { TimelineLabResults } from './TimelineLabResults';
 import { TimelineAsNeededDose } from './TimelineAsNeededDose';
+import { TimelinePainEvent } from './TimelinePainEvent';
 
 type Props = { event: TimelineEvent; profileId: string | undefined };
 
@@ -28,6 +29,10 @@ export function TimelineEventDetails({ event, profileId }: Props) {
       return <p>{formatNumber(event.data.celsius)} °C</p>;
     case 'as_needed_dose':
       return <TimelineAsNeededDose data={event.data} />;
+    case 'pain_entry':
+    case 'pain_issue_status':
+    case 'exercise_started':
+      return <TimelinePainEvent event={event} />;
     case 'adherence_period':
       return (
         <p>

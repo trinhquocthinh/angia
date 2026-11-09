@@ -9,8 +9,10 @@ import { SummaryAdherence } from './SummaryAdherence';
 import { SummaryLabs } from './SummaryLabs';
 import { NARROW_CAPACITY, SummaryMeasurements } from './SummaryMeasurements';
 import { SummaryMedications } from './SummaryMedications';
+import { SummaryPain } from './SummaryPain';
 
-// Trang A4 (Design v0.1 §7): đầu trang hồ sơ + khoảng dữ liệu; thuốc; số đo cạnh xét nghiệm + giai đoạn.
+// Trang A4 (Design v0.1 §7): đầu trang hồ sơ + khoảng dữ liệu; thuốc; số đo cạnh xét nghiệm + giai đoạn;
+// cuối cùng mục đau nhức toàn chiều ngang (SPEC-024 v0.3).
 // Nhiều số đo → bảng số đo nén toàn chiều ngang ở cuối (owner chốt E6-S1-T2). Chân trang miễn trừ +
 // ngày tạo lặp mỗi trang in (BR-035). Khung là bảng trình bày để trình duyệt lặp tfoot khi in.
 export function SummarySheet({ summary }: { summary: VisitSummary }) {
@@ -45,6 +47,7 @@ export function SummarySheet({ summary }: { summary: VisitSummary }) {
                     <div className="flex flex-col gap-[18px]">{side}</div>
                   </div>
                 )}
+                <SummaryPain issues={summary.painIssues} />
               </div>
             </td>
           </tr>

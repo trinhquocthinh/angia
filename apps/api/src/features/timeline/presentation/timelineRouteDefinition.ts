@@ -9,7 +9,7 @@ export const timelineRoute = createRoute({
   method: 'get',
   path: '/api/health-profiles/{id}/timeline',
   tags: ['timeline'],
-  summary: 'Dòng thời gian sáu loại sự kiện đã ghi nhận (SPEC-049, E13-S5-T1)',
+  summary: 'Dòng thời gian mười một loại sự kiện đã ghi nhận (SPEC-049, E22-S1-T1)',
   request: { params: z.object({ id: z.uuid() }), query: timelineQuerySchema },
   responses: {
     200: {

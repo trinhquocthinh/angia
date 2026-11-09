@@ -3,6 +3,12 @@ import type { WorkerConfig } from '../config/loadWorkerConfig.js';
 
 export function createS3Client(config: WorkerConfig): S3Client {
   return new S3Client({
+    requestHandler: {
+      connectionTimeout: 2_000,
+      requestTimeout: 30_000,
+      throwOnRequestTimeout: true,
+      socketTimeout: 30_000,
+    },
     endpoint: config.S3_ENDPOINT,
     region: config.S3_REGION,
     // Garage bắt buộc path-style.

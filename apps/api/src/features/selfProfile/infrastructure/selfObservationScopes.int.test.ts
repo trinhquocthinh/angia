@@ -10,6 +10,18 @@ describe('SPEC-042: RLS của hai nguồn tự xem E15', () => {
   });
   afterAll(async () => t?.stop());
 
+  it('TC-565: bốn repository tự xem đọc được hồ sơ khi policy chặn ghi bảng cũ', async () => {
+    const familyId = await t.family();
+    const main = await t.session(familyId);
+    const mother = await seedSelfProfileData(t, main, familyId, 'Mẹ');
+    const scope = createSelfProfileRepository(t.database).forProfile(mother.profile.id);
+    for (const repository of [scope.medications, scope.revisits, scope.asNeededDoses, scope.temperatures]) {
+      expect(
+        await repository.withFamily(familyId, (store) => store.findProfile(mother.profile.id)),
+      ).toMatchObject({ consentStatus: 'confirmed' });
+    }
+  });
+
   it('TC-567: bỏ lọc hồ sơ của phiên ở application, hai bảng vẫn chặn hồ sơ Ba', async () => {
     const familyId = await t.family();
     const main = await t.session(familyId);

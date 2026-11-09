@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { boolean, check, date, index, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import { createdAtColumn, familyIdColumn, selfIsolationPolicy, idColumn } from './columns.js';
@@ -38,6 +39,7 @@ export const prescriptions = pgTable(
       'prescriptions_has_source',
       sql`${t.sourceDocumentId} IS NOT NULL OR ${t.manualWithoutSource} = true`,
     ),
+    ...selfReadOnlyPolicies(),
     selfIsolationPolicy('health_profile_id'),
   ],
 );

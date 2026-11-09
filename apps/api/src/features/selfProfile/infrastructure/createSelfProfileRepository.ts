@@ -17,6 +17,7 @@ export function createSelfProfileRepository(db: Database): SelfProfileRepository
     forProfile: (profileId) => {
       const scope: FamilyScope = (scopedDb, familyId, work) =>
         withSelfScope(scopedDb, { familyId, profileId }, work);
+      // SELECT FOR SHARE chịu policy UPDATE, nên GET tự xem chỉ dùng SELECT thường.
       return {
         withFamily: (familyId, work) =>
           scope(db, familyId, (tx) =>
@@ -27,11 +28,11 @@ export function createSelfProfileRepository(db: Database): SelfProfileRepository
           ),
         measurements: createMeasurementRepository(db, scope),
         labResults: createLabResultRepository(db, scope),
-        medications: createMedicationRepository(db, scope),
-        revisits: createRevisitRepository(db, scope),
+        medications: createMedicationRepository(db, scope, null),
+        revisits: createRevisitRepository(db, scope, null),
         timeline: createTimelineRepository(db, scope),
-        asNeededDoses: createAsNeededDoseRepository(db, scope),
-        temperatures: createTemperatureRepository(db, scope),
+        asNeededDoses: createAsNeededDoseRepository(db, scope, null),
+        temperatures: createTemperatureRepository(db, scope, null),
       };
     },
   };

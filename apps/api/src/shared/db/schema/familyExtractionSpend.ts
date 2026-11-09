@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { check, numeric, pgTable, primaryKey, text, timestamp } from 'drizzle-orm/pg-core';
 import { familyIdColumn, familyIsolationPolicy } from './columns.js';
@@ -18,6 +19,7 @@ export const familyExtractionSpend = pgTable(
   (table) => [
     primaryKey({ columns: [table.familyId, table.month] }),
     check('family_extraction_spend_spent_non_negative', sql`${table.spentUsd} >= 0`),
+    ...selfReadOnlyPolicies(),
     familyIsolationPolicy(),
   ],
 );

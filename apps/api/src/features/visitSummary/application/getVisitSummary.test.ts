@@ -3,7 +3,7 @@ import type { AdherencePeriod } from '@src/features/adherence/domain/AdherencePe
 import type { LabResult } from '@src/features/labResults/domain/LabResult.js';
 import type { CurrentMedicationCourse } from '@src/features/medications/application/managementPorts.js';
 import type { Measurement } from '@src/features/measurements/domain/Measurement.js';
-import { VISIT_SUMMARY_DISCLAIMER } from '../domain/VisitSummary.js';
+import { VISIT_SUMMARY_DISCLAIMER, type VisitSummaryPainIssue } from '../domain/VisitSummary.js';
 import { getVisitSummary } from './getVisitSummary.js';
 import type { VisitSummaryRepository } from './ports.js';
 
@@ -63,6 +63,15 @@ const period: AdherencePeriod = {
   fromDate: '2026-08-01',
   toDate: null,
 };
+const painIssue: VisitSummaryPainIssue = {
+  region: 'knee',
+  side: 'left',
+  title: null,
+  status: 'tracking',
+  resolvedOn: null,
+  entries: [],
+  exercises: [],
+};
 // 17:30 UTC ngày 15/10 = 00:30 ngày 16/10 giờ Việt Nam.
 const now = () => new Date('2026-10-15T17:30:00Z');
 
@@ -79,8 +88,12 @@ function setup(profile: Awaited<ReturnType<VisitSummaryStore['findProfile']>> | 
       course('Ended', '2026-09-01', '2026-10-15'),
     ]),
     listMeasurementsBetween: vi.fn(async () => Array.from({ length: 10 }, (_, i) => measurement(i + 1))),
-    listLabResults: vi.fn(async () => [hba1c('old', '2026-07-01'), hba1c('new', '2026-09-20')]),
+    listLabResults: vi.fn(async (_profileId: string, _to: string) => [
+      hba1c('old', '2026-07-01'),
+      hba1c('new', '2026-09-20'),
+    ]),
     listAdherencePeriodsBetween: vi.fn(async () => [period]),
+    listPainIssues: vi.fn(async () => [painIssue]),
   } satisfies VisitSummaryStore;
   const repository: VisitSummaryRepository = { withFamily: async (_familyId, work) => work(store) };
   return { store, repository };
@@ -104,7 +117,10 @@ describe('Kết xuất bản tóm tắt tái khám (SPEC-024, E6-S1-T1)', () => 
     expect(summary.disclaimer).toBe('Tài liệu tổng hợp từ gia đình, không phải chỉ định y khoa.');
     expect(VISIT_SUMMARY_DISCLAIMER).toBe(summary.disclaimer);
     expect(store.listMeasurementsBetween).toHaveBeenCalledWith('p', '2026-07-16', '2026-10-16');
+    expect(store.listLabResults).toHaveBeenCalledWith('p', '2026-10-16');
     expect(store.listAdherencePeriodsBetween).toHaveBeenCalledWith('p', '2026-07-16', '2026-10-16');
+    expect(summary.painIssues).toEqual([painIssue]);
+    expect(store.listPainIssues).toHaveBeenCalledWith('p', '2026-07-16', '2026-10-16');
   });
 
   it('thuốc đang dùng tính tại ngày tạo; xét nghiệm mới nhất tính tới ngày to', async () => {
@@ -172,6 +188,8 @@ describe('Kết xuất bản tóm tắt tái khám (SPEC-024, E6-S1-T1)', () => 
       expect(result.value.currentMedications.map((item) => item.name)).toEqual(['Amlodipin', 'Metformin']);
       expect(result.value.latestLabResults.map((item) => item.id)).toEqual(['old']);
       expect(result.value.adherencePeriods).toEqual([period]);
+      // TC-712: BR-064 — mục đau nhức không ẩn theo BR-049.
+      expect(result.value.painIssues).toEqual([painIssue]);
       expect(result.value.disclaimer).toBe(VISIT_SUMMARY_DISCLAIMER);
     },
   );
