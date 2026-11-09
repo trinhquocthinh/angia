@@ -9,7 +9,7 @@ interface VapidDetails {
   subject: string;
 }
 
-export interface WebPushLibrary {
+interface WebPushLibrary {
   sendNotification(
     value: PushSubscriptionValue,
     payload: string,

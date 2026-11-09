@@ -25,7 +25,7 @@ export function SummaryStates({ loading, error, retry }: Props) {
     <div className="rounded-[20px] border-2 border-dashed border-[#d9e5e4] bg-white px-6 py-12 text-center">
       <p className="text-sm font-semibold text-[#131d1d]">Chưa đủ dữ liệu để kết xuất tóm tắt.</p>
       <p className="mt-1 text-sm text-[#404945]">
-        Khoảng này chưa có thuốc, số đo, xét nghiệm hay giai đoạn dùng thuốc đã duyệt.
+        Khoảng này chưa có thuốc, số đo, xét nghiệm, giai đoạn dùng thuốc hay ghi nhận đau nhức.
       </p>
     </div>
   );

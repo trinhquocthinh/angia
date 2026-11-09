@@ -4934,6 +4934,287 @@
               "kind",
               "data"
             ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "pain_entry"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "issueId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "region": {
+                    "type": "string",
+                    "enum": [
+                      "head",
+                      "neck",
+                      "chest",
+                      "abdomen",
+                      "upper_back",
+                      "lower_back",
+                      "pelvis",
+                      "shoulder",
+                      "upper_arm",
+                      "elbow",
+                      "forearm",
+                      "wrist",
+                      "hand",
+                      "hip",
+                      "buttock",
+                      "thigh",
+                      "knee",
+                      "shin",
+                      "calf",
+                      "ankle",
+                      "foot"
+                    ]
+                  },
+                  "side": {
+                    "type": "string",
+                    "enum": [
+                      "left",
+                      "right",
+                      "center"
+                    ]
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 10
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "issueId",
+                  "region",
+                  "side",
+                  "level",
+                  "note"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "pain_issue_status"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "issueId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "region": {
+                    "type": "string",
+                    "enum": [
+                      "head",
+                      "neck",
+                      "chest",
+                      "abdomen",
+                      "upper_back",
+                      "lower_back",
+                      "pelvis",
+                      "shoulder",
+                      "upper_arm",
+                      "elbow",
+                      "forearm",
+                      "wrist",
+                      "hand",
+                      "hip",
+                      "buttock",
+                      "thigh",
+                      "knee",
+                      "shin",
+                      "calf",
+                      "ankle",
+                      "foot"
+                    ]
+                  },
+                  "side": {
+                    "type": "string",
+                    "enum": [
+                      "left",
+                      "right",
+                      "center"
+                    ]
+                  },
+                  "change": {
+                    "type": "string",
+                    "enum": [
+                      "resolved",
+                      "reopened"
+                    ]
+                  }
+                },
+                "required": [
+                  "issueId",
+                  "region",
+                  "side",
+                  "change"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "exercise_started"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "issueId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "region": {
+                    "type": "string",
+                    "enum": [
+                      "head",
+                      "neck",
+                      "chest",
+                      "abdomen",
+                      "upper_back",
+                      "lower_back",
+                      "pelvis",
+                      "shoulder",
+                      "upper_arm",
+                      "elbow",
+                      "forearm",
+                      "wrist",
+                      "hand",
+                      "hip",
+                      "buttock",
+                      "thigh",
+                      "knee",
+                      "shin",
+                      "calf",
+                      "ankle",
+                      "foot"
+                    ]
+                  },
+                  "side": {
+                    "type": "string",
+                    "enum": [
+                      "left",
+                      "right",
+                      "center"
+                    ]
+                  },
+                  "exerciseId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string",
+                    "enum": [
+                      "prescribed",
+                      "self"
+                    ]
+                  }
+                },
+                "required": [
+                  "issueId",
+                  "region",
+                  "side",
+                  "exerciseId",
+                  "name",
+                  "source"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "date",
+              "time",
+              "kind",
+              "data"
+            ]
           }
         ]
       },
@@ -5639,6 +5920,184 @@
               "$ref": "#/components/schemas/AdherencePeriod"
             }
           },
+          "painIssues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "region": {
+                  "type": "string",
+                  "enum": [
+                    "head",
+                    "neck",
+                    "chest",
+                    "abdomen",
+                    "upper_back",
+                    "lower_back",
+                    "pelvis",
+                    "shoulder",
+                    "upper_arm",
+                    "elbow",
+                    "forearm",
+                    "wrist",
+                    "hand",
+                    "hip",
+                    "buttock",
+                    "thigh",
+                    "knee",
+                    "shin",
+                    "calf",
+                    "ankle",
+                    "foot"
+                  ]
+                },
+                "side": {
+                  "type": "string",
+                  "enum": [
+                    "left",
+                    "right",
+                    "center"
+                  ]
+                },
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 60
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "tracking",
+                    "resolved"
+                  ]
+                },
+                "resolvedOn": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date"
+                },
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "recordedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "level": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 10
+                      },
+                      "note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "maxLength": 500
+                      },
+                      "createdBy": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "properties": {
+                          "accountId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "displayName": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "accountId",
+                          "displayName"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "recordedAt",
+                      "level",
+                      "note",
+                      "createdBy"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "exercises": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                      },
+                      "source": {
+                        "type": "string",
+                        "enum": [
+                          "prescribed",
+                          "self"
+                        ]
+                      },
+                      "prescriber": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "maxLength": 100
+                      },
+                      "startDate": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "endDate": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "format": "date"
+                      },
+                      "note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "maxLength": 1000
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "source",
+                      "prescriber",
+                      "startDate",
+                      "endDate",
+                      "note"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "region",
+                "side",
+                "title",
+                "status",
+                "resolvedOn",
+                "entries",
+                "exercises"
+              ],
+              "additionalProperties": false
+            }
+          },
           "disclaimer": {
             "type": "string",
             "enum": [
@@ -5656,6 +6115,7 @@
           "measurements",
           "latestLabResults",
           "adherencePeriods",
+          "painIssues",
           "disclaimer"
         ]
       },
@@ -5978,6 +6438,937 @@
           "decision"
         ],
         "additionalProperties": false
+      },
+      "PainIssueList": {
+        "type": "object",
+        "properties": {
+          "issues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PainIssueSummary"
+            }
+          }
+        },
+        "required": [
+          "issues"
+        ],
+        "additionalProperties": false
+      },
+      "PainIssueSummary": {
+        "type": "object",
+        "properties": {
+          "region": {
+            "type": "string",
+            "enum": [
+              "head",
+              "neck",
+              "chest",
+              "abdomen",
+              "upper_back",
+              "lower_back",
+              "pelvis",
+              "shoulder",
+              "upper_arm",
+              "elbow",
+              "forearm",
+              "wrist",
+              "hand",
+              "hip",
+              "buttock",
+              "thigh",
+              "knee",
+              "shin",
+              "calf",
+              "ankle",
+              "foot"
+            ]
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "left",
+              "right",
+              "center"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 60
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "tracking",
+              "resolved"
+            ]
+          },
+          "resolvedOn": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "lastEntry": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10
+              },
+              "recordedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "level",
+              "recordedAt"
+            ],
+            "additionalProperties": false
+          },
+          "entryCount": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "exerciseCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "createdBy": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "accountId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "accountId",
+              "displayName"
+            ],
+            "additionalProperties": false
+          },
+          "updatedBy": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "accountId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "accountId",
+              "displayName"
+            ],
+            "additionalProperties": false
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "region",
+          "side",
+          "id",
+          "title",
+          "status",
+          "resolvedOn",
+          "lastEntry",
+          "entryCount",
+          "exerciseCount",
+          "createdBy",
+          "updatedBy",
+          "updatedAt"
+        ],
+        "additionalProperties": false
+      },
+      "PainIssueDetail": {
+        "type": "object",
+        "properties": {
+          "region": {
+            "type": "string",
+            "enum": [
+              "head",
+              "neck",
+              "chest",
+              "abdomen",
+              "upper_back",
+              "lower_back",
+              "pelvis",
+              "shoulder",
+              "upper_arm",
+              "elbow",
+              "forearm",
+              "wrist",
+              "hand",
+              "hip",
+              "buttock",
+              "thigh",
+              "knee",
+              "shin",
+              "calf",
+              "ankle",
+              "foot"
+            ]
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "left",
+              "right",
+              "center"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 60
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "tracking",
+              "resolved"
+            ]
+          },
+          "resolvedOn": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "lastEntry": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10
+              },
+              "recordedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "level",
+              "recordedAt"
+            ],
+            "additionalProperties": false
+          },
+          "entryCount": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "exerciseCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "createdBy": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "accountId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "accountId",
+              "displayName"
+            ],
+            "additionalProperties": false
+          },
+          "updatedBy": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "accountId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "accountId",
+              "displayName"
+            ],
+            "additionalProperties": false
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PainEntry"
+            }
+          },
+          "exercises": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExerciseNote"
+            }
+          },
+          "statusEvents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PainIssueStatusEvent"
+            }
+          }
+        },
+        "required": [
+          "region",
+          "side",
+          "id",
+          "title",
+          "status",
+          "resolvedOn",
+          "lastEntry",
+          "entryCount",
+          "exerciseCount",
+          "createdBy",
+          "updatedBy",
+          "updatedAt",
+          "entries",
+          "exercises",
+          "statusEvents"
+        ],
+        "additionalProperties": false
+      },
+      "PainEntry": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "level": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 500
+          },
+          "createdBy": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "accountId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "accountId",
+              "displayName"
+            ],
+            "additionalProperties": false
+          },
+          "updatedBy": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "accountId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "accountId",
+              "displayName"
+            ],
+            "additionalProperties": false
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "level",
+          "recordedAt",
+          "note",
+          "createdBy",
+          "updatedBy",
+          "updatedAt"
+        ],
+        "additionalProperties": false
+      },
+      "ExerciseNote": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "prescribed",
+              "self"
+            ]
+          },
+          "prescriber": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1000
+          },
+          "createdBy": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "accountId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "accountId",
+              "displayName"
+            ],
+            "additionalProperties": false
+          },
+          "updatedBy": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "accountId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "accountId",
+              "displayName"
+            ],
+            "additionalProperties": false
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "source",
+          "prescriber",
+          "startDate",
+          "endDate",
+          "note",
+          "createdBy",
+          "updatedBy",
+          "updatedAt"
+        ],
+        "additionalProperties": false
+      },
+      "PainIssueStatusEvent": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "resolved",
+              "reopened"
+            ]
+          },
+          "on": {
+            "type": "string",
+            "format": "date"
+          },
+          "by": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "accountId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "accountId",
+              "displayName"
+            ],
+            "additionalProperties": false
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "kind",
+          "on",
+          "by",
+          "at"
+        ],
+        "additionalProperties": false
+      },
+      "PainContext": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "asNeededDoses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "courseId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "givenAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "quantity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "unit": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "courseId",
+                "name",
+                "givenAt",
+                "quantity",
+                "unit"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "courses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "courseId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "startDate": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "endDate": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "ended",
+                    "stopped",
+                    "replaced"
+                  ]
+                }
+              },
+              "required": [
+                "courseId",
+                "name",
+                "startDate",
+                "endDate",
+                "status"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "asNeededDoses",
+          "courses"
+        ],
+        "additionalProperties": false
+      },
+      "PainIssueDeletionImpact": {
+        "type": "object",
+        "properties": {
+          "entryCount": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "exerciseCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "entryCount",
+          "exerciseCount"
+        ],
+        "additionalProperties": false
+      },
+      "CreatePainIssueRequest": {
+        "type": "object",
+        "properties": {
+          "region": {
+            "type": "string",
+            "enum": [
+              "head",
+              "neck",
+              "chest",
+              "abdomen",
+              "upper_back",
+              "lower_back",
+              "pelvis",
+              "shoulder",
+              "upper_arm",
+              "elbow",
+              "forearm",
+              "wrist",
+              "hand",
+              "hip",
+              "buttock",
+              "thigh",
+              "knee",
+              "shin",
+              "calf",
+              "ankle",
+              "foot"
+            ]
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "left",
+              "right",
+              "center"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 60
+          },
+          "firstEntry": {
+            "$ref": "#/components/schemas/CreatePainEntryRequest"
+          }
+        },
+        "required": [
+          "region",
+          "side",
+          "firstEntry"
+        ],
+        "additionalProperties": false
+      },
+      "CreatePainEntryRequest": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "level"
+        ],
+        "additionalProperties": false
+      },
+      "UpdatePainIssueRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 60
+          },
+          "region": {
+            "type": "string",
+            "enum": [
+              "head",
+              "neck",
+              "chest",
+              "abdomen",
+              "upper_back",
+              "lower_back",
+              "pelvis",
+              "shoulder",
+              "upper_arm",
+              "elbow",
+              "forearm",
+              "wrist",
+              "hand",
+              "hip",
+              "buttock",
+              "thigh",
+              "knee",
+              "shin",
+              "calf",
+              "ankle",
+              "foot"
+            ]
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "left",
+              "right",
+              "center"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResolvePainIssueRequest": {
+        "type": "object",
+        "properties": {
+          "resolvedOn": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "resolvedOn"
+        ],
+        "additionalProperties": false
+      },
+      "ReopenPainIssueRequest": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "DeletePainIssueRequest": {
+        "type": "object",
+        "properties": {
+          "confirm": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "confirm"
+        ],
+        "additionalProperties": false
+      },
+      "UpdatePainEntryRequest": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateExerciseNoteRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "prescribed",
+              "self"
+            ]
+          },
+          "prescriber": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "name",
+          "source",
+          "startDate"
+        ],
+        "additionalProperties": false
+      },
+      "UpdateExerciseNoteRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "prescribed",
+              "self"
+            ]
+          },
+          "prescriber": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "additionalProperties": false
       }
     },
     "parameters": {}
@@ -6242,6 +7633,16 @@
           },
           "409": {
             "description": "Lỗi đăng ký/quyền/giới hạn hoặc dịch vụ push",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
             "content": {
               "application/json": {
                 "schema": {
@@ -6533,6 +7934,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION: tên rỗng hoặc dài hơn 60 ký tự",
             "content": {
@@ -6667,6 +8078,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION",
             "content": {
@@ -6748,6 +8169,16 @@
           },
           "409": {
             "description": "ERR_LAST_MAIN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
             "content": {
               "application/json": {
                 "schema": {
@@ -6906,6 +8337,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION",
             "content": {
@@ -7054,6 +8495,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION: ngoài 0.00 – 100.00 hoặc lẻ hơn 0.01",
             "content": {
@@ -7154,6 +8605,16 @@
           },
           "409": {
             "description": "ERR_AI_ROUTING_CONFLICT",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
             "content": {
               "application/json": {
                 "schema": {
@@ -7363,6 +8824,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION: tên/năm sinh/tài khoản không hợp lệ",
             "content": {
@@ -7497,6 +8968,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION",
             "content": {
@@ -7561,6 +9042,16 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
             "content": {
               "application/json": {
                 "schema": {
@@ -7660,6 +9151,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION",
             "content": {
@@ -7733,6 +9234,16 @@
           },
           "409": {
             "description": "ERR_CONSENT_INVITATION_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
             "content": {
               "application/json": {
                 "schema": {
@@ -8237,6 +9748,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_DOCUMENT_DATE_REQUIRED, ERR_BP_INVALID, ERR_GLUCOSE_UNIT_REQUIRED, ERR_OUT_OF_RANGE_UNCONFIRMED (details.fields), ERR_DOSE_INFO_MISSING (details.invalidItemIndexes), ERR_VALIDATION",
             "content": {
@@ -8402,6 +9923,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION",
             "content": {
@@ -8496,6 +10027,16 @@
                       "$ref": "#/components/schemas/CourseConflictErrorResponse"
                     }
                   ]
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -9212,6 +10753,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION, ERR_DOSE_INFO_MISSING (details.invalidItemIndexes)",
             "content": {
@@ -9304,6 +10855,16 @@
           },
           "409": {
             "description": "ERR_CONSENT_REQUIRED, ERR_INVALID_STATE_TRANSITION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
             "content": {
               "application/json": {
                 "schema": {
@@ -9406,6 +10967,16 @@
                       "$ref": "#/components/schemas/CourseConflictErrorResponse"
                     }
                   ]
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -9580,6 +11151,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION: mốc không sau giai đoạn trước, ở tương lai hoặc trùng trạng thái",
             "content": {
@@ -9742,6 +11323,16 @@
           },
           "409": {
             "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
             "content": {
               "application/json": {
                 "schema": {
@@ -9932,6 +11523,16 @@
           },
           "409": {
             "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
             "content": {
               "application/json": {
                 "schema": {
@@ -10132,7 +11733,7 @@
         "tags": [
           "timeline"
         ],
-        "summary": "Dòng thời gian sáu loại sự kiện đã ghi nhận (SPEC-049, E13-S5-T1)",
+        "summary": "Dòng thời gian mười một loại sự kiện đã ghi nhận (SPEC-049, E22-S1-T1)",
         "parameters": [
           {
             "schema": {
@@ -11052,6 +12653,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION: dữ liệu sai hoặc lời nhắc không thuộc hôm nay theo giờ Việt Nam",
             "content": {
@@ -11300,6 +12911,16 @@
           },
           "409": {
             "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
             "content": {
               "application/json": {
                 "schema": {
@@ -11597,6 +13218,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION: đợt không phải \"Khi cần\" từ đơn",
             "content": {
@@ -11680,6 +13311,16 @@
           },
           "409": {
             "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
             "content": {
               "application/json": {
                 "schema": {
@@ -12038,6 +13679,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION: danh sách rỗng, tài khoản không phải main cùng gia đình, hoặc hồ sơ đã liên kết tài khoản",
             "content": {
@@ -12279,6 +13930,16 @@
                 }
               }
             }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -12449,6 +14110,16 @@
                 }
               }
             }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       },
@@ -12588,6 +14259,16 @@
                 }
               }
             }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -12634,6 +14315,16 @@
           },
           "404": {
             "description": "ERR_NOT_FOUND: tài khoản không có hồ sơ liên kết",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
             "content": {
               "application/json": {
                 "schema": {
@@ -12806,6 +14497,16 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION",
             "content": {
@@ -12888,6 +14589,16 @@
           },
           "409": {
             "description": "ERR_PROFILE_ALREADY_LINKED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
             "content": {
               "application/json": {
                 "schema": {
@@ -13095,8 +14806,2949 @@
               }
             }
           },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "422": {
             "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/pain-issues": {
+      "get": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tracking",
+                "resolved",
+                "all"
+              ],
+              "default": "all"
+            },
+            "required": false,
+            "name": "status",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePainIssueRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/pain-issues/{issueId}": {
+      "get": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePainIssueRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueSummary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletePainIssueRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Thành công"
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/pain-issues/{issueId}/context": {
+      "get": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": false,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": false,
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainContext"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/pain-issues/{issueId}/deletion-impact": {
+      "get": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueDeletionImpact"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/pain-issues/{issueId}/resolve": {
+      "post": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolvePainIssueRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueSummary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/pain-issues/{issueId}/reopen": {
+      "post": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReopenPainIssueRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueSummary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/pain-issues/{issueId}/entries": {
+      "post": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePainEntryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainEntry"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/pain-issues/{issueId}/entries/{entryId}": {
+      "patch": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "entryId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePainEntryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainEntry"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "entryId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Thành công"
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/pain-issues/{issueId}/exercises": {
+      "post": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExerciseNoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExerciseNote"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/pain-issues/{issueId}/exercises/{exerciseId}": {
+      "patch": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "exerciseId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateExerciseNoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExerciseNote"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "exerciseId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Thành công"
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/pain-issues": {
+      "get": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tracking",
+                "resolved",
+                "all"
+              ],
+              "default": "all"
+            },
+            "required": false,
+            "name": "status",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "pain-journal"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePainIssueRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/pain-issues/{issueId}": {
+      "get": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePainIssueRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueSummary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletePainIssueRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Thành công"
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/pain-issues/{issueId}/context": {
+      "get": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": false,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "required": false,
+            "name": "to",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainContext"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/pain-issues/{issueId}/deletion-impact": {
+      "get": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueDeletionImpact"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/pain-issues/{issueId}/resolve": {
+      "post": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolvePainIssueRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueSummary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/pain-issues/{issueId}/reopen": {
+      "post": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReopenPainIssueRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainIssueSummary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/pain-issues/{issueId}/entries": {
+      "post": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePainEntryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainEntry"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/pain-issues/{issueId}/entries/{entryId}": {
+      "patch": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "entryId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePainEntryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PainEntry"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "entryId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Thành công"
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/pain-issues/{issueId}/exercises": {
+      "post": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExerciseNoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExerciseNote"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/profile/pain-issues/{issueId}/exercises/{exerciseId}": {
+      "patch": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "exerciseId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateExerciseNoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExerciseNote"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "pain-journal"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "issueId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "exerciseId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Thành công"
+          },
+          "401": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lỗi theo SDD §4",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Lỗi theo SDD §4",
             "content": {
               "application/json": {
                 "schema": {

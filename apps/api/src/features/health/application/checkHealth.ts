@@ -5,12 +5,16 @@ import type { DependencyProbe, HealthProbes } from './ports.js';
 const DEFAULT_TIMEOUT_MS = 2_000;
 
 async function runProbe(probe: DependencyProbe, timeoutMs: number): Promise<DependencyStatus> {
+  const controller = new AbortController();
   let timer: NodeJS.Timeout | undefined;
   const timeout = new Promise<never>((_, reject) => {
-    timer = setTimeout(() => reject(new Error('Hết thời gian chờ probe')), timeoutMs);
+    timer = setTimeout(() => {
+      controller.abort(new Error('Hết thời gian chờ probe'));
+      reject(controller.signal.reason);
+    }, timeoutMs);
   });
   try {
-    await Promise.race([probe(), timeout]);
+    await Promise.race([probe(controller.signal), timeout]);
     return 'ok';
   } catch {
     return 'down';

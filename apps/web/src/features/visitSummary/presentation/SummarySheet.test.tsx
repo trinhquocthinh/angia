@@ -83,6 +83,7 @@ const summary: VisitSummary = {
       toDate: '2026-08-16',
     },
   ],
+  painIssues: [],
   disclaimer: 'Tài liệu tổng hợp từ gia đình, không phải chỉ định y khoa.',
 };
 const render = (data: VisitSummary = summary) => renderToStaticMarkup(<SummarySheet summary={data} />);

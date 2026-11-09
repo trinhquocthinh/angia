@@ -12,6 +12,29 @@ export interface VisitSummaryProfile {
   birthYear: number | null;
 }
 
+// BR-064: chỉ dữ liệu người dùng nhập (vùng, mức, ghi chú, bài tập); không nhận định (BR-033).
+export interface VisitSummaryPainIssue {
+  region: string;
+  side: 'left' | 'right' | 'center';
+  title: string | null;
+  status: 'tracking' | 'resolved';
+  resolvedOn: string | null;
+  entries: {
+    recordedAt: string;
+    level: number;
+    note: string | null;
+    createdBy: { accountId: string; displayName: string } | null;
+  }[];
+  exercises: {
+    name: string;
+    source: 'prescribed' | 'self';
+    prescriber: string | null;
+    startDate: string;
+    endDate: string | null;
+    note: string | null;
+  }[];
+}
+
 // SPEC-024: chỉ dữ liệu đã duyệt (BR-013); không có trường nhận xét/đánh giá (BR-033).
 export interface VisitSummary<Course extends MedicationCourse = MedicationCourse> {
   profile: VisitSummaryProfile;
@@ -23,5 +46,6 @@ export interface VisitSummary<Course extends MedicationCourse = MedicationCourse
   measurements: Measurement[];
   latestLabResults: LabResult[];
   adherencePeriods: AdherencePeriod[];
+  painIssues: VisitSummaryPainIssue[];
   disclaimer: typeof VISIT_SUMMARY_DISCLAIMER;
 }

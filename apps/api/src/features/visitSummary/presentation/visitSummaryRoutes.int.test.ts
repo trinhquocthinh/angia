@@ -4,8 +4,10 @@ import type { HealthProfile, VisitSummary } from '@angia/contracts';
 import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { manualReading } from '@src/shared/test/healthDataFixtures.js';
+import { seedAsNeededCourse } from '@src/shared/test/seedAsNeededDose.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
+import { createVisitSummaryRepository } from '../infrastructure/createVisitSummaryRepository.js';
 
 const profiles = '/api/health-profiles';
 const range = '?from=2026-07-01&to=2026-09-30';
@@ -28,6 +30,18 @@ describe('API bản tóm tắt tái khám SPEC-024 (E6-S1-T1)', () => {
     return { familyId, main, profile, base: `${profiles}/${profile.id}/visit-summary` };
   };
   type Fixture = Awaited<ReturnType<typeof fixture>>;
+  it('từ chối JSON quá 1 MiB qua middleware thật trước khi tạo hồ sơ', async () => {
+    const main = await t.session(await t.family());
+    const response = await t.call(main, 'POST', profiles, {
+      displayName: 'Hồ sơ thử',
+      birthYear: 2000,
+      ignored: 'x'.repeat(1024 * 1024),
+    });
+    expect(response.status).toBe(413);
+    expect(await response.json()).toMatchObject({ error: { code: 'ERR_REQUEST_TOO_LARGE' } });
+    const saved = await t.call(main, 'GET', profiles);
+    expect(await saved.json()).toEqual([]);
+  });
   const insertMeasurement = (f: Fixture, measuredOn: string) =>
     t.owner.query(
       `INSERT INTO measurements (id, family_id, health_profile_id, kind, measured_on, systolic, diastolic,
@@ -54,6 +68,27 @@ describe('API bản tóm tắt tái khám SPEC-024 (E6-S1-T1)', () => {
     expect(response.headers.get('cache-control')).toBe('no-store');
     return (await response.json()) as VisitSummary;
   };
+
+  it('TC-065: tóm tắt giữ null khi chưa ghi liều và trả giờ ISO sau khi ghi liều Khi cần', async () => {
+    const f = await fixture();
+    const { courseId } = await seedAsNeededCourse(t, f.main, f.profile.id);
+    const before = await getSummary(f);
+    expect(before.currentMedications.find((course) => course.id === courseId)).toMatchObject({
+      lastDoseAt: null,
+    });
+
+    const givenAt = new Date(Date.now() - 60_000).toISOString();
+    const recorded = await t.call(f.main, 'POST', `${profiles}/${f.profile.id}/as-needed-doses`, {
+      courseId,
+      givenAt,
+    });
+    expect(recorded.status).toBe(201);
+
+    const after = await getSummary(f);
+    expect(after.currentMedications.find((course) => course.id === courseId)).toMatchObject({
+      lastDoseAt: givenAt,
+    });
+  });
 
   it('TC-065: đủ 2 thuốc đang dùng, 10 số đo, đúng 1 HbA1c mới nhất, ngày tạo và dòng miễn trừ', async () => {
     const f = await fixture();
@@ -85,6 +120,43 @@ describe('API bản tóm tắt tái khám SPEC-024 (E6-S1-T1)', () => {
     expect(summary.adherencePeriods).toHaveLength(1);
     expect(summary.adherencePeriods[0]).not.toHaveProperty('medicationNameNormalized');
     expect(summary.disclaimer).toBe('Tài liệu tổng hợp từ gia đình, không phải chỉ định y khoa.');
+  });
+
+  it('TC-065: kho summary chỉ tải bản xét nghiệm mới nhất mỗi tên, phân xử ngày/thời điểm/id và giữ RLS', async () => {
+    const f = await fixture();
+    await insertLab(f, '2025-01-01', 'old');
+    const ids = [
+      '00000000-0000-4000-8000-000000000001',
+      '00000000-0000-4000-8000-000000000002',
+      '00000000-0000-4000-8000-000000000003',
+      '00000000-0000-4000-8000-000000000004',
+    ];
+    for (const [i, id] of ids.entries())
+      await t.owner.query(
+        `INSERT INTO lab_results (id,family_id,health_profile_id,result_date,test_name,test_name_normalized,
+        value,manual_without_source,created_at) VALUES ($1,$2,$3,$4,$5,'hba1c',$6,true,$7)`,
+        [
+          id,
+          f.familyId,
+          f.profile.id,
+          i === 3 ? '2026-10-01' : '2026-09-20',
+          i === 2 ? 'hba1c' : 'HbA1c',
+          String(i),
+          i === 0 ? '2026-09-20T08:00Z' : '2026-09-20T09:00Z',
+        ],
+      );
+    const repository = createVisitSummaryRepository(t.database);
+    const rows = await repository.withFamily(f.familyId, (store) =>
+      store.listLabResults(f.profile.id, '2026-09-30'),
+    );
+    expect(rows.map((row) => row.id)).toEqual([ids[2]]);
+    const summary = await getSummary(f);
+    expect(summary.latestLabResults.map((row) => row.id)).toEqual([ids[2]]);
+    const other = await fixture();
+    const denied = await repository.withFamily(other.familyId, (store) =>
+      store.listLabResults(f.profile.id, '2026-09-30'),
+    );
+    expect(denied).toEqual([]);
   });
 
   it('TC-445: trẻ chưa bật không trả số đo; bật lại trả đủ dữ liệu trong khoảng', async () => {

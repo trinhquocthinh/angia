@@ -13,6 +13,28 @@ import {
 // Khớp đúng /api/me/profile và /api/me/profile/*, không gồm /api/me/profile-link/* (SPEC-050).
 const SELF_PATH = / \/api\/me\/profile(\/|$)/;
 
+const selfWriteViolations = (
+  routes: Record<string, string>,
+  registeredRoutes = Object.keys(routes),
+): string[] =>
+  Object.entries({
+    ...Object.fromEntries(registeredRoutes.map((route) => [route, 'unclassified'])),
+    ...routes,
+  })
+    .filter(([route, kind]) => {
+      const [method = '', path = ''] = route.split(' ');
+      const selfPath = /^\/api\/me\/profile(?:\/|$)/.test(path);
+      if (kind === 'self_write') {
+        return (
+          !['POST', 'PATCH', 'DELETE'].includes(method) ||
+          !/^\/api\/me\/profile\/pain-issues(?:\/|$)/.test(path)
+        );
+      }
+      if (selfPath) return method !== 'GET' || kind !== 'self';
+      return kind === 'self';
+    })
+    .map(([route]) => route);
+
 interface SourceFile {
   path: string;
   content: string;
@@ -58,12 +80,18 @@ describe('Kiểm kê route cho NFR-4', () => {
       'GET /api/me/profile/lab-result-series',
       'GET /api/me/profile/measurements/series',
       'GET /api/me/profile/medications/current',
+      'GET /api/me/profile/pain-issues',
+      'GET /api/me/profile/pain-issues/:issueId',
+      'GET /api/me/profile/pain-issues/:issueId/context',
+      'GET /api/me/profile/pain-issues/:issueId/deletion-impact',
       'GET /api/me/profile/reminders',
       'GET /api/me/profile/revisits',
       'GET /api/me/profile/temperatures',
       'GET /api/me/profile/timeline',
     ];
-    expect(registered().filter((route) => SELF_PATH.test(route))).toEqual(selfRoutes);
+    expect(registered().filter((route) => route.startsWith('GET ') && SELF_PATH.test(route))).toEqual(
+      selfRoutes,
+    );
     expect(MEMBER_BLOCKED_SESSION_ROUTES.filter((route) => SELF_PATH.test(route))).toEqual([]);
   });
 
@@ -81,5 +109,43 @@ describe('Kiểm kê route cho NFR-4', () => {
         { path: 'features/measurements/infrastructure/repo.ts', content: call },
       ]),
     ).toEqual(['features/selfProfile/infrastructure/repo.ts', 'features/x/presentation/route.ts']);
+  });
+});
+
+describe('Kiểm kê quyền ghi tự quản', () => {
+  it('TC-709: phân loại route tự xem/ghi và giới hạn ghi trong sổ đau nhức', () => {
+    expect(selfWriteViolations(HEALTH_DATA_ROUTES, registered())).toEqual([]);
+  });
+
+  it('TC-709 phá thử: phát hiện route tự quản bị bỏ khỏi kiểm kê sức khỏe', () => {
+    const route = 'POST /api/me/profile/pain-issues';
+    expect(selfWriteViolations({}, [route])).toEqual([route]);
+  });
+
+  it('TC-709: chấp nhận GET tự xem và POST/PATCH/DELETE tự quản đúng tiền tố', () => {
+    expect(
+      selfWriteViolations({
+        'GET /api/me/profile': 'self',
+        'GET /api/me/profile/pain-issues': 'self',
+        'POST /api/me/profile/pain-issues': 'self_write',
+        'PATCH /api/me/profile/pain-issues/:issueId/entries/:entryId': 'self_write',
+        'DELETE /api/me/profile/pain-issues/:issueId': 'self_write',
+        'POST /api/me/profile-link/unlink': 'scoped',
+      }),
+    ).toEqual([]);
+  });
+
+  it.each([
+    ['POST /api/me/profile/temperatures', 'self_write'],
+    ['PATCH /api/me/profile/pain-issues-extra/:id', 'self_write'],
+    ['POST /api/me/profile/pain-issues', 'scoped'],
+    ['POST /api/me/profile/pain-issues', 'self'],
+    ['POST /api/me/profile/pain-issues', 'list'],
+    ['GET /api/me/profile/pain-issues', 'self_write'],
+    ['PUT /api/me/profile/pain-issues/:id', 'self_write'],
+    ['PATCH /api/health-profiles/:id/pain-issues/:issueId', 'self_write'],
+    ['GET /api/me/profile/timeline', 'scoped'],
+  ])('TC-709 phá thử: phát hiện %s bị xếp vào %s', (route, kind) => {
+    expect(selfWriteViolations({ [route]: kind })).toEqual([route]);
   });
 });

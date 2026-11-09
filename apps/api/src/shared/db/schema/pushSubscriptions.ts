@@ -1,3 +1,4 @@
+import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { foreignKey, index, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
 import { sessions } from './sessions.js';
@@ -18,6 +19,7 @@ export const pushSubscriptions = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
+    ...selfReadOnlyPolicies(),
     familyIsolationPolicy(),
     index('push_subscriptions_account_idx').on(t.accountId),
     foreignKey({

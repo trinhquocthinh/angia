@@ -12,12 +12,13 @@ import { listProfileRevisits } from './listProfileRevisits.js';
 export function createRevisitRepository(
   db: Database,
   scope: FamilyScope = withFamilyScope,
+  profileReadLock: 'share' | null = 'share',
 ): RevisitRepository {
   return {
     withFamily: (familyId, work) =>
       scope(db, familyId, (tx) =>
         work({
-          findProfile: (id) => findProfileInFamily(tx, familyId, id, 'share'),
+          findProfile: (id) => findProfileInFamily(tx, familyId, id, profileReadLock ?? undefined),
           lockProfile: (id) => lockMedicationProfile(tx, familyId, id),
           listRevisits: (id, from) => listProfileRevisits(tx, familyId, id, from),
           findPrescription: async (profileId, id) =>

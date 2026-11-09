@@ -17,7 +17,9 @@ export function groupLabSeries(results: LabResult[]): LabSeriesGroup[] {
   const groups = new Map<string, LabResult[]>();
   for (const result of [...results].sort(byChronology)) {
     const key = normalizeName(result.testName);
-    groups.set(key, [...(groups.get(key) ?? []), result]);
+    const group = groups.get(key);
+    if (group) group.push(result);
+    else groups.set(key, [result]);
   }
   return [...groups.entries()]
     .map(([key, items]) => ({ key, latest: items.at(-1)!, items }))

@@ -49,7 +49,37 @@ describe('Hợp đồng dòng thời gian (SPEC-049)', () => {
         unit: 'gói',
       },
     },
-  ])('TC-503/504: nhận sự kiện và cursor $kind', ({ kind, data }) => {
+    {
+      kind: 'pain_entry',
+      data: {
+        issueId: '00000000-0000-4000-8000-000000000003',
+        region: 'knee',
+        side: 'left',
+        level: 6,
+        note: null,
+      },
+    },
+    {
+      kind: 'pain_issue_status',
+      data: {
+        issueId: '00000000-0000-4000-8000-000000000003',
+        region: 'head',
+        side: 'center',
+        change: 'reopened',
+      },
+    },
+    {
+      kind: 'exercise_started',
+      data: {
+        issueId: '00000000-0000-4000-8000-000000000003',
+        region: 'knee',
+        side: 'right',
+        exerciseId: '00000000-0000-4000-8000-000000000001',
+        name: 'Duỗi gối',
+        source: 'self',
+      },
+    },
+  ])('TC-503/504/715: nhận sự kiện và cursor $kind', ({ kind, data }) => {
     const key = {
       id: '00000000-0000-4000-8000-000000000001',
       date: '2026-10-30',
@@ -59,5 +89,17 @@ describe('Hợp đồng dòng thời gian (SPEC-049)', () => {
     expect(timelineEventSchema.parse({ ...key, data })).toEqual({ ...key, data });
     expect(timelineCursorSchema.parse(key)).toEqual(key);
     expect(timelineEventSchema.safeParse({ ...key, data: {} }).success).toBe(false);
+  });
+
+  it('TC-715: sự kiện đau từ chối mức ngoài 1–10, vùng/bên lạ và thay đổi trạng thái lạ', () => {
+    const key = { id: '00000000-0000-4000-8000-000000000001', date: '2026-10-30', time: null };
+    const at = { issueId: key.id, region: 'knee', side: 'left' };
+    for (const event of [
+      { ...key, kind: 'pain_entry', data: { ...at, level: 11, note: null } },
+      { ...key, kind: 'pain_entry', data: { ...at, region: 'tail', level: 5, note: null } },
+      { ...key, kind: 'pain_issue_status', data: { ...at, change: 'closed' } },
+      { ...key, kind: 'exercise_started', data: { ...at, exerciseId: key.id, name: 'A', source: 'other' } },
+    ])
+      expect(timelineEventSchema.safeParse(event).success).toBe(false);
   });
 });
