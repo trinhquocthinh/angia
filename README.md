@@ -531,3 +531,78 @@ Quyết định này thay trạng thái chờ nghiệm thu E21 trong các checkp
 [Biên bản và giới hạn](../../Docs/angia/acceptance/v0.3/epic21-acceptance.md).
 Tiếp theo **E22-S1-T1 — Dòng thời gian thêm ba loại**; E18 giữ trạng thái riêng,
 E22/E23 và phát hành v0.3/Production còn mở.
+
+## Nghiệm thu E18 và E22 trên SIT — 2026-11-08
+
+**PASS, đóng E18 (5/5 task, kết luận spike (b)) và E22 (4/4 task) theo xác nhận owner:** “Đã PASS, ghi biên bản”.
+[PR #67](https://github.com/trinhquocthinh/angia/pull/67) đã merge; bản nghiệm thu SIT là `cb16a7b892556aebbaed2b05b94b08a1373d8671`.
+[CI sau merge](https://github.com/trinhquocthinh/angia/actions/runs/42494509977) và
+[pipeline SIT](https://github.com/trinhquocthinh/homelab-deploy/actions/runs/42495136267) PASS; wrapper ghi đúng source SHA và ba digest đang chạy.
+Agent chạy lại `yarn verify` đầy đủ trên `cb16a7b` (PASS) và Playwright body-map 125/126; TC-692 WebKit flaky, chạy riêng 3/3 PASS.
+
+Còn mở sang E23: header CSP không còn trên SIT tối 2026-11-08, cần đặt lại và thêm `'wasm-unsafe-eval'` có review; đo 3D trên iPhone; TC-733.
+Biên bản: [E18](../../Docs/angia/acceptance/v0.3/epic18-acceptance.md), [E22](../../Docs/angia/acceptance/v0.3/epic22-acceptance.md).
+Tiếp theo **E23 — Nghiệm thu v0.3, promote, đóng băng**.
+
+## Kiểm toán E23-S1-T1 — 2026-11-08
+
+**PASS theo owner; E23 hoàn thành 1/4 task.** Bản kiểm `cb16a7b`:
+11 route `self_write` có probe cùng gia đình khác hồ sơ và khác gia đình,
+kiểm `404` và snapshot DB không đổi; 24 unit kiểm kê/helper PASS;
+full integration local **845/845 test, 136/136 suite PASS**.
+API và worker SIT đều dùng `angia_sit_app`, không superuser, không bypass RLS
+và không sở hữu các bảng RLS. Catalog SIT khớp 4 bảng đau nhức bật RLS,
+29 bảng cũ có tổng 87 policy RESTRICTIVE.
+
+`yarn verify:fast` trên bản sao tạm exit 0: typecheck đạt;
+`--changed` không chọn unit test. Các phép phá policy đỏ TC-704/705
+tham chiếu bằng chứng E19, không thực hiện lại trong lượt này.
+[Biên bản E23](../../Docs/angia/acceptance/v0.3/epic23-acceptance.md).
+Tiếp theo **E23-S1-T2** — đo NFR-8, rà SC18 và kiểm SC19.
+E23 chưa đóng; Production vẫn giữ v0.2.
+
+## Checkpoint E23-S1-T2 — cập nhật 2026-11-09
+
+**Đang thực hiện, chưa nghiệm thu PASS; E23 giữ 1/4 task hoàn tất.**
+Lượt kiểm ngày 2026-11-08 trên source `9acce6b`:
+
+- SC18 (TC-714/725): 9/9 unit test, 3/3 tệp PASS.
+- `yarn perf:budget`: PASS, TC-729 đạt; route lớn nhất 204.748 byte gzip,
+  còn 52 byte dưới ngưỡng 200 KB. Đây là build local, chưa đo lại image SIT.
+- `yarn verify:fast` trên bản sao tạm: exit 0, typecheck đạt;
+  baseline Git sạch nên `--changed` không chọn test.
+- Lighthouse 12.8.2 Mobile Slow 4G, CPU ×4 trên SIT `/` → `/login`:
+  LCP 3,014 / 2,410 / 2,405 / 2,411 / 2,410 giây;
+  trung vị **2,410 giây**, 1/5 lượt vượt 3 giây.
+  Chưa đo các route cũ sau đăng nhập, chưa kết luận SC19 đầy đủ.
+- Đã rà mẫu danh sách/chi tiết trên phiên SIT của tài khoản thử;
+  chưa kết luận SC18 toàn bộ UI/bản in. Bản tóm tắt báo
+  “Không tải được bản tóm tắt.” sau khi thử lại; nút in bị vô hiệu hóa.
+
+Còn lại: 5 số đo điện thoại thật TC-733 (trung vị ≤15 giây, ≤4 chạm),
+xác định/xử lý lỗi tải tóm tắt theo quy trình review và rà bản in,
+hoàn tất SC18 và Lighthouse các route cũ sau đăng nhập.
+CSP SIT và kiểm 3D iPhone/Android tiếp tục theo bàn giao E22.
+[Biên bản E23 và bằng chứng](../../Docs/angia/acceptance/v0.3/epic23-acceptance.md).
+Chưa đóng T2/E23, promote Production hoặc ghi mốc phát hành v0.3.
+
+## Sửa lỗi chặn nghiệm thu E23 — 2026-11-09
+
+Owner duyệt áp dụng bản sửa trong chat. API tóm tắt chưa chuyển
+`currentMedications[].lastDoseAt` từ `Date` sang chuỗi ISO, khiến hồ sơ có
+liều “Khi cần” trả 500. Đã sửa tại presentation, giữ `null` khi chưa ghi liều;
+không đổi domain, schema DB hoặc hợp đồng API.
+
+- Test hồi quy trên DB tạm: RED đúng lỗi 500 trước sửa; sau sửa,
+  11/11 integration của tóm tắt PASS, gồm ca chặn chéo gia đình.
+- `yarn verify:fast`: PASS, 18 unit được chọn. `yarn verify`: PASS,
+  2.774 unit/552 tệp, typecheck/lint/format/build/budget/model check đạt.
+- Caddy SIT đã khôi phục CSP cho nhánh web, thêm `'wasm-unsafe-eval'` vào
+  `script-src` theo bàn giao E22. Validate/reload đạt; HTTPS trả đúng CSP;
+  mô hình 3D hiển thị trên Chrome desktop sau reload.
+
+Đây là checkpoint source local và cấu hình CSP SIT; chưa chứng minh bản sửa
+API đã deploy. Còn kiểm lại tóm tắt/bản in trên image SIT mới, Lighthouse
+sau đăng nhập, TC-733 điện thoại thật, 3D trên thiết bị thật và backup
+Production đã restore-check/offsite. E23-S1-T2/E23-S2-T1 chưa PASS;
+Production vẫn giữ v0.2.

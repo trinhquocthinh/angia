@@ -4,6 +4,7 @@ import type { HealthProfile, VisitSummary } from '@angia/contracts';
 import { confirmConsentByAttestation } from '@src/shared/test/confirmConsentByAttestation.js';
 import { expectCrossFamilyDenied } from '@src/shared/test/expectCrossFamilyDenied.js';
 import { manualReading } from '@src/shared/test/healthDataFixtures.js';
+import { seedAsNeededCourse } from '@src/shared/test/seedAsNeededDose.js';
 import { seedPendingDocument } from '@src/shared/test/seedPendingDocument.js';
 import { startProfileTestApp, type ProfileTestApp } from '@src/shared/test/startProfileTestApp.js';
 import { createVisitSummaryRepository } from '../infrastructure/createVisitSummaryRepository.js';
@@ -67,6 +68,27 @@ describe('API bản tóm tắt tái khám SPEC-024 (E6-S1-T1)', () => {
     expect(response.headers.get('cache-control')).toBe('no-store');
     return (await response.json()) as VisitSummary;
   };
+
+  it('TC-065: tóm tắt giữ null khi chưa ghi liều và trả giờ ISO sau khi ghi liều Khi cần', async () => {
+    const f = await fixture();
+    const { courseId } = await seedAsNeededCourse(t, f.main, f.profile.id);
+    const before = await getSummary(f);
+    expect(before.currentMedications.find((course) => course.id === courseId)).toMatchObject({
+      lastDoseAt: null,
+    });
+
+    const givenAt = new Date(Date.now() - 60_000).toISOString();
+    const recorded = await t.call(f.main, 'POST', `${profiles}/${f.profile.id}/as-needed-doses`, {
+      courseId,
+      givenAt,
+    });
+    expect(recorded.status).toBe(201);
+
+    const after = await getSummary(f);
+    expect(after.currentMedications.find((course) => course.id === courseId)).toMatchObject({
+      lastDoseAt: givenAt,
+    });
+  });
 
   it('TC-065: đủ 2 thuốc đang dùng, 10 số đo, đúng 1 HbA1c mới nhất, ngày tạo và dòng miễn trừ', async () => {
     const f = await fixture();
