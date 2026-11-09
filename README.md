@@ -2,6 +2,17 @@
 
 > Chăm chút từng thói quen, chở che từng thế hệ.
 
+**v0.3 — BodyWell đã phát hành và đóng băng ngày 09/11/2026.**
+E18–E23 hoàn thành 36/36 task; E23 4/4 task PASS theo owner và bằng chứng kỹ thuật.
+Tag annotated [v0.3](https://github.com/trinhquocthinh/angia/tree/v0.3) tại
+`prod` `14aa7a6`, cùng cây tệp với source Production `6a3a2c7`;
+[PR #69](https://github.com/trinhquocthinh/angia/pull/69), private #13/#14 đã merge.
+Nghiệm thu thủ công là xác nhận của owner qua người dùng thật; không có
+ảnh/log/số đo thô đính kèm. Các checkpoint bên dưới giữ làm lịch sử.
+**T_d = 09/11/2026; rà SC20 ngày 04/01/2027** — chỉ theo dõi số vấn đề đau
+và số lần ghi do user thật tạo, không đặt ngưỡng sử dụng. E16/KH-1 và các nợ
+ngoài phạm vi v0.3 giữ trạng thái riêng.
+
 Nền tảng tự lưu trữ quản lý sức khỏe gia đình: số hóa chứng từ y tế bằng AI, theo dõi đợt thuốc, chỉ số sinh tồn và xuất bản tóm tắt tái khám.
 
 ## Cấu trúc monorepo
