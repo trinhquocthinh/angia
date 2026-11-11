@@ -1,17 +1,16 @@
 import type { useFamilyScanQuota } from '@src/features/scanQuota/application/useFamilyScanQuota';
 import '@src/shared/ui/modal-motion.css';
 import { useState } from 'react';
-import { profileShowsVitals } from '@src/features/profiles/application/profileShowsVitals';
 import type { FamilyUsage } from '@angia/contracts';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
-import type { DocumentType, DocumentUploader } from '../../application/ports';
+import type { DocumentUploader } from '../../application/ports';
 import type { RedactionSuggester } from '../../application/redactionSuggestionPorts';
 import { useLeaveWarning } from '../../application/useLeaveWarning';
 import { useUploadQueue } from '../../application/useUploadQueue';
 import { aiQueueBlockReason, usageBlockReason } from '../../application/familyUsageState';
 import { shouldWarnOnLeave, type UploadItem } from '../../application/uploadQueue';
 import { useOpenUploadedDocument } from '../../application/useOpenUploadedDocument';
-import { resolveUploadProfile } from '../../application/resolveUploadProfile';
+import { useUploadProfileChoice } from '../../application/useUploadProfileChoice';
 import { UploadUsageCards } from './UploadUsageCards';
 import { ProfileChoices } from './ProfileChoices';
 import { UploadIntro } from './UploadIntro';
@@ -55,21 +54,19 @@ const suggestProps = (
     },
   };
 
+// SPEC-084: ảnh nắn của mục đang che; đổi/bỏ ảnh nắn đi qua hàng đợi để thu hồi object URL đúng chỗ.
+const scanProps = (queue: ReturnType<typeof useUploadQueue>, item: UploadItem) => ({
+  scanned: Boolean(item.scan),
+  onScanned: (blob: Blob) => queue.scan(item.id, blob),
+  onUnscan: () => queue.unscan(item.id),
+});
+
 export function UploadWorkspace(props: UploadWorkspaceProps) {
   const { uploader, suggester, csrfToken, profiles, usage, scanQuota, ...status } = props;
   const queue = useUploadQueue(uploader, csrfToken);
-  const [profileId, setProfileId] = useState<string | null>(null);
-  const [declaredType, setDeclaredType] = useState<DocumentType | null>(null);
+  const { ready, chooseProfile, selectedType, setDeclaredType } = useUploadProfileChoice(profiles);
   const [editingId, setEditingId] = useState<string | null>(null);
   useLeaveWarning(shouldWarnOnLeave(queue.summary));
-  const ready = resolveUploadProfile(profiles, profileId);
-  const chooseProfile = (id: string) => {
-    setProfileId(id);
-    const next = profiles.find((profile) => profile.id === id);
-    if (next && !profileShowsVitals(next) && declaredType === 'device_reading') setDeclaredType(null);
-  };
-  const selectedType =
-    ready && !profileShowsVitals(ready) && declaredType === 'device_reading' ? null : declaredType;
   useOpenUploadedDocument(queue.summary);
   const editing = queue.items.find((item) => item.id === editingId);
   return (
@@ -91,6 +88,7 @@ export function UploadWorkspace(props: UploadWorkspaceProps) {
           key={`${editing.id}:${editing.scan?.url ?? ''}`}
           item={{ ...editing, previewUrl: editing.previewUrl }}
           {...suggestProps(suggester, ready, csrfToken, profiles, chooseProfile)}
+          scan={scanProps(queue, editing)}
           aiExhausted={usage?.aiOcr?.exhausted ?? false}
           aiReason={usage?.aiOcr?.reason}
           aiBlockedReason={usage ? aiQueueBlockReason(usage, queue.summary.aiReady) : null}

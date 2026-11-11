@@ -1,5 +1,6 @@
 import type { FamilyUsage, PrivacyEdits } from '@angia/contracts';
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useReducer, useState } from 'react';
+import { useScrollIntoViewOnMount } from '../../application/useScrollIntoViewOnMount';
 import { createBrowserRedactionCodec } from '@src/shared/utils/image/createBrowserRedactionCodec';
 import { heicToDisplayable } from '@src/shared/utils/image/heicToDisplayable';
 import { initialPrivacyEditor } from '../../application/initialPrivacyEditor';
@@ -7,13 +8,16 @@ import { privacyEditorReducer } from '../../application/privacyEditorState';
 import { redactionSource } from '../../application/redactionSource';
 import type { UploadItem } from '../../application/uploadQueue';
 import { useRedactionSource } from '../../application/useRedactionSource';
-import { type SuggestFn, useRedactionSuggestions } from '../../application/useRedactionSuggestions';
+import { useRedactionSuggestions } from '../../application/useRedactionSuggestions';
+import { createDocumentScanner } from '../../infrastructure/createDocumentScanner';
+import { DocumentScanPanel } from './DocumentScanPanel';
 import { PrivacyEditPanel } from './PrivacyEditPanel';
-import { type ProfileOption, RedactionSuggestionControl } from './RedactionSuggestionControl';
 import { RedactionPreviewStep } from './RedactionPreviewStep';
+import { type StudioScan, type StudioSuggest, studioSlots } from './studioSlots';
 import { UploadStepper } from './UploadStepper';
 
 const codec = createBrowserRedactionCodec();
+const scanner = createDocumentScanner();
 
 type Props = {
   item: UploadItem & { previewUrl: string };
@@ -23,13 +27,15 @@ type Props = {
   onDone: (blob: Blob, edits: PrivacyEdits, sendToAi: boolean) => void;
   onClose: () => void;
   /** SPEC-083: vắng = tính năng tắt; `run` null = chưa có hồ sơ nhận ảnh, chọn trong `choices`. */
-  suggest?: { run: SuggestFn | null; choices: ProfileOption[]; onChooseProfile: (id: string) => void };
+  suggest?: StudioSuggest;
+  /** SPEC-084: ảnh nắn của mục này và cách đổi/bỏ nó trong hàng đợi. */
+  scan?: StudioScan;
 };
 
 // Che từng ảnh ngay trong trang Tải lên (D7): chỉnh trên ảnh gốc trong tab → xem đúng bản xuất → xác nhận.
-export function UploadRedactionStudio({ item, onDone, onClose, suggest, ...ai }: Props) {
+export function UploadRedactionStudio({ item, onDone, onClose, suggest, scan, ...ai }: Props) {
   const [state, dispatch] = useReducer(privacyEditorReducer, item.edits, initialPrivacyEditor);
-  const [step, setStep] = useState<'edit' | 'confirm'>('edit');
+  const [step, setStep] = useState<'edit' | 'scan' | 'confirm'>('edit');
   const origin = redactionSource(item);
   const source = useRedactionSource(origin.file, origin.url ?? item.previewUrl, heicToDisplayable);
   const suggestions = useRedactionSuggestions({
@@ -39,24 +45,32 @@ export function UploadRedactionStudio({ item, onDone, onClose, suggest, ...ai }:
     suggest: suggest?.run ?? null,
     dispatch,
   });
-  const ref = useRef<HTMLElement>(null);
+  const hasMasks = state.edits.masks.length > 0;
   // Nút "Che thông tin" nằm dưới lưới ảnh, còn khung che thay chỗ lưới: đưa khung về đầu màn hình khi mở.
-  useEffect(() => {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    ref.current?.scrollIntoView({ block: 'start', behavior: reduced ? 'auto' : 'smooth' });
-  }, []);
+  const ref = useScrollIntoViewOnMount<HTMLElement>();
   return (
     <section
       ref={ref}
       aria-label={`Che thông tin ảnh ${item.file.name}`}
       className="flex min-w-0 scroll-mt-24 flex-col gap-6"
     >
-      <UploadStepper current={step === 'edit' ? 2 : 3} />
+      <UploadStepper current={step === 'confirm' ? 3 : 2} />
       {source.converting ? (
         <p role="status" className="rounded-2xl bg-white p-4 text-sm text-[#55615f] shadow-sm">
           Đang mở ảnh HEIC trên máy…
         </p>
-      ) : step === 'edit' ? (
+      ) : step === 'scan' && scan ? (
+        <DocumentScanPanel
+          src={source.src}
+          file={origin.file}
+          rotation={state.edits.rotation}
+          hasMasks={hasMasks}
+          codec={codec}
+          scanner={scanner}
+          onUse={scan.onScanned}
+          onCancel={() => setStep('edit')}
+        />
+      ) : step !== 'confirm' ? (
         <PrivacyEditPanel
           state={state}
           dispatch={dispatch}
@@ -65,15 +79,7 @@ export function UploadRedactionStudio({ item, onDone, onClose, suggest, ...ai }:
           onNext={() => setStep('confirm')}
           onCancel={onClose}
           historyLocked={suggestions.status.kind === 'loading'}
-          suggestion={
-            suggest && (
-              <RedactionSuggestionControl
-                suggestions={suggestions}
-                choices={suggest.run ? null : suggest.choices}
-                onChooseProfile={suggest.onChooseProfile}
-              />
-            )
-          }
+          {...studioSlots({ suggest, suggestions, scan, hasMasks, onScan: () => setStep('scan') })}
         />
       ) : (
         <RedactionPreviewStep
