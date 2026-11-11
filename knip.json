@@ -7,6 +7,8 @@
         "tooling/**/*.test.ts",
         "scripts/**/*.test.ts",
         "scripts/heic-spike/measureOne.ts",
+        "scripts/spike/identityProvider.ts!",
+        "scripts/spike/identityMeasurements.ts!",
         "e2e/**/*.spec.ts"
       ],
       "project": ["tooling/**/*.ts", "scripts/**/*.ts", "e2e/**/*.ts"]
