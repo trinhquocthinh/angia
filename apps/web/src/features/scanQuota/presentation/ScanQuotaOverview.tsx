@@ -8,15 +8,15 @@ const BILLING = {
   stale: 'Dữ liệu phí đã cũ',
   unconfigured: 'Chưa cấu hình nguồn phí',
 };
-const TILE = 'min-w-0 rounded-xl bg-[#eaf6f5]/70 p-3';
-const LABEL = 'text-xs leading-4 text-[#404945]';
-const VALUE = 'auth-heading m-0 mt-0.5 text-2xl leading-8 font-semibold text-[#004135] tabular-nums';
+const TILE = 'min-w-0 rounded-xl bg-accent-soft/70 p-3';
+const LABEL = 'text-xs leading-4 text-text-secondary';
+const VALUE = 'auth-heading m-0 mt-0.5 text-2xl leading-8 font-semibold text-accent tabular-nums';
 
 // Trần và phí thực đã có ở thẻ "Chi phí AI" nên không lặp lại ở đây.
 export function ScanQuotaOverview({ view }: { view: AdminScanQuotaView }) {
   const available = view.availableAdditionalScans;
   return (
-    <div className="grid gap-2 text-[12px] leading-5 text-[#404945]">
+    <div className="grid gap-2 text-[12px] leading-5 text-text-secondary">
       <dl className="m-0 grid grid-cols-2 gap-2">
         <div className={TILE}>
           <dt className={LABEL}>Lượt cam kết còn lại</dt>
@@ -29,24 +29,24 @@ export function ScanQuotaOverview({ view }: { view: AdminScanQuotaView }) {
           </dd>
         </div>
       </dl>
-      <p className="m-0 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-xl bg-[#e4f0f0] px-3 py-2">
+      <p className="m-0 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-xl bg-accent-soft px-3 py-2">
         <span>Đối soát phí</span>
-        <span className="font-semibold text-[#004135]">{BILLING[view.billingStatus]}</span>
+        <span className="font-semibold text-accent">{BILLING[view.billingStatus]}</span>
       </p>
       {view.policy && (
-        <p className="m-0 text-[#55615f]">
+        <p className="m-0 text-text-secondary">
           Mặc định {view.policy.trialScans} lượt/gia đình/tháng · dự phòng{' '}
           {view.policy.reserveBasisPoints / 100}% · ước tính{' '}
           {formatBillingUsd(view.policy.estimatedCostPerScanUsd)}/lượt
         </p>
       )}
       {view.billingStatus !== 'ready' && (
-        <p role="status" className="m-0 text-[#55615f]">
+        <p role="status" className="m-0 text-text-secondary">
           Cần phí thực đầy đủ và còn mới để máy chủ duyệt cấp lượt. Lượt đã cấp được giữ nguyên.
         </p>
       )}
       {view.overAllocatedScans !== null && view.overAllocatedScans !== '0' && (
-        <p role="alert" className="m-0 rounded-xl bg-[#ffdad6] px-3 py-2 text-[#93000a]">
+        <p role="alert" className="m-0 rounded-xl bg-danger-soft px-3 py-2 text-danger">
           Đang cấp vượt khả năng ngân sách {view.overAllocatedScans} lượt; cần nâng trần tháng thêm khoảng{' '}
           {view.policy
             ? formatBillingUsd(requiredCapIncreaseUsd(view.policy, Number(view.overAllocatedScans)))

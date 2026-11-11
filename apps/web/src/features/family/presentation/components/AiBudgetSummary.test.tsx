@@ -12,7 +12,7 @@ describe('Thẻ Chi phí AI tháng này (SPEC-013, Stitch f9e3fb04)', () => {
     expect(html).toContain('Đã dùng 8,4% định mức');
     expect(html).toContain('Còn lại 4,58 USD');
     expect(html).toContain('aria-valuenow="8.4"');
-    expect(html).toContain('bg-[#55615f]');
+    expect(html).toContain('bg-text-secondary');
     expect(html).not.toContain('Đã chạm trần');
   });
 
@@ -22,6 +22,6 @@ describe('Thẻ Chi phí AI tháng này (SPEC-013, Stitch f9e3fb04)', () => {
     );
     expect(html).toContain('Đã chạm trần');
     expect(html).toContain('aria-valuenow="100"');
-    expect(html).toContain('bg-[#ba1a1a]');
+    expect(html).toContain('bg-danger');
   });
 });

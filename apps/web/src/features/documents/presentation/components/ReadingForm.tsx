@@ -40,7 +40,7 @@ export function ReadingForm({ payload, manual = false, pending, error, onSubmit 
   const submit = form.handleSubmit((values) => onSubmit(toApproveRequest(values, confirmed)));
   return (
     <form noValidate onSubmit={(event) => void submit(event)} className="flex flex-col gap-6">
-      <section className="flex flex-col gap-5 rounded-[20px] bg-white p-5 shadow-card lg:p-6">
+      <section className="flex flex-col gap-5 rounded-[20px] bg-surface p-5 shadow-card lg:p-6">
         <ReviewSectionTitle title="Thông tin trên máy đo" />
         <div className="grid gap-4 sm:grid-cols-2">
           <ReadingField
@@ -60,14 +60,16 @@ export function ReadingForm({ payload, manual = false, pending, error, onSubmit 
         <ReadingKindPicker register={form.register('kind')} />
         <ReadingValueFields kind={kind} register={form.register} errors={errors} flagged={outOfRange} />
         {payload === null && !manual && (
-          <p className="text-sm text-[#55615f]">Chưa có dữ liệu tự động nhận diện, vui lòng nhập theo ảnh.</p>
+          <p className="text-sm text-text-secondary">
+            Chưa có dữ liệu tự động nhận diện, vui lòng nhập theo ảnh.
+          </p>
         )}
       </section>
       {outOfRange.length > 0 && (
         <OutOfRangeConfirm fields={outOfRange} confirmed={confirmed} onConfirm={setConfirmed} />
       )}
       {otherError && (
-        <p role="alert" className="rounded-2xl bg-[#fdecea] p-4 text-sm text-[#b42318]">
+        <p role="alert" className="rounded-2xl bg-danger-soft p-4 text-sm text-danger">
           {otherError}
         </p>
       )}

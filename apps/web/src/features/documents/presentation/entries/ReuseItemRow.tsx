@@ -16,20 +16,20 @@ type Props = {
 export function ReuseItemRow({ index, item, value, disabled, onChange }: Props) {
   const id = `reuse-item-${index}`;
   return (
-    <fieldset disabled={disabled} className="flex flex-col gap-3 rounded-xl border border-[#d9e5e4] p-4">
+    <fieldset disabled={disabled} className="flex flex-col gap-3 rounded-xl border border-border p-4">
       <label className="flex min-h-11 cursor-pointer items-start gap-3">
         <input
           type="checkbox"
           checked={value.selected}
           onChange={(event) => onChange({ ...value, selected: event.target.checked })}
-          className="mt-1 h-5 w-5 accent-[#004135]"
+          className="mt-1 h-5 w-5 accent-accent"
         />
         <span className="flex flex-col text-sm">
           <span className="font-semibold">
             {item.name}
             {item.strength ? ` ${item.strength}` : ''}
           </span>
-          <span className="text-[#55615f]">
+          <span className="text-text-secondary">
             {doseLabel(item.quantityPerDose, item.doseUnit)} · {item.slots.map(doseSlotLabel).join(', ')}
           </span>
         </span>
@@ -47,7 +47,7 @@ export function ReuseItemRow({ index, item, value, disabled, onChange }: Props) 
                 max={3650}
                 value={value.durationDays}
                 onChange={(event) => onChange({ ...value, durationDays: event.target.value })}
-                className="min-h-11 w-28 rounded-xl border border-[#bfc9c4] px-3"
+                className="min-h-11 w-28 rounded-xl border border-border px-3"
               />
             </label>
           )}

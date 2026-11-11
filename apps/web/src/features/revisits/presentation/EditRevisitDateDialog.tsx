@@ -34,7 +34,7 @@ export function EditRevisitDateDialog({ profile, session, prescription, revisitD
         <h2 id="edit-revisit-title" className="auth-heading text-2xl font-semibold">
           Sửa ngày hẹn tái khám
         </h2>
-        <p className="mt-2 mb-5 text-sm text-[#55615f]">
+        <p className="mt-2 mb-5 text-sm text-text-secondary">
           Đơn ngày {formatDay(prescription.issuedDate)}. Để trống ngày hẹn rồi lưu để xóa lịch hẹn của đơn
           này.
         </p>
@@ -47,7 +47,7 @@ export function EditRevisitDateDialog({ profile, session, prescription, revisitD
             onChange={(event) => setValue(event.target.value)}
           />
           {edit.error && (
-            <p role="alert" className="text-sm text-[#b42318]">
+            <p role="alert" className="text-sm text-danger">
               {edit.error}
             </p>
           )}
@@ -55,13 +55,13 @@ export function EditRevisitDateDialog({ profile, session, prescription, revisitD
             <button
               type="button"
               onClick={onClose}
-              className="min-h-11 rounded-full bg-[#eaf6f5] px-5 text-sm font-semibold"
+              className="min-h-11 rounded-full bg-accent-soft px-5 text-sm font-semibold"
             >
               Hủy
             </button>
             <button
               type="submit"
-              className="min-h-11 rounded-full bg-[#004135] px-5 text-sm font-semibold text-white disabled:opacity-50"
+              className="min-h-11 rounded-full bg-accent px-5 text-sm font-semibold text-on-accent disabled:opacity-50"
             >
               {edit.saving ? 'Đang lưu…' : 'Lưu ngày hẹn'}
             </button>

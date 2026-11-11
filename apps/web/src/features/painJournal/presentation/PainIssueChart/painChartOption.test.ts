@@ -38,8 +38,8 @@ it('TC-725 — điểm và nét có cùng kiểu ở mức 1 và 10, không tô 
         connectNulls: false,
         symbol: 'circle',
         symbolSize: 6,
-        itemStyle: { color: '#1F2A2A' },
-        lineStyle: { color: '#1F2A2A', width: 2 },
+        itemStyle: { color: 'var(--color-series-pain)' },
+        lineStyle: { color: 'var(--color-series-pain)', width: 2 },
       },
     ]);
   expect(painMedicationSeries(undefined, range)).toEqual({ series: [], rows: 0 });

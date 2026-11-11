@@ -7,14 +7,14 @@
   padding: 56px 64px;
   display: flex;
   flex-direction: column;
-  background: #fff;
-  color: #1f2a2a;
+  background: var(--color-paper);
+  color: var(--color-print-text);
   font:
     400 11pt/15pt 'Be Vietnam Pro',
     ui-sans-serif,
     system-ui,
     sans-serif;
-  box-shadow: 0 12px 32px rgb(31 42 42 / 0.12);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--color-shadow) 12%, transparent);
 }
 /* Khung trình bày: màn hình xếp dọc, chân trang dính đáy trang; khi in là bảng để chân trang lặp mỗi trang. */
 .summary-frame,
@@ -46,7 +46,7 @@
   font-weight: 600;
 }
 .summary-muted {
-  color: #55615f;
+  color: var(--color-print-muted);
 }
 .summary-table {
   width: 100%;
@@ -55,14 +55,14 @@
 }
 .summary-table th {
   padding: 4px 8px 4px 0;
-  border-bottom: 1px solid #e4e0da;
-  color: #55615f;
+  border-bottom: 1px solid var(--color-print-border);
+  color: var(--color-print-muted);
   font-weight: 500;
   text-align: left;
 }
 .summary-table td {
   padding: 3px 8px 3px 0;
-  border-bottom: 1px solid #f1ece4;
+  border-bottom: 1px solid var(--color-print-stopped);
   vertical-align: top;
   overflow-wrap: anywhere;
 }
@@ -88,7 +88,7 @@
 }
 .summary-table .summary-pair-start {
   padding-left: 12px;
-  border-left: 1px solid #e4e0da;
+  border-left: 1px solid var(--color-print-border);
 }
 .summary-table th {
   white-space: nowrap;
@@ -98,22 +98,22 @@
   height: 14px;
   margin-top: 3px;
   flex: none;
-  border: 1px solid #1f2a2a;
-  background: #e3efea;
+  border: 1px solid var(--color-print-text);
+  background: var(--color-print-accent-soft);
   print-color-adjust: exact;
   -webkit-print-color-adjust: exact;
 }
 .summary-swatch--stopped {
-  background-color: #f1ece4;
-  background-image: repeating-linear-gradient(135deg, #1f2a2a 0 1px, transparent 1px 4px);
+  background-color: var(--color-print-stopped);
+  background-image: repeating-linear-gradient(135deg, var(--color-print-text) 0 1px, transparent 1px 4px);
 }
 .summary-footer {
   display: flex;
   justify-content: space-between;
   gap: 24px;
   padding-top: 10px;
-  border-top: 1px solid #e4e0da;
-  color: #55615f;
+  border-top: 1px solid var(--color-print-border);
+  color: var(--color-print-muted);
 }
 .summary-print-root {
   display: none;
@@ -130,7 +130,7 @@
   }
   html:has(.summary-print-root),
   body:has(.summary-print-root) {
-    background: #fff;
+    background: var(--color-paper);
   }
   .summary-print-root {
     display: block;

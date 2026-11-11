@@ -14,12 +14,12 @@ export function MedicationSlotSection({
 }) {
   const headingId = `medication-slot-${group.slot}`;
   return (
-    <section aria-labelledby={headingId} className="flex flex-col gap-3 rounded-xl bg-white p-5 shadow-sm">
+    <section aria-labelledby={headingId} className="flex flex-col gap-3 rounded-xl bg-surface p-5 shadow-sm">
       <div className="flex items-center justify-between gap-2">
-        <h3 id={headingId} className="text-lg font-semibold text-[#004135]">
+        <h3 id={headingId} className="text-lg font-semibold text-accent">
           {group.label}
         </h3>
-        <span className="text-xs font-medium text-[#707975]">{group.courses.length} thuốc</span>
+        <span className="text-xs font-medium text-text-secondary">{group.courses.length} thuốc</span>
       </div>
       <ul className="flex flex-col gap-2">
         {group.courses.map((course) => (

@@ -32,7 +32,7 @@ export function ScanQuotaGrantFields({
       />
       <label
         htmlFor={`${id}-reason`}
-        className="grid content-start gap-1 text-[12px] font-medium text-[#404945]"
+        className="grid content-start gap-1 text-[12px] font-medium text-text-secondary"
       >
         <span>
           Lý do duyệt<span className="sr-only"> · {familyName}</span>
@@ -43,7 +43,7 @@ export function ScanQuotaGrantFields({
           value={draft.reason}
           maxLength={500}
           onChange={(event) => onChange({ ...draft, reason: event.target.value })}
-          className="min-h-10 w-full min-w-0 rounded-xl border-0 bg-[#eaf6f5] px-3 py-2 text-[13px] font-normal leading-5 text-[#131d1d] focus:bg-[#e4f0f0]"
+          className="min-h-10 w-full min-w-0 rounded-xl border-0 bg-accent-soft px-3 py-2 text-[13px] font-normal leading-5 text-text-primary focus:bg-accent-soft"
         />
       </label>
     </fieldset>

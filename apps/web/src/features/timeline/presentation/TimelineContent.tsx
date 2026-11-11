@@ -12,14 +12,14 @@ export function TimelineContent({ profile, session }: { profile: HealthProfile; 
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <ProfileHealthHeader profile={profile} session={session} active="timeline" />
-      <section className="rounded-xl bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-semibold text-[#004135]">Dòng thời gian</h2>
-        <p className="mt-2 text-sm text-[#55615f]">
+      <section className="rounded-xl bg-surface p-5 shadow-sm">
+        <h2 className="text-xl font-semibold text-accent">Dòng thời gian</h2>
+        <p className="mt-2 text-sm text-text-secondary">
           Các sự kiện sức khỏe đã ghi nhận, từ mới nhất đến trước đó.
         </p>
       </section>
       {profile.consentStatus !== 'confirmed' ? (
-        <p role="alert" className="rounded-xl bg-white p-6 text-sm">
+        <p role="alert" className="rounded-xl bg-surface p-6 text-sm">
           Hồ sơ chưa được đồng ý lưu dữ liệu.
         </p>
       ) : (

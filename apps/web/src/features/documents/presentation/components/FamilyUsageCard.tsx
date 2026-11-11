@@ -17,16 +17,16 @@ function UsageMeter({ label, value, used, limit }: Meter) {
   const [amount, cap] = value.split(' / ');
   return (
     <div className="flex min-w-0 flex-col justify-end gap-1.5">
-      <span className="text-xs leading-4 font-medium text-[#404945]">{label}</span>
+      <span className="text-xs leading-4 font-medium text-text-secondary">{label}</span>
       {cap ? (
         <span className="flex flex-wrap items-baseline gap-x-1.5 tabular-nums">
-          <span className="auth-heading text-2xl leading-8 font-semibold text-[#131d1d] sm:text-[28px]">
+          <span className="auth-heading text-2xl leading-8 font-semibold text-text-primary sm:text-[28px]">
             {amount}
           </span>
-          <span className="text-xs leading-4 text-[#55615f]">/ {cap}</span>
+          <span className="text-xs leading-4 text-text-secondary">/ {cap}</span>
         </span>
       ) : (
-        <span className="text-sm leading-8 font-semibold text-[#131d1d]">{value}</span>
+        <span className="text-sm leading-8 font-semibold text-text-primary">{value}</span>
       )}
       <div
         role="progressbar"
@@ -34,10 +34,10 @@ function UsageMeter({ label, value, used, limit }: Meter) {
         aria-valuemin={0}
         aria-valuemax={limit}
         aria-valuenow={used}
-        className="h-1.5 overflow-hidden rounded-full bg-[#e4f0f0]"
+        className="h-1.5 overflow-hidden rounded-full bg-accent-soft"
       >
         <div
-          className={`upload-meter-fill h-full rounded-full ${full ? 'bg-[#93000a]' : 'bg-[#286958]'}`}
+          className={`upload-meter-fill h-full rounded-full ${full ? 'bg-danger' : 'bg-accent'}`}
           style={{ width: `${percent}%` }}
         />
       </div>
@@ -99,14 +99,14 @@ export function FamilyUsageCard({
   return (
     <section
       aria-labelledby="family-usage-title"
-      className="angia-modal-reveal flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm max-md:p-4"
+      className="angia-modal-reveal flex flex-col gap-4 rounded-2xl bg-surface p-6 shadow-sm max-md:p-4"
       style={revealStyle(2)}
     >
       <h2
         id="family-usage-title"
-        className="flex items-center gap-1.5 text-lg leading-6 font-semibold text-[#131d1d]"
+        className="flex items-center gap-1.5 text-lg leading-6 font-semibold text-text-primary"
       >
-        <span className="text-[#286958]">
+        <span className="text-accent">
           <DocumentIcon name="cloud" />
         </span>
         Mức sử dụng của gia đình
@@ -119,10 +119,12 @@ export function FamilyUsageCard({
         </div>
       )}
       {children && (
-        <div className="border-t border-[#e4f0f0] pt-3 text-[13px] leading-5 text-[#55615f]">{children}</div>
+        <div className="border-t border-border pt-3 text-[13px] leading-5 text-text-secondary">
+          {children}
+        </div>
       )}
       {reason && (
-        <p role="status" className="rounded-xl bg-[#ffdad6]/60 p-3 text-sm text-[#93000a]">
+        <p role="status" className="rounded-xl bg-danger-soft/60 p-3 text-sm text-danger">
           {reason}
         </p>
       )}

@@ -632,3 +632,42 @@ mở**; các màn còn màu cứng thuộc E25-S1-T2/E30-S5-T1.
 Đã đồng bộ ghi chú tại bộ tài liệu ngoài repository: SDD SPEC-080, Tech Spec
 §10.6, ma trận TC-856–859, Design §11.2 và Master Plan E25. Xem
 [Master Plan](../../Docs/angia/11-master-plan.md). Tiếp theo **E25-S1-T2**.
+
+## E25-S1-T2 — chuyển màu cứng sang token — 2026-11-11
+
+Đã chuyển màu trong TS/TSX/CSS của web sang token theo Design §11.2 và §4.1,
+bao gồm class Tailwind, SVG, bóng và mũi tên dropdown. Token biểu đồ và hình
+người có đủ hai nền; ECharts/Three.js đọc giá trị CSS thực và cập nhật khi
+`html[data-theme]` đổi. Vật liệu hình người dùng bản sao, khôi phục và giải
+phóng khi tháo. Mỗi mức đau vẫn dùng cùng một màu.
+
+Token giấy/bản in và lớp phủ ảnh giữ màu cố định. Chữ trên nền ảnh tối và
+nhãn vùng che đen luôn sáng; xuất ảnh vẫn che đen, nền trắng và giữ pixel
+không bị che. Không đổi API, domain, schema DB hoặc dependency.
+
+ESLint `theme/no-hardcoded-colors` chặn hex, màu CSS dạng hàm và bảng màu
+Tailwind cứng trong chuỗi TS/TSX; test tooling kiểm CSS ngoài `tokens.css`.
+Các tên màu `white`/`black` trong codec là màu pixel xuất ảnh cố định theo
+SPEC-080; tài liệu nguồn gốc GLB không phải stylesheet và được giữ nguyên.
+
+Kiểm chứng trên bản sao sạch `/tmp` để tránh metadata `._*` của ổ ngoài:
+unit 2.889/584 tệp PASS; Chromium/WebKit 360 px PASS 142/142, gồm 126 ca hồi
+quy và 16 ca theme/ảnh. Lint, format, kiểm trùng, Knip và build PASS. Đã xem
+ảnh sheet chọn vùng ở cả hai nền; review độc lập không còn finding.
+
+```bash
+yarn verify:fast
+yarn playwright test --config playwright.theme.config.ts
+yarn test:e2e:body-map
+yarn verify
+```
+
+`yarn verify` chưa xanh: dừng tại `perf:budget`, `/my-profile` và
+`/my-profile/pain/$issueId` khoảng 200,3 KB gzip, vượt ngưỡng 200 KB. Bản HEAD
+trước T2 đo riêng cũng lỗi ở 200,6 KB; chưa sửa cách tải route trong task
+màu. TC-861 giữ mở và cần xử lý trước PR. Build vẫn cảnh báo chunk lớn;
+harness có cảnh báo ECharts disposed/Three.Clock deprecated.
+
+TC-858 (tương phản toàn bộ route), TC-862, PDF/máy in thật và SIT/Production
+chưa nghiệm thu. Tài liệu SDD, Tech Spec, TC, Design và Master Plan ghi cùng
+checkpoint. Bộ `Docs/angia` nằm ngoài Git của source; chưa push/deploy.

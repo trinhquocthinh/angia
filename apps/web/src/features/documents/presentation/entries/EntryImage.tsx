@@ -4,7 +4,7 @@ import { documentImageUrl } from '../../infrastructure/createReviewRepository';
 export function EntryImage({ documentId, hasImage }: { documentId: string; hasImage: boolean }) {
   if (!hasImage)
     return (
-      <p className="rounded-xl border border-[#d9e5e4] bg-[#f0fcfb] p-4 text-sm text-[#404945]">
+      <p className="rounded-xl border border-border bg-bg p-4 text-sm text-text-secondary">
         Ảnh đã được xóa để bảo vệ riêng tư
       </p>
     );
@@ -13,9 +13,9 @@ export function EntryImage({ documentId, hasImage }: { documentId: string; hasIm
       <img
         src={documentImageUrl(documentId)}
         alt="Ảnh giấy tờ đã che"
-        className="w-full rounded-xl border border-[#d9e5e4] bg-[#f0fcfb] object-contain"
+        className="w-full rounded-xl border border-border bg-bg object-contain"
       />
-      <figcaption className="text-xs text-[#404945]">
+      <figcaption className="text-xs text-text-secondary">
         Đây là bản đã che. AN GIA không lưu ảnh chưa che.
       </figcaption>
     </figure>

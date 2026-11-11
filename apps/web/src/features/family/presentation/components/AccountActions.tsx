@@ -22,7 +22,7 @@ export function AccountActions({
         <>
           <button
             type="button"
-            className={`${BASE} bg-white text-[#286958] enabled:hover:bg-[#deebea]`}
+            className={`${BASE} bg-surface text-accent enabled:hover:bg-border`}
             disabled={pending}
             onClick={() => onTask({ kind: 'role', account })}
           >
@@ -31,7 +31,7 @@ export function AccountActions({
           </button>
           <button
             type="button"
-            className={`${BASE} bg-transparent text-[#ba1a1a] enabled:hover:bg-[#ffdad6]/60`}
+            className={`${BASE} bg-transparent text-danger enabled:hover:bg-danger-soft/60`}
             disabled={pending}
             onClick={() => onTask({ kind: 'remove', account })}
           >
@@ -42,7 +42,7 @@ export function AccountActions({
       ) : (
         <button
           type="button"
-          className={`${BASE} bg-[#004135] text-white enabled:hover:bg-[#20594b]`}
+          className={`${BASE} bg-accent text-on-accent enabled:hover:bg-accent-hover`}
           disabled={pending || !hasFamilies}
           onClick={() => onTask({ kind: 'assign', account })}
         >

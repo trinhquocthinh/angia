@@ -44,7 +44,7 @@ export function DocumentEntryPanel({ entry, canReuse, onReuse, onClose, deletion
           <button
             type="button"
             onClick={onReuse}
-            className="min-h-11 rounded-xl bg-[#004135] px-4 text-sm font-semibold text-white hover:bg-[#20594b]"
+            className="min-h-11 rounded-xl bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover"
           >
             Dùng lại đơn này
           </button>

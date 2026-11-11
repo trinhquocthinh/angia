@@ -9,15 +9,15 @@ export function MeasurementStatCards({ points, weeks }: { points: SeriesPoint[];
         {[...points].reverse().map((point) => {
           const [value = '', unit = ''] = splitReading(displayReadingText(point));
           return (
-            <li key={point.id} className="flex flex-col gap-1 rounded-xl bg-[#eaf6f5] p-4">
-              <p className="tabular-nums text-[#131d1d]">
+            <li key={point.id} className="flex flex-col gap-1 rounded-xl bg-accent-soft p-4">
+              <p className="tabular-nums text-text-primary">
                 <span className="text-3xl font-semibold tracking-tight">{value}</span>{' '}
-                <span className="text-sm text-[#55615f]">{unit}</span>
+                <span className="text-sm text-text-secondary">{unit}</span>
               </p>
               {point.kind === 'blood_pressure' && point.pulse !== null && (
-                <p className="text-sm text-[#404945]">Mạch: {point.pulse} lần/phút</p>
+                <p className="text-sm text-text-secondary">Mạch: {point.pulse} lần/phút</p>
               )}
-              <p className="text-sm text-[#55615f]">
+              <p className="text-sm text-text-secondary">
                 {formatDay(point.measuredOn)}
                 {point.measuredTime ? ` · ${point.measuredTime}` : ''}
               </p>
@@ -25,7 +25,7 @@ export function MeasurementStatCards({ points, weeks }: { points: SeriesPoint[];
           );
         })}
       </ul>
-      <p className="text-sm text-[#55615f]">Cần ít nhất 4 lần đo trong {weeks} tuần để vẽ biểu đồ.</p>
+      <p className="text-sm text-text-secondary">Cần ít nhất 4 lần đo trong {weeks} tuần để vẽ biểu đồ.</p>
     </div>
   );
 }

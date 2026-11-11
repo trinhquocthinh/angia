@@ -10,7 +10,7 @@ const recordedFormatter = new Intl.DateTimeFormat('vi-VN', {
   minute: '2-digit',
   hourCycle: 'h23',
 });
-const buttonClass = 'min-h-11 rounded-xl bg-[#e4f0ef] px-4 text-sm font-medium text-[#004135]';
+const buttonClass = 'min-h-11 rounded-xl bg-accent-soft px-4 text-sm font-medium text-accent';
 type Props = Pick<PainJournalActions, 'onOpen' | 'onRecord'> & { issue: PainIssueSummary };
 
 export function PainIssueCard({ issue, onOpen, onRecord }: Props) {
@@ -21,19 +21,21 @@ export function PainIssueCard({ issue, onOpen, onRecord }: Props) {
   return (
     <article
       aria-label={location}
-      className="flex min-w-0 flex-col gap-3 rounded-xl border border-[#dce5e1] p-4"
+      className="flex min-w-0 flex-col gap-3 rounded-xl border border-border p-4"
     >
-      <h3 className="break-words text-lg font-semibold text-[#131d1d]">{location}</h3>
-      {issue.title && <p className="break-words text-sm text-[#55615f]">{issue.title}</p>}
-      <p className="text-[#131d1d]">
+      <h3 className="break-words text-lg font-semibold text-text-primary">{location}</h3>
+      {issue.title && <p className="break-words text-sm text-text-secondary">{issue.title}</p>}
+      <p className="text-text-primary">
         <span className="text-4xl font-semibold tabular-nums">{issue.lastEntry.level}</span>
-        <span className="text-sm text-[#55615f]">/10</span>
+        <span className="text-sm text-text-secondary">/10</span>
       </p>
-      <p className="text-sm text-[#55615f]">
+      <p className="text-sm text-text-secondary">
         <time dateTime={issue.lastEntry.recordedAt}>{recorded}</time> · {issue.entryCount} lần ghi
       </p>
       {issue.status === 'resolved' && issue.resolvedOn && (
-        <p className="text-sm text-[#55615f]">Khỏi từ {issue.resolvedOn.split('-').reverse().join('/')}</p>
+        <p className="text-sm text-text-secondary">
+          Khỏi từ {issue.resolvedOn.split('-').reverse().join('/')}
+        </p>
       )}
       <div className="flex flex-wrap gap-2">
         {onOpen && (

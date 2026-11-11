@@ -19,13 +19,13 @@ export function EditProfileForm({ pending, error, onSubmit, onClose, ...fields }
       <h2 id="edit-profile-title" className="auth-heading text-2xl font-semibold">
         Sửa hồ sơ
       </h2>
-      <p id="edit-profile-description" className="mt-2 mb-6 text-sm text-[#55615f]">
+      <p id="edit-profile-description" className="mt-2 mb-6 text-sm text-text-secondary">
         Cập nhật năm sinh và lựa chọn theo dõi huyết áp, đường huyết.
       </p>
       <fieldset disabled={pending} className="space-y-6">
         <EditProfileFields {...fields} />
         {error && (
-          <p role="alert" className="text-sm text-[#b42318]">
+          <p role="alert" className="text-sm text-danger">
             {error}
           </p>
         )}
@@ -33,13 +33,13 @@ export function EditProfileForm({ pending, error, onSubmit, onClose, ...fields }
           <button
             type="button"
             onClick={onClose}
-            className="min-h-11 cursor-pointer rounded-xl bg-[#eaf6f5] px-5 text-sm font-semibold"
+            className="min-h-11 cursor-pointer rounded-xl bg-accent-soft px-5 text-sm font-semibold"
           >
             Hủy
           </button>
           <button
             type="submit"
-            className="min-h-11 cursor-pointer rounded-xl bg-[#004135] px-5 text-sm font-semibold text-white disabled:opacity-55"
+            className="min-h-11 cursor-pointer rounded-xl bg-accent px-5 text-sm font-semibold text-on-accent disabled:opacity-55"
           >
             {pending ? 'Đang lưu…' : 'Lưu thay đổi'}
           </button>

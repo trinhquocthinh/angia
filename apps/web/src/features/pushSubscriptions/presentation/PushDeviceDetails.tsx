@@ -46,21 +46,21 @@ export function PushDeviceDetails({
     },
   ];
   return (
-    <section className="rounded-[20px] bg-white p-6 shadow-[0_1px_2px_#1f2a2a0f]">
-      <h2 className="mb-2 text-base font-semibold text-[#131d1d]">Thông số thiết bị</h2>
-      <dl className="divide-y divide-[#e4f0ef]">
+    <section className="rounded-[20px] bg-surface p-6 shadow-[0_1px_2px_color-mix(in_srgb,var(--color-shadow)_6%,transparent)]">
+      <h2 className="mb-2 text-base font-semibold text-text-primary">Thông số thiết bị</h2>
+      <dl className="divide-y divide-[var(--color-accent-soft)]">
         {rows.map((row) => (
           <div key={row.label} className="flex items-center gap-3 py-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#eaf6f5] text-[#404945]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-text-secondary">
               <PushIcon name={row.icon} size={18} />
             </span>
             <div className="min-w-0 flex-1">
-              <dt className="text-sm text-[#131d1d]">{row.label}</dt>
-              <dd className={`text-xs ${row.ok ? 'text-[#286958]' : 'text-[#707975]'}`}>{row.value}</dd>
+              <dt className="text-sm text-text-primary">{row.label}</dt>
+              <dd className={`text-xs ${row.ok ? 'text-accent' : 'text-text-secondary'}`}>{row.value}</dd>
             </div>
             <span
               aria-hidden="true"
-              className={`h-2.5 w-2.5 shrink-0 rounded-full ${row.ok ? 'bg-[#286958]' : 'bg-[#d9e5e4]'}`}
+              className={`h-2.5 w-2.5 shrink-0 rounded-full ${row.ok ? 'bg-accent' : 'bg-border'}`}
             />
           </div>
         ))}

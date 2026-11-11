@@ -39,7 +39,7 @@ export function ExerciseNoteSheet(props: ExerciseNoteSheetProps) {
           <button
             type="submit"
             disabled={state.pending || !state.enabled}
-            className="min-h-11 rounded-lg bg-accent px-4 text-white disabled:opacity-50"
+            className="min-h-11 rounded-lg bg-accent px-4 text-on-accent disabled:opacity-50"
           >
             {state.pending ? 'Đang lưu…' : props.exercise ? 'Lưu thay đổi' : 'Thêm bài tập'}
           </button>

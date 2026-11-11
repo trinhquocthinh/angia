@@ -27,44 +27,44 @@ export function ReminderRecipientsForm({ saved, pending, serverError, done, onSu
   };
   const error = invalid ?? serverError;
   return (
-    <form onSubmit={submit} noValidate className="flex flex-col gap-4 rounded-xl bg-white p-5 shadow-sm">
+    <form onSubmit={submit} noValidate className="flex flex-col gap-4 rounded-xl bg-surface p-5 shadow-sm">
       {saved.recipients.length === 0 && (
-        <p className="rounded-xl bg-[#eaf6f5] px-4 py-3 text-sm text-[#404945]">
+        <p className="rounded-xl bg-accent-soft px-4 py-3 text-sm text-text-secondary">
           Chưa chỉ định người nhận nhắc.
         </p>
       )}
       <fieldset className="flex flex-col gap-2" aria-describedby={error ? 'recipient-error' : undefined}>
-        <legend className="mb-1 text-xs text-[#404945]">
+        <legend className="mb-1 text-xs text-text-secondary">
           Hồ sơ không có tài khoản riêng. Chọn người chăm sóc chính nhận nhắc thay.
         </legend>
         {saved.candidates.map(({ accountId, displayName }) => (
-          <label key={accountId} className="flex min-h-11 items-center gap-3 text-base text-[#131d1d]">
+          <label key={accountId} className="flex min-h-11 items-center gap-3 text-base text-text-primary">
             <input
               type="checkbox"
               name="recipientAccountIds"
               value={accountId}
               checked={selected.includes(accountId)}
               onChange={() => setSelected(toggleRecipient(selected, accountId))}
-              className="size-5 accent-[#004135]"
+              className="size-5 accent-accent"
             />
             {displayName}
           </label>
         ))}
       </fieldset>
       {error && (
-        <p id="recipient-error" role="alert" className="text-sm font-medium text-[#ba1a1a]">
+        <p id="recipient-error" role="alert" className="text-sm font-medium text-danger">
           {error}
         </p>
       )}
       {done && !error && (
-        <p role="status" className="text-sm font-medium text-[#286958]">
+        <p role="status" className="text-sm font-medium text-accent">
           Đã lưu người nhận nhắc.
         </p>
       )}
       <button
         type="submit"
         disabled={pending}
-        className="min-h-11 self-start rounded-xl bg-[#004135] px-5 text-sm font-semibold text-white disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
+        className="min-h-11 self-start rounded-xl bg-accent px-5 text-sm font-semibold text-on-accent disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       >
         {pending ? 'Đang lưu…' : 'Lưu người nhận'}
       </button>

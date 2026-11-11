@@ -18,7 +18,7 @@ export function SelfReportedDoseSlots({
           aria-invalid={Boolean(error) || undefined}
           aria-describedby={error ? 'supplement-slots-error' : undefined}
         >
-          <legend className="mb-2 text-xs font-bold tracking-wider text-[#55615f] uppercase">
+          <legend className="mb-2 text-xs font-bold tracking-wider text-text-secondary uppercase">
             Buổi dùng *
           </legend>
           <div ref={field.ref} tabIndex={-1} className="flex flex-wrap gap-2 outline-none">
@@ -42,7 +42,7 @@ export function SelfReportedDoseSlots({
             })}
           </div>
           {error && (
-            <p id="supplement-slots-error" className="mt-1 text-sm text-[#b42318]">
+            <p id="supplement-slots-error" className="mt-1 text-sm text-danger">
               {error}
             </p>
           )}

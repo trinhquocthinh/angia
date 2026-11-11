@@ -17,7 +17,7 @@ export function AdherenceAction({ profile, session, onSaved }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="min-h-11 rounded-xl bg-[#e3efea] px-4 text-sm font-semibold text-[#004135] transition-colors hover:bg-[#d3e7df] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
+        className="min-h-11 rounded-xl bg-accent-soft px-4 text-sm font-semibold text-accent transition-colors hover:bg-accent-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       >
         Ghi thực tế dùng thuốc
       </button>

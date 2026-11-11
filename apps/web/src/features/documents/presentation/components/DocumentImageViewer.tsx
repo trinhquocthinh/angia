@@ -34,7 +34,7 @@ export function DocumentImageViewer({ src, turns, onError, onRotate, onExpand }:
       <div className={`relative ${onExpand ? 'h-64 xl:h-auto xl:min-h-0 xl:flex-1' : 'min-h-0 flex-1'}`}>
         <div
           ref={containerRef}
-          className={`h-full touch-pan-x touch-pan-y overflow-auto rounded-xl bg-[#e4f0f0] [scrollbar-gutter:stable] ${
+          className={`h-full touch-pan-x touch-pan-y overflow-auto rounded-xl bg-accent-soft [scrollbar-gutter:stable] ${
             pannable ? 'cursor-grab active:cursor-grabbing' : ''
           }`}
         >

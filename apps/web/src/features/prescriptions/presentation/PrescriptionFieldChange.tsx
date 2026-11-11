@@ -10,8 +10,10 @@ export function PrescriptionFieldChange({ change }: { change: Change }) {
       <h5 className="text-sm font-semibold">{text?.label ?? 'Các dòng cùng tên trên đơn'}</h5>
       <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2">
         {(['before', 'after'] as const).map((side) => (
-          <div key={side} className="min-w-0 rounded-xl bg-[#f0f7f5] p-3 break-words">
-            <p className="mb-2 text-sm font-semibold text-[#55615f]">{side === 'before' ? 'Trước' : 'Sau'}</p>
+          <div key={side} className="min-w-0 rounded-xl bg-surface p-3 break-words">
+            <p className="mb-2 text-sm font-semibold text-text-secondary">
+              {side === 'before' ? 'Trước' : 'Sau'}
+            </p>
             {change.field === 'lines' ? (
               <PrescriptionItems items={change[side]} />
             ) : (

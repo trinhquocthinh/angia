@@ -15,10 +15,10 @@ export function PushToggle({
       aria-label="Nhận thông báo trên thiết bị này"
       disabled={disabled}
       onClick={onToggle}
-      className="group flex min-h-11 min-w-12 shrink-0 items-center justify-center disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-[#286958]"
+      className="group flex min-h-11 min-w-12 shrink-0 items-center justify-center disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-focus"
     >
-      <span className="relative h-7 w-12 rounded-full bg-[#d9e5e4] transition-colors group-aria-checked:bg-[#004135]">
-        <span className="absolute top-1 left-1 h-5 w-5 rounded-full bg-white shadow transition-transform group-aria-checked:translate-x-5 motion-reduce:transition-none" />
+      <span className="relative h-7 w-12 rounded-full bg-border transition-colors group-aria-checked:bg-accent">
+        <span className="absolute top-1 left-1 h-5 w-5 rounded-full bg-surface shadow transition-transform group-aria-checked:translate-x-5 motion-reduce:transition-none" />
       </span>
     </button>
   );

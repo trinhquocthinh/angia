@@ -6,10 +6,10 @@ export const ACCEPT =
   '.jpg,.jpeg,.png,.webp,.heic,.heif,image/jpeg,image/png,image/webp,image/heic,image/heif';
 
 const ZONE_STATE = {
-  disabled: 'cursor-not-allowed border-[#bfc9c4] bg-white opacity-70',
-  idle: 'cursor-pointer border-[#bfc9c4] bg-white hover:border-[#286958]/60 hover:bg-[#f6fcfb]',
+  disabled: 'cursor-not-allowed border-border bg-surface opacity-70',
+  idle: 'cursor-pointer border-border bg-surface hover:border-accent/60 hover:bg-surface',
   // Con không nhận sự kiện kéo để dragleave không nháy khi lướt qua chữ/biểu tượng.
-  over: 'scale-[1.01] cursor-copy border-[#286958] bg-[#aef0da]/30 shadow-md *:pointer-events-none',
+  over: 'scale-[1.01] cursor-copy border-accent bg-accent-soft/30 shadow-md *:pointer-events-none',
 };
 
 export function UploadDropZone({
@@ -40,7 +40,7 @@ export function UploadDropZone({
       }}
       aria-disabled={disabled}
       style={revealStyle(5)}
-      className={`angia-modal-reveal group flex flex-col items-center justify-center gap-1 rounded-2xl border-[1.5px] border-dashed p-8 text-center shadow-sm transition-[background-color,border-color,box-shadow,scale] duration-200 ease-out focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#286958] motion-reduce:transition-none max-sm:p-6 ${
+      className={`angia-modal-reveal group flex flex-col items-center justify-center gap-1 rounded-2xl border-[1.5px] border-dashed p-8 text-center shadow-sm transition-[background-color,border-color,box-shadow,scale] duration-200 ease-out focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus motion-reduce:transition-none max-sm:p-6 ${
         ZONE_STATE[disabled ? 'disabled' : over ? 'over' : 'idle']
       }`}
     >

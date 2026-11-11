@@ -15,7 +15,7 @@ export function AccountsTable({
 }) {
   return (
     <div className="overflow-x-auto px-4 pb-4">
-      <table className="admin-table w-full border-separate border-spacing-y-1.5 text-[13px] leading-[20px] [&_th]:px-2 [&_th]:py-1.5 [&_th]:text-[#404945] [&_th]:text-left [&_th]:text-xs [&_th]:leading-4 [&_th]:font-semibold [&_th]:whitespace-nowrap [&_th:last-child]:text-right [&_td]:py-2.5 [&_td]:px-2 [&_td]:align-middle [&_td]:bg-[#eaf6f5]/70 [&_td]:transition-colors [&_td]:duration-150 [&_td:first-child]:rounded-l-xl [&_td:last-child]:rounded-r-xl [&_tbody_tr:hover_td]:bg-[#e4f0f0] [&_strong]:block [&_strong]:text-[14px] [&_strong]:leading-[20px] [&_strong]:font-semibold [&_small]:block [&_small]:text-[11px] [&_small]:leading-[14px] [&_small]:text-[#55615f] max-[600px]:min-w-170">
+      <table className="admin-table w-full border-separate border-spacing-y-1.5 text-[13px] leading-[20px] [&_th]:px-2 [&_th]:py-1.5 [&_th]:text-text-secondary [&_th]:text-left [&_th]:text-xs [&_th]:leading-4 [&_th]:font-semibold [&_th]:whitespace-nowrap [&_th:last-child]:text-right [&_td]:py-2.5 [&_td]:px-2 [&_td]:align-middle [&_td]:bg-accent-soft/70 [&_td]:transition-colors [&_td]:duration-150 [&_td:first-child]:rounded-l-xl [&_td:last-child]:rounded-r-xl [&_tbody_tr:hover_td]:bg-accent-soft [&_strong]:block [&_strong]:text-[14px] [&_strong]:leading-[20px] [&_strong]:font-semibold [&_small]:block [&_small]:text-[11px] [&_small]:leading-[14px] [&_small]:text-text-secondary max-[600px]:min-w-170">
         <caption className="sr-only">Danh sách tài khoản và vai trò trong nhóm</caption>
         <thead>
           <tr>
@@ -38,7 +38,7 @@ export function AccountsTable({
         </tbody>
       </table>
       {accounts.length === 0 && (
-        <p className="py-3 m-0 text-[#55615f] text-[13px] leading-[20px]">Không có tài khoản phù hợp.</p>
+        <p className="py-3 m-0 text-text-secondary text-[13px] leading-[20px]">Không có tài khoản phù hợp.</p>
       )}
     </div>
   );

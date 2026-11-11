@@ -14,15 +14,15 @@ const COPY = {
 export function CourseResolutionOption({ name, value, checked, onChange }: Props) {
   return (
     <label
-      className={`flex min-h-11 cursor-pointer items-start gap-3 rounded-xl p-3.5 ring-1 transition-[background-color,box-shadow] duration-200 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#286958] motion-reduce:transition-none ${
-        checked ? 'bg-[#e3efea] ring-2 ring-[#2f6f5e]' : 'bg-white ring-[#d9e5e4] hover:bg-[#f4faf9]'
+      className={`flex min-h-11 cursor-pointer items-start gap-3 rounded-xl p-3.5 ring-1 transition-[background-color,box-shadow] duration-200 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus motion-reduce:transition-none ${
+        checked ? 'bg-accent-soft ring-2 ring-focus' : 'bg-surface ring-border hover:bg-surface'
       }`}
     >
       <input type="radio" name={name} checked={checked} onChange={onChange} className="sr-only" />
       <span
         aria-hidden="true"
         className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors duration-200 ${
-          checked ? 'bg-[#004135] text-white' : 'border-2 border-[#bfc9c4] bg-white'
+          checked ? 'bg-accent text-on-accent' : 'border-2 border-border bg-surface'
         }`}
       >
         {checked && (
@@ -40,8 +40,8 @@ export function CourseResolutionOption({ name, value, checked, onChange }: Props
         )}
       </span>
       <span className="min-w-0">
-        <span className="block font-semibold text-[#131d1d]">{COPY[value].label}</span>
-        <span className="block text-[13px] leading-5 text-[#404945]">{COPY[value].detail}</span>
+        <span className="block font-semibold text-text-primary">{COPY[value].label}</span>
+        <span className="block text-[13px] leading-5 text-text-secondary">{COPY[value].detail}</span>
       </span>
     </label>
   );

@@ -24,16 +24,13 @@ export function RedactionPreviewStep({ file, edits, codec, onBack, onConfirm, ..
   const exported = useRedactionExport(file, edits, codec);
   if (exported.state === 'exporting')
     return (
-      <p role="status" className="rounded-2xl bg-white p-4 text-sm text-[#55615f] shadow-sm">
+      <p role="status" className="rounded-2xl bg-surface p-4 text-sm text-text-secondary shadow-sm">
         Đang tạo bản sẽ tải lên trên máy…
       </p>
     );
   if (exported.state === 'failed')
     return (
-      <div
-        role="alert"
-        className="flex flex-col gap-3 rounded-2xl bg-[#ffdad6]/60 p-4 text-sm text-[#93000a]"
-      >
+      <div role="alert" className="flex flex-col gap-3 rounded-2xl bg-danger-soft/60 p-4 text-sm text-danger">
         {PROBLEMS[exported.problem]}
         <button type="button" onClick={onBack} className="min-h-11 self-start font-semibold underline">
           Quay lại che

@@ -6,7 +6,7 @@ import { selfProfileRepository as repository } from './selfProfileRepository';
 import { SelfReminders } from './SelfReminders';
 import { SelfRevisits } from './SelfRevisits';
 
-const heading = 'text-xl font-semibold text-[#004135]';
+const heading = 'text-xl font-semibold text-accent';
 
 // Trang đầu (Design §9.5): thuốc theo buổi, lời nhắc của ngày, lịch hẹn sắp tới.
 export function SelfToday({ session }: { session: ProfileSession }) {

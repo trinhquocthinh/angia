@@ -23,15 +23,15 @@ export function NoMaskWarning({ busy, onBack, onSendAnyway }: NoMaskWarningProps
       />
       <div className="flex flex-col gap-5 overflow-y-auto px-6 pb-6 max-md:px-5 max-md:pb-[max(20px,env(safe-area-inset-bottom))]">
         <p
-          className="angia-modal-reveal flex gap-3 rounded-2xl bg-[#fff1ea] p-4 text-[15px] leading-6 text-[#321200]"
+          className="angia-modal-reveal flex gap-3 rounded-2xl bg-warning-soft p-4 text-[15px] leading-6 text-warning"
           style={revealStyle(0)}
         >
-          <span className="mt-0.5 text-[#833b00]">
+          <span className="mt-0.5 text-warning">
             <DocumentIcon name="warning" size={20} />
           </span>
           <span>
             Nếu trên ảnh còn{' '}
-            <strong className="font-semibold underline decoration-[#ffb68c] decoration-2 underline-offset-4">
+            <strong className="font-semibold underline decoration-warning-soft decoration-2 underline-offset-4">
               họ tên, ngày sinh, địa chỉ, số điện thoại, mã bệnh nhân hoặc số bảo hiểm y tế
             </strong>
             , hãy che trước khi tải lên.
@@ -43,7 +43,7 @@ export function NoMaskWarning({ busy, onBack, onSendAnyway }: NoMaskWarningProps
             autoFocus
             disabled={busy}
             onClick={onBack}
-            className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#20594b] px-4 text-sm font-semibold text-white shadow-[0_8px_20px_#20594b33] transition-[background-color,transform] duration-200 hover:bg-[#004135] active:scale-[0.98] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958] motion-reduce:transition-none motion-reduce:active:scale-100"
+            className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-accent px-4 text-sm font-semibold text-on-accent shadow-[0_8px_20px_color-mix(in_srgb,var(--color-shadow)_20%,transparent)] transition-[background-color,transform] duration-200 hover:bg-accent-hover active:scale-[0.98] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none motion-reduce:active:scale-100"
           >
             <span className="-scale-x-100">
               <DocumentIcon name="arrow" size={18} />
@@ -54,7 +54,7 @@ export function NoMaskWarning({ busy, onBack, onSendAnyway }: NoMaskWarningProps
             type="button"
             disabled={busy}
             onClick={onSendAnyway}
-            className="min-h-12 rounded-xl border border-[#ffb68c] bg-[#fff6f1] px-4 text-sm font-semibold text-[#602900] transition-colors duration-200 hover:bg-[#ffdbc9] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#602900] motion-reduce:transition-none"
+            className="min-h-12 rounded-xl border border-warning-soft bg-warning-soft px-4 text-sm font-semibold text-warning transition-colors duration-200 hover:bg-warning-soft disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning motion-reduce:transition-none"
           >
             Ảnh không có thông tin cá nhân — vẫn tải lên
           </button>

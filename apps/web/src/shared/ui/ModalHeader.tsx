@@ -13,8 +13,8 @@ type Props = {
 };
 
 const TONES = {
-  warning: { tile: 'bg-[#ffdbc9] text-[#833b00]', chip: 'bg-[#ffdbc9] text-[#753400]' },
-  accent: { tile: 'bg-[#e3efea] text-[#20594b]', chip: 'bg-[#e3efea] text-[#20594b]' },
+  warning: { tile: 'bg-warning-soft text-warning', chip: 'bg-warning-soft text-warning' },
+  accent: { tile: 'bg-accent-soft text-accent', chip: 'bg-accent-soft text-accent' },
 };
 
 // Đầu hộp thoại: ô biểu tượng (bật nhẹ khi mở), nhãn nhỏ, tiêu đề serif Newsreader và nút đóng.
@@ -33,7 +33,7 @@ export function ModalHeader({
     <div className="flex shrink-0 items-start gap-4 px-6 pt-6 pb-4 max-md:px-5 max-md:pt-3">
       <span
         aria-hidden="true"
-        className={`angia-modal-pop flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-[0_6px_16px_#83390018] ${TONES[tone].tile}`}
+        className={`angia-modal-pop flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-[0_6px_16px_color-mix(in_srgb,var(--color-shadow)_9%,transparent)] ${TONES[tone].tile}`}
       >
         {icon}
       </span>
@@ -47,18 +47,18 @@ export function ModalHeader({
         )}
         <h2
           id={titleId}
-          className="font-['Newsreader',Georgia,serif] text-[22px] leading-7 font-semibold text-[#004135]"
+          className="font-['Newsreader',Georgia,serif] text-[22px] leading-7 font-semibold text-accent"
         >
           {title}
         </h2>
-        {subtitle && <p className="text-sm leading-5 text-[#55615f]">{subtitle}</p>}
+        {subtitle && <p className="text-sm leading-5 text-text-secondary">{subtitle}</p>}
       </div>
       <button
         type="button"
         disabled={pending}
         onClick={onClose}
         aria-label={closeLabel}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#eaf6f5] text-[#404945] transition-colors duration-200 hover:bg-[#deebea] hover:text-[#131d1d] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent-soft text-text-secondary transition-colors duration-200 hover:bg-border hover:text-text-primary disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       >
         <svg
           width="18"

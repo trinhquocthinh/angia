@@ -15,9 +15,9 @@ export function MeasurementTableSection({ kind, measurements }: MeasurementTable
   return (
     <section
       aria-labelledby="measurement-table-title"
-      className="flex flex-col gap-4 rounded-xl bg-white p-5 shadow-sm lg:p-6"
+      className="flex flex-col gap-4 rounded-xl bg-surface p-5 shadow-sm lg:p-6"
     >
-      <h2 id="measurement-table-title" className="text-lg font-semibold text-[#004135]">
+      <h2 id="measurement-table-title" className="text-lg font-semibold text-accent">
         Bảng số đo chi tiết
       </h2>
       <MeasurementTable

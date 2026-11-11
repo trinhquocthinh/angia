@@ -27,18 +27,18 @@ export function MedicationCatalog({
     return (
       <div role="status" aria-label="Đang tải danh mục thuốc" className="grid gap-4 md:grid-cols-2">
         {[0, 1].map((key) => (
-          <div key={key} className="h-48 animate-pulse rounded-xl bg-white motion-reduce:animate-none" />
+          <div key={key} className="h-48 animate-pulse rounded-xl bg-surface motion-reduce:animate-none" />
         ))}
       </div>
     );
   if (error || !data)
     return (
-      <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-[#fdecea] p-5 text-sm">
+      <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-danger-soft p-5 text-sm">
         <p>Không tải được danh mục thuốc.</p>
         <button
           type="button"
           onClick={retry}
-          className="min-h-11 rounded-xl bg-white px-4 font-semibold text-[#004135]"
+          className="min-h-11 rounded-xl bg-surface px-4 font-semibold text-accent"
         >
           Thử lại
         </button>
@@ -47,8 +47,8 @@ export function MedicationCatalog({
   const groups = groupMedicationsBySlot(data.courses);
   if (groups.length === 0)
     return (
-      <div className="flex flex-col items-center gap-3 rounded-[20px] border-2 border-dashed border-[#d9e5e4] bg-white px-6 py-12 text-center">
-        <p className="text-sm font-semibold text-[#131d1d]">
+      <div className="flex flex-col items-center gap-3 rounded-[20px] border-2 border-dashed border-border bg-surface px-6 py-12 text-center">
+        <p className="text-sm font-semibold text-text-primary">
           {readOnly
             ? 'Chưa có thuốc đang dùng hôm nay.'
             : 'Chưa có thuốc. Hãy tải đơn thuốc hoặc thêm thuốc bổ, vitamin.'}
@@ -56,7 +56,7 @@ export function MedicationCatalog({
         {!readOnly && (
           <Link
             to="/upload"
-            className="min-h-11 content-center rounded-full bg-[#004135] px-5 text-sm font-semibold text-white"
+            className="min-h-11 content-center rounded-full bg-accent px-5 text-sm font-semibold text-on-accent"
           >
             Tải ảnh đơn thuốc
           </Link>

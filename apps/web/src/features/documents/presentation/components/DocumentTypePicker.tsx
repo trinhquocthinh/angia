@@ -23,7 +23,7 @@ export function DocumentTypePicker({
   return (
     <PickerCard icon="category" title="Loại giấy tờ" hint="Tùy chọn gợi ý">
       <ChoiceChip selected={value === null} onClick={() => onChange(null)}>
-        <span className={value === null ? 'text-[#b3eddf]' : 'text-[#707975]'}>
+        <span className={value === null ? 'text-accent-soft' : 'text-text-secondary'}>
           <DocumentIcon name="sparkle" size={16} />
         </span>
         Tự động nhận diện
@@ -34,13 +34,13 @@ export function DocumentTypePicker({
           selected={value === type.value}
           onClick={() => onChange(value === type.value ? null : type.value)}
         >
-          <span className={value === type.value ? 'text-[#b3eddf]' : 'text-[#707975]'}>
+          <span className={value === type.value ? 'text-accent-soft' : 'text-text-secondary'}>
             <DocumentIcon name={type.icon} size={16} />
           </span>
           {type.label}
         </ChoiceChip>
       ))}
-      <p className="basis-full text-xs leading-5 text-[#55615f]">
+      <p className="basis-full text-xs leading-5 text-text-secondary">
         Chọn nhiều loại giấy tờ trong một lần tải: để hệ thống tự động nhận diện từng ảnh. Chỉ chọn một loại
         khi mọi ảnh cùng loại — ảnh khác loại sẽ chuyển sang nhập tay.
       </p>

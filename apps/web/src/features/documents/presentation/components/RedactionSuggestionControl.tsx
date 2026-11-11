@@ -10,7 +10,7 @@ type Props = {
 };
 
 const button =
-  'flex min-h-11 items-center gap-1.5 rounded-xl bg-[#e4f0f0] px-3 text-xs font-semibold text-[#131d1d] transition-colors enabled:hover:bg-[#deebea] disabled:opacity-40';
+  'flex min-h-11 items-center gap-1.5 rounded-xl bg-accent-soft px-3 text-xs font-semibold text-text-primary transition-colors enabled:hover:bg-border disabled:opacity-40';
 
 function message(status: SuggestionStatus): string | null {
   if (status.kind === 'error')
@@ -29,13 +29,15 @@ function message(status: SuggestionStatus): string | null {
 function ProfilePicker({ choices, onChoose }: { choices: ProfileOption[]; onChoose: (id: string) => void }) {
   if (!choices.length)
     return (
-      <span className="text-xs text-[#404945]">Chưa có hồ sơ nào đã đồng thuận nên chưa gợi ý được.</span>
+      <span className="text-xs text-text-secondary">
+        Chưa có hồ sơ nào đã đồng thuận nên chưa gợi ý được.
+      </span>
     );
   return (
-    <label className="flex items-center gap-2 text-xs font-semibold text-[#131d1d]">
+    <label className="flex items-center gap-2 text-xs font-semibold text-text-primary">
       Hồ sơ nhận ảnh
       <select
-        className="min-h-11 rounded-xl border border-[#c4d3d0] bg-white px-2 text-sm"
+        className="min-h-11 rounded-xl border border-border bg-surface px-2 text-sm"
         defaultValue=""
         onChange={(event) => event.target.value && onChoose(event.target.value)}
       >
@@ -58,7 +60,7 @@ export function RedactionSuggestionControl({ suggestions, choices, onChooseProfi
   const loading = status.kind === 'loading';
   const text = message(status);
   return (
-    <div className="flex flex-col gap-2 rounded-xl bg-[#f3f8f7] p-3">
+    <div className="flex flex-col gap-2 rounded-xl bg-surface p-3">
       <div className="flex flex-wrap items-center gap-2">
         {choices && <ProfilePicker choices={choices} onChoose={onChooseProfile} />}
         <button type="button" className={button} disabled={loading || Boolean(choices)} onClick={onRun}>
@@ -70,14 +72,14 @@ export function RedactionSuggestionControl({ suggestions, choices, onChooseProfi
           </button>
         )}
       </div>
-      <p className="text-[13px] leading-5 text-[#404945]">
+      <p className="text-[13px] leading-5 text-text-secondary">
         Ảnh sẽ được gửi tới máy chủ AN GIA để tìm thông tin cá nhân. Ảnh không được lưu và không gửi ra ngoài.
         Xoay ảnh cho đúng chiều trước khi gợi ý.
       </p>
       <p
         role="status"
         aria-live="polite"
-        className="text-[13px] leading-5 font-medium text-[#131d1d] empty:hidden"
+        className="text-[13px] leading-5 font-medium text-text-primary empty:hidden"
       >
         {text}
       </p>

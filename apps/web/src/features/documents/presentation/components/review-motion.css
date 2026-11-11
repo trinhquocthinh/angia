@@ -7,7 +7,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.7), transparent);
+  background: linear-gradient(90deg, transparent, var(--color-shimmer), transparent);
   animation: review-shimmer 1400ms ease-in-out infinite;
 }
 /* Xóa dòng: thẻ thu nhẹ rồi mờ đi, các thẻ còn lại trượt về chỗ mới. */

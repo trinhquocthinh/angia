@@ -15,7 +15,7 @@ const ICONS: Record<NonNullable<DocumentEntry['type']>, DocumentIconName> = {
   device_reading: 'monitor',
 };
 const actionClass =
-  'min-h-11 content-center rounded-xl bg-[#eaf6f5] px-4 text-sm font-semibold text-[#004135] hover:bg-[#deebea]';
+  'min-h-11 content-center rounded-xl bg-accent-soft px-4 text-sm font-semibold text-accent hover:bg-border';
 
 // Thẻ chứng từ (Stitch 10424d70): tiêu đề, nhãn trạng thái trung tính, nơi khám · ngày, tóm tắt bản ghi.
 export function DocumentEntryCard({
@@ -28,19 +28,19 @@ export function DocumentEntryCard({
   const action = entryAction(entry);
   const facility = entry.records.prescription?.facility ?? entry.records.labResults[0]?.facility ?? null;
   return (
-    <article className="flex flex-col gap-4 rounded-xl bg-white p-5 shadow-sm">
+    <article className="flex flex-col gap-4 rounded-xl bg-surface p-5 shadow-sm">
       <div className="flex items-start gap-3">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#004135] text-white">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent text-on-accent">
           <DocumentIcon name={entry.type ? ICONS[entry.type] : 'file'} />
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-base font-semibold text-[#131d1d]">{entryTitle(entry)}</h3>
-            <span className="rounded-full bg-[#e4f0f0] px-2.5 py-0.5 text-xs font-medium text-[#404945]">
+            <h3 className="text-base font-semibold text-text-primary">{entryTitle(entry)}</h3>
+            <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-medium text-text-secondary">
               {entryStatusLabel(entry)}
             </span>
           </div>
-          <p className="mt-1 text-sm text-[#55615f]">
+          <p className="mt-1 text-sm text-text-secondary">
             {facility ? `${facility} · ` : ''}
             {entryDateLabel(entry)}
           </p>

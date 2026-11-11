@@ -44,7 +44,7 @@ export function DeleteDocumentDialog(props: Props) {
           !error && <p role="status">Đang tải tác động xóa…</p>
         )}
         {error && (
-          <p role="alert" className="text-sm text-[#a32622]">
+          <p role="alert" className="text-sm text-danger">
             {error}
           </p>
         )}

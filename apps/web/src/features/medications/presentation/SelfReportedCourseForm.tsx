@@ -29,14 +29,14 @@ export function SelfReportedCourseForm({ disabled, pending, error, onSubmit, onC
   return (
     <form noValidate onSubmit={(event) => void submit(event)} className="flex flex-1 flex-col">
       <div className="flex flex-col gap-5 px-6 py-5">
-        <p id="supplement-description" className="text-sm leading-6 text-[#55615f]">
+        <p id="supplement-description" className="text-sm leading-6 text-text-secondary">
           Thuốc này được ghi nhận dài hạn, đến khi bạn đánh dấu dừng uống.
         </p>
         <fieldset disabled={disabled} className="flex min-w-0 flex-col gap-5 border-0 p-0">
           <SelfReportedCourseFields form={form} />
           <SelfReportedDoseSlots control={form.control} error={form.formState.errors.slots?.message} />
           {error && (
-            <p role="alert" className="rounded-xl bg-[#fdecea] p-3 text-sm text-[#b42318]">
+            <p role="alert" className="rounded-xl bg-danger-soft p-3 text-sm text-danger">
               {error}
             </p>
           )}

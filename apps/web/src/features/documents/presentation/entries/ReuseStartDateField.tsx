@@ -20,7 +20,7 @@ export function ReuseStartDateField({ value, min, max, disabled, onChange }: Pro
         max={max}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="min-h-11 rounded-xl border border-[#bfc9c4] px-3"
+        className="min-h-11 rounded-xl border border-border px-3"
       />
     </label>
   );

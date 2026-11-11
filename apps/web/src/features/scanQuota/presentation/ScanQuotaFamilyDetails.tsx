@@ -9,12 +9,12 @@ export function ScanQuotaFamilyDetails({ family }: { family: Family }) {
   };
   return (
     <>
-      <p className="m-0 text-[12px] leading-5 text-[#404945]">
-        <span className="font-semibold text-[#004135]">{status[family.quota.status]}</span> · Đã cấp{' '}
+      <p className="m-0 text-[12px] leading-5 text-text-secondary">
+        <span className="font-semibold text-accent">{status[family.quota.status]}</span> · Đã cấp{' '}
         {family.quota.grantedScans} · Đã dùng {family.quota.usedScans} · Đang giữ {family.quota.heldScans} ·
         Còn lại {family.quota.remainingScans} lượt
       </p>
-      <p className="m-0 text-[12px] leading-5 text-[#55615f]">
+      <p className="m-0 text-[12px] leading-5 text-text-secondary">
         {family.previousApprovedScans === null
           ? 'Không có mức duyệt tháng trước.'
           : `Tháng trước đã duyệt: ${family.previousApprovedScans} lượt. Chỉ là gợi ý; cần chọn và xác nhận lại.`}

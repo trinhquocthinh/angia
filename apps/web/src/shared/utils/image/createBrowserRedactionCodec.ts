@@ -34,14 +34,15 @@ function draw(
   output: RenderedImage,
 ) {
   const { crop, scale } = plan;
-  context.fillStyle = '#ffffff';
+  // Màu xuất ảnh cố định, không phụ thuộc nền giao diện (SPEC-080).
+  context.fillStyle = 'white';
   context.fillRect(0, 0, output.width, output.height);
   context.setTransform(scale, 0, 0, scale, -crop.left * scale, -crop.top * scale);
   context.translate(plan.rotated.width / 2, plan.rotated.height / 2);
   context.rotate((plan.rotation * Math.PI) / 180);
   context.drawImage(bitmap, -bitmap.width / 2, -bitmap.height / 2);
   context.setTransform(1, 0, 0, 1, 0, 0);
-  context.fillStyle = '#000000';
+  context.fillStyle = 'black';
   for (const mask of plan.masks) {
     const rect = scaleRect(mask, crop, scale);
     context.fillRect(rect.left, rect.top, rect.width, rect.height);

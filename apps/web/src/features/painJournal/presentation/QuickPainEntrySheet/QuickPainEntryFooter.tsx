@@ -15,7 +15,7 @@ export function QuickPainEntryFooter({ state }: { state: ReturnType<typeof useQu
         <button
           type="submit"
           disabled={state.values.level === null || state.pending || !state.enabled}
-          className="min-h-[52px] w-full rounded-xl bg-accent px-5 font-medium text-white disabled:opacity-50"
+          className="min-h-[52px] w-full rounded-xl bg-accent px-5 font-medium text-on-accent disabled:opacity-50"
         >
           {state.pending ? 'Đang lưu…' : state.needsReopen ? 'Mở lại và ghi' : 'Lưu'}
         </button>

@@ -16,11 +16,11 @@ export function TemperatureFields({ form }: { form: UseFormReturn<TemperatureFor
           {...form.register('celsius')}
           aria-invalid={Boolean(form.formState.errors.celsius)}
           aria-describedby={form.formState.errors.celsius ? `${id}-celsius-error` : undefined}
-          className="min-h-11 rounded-xl border border-[#d9e5e4] px-3"
+          className="min-h-11 rounded-xl border border-border px-3"
         />
       </label>
       {form.formState.errors.celsius && (
-        <p id={`${id}-celsius-error`} role="alert" className="text-sm text-[#b42318]">
+        <p id={`${id}-celsius-error`} role="alert" className="text-sm text-danger">
           {form.formState.errors.celsius.message}
         </p>
       )}
@@ -32,11 +32,11 @@ export function TemperatureFields({ form }: { form: UseFormReturn<TemperatureFor
           {...form.register('measuredAt')}
           aria-invalid={Boolean(form.formState.errors.measuredAt)}
           aria-describedby={form.formState.errors.measuredAt ? `${id}-time-error` : undefined}
-          className="min-h-11 min-w-0 rounded-xl border border-[#d9e5e4] px-3"
+          className="min-h-11 min-w-0 rounded-xl border border-border px-3"
         />
       </label>
       {form.formState.errors.measuredAt && (
-        <p id={`${id}-time-error`} role="alert" className="text-sm text-[#b42318]">
+        <p id={`${id}-time-error`} role="alert" className="text-sm text-danger">
           {form.formState.errors.measuredAt.message}
         </p>
       )}

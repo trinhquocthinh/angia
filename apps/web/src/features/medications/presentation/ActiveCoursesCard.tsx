@@ -5,8 +5,8 @@ import { doseLabel } from '../application/doseLabel';
 // Thẻ phải của nhóm trùng tên: liệt kê đủ các đợt cũ đang có hiệu lực (SPEC-015).
 export function ActiveCoursesCard({ courses }: { courses: CourseConflict['courses'] }) {
   return (
-    <div className="rounded-xl bg-[#deebea] p-3.5">
-      <p className="text-xs font-semibold text-[#404945]">
+    <div className="rounded-xl bg-border p-3.5">
+      <p className="text-xs font-semibold text-text-secondary">
         {courses.length > 0
           ? 'Các đợt đang có hiệu lực'
           : 'Danh sách đã thay đổi: hiện không còn đợt trùng tên có hiệu lực.'}
@@ -19,7 +19,7 @@ export function ActiveCoursesCard({ courses }: { courses: CourseConflict['course
             </strong>{' '}
             · {doseLabel(course.quantityPerDose, course.doseUnit)} ·{' '}
             {course.slots.map(doseSlotLabel).join(', ')}
-            <span className="block text-[13px] text-[#404945]">
+            <span className="block text-[13px] text-text-secondary">
               Từ {course.startDate} · {course.endDate ? `đến ${course.endDate}` : 'Dài hạn'}
             </span>
           </li>

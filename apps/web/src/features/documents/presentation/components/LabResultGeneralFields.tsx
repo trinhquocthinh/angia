@@ -10,7 +10,7 @@ type GeneralFieldsProps = { form: UseFormReturn<LabResultFormValues>; aiDate: bo
 export function LabResultGeneralFields({ form, aiDate, autoRead }: GeneralFieldsProps) {
   const errors = form.formState.errors;
   return (
-    <section className="flex flex-col gap-5 rounded-[20px] bg-white p-5 shadow-card lg:p-6">
+    <section className="flex flex-col gap-5 rounded-[20px] bg-surface p-5 shadow-card lg:p-6">
       <ReviewSectionTitle title="Thông tin chung" aside={autoRead && <AutoReadLabel />} />
       <div className="grid gap-4 sm:grid-cols-2">
         <ReadingField

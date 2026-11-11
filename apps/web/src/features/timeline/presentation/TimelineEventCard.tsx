@@ -20,18 +20,18 @@ type Props = { event: TimelineEvent; profileId: string | undefined };
 
 export function TimelineEventCard({ event, profileId }: Props) {
   return (
-    <article className="min-w-0 rounded-xl border-l-4 border-[#286958] bg-white p-5 shadow-sm">
+    <article className="min-w-0 rounded-xl border-l-4 border-accent bg-surface p-5 shadow-sm">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="font-semibold text-[#004135]">{labels[event.kind]}</h3>
+        <h3 className="font-semibold text-accent">{labels[event.kind]}</h3>
         <time
           dateTime={event.time ? `${event.date}T${event.time}` : event.date}
-          className="text-sm text-[#55615f] tabular-nums"
+          className="text-sm text-text-secondary tabular-nums"
         >
           {formatDay(event.date)}
           {event.time ? ` · ${event.time}` : ''}
         </time>
       </div>
-      <div className="mt-3 space-y-2 text-sm break-words text-[#131d1d]">
+      <div className="mt-3 space-y-2 text-sm break-words text-text-primary">
         <TimelineEventDetails event={event} profileId={profileId} />
       </div>
     </article>

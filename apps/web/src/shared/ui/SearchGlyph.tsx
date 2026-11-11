@@ -3,7 +3,7 @@ export function SearchGlyph() {
     <svg
       aria-hidden="true"
       viewBox="0 0 24 24"
-      className="pointer-events-none absolute top-1/2 left-3.5 h-[18px] w-[18px] -translate-y-1/2 text-[#55615f]"
+      className="pointer-events-none absolute top-1/2 left-3.5 h-[18px] w-[18px] -translate-y-1/2 text-text-secondary"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.8"

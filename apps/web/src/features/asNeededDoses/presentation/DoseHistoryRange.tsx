@@ -27,20 +27,20 @@ export function DoseHistoryRange({ initial, pending, onChange }: Props) {
               required
               value={range[field]}
               onChange={(event) => setRange({ ...range, [field]: event.target.value })}
-              className="min-h-11 min-w-0 rounded-xl border border-[#d9e5e4] px-2"
+              className="min-h-11 min-w-0 rounded-xl border border-border px-2"
             />
           </label>
         ))}
       </fieldset>
       {error && (
-        <p role="alert" className="text-sm text-[#b42318]">
+        <p role="alert" className="text-sm text-danger">
           Chọn khoảng ngày hợp lệ, tối đa 366 ngày.
         </p>
       )}
       <button
         type="submit"
         disabled={pending}
-        className="min-h-11 rounded-xl bg-[#e4f0ef] px-4 text-sm font-semibold text-[#004135] disabled:opacity-50"
+        className="min-h-11 rounded-xl bg-accent-soft px-4 text-sm font-semibold text-accent disabled:opacity-50"
       >
         Xem nhật ký theo ngày
       </button>

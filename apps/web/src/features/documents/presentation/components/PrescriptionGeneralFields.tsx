@@ -17,7 +17,7 @@ export function PrescriptionGeneralFields({ form, payload, manual }: GeneralFiel
   const autoRead = Boolean(payload) && !manual;
   const errors = form.formState.errors;
   return (
-    <section className="flex flex-col gap-5 rounded-[20px] bg-white p-4 shadow-card lg:p-6">
+    <section className="flex flex-col gap-5 rounded-[20px] bg-surface p-4 shadow-card lg:p-6">
       <ReviewSectionTitle title="Thông tin chung" aside={autoRead && <AutoReadLabel />} />
       <div className="grid items-start gap-3 min-[375px]:grid-cols-2 sm:gap-4">
         <ReadingField

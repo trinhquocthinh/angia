@@ -30,7 +30,7 @@ export function PushSettingsPanel({ csrf }: { csrf: string }) {
     run(() => enableBrowserPush(api, data!.publicKey!, csrf), 'Đã bật thông báo trên thiết bị này.');
   const disable = () => run(() => disableBrowserPush(api, csrf), 'Đã tắt thông báo trên thiết bị này.');
   return (
-    <div className="mx-auto grid max-w-2xl gap-4 lg:max-w-6xl text-[#131d1d] lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-8">
+    <div className="mx-auto grid max-w-2xl gap-4 lg:max-w-6xl text-text-primary lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-8">
       <section className="flex min-w-0 flex-col gap-4 lg:gap-6">
         <PushHero />
         <PushDeviceCard

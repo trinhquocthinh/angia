@@ -24,9 +24,9 @@ export function RevisitReminderDetailPage({ reminderId }: { reminderId: string }
       mobileTitle="Lời nhắc tái khám"
     >
       <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
-        <h1 className="auth-heading text-2xl font-semibold text-[#131d1d]">Lời nhắc tái khám</h1>
+        <h1 className="auth-heading text-2xl font-semibold text-text-primary">Lời nhắc tái khám</h1>
         {reminder.error ? (
-          <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-white p-6 text-sm">
+          <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-surface p-6 text-sm">
             <p>
               {hidden
                 ? 'Không tìm thấy lời nhắc hoặc bạn không có quyền xem.'
@@ -36,7 +36,7 @@ export function RevisitReminderDetailPage({ reminderId }: { reminderId: string }
               <button
                 type="button"
                 onClick={() => void reminder.refetch()}
-                className="min-h-11 rounded-full bg-[#004135] px-5 font-semibold text-white"
+                className="min-h-11 rounded-full bg-accent px-5 font-semibold text-on-accent"
               >
                 Thử lại
               </button>
@@ -45,7 +45,7 @@ export function RevisitReminderDetailPage({ reminderId }: { reminderId: string }
         ) : reminder.data ? (
           <RevisitReminderDetailCard reminder={reminder.data} />
         ) : (
-          <p role="status" className="rounded-[20px] bg-white p-6 text-sm">
+          <p role="status" className="rounded-[20px] bg-surface p-6 text-sm">
             Đang tải lời nhắc…
           </p>
         )}

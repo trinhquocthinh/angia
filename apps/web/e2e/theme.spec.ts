@@ -65,3 +65,77 @@ for (const colorScheme of ['light', 'dark'] as const) {
     await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   });
 }
+
+test('TC-860 — đổi nền cập nhật màn, SVG, biểu đồ và vật liệu 3D; ảnh không đổi', async ({ page }) => {
+  await page.goto('/e2e/theme.html');
+  const expected = {
+    Sáng: {
+      surface: 'rgb(255, 255, 255)',
+      text: 'rgb(31, 42, 42)',
+      accent: 'rgb(47, 111, 94)',
+      model: 'ece8e2,2f6f5e',
+      series: ['#2f6f5e', '#6b4fa8', '#b54708'],
+      pain: '#1f2a2a',
+      body: 'rgb(236, 232, 226)',
+    },
+    Tối: {
+      surface: 'rgb(26, 33, 32)',
+      text: 'rgb(237, 239, 238)',
+      accent: 'rgb(111, 191, 166)',
+      model: '2a3230,6fbfa6',
+      series: ['#6fbfa6', '#b39ddb', '#fdb022'],
+      pain: '#edefee',
+      body: 'rgb(42, 50, 48)',
+    },
+  };
+  for (const name of ['Sáng', 'Tối', 'Sáng'] as const) {
+    const value = expected[name];
+    await page.getByRole('radio', { name, exact: true }).check();
+    const input = page.getByRole('textbox', { name: 'Ô nhập thử' });
+    await expect(input).toHaveCSS('background-color', value.surface);
+    await expect(input).toHaveCSS('color', value.text);
+    await expect(page.getByRole('button', { name: 'Lưu thử' })).toHaveCSS('background-color', value.accent);
+    for (const color of value.series)
+      await expect(page.getByTestId('trend').locator(`path[stroke="${color}"]`).first()).toBeAttached();
+    await expect(
+      page.getByTestId('pain-chart').locator(`path[stroke="${value.pain}"]`).first(),
+    ).toBeAttached();
+    await expect(page.locator('[data-body-region="knee/left"]')).toHaveCSS('fill', value.body);
+    await page.getByRole('button', { name: 'Kiểm tra mô hình' }).click();
+    await expect(page.getByTestId('model-colors')).toHaveText(value.model);
+    await page.getByRole('button', { name: 'Kiểm tra ảnh' }).click();
+    await expect(page.getByTestId('redaction-pixels')).toHaveText(
+      '[0,0,0,255,255,0,0,255,255,255,255,255,255,255,255,255]',
+    );
+  }
+});
+
+test('TC-860 — chữ trên nền ảnh tối và nhãn che đen luôn sáng ở cả hai nền', async ({ page }) => {
+  await page.goto('/e2e/theme.html');
+  for (const name of ['Tối', 'Sáng'] as const) {
+    await page.getByRole('radio', { name, exact: true }).check();
+    const remove = page.getByRole('button', { name: 'Bỏ ảnh thử', exact: true });
+    await remove.hover();
+    await expect(remove).toHaveCSS('color', 'rgb(255, 255, 255)');
+    await expect(page.getByTestId('image-busy').locator('span').first()).toHaveCSS(
+      'color',
+      'rgb(255, 255, 255)',
+    );
+    await expect(page.getByTestId('image-failed').getByRole('alert')).toHaveCSS(
+      'color',
+      'rgb(255, 255, 255)',
+    );
+    await expect(page.getByTestId('image-loaded').locator('svg text')).toHaveCSS(
+      'fill',
+      'rgb(255, 255, 255)',
+    );
+    await expect(page.getByText('Kéo trên ảnh để tạo vùng cắt hoặc che')).toHaveCSS(
+      'color',
+      'rgb(255, 255, 255)',
+    );
+    await expect(page.getByRole('button', { name: 'Xem toàn màn hình', exact: true })).toHaveCSS(
+      'color',
+      'rgb(255, 255, 255)',
+    );
+  }
+});

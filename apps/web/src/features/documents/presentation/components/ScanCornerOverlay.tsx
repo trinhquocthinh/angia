@@ -32,8 +32,9 @@ export function ScanCornerOverlay({ quad, disabled, onChange }: Props) {
       >
         <polygon
           points={quad.map((p) => `${p.x * 100},${p.y * 100}`).join(' ')}
-          fill="rgba(127,224,198,0.15)"
-          stroke="#7fe0c6"
+          fill="var(--color-scan-guide)"
+          fillOpacity="0.15"
+          stroke="var(--color-scan-guide)"
           strokeWidth="2"
           vectorEffect="non-scaling-stroke"
         />
@@ -44,7 +45,7 @@ export function ScanCornerOverlay({ quad, disabled, onChange }: Props) {
           type="button"
           aria-label={`${CORNER_LABELS[index]}. Dùng phím mũi tên để dịch, giữ Shift để dịch nhanh.`}
           disabled={disabled}
-          className="absolute size-11 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[#004135]/80 shadow-lg focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#7fe0c6] disabled:opacity-40"
+          className="absolute size-11 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-paper bg-accent/80 shadow-lg focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-scan-guide disabled:opacity-40"
           style={{ left: `${point.x * 100}%`, top: `${point.y * 100}%` }}
           onPointerDown={(event) => !disabled && event.currentTarget.setPointerCapture(event.pointerId)}
           onPointerMove={(event) => move(index, event)}

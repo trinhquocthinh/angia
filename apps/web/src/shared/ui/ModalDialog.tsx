@@ -31,11 +31,11 @@ export function ModalDialog({ labelledBy, role = 'dialog', onCancel, pending, wi
         event.preventDefault();
         if (!pending) onCancel();
       }}
-      className={`angia-modal max-h-[calc(100dvh-32px)] flex-col overflow-hidden border-0 bg-white p-0 text-[#131d1d] shadow-[0_24px_80px_#00413533] backdrop:bg-[#00201966] backdrop:backdrop-blur-[3px] open:flex md:m-auto md:rounded-[24px] max-md:inset-x-0 max-md:top-auto max-md:bottom-0 max-md:m-0 max-md:max-h-[92dvh] max-md:w-full max-md:max-w-full max-md:rounded-t-[24px] ${WIDTHS[width]}`}
+      className={`angia-modal max-h-[calc(100dvh-32px)] flex-col overflow-hidden border-0 bg-surface p-0 text-text-primary shadow-[0_24px_80px_color-mix(in_srgb,var(--color-shadow)_20%,transparent)] backdrop:bg-overlay/40 backdrop:backdrop-blur-[3px] open:flex md:m-auto md:rounded-[24px] max-md:inset-x-0 max-md:top-auto max-md:bottom-0 max-md:m-0 max-md:max-h-[92dvh] max-md:w-full max-md:max-w-full max-md:rounded-t-[24px] ${WIDTHS[width]}`}
     >
       <span
         aria-hidden="true"
-        className="mx-auto mt-2.5 h-1.5 w-10 shrink-0 rounded-full bg-[#d9e5e4] md:hidden"
+        className="mx-auto mt-2.5 h-1.5 w-10 shrink-0 rounded-full bg-border md:hidden"
       />
       {children}
     </dialog>

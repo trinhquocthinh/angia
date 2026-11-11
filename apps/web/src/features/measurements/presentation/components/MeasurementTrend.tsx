@@ -25,7 +25,7 @@ export const ChartSkeleton = () => (
   <div
     role="status"
     aria-label="Đang tải biểu đồ"
-    className="h-72 animate-pulse rounded-2xl bg-[#eaf6f5] motion-reduce:animate-none"
+    className="h-72 animate-pulse rounded-2xl bg-accent-soft motion-reduce:animate-none"
   />
 );
 
@@ -34,7 +34,7 @@ export function MeasurementTrend({ kind, weeks, range, series, bands }: Props) {
   const { points } = series;
   if (points.length === 0)
     return (
-      <p className="rounded-2xl bg-[#eaf6f5] px-6 py-10 text-center text-sm text-[#3f4946]">
+      <p className="rounded-2xl bg-accent-soft px-6 py-10 text-center text-sm text-text-secondary">
         Chưa có số đo trong {weeks} tuần gần đây.
       </p>
     );
@@ -49,7 +49,7 @@ export function MeasurementTrend({ kind, weeks, range, series, bands }: Props) {
         </Suspense>
       </div>
       {lines.some((line) => line.bridges.length > 0) && (
-        <p className="text-xs text-[#55615f]">Nét chấm mảnh: đoạn nối qua tuần chưa đo.</p>
+        <p className="text-xs text-text-secondary">Nét chấm mảnh: đoạn nối qua tuần chưa đo.</p>
       )}
       <SeriesDataTable
         caption={describeSeries(kind, { ...range, points: points.length, emptyWeeks })}

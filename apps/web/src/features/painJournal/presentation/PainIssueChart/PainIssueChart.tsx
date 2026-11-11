@@ -34,7 +34,7 @@ export function PainIssueChart({
   return (
     <section
       aria-labelledby={id}
-      className="min-w-0 space-y-4 rounded-xl border border-[#E4E0DA] bg-white p-4 md:p-6"
+      className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4 md:p-6"
     >
       <h2 id={id} className="text-lg font-semibold">
         Mức đau trong {weeks} tuần

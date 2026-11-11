@@ -6,6 +6,8 @@ type Props = {
   disabled: boolean;
   gesture: ReturnType<typeof usePrivacyDrag>;
 };
+const MASK = 'var(--color-redaction-mask)';
+
 export function PrivacyOverlay({ edits, mode, disabled, gesture }: Props) {
   const rect = gesture.rectangle;
   return (
@@ -23,14 +25,14 @@ export function PrivacyOverlay({ edits, mode, disabled, gesture }: Props) {
     >
       {edits.masks.map((mask: PrivacyRectangle, index: number) => (
         <g key={index}>
-          <rect x={mask.left} y={mask.top} width={mask.width} height={mask.height} fill="black" />
+          <rect x={mask.left} y={mask.top} width={mask.width} height={mask.height} fill={MASK} />
           <text
             x={mask.left + mask.width / 2}
             y={mask.top + mask.height / 2}
             fontSize={18000}
             textAnchor="middle"
             dominantBaseline="middle"
-            fill="#ffffff"
+            fill="var(--color-on-overlay)"
             fillOpacity={0.7}
           >
             VÙNG CHE ĐEN #{index + 1}
@@ -43,7 +45,7 @@ export function PrivacyOverlay({ edits, mode, disabled, gesture }: Props) {
         width={edits.crop.width}
         height={edits.crop.height}
         fill="none"
-        stroke="#286958"
+        stroke="var(--color-accent)"
         strokeWidth={2}
         strokeDasharray="8 6"
         vectorEffect="non-scaling-stroke"
@@ -54,8 +56,8 @@ export function PrivacyOverlay({ edits, mode, disabled, gesture }: Props) {
           y={rect.top}
           width={rect.width}
           height={rect.height}
-          fill={mode === 'mask' ? 'black' : 'none'}
-          stroke="#286958"
+          fill={mode === 'mask' ? MASK : 'none'}
+          stroke="var(--color-accent)"
           strokeWidth={2}
           vectorEffect="non-scaling-stroke"
         />

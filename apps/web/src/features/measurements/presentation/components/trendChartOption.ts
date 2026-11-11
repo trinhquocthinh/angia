@@ -1,29 +1,20 @@
+import { chartTooltipStyle } from '@src/shared/theme/chartTooltipStyle';
+import { readThemeColor } from '@src/shared/theme/readThemeColor';
 import type { EChartsCoreOption } from 'echarts/core';
 import type { PeriodBand } from '@src/features/adherence/application/periodBands';
 import { STATUS_LABEL } from '@src/features/adherence/application/periodText';
 import { formatDay } from '../../application/formatMeasurement';
 import type { TrendLine, TrendPoint } from '../../application/buildTrendLines';
 
-// Design §4.1: màu chỉ phân biệt loại đường, không theo giá trị (BR-033).
-const COLORS: Record<TrendLine['key'], string> = {
-  systolic: '#2F6F5E',
-  diastolic: '#6B4FA8',
-  glucose: '#B54708',
-};
-const TEXT_SECONDARY = '#55615F';
-const BORDER = '#E4E0DA';
-
-// Design §4.1: đang dùng = color.accent.soft; ngưng = color.period.stopped + hoa văn sọc, cấm màu đỏ.
-// decal của ECharts không áp cho markArea nên sọc là pattern ảnh SVG lặp lại.
-const STOPPED_HATCH = `data:image/svg+xml,${encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="#F1ECE4"/>' +
-    '<path d="M-2 2l4-4M0 8l8-8M6 10l4-4" stroke="#6B5E51" stroke-opacity="0.28" stroke-width="1.2"/></svg>',
-)}`;
-const BAND_STYLE: Record<PeriodBand['status'], { color: string | { image: string; repeat: 'repeat' } }> = {
-  taking: { color: '#E3EFEA' },
-  stopped: { color: { image: STOPPED_HATCH, repeat: 'repeat' } },
-};
-const BAND_TEXT = '#4A5250';
+// Hoa văn SVG là ảnh độc lập: màu phải được chèn trước khi mã hóa data URL.
+function bandStyle(status: PeriodBand['status']) {
+  if (status === 'taking') return { color: readThemeColor('accent-soft') };
+  const image = `data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="${readThemeColor('period-stopped')}"/>` +
+      `<path d="M-2 2l4-4M0 8l8-8M6 10l4-4" stroke="${readThemeColor('period-hatch')}" stroke-opacity="0.28" stroke-width="1.2"/></svg>`,
+  )}`;
+  return { color: { image, repeat: 'repeat' as const } };
+}
 
 // Series rỗng chỉ để mang markArea; đặt đầu tiên để nằm dưới các đường số đo.
 function bandSeries(bands: PeriodBand[]) {
@@ -31,7 +22,7 @@ function bandSeries(bands: PeriodBand[]) {
   const data = bands.map((band) => [
     {
       xAxis: `${band.from}T00:00`,
-      itemStyle: BAND_STYLE[band.status],
+      itemStyle: bandStyle(band.status),
       label: { formatter: STATUS_LABEL[band.status] },
     },
     { xAxis: `${band.to}T23:59` },
@@ -44,7 +35,13 @@ function bandSeries(bands: PeriodBand[]) {
       silent: true,
       markArea: {
         silent: true,
-        label: { show: true, position: 'insideTopLeft', color: BAND_TEXT, fontSize: 11, fontWeight: 600 },
+        label: {
+          show: true,
+          position: 'insideTopLeft',
+          color: readThemeColor('text-secondary'),
+          fontSize: 11,
+          fontWeight: 600,
+        },
         data,
       },
     },
@@ -59,7 +56,9 @@ const formatValue = (value: number) =>
   new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 1 }).format(value);
 
 function lineSeries(line: TrendLine) {
-  const color = COLORS[line.key];
+  const color = readThemeColor(
+    { systolic: 'accent', diastolic: 'series-diastolic', glucose: 'series-glucose' }[line.key],
+  );
   return [
     {
       type: 'line',
@@ -99,22 +98,22 @@ export function trendChartOption(
     animation: animate,
     textStyle: { fontFamily: 'Be Vietnam Pro, system-ui, sans-serif' },
     grid: { left: 8, right: 84, top: 28, bottom: 8, containLabel: true },
-    tooltip: { trigger: 'item', confine: true },
+    tooltip: { trigger: 'item', confine: true, ...chartTooltipStyle() },
     xAxis: {
       type: 'time',
       min: `${range.from}T00:00`,
       max: `${range.to}T23:59`,
-      axisLabel: { formatter: '{dd}/{MM}', color: TEXT_SECONDARY, hideOverlap: true },
-      axisLine: { lineStyle: { color: BORDER } },
+      axisLabel: { formatter: '{dd}/{MM}', color: readThemeColor('text-secondary'), hideOverlap: true },
+      axisLine: { lineStyle: { color: readThemeColor('border') } },
       splitLine: { show: false },
     },
     yAxis: {
       type: 'value',
       scale: true,
       name: lines[0]?.unit ?? '',
-      nameTextStyle: { color: TEXT_SECONDARY, align: 'left' },
-      axisLabel: { color: TEXT_SECONDARY },
-      splitLine: { lineStyle: { color: BORDER } },
+      nameTextStyle: { color: readThemeColor('text-secondary'), align: 'left' },
+      axisLabel: { color: readThemeColor('text-secondary') },
+      splitLine: { lineStyle: { color: readThemeColor('border') } },
     },
     series: [...bandSeries(bands), ...lines.flatMap(lineSeries)],
   };

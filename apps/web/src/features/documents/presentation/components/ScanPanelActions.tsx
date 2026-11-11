@@ -13,9 +13,9 @@ type Props = {
 };
 
 const button =
-  'flex min-h-11 items-center rounded-xl bg-[#e4f0f0] px-3 text-xs font-semibold text-[#131d1d] transition-colors enabled:hover:bg-[#deebea] disabled:opacity-40';
+  'flex min-h-11 items-center rounded-xl bg-accent-soft px-3 text-xs font-semibold text-text-primary transition-colors enabled:hover:bg-border disabled:opacity-40';
 const primary =
-  'flex min-h-11 items-center rounded-xl bg-[#004135] px-3 text-xs font-semibold text-white disabled:opacity-40';
+  'flex min-h-11 items-center rounded-xl bg-accent px-3 text-xs font-semibold text-on-accent disabled:opacity-40';
 
 function CornerActions({
   status,
@@ -28,7 +28,7 @@ function CornerActions({
   const working = status === 'working';
   return (
     <>
-      <label className="flex min-h-11 items-center gap-2 text-xs font-semibold text-[#131d1d]">
+      <label className="flex min-h-11 items-center gap-2 text-xs font-semibold text-text-primary">
         <input
           type="checkbox"
           checked={clean}
@@ -54,7 +54,7 @@ export function ScanPanelActions(props: Props) {
   if (step === 'confirm')
     return (
       <>
-        <p role="alert" className="w-full text-[13px] font-medium text-[#8a3a00]">
+        <p role="alert" className="w-full text-[13px] font-medium text-warning">
           Nắn ảnh sẽ xoá vùng cắt và vùng che hiện có. Bạn sẽ cần che lại trên ảnh nắn.
         </p>
         <button type="button" className={primary} onClick={() => onStep({ type: 'confirmed' })}>

@@ -14,10 +14,10 @@ export function HeaderSearchResults({ listId, items, activeIndex, emptyText, onS
     <ul
       id={listId}
       role="listbox"
-      className="absolute top-[calc(100%+6px)] right-0 left-0 z-50 m-0 max-h-80 min-w-64 list-none overflow-y-auto rounded-2xl bg-white p-1.5 shadow-[0_8px_28px_rgba(22,62,52,0.14)]"
+      className="absolute top-[calc(100%+6px)] right-0 left-0 z-50 m-0 max-h-80 min-w-64 list-none overflow-y-auto rounded-2xl bg-surface p-1.5 shadow-[0_8px_28px_color-mix(in_srgb,var(--color-shadow)_14%,transparent)]"
     >
       {items.length === 0 ? (
-        <li className="px-3 py-2.5 text-sm text-[#55615f]">{emptyText}</li>
+        <li className="px-3 py-2.5 text-sm text-text-secondary">{emptyText}</li>
       ) : (
         items.map((item, index) => (
           <li
@@ -25,19 +25,19 @@ export function HeaderSearchResults({ listId, items, activeIndex, emptyText, onS
             id={`${listId}-${index}`}
             role="option"
             aria-selected={index === activeIndex}
-            className={`flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm ${index === activeIndex ? 'bg-[#e4f0f0]' : 'hover:bg-[#f0fcfb]'}`}
+            className={`flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm ${index === activeIndex ? 'bg-accent-soft' : 'hover:bg-bg'}`}
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => onSelect(item)}
           >
             <span
               aria-hidden="true"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#b3eddf] font-semibold text-[#004135]"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-soft font-semibold text-accent"
             >
               {item.label.slice(0, 1).toLocaleUpperCase('vi')}
             </span>
             <span className="min-w-0">
-              <span className="block truncate font-medium text-[#131d1d]">{item.label}</span>
-              {item.hint && <span className="block truncate text-xs text-[#55615f]">{item.hint}</span>}
+              <span className="block truncate font-medium text-text-primary">{item.label}</span>
+              {item.hint && <span className="block truncate text-xs text-text-secondary">{item.hint}</span>}
             </span>
           </li>
         ))

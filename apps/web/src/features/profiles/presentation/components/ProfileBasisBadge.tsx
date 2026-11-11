@@ -1,8 +1,8 @@
 import type { ProfileListItem } from '../../application/ports';
 
 const basisBadge = {
-  self: { label: 'Chính thức', className: 'bg-[#aef0da]/60 text-[#2f6f5e]' },
-  guardian: { label: 'Phụ thuộc', className: 'bg-[#e4f0f0] text-[#404945]' },
+  self: { label: 'Chính thức', className: 'bg-accent-soft/60 text-accent' },
+  guardian: { label: 'Phụ thuộc', className: 'bg-accent-soft text-text-secondary' },
 };
 
 // Nhãn căn cứ đồng thuận: người thân tự đồng ý (chính thức) hay người giám hộ đồng ý thay (phụ thuộc).

@@ -20,7 +20,7 @@ export function PushSettingsPage() {
       {session.data.family ? (
         <PushSettingsPanel key={session.data.csrfToken} csrf={session.data.csrfToken} />
       ) : (
-        <p role="alert" className="rounded-[20px] bg-white p-6 text-sm">
+        <p role="alert" className="rounded-[20px] bg-surface p-6 text-sm">
           Tài khoản cần được gán vào gia đình trước khi bật thông báo.
         </p>
       )}

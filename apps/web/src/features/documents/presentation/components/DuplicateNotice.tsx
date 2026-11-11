@@ -14,10 +14,10 @@ type DuplicateNoticeProps = {
 // Kiểu cảnh báo nội tuyến theo Stitch 626ca318 (nền cam nhạt, biểu tượng trong vòng tròn, nút đậm).
 export function DuplicateNotice({ duplicate, type, pending, onConfirm }: DuplicateNoticeProps) {
   return (
-    <div role="alert" className="flex items-start gap-3 rounded-xl bg-[#ffdbc9] p-4 text-[#321200]">
+    <div role="alert" className="flex items-start gap-3 rounded-xl bg-warning-soft p-4 text-warning">
       <span
         aria-hidden="true"
-        className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#833b00] text-[#ffdbc9]"
+        className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-warning text-warning-soft"
       >
         <DocumentIcon name="warning" size={16} />
       </span>
@@ -30,7 +30,7 @@ export function DuplicateNotice({ duplicate, type, pending, onConfirm }: Duplica
           type="button"
           disabled={pending}
           onClick={onConfirm}
-          className="min-h-11 self-start rounded-lg bg-[#602900] px-4 text-sm font-semibold text-white disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#602900]"
+          className="min-h-11 self-start rounded-lg bg-warning px-4 text-sm font-semibold text-on-accent disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning"
         >
           {pending ? 'Đang lưu…' : 'Vẫn lưu bản này'}
         </button>

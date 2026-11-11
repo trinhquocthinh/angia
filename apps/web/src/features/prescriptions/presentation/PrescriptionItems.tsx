@@ -6,11 +6,8 @@ export function PrescriptionItems({ items }: { items: Prescription['items'] }) {
   return (
     <ol className="flex min-w-0 flex-col gap-3 text-sm">
       {items.map((item, index) => (
-        <li
-          key={`${item.id}:${index}`}
-          className="min-w-0 rounded-xl border border-[#d9e5e4] p-4 break-words"
-        >
-          <p className="font-semibold text-[#004135]">
+        <li key={`${item.id}:${index}`} className="min-w-0 rounded-xl border border-border p-4 break-words">
+          <p className="font-semibold text-accent">
             {item.name}
             {item.strength ? ` · ${item.strength}` : ''}
           </p>
@@ -31,7 +28,7 @@ export function PrescriptionItems({ items }: { items: Prescription['items'] }) {
             </p>
           )}
           {item.note && (
-            <p className="mt-2 whitespace-pre-wrap text-[#55615f]">Ghi chú trên đơn: {item.note}</p>
+            <p className="mt-2 whitespace-pre-wrap text-text-secondary">Ghi chú trên đơn: {item.note}</p>
           )}
         </li>
       ))}

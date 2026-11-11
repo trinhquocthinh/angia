@@ -22,7 +22,7 @@ export function AiRoutingCard({
     <article
       aria-labelledby="ai-routing-title"
       aria-busy={busy}
-      className="admin-panel min-w-0 max-[1199px]:self-start rounded-2xl bg-white p-4 sm:p-5 shadow-sm flex flex-col gap-4 admin-reveal"
+      className="admin-panel min-w-0 max-[1199px]:self-start rounded-2xl bg-surface p-4 sm:p-5 shadow-sm flex flex-col gap-4 admin-reveal"
     >
       <AdminCardHeading
         id="ai-routing-title"
@@ -30,14 +30,14 @@ export function AiRoutingCard({
         title="Nhận diện chứng từ"
         aside={
           config.data && (
-            <span className="shrink-0 rounded-full bg-[#e4f0f0] px-2.5 py-1 text-xs font-medium text-[#404945]">
+            <span className="shrink-0 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-medium text-text-secondary">
               Bản {config.data.version}
             </span>
           )
         }
       />
       {config.isError && (
-        <p role="alert" className="m-0 text-[12px] leading-5 text-[#93000a]">
+        <p role="alert" className="m-0 text-[12px] leading-5 text-danger">
           {config.error instanceof AdminRequestError
             ? config.error.message
             : panel.editing
@@ -46,7 +46,7 @@ export function AiRoutingCard({
         </p>
       )}
       {!config.data && !config.isError && (
-        <p role="status" className="m-0 text-[13px] text-[#707975]">
+        <p role="status" className="m-0 text-[13px] text-text-secondary">
           Đang tải cấu hình…
         </p>
       )}

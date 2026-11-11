@@ -50,7 +50,7 @@ export function InvitationContent({
         <InvitationBlocked reason={view.reason} />
       )}
       {error && (
-        <p role="alert" className="mt-4 text-sm leading-6 text-[#b42318]">
+        <p role="alert" className="mt-4 text-sm leading-6 text-danger">
           {error}
         </p>
       )}

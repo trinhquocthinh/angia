@@ -1,3 +1,4 @@
+import { readThemeColor } from '@src/shared/theme/readThemeColor';
 import type { PainContext } from '@angia/contracts';
 import { formatPainEntryTime } from '../PainIssueDetail/formatPainEntryTime';
 
@@ -33,9 +34,15 @@ export function painMedicationSeries(context: PainContext | undefined, range: { 
     const tooltip = `${dose.name}\n${formatPainEntryTime(dose.givenAt)}${dose.quantity !== null ? ` · ${dose.quantity} ${dose.unit ?? ''}` : ''}`;
     series.push({
       ...base,
-      lineStyle: { color: '#55615F', width: 2 },
+      lineStyle: { color: readThemeColor('text-secondary'), width: 2 },
       data: [
-        { value: [at, 0], tooltip, symbol: 'rect', symbolSize: [3, 12], itemStyle: { color: '#55615F' } },
+        {
+          value: [at, 0],
+          tooltip,
+          symbol: 'rect',
+          symbolSize: [3, 12],
+          itemStyle: { color: readThemeColor('text-secondary') },
+        },
       ],
     });
   }
@@ -47,7 +54,7 @@ export function painMedicationSeries(context: PainContext | undefined, range: { 
     const row = rows++;
     series.push({
       ...base,
-      lineStyle: { color: '#E4E0DA', width: 4 },
+      lineStyle: { color: readThemeColor('border'), width: 4 },
       data: [
         { value: [start, row], tooltip },
         {

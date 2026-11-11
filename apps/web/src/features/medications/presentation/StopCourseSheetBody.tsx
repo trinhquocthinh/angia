@@ -29,7 +29,7 @@ export function StopCourseSheetBody({ profile, courses, state, onClose }: Props)
       onClose={onClose}
     >
       {state.saved ? (
-        <p role="status" className="mx-6 mt-5 rounded-xl bg-[#e4f0ef] p-4 text-sm leading-6">
+        <p role="status" className="mx-6 mt-5 rounded-xl bg-accent-soft p-4 text-sm leading-6">
           Đã đánh dấu dừng {state.saved.name}. Ngày hiệu lực cuối:{' '}
           {state.saved.endDate ? formatDay(state.saved.endDate) : '—'}.
         </p>

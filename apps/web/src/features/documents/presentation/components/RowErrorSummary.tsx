@@ -12,8 +12,8 @@ type RowErrorSummaryProps = {
 export function RowErrorSummary({ rows, noun, anchorPrefix }: RowErrorSummaryProps) {
   if (rows.length === 0) return null;
   return (
-    <div role="alert" className="flex gap-3 rounded-2xl bg-[#fdecea] p-4 text-sm text-[#7a1b12]">
-      <span aria-hidden="true" className="mt-0.5 shrink-0 text-[#b42318]">
+    <div role="alert" className="flex gap-3 rounded-2xl bg-danger-soft p-4 text-sm text-danger">
+      <span aria-hidden="true" className="mt-0.5 shrink-0 text-danger">
         <DocumentIcon name="warning" />
       </span>
       <div className="flex flex-col gap-2">
@@ -25,7 +25,7 @@ export function RowErrorSummary({ rows, noun, anchorPrefix }: RowErrorSummaryPro
             <li key={row.index}>
               <a
                 href={`#${anchorPrefix}-${row.index}`}
-                className="font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#b42318]"
+                className="font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger"
               >
                 {row.label}
               </a>

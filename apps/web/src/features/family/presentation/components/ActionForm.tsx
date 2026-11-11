@@ -31,7 +31,7 @@ export function ActionForm({
         <h2 id="admin-dialog-title">{titles[task.kind]}</h2>
         <button
           type="button"
-          className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg border-0 bg-transparent text-[#404945] transition-colors hover:bg-[#eaf6f5] hover:text-[#004135] disabled:cursor-default"
+          className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg border-0 bg-transparent text-text-secondary transition-colors hover:bg-accent-soft hover:text-accent disabled:cursor-default"
           aria-label="Đóng hộp thoại"
           disabled={pending}
           onClick={onClose}
@@ -40,12 +40,14 @@ export function ActionForm({
         </button>
       </div>
       {task.kind !== 'create' && (
-        <p className="mt--2 mx-0 mb-0 text-[#55615f] [overflow-wrap:anywhere]">{task.account.displayName}</p>
+        <p className="mt--2 mx-0 mb-0 text-text-secondary [overflow-wrap:anywhere]">
+          {task.account.displayName}
+        </p>
       )}
       <ActionFields task={task} families={families} accounts={accounts} pending={pending} />
       {error && (
         <p
-          className="rounded-[12px] py-3 px-4 m-0 text-[13px] leading-[20px] text-[#93000a] bg-[#ffdad6]"
+          className="rounded-[12px] py-3 px-4 m-0 text-[13px] leading-[20px] text-danger bg-danger-soft"
           role="alert"
         >
           {error instanceof AdminRequestError ? error.message : 'Không thể kết nối. Vui lòng thử lại.'}

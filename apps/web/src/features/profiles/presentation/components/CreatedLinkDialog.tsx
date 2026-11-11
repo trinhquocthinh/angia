@@ -17,9 +17,9 @@ export function CreatedLinkDialog({ created, onClose }: { created: InvitationCre
         pending={false}
         onClose={onClose}
       />
-      <div className="border-t border-[#e4f0f0] px-6 pb-6 max-md:px-5">
+      <div className="border-t border-border px-6 pb-6 max-md:px-5">
         <InvitationCopyField created={created} />
-        <p className="mt-3 text-xs leading-5 text-[#55615f]">
+        <p className="mt-3 text-xs leading-5 text-text-secondary">
           Hãy sao chép trước khi đóng; link không được lưu để đọc lại. Nếu mất link, bạn tạo link mới từ thẻ
           hồ sơ trên Trang chủ.
         </p>

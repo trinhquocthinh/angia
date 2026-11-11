@@ -28,24 +28,24 @@ export function ProfileHealthHeader({ profile, session, latest, active = 'health
   return (
     <div className="flex flex-col gap-4">
       <ProfileEditControls profile={profile} session={session} />
-      <section className="@container rounded-xl bg-white p-5 shadow-sm lg:p-6">
+      <section className="@container rounded-xl bg-surface p-5 shadow-sm lg:p-6">
         <div className="flex flex-col justify-between gap-4 @5xl:flex-row @5xl:items-center">
           <div className="flex min-w-0 items-center gap-4">
             <span className="relative shrink-0" aria-hidden="true">
-              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#b3eddf] text-2xl font-semibold text-[#004135] shadow-sm">
+              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-soft text-2xl font-semibold text-accent shadow-sm">
                 {profile.displayName.slice(0, 1)}
               </span>
               {profile.consentStatus === 'confirmed' && (
-                <span className="absolute right-0 bottom-0 h-4 w-4 rounded-full bg-[#286958] ring-2 ring-white" />
+                <span className="absolute right-0 bottom-0 h-4 w-4 rounded-full bg-accent ring-2 ring-on-accent" />
               )}
             </span>
             <div className="flex min-w-0 flex-col gap-0.5">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="auth-heading break-words text-2xl font-semibold tracking-tight text-[#131d1d] lg:text-[28px]">
+                <h1 className="auth-heading break-words text-2xl font-semibold tracking-tight text-text-primary lg:text-[28px]">
                   {profile.displayName}
                 </h1>
                 {age !== null && (
-                  <span className="rounded-full bg-[#e4f0f0] px-2.5 py-0.5 text-xs text-[#404945]">
+                  <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs text-text-secondary">
                     {age} tuổi
                   </span>
                 )}
@@ -67,7 +67,7 @@ export function ProfileHealthHeader({ profile, session, latest, active = 'health
 
 function LatestReading({ latest }: { latest: Measurement | null }) {
   return (
-    <p className="flex flex-wrap items-center gap-1 text-sm text-[#404945]">
+    <p className="flex flex-wrap items-center gap-1 text-sm text-text-secondary">
       <svg
         width="16"
         height="16"
@@ -78,13 +78,13 @@ function LatestReading({ latest }: { latest: Measurement | null }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden="true"
-        className="text-[#286958]"
+        className="text-accent"
       >
         <path d="M3 5h18v12H3Z M8 21h8 M6 11h3l2-3 2 6 2-3h3" />
       </svg>
       {latest ? (
         <>
-          Chỉ số mới nhất: <strong className="tabular-nums text-[#131d1d]">{readingText(latest)}</strong> (
+          Chỉ số mới nhất: <strong className="tabular-nums text-text-primary">{readingText(latest)}</strong> (
           {formatDay(latest.measuredOn)}
           {latest.measuredTime ? ` · ${latest.measuredTime}` : ''})
         </>

@@ -19,17 +19,17 @@ export function DeleteProfileForm(props: DeleteProfileFormProps) {
   const message = mismatch ? 'Tên nhập lại không khớp' : failure;
   return (
     <form className="flex flex-col gap-5 p-6" onSubmit={submit}>
-      <h2 id="delete-profile-title" className="auth-heading text-2xl font-semibold text-[#912018]">
+      <h2 id="delete-profile-title" className="auth-heading text-2xl font-semibold text-danger">
         Xóa hồ sơ {name}
       </h2>
-      <p id="delete-profile-description" className="text-sm text-[#55615f]">
+      <p id="delete-profile-description" className="text-sm text-text-secondary">
         Toàn bộ chứng từ, ảnh, đơn thuốc, xét nghiệm, số đo và lời nhắc của hồ sơ này sẽ bị xóa vĩnh viễn và
         không thể khôi phục.
       </p>
       <label className="flex flex-col gap-2 text-sm font-medium">
         Nhập lại chính xác tên hồ sơ
         <input
-          className="min-h-[52px] rounded-xl border border-[#c1c8c5] px-4 text-base"
+          className="min-h-[52px] rounded-xl border border-border px-4 text-base"
           value={value}
           autoComplete="off"
           aria-invalid={mismatch}
@@ -38,21 +38,21 @@ export function DeleteProfileForm(props: DeleteProfileFormProps) {
         />
       </label>
       {message && (
-        <p role="alert" className="text-sm font-medium text-[#b42318]">
+        <p role="alert" className="text-sm font-medium text-danger">
           {message}
         </p>
       )}
       <button
         type="submit"
         disabled={!value || pending}
-        className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-[#b42318] px-5 py-3 text-[17px] font-semibold text-white cursor-pointer hover:bg-[#912018] disabled:bg-[#e4e0da] disabled:text-[#55615f] disabled:cursor-default"
+        className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-danger px-5 py-3 text-[17px] font-semibold text-on-accent cursor-pointer hover:bg-danger disabled:bg-border disabled:text-text-secondary disabled:cursor-default"
       >
         {pending ? 'Đang xóa triệt để...' : 'Xóa hồ sơ'}
       </button>
       <button
         type="button"
         disabled={pending}
-        className="min-h-[52px] rounded-xl px-5 text-sm font-semibold text-[#004135] cursor-pointer disabled:opacity-55"
+        className="min-h-[52px] rounded-xl px-5 text-sm font-semibold text-accent cursor-pointer disabled:opacity-55"
         onClick={props.onCancel}
       >
         Hủy

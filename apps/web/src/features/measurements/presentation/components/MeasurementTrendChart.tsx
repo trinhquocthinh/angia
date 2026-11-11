@@ -1,3 +1,4 @@
+import { useDocumentTheme } from '@src/shared/theme/useDocumentTheme';
 import ReactEChartsCore from 'echarts-for-react/esm/core';
 import { LineChart } from 'echarts/charts';
 import { GridComponent, MarkAreaComponent, TooltipComponent } from 'echarts/components';
@@ -14,6 +15,7 @@ type Props = { lines: TrendLine[]; range: { from: string; to: string }; bands: P
 
 // Tệp này được nạp lười (React.lazy) nên ECharts nằm ở chunk riêng, chỉ tải khi đủ ≥ 4 điểm.
 export function MeasurementTrendChart({ lines, range, bands }: Props) {
+  useDocumentTheme();
   const animate = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   return (
     <ReactEChartsCore

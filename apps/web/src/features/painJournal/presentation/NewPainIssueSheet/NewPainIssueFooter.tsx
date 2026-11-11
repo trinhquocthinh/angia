@@ -7,7 +7,7 @@ export function NewPainIssueFooter({ state }: { state: ReturnType<typeof useNewP
           type="button"
           disabled={!state.selected || state.pending}
           onClick={() => state.setStep(2)}
-          className="min-h-[52px] w-full rounded-xl bg-accent px-5 font-medium text-white disabled:opacity-50"
+          className="min-h-[52px] w-full rounded-xl bg-accent px-5 font-medium text-on-accent disabled:opacity-50"
         >
           Tiếp tục
         </button>
@@ -15,7 +15,7 @@ export function NewPainIssueFooter({ state }: { state: ReturnType<typeof useNewP
         <button
           type="submit"
           disabled={state.values.level === null || state.pending}
-          className="min-h-[52px] w-full rounded-xl bg-accent px-5 font-medium text-white disabled:opacity-50"
+          className="min-h-[52px] w-full rounded-xl bg-accent px-5 font-medium text-on-accent disabled:opacity-50"
         >
           {state.pending ? 'Đang lưu…' : 'Lưu vấn đề đau'}
         </button>

@@ -1,6 +1,7 @@
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import type { Object3D } from 'three';
 import { type BodyLocation, regionFromNodeName } from '../../application/regionFromNodeName';
+import { BodyModelAppearance } from './BodyModelAppearance';
 import { CameraControls } from './CameraControls';
 import { SelectedRegionHighlight } from './SelectedRegionHighlight';
 
@@ -27,6 +28,7 @@ export function BodyModel3DScene({ model, selected, onSelect }: Props) {
       <ambientLight intensity={1.6} />
       <directionalLight position={[1, 2, 3]} intensity={1.4} />
       <primitive object={model} onClick={handleClick} />
+      <BodyModelAppearance model={model} />
       <SelectedRegionHighlight model={model} selected={selected} />
       <CameraControls />
     </Canvas>

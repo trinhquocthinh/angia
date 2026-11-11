@@ -2,13 +2,9 @@ type Props = { error: Error | null; retry: () => void };
 export function PainJournalStatus({ error, retry }: Props) {
   if (error)
     return (
-      <div role="alert" className="flex flex-col gap-3 rounded-xl border border-[#dce5e1] p-4 text-sm">
+      <div role="alert" className="flex flex-col gap-3 rounded-xl border border-border p-4 text-sm">
         <p>Không thể tải sổ đau nhức. Vui lòng thử lại.</p>
-        <button
-          type="button"
-          onClick={retry}
-          className="min-h-11 rounded-xl bg-[#e4f0ef] px-4 text-[#004135]"
-        >
+        <button type="button" onClick={retry} className="min-h-11 rounded-xl bg-accent-soft px-4 text-accent">
           Thử lại
         </button>
       </div>
@@ -20,7 +16,7 @@ export function PainJournalStatus({ error, retry }: Props) {
         <div
           key={index}
           aria-hidden="true"
-          className="h-44 rounded-xl bg-[#e4f0ef] motion-safe:animate-pulse"
+          className="h-44 rounded-xl bg-accent-soft motion-safe:animate-pulse"
         />
       ))}
     </div>

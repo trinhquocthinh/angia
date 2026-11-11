@@ -33,7 +33,7 @@ export function NewProfileForm({
         event.preventDefault();
         void save(event.currentTarget);
       }}
-      className="min-h-0 flex-1 overflow-y-auto border-t border-[#e4f0f0] px-6 pt-5 max-md:px-5"
+      className="min-h-0 flex-1 overflow-y-auto border-t border-border px-6 pt-5 max-md:px-5"
     >
       <fieldset disabled={pending} className="space-y-5">
         <ProfileFormFields
@@ -50,8 +50,8 @@ export function NewProfileForm({
           profileName={consent.state.displayName}
           onChange={consent.setDraft}
         />
-        <p className="flex items-start gap-2 px-1 text-xs leading-5 text-[#55615f]">
-          <span className="mt-0.5 shrink-0 text-[#707975]">
+        <p className="flex items-start gap-2 px-1 text-xs leading-5 text-text-secondary">
+          <span className="mt-0.5 shrink-0 text-text-secondary">
             <AdminIcon name="info" size={16} />
           </span>
           {consent.mode === 'invitation'
@@ -59,7 +59,7 @@ export function NewProfileForm({
             : 'Bạn có thể bỏ tick và tạo hồ sơ trước; chỉ ghi được dữ liệu sức khỏe sau khi xác nhận đồng ý.'}
         </p>
         {error && (
-          <p role="alert" className="text-sm text-[#b42318]">
+          <p role="alert" className="text-sm text-danger">
             {error}
           </p>
         )}

@@ -9,7 +9,7 @@ export function AiBudgetHeader({ monthLabel }: { monthLabel: string | null }) {
       title="Chi phí AI tháng này"
       aside={
         monthLabel && (
-          <span className="shrink-0 rounded-full bg-[#e4f0f0] px-2.5 py-1 text-xs font-medium text-[#404945]">
+          <span className="shrink-0 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-medium text-text-secondary">
             {monthLabel}
           </span>
         )

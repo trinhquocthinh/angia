@@ -13,17 +13,17 @@ export function DayReminderList({
   session: ProfileSession;
 }) {
   if (reminders.length === 0)
-    return <p className="rounded-[20px] bg-white p-6 text-sm">Hôm nay không có lời nhắc.</p>;
+    return <p className="rounded-[20px] bg-surface p-6 text-sm">Hôm nay không có lời nhắc.</p>;
   return (
     <ul className="grid items-start gap-4 md:grid-cols-2">
       {reminders.map((reminder) => {
         const { slot, time } = describeReminderSchedule(reminder);
         return (
-          <li key={reminder.id} className="flex flex-col gap-3 rounded-xl bg-white p-5 shadow-sm">
-            <p className="font-semibold text-[#004135]">
+          <li key={reminder.id} className="flex flex-col gap-3 rounded-xl bg-surface p-5 shadow-sm">
+            <p className="font-semibold text-accent">
               {slot} · {time}
             </p>
-            <ul className="flex flex-col gap-1 text-sm break-words text-[#404945]">
+            <ul className="flex flex-col gap-1 text-sm break-words text-text-secondary">
               {reminder.medications.map((medication, index) => (
                 <li key={index}>{reminderMedicationLine(medication)}</li>
               ))}

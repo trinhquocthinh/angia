@@ -1,9 +1,9 @@
 import type { PushStateView } from '../application/describePushState';
 
 const tones: Record<PushStateView['tone'], string> = {
-  active: 'bg-[#aef0da] text-[#055141]',
-  neutral: 'bg-[#e4f0f0] text-[#404945]',
-  warning: 'bg-[#ffdbcf] text-[#7a2e14]',
+  active: 'bg-accent-soft text-accent',
+  neutral: 'bg-accent-soft text-text-secondary',
+  warning: 'bg-warning-soft text-warning',
 };
 export function PushStatePill({ state }: { state: PushStateView }) {
   return (

@@ -1,15 +1,15 @@
 import type { UploadItem } from '../../application/uploadQueue';
 
-const WAITING = 'bg-[#ffdbc9]/50 text-[#833b00]';
-const NEUTRAL = 'bg-[#e4f0f0] text-[#404945]';
+const WAITING = 'bg-warning-soft/50 text-warning';
+const NEUTRAL = 'bg-accent-soft text-text-secondary';
 const BADGES: Record<UploadItem['status'], { label: string; className: string }> = {
   needs_redaction: { label: 'Chưa che', className: WAITING },
-  ready: { label: 'Đã che', className: 'bg-[#aef0da]/60 text-[#004135]' },
+  ready: { label: 'Đã che', className: 'bg-accent-soft/60 text-accent' },
   queued: { label: 'Đang chờ', className: NEUTRAL },
   uploading: { label: 'Đang gửi', className: NEUTRAL },
-  done: { label: 'Đã gửi', className: 'bg-[#aef0da]/60 text-[#004135]' },
-  failed: { label: 'Gửi lỗi', className: 'bg-[#ffdad6] text-[#93000a]' },
-  rejected: { label: 'Bị loại', className: 'bg-[#ffdad6] text-[#93000a]' },
+  done: { label: 'Đã gửi', className: 'bg-accent-soft/60 text-accent' },
+  failed: { label: 'Gửi lỗi', className: 'bg-danger-soft text-danger' },
+  rejected: { label: 'Bị loại', className: 'bg-danger-soft text-danger' },
 };
 
 export function TileBadge({ status }: { status: UploadItem['status'] }) {

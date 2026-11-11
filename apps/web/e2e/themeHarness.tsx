@@ -1,3 +1,4 @@
+import { ThemeMigrationHarness } from './themeMigrationHarness';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider } from '../src/shared/theme/ThemeProvider';
@@ -10,6 +11,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
       <ThemeSwitch />
+      <ThemeMigrationHarness />
       <SummaryPreview
         summary={{
           profile: { id: 'p', displayName: 'Hồ sơ thử', birthYear: null },

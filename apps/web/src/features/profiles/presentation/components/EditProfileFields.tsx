@@ -35,10 +35,10 @@ export function EditProfileFields({
           onChange={(event) => onBirthYearChange(event.currentTarget.value)}
           aria-invalid={Boolean(yearError)}
           aria-describedby={yearError ? 'edit-year-error' : undefined}
-          className="mt-2 block min-h-12 w-full rounded-xl bg-[#eaf6f5] p-3 text-sm"
+          className="mt-2 block min-h-12 w-full rounded-xl bg-accent-soft p-3 text-sm"
         />
         {yearError && (
-          <p id="edit-year-error" role="alert" className="mt-2 text-sm text-[#b42318]">
+          <p id="edit-year-error" role="alert" className="mt-2 text-sm text-danger">
             {yearError}
           </p>
         )}
@@ -52,11 +52,11 @@ export function EditProfileFields({
               checked={vitalsEnabled}
               aria-describedby="edit-vitals-help"
               onChange={(event) => onVitalsChange(event.currentTarget.checked)}
-              className="h-5 w-5 accent-[#004135]"
+              className="h-5 w-5 accent-accent"
             />
             Theo dõi huyết áp, đường huyết
           </label>
-          <p id="edit-vitals-help" className="mt-1 text-sm text-[#55615f]">
+          <p id="edit-vitals-help" className="mt-1 text-sm text-text-secondary">
             Bật khi bác sĩ yêu cầu theo dõi cho bé.
           </p>
         </div>

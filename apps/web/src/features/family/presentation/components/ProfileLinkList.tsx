@@ -21,16 +21,16 @@ export function ProfileLinkList({
   return (
     <>
       {loading && (
-        <p role="status" className="m-0 text-[13px] text-[#55615f]">
+        <p role="status" className="m-0 text-[13px] text-text-secondary">
           Đang tải hồ sơ…
         </p>
       )}
       {error && (
-        <p role="alert" className="m-0 text-[13px] leading-5 text-[#b42318]">
+        <p role="alert" className="m-0 text-[13px] leading-5 text-danger">
           {error.message}
         </p>
       )}
-      {empty && <p className="m-0 text-[13px] text-[#55615f]">Nhóm này chưa có hồ sơ.</p>}
+      {empty && <p className="m-0 text-[13px] text-text-secondary">Nhóm này chưa có hồ sơ.</p>}
       {rows.length > 0 && (
         <ul className="m-0 grid list-none gap-3 p-0">
           {rows.map((profile) => (

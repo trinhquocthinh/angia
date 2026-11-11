@@ -5,7 +5,7 @@ export function EditPainEntryFooter({ state }: { state: ReturnType<typeof useEdi
       <button
         type="submit"
         disabled={state.pending || !state.enabled || state.values.level === null}
-        className="min-h-[52px] w-full rounded-xl bg-accent px-4 text-white disabled:opacity-50"
+        className="min-h-[52px] w-full rounded-xl bg-accent px-4 text-on-accent disabled:opacity-50"
       >
         {state.pending ? 'Đang lưu…' : 'Lưu thay đổi'}
       </button>

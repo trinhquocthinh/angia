@@ -12,7 +12,7 @@ export function SoonMenuItem({
 }) {
   return (
     <button type="button" disabled title="Sắp ra mắt" className={className}>
-      <span className="text-[#404945]">
+      <span className="text-text-secondary">
         <AdminIcon name={icon} />
       </span>
       {label}

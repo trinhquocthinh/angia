@@ -46,7 +46,7 @@ export function BodyModel3D({ selected = null, onSelect, onReady, onUnavailable 
 
   if (state.status === 'unavailable')
     return (
-      <p role="alert" className="rounded-xl bg-[#e4f0ef] p-4 text-sm">
+      <p role="alert" className="rounded-xl bg-accent-soft p-4 text-sm">
         Không mở được chế độ 3D trên thiết bị này.
       </p>
     );
@@ -54,7 +54,7 @@ export function BodyModel3D({ selected = null, onSelect, onReady, onUnavailable 
     return (
       <div
         role="status"
-        className="grid h-full place-items-center rounded-xl bg-[#f3f0eb] text-sm text-[#55615f]"
+        className="grid h-full place-items-center rounded-xl bg-bg text-sm text-text-secondary"
       >
         Đang tải mô hình 3D…
       </div>

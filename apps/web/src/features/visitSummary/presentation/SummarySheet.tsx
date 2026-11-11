@@ -56,7 +56,7 @@ export function SummarySheet({ summary }: { summary: VisitSummary }) {
           <tr className="summary-frame__row">
             <td className="summary-frame__cell">
               <footer className="summary-footer">
-                <span className="text-[#1f2a2a] italic">{summary.disclaimer}</span>
+                <span className="text-print-text italic">{summary.disclaimer}</span>
                 <span className="whitespace-nowrap tabular-nums">Tạo ngày {formatDay(created)}</span>
               </footer>
             </td>
@@ -71,9 +71,9 @@ function SheetHeader({ summary, createdYear }: { summary: VisitSummary; createdY
   const { displayName, birthYear } = summary.profile;
   const name = birthYear === null ? displayName : `${displayName} · ${createdYear - birthYear} tuổi`;
   return (
-    <header className="flex items-end justify-between gap-6 border-b-[1.5px] border-[#1f2a2a] pb-2.5">
+    <header className="flex items-end justify-between gap-6 border-b-[1.5px] border-print-text pb-2.5">
       <div className="flex min-w-0 flex-col gap-0.5">
-        <span className="text-[11pt] font-semibold tracking-[.06em] text-[#2f6f5e]">
+        <span className="text-[11pt] font-semibold tracking-[.06em] text-print-accent">
           AN GIA · TÓM TẮT SỨC KHỎE
         </span>
         <span className="text-[20pt] leading-[26pt] font-semibold break-words">{name}</span>

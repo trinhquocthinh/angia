@@ -11,10 +11,10 @@ export function LabGroupSection({ group }: { group: LabGroup }) {
       className="flex scroll-mt-24 flex-col gap-3"
     >
       <div className="flex items-baseline gap-2">
-        <h2 id={headingId} className="text-xl font-semibold text-[#004135]">
+        <h2 id={headingId} className="text-xl font-semibold text-accent">
           {group.label}
         </h2>
-        <span className="text-xs font-medium text-[#707975]">{group.items.length} chỉ số</span>
+        <span className="text-xs font-medium text-text-secondary">{group.items.length} chỉ số</span>
       </div>
       <div className="grid items-start gap-4 md:grid-cols-2">
         {group.items.map(({ series, note }, index) => (
