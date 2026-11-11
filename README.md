@@ -712,3 +712,39 @@ chưa bỏ Newsreader toàn app hoặc nghiệm thu NFR-9/TC-858/862 toàn route
 focus chạm Safari, zoom hệ điều hành, điện thoại thật hay SIT/Production.
 Không đổi API, domain, DB hoặc dependency. Review độc lập không có finding.
 Bộ `Docs/angia` được cập nhật riêng ngoài Git source; chưa push/deploy.
+
+## E25-S3-T1 — dữ liệu Liều hôm nay — 2026-11-11
+
+`features/today/application/useTodayReminders.ts` nhận adapter, phiên và
+`TodayTarget | null`. Đích `self` dùng hồ sơ liên kết; đích `profile` dành cho
+`main` chọn hồ sơ trong cùng nhà. Hook chỉ bật khi có nhà, đúng phạm vi truy
+cập và hồ sơ `confirmed`; khi `enabled = false`, `data` được che dù cache còn
+bản cũ. API vẫn kiểm quyền và đồng thuận ở máy chủ.
+
+Hook trả snapshot lời nhắc hôm nay theo ngày Việt Nam, theo thứ tự
+Sáng/Trưa/Chiều/Tối, giữ nguyên thuốc, `confirmation`, `canConfirm`, `canUndo`.
+Không dựng liều từ danh sách thuốc hiện dùng. Khóa cache dùng chung với
+`/my-profile` và tab Thuốc, phân biệt tài khoản/nhà/hồ sơ/ngày.
+
+`createTodayRepository` bổ sung đọc tự xem, tái sử dụng đọc theo hồ sơ và
+ghi/hủy SPEC-046. Consumer tiêm cùng adapter vào `useDoseConfirmation` cho
+từng lời nhắc; hook này khóa bấm lặp và chờ đọc lại dữ liệu máy chủ để hiện
+người xác nhận và giờ. Hook đọc không tự chọn hồ sơ hay đổi điều hướng.
+
+Kiểm chứng: 10 test mới PASS; 35 test liên quan today/doseConfirmations PASS.
+`yarn verify:fast` PASS trên bản sao sạch `/tmp` (typecheck + 10 test/2 tệp).
+Chạy ở ổ nguồn bị metadata macOS `._*` có sẵn làm Vitest lỗi parse; không
+dọn metadata ngoài phạm vi task. Lint toàn repo trên bản sao sạch, format
+phần thay đổi, kiểm trùng và Knip PASS; Knip còn hai gợi ý identity spike
+đã có. Hai entry Knip tạm giữ API
+today dùng ở T2; bỏ entry khi màn mới trở thành consumer thực tế.
+
+```bash
+yarn vitest run --project unit-web apps/web/src/features/today apps/web/src/features/doseConfirmations
+yarn verify:fast
+```
+
+Chưa có giao diện/route mới; TC-852/853 chỉ được kiểm ở lớp dữ liệu, chưa
+PASS E2E của SPEC-079. Không đổi API/domain/DB/dependency. Chưa chạy full
+`yarn verify`, chưa đánh giá lại budget còn mở từ E25-S2-T1 hoặc SIT/Production.
+Tiếp theo E25-S3-T2.

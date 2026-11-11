@@ -41,6 +41,8 @@
         "e2e/**/*.spec.ts",
         "vite.body-map.config.ts",
         "e2e/uiFoundationHarness.tsx",
+        "src/features/today/application/useTodayReminders.ts!",
+        "src/features/today/infrastructure/createTodayRepository.ts!",
         "src/shared/ui/{button/Button,field/Field,sheet/Sheet,card/Card}.tsx!"
       ],
       "project": [
