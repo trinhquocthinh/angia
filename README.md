@@ -840,3 +840,26 @@ OpenAPI/typecheck/lint/format/unit/kiểm trùng/Knip/build PASS, dừng tại
 `perf:budget`; `model:check` chưa chạy trong chuỗi do bước budget thất bại.
 Chưa chạy GitHub CI, chưa nghiệm thu SIT/Production hay điện thoại thật; TC-876 mọi route
 và NFR-9 toàn app vẫn mở. Chưa đóng Epic 25.
+
+### Sửa budget hai route self — 2026-11-11
+
+Owner duyệt chuyển `LabSeriesList` trong `SelfSection` từ import tĩnh sang
+`lazy/Suspense`, theo mẫu tab Đau nhức/Nhiệt độ hiện có. Gói trang đầu không
+còn tải giao diện, danh mục và phần phân nhóm xét nghiệm trước khi mở mục
+xét nghiệm. Giữ nguyên API/cache/đồng thuận, quyền đọc và `readOnly`; khi
+nạp chunk có trạng thái “Đang tải kết quả xét nghiệm…”. Không đổi dependency,
+trần 200 KB hoặc thuật toán đo bundle.
+
+TC-861 E2E mới tái hiện việc tải sớm trên bản cũ; sau sửa chỉ tải chunk khi
+mở mục xét nghiệm, vẫn không có hành động ghi. Kiểm chứng trên snapshot
+commit PR #75 cộng đúng diff đã duyệt: build/typecheck/lint, 13 unit liên
+quan và 18 E2E tự xem hồ sơ/đau nhức/xét nghiệm Chromium/WebKit PASS.
+Full `yarn verify` PASS: OpenAPI/typecheck/lint/format, 2.906 unit/588 tệp,
+kiểm trùng/Knip/build/budget/model:check. Hai gợi ý Knip identity spike và
+cảnh báo chunk lớn có sẵn vẫn giữ riêng.
+
+Budget mới: `/my-profile` 198,6 KB; `/my-profile/pain/$issueId` 198,7 KB gzip,
+mọi trang đầu ≤200 KB; TC-729 không có Three.js/GLB trong gói ban đầu PASS.
+Kết quả này thay trạng thái budget đỏ ở checkpoint E25-S4-T1 phía trên.
+Dư địa chỉ khoảng 1,3 KB; vẫn cần cổng CI cho thay đổi sau. Chưa nghiệm thu
+SIT/Production, thiết bị thật, SPEC-081 hoặc TC-876 mọi route; chưa đóng Epic 25.
