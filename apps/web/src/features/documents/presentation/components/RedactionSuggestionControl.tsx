@@ -1,11 +1,12 @@
 import type { SuggestionStatus } from '../../application/requestRedactionSuggestions';
 
+export type ProfileOption = { id: string; displayName: string };
 type Props = {
-  status: SuggestionStatus;
-  /** Lý do chưa bấm được (chưa chọn hồ sơ), null khi sẵn sàng. */
-  blockedReason: string | null;
-  onRun: () => void;
-  onCancel: () => void;
+  /** Kết quả useRedactionSuggestions. */
+  suggestions: { status: SuggestionStatus; run: () => void; cancel: () => void };
+  /** Hồ sơ đã đồng thuận để chọn ngay tại chỗ khi chưa có hồ sơ nhận ảnh; null khi đã có. */
+  choices: ProfileOption[] | null;
+  onChooseProfile: (id: string) => void;
 };
 
 const button =
@@ -24,14 +25,43 @@ function message(status: SuggestionStatus): string | null {
     : added;
 }
 
+// API kiểm đồng thuận theo hồ sơ: chưa có hồ sơ nhận ảnh thì cho chọn ngay tại đây (cùng hồ sơ dùng khi tải lên).
+function ProfilePicker({ choices, onChoose }: { choices: ProfileOption[]; onChoose: (id: string) => void }) {
+  if (!choices.length)
+    return (
+      <span className="text-xs text-[#404945]">Chưa có hồ sơ nào đã đồng thuận nên chưa gợi ý được.</span>
+    );
+  return (
+    <label className="flex items-center gap-2 text-xs font-semibold text-[#131d1d]">
+      Hồ sơ nhận ảnh
+      <select
+        className="min-h-11 rounded-xl border border-[#c4d3d0] bg-white px-2 text-sm"
+        defaultValue=""
+        onChange={(event) => event.target.value && onChoose(event.target.value)}
+      >
+        <option value="" disabled>
+          Chọn hồ sơ…
+        </option>
+        {choices.map((choice) => (
+          <option key={choice.id} value={choice.id}>
+            {choice.displayName}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
 // SPEC-083 / BR-085: gợi ý là tuỳ chọn; lỗi hay bận không chặn việc tự che.
-export function RedactionSuggestionControl({ status, blockedReason, onRun, onCancel }: Props) {
+export function RedactionSuggestionControl({ suggestions, choices, onChooseProfile }: Props) {
+  const { status, run: onRun, cancel: onCancel } = suggestions;
   const loading = status.kind === 'loading';
   const text = message(status);
   return (
     <div className="flex flex-col gap-2 rounded-xl bg-[#f3f8f7] p-3">
       <div className="flex flex-wrap items-center gap-2">
-        <button type="button" className={button} disabled={loading || Boolean(blockedReason)} onClick={onRun}>
+        {choices && <ProfilePicker choices={choices} onChoose={onChooseProfile} />}
+        <button type="button" className={button} disabled={loading || Boolean(choices)} onClick={onRun}>
           {loading ? 'Đang tìm thông tin cá nhân… (khoảng 15 giây)' : 'Gợi ý vùng che'}
         </button>
         {loading && (
@@ -41,8 +71,8 @@ export function RedactionSuggestionControl({ status, blockedReason, onRun, onCan
         )}
       </div>
       <p className="text-[13px] leading-5 text-[#404945]">
-        {blockedReason ??
-          'Ảnh sẽ được gửi tới máy chủ AN GIA để tìm thông tin cá nhân. Ảnh không được lưu và không gửi ra ngoài. Xoay ảnh cho đúng chiều trước khi gợi ý.'}
+        Ảnh sẽ được gửi tới máy chủ AN GIA để tìm thông tin cá nhân. Ảnh không được lưu và không gửi ra ngoài.
+        Xoay ảnh cho đúng chiều trước khi gợi ý.
       </p>
       <p
         role="status"

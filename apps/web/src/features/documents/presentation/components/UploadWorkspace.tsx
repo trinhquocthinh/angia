@@ -11,6 +11,7 @@ import { useUploadQueue } from '../../application/useUploadQueue';
 import { aiQueueBlockReason, usageBlockReason } from '../../application/familyUsageState';
 import { shouldWarnOnLeave, type UploadItem } from '../../application/uploadQueue';
 import { useOpenUploadedDocument } from '../../application/useOpenUploadedDocument';
+import { resolveUploadProfile } from '../../application/resolveUploadProfile';
 import { UploadUsageCards } from './UploadUsageCards';
 import { ProfileChoices } from './ProfileChoices';
 import { UploadIntro } from './UploadIntro';
@@ -35,12 +36,23 @@ type UploadWorkspaceProps = {
 const nextToRedact = (items: UploadItem[], doneId: string) =>
   items.find((item) => item.id !== doneId && item.status === 'needs_redaction')?.id ?? null;
 
-// SPEC-083: tắt → không truyền; API kiểm đồng thuận theo hồ sơ nên chưa chọn hồ sơ đã đồng thuận → null.
-const suggestProps = (suggester: RedactionSuggester | null, profileId: string | undefined, csrf: string) =>
+// SPEC-083: tắt → không truyền. API kiểm đồng thuận theo hồ sơ: chưa có hồ sơ nhận ảnh thì `run` null
+// và trình che cho chọn hồ sơ đã đồng thuận ngay tại nút.
+const suggestProps = (
+  suggester: RedactionSuggester | null,
+  ready: HealthProfile | undefined,
+  csrf: string,
+  profiles: HealthProfile[],
+  choose: (id: string) => void,
+) =>
   suggester && {
-    suggest: profileId
-      ? (image: Blob, signal: AbortSignal) => suggester.suggest(profileId, image, csrf, signal)
-      : null,
+    suggest: {
+      run: ready
+        ? (image: Blob, signal: AbortSignal) => suggester.suggest(ready.id, image, csrf, signal)
+        : null,
+      choices: profiles.filter((profile) => profile.consentStatus === 'confirmed'),
+      onChooseProfile: choose,
+    },
   };
 
 export function UploadWorkspace(props: UploadWorkspaceProps) {
@@ -49,12 +61,16 @@ export function UploadWorkspace(props: UploadWorkspaceProps) {
   const [profileId, setProfileId] = useState<string | null>(null);
   const [declaredType, setDeclaredType] = useState<DocumentType | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const { summary } = queue;
-  useLeaveWarning(shouldWarnOnLeave(summary));
-  const ready = profiles.find((profile) => profile.id === profileId && profile.consentStatus === 'confirmed');
+  useLeaveWarning(shouldWarnOnLeave(queue.summary));
+  const ready = resolveUploadProfile(profiles, profileId);
+  const chooseProfile = (id: string) => {
+    setProfileId(id);
+    const next = profiles.find((profile) => profile.id === id);
+    if (next && !profileShowsVitals(next) && declaredType === 'device_reading') setDeclaredType(null);
+  };
   const selectedType =
     ready && !profileShowsVitals(ready) && declaredType === 'device_reading' ? null : declaredType;
-  useOpenUploadedDocument(summary);
+  useOpenUploadedDocument(queue.summary);
   const editing = queue.items.find((item) => item.id === editingId);
   return (
     <>
@@ -64,12 +80,8 @@ export function UploadWorkspace(props: UploadWorkspaceProps) {
         profiles={profiles}
         {...status}
         profileId={ready?.id ?? null}
-        locked={summary.active > 0}
-        onProfile={(id) => {
-          setProfileId(id);
-          const next = profiles.find((profile) => profile.id === id);
-          if (next && !profileShowsVitals(next) && declaredType === 'device_reading') setDeclaredType(null);
-        }}
+        locked={queue.summary.active > 0}
+        onProfile={chooseProfile}
         declaredType={selectedType}
         onType={setDeclaredType}
       />
@@ -77,10 +89,10 @@ export function UploadWorkspace(props: UploadWorkspaceProps) {
         <UploadRedactionStudio
           key={editing.id}
           item={{ ...editing, previewUrl: editing.previewUrl }}
-          {...suggestProps(suggester, ready?.id, csrfToken)}
+          {...suggestProps(suggester, ready, csrfToken, profiles, chooseProfile)}
           aiExhausted={usage?.aiOcr?.exhausted ?? false}
           aiReason={usage?.aiOcr?.reason}
-          aiBlockedReason={usage ? aiQueueBlockReason(usage, summary.aiReady) : null}
+          aiBlockedReason={usage ? aiQueueBlockReason(usage, queue.summary.aiReady) : null}
           onDone={(blob, edits, sendToAi) => {
             queue.redact(editing.id, blob, edits, sendToAi);
             setEditingId(nextToRedact(queue.items, editing.id));

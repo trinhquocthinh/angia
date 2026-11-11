@@ -1,15 +1,14 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { SuggestionStatus } from '../../application/requestRedactionSuggestions';
-import { RedactionSuggestionControl } from './RedactionSuggestionControl';
+import { type ProfileOption, RedactionSuggestionControl } from './RedactionSuggestionControl';
 
-const render = (status: SuggestionStatus, blockedReason: string | null = null) =>
+const render = (status: SuggestionStatus, choices: ProfileOption[] | null = null) =>
   renderToStaticMarkup(
     <RedactionSuggestionControl
-      status={status}
-      blockedReason={blockedReason}
-      onRun={() => {}}
-      onCancel={() => {}}
+      suggestions={{ status, run: () => {}, cancel: () => {} }}
+      choices={choices}
+      onChooseProfile={() => {}}
     />,
   );
 
@@ -22,10 +21,15 @@ describe('Nút "Gợi ý vùng che" (SPEC-083)', () => {
     expect(html).not.toContain('disabled=""');
   });
 
-  it('chưa chọn hồ sơ: khoá nút và nêu lý do', () => {
-    const html = render({ kind: 'idle' }, 'Chọn hồ sơ ở trên để dùng gợi ý vùng che.');
+  it('chưa có hồ sơ nhận ảnh: khoá nút và cho chọn hồ sơ đã đồng thuận ngay tại chỗ', () => {
+    const html = render({ kind: 'idle' }, [
+      { id: 'p1', displayName: 'Mẹ' },
+      { id: 'p2', displayName: 'Bố' },
+    ]);
     expect(html).toContain('disabled=""');
-    expect(html).toContain('Chọn hồ sơ ở trên');
+    expect(html).toContain('Hồ sơ nhận ảnh');
+    expect(html).toContain('<option value="p1">Mẹ</option>');
+    expect(render({ kind: 'idle' }, [])).toContain('Chưa có hồ sơ nào đã đồng thuận');
   });
 
   it('TC-893: đang chờ có nút Huỷ; bận/lỗi báo vẫn tự che được', () => {
