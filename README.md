@@ -748,3 +748,42 @@ Chưa có giao diện/route mới; TC-852/853 chỉ được kiểm ở lớp d�
 PASS E2E của SPEC-079. Không đổi API/domain/DB/dependency. Chưa chạy full
 `yarn verify`, chưa đánh giá lại budget còn mở từ E25-S2-T1 hoặc SIT/Production.
 Tiếp theo E25-S3-T2.
+
+### E25-S3-T2 — Màn Liều hôm nay (local)
+
+Route `/` mở Liều hôm nay cho tài khoản có hồ sơ liên kết và người chăm sóc
+chính có nhà. Danh sách hồ sơ và các thao tác đồng thuận hiện có vẫn truy cập
+qua nút Hồ sơ gia đình tại `/?view=profiles`; có nút Hôm nay để quay lại.
+Tài khoản chưa có nhà hoặc thành viên chưa liên kết giữ luồng trước đó.
+
+`main` có bộ chọn hồ sơ dạng chip; mặc định là hồ sơ liên kết của chính tài
+khoản. Nếu chưa liên kết thì cần chọn hồ sơ, không tự chọn người khác. Mỗi
+buổi có tên, giờ Việt Nam, snapshot thuốc/liều và nút Đã dùng toàn chiều
+rộng, cao tối thiểu 56 px, chữ 20 px. Xác nhận/hủy dùng SPEC-046, khóa nút
+trong lúc gửi và đọc lại người/giờ máy chủ; thẻ đã xác nhận đổi nền token
+`accent-soft`. Không thêm đánh giá sức khỏe hoặc cảnh báo tuân thủ.
+
+Có trạng thái tải, lỗi và thử lại; rỗng có lối Xem thuốc đang dùng. Hồ sơ
+chưa đồng thuận/đã rút không đọc hoặc hiện liều, có hướng dẫn về luồng
+đồng thuận hiện có. Hai entry Knip tạm của today tại T1 đã được bỏ.
+
+```bash
+yarn workspace @angia/web build
+yarn exec playwright test --config playwright.today.config.ts
+yarn verify:fast
+```
+
+Kiểm chứng local trên bản sao sạch `/tmp`: 5 test trình bày mới PASS;
+toàn bộ unit 588 tệp / 2.906 test PASS; E2E route sản phẩm với API giả
+16/16 PASS trên Chromium/WebKit ở 360 px (hai nền, kích thước nút,
+xác nhận/hủy, tải, khóa gửi, lỗi thử lại, chuyển hồ sơ và withdrawn).
+Không đổi API/domain/DB/dependency. Thanh điều hướng v1.0 thuộc E30-S1-T1;
+axe/Lighthouse CI thuộc E25-S4-T1. Chưa nghiệm thu đăng nhập thật hoặc
+SIT/Production; không coi E2E API giả là nghiệm thu toàn bộ TC-852/853.
+
+`yarn verify:fast` PASS (typecheck + 11 test liên quan / 2 tệp); lint,
+format phần thay đổi, kiểm trùng và Knip PASS trên bản sao sạch. Knip còn
+hai gợi ý identity spike có sẵn. Build web PASS, còn cảnh báo chunk lớn.
+Budget hai route self hiện khoảng 202,2–202,3 KB / 200 KB (checkpoint trước
+200,9 KB); route Hôm nay khoảng 175,1 KB. Budget vẫn là việc mở trước PR;
+chưa chạy full `yarn verify`. Tiếp theo E25-S4-T1; chưa đóng Epic 25.

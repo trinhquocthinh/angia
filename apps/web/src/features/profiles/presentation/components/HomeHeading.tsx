@@ -1,3 +1,4 @@
+import { TodayHomeLink } from '@src/features/today/presentation/TodayHomeLink';
 import { Link } from '@tanstack/react-router';
 import { HomeBadges } from './HomeBadges';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
@@ -14,6 +15,7 @@ export function HomeHeading({
 }) {
   return (
     <section className="flex flex-col gap-6 pb-2 lg:mb-10">
+      <TodayHomeLink />
       <HomeBadges familyName={familyName} />
       <div className="flex items-center justify-between gap-3 lg:items-end lg:gap-6">
         <div className="flex min-w-0 flex-col gap-0.5 lg:gap-1.5">
