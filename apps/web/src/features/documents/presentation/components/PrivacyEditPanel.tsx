@@ -14,6 +14,8 @@ type Props = {
   onCancel: () => void;
   /** Nút "Gợi ý vùng che" (SPEC-083); vắng khi tính năng tắt. */
   suggestion?: ReactNode;
+  /** Nút "Nắn giấy" / "Dùng lại ảnh gốc" (SPEC-084). */
+  tools?: ReactNode;
   historyLocked?: boolean;
 };
 export function PrivacyEditPanel(props: Props) {
@@ -52,6 +54,7 @@ export function PrivacyEditPanel(props: Props) {
               }}
             />
             {toolbar}
+            {preview && props.tools}
             {preview && suggestion}
             <p className="text-[13px] leading-5 text-[#404945]">
               Kéo trên ảnh để cắt hoặc che thông tin. Xoay ảnh sẽ đặt lại toàn bộ vùng cắt và vùng che. Bạn có

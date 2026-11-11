@@ -1,4 +1,5 @@
 import type { PrivacyEdits } from '@angia/contracts';
+import type { RgbaImage } from './scanTypes';
 
 export interface PixelRect {
   left: number;
@@ -29,4 +30,7 @@ export interface RedactionCodec {
   render(image: DecodedImage, plan: RedactionPlan): Promise<RenderedImage>;
   encodeJpeg(rendered: RenderedImage, quality: number): Promise<Blob>;
   dispose(rendered: RenderedImage): void;
+  /** SPEC-084: đọc pixel của ảnh đã vẽ để nắn; vẽ lại kết quả để mã hoá JPEG. */
+  readPixels(rendered: RenderedImage): RgbaImage;
+  fromPixels(image: RgbaImage): RenderedImage;
 }

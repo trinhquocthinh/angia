@@ -48,6 +48,12 @@ function draw(
   }
 }
 
+function context2d(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('Canvas 2D không khả dụng');
+  return context;
+}
+
 export function createBrowserRedactionCodec(): RedactionCodec {
   return {
     decode: async (file) => {
@@ -66,9 +72,7 @@ export function createBrowserRedactionCodec(): RedactionCodec {
       const canvas = document.createElement('canvas');
       canvas.width = width;
       canvas.height = height;
-      const context = canvas.getContext('2d');
-      if (!context) throw new Error('Canvas 2D không khả dụng');
-      draw(context, (image as BitmapImage).bitmap, plan, { width, height });
+      draw(context2d(canvas), (image as BitmapImage).bitmap, plan, { width, height });
       const rendered: CanvasImage = { width, height, canvas };
       return rendered;
     },
@@ -85,6 +89,18 @@ export function createBrowserRedactionCodec(): RedactionCodec {
       const { canvas } = rendered as CanvasImage;
       canvas.width = 0;
       canvas.height = 0;
+    },
+    readPixels: (rendered) => {
+      const { canvas, width, height } = rendered as CanvasImage;
+      return context2d(canvas).getImageData(0, 0, width, height);
+    },
+    fromPixels: (image) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = image.width;
+      canvas.height = image.height;
+      context2d(canvas).putImageData(new ImageData(image.data, image.width, image.height), 0, 0);
+      const rendered: CanvasImage = { width: image.width, height: image.height, canvas };
+      return rendered;
     },
   };
 }

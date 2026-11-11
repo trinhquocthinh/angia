@@ -31,6 +31,8 @@ export interface UploadItem {
   error: string | null;
   // Object URL cục bộ cho ảnh xem trước; null với tệp bị loại.
   previewUrl: string | null;
+  // SPEC-084: JPEG đã nắn trên máy (ảnh chưa che, không bao giờ gửi đi) và object URL của nó.
+  scan?: { file: File; url: string } | null;
   // ID chứng từ server trả về khi gửi xong, để mở thẳng màn duyệt.
   documentId?: string | null;
   // Lời nhắn khi máy chủ bận và ảnh đang chờ tự gửi lại (vẫn ở trạng thái uploading).
@@ -47,6 +49,8 @@ export type UploadAction =
       thumbnailUrl: string;
     }
   | { type: 'reopen'; id: string }
+  | { type: 'scanned'; id: string; file: File; url: string }
+  | { type: 'unscan'; id: string }
   | { type: 'submit'; profileId: string; declaredType: DocumentType | null }
   | { type: 'start'; ids: string[] }
   | { type: 'progress'; ids: string[]; percent: number }
@@ -90,6 +94,20 @@ const update = (state: UploadItem[], ids: string | string[], patch: Partial<Uplo
   return state.map((item) => (targets.has(item.id) ? { ...item, ...patch } : item));
 };
 
+// SPEC-084: đổi nguồn che thì vùng che và bản xuất cũ không còn khớp → về chờ che. Ảnh đã gửi thì giữ nguyên.
+const rescan = (state: UploadItem[], id: string, scan: { file: File; url: string } | null) => {
+  const target = state.find((item) => item.id === id);
+  if (!target || (target.status !== 'needs_redaction' && target.status !== 'ready')) return state;
+  return update(state, id, {
+    scan,
+    status: 'needs_redaction',
+    edits: null,
+    upload: null,
+    thumbnailUrl: null,
+    sendToAi: null,
+  });
+};
+
 export function uploadQueueReducer(state: UploadItem[], action: UploadAction): UploadItem[] {
   switch (action.type) {
     case 'add':
@@ -98,6 +116,13 @@ export function uploadQueueReducer(state: UploadItem[], action: UploadAction): U
       const { upload, edits, sendToAi, thumbnailUrl } = action;
       return update(state, action.id, { status: 'ready', upload, edits, sendToAi, thumbnailUrl });
     }
+    case 'scanned':
+    case 'unscan':
+      return rescan(
+        state,
+        action.id,
+        action.type === 'scanned' ? { file: action.file, url: action.url } : null,
+      );
     case 'reopen':
       return state.map((item) =>
         item.id === action.id && item.status === 'ready'
