@@ -12,6 +12,8 @@ module.exports = {
       numberOfRuns: 1,
       settings: {
         onlyCategories: ['accessibility'],
+        // Runner Ubuntu ≥ 23.10 chặn user namespace (AppArmor) nên Chrome báo "No usable sandbox"; Playwright cũng tắt sandbox như vậy.
+        ...(process.env.CI ? { chromeFlags: '--headless=new --no-sandbox' } : {}),
         screenEmulation: { mobile: true, width: 360, height: 800, deviceScaleFactor: 1, disabled: false },
       },
     },
