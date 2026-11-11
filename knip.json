@@ -41,7 +41,8 @@
         "e2e/**/*.spec.ts",
         "vite.body-map.config.ts",
         "e2e/uiFoundationHarness.tsx",
-        "src/shared/ui/{button/Button,field/Field,sheet/Sheet,card/Card}.tsx!"
+        "src/shared/ui/{button/Button,field/Field,sheet/Sheet,card/Card}.tsx!",
+        "e2e/a11y/lighthouseServer.ts"
       ],
       "project": [
         "src/**/*.{ts,tsx,css}!",

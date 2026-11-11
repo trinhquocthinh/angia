@@ -787,3 +787,56 @@ hai gợi ý identity spike có sẵn. Build web PASS, còn cảnh báo chunk l�
 Budget hai route self hiện khoảng 202,2–202,3 KB / 200 KB (checkpoint trước
 200,9 KB); route Hôm nay khoảng 175,1 KB. Budget vẫn là việc mở trước PR;
 chưa chạy full `yarn verify`. Tiếp theo E25-S4-T1; chưa đóng Epic 25.
+
+### Accessibility CI — E25-S4-T1 (local 2026-11-11)
+
+CI thêm job `accessibility` vào cổng `verify`: bản build web thật, API giả,
+không đăng nhập/gọi SIT. Axe quét toàn trang Hôm nay ở 360 px trên
+Chromium/WebKit, main/member và nền sáng/tối, trước/sau xác nhận liều;
+chặn mọi vi phạm `serious`/`critical` thuộc WCAG A/AA đến 2.2. Kiểm riêng
+chữ nội dung ≥16 px, nút chính ≥18 px/cao ≥56 px, vùng chạm ≥48 × 48 px
+và không tràn ngang. Không dùng điểm Lighthouse để thay thế các kiểm tra này.
+
+Lighthouse CI đo Accessibility trên `/` với hai URL query phân biệt nền;
+server preview riêng chỉ bind loopback, phục vụ dữ liệu giả từ `todayState`,
+chặn API lạ và xác nhận tiêu đề/hai thẻ liều/nền trước khi báo sẵn sàng.
+Cấu hình dùng Chromium của Playwright, chặn lỗi `color-contrast`; báo cáo
+chỉ lưu filesystem và artifact GitHub Actions 7 ngày.
+
+```bash
+yarn install --immutable
+yarn build:contracts
+yarn playwright install chromium webkit
+yarn test:e2e:a11y
+yarn test:lighthouse
+yarn verify:fast
+```
+
+Báo cáo axe nằm ở `.playwright/a11y/` (macOS: thư mục tạm
+`angia-a11y-playwright`); báo cáo Lighthouse ở `.playwright/lighthouse/`
+và dữ liệu thu thập ở `.lighthouseci/`. Các thư mục này không commit.
+Job GitHub-hosted runner cài browser cùng thư viện hệ thống qua `--with-deps`.
+
+Kiểm tra toàn trang phát hiện layout chung còn vùng chạm 36/44 px và chữ
+11–14 px. Theo owner duyệt bổ sung, đã chỉnh kích thước mobile trong
+`MobileTopbar`, `AccountMenu`, `MobileBottomNav`, `ProfileFooter`; không đổi
+điều hướng/nghiệp vụ. Không thêm dependency runtime; thêm devDependencies
+`@axe-core/playwright`, `@lhci/cli` và peer `playwright-core` cùng bản Playwright.
+
+Kiểm chứng bản sao sạch `/tmp`: axe 8/8 PASS, E2E Hôm nay cũ 16/16 PASS;
+Lighthouse Accessibility 100/100 và tương phản PASS ở cả hai nền.
+Đã thử chèn nút không tên và lỗi tương phản trong bản sao: axe/Lighthouse
+đều báo đỏ đúng lỗi, sau đó bỏ phần chèn và chạy lại PASS.
+`verify:fast` PASS (typecheck + 2.906 test / 588 tệp); lint, format,
+kiểm trùng và Knip PASS (còn hai gợi ý identity spike có sẵn).
+Tại ổ nguồn, lệnh `verify:fast` mặc định chạy đủ 2.906 test PASS nhưng
+vẫn báo lỗi parse hai metadata AppleDouble có sẵn
+`._Field.test.tsx` / `._TodayPresentation.test.tsx`; không xóa metadata hay
+đổi cấu hình test trong task này. Chạy lại tại ổ nguồn bằng
+`yarn verify:fast --exclude '**/._*'` PASS: typecheck và 2.906 test / 588 tệp.
+Build web PASS; budget hai route self vẫn khoảng 202,3 KB / 200 KB,
+là việc đang mở trước merge. Full `yarn verify` đã chạy trên bản sao sạch:
+OpenAPI/typecheck/lint/format/unit/kiểm trùng/Knip/build PASS, dừng tại
+`perf:budget`; `model:check` chưa chạy trong chuỗi do bước budget thất bại.
+Chưa chạy GitHub CI, chưa nghiệm thu SIT/Production hay điện thoại thật; TC-876 mọi route
+và NFR-9 toàn app vẫn mở. Chưa đóng Epic 25.

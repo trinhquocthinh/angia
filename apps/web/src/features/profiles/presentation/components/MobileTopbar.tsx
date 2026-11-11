@@ -20,12 +20,16 @@ export function MobileTopbar({
             <Link
               to="/"
               aria-label="Về AN GIA"
-              className="-ml-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-text-secondary hover:text-text-primary focus-visible:outline-2 focus-visible:outline-focus"
+              className="-ml-2 flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-text-secondary hover:text-text-primary focus-visible:outline-2 focus-visible:outline-focus"
             >
               <AdminIcon name="arrow_back" size={24} />
             </Link>
           )}
-          <a href="/" className="shrink-0" aria-label="AN GIA">
+          <a
+            href="/"
+            className="inline-flex h-12 w-12 shrink-0 items-center justify-center"
+            aria-label="AN GIA"
+          >
             <img src="/logo.webp" alt="" className="h-9 w-9 rounded-lg object-contain" />
           </a>
           {title ? (
@@ -48,7 +52,7 @@ export function MobileTopbar({
             <Link
               to="/notifications"
               aria-label="Cài đặt thông báo"
-              className="flex h-11 w-11 items-center justify-center text-text-secondary transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-focus"
+              className="flex h-12 w-12 items-center justify-center text-text-secondary transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-focus"
             >
               <AdminIcon name="notifications" size={24} />
             </Link>

@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 
 const item =
-  'flex min-h-11 min-w-14 flex-1 flex-col items-center justify-center text-[11px] leading-[14px] font-medium tracking-[0.03em] text-text-secondary transition-colors focus-visible:outline-2 focus-visible:outline-focus';
+  'flex min-h-12 min-w-14 flex-1 flex-col items-center justify-center text-base leading-5 font-medium tracking-[0.03em] text-text-secondary transition-colors focus-visible:outline-2 focus-visible:outline-focus';
 const active = { className: 'font-semibold text-accent' };
 
 // Thanh điều hướng đáy màn hình cho di động/máy tính bảng (< lg), thay cho điều hướng trên header.

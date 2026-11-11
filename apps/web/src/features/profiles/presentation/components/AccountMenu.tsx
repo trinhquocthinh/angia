@@ -30,7 +30,7 @@ export function AccountMenu({
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((value) => !value)}
-        className="flex min-h-11 cursor-pointer items-center gap-2 rounded-xl p-1 transition-colors hover:bg-accent-soft focus-visible:outline-2 focus-visible:outline-focus lg:px-1.5"
+        className="flex min-h-12 min-w-12 cursor-pointer items-center gap-2 rounded-xl p-1 transition-colors hover:bg-accent-soft focus-visible:outline-2 focus-visible:outline-focus lg:px-1.5"
       >
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-on-accent shadow-[0_2px_8px_color-mix(in_srgb,var(--color-shadow)_30%,transparent)] ring-2 ring-focus/20 lg:h-8 lg:w-8 lg:bg-accent lg:shadow-sm lg:ring-0">
           <AdminIcon name="person" size={18} />

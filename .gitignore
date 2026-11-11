@@ -43,3 +43,5 @@ fixtures/heic/*
 # E2E: phiên, ảnh thật và báo cáo chỉ lưu cục bộ/private CI
 .playwright/
 
+# Lighthouse CI: báo cáo và dữ liệu thu thập cục bộ
+.lighthouseci/
