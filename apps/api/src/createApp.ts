@@ -35,6 +35,8 @@ import type { ProfileLinkDependencies } from '@src/features/profileLinks/applica
 import { registerProfileLinkRoutes } from '@src/features/profileLinks/presentation/registerProfileLinkRoutes.js';
 import type { DocumentDependencies } from '@src/features/documents/application/ports.js';
 import { registerDocumentRoutes } from '@src/features/documents/presentation/registerDocumentRoutes.js';
+import { registerRedactionSuggestionRoutes } from '@src/features/documents/presentation/registerRedactionSuggestionRoutes.js';
+import type { RedactionSuggestionDependencies } from '@src/features/documents/application/redactionSuggestionPorts.js';
 import { registerDeletionRoutes } from '@src/features/documents/presentation/registerDeletionRoutes.js';
 import { registerManualRecordRoutes } from '@src/features/documents/presentation/registerManualRecordRoutes.js';
 import {
@@ -76,7 +78,7 @@ import { registerPushRoutes } from '@src/features/pushSubscriptions/presentation
 export type AppDependencies = {
   push?: PushDependencies;
   // SPEC-083: chỉ có khi cấu hình OCR_MASK_URL; vắng thì tắt gợi ý vùng che.
-  redactionSuggestions?: { ocrMaskUrl: string };
+  redactionSuggestions?: RedactionSuggestionDependencies;
   healthProbes: HealthProbes;
   auth: AuthRouteDeps;
   familyAdmin: FamilyAdminRepository;
@@ -163,6 +165,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
     now: deps.heavyRateLimit.now,
   });
   registerDocumentRoutes(app, deps.documents, heavyLimiter);
+  registerRedactionSuggestionRoutes(app, deps.documents.repository, deps.redactionSuggestions, heavyLimiter);
   registerReviewRoutes(app, deps.review);
   registerDeletionRoutes(app, deps.documents, deps.auth.logger);
   registerManualRecordRoutes(app, deps.review.repository);

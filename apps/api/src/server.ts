@@ -64,6 +64,7 @@ import { createS3Client } from '@src/shared/storage/createS3Client.js';
 import { sweepOrphanUploadDirs } from '@src/shared/http/sweepOrphanUploadDirs.js';
 
 import { createPushDependencies } from '@src/features/pushSubscriptions/infrastructure/createPushDependencies.js';
+import { createOcrMaskAnalyzer } from '@src/features/documents/infrastructure/createOcrMaskAnalyzer.js';
 
 // Composition root: đọc config, khởi tạo adapter hạ tầng và tiêm vào app.
 const config = loadApiConfig(process.env);
@@ -105,7 +106,9 @@ const scanQuotaDefaults = {
 };
 const app = createApp({
   push: createPushDependencies(db, config),
-  ...(config.OCR_MASK_URL ? { redactionSuggestions: { ocrMaskUrl: config.OCR_MASK_URL } } : {}),
+  ...(config.OCR_MASK_URL
+    ? { redactionSuggestions: { analyzer: createOcrMaskAnalyzer(config.OCR_MASK_URL), logger } }
+    : {}),
   healthProbes: {
     db: createPostgresProbe(pool),
     storage: createS3BucketProbe(s3, config.S3_BUCKET),
