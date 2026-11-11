@@ -33,6 +33,16 @@ describe('Trình che ảnh trên máy', () => {
     expect(state.edits.masks).toHaveLength(32);
     expect(reduce(state, { type: 'remove-mask', index: 4 }).edits.masks).toHaveLength(31);
   });
+  it('TC-891: thêm khung gợi ý chỉ tới trần 32, giữ nguyên vùng cũ, một bước hoàn tác', () => {
+    let state = initial();
+    for (let n = 0; n < 30; n++)
+      state = reduce(state, { type: 'mask', rectangle: { left: n, top: 0, width: 1, height: 1 } });
+    const suggested = Array.from({ length: 5 }, (_, n) => ({ left: 100 + n, top: 5, width: 2, height: 2 }));
+    const next = reduce(state, { type: 'add-masks', rectangles: suggested });
+    expect(next.edits.masks).toEqual([...state.edits.masks, suggested[0], suggested[1]]);
+    expect(reduce(next, { type: 'undo' }).edits).toEqual(state.edits);
+    expect(reduce(next, { type: 'add-masks', rectangles: suggested })).toBe(next);
+  });
   it('TC-210: reset bỏ mọi vùng sửa và lịch sử', () => {
     const masked = reduce(initial(), { type: 'mask', rectangle: { left: 0, top: 0, width: 1, height: 1 } });
     expect(reduce(masked, { type: 'reset' })).toEqual(initial());

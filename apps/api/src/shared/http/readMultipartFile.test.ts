@@ -1,5 +1,3 @@
-import { readdir } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
 import { describe, expect, it } from 'vitest';
 import { readMultipartFile } from './readMultipartFile.js';
 
@@ -19,14 +17,13 @@ const multipart = async (parts: { field: string; bytes: Uint8Array }[]) => {
 };
 
 describe('Đọc một tệp multipart vào bộ nhớ (SPEC-083: ảnh chưa che không ghi ra đĩa)', () => {
-  it('trả đúng byte của trường cần đọc và không tạo thư mục tạm nào', async () => {
-    const before = await readdir(tmpdir());
+  // Không so thư mục tạm của hệ thống: test khác chạy song song cũng ghi vào đó. Module không import fs.
+  it('trả đúng byte của trường cần đọc', async () => {
     const result = await readMultipartFile(
       await multipart([{ field: 'image', bytes: filled(1000, 3) }]),
       limits,
     );
     expect(result).toEqual({ ok: true, bytes: filled(1000, 3) });
-    expect(await readdir(tmpdir())).toEqual(before);
   });
 
   it('tệp vượt trần, thiếu trường hoặc có hơn một tệp → ERR_VALIDATION', async () => {

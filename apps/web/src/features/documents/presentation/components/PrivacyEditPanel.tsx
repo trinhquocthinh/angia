@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { PrivacyEditorAction, PrivacyEditorState } from '../../application/privacyEditorState';
 import { PrivacyCanvas } from './PrivacyCanvas';
 import { PrivacyInspector } from './PrivacyInspector';
@@ -12,8 +12,12 @@ type Props = {
   onImageError: () => void;
   onNext: () => void;
   onCancel: () => void;
+  /** Nút "Gợi ý vùng che" (SPEC-083); vắng khi tính năng tắt. */
+  suggestion?: ReactNode;
+  historyLocked?: boolean;
 };
-export function PrivacyEditPanel({ state, dispatch, src, onImageError, onNext, onCancel }: Props) {
+export function PrivacyEditPanel(props: Props) {
+  const { state, dispatch, src, onImageError, onNext, onCancel, suggestion, historyLocked = false } = props;
   const [mode, setMode] = useState<'crop' | 'mask'>('mask');
   const [preview, setPreview] = useState(false);
   const [inputPending, setInputPending] = useState(false);
@@ -24,6 +28,7 @@ export function PrivacyEditPanel({ state, dispatch, src, onImageError, onNext, o
       mode={mode}
       setMode={setMode}
       disabled={!preview}
+      historyLocked={historyLocked}
       onInputPending={setInputPending}
     >
       {(toolbar, fields) => (
@@ -47,6 +52,7 @@ export function PrivacyEditPanel({ state, dispatch, src, onImageError, onNext, o
               }}
             />
             {toolbar}
+            {preview && suggestion}
             <p className="text-[13px] leading-5 text-[#404945]">
               Kéo trên ảnh để cắt hoặc che thông tin. Xoay ảnh sẽ đặt lại toàn bộ vùng cắt và vùng che. Bạn có
               thể tinh chỉnh qua các ô số bên phải. Ảnh vẫn chỉ nằm trên máy của bạn cho tới khi tải lên.
