@@ -11,6 +11,7 @@ const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà' },
   role: 'main',
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 function render(readOnly = false, consentConfirmed = true) {
   const client = new QueryClient();

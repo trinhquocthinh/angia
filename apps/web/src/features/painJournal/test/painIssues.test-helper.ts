@@ -6,6 +6,7 @@ export const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà' },
   role: 'main',
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 export const profile = {
   id: 'p',

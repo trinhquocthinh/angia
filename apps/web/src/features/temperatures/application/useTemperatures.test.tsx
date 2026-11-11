@@ -11,6 +11,7 @@ const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà' },
   role: 'main',
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 const filter = { from: '2026-11-01', to: '2026-11-04' };
 const key = ['temperatures', 'a', 'f', 'p', filter.from, filter.to];

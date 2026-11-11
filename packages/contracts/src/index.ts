@@ -128,8 +128,8 @@ export {
   extractDocumentJobSchema,
 } from './jobs/extractDocumentJob.js';
 export type { ExtractDocumentJob } from './jobs/extractDocumentJob.js';
-export { privacyRectangleSchema, privacyEditsSchema } from './documents/privacySchemas.js';
-export type { PrivacyRectangle, PrivacyEdits } from './documents/privacySchemas.js';
+export * from './documents/privacySchemas.js';
+export * from './documents/redactionSuggestionsSchemas.js';
 
 export {
   deleteDocumentRequestSchema,

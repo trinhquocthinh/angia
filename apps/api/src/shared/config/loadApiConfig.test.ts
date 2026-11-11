@@ -58,6 +58,16 @@ describe('Ân hạn dọn thư mục tạm upload mồ côi (F08b, nợ #21)', (
   });
 });
 
+describe('Địa chỉ ocr-mask cho gợi ý vùng che (SPEC-083, BR-085)', () => {
+  it('mặc định trống (tắt tính năng); nhận URL hợp lệ; từ chối chuỗi không phải URL', () => {
+    expect(loadApiConfig(env).OCR_MASK_URL).toBe('');
+    expect(loadApiConfig({ ...env, OCR_MASK_URL: 'http://ocr-mask:8000' }).OCR_MASK_URL).toBe(
+      'http://ocr-mask:8000',
+    );
+    expect(() => loadApiConfig({ ...env, OCR_MASK_URL: 'ocr-mask' })).toThrow();
+  });
+});
+
 describe('Trần AI theo gia đình (SPEC-031, BR-018)', () => {
   it('TC-652: không còn AI_ESTIMATED_COST_USD, AI_DEFAULT_FAMILY_MONTHLY_CAP_USD; có đặt cũng bị bỏ qua', () => {
     const config = loadApiConfig({

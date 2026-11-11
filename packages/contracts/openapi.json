@@ -133,13 +133,25 @@
           },
           "csrfToken": {
             "type": "string"
+          },
+          "features": {
+            "type": "object",
+            "properties": {
+              "redactionSuggestions": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "redactionSuggestions"
+            ]
           }
         },
         "required": [
           "account",
           "family",
           "role",
-          "csrfToken"
+          "csrfToken",
+          "features"
         ]
       },
       "PushConfig": {

@@ -8,6 +8,7 @@ const session: ProfileSession = {
   account: { id: 'a', displayName: 'An', isSystemAdmin: false, healthProfileId: null },
   family: { id: 'f', name: 'Nhà Thịnh' },
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 const props = {
   session,

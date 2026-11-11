@@ -105,6 +105,7 @@ const scanQuotaDefaults = {
 };
 const app = createApp({
   push: createPushDependencies(db, config),
+  ...(config.OCR_MASK_URL ? { redactionSuggestions: { ocrMaskUrl: config.OCR_MASK_URL } } : {}),
   healthProbes: {
     db: createPostgresProbe(pool),
     storage: createS3BucketProbe(s3, config.S3_BUCKET),

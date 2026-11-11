@@ -9,6 +9,7 @@ const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà An' },
   role: 'main',
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 function mount(client: QueryClient, repo: ProfilesRepository, context = session) {
   let workspace: ReturnType<typeof useInvitationManager> | undefined;

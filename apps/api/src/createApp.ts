@@ -75,6 +75,8 @@ import { registerPushRoutes } from '@src/features/pushSubscriptions/presentation
 
 export type AppDependencies = {
   push?: PushDependencies;
+  // SPEC-083: chỉ có khi cấu hình OCR_MASK_URL; vắng thì tắt gợi ý vùng che.
+  redactionSuggestions?: { ocrMaskUrl: string };
   healthProbes: HealthProbes;
   auth: AuthRouteDeps;
   familyAdmin: FamilyAdminRepository;
@@ -144,7 +146,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   app.use('/api/*', except(PUBLIC_PATHS, requireSession()), limitRequestBody());
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth);
-  registerMeRoute(app);
+  registerMeRoute(app, { redactionSuggestions: Boolean(deps.redactionSuggestions) });
   if (deps.push)
     registerPushRoutes(app, deps.push, { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies });
   registerAdminRoutes(app, deps.familyAdmin, deps.scanQuota.now);

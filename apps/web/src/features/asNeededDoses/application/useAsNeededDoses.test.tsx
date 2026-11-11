@@ -11,6 +11,7 @@ const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà' },
   role: 'main',
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 const filter = { courseId: 'c', from: '2026-11-01', to: '2026-11-04' };
 const mainKey = ['as-needed-doses', 'a', 'f', 'p', 'c', filter.from, filter.to];

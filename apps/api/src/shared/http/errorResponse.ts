@@ -122,6 +122,14 @@ const ERROR_CATALOG = {
     status: 503,
     message: 'Hệ thống đang nhận ảnh của nhiều người cùng lúc. Vui lòng thử lại sau ít giây.',
   },
+  ERR_SUGGESTION_BUSY: {
+    status: 503,
+    message: 'Máy chủ đang bận tìm thông tin cá nhân trên ảnh khác. Bạn vẫn tự che được như bình thường.',
+  },
+  ERR_SUGGESTION_UNAVAILABLE: {
+    status: 503,
+    message: 'Chưa gợi ý được lúc này. Bạn vẫn tự che được như bình thường.',
+  },
   ERR_STORAGE_QUOTA: {
     status: 413,
     message:

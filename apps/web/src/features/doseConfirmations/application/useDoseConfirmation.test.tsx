@@ -13,6 +13,7 @@ const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà' },
   role: 'main',
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 const detailKey = ['my-reminder', 'r'];
 const selfKey = [...selfProfileKey(session), 'reminders', '2026-11-02'];

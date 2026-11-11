@@ -9,6 +9,7 @@ const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà An' },
   role: 'main',
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 const profile = {
   consentAction: 'attestation' as const,

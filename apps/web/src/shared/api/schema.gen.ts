@@ -9785,6 +9785,9 @@ export interface components {
       /** @enum {string|null} */
       role: 'main' | 'member' | null;
       csrfToken: string;
+      features: {
+        redactionSuggestions: boolean;
+      };
     };
     PushConfig: {
       enabled: boolean;
