@@ -671,3 +671,44 @@ harness có cảnh báo ECharts disposed/Three.Clock deprecated.
 TC-858 (tương phản toàn bộ route), TC-862, PDF/máy in thật và SIT/Production
 chưa nghiệm thu. Tài liệu SDD, Tech Spec, TC, Design và Master Plan ghi cùng
 checkpoint. Bộ `Docs/angia` nằm ngoài Git của source; chưa push/deploy.
+
+## E25-S2-T1 — component nền dễ đọc — 2026-11-11
+
+Đã thêm `Button`, `Field`, `Sheet`, `Card` tại `apps/web/src/shared/ui/`.
+`Button` mặc định là nút thường, cần truyền `type="submit"` để gửi form;
+variant `icon` yêu cầu `aria-label`. `Field` hiện bọc một input native,
+liên kết nhãn/hướng dẫn/lỗi và chuyển tiếp props/ref. `Card` là khối không
+tương tác. `Sheet` tái sử dụng native dialog và hook focus hiện có;
+`ModalDialog`/`SidePanel` giữ API cũ.
+
+Header/footer dùng chữ sans và vùng chạm mới: nút chính tối thiểu 56px,
+chữ 20/28px; nút phụ/đóng tối thiểu 48px; chữ phụ 18/24px, nhãn/lỗi 16/24px,
+focus 3px. Tiêu đề dùng rem, bố cục header chịu được chữ phóng 200%.
+Card/sheet tối dùng viền thay bóng. Mở sheet 200ms, backdrop 180ms ease-out;
+bỏ reveal/pop so le ở stylesheet modal chung, tắt chuyển động khi giảm motion.
+
+Kiểm chứng trên bản sao `/tmp`: `verify:fast` PASS 124 test/28 tệp liên quan;
+full unit PASS 2.891 test/585 tệp; lint/format, kiểm trùng, Knip và build PASS.
+E2E Chromium/WebKit 360px: component 24/24, theme 16/16 PASS. Hồi quy modal
+125/126 qua lượt đầu; ca còn lại bị reload trong lúc codegen và PASS khi chạy
+riêng sau codegen. Unit Field tại source sau áp dụng PASS 2/2; 17/17 tệp
+khớp bản kiểm chứng. Đã xem ảnh modal hai nền.
+
+```bash
+yarn playwright test --config playwright.ui-foundation.config.ts
+yarn playwright test --config playwright.theme.config.ts
+yarn test:e2e:body-map
+yarn verify:fast
+yarn verify
+```
+
+Full `verify` còn dừng ở budget hai route self: **200,9 KB/200 KB**
+(checkpoint T2: 200,3 KB). TC-861 giữ mở; bước `model:check` sau budget chưa
+được chạy trong chuỗi này. Còn cảnh báo chunk lớn, ECharts disposed,
+Three.Clock deprecated và hai gợi ý Knip có sẵn cho identity spike.
+
+Phạm vi này là nền cho E25-S3/E30; chưa chuyển mọi màn sang primitive,
+chưa bỏ Newsreader toàn app hoặc nghiệm thu NFR-9/TC-858/862 toàn route,
+focus chạm Safari, zoom hệ điều hành, điện thoại thật hay SIT/Production.
+Không đổi API, domain, DB hoặc dependency. Review độc lập không có finding.
+Bộ `Docs/angia` được cập nhật riêng ngoài Git source; chưa push/deploy.
