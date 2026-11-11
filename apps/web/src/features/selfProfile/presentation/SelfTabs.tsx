@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { profileTabClass } from '@src/features/measurements/presentation/components/profileTabClass';
+import { TabUnderline } from '@src/features/measurements/presentation/components/TabUnderline';
 import { useScrollActiveTab } from '@src/features/measurements/presentation/components/useScrollActiveTab';
 import { selfSections, type SelfSectionKey } from '../application/selfSections';
 
@@ -17,6 +18,7 @@ export function SelfTabs({ active, showsVitals }: { active: SelfSectionKey; show
           className={profileTabClass}
         >
           {item.label}
+          <TabUnderline active={item.key === active} />
         </Link>
       ))}
     </nav>

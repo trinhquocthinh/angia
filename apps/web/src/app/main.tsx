@@ -17,7 +17,8 @@ const queryClient = new QueryClient();
 if (!isConsentInvitationRoute(window.location.pathname)) {
   void prefetchCurrentSession(queryClient, fetchCurrentSession);
 }
-const router = createRouter({ routeTree });
+// Design §11.4.1: chuyển trang mờ dần qua View Transitions; trình duyệt không hỗ trợ thì đổi trang tức thì.
+const router = createRouter({ routeTree, defaultViewTransition: true });
 
 declare module '@tanstack/react-router' {
   interface Register {

@@ -1,4 +1,6 @@
+import { revealStyle } from '@src/shared/ui/revealStyle';
 import { ProfilesEmpty } from './ProfilesEmpty';
+import { ProfilesSkeleton } from './ProfilesSkeleton';
 import { AddProfileTile } from './AddProfileTile';
 import type { ProfileListItem } from '../../application/ports';
 import { ProfileCard } from './ProfileCard';
@@ -24,21 +26,7 @@ export function ProfilesContent({
   ownProfileId,
   onWithdraw,
 }: ProfilesContentProps) {
-  if (loading)
-    return (
-      <div
-        role="status"
-        aria-label="Đang tải hồ sơ"
-        className="grid gap-5 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
-      >
-        {[0, 1, 2].map((key) => (
-          <div
-            key={key}
-            className="h-[280px] animate-pulse rounded-2xl lg:rounded-3xl bg-surface motion-reduce:animate-none"
-          />
-        ))}
-      </div>
-    );
+  if (loading) return <ProfilesSkeleton />;
   if (error)
     return (
       <div role="alert" className="rounded-2xl bg-surface p-8">
@@ -58,17 +46,21 @@ export function ProfilesContent({
         Hồ sơ thành viên gia đình
       </h2>
       <div className="grid gap-5 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-        {profiles.map((profile) => (
-          <ProfileCard
-            key={profile.id}
-            profile={profile}
-            onConsent={onConsent}
-            onLink={onLink}
-            onDelete={onDelete}
-            onWithdraw={profile.id === ownProfileId ? onWithdraw : undefined}
-          />
+        {/* §11.4.1: thẻ tới so le sau skeleton; vỏ `grid` để thẻ vẫn giãn bằng hàng. */}
+        {profiles.map((profile, index) => (
+          <div key={profile.id} className="angia-enter grid" style={revealStyle(index)}>
+            <ProfileCard
+              profile={profile}
+              onConsent={onConsent}
+              onLink={onLink}
+              onDelete={onDelete}
+              onWithdraw={profile.id === ownProfileId ? onWithdraw : undefined}
+            />
+          </div>
         ))}
-        <AddProfileTile />
+        <div className="angia-enter grid" style={revealStyle(profiles.length)}>
+          <AddProfileTile />
+        </div>
       </div>
     </section>
   );

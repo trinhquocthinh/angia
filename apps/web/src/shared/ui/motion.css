@@ -1,0 +1,66 @@
+/* Design §11.4.1: chuyển động định hướng dùng chung; modal/sheet giữ quy định riêng ở modal-motion.css. */
+:root {
+  --motion-ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --motion-fast: 150ms;
+  --motion-base: 240ms;
+  --motion-enter: 320ms;
+  --motion-stagger: 50ms;
+}
+
+/* Chuyển trang: giữ cross-fade mặc định (plus-lighter, cùng thời lượng) nên header/thanh điều hướng giống nhau đứng yên. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--motion-base);
+  animation-timing-function: var(--motion-ease-out);
+}
+/* Gạch chân tab trượt giữa hai trang tab; chỉ trượt khối, không mờ chồng. */
+::view-transition-group(angia-tab-indicator) {
+  animation-duration: var(--motion-base);
+  animation-timing-function: var(--motion-ease-out);
+}
+::view-transition-old(angia-tab-indicator),
+::view-transition-new(angia-tab-indicator) {
+  animation: none;
+  height: 100%;
+}
+
+.angia-tab-indicator {
+  view-transition-name: angia-tab-indicator;
+}
+
+.angia-slide-indicator {
+  transition:
+    transform var(--motion-base) var(--motion-ease-out),
+    width var(--motion-base) var(--motion-ease-out);
+}
+
+/* Nội dung tới: so le theo --reveal-index (revealStyle), tối đa 6 bậc. */
+.angia-enter {
+  animation: angia-enter var(--motion-enter) var(--motion-ease-out) both;
+  animation-delay: calc(min(var(--reveal-index, 0), 6) * var(--motion-stagger));
+}
+
+@keyframes angia-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  .angia-enter {
+    animation: none;
+  }
+  .angia-slide-indicator {
+    transition: none;
+  }
+}

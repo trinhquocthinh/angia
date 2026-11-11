@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { profileTabClass } from './profileTabClass';
+import { TabUnderline } from './TabUnderline';
 import { useScrollActiveTab } from './useScrollActiveTab';
 
 const LINKED_TABS = [
@@ -39,6 +40,7 @@ export function ProfileTabs({
           className={profileTabClass}
         >
           {tab.label}
+          <TabUnderline active={tab.key === active} />
         </Link>
       ))}
     </nav>
