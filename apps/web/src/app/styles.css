@@ -1,22 +1,6 @@
 @import 'tailwindcss';
 @import './fonts.css';
-
-/* Design tokens theo 09-design-criteria §4.1 (chế độ sáng; dark mode là nợ kỹ thuật #8). */
-@theme {
-  --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
-  --color-bg: #faf8f5;
-  --color-surface: #ffffff;
-  --color-border: #e4e0da;
-  --color-text-primary: #1f2a2a;
-  --color-text-secondary: #55615f;
-  --color-accent: #2f6f5e;
-  --color-accent-hover: #255a4c;
-  --color-accent-soft: #e3efea;
-  --color-on-accent: #ffffff;
-  --color-danger: #b42318;
-  --color-success: #2e7d4f;
-  --shadow-card: 0 2px 10px rgb(31 42 42 / 0.05);
-}
+@import '../shared/styles/tokens.css';
 
 body {
   background-color: var(--color-bg);
@@ -28,7 +12,7 @@ body {
 @media (display-mode: standalone) {
   html,
   body {
-    background-color: #f0fcfb;
+    background-color: var(--color-bg);
     overscroll-behavior-y: none;
   }
   body {

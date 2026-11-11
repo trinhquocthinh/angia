@@ -606,3 +606,29 @@ API đã deploy. Còn kiểm lại tóm tắt/bản in trên image SIT mới, Li
 sau đăng nhập, TC-733 điện thoại thật, 3D trên thiết bị thật và backup
 Production đã restore-check/offsite. E23-S1-T2/E23-S2-T1 chưa PASS;
 Production vẫn giữ v0.2.
+
+## E25-S1-T1 — nền sáng/tối — 2026-11-11
+
+Đã tích hợp token Design §11.2, `ThemeProvider` và lựa chọn **Sáng / Tối /
+Theo máy** trong menu Tài khoản. Mặc định theo máy, theo dõi khi hệ thống đổi
+nền; lựa chọn lưu tại `localStorage` với khoá `angia-theme`, không gửi server.
+Storage bị chặn vẫn đổi được nền trong phiên hiện tại. Không đổi API, schema
+DB hoặc thêm dependency.
+
+Kiểm chứng local: `yarn verify:fast` PASS (2.878 test / 581 tệp); unit đọc lựa
+chọn nền 7/7; E2E 12/12 trên Chromium/WebKit ở 360 px. ESLint, Prettier và
+Knip PASS. Chạy lại E2E độc lập bằng:
+
+```bash
+yarn playwright test --config playwright.theme.config.ts
+```
+
+Harness dùng Vite localhost:5174, không cần API hoặc tài khoản. Phủ TC-856,
+TC-857 và TC-859: nền máy, lưu qua tải lại, storage bị chặn, bàn phím, vùng
+chạm ≥48 px, bản xem trước và CSS bản in nền trắng. Chưa kiểm PDF/máy in
+thật, chưa chạy `yarn verify` hoặc nghiệm thu SIT/Production. **TC-858 vẫn
+mở**; các màn còn màu cứng thuộc E25-S1-T2/E30-S5-T1.
+
+Đã đồng bộ ghi chú tại bộ tài liệu ngoài repository: SDD SPEC-080, Tech Spec
+§10.6, ma trận TC-856–859, Design §11.2 và Master Plan E25. Xem
+[Master Plan](../../Docs/angia/11-master-plan.md). Tiếp theo **E25-S1-T2**.

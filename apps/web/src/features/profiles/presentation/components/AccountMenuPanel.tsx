@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { ThemeSwitch } from '@src/shared/theme/ThemeSwitch';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { SelfProfileMenuItem } from './SelfProfileMenuItem';
 import { SoonMenuItem } from './SoonMenuItem';
@@ -46,6 +47,9 @@ export function AccountMenuPanel({
           </Link>
         )}
         <SoonMenuItem icon="group_add" label="Cài đặt gia đình" className={item} />
+      </div>
+      <div className="border-t border-border bg-surface px-4 py-3">
+        <ThemeSwitch />
       </div>
       <div className="mt-1 border-t border-[#e4f0f0] pt-1">
         <button

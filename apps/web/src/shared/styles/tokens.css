@@ -1,0 +1,41 @@
+/* Design §11.2: một bộ token cho cả hai nền, kể cả các tiện ích Tailwind. */
+@theme {
+  --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+  --color-bg: #faf8f5;
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-border: #e4e0da;
+  --color-text-primary: #1f2a2a;
+  --color-text-secondary: #55615f;
+  --color-accent: #2f6f5e;
+  --color-accent-hover: #255a4c;
+  --color-accent-soft: #e3efea;
+  --color-on-accent: #ffffff;
+  --color-danger: #b42318;
+  --color-warning: #b54708;
+  --color-success: #2e7d4f;
+  --color-focus: #2f6f5e;
+  --shadow-card: 0 2px 10px rgb(31 42 42 / 0.05);
+}
+
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #121716;
+  --color-surface: #1a2120;
+  --color-surface-raised: #222b29;
+  --color-border: #2c3533;
+  --color-text-primary: #edefee;
+  --color-text-secondary: #a8b3b0;
+  --color-accent: #6fbfa6;
+  --color-accent-hover: #85cdb6;
+  --color-accent-soft: #1e3530;
+  --color-on-accent: #0e1413;
+  --color-danger: #f97066;
+  --color-warning: #fdb022;
+  --color-success: #6ccb8f;
+  --color-focus: #85cdb6;
+}
