@@ -2,7 +2,7 @@
 export interface RgbaImage {
   width: number;
   height: number;
-  data: Uint8ClampedArray;
+  data: Uint8ClampedArray<ArrayBuffer>;
 }
 export interface Point {
   x: number;

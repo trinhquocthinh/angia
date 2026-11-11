@@ -4,6 +4,7 @@ import { createBrowserRedactionCodec } from '@src/shared/utils/image/createBrows
 import { heicToDisplayable } from '@src/shared/utils/image/heicToDisplayable';
 import { initialPrivacyEditor } from '../../application/initialPrivacyEditor';
 import { privacyEditorReducer } from '../../application/privacyEditorState';
+import { redactionSource } from '../../application/redactionSource';
 import type { UploadItem } from '../../application/uploadQueue';
 import { useRedactionSource } from '../../application/useRedactionSource';
 import { type SuggestFn, useRedactionSuggestions } from '../../application/useRedactionSuggestions';
@@ -29,9 +30,10 @@ type Props = {
 export function UploadRedactionStudio({ item, onDone, onClose, suggest, ...ai }: Props) {
   const [state, dispatch] = useReducer(privacyEditorReducer, item.edits, initialPrivacyEditor);
   const [step, setStep] = useState<'edit' | 'confirm'>('edit');
-  const source = useRedactionSource(item.file, item.previewUrl, heicToDisplayable);
+  const origin = redactionSource(item);
+  const source = useRedactionSource(origin.file, origin.url ?? item.previewUrl, heicToDisplayable);
   const suggestions = useRedactionSuggestions({
-    file: item.file,
+    file: origin.file,
     edits: state.edits,
     codec,
     suggest: suggest?.run ?? null,
@@ -76,7 +78,7 @@ export function UploadRedactionStudio({ item, onDone, onClose, suggest, ...ai }:
       ) : (
         <RedactionPreviewStep
           {...ai}
-          file={item.file}
+          file={origin.file}
           edits={state.edits}
           codec={codec}
           onBack={() => setStep('edit')}

@@ -5,6 +5,7 @@ import type { DocumentType, DocumentUploader } from './ports';
 import { runUpload } from './runUpload';
 import { FAMILY_USAGE_KEY } from './useFamilyUsage';
 import { useObjectUrls } from './useObjectUrls';
+import { useScanActions } from './useScanActions';
 import { isSessionError } from './uploadErrorMessage';
 import { nextBatch, planUpload, summarizeQueue, uploadQueueReducer } from './uploadQueue';
 
@@ -14,7 +15,7 @@ export function useUploadQueue(uploader: DocumentUploader, csrfToken: string | u
   const client = useQueryClient();
   const [items, dispatch] = useReducer(uploadQueueReducer, []);
   const started = useRef(new Set<string>());
-  // Khóa URL: ảnh gốc để che (`id`) và bản đã xuất (`id:thumb`).
+  // Khóa URL: ảnh gốc để che (`id`), ảnh nắn (`id:scan`) và bản đã xuất (`id:thumb`).
   const { create, revoke } = useObjectUrls();
 
   // StrictMode chạy effect hai lần trước khi state kịp áp dụng: khóa theo id:lượt.
@@ -32,7 +33,7 @@ export function useUploadQueue(uploader: DocumentUploader, csrfToken: string | u
 
   // KH-2 §3.6: ảnh gốc chỉ giữ trong tab tới khi đã tải lên.
   useEffect(() => {
-    for (const item of items) if (item.status === 'done') revoke(item.id);
+    for (const item of items) if (item.status === 'done') [item.id, `${item.id}:scan`].forEach(revoke);
   }, [items, revoke]);
 
   const add = useCallback(
@@ -60,11 +61,12 @@ export function useUploadQueue(uploader: DocumentUploader, csrfToken: string | u
   }, []);
   const remove = useCallback(
     (id: string) => {
-      revoke(id);
-      revoke(`${id}:thumb`);
+      [id, `${id}:scan`, `${id}:thumb`].forEach(revoke);
       dispatch({ type: 'remove', id });
     },
     [revoke],
   );
-  return { items, summary: summarizeQueue(items), add, redact, submit, remove, dispatch };
+  const { scan, unscan } = useScanActions(dispatch, create, revoke);
+  const summary = summarizeQueue(items);
+  return { items, summary, add, redact, submit, remove, scan, unscan, dispatch };
 }

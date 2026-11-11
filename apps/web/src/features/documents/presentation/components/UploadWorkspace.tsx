@@ -87,7 +87,8 @@ export function UploadWorkspace(props: UploadWorkspaceProps) {
       />
       {editing?.previewUrl ? (
         <UploadRedactionStudio
-          key={editing.id}
+          // SPEC-084: đổi ảnh nắn thì dựng lại trình che với nguồn mới (vùng che đã được đặt lại).
+          key={`${editing.id}:${editing.scan?.url ?? ''}`}
           item={{ ...editing, previewUrl: editing.previewUrl }}
           {...suggestProps(suggester, ready, csrfToken, profiles, chooseProfile)}
           aiExhausted={usage?.aiOcr?.exhausted ?? false}

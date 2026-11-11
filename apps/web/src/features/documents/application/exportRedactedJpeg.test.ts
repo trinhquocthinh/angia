@@ -28,6 +28,8 @@ function fakeCodec(sizes: Record<number, number>, decoded = { width: 3024, heigh
       return { size: (sizes[quality] ?? 0) * MiB } as Blob;
     },
     dispose,
+    readPixels: () => ({ width: 0, height: 0, data: new Uint8ClampedArray() }),
+    fromPixels: (image) => ({ width: image.width, height: image.height }),
   };
   return { codec, plans, qualities, release, dispose };
 }
