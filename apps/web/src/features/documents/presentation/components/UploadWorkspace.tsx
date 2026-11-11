@@ -5,6 +5,7 @@ import { profileShowsVitals } from '@src/features/profiles/application/profileSh
 import type { FamilyUsage } from '@angia/contracts';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
 import type { DocumentType, DocumentUploader } from '../../application/ports';
+import type { RedactionSuggester } from '../../application/redactionSuggestionPorts';
 import { useLeaveWarning } from '../../application/useLeaveWarning';
 import { useUploadQueue } from '../../application/useUploadQueue';
 import { aiQueueBlockReason, usageBlockReason } from '../../application/familyUsageState';
@@ -19,6 +20,8 @@ import './upload-motion.css';
 
 type UploadWorkspaceProps = {
   uploader: DocumentUploader;
+  /** SPEC-083: null khi API tắt gợi ý vùng che (`features.redactionSuggestions`). */
+  suggester: RedactionSuggester | null;
   csrfToken: string;
   profiles: HealthProfile[];
   usage: FamilyUsage | null;
@@ -32,8 +35,16 @@ type UploadWorkspaceProps = {
 const nextToRedact = (items: UploadItem[], doneId: string) =>
   items.find((item) => item.id !== doneId && item.status === 'needs_redaction')?.id ?? null;
 
+// SPEC-083: tắt → không truyền; API kiểm đồng thuận theo hồ sơ nên chưa chọn hồ sơ đã đồng thuận → null.
+const suggestProps = (suggester: RedactionSuggester | null, profileId: string | undefined, csrf: string) =>
+  suggester && {
+    suggest: profileId
+      ? (image: Blob, signal: AbortSignal) => suggester.suggest(profileId, image, csrf, signal)
+      : null,
+  };
+
 export function UploadWorkspace(props: UploadWorkspaceProps) {
-  const { uploader, csrfToken, profiles, usage, scanQuota, ...status } = props;
+  const { uploader, suggester, csrfToken, profiles, usage, scanQuota, ...status } = props;
   const queue = useUploadQueue(uploader, csrfToken);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [declaredType, setDeclaredType] = useState<DocumentType | null>(null);
@@ -66,6 +77,7 @@ export function UploadWorkspace(props: UploadWorkspaceProps) {
         <UploadRedactionStudio
           key={editing.id}
           item={{ ...editing, previewUrl: editing.previewUrl }}
+          {...suggestProps(suggester, ready?.id, csrfToken)}
           aiExhausted={usage?.aiOcr?.exhausted ?? false}
           aiReason={usage?.aiOcr?.reason}
           aiBlockedReason={usage ? aiQueueBlockReason(usage, summary.aiReady) : null}

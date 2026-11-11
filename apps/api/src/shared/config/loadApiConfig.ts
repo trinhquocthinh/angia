@@ -44,6 +44,8 @@ const apiEnvSchema = z.object({
   RATE_LIMIT_HEAVY_PER_MINUTE: z.coerce.number().int().positive().default(10),
   // F08b (nợ #21): khi khởi động chỉ xóa thư mục angia-upload-* cũ hơn ngưỡng này (> timeout body 5 phút + ghi S3).
   UPLOAD_ORPHAN_GRACE_MINUTES: z.coerce.number().int().positive().default(15),
+  // SPEC-083 (BR-085): ocr-mask trong mạng internal ocr-<env>; để trống thì tắt gợi ý vùng che.
+  OCR_MASK_URL: z.union([z.literal(''), z.string().url()]).default(''),
 });
 
 export type ApiConfig = z.infer<typeof apiEnvSchema>;

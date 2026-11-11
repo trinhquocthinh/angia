@@ -71,6 +71,7 @@ const props = {
   loading: false,
   error: false,
   retry: vi.fn(),
+  suggester: null,
 };
 function render(profiles = props.profiles) {
   harness.cursor = 0;

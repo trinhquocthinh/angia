@@ -22,6 +22,7 @@ const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà' },
   role: 'main',
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 describe('Cache danh sách chọn đợt dừng', () => {
   it('TC-051: cache cách ly theo tài khoản, gia đình và hồ sơ', () => {

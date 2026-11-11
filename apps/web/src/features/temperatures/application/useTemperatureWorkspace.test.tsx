@@ -10,6 +10,7 @@ const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà' },
   role: 'main',
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 const request = { celsius: 38.5, measuredAt: '2020-01-01T06:50:00Z', confirmOutOfRange: false };
 function setup(readOnly = false, consentConfirmed = true) {

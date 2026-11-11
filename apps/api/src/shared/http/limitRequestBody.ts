@@ -3,7 +3,7 @@ import type { AppEnv } from './AppEnv.js';
 import { errorResponse } from './errorResponse.js';
 
 const MAX_BODY_BYTES = 1024 * 1024;
-const UPLOAD_PATH = /^\/api\/health-profiles\/[^/]+\/upload-batches$/;
+const UPLOAD_PATH = /^\/api\/health-profiles\/[^/]+\/(upload-batches|redaction-suggestions)$/;
 
 // Multipart có bộ nhận stream riêng; các body khác phải có trần trước khi validator parse JSON.
 export function limitRequestBody() {

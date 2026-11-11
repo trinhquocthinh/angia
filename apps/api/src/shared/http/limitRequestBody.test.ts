@@ -13,6 +13,7 @@ function fixture() {
     return c.json({ saved: true }, 201);
   });
   app.post('/api/health-profiles/:id/upload-batches', (c) => c.text('multipart', 201));
+  app.post('/api/health-profiles/:id/redaction-suggestions', (c) => c.text('multipart', 200));
   return { app, handled: () => handled };
 }
 
@@ -65,5 +66,14 @@ describe('Giới hạn body trước validation (SEC-20261105)', () => {
       body: new Uint8Array(2 * 1024 * 1024),
     });
     expect(response.status).toBe(201);
+  });
+
+  it('route gợi ý vùng che (SPEC-083) cũng dùng bộ đọc multipart riêng, nhận ảnh lớn hơn 1 MiB', async () => {
+    const t = fixture();
+    const response = await t.app.request('/api/health-profiles/p/redaction-suggestions', {
+      method: 'POST',
+      body: new Uint8Array(2 * 1024 * 1024),
+    });
+    expect(response.status).toBe(200);
   });
 });

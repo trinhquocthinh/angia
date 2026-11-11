@@ -40,10 +40,10 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     await t?.stop();
   });
 
-  const upload = (user: SeededSession, profileId: string) => {
+  const upload = (user: SeededSession, profileId: string, path = 'upload-batches', field = 'files') => {
     const form = new FormData();
-    form.append('files', new File([new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 9])], 'a.jpg'));
-    return t.app.request(`${profiles}/${profileId}/upload-batches`, {
+    form.append(field, new File([new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 9])], 'a.jpg'));
+    return t.app.request(`${profiles}/${profileId}/${path}`, {
       method: 'POST',
       headers: { cookie: user.cookie, 'x-csrf-token': user.csrf },
       body: form,
@@ -66,6 +66,8 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     'GET /api/me/link-invitations/view': (u, x) => linkCall(t, u, x.token),
     'POST /api/me/link-invitations/accept': (u, x) => linkCall(t, u, x.token, acceptBody),
     'POST /api/health-profiles/:id/upload-batches': (u, x) => upload(u, x.profileId),
+    'POST /api/health-profiles/:id/redaction-suggestions': (u, x) =>
+      upload(u, x.profileId, 'redaction-suggestions', 'image'),
     'GET /api/source-documents/:id/review': (u, x) => t.call(u, 'GET', `${documents}/${x.documentId}/review`),
     'GET /api/source-documents/:id/image': (u, x) => t.call(u, 'GET', `${documents}/${x.documentId}/image`),
     'POST /api/source-documents/:id/approve': (u, x) =>

@@ -114,6 +114,7 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
       family: null,
       role: null,
       csrfToken: session.csrf,
+      features: { redactionSuggestions: false },
     });
   });
 

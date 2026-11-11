@@ -9,6 +9,7 @@ export const session = {
   family: { id: 'f', name: 'Nhà' },
   role: 'main',
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 } satisfies ProfileSession;
 export const profile = { id: profileId, familyId: 'f', consentStatus: 'confirmed' } as HealthProfile;
 export const item = {

@@ -3,13 +3,23 @@ import { PrivacyModeControls } from './PrivacyModeControls';
 import { PrivacyHistoryControls } from './PrivacyHistoryControls';
 type Props = {
   disabled: boolean;
+  /** Khoá xoay/hoàn tác/đặt lại khi đang chờ gợi ý: toạ độ gợi ý gắn với chiều xoay lúc gửi (SPEC-083). */
+  historyLocked: boolean;
   mode: 'crop' | 'mask';
   state: PrivacyEditorState;
   setMode: (mode: 'crop' | 'mask') => void;
   setSelected: (index: number) => void;
   dispatch: (action: PrivacyEditorAction) => void;
 };
-export function PrivacyToolbar({ disabled, mode, state, setMode, setSelected, dispatch }: Props) {
+export function PrivacyToolbar({
+  disabled,
+  historyLocked,
+  mode,
+  state,
+  setMode,
+  setSelected,
+  dispatch,
+}: Props) {
   return (
     <div aria-label="Công cụ cắt và che" className="flex flex-wrap items-center justify-between gap-2">
       <PrivacyModeControls
@@ -21,7 +31,7 @@ export function PrivacyToolbar({ disabled, mode, state, setMode, setSelected, di
         dispatch={dispatch}
       />
       <PrivacyHistoryControls
-        disabled={disabled}
+        disabled={disabled || historyLocked}
         canUndo={Boolean(state.history.length)}
         setSelected={setSelected}
         dispatch={dispatch}

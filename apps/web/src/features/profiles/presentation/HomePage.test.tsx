@@ -20,6 +20,7 @@ const session: ProfileSession = {
   family: { id: 'family', name: 'Nhà kiểm thử' },
   role: 'main',
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 const base: ProfileListItem = {
   id: 'own',

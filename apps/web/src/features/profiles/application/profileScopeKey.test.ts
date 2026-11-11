@@ -12,6 +12,7 @@ describe('Khóa cache hồ sơ theo phiên hiện tại', () => {
         family: { id: 'f', name: 'Nhà An' },
         role: 'main',
         csrfToken: 'csrf',
+        features: { redactionSuggestions: false },
       }),
     ).toEqual(['profiles', 'a', 'f']);
   });

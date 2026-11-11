@@ -11,6 +11,7 @@ import '@src/features/profiles/presentation/profiles.css';
 import { useFamilyUsage } from '../application/useFamilyUsage';
 import { createFamilyUsageRepository } from '../infrastructure/createFamilyUsageRepository';
 import { createXhrDocumentUploader } from '../infrastructure/createXhrDocumentUploader';
+import { createRedactionSuggester } from '../infrastructure/createRedactionSuggester';
 import { dismissPrivacyReminder, shouldShowPrivacyReminder } from '../infrastructure/privacyReminderStorage';
 import { UploadPrivacyReminder } from './components/UploadPrivacyReminder';
 import { UploadWorkspace } from './components/UploadWorkspace';
@@ -18,6 +19,7 @@ import { UploadWorkspace } from './components/UploadWorkspace';
 const scanQuotaRepository = createScanQuotaRepository();
 const profilesRepository = createProfilesRepository();
 const uploader = createXhrDocumentUploader();
+const suggester = createRedactionSuggester();
 const usageRepository = createFamilyUsageRepository();
 
 export function UploadPage() {
@@ -49,6 +51,7 @@ export function UploadPage() {
         {main ? (
           <UploadWorkspace
             uploader={uploader}
+            suggester={session.data.features.redactionSuggestions ? suggester : null}
             csrfToken={session.data.csrfToken}
             profiles={profiles}
             usage={usage.data ?? null}

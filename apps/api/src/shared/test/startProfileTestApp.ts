@@ -59,10 +59,12 @@ import { startTestDatabase } from './startTestDatabase.js';
 import { trackPoolClientClosures } from './trackPoolClientClosures.js';
 
 import type { PushDependencies } from '@src/features/pushSubscriptions/application/ports.js';
+import type { RedactionSuggestionDependencies } from '@src/features/documents/application/redactionSuggestionPorts.js';
 
 export interface ProfileTestOptions {
   now?: () => Date;
   push?: (db: Database) => PushDependencies;
+  redactionSuggestions?: RedactionSuggestionDependencies;
   quota?: Partial<QuotaLimits>;
   heavyRateLimit?: { perMinute: number; now(): number };
 }
@@ -101,6 +103,7 @@ function buildApp(
   const stub = createStubAuthDeps();
   return createApp({
     ...(options.push ? { push: options.push(database) } : {}),
+    ...(options.redactionSuggestions ? { redactionSuggestions: options.redactionSuggestions } : {}),
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
     auth: {
       ...stub,

@@ -12,6 +12,7 @@ const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà' },
   role: 'main',
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 const profile = { id: 'p', consentStatus: 'confirmed' } as HealthProfile;
 const reminder: SelfReminder = {

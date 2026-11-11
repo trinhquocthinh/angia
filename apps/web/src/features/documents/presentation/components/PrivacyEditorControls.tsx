@@ -7,21 +7,15 @@ import { PrivacyRegionSelector } from './PrivacyRegionSelector';
 type Props = {
   state: PrivacyEditorState;
   disabled: boolean;
+  historyLocked: boolean;
   mode: 'crop' | 'mask';
   setMode: (mode: 'crop' | 'mask') => void;
   dispatch: (action: PrivacyEditorAction) => void;
   onInputPending: (pending: boolean) => void;
   children: (toolbar: ReactNode, fields: ReactNode) => ReactNode;
 };
-export function PrivacyEditorControls({
-  state,
-  disabled,
-  mode,
-  setMode,
-  dispatch,
-  onInputPending,
-  children,
-}: Props) {
+export function PrivacyEditorControls(props: Props) {
+  const { state, disabled, historyLocked, mode, setMode, dispatch, onInputPending, children } = props;
   const [selected, setSelected] = useState(-1);
   const [reset, setReset] = useState(0);
   const index = selected < state.edits.masks.length ? selected : -1;
@@ -39,6 +33,7 @@ export function PrivacyEditorControls({
   const toolbar = (
     <PrivacyToolbar
       disabled={disabled}
+      historyLocked={historyLocked}
       mode={mode}
       state={state}
       setMode={setMode}

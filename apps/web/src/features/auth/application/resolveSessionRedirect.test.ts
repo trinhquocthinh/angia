@@ -8,6 +8,7 @@ const waiting: Session = {
   family: null,
   role: null,
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 const assigned: Session = { ...waiting, family: { id: 'family', name: 'Nhà An' }, role: 'main' };
 

@@ -11,6 +11,7 @@ const waiting: components['schemas']['MeContextResponse'] = {
   family: null,
   role: null,
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 
 const router = vi.hoisted(() => ({ pathname: '/', navigate: vi.fn() }));

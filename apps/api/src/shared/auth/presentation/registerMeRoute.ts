@@ -21,19 +21,22 @@ const meRoute = createRoute({
   },
 });
 
-function toMeContextResponse(session: SessionContext): MeContextResponse {
+type MeFeatures = MeContextResponse['features'];
+
+function toMeContextResponse(session: SessionContext, features: MeFeatures): MeContextResponse {
   return {
     account: session.account,
     family: session.family,
     role: session.role,
     csrfToken: session.csrfToken,
+    features,
   };
 }
 
 // Phiên đã được loadSession + requireSession kiểm tra trước khi tới handler.
-export function registerMeRoute(app: OpenAPIHono<AppEnv>): void {
+export function registerMeRoute(app: OpenAPIHono<AppEnv>, features: MeFeatures): void {
   app.openapi(meRoute, (c) => {
     c.header('Cache-Control', 'no-store');
-    return c.json(toMeContextResponse(currentSession(c)), 200);
+    return c.json(toMeContextResponse(currentSession(c), features), 200);
   });
 }

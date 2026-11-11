@@ -29,6 +29,7 @@ const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà' },
   role: 'main',
   csrfToken: 'csrf',
+  features: { redactionSuggestions: false },
 };
 const noop = () => undefined;
 describe('Giao diện Khi cần', () => {

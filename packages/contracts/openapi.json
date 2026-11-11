@@ -133,13 +133,25 @@
           },
           "csrfToken": {
             "type": "string"
+          },
+          "features": {
+            "type": "object",
+            "properties": {
+              "redactionSuggestions": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "redactionSuggestions"
+            ]
           }
         },
         "required": [
           "account",
           "family",
           "role",
-          "csrfToken"
+          "csrfToken",
+          "features"
         ]
       },
       "PushConfig": {
@@ -1539,6 +1551,51 @@
         "required": [
           "files"
         ]
+      },
+      "RedactionSuggestions": {
+        "type": "object",
+        "properties": {
+          "masks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "left": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "top": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000000
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000000
+                },
+                "height": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000000
+                }
+              },
+              "required": [
+                "left",
+                "top",
+                "width",
+                "height"
+              ],
+              "additionalProperties": false
+            },
+            "maxItems": 64
+          }
+        },
+        "required": [
+          "masks"
+        ],
+        "additionalProperties": false
       },
       "SourceDocumentPage": {
         "type": "object",
@@ -9385,6 +9442,136 @@
           },
           "503": {
             "description": "ERR_UPLOAD_BUSY: đã có 3 lô đang xử lý; thử lại sau số giây trong Retry-After",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health-profiles/{id}/redaction-suggestions": {
+      "post": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Gợi ý vùng che bằng ocr-mask nội bộ: ảnh xử lý trong RAM, không lưu, chỉ trả toạ độ khung (SPEC-083)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "image"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tối đa 64 khung đã gộp, cùng hệ toạ độ PrivacyEdits; không có chữ OCR",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedactionSuggestions"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: cần main cùng gia đình và CSRF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: hồ sơ không thuộc gia đình",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "408": {
+            "description": "ERR_UPLOAD_TIMEOUT: 30 giây không có dữ liệu hoặc body quá 120 giây",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CONSENT_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: thiếu/thừa tệp, không phải JPEG hoặc vượt 10 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_RATE_LIMITED — SPEC-030",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_SUGGESTION_BUSY (đã có 2 yêu cầu; Retry-After: 15) | ERR_SUGGESTION_UNAVAILABLE (chưa cấu hình hoặc ocr-mask lỗi)",
             "content": {
               "application/json": {
                 "schema": {

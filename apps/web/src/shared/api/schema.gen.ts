@@ -2181,6 +2181,123 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/health-profiles/{id}/redaction-suggestions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Gợi ý vùng che bằng ocr-mask nội bộ: ảnh xử lý trong RAM, không lưu, chỉ trả toạ độ khung (SPEC-083) */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'multipart/form-data': {
+            /** Format: binary */
+            image: string;
+          };
+        };
+      };
+      responses: {
+        /** @description Tối đa 64 khung đã gộp, cùng hệ toạ độ PrivacyEdits; không có chữ OCR */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['RedactionSuggestions'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: cần main cùng gia đình và CSRF */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: hồ sơ không thuộc gia đình */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_UPLOAD_TIMEOUT: 30 giây không có dữ liệu hoặc body quá 120 giây */
+        408: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CONSENT_REQUIRED */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: thiếu/thừa tệp, không phải JPEG hoặc vượt 10 MiB */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_RATE_LIMITED — SPEC-030 */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_SUGGESTION_BUSY (đã có 2 yêu cầu; Retry-After: 15) | ERR_SUGGESTION_UNAVAILABLE (chưa cấu hình hoặc ocr-mask lỗi) */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/source-documents': {
     parameters: {
       query?: never;
@@ -9785,6 +9902,9 @@ export interface components {
       /** @enum {string|null} */
       role: 'main' | 'member' | null;
       csrfToken: string;
+      features: {
+        redactionSuggestions: boolean;
+      };
     };
     PushConfig: {
       enabled: boolean;
@@ -10117,6 +10237,14 @@ export interface components {
       /** @enum {string} */
       declaredType?: 'prescription' | 'lab_result' | 'device_reading';
       sendToAi?: string;
+    };
+    RedactionSuggestions: {
+      masks: {
+        left: number;
+        top: number;
+        width: number;
+        height: number;
+      }[];
     };
     SourceDocumentPage: {
       items: components['schemas']['SourceDocument'][];

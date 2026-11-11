@@ -3,7 +3,7 @@ import type { AppEnv } from './AppEnv.js';
 import type { SlidingWindowLimiter } from './createSlidingWindowLimiter.js';
 import { errorResponse } from './errorResponse.js';
 
-export type HeavyRoute = 'upload';
+export type HeavyRoute = 'upload' | 'redaction-suggestion';
 
 export const heavyKey = (accountId: string, route: HeavyRoute) => `${accountId}:${route}`;
 

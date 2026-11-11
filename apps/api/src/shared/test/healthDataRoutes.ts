@@ -50,6 +50,8 @@ export const HEALTH_DATA_ROUTES = {
   'GET /api/me/link-invitations/view': 'scoped',
   'POST /api/me/link-invitations/accept': 'scoped',
   'POST /api/health-profiles/:id/upload-batches': 'scoped',
+  // SPEC-083: không đọc/ghi dữ liệu đã lưu nhưng nhận ảnh chưa che theo hồ sơ → kiểm khác gia đình.
+  'POST /api/health-profiles/:id/redaction-suggestions': 'scoped',
   'GET /api/source-documents': 'list',
   'GET /api/source-documents/:id/review': 'scoped',
   'GET /api/source-documents/:id/image': 'scoped',

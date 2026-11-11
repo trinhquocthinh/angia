@@ -6,7 +6,9 @@ import { initialPrivacyEditor } from '../../application/initialPrivacyEditor';
 import { privacyEditorReducer } from '../../application/privacyEditorState';
 import type { UploadItem } from '../../application/uploadQueue';
 import { useRedactionSource } from '../../application/useRedactionSource';
+import { type SuggestFn, useRedactionSuggestions } from '../../application/useRedactionSuggestions';
 import { PrivacyEditPanel } from './PrivacyEditPanel';
+import { RedactionSuggestionControl } from './RedactionSuggestionControl';
 import { RedactionPreviewStep } from './RedactionPreviewStep';
 import { UploadStepper } from './UploadStepper';
 
@@ -19,13 +21,22 @@ type Props = {
   aiBlockedReason: string | null;
   onDone: (blob: Blob, edits: PrivacyEdits, sendToAi: boolean) => void;
   onClose: () => void;
+  /** SPEC-083: vắng = tính năng tắt; null = chưa chọn hồ sơ đã đồng thuận nên chưa gợi ý được. */
+  suggest?: SuggestFn | null;
 };
 
 // Che từng ảnh ngay trong trang Tải lên (D7): chỉnh trên ảnh gốc trong tab → xem đúng bản xuất → xác nhận.
-export function UploadRedactionStudio({ item, onDone, onClose, ...ai }: Props) {
+export function UploadRedactionStudio({ item, onDone, onClose, suggest, ...ai }: Props) {
   const [state, dispatch] = useReducer(privacyEditorReducer, item.edits, initialPrivacyEditor);
   const [step, setStep] = useState<'edit' | 'confirm'>('edit');
   const source = useRedactionSource(item.file, item.previewUrl, heicToDisplayable);
+  const suggestions = useRedactionSuggestions({
+    file: item.file,
+    edits: state.edits,
+    codec,
+    suggest: suggest ?? null,
+    dispatch,
+  });
   const ref = useRef<HTMLElement>(null);
   // Nút "Che thông tin" nằm dưới lưới ảnh, còn khung che thay chỗ lưới: đưa khung về đầu màn hình khi mở.
   useEffect(() => {
@@ -51,6 +62,17 @@ export function UploadRedactionStudio({ item, onDone, onClose, ...ai }: Props) {
           onImageError={source.fallback}
           onNext={() => setStep('confirm')}
           onCancel={onClose}
+          historyLocked={suggestions.status.kind === 'loading'}
+          suggestion={
+            suggest !== undefined && (
+              <RedactionSuggestionControl
+                status={suggestions.status}
+                blockedReason={suggest ? null : 'Chọn hồ sơ ở trên để dùng gợi ý vùng che.'}
+                onRun={suggestions.run}
+                onCancel={suggestions.cancel}
+              />
+            )
+          }
         />
       ) : (
         <RedactionPreviewStep
