@@ -8,7 +8,7 @@ import type { UploadItem } from '../../application/uploadQueue';
 import { useRedactionSource } from '../../application/useRedactionSource';
 import { type SuggestFn, useRedactionSuggestions } from '../../application/useRedactionSuggestions';
 import { PrivacyEditPanel } from './PrivacyEditPanel';
-import { RedactionSuggestionControl } from './RedactionSuggestionControl';
+import { type ProfileOption, RedactionSuggestionControl } from './RedactionSuggestionControl';
 import { RedactionPreviewStep } from './RedactionPreviewStep';
 import { UploadStepper } from './UploadStepper';
 
@@ -21,8 +21,8 @@ type Props = {
   aiBlockedReason: string | null;
   onDone: (blob: Blob, edits: PrivacyEdits, sendToAi: boolean) => void;
   onClose: () => void;
-  /** SPEC-083: vắng = tính năng tắt; null = chưa chọn hồ sơ đã đồng thuận nên chưa gợi ý được. */
-  suggest?: SuggestFn | null;
+  /** SPEC-083: vắng = tính năng tắt; `run` null = chưa có hồ sơ nhận ảnh, chọn trong `choices`. */
+  suggest?: { run: SuggestFn | null; choices: ProfileOption[]; onChooseProfile: (id: string) => void };
 };
 
 // Che từng ảnh ngay trong trang Tải lên (D7): chỉnh trên ảnh gốc trong tab → xem đúng bản xuất → xác nhận.
@@ -34,7 +34,7 @@ export function UploadRedactionStudio({ item, onDone, onClose, suggest, ...ai }:
     file: item.file,
     edits: state.edits,
     codec,
-    suggest: suggest ?? null,
+    suggest: suggest?.run ?? null,
     dispatch,
   });
   const ref = useRef<HTMLElement>(null);
@@ -64,12 +64,11 @@ export function UploadRedactionStudio({ item, onDone, onClose, suggest, ...ai }:
           onCancel={onClose}
           historyLocked={suggestions.status.kind === 'loading'}
           suggestion={
-            suggest !== undefined && (
+            suggest && (
               <RedactionSuggestionControl
-                status={suggestions.status}
-                blockedReason={suggest ? null : 'Chọn hồ sơ ở trên để dùng gợi ý vùng che.'}
-                onRun={suggestions.run}
-                onCancel={suggestions.cancel}
+                suggestions={suggestions}
+                choices={suggest.run ? null : suggest.choices}
+                onChooseProfile={suggest.onChooseProfile}
               />
             )
           }
