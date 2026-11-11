@@ -34,13 +34,13 @@ export function CourseIntervalForm({ initialText, pending, error, onSubmit, onCa
           maxLength={100}
           aria-invalid={invalid}
           aria-describedby={`${id}-hint`}
-          className="min-h-12 w-full rounded-xl border border-[#d9e5e4] px-3 text-sm focus-visible:outline-2 focus-visible:outline-[#286958]"
+          className="min-h-12 w-full rounded-xl border border-border px-3 text-sm focus-visible:outline-2 focus-visible:outline-focus"
         />
-        <p id={`${id}-hint`} className="text-xs text-[#55615f]">
+        <p id={`${id}-hint`} className="text-xs text-text-secondary">
           Tối đa 100 ký tự. Để trống để xóa khoảng cách tự nhập.
         </p>
         {(invalid || error) && (
-          <p role="alert" className="text-sm text-[#b42318]">
+          <p role="alert" className="text-sm text-danger">
             {invalid ? 'Khoảng cách tối đa 100 ký tự.' : error}
           </p>
         )}

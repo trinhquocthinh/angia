@@ -62,7 +62,9 @@ const list = (props: Partial<Parameters<typeof DocumentEntryList>[0]> = {}) =>
 describe('TC-285 tab Hồ sơ & Giấy tờ khám', () => {
   it('tab là link và sáng khi đang mở', () => {
     const html = renderToStaticMarkup(<ProfileTabs profileId="p" active="documents" />);
-    expect(html).toContain('<a aria-current="page">Hồ sơ &amp; Giấy tờ khám</a>');
+    expect(html).toContain('<a aria-current="page">Hồ sơ &amp; Giấy tờ khám<span aria-hidden="true"');
+    // Chỉ tab đang mở có gạch chân trượt (§11.4.1).
+    expect(html.match(/angia-tab-indicator/g)).toHaveLength(1);
     expect(html).not.toContain('disabled');
   });
 

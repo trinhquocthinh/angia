@@ -19,7 +19,7 @@ export function ActionFields({
         <label>
           Tên nhóm
           <input
-            className="h-10 w-full min-w-0 rounded-xl border-0 bg-[#eaf6f5] px-3 text-[13px] leading-5 text-[#131d1d] placeholder:text-[#707975] transition-colors focus:bg-[#e4f0f0] disabled:opacity-65"
+            className="h-10 w-full min-w-0 rounded-xl border-0 bg-accent-soft px-3 text-[13px] leading-5 text-text-primary placeholder:text-text-secondary transition-colors focus:bg-accent-soft disabled:opacity-65"
             name="name"
             required
             maxLength={60}

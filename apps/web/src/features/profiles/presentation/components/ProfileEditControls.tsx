@@ -24,7 +24,7 @@ export function ProfileEditControls({
       <button
         type="button"
         onClick={() => setOpened(true)}
-        className="min-h-11 cursor-pointer rounded-xl bg-white px-4 text-sm font-semibold text-[#004135] shadow-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
+        className="min-h-11 cursor-pointer rounded-xl bg-surface px-4 text-sm font-semibold text-accent shadow-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus"
       >
         Sửa hồ sơ
       </button>

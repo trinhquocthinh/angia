@@ -35,7 +35,7 @@ export function SpikeStats({ load, fps, trial, onResetTrial }: Props) {
         </button>
       </dd>
       {trial.misses.map(({ target: want, tapped }) => (
-        <dd key={`${want.region}:${want.side}`} className="col-start-2 text-[#9a3b2f]">
+        <dd key={`${want.region}:${want.side}`} className="col-start-2 text-danger">
           {`Trượt ${describeLocation(want)} → ${describeLocation(tapped)}`}
         </dd>
       ))}

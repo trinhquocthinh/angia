@@ -1,22 +1,7 @@
 @import 'tailwindcss';
 @import './fonts.css';
-
-/* Design tokens theo 09-design-criteria §4.1 (chế độ sáng; dark mode là nợ kỹ thuật #8). */
-@theme {
-  --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
-  --color-bg: #faf8f5;
-  --color-surface: #ffffff;
-  --color-border: #e4e0da;
-  --color-text-primary: #1f2a2a;
-  --color-text-secondary: #55615f;
-  --color-accent: #2f6f5e;
-  --color-accent-hover: #255a4c;
-  --color-accent-soft: #e3efea;
-  --color-on-accent: #ffffff;
-  --color-danger: #b42318;
-  --color-success: #2e7d4f;
-  --shadow-card: 0 2px 10px rgb(31 42 42 / 0.05);
-}
+@import '../shared/styles/tokens.css';
+@import '../shared/ui/motion.css';
 
 body {
   background-color: var(--color-bg);
@@ -28,7 +13,7 @@ body {
 @media (display-mode: standalone) {
   html,
   body {
-    background-color: #f0fcfb;
+    background-color: var(--color-bg);
     overscroll-behavior-y: none;
   }
   body {
@@ -41,7 +26,7 @@ body {
 select:not([multiple]):not([size]) {
   appearance: none;
   padding-right: 2.5rem;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23404945' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-image: var(--select-arrow);
   background-position: right 0.75rem center;
   background-repeat: no-repeat;
   background-size: 1.125rem;

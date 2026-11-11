@@ -31,14 +31,14 @@ export function ConsentAttestationForm({
         if (!pending && result.body) onSubmit(result.body);
       }}
     >
-      <h2 id="consent-attestation-title" className="text-xl font-semibold text-[#004135]">
+      <h2 id="consent-attestation-title" className="text-xl font-semibold text-accent">
         Xác nhận đồng ý
       </h2>
       <p id="consent-attestation-description" className="break-words text-sm">
         Hồ sơ: {profile.displayName}
       </p>
       {profile.consentStatus === 'declined' && (
-        <p role="alert" className="rounded-xl bg-[#fff4e5] p-4 text-sm leading-6">
+        <p role="alert" className="rounded-xl bg-warning-soft p-4 text-sm leading-6">
           Trước đây có phản hồi không đồng ý qua link. Chỉ xác nhận sau khi đã hỏi lại và được đồng ý.
         </p>
       )}
@@ -46,7 +46,7 @@ export function ConsentAttestationForm({
         <ConsentFields mode={mode} draft={draft} profileName={profile.displayName} onChange={onChange} />
       </fieldset>
       {error && (
-        <p role="alert" className="text-sm text-[#b42318]">
+        <p role="alert" className="text-sm text-danger">
           {error}
         </p>
       )}
@@ -54,7 +54,7 @@ export function ConsentAttestationForm({
         <button
           type="submit"
           disabled={pending || !result.body}
-          className="min-h-12 rounded-xl bg-[#004135] px-5 py-3 font-semibold text-white disabled:opacity-55"
+          className="min-h-12 rounded-xl bg-accent px-5 py-3 font-semibold text-on-accent disabled:opacity-55"
         >
           {pending ? 'Đang xác nhận…' : 'Xác nhận đồng ý'}
         </button>
@@ -62,7 +62,7 @@ export function ConsentAttestationForm({
           type="button"
           disabled={pending}
           onClick={onCancel}
-          className="min-h-12 rounded-xl border border-[#004135] px-5 py-3 font-semibold text-[#004135] disabled:opacity-55"
+          className="min-h-12 rounded-xl border border-accent px-5 py-3 font-semibold text-accent disabled:opacity-55"
         >
           Hủy
         </button>

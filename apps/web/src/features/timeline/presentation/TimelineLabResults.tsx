@@ -14,7 +14,7 @@ export function TimelineLabResults({ data }: { data: Data }) {
               {result.unit ? ` ${result.unit}` : ''}
             </p>
             {result.referenceRange && (
-              <p className="text-[#55615f]">Khoảng tham chiếu trên phiếu: {result.referenceRange}</p>
+              <p className="text-text-secondary">Khoảng tham chiếu trên phiếu: {result.referenceRange}</p>
             )}
           </li>
         ))}

@@ -1,3 +1,4 @@
+import { useDocumentTheme } from '@src/shared/theme/useDocumentTheme';
 import ReactEChartsCore from 'echarts-for-react/esm/core';
 import { LineChart } from 'echarts/charts';
 import { GridComponent, TooltipComponent } from 'echarts/components';
@@ -17,6 +18,7 @@ export function PainChartCanvas({
   range: { from: string; to: string };
   context?: PainContext | undefined;
 }) {
+  useDocumentTheme();
   const animate = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   return (
     <ReactEChartsCore

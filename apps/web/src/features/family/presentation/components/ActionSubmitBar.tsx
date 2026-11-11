@@ -11,7 +11,7 @@ export function ActionSubmitBar({
     <div className="flex flex-wrap justify-end gap-3">
       <button
         type="button"
-        className="admin-button inline-flex items-center justify-center gap-2 min-h-11 py-[10px] px-4 border-0 rounded-[12px] bg-[#286958] text-white text-[14px] leading-[20px] font-semibold cursor-pointer shadow-[0_1px_2px_#0000000d] transition-[transform,background-color,box-shadow] duration-[160ms] ease-[ease] [&:hover]:bg-[#004135] [&:hover]:shadow-[0_4px_12px_#0041350f] [&:active]:scale-[0.99] motion-reduce:[&:active]:transform-none admin-button-secondary bg-[#e4f0f0]! text-[#404945]! [&:hover]:bg-[#d9e5e4]!"
+        className="admin-button inline-flex items-center justify-center gap-2 min-h-11 py-[10px] px-4 border-0 rounded-[12px] bg-accent text-on-accent text-[14px] leading-[20px] font-semibold cursor-pointer shadow-[0_1px_2px_color-mix(in_srgb,var(--color-shadow)_5%,transparent)] transition-[transform,background-color,box-shadow] duration-[160ms] ease-[ease] [&:hover]:bg-accent [&:hover]:shadow-[0_4px_12px_color-mix(in_srgb,var(--color-shadow)_6%,transparent)] [&:active]:scale-[0.99] motion-reduce:[&:active]:transform-none admin-button-secondary bg-accent-soft! text-text-secondary! [&:hover]:bg-border!"
         disabled={pending}
         onClick={onClose}
       >
@@ -19,13 +19,13 @@ export function ActionSubmitBar({
       </button>
       <button
         type="submit"
-        className={`admin-button inline-flex items-center justify-center gap-2 min-h-11 py-[10px] px-4 border-0 rounded-[12px] bg-[#286958] text-white text-[14px] leading-[20px] font-semibold cursor-pointer shadow-[0_1px_2px_#0000000d] transition-[transform,background-color,box-shadow] duration-[160ms] ease-[ease] [&:hover]:bg-[#004135] [&:hover]:shadow-[0_4px_12px_#0041350f] [&:active]:scale-[0.99] motion-reduce:[&:active]:transform-none ${remove ? 'admin-button-danger bg-[#ba1a1a]! [&:hover]:bg-[#93000a]!' : ''}`}
+        className={`admin-button inline-flex items-center justify-center gap-2 min-h-11 py-[10px] px-4 border-0 rounded-[12px] bg-accent text-on-accent text-[14px] leading-[20px] font-semibold cursor-pointer shadow-[0_1px_2px_color-mix(in_srgb,var(--color-shadow)_5%,transparent)] transition-[transform,background-color,box-shadow] duration-[160ms] ease-[ease] [&:hover]:bg-accent [&:hover]:shadow-[0_4px_12px_color-mix(in_srgb,var(--color-shadow)_6%,transparent)] [&:active]:scale-[0.99] motion-reduce:[&:active]:transform-none ${remove ? 'admin-button-danger bg-danger! [&:hover]:bg-danger!' : ''}`}
         disabled={pending}
       >
         {pending ? (
           <>
             <span
-              className="size-4 rounded-full border-2 border-[#ffffff55] border-t-white animate-spin motion-reduce:animate-none"
+              className="size-4 rounded-full border-2 border-surface/33 border-t-on-accent animate-spin motion-reduce:animate-none"
               aria-hidden="true"
             />
             Đang lưu...

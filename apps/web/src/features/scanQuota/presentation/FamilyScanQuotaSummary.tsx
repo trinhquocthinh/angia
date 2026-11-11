@@ -22,7 +22,7 @@ export function FamilyScanQuotaSummary({
         <button
           type="button"
           onClick={onRetry}
-          className="min-h-11 cursor-pointer font-semibold text-[#286958] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
+          className="min-h-11 cursor-pointer font-semibold text-accent underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         >
           Thử lại
         </button>
@@ -32,7 +32,7 @@ export function FamilyScanQuotaSummary({
   if (quota.status === 'unconfigured') return <p>Chưa cấp lượt tháng này.</p>;
   return (
     <p>
-      <span className="font-semibold text-[#20594b]">Còn lại {quota.remainingScans} lượt</span>
+      <span className="font-semibold text-accent">Còn lại {quota.remainingScans} lượt</span>
       {` · Đang giữ ${quota.heldScans} lượt · ${STATUS_LABELS[quota.status]}`}
     </p>
   );

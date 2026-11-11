@@ -12,7 +12,7 @@ export function AiBillingCard({ state }: { state: ReturnType<typeof useAiBilling
     <article
       aria-labelledby="ai-billing-title"
       aria-busy={state.isFetching}
-      className="admin-panel min-w-0 max-[1199px]:self-start rounded-2xl bg-white p-4 sm:p-5 shadow-sm flex flex-col gap-4 admin-reveal"
+      className="admin-panel min-w-0 max-[1199px]:self-start rounded-2xl bg-surface p-4 sm:p-5 shadow-sm flex flex-col gap-4 admin-reveal"
     >
       <AdminCardHeading
         id="ai-billing-title"
@@ -20,7 +20,7 @@ export function AiBillingCard({ state }: { state: ReturnType<typeof useAiBilling
         title="Phí thực từ nhà cung cấp"
       />
       {state.isError && (
-        <p role="alert" className="m-0 text-[12px] leading-5 text-[#93000a]">
+        <p role="alert" className="m-0 text-[12px] leading-5 text-danger">
           Không thể làm mới phí thực. Số đã ghi nhận không xác nhận tổng phí hiện tại.
         </p>
       )}
@@ -28,7 +28,7 @@ export function AiBillingCard({ state }: { state: ReturnType<typeof useAiBilling
         <AiBillingContent view={view} now={new Date()} />
       ) : (
         !state.isError && (
-          <p role="status" className="m-0 text-[13px] text-[#55615f]">
+          <p role="status" className="m-0 text-[13px] text-text-secondary">
             Đang tải phí thực…
           </p>
         )
@@ -37,7 +37,7 @@ export function AiBillingCard({ state }: { state: ReturnType<typeof useAiBilling
         type="button"
         onClick={() => void state.refetch()}
         disabled={state.isFetching}
-        className="min-h-11 w-full cursor-pointer rounded-xl border-0 bg-[#e4f0f0] px-4 text-[13px] font-semibold text-[#004135] transition-colors enabled:hover:bg-[#deebea] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
+        className="min-h-11 w-full cursor-pointer rounded-xl border-0 bg-accent-soft px-4 text-[13px] font-semibold text-accent transition-colors enabled:hover:bg-border disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       >
         {state.isFetching ? 'Đang tải…' : 'Làm mới số liệu'}
       </button>

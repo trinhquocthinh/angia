@@ -54,7 +54,9 @@ export function LabResultForm({ payload, manual = false, pending, error, onSubmi
           count={`${items.fields.length} chỉ số`}
         />
         {payload === null && !manual && (
-          <p className="text-sm text-[#55615f]">Chưa có dữ liệu tự động nhận diện, vui lòng nhập theo ảnh.</p>
+          <p className="text-sm text-text-secondary">
+            Chưa có dữ liệu tự động nhận diện, vui lòng nhập theo ảnh.
+          </p>
         )}
         <ol className="flex flex-col gap-4">
           {items.fields.map((field, index) => (
@@ -70,7 +72,7 @@ export function LabResultForm({ payload, manual = false, pending, error, onSubmi
       </section>
       <RowErrorSummary rows={rows} noun="chỉ số" anchorPrefix="lab-item" />
       {error && (
-        <p role="alert" className="rounded-2xl bg-[#fdecea] p-4 text-sm text-[#b42318]">
+        <p role="alert" className="rounded-2xl bg-danger-soft p-4 text-sm text-danger">
           {error.message}
         </p>
       )}

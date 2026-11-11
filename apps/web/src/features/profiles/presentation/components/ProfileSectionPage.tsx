@@ -30,7 +30,7 @@ export function ProfileSectionPage({ profileId, children }: Props) {
       {!main ? (
         <RecipientNotice />
       ) : workspace.profiles.isSuccess && !profile ? (
-        <p role="alert" className="rounded-[20px] bg-white p-6 text-sm">
+        <p role="alert" className="rounded-[20px] bg-surface p-6 text-sm">
           Không tìm thấy hồ sơ này trong gia đình.
         </p>
       ) : (

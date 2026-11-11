@@ -46,14 +46,14 @@ export function DocumentScanPanel({ src, file, rotation, hasMasks, codec, scanne
   return (
     <section
       aria-label="Nắn giấy"
-      className="flex min-w-0 flex-col gap-4 rounded-2xl bg-white p-4 shadow-sm lg:p-6"
+      className="flex min-w-0 flex-col gap-4 rounded-2xl bg-surface p-4 shadow-sm lg:p-6"
     >
-      <p className="text-[13px] leading-5 text-[#404945]">
+      <p className="text-[13px] leading-5 text-text-secondary">
         {previewUrl
           ? 'Ảnh sau khi nắn. Kiểm tra chữ còn đọc rõ trước khi dùng.'
           : 'Kéo 4 chấm tới 4 góc tờ giấy.'}
       </p>
-      <div className="flex h-[clamp(320px,52dvh,520px)] items-center justify-center rounded-xl bg-[#273232] p-2">
+      <div className="flex h-[clamp(320px,52dvh,520px)] items-center justify-center rounded-xl bg-overlay p-2">
         {previewUrl ? (
           <img src={previewUrl} alt="Ảnh đã nắn" className="max-h-full max-w-full rounded object-contain" />
         ) : (
@@ -66,7 +66,7 @@ export function DocumentScanPanel({ src, file, rotation, hasMasks, codec, scanne
         )}
       </div>
       {problem && (
-        <p role="alert" className="text-[13px] font-medium text-[#8a3a00]">
+        <p role="alert" className="text-[13px] font-medium text-warning">
           {problem}
         </p>
       )}

@@ -29,7 +29,7 @@ type Props = {
 // Thanh công cụ tab Diễn biến; nút "Ghi thực tế dùng thuốc" (E5-S3-T2) đặt cuối như Stitch 718c9615.
 export function HealthTrendToolbar({ kind, weeks, onKindChange, onWeeksChange, ...adherence }: Props) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white p-3 shadow-sm sm:p-4">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface p-3 shadow-sm sm:p-4">
       <SegmentedToggle label="Chọn chỉ số" value={kind} options={KIND_OPTIONS} onChange={onKindChange} />
       <SegmentedToggle
         label="Khoảng thời gian"

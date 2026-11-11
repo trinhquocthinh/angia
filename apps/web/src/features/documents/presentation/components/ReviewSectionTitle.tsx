@@ -6,12 +6,12 @@ type ReviewSectionTitleProps = { id?: string; title: string; aside?: ReactNode; 
 export function ReviewSectionTitle({ id, title, aside, count }: ReviewSectionTitleProps) {
   return (
     <div className="flex items-center justify-between gap-2">
-      <h2 id={id} className="flex items-center gap-2 text-lg leading-6 font-semibold text-[#131d1d]">
-        <span aria-hidden="true" className="h-4 w-1.5 shrink-0 rounded-full bg-[#004135]" />
+      <h2 id={id} className="flex items-center gap-2 text-lg leading-6 font-semibold text-text-primary">
+        <span aria-hidden="true" className="h-4 w-1.5 shrink-0 rounded-full bg-accent" />
         {title}
       </h2>
       {count && (
-        <span className="shrink-0 rounded-full bg-[#20594b] px-2.5 py-0.5 text-xs font-bold text-white tabular-nums">
+        <span className="shrink-0 rounded-full bg-accent px-2.5 py-0.5 text-xs font-bold text-on-accent tabular-nums">
           {count}
         </span>
       )}

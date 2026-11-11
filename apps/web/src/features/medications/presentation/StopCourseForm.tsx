@@ -25,8 +25,11 @@ export function StopCourseForm({ course, today, pending, onSubmit, onCancel }: P
       <fieldset disabled={pending} className="flex flex-col gap-6 border-0 px-6 py-5">
         <StopCourseDetails course={course} />
         <div className="flex flex-col gap-2">
-          <label htmlFor="stop-date" className="text-xs font-bold tracking-wider text-[#55615f] uppercase">
-            Dừng từ ngày <span className="text-[#b42318]">*</span>
+          <label
+            htmlFor="stop-date"
+            className="text-xs font-bold tracking-wider text-text-secondary uppercase"
+          >
+            Dừng từ ngày <span className="text-danger">*</span>
           </label>
           <input
             id="stop-date"
@@ -36,9 +39,9 @@ export function StopCourseForm({ course, today, pending, onSubmit, onCancel }: P
             max={max}
             value={date}
             onChange={(event) => setDate(event.target.value)}
-            className="h-12 w-full rounded-xl border border-[#d9e5e4] bg-white px-3.5 text-sm font-semibold tabular-nums focus:border-[#004135] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#004135]/20"
+            className="h-12 w-full rounded-xl border border-border bg-surface px-3.5 text-sm font-semibold tabular-nums focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/20"
           />
-          <p className="pl-1 text-[11px] text-[#55615f] italic">
+          <p className="pl-1 text-[11px] text-text-secondary italic">
             Mặc định là {formatDay(max)}. Từ ngày đã chọn, đợt thuốc không còn hiệu lực; các ngày trước đó vẫn
             được giữ trong lịch sử. Thao tác này không có chức năng hoàn tác.
           </p>

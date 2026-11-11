@@ -18,7 +18,7 @@ export function RecordTypePicker({
     <PickerCard icon="category" title="Loại dữ liệu" hint="Bắt buộc" required>
       {DOCUMENT_TYPES.filter((type) => type.value !== 'device_reading' || allowReading).map((type) => (
         <ChoiceChip key={type.value} selected={value === type.value} onClick={() => onChange(type.value)}>
-          <span className={value === type.value ? 'text-[#b3eddf]' : 'text-[#707975]'}>
+          <span className={value === type.value ? 'text-accent-soft' : 'text-text-secondary'}>
             <DocumentIcon name={type.icon} size={16} />
           </span>
           {type.label}

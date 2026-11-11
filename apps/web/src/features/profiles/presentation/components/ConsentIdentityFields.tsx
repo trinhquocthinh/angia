@@ -19,7 +19,7 @@ export function ConsentIdentityFields({ id, draft, profileName, onChange }: Prop
             const basis = event.target.value as ConsentDraft['basis'];
             onChange({ ...draft, basis, respondentName: basis === 'self' ? profileName : '' });
           }}
-          className="mt-1.5 block h-11 w-full rounded-xl border border-[#bfc9c4]/40 bg-white px-3.5 text-sm"
+          className="mt-1.5 block h-11 w-full rounded-xl border border-border/40 bg-surface px-3.5 text-sm"
         >
           <option value="">Chọn người đồng ý</option>
           <option value="self">Chính người này</option>
@@ -36,7 +36,7 @@ export function ConsentIdentityFields({ id, draft, profileName, onChange }: Prop
           onChange={(event) => onChange({ ...draft, respondentName: event.target.value })}
           maxLength={60}
           autoComplete="off"
-          className="mt-1.5 block h-11 w-full rounded-xl border border-[#bfc9c4]/40 bg-white px-3.5 text-sm"
+          className="mt-1.5 block h-11 w-full rounded-xl border border-border/40 bg-surface px-3.5 text-sm"
         />
       </div>
     </fieldset>

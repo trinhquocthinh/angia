@@ -30,18 +30,18 @@ export function ItemCard({ anchorPrefix, index, title, invalid, onRemove, childr
       id={id}
       aria-labelledby={`${id}-title`}
       style={{ ...revealStyle(Math.min(index, MAX_REVEAL_INDEX)), viewTransitionName: transitionName }}
-      className={`angia-modal-reveal flex scroll-mt-24 flex-col gap-4 rounded-[20px] bg-white p-4 shadow-card outline-2 transition-[outline-color] duration-200 [view-transition-class:review-row] motion-reduce:transition-none lg:p-5 ${
-        invalid ? 'outline-[#b42318]' : 'outline-transparent'
+      className={`angia-modal-reveal flex scroll-mt-24 flex-col gap-4 rounded-[20px] bg-surface p-4 shadow-card outline-2 transition-[outline-color] duration-200 [view-transition-class:review-row] motion-reduce:transition-none lg:p-5 ${
+        invalid ? 'outline-danger' : 'outline-transparent'
       }`}
     >
       <div className="flex items-center gap-3">
         <span
           aria-hidden="true"
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#20594b] text-xs font-bold text-white"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent text-xs font-bold text-on-accent"
         >
           {order}
         </span>
-        <h3 id={`${id}-title`} className="flex-1 text-[15px] font-semibold text-[#004135]">
+        <h3 id={`${id}-title`} className="flex-1 text-[15px] font-semibold text-accent">
           {title}
         </h3>
         {onRemove && (
@@ -49,7 +49,7 @@ export function ItemCard({ anchorPrefix, index, title, invalid, onRemove, childr
             type="button"
             onClick={() => withRowTransition(onRemove)}
             aria-label={`Xóa dòng ${order}`}
-            className="flex h-11 w-11 items-center justify-center rounded-full text-[#55615f] transition-colors duration-200 hover:bg-[#e4f0f0] hover:text-[#b42318] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-text-secondary transition-colors duration-200 hover:bg-accent-soft hover:text-danger motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             <DocumentIcon name="close" size={18} />
           </button>

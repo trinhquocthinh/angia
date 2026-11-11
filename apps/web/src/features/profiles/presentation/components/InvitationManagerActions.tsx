@@ -16,7 +16,7 @@ export function InvitationManagerActions({
         type="button"
         disabled={pending}
         onClick={() => void create()}
-        className={`flex min-h-12 w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-colors disabled:opacity-55 ${invitationState === 'active' ? 'bg-[#eaf6f5] text-[#286958] hover:bg-[#deebea]' : 'bg-[#004135] text-white hover:bg-[#20594b]'}`}
+        className={`flex min-h-12 w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-colors disabled:opacity-55 ${invitationState === 'active' ? 'bg-accent-soft text-accent hover:bg-border' : 'bg-accent text-on-accent hover:bg-accent-hover'}`}
       >
         <InvitationIcon name="refresh" />
         {pending ? 'Đang xử lý…' : invitationState === 'active' ? 'Tạo lại link' : 'Tạo link liên kết'}
@@ -26,7 +26,7 @@ export function InvitationManagerActions({
           type="button"
           disabled={pending}
           onClick={() => void revoke()}
-          className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl px-4 py-3 text-xs font-medium text-[#ba1a1a] hover:bg-[#ffdad6]/30 disabled:opacity-55"
+          className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl px-4 py-3 text-xs font-medium text-danger hover:bg-danger-soft/30 disabled:opacity-55"
         >
           <InvitationIcon name="unlink" />
           Thu hồi link đang chờ

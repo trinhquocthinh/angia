@@ -169,3 +169,18 @@ test('US-042: tự mở vấn đề mới từ danh sách rỗng', async ({ page
   expect(create?.path).toBe('/api/me/profile/pain-issues');
   expect(create?.body).toEqual({ region: 'knee', side: 'left', title: '', firstEntry: { level: 5 } });
 });
+
+test('TC-861: chỉ tải giao diện xét nghiệm khi mở mục xét nghiệm', async ({ page }) => {
+  const fixture = await selfPainFixture(page);
+  await page.goto('/my-profile');
+  await expect(page.getByRole('heading', { name: 'Hồ sơ của tôi', exact: true })).toBeVisible();
+  expect(fixture.loaded.some((path) => /LabSeriesList/.test(path))).toBe(false);
+  await page
+    .getByRole('navigation', { name: 'Các mục hồ sơ của tôi' })
+    .getByRole('link', { name: 'Kết quả xét nghiệm', exact: true })
+    .click();
+  await expect(page.getByText('Chưa có kết quả xét nghiệm nào.', { exact: true })).toBeVisible();
+  expect(fixture.loaded.some((path) => /LabSeriesList/.test(path))).toBe(true);
+  await expect(page.getByRole('button', { name: /Thêm|Sửa|Xóa|Nhập tay/ })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Tải ảnh phiếu xét nghiệm' })).toHaveCount(0);
+});

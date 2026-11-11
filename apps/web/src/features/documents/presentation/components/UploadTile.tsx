@@ -27,10 +27,10 @@ export function UploadTile({
   const busy = item.status === 'queued' || item.status === 'uploading';
   return (
     <li
-      className="angia-modal-reveal group flex min-w-0 flex-col gap-2 rounded-2xl bg-white p-2 shadow-sm transition-shadow duration-200 hover:shadow-md motion-reduce:transition-none"
+      className="angia-modal-reveal group flex min-w-0 flex-col gap-2 rounded-2xl bg-surface p-2 shadow-sm transition-shadow duration-200 hover:shadow-md motion-reduce:transition-none"
       style={revealStyle(revealIndex)}
     >
-      <div className="relative h-44 overflow-hidden rounded-xl bg-[#deebea] sm:h-56">
+      <div className="relative h-44 overflow-hidden rounded-xl bg-border sm:h-56">
         {preview && broken !== preview ? (
           <img
             src={preview}
@@ -39,7 +39,7 @@ export function UploadTile({
             className={`h-full w-full object-cover transition-[opacity,scale] duration-300 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100 ${busy ? 'opacity-60' : ''}`}
           />
         ) : (
-          <span className="flex h-full w-full items-center justify-center text-[#707975]">
+          <span className="flex h-full w-full items-center justify-center text-text-secondary">
             <DocumentIcon name="image" size={32} />
           </span>
         )}
@@ -54,7 +54,7 @@ export function UploadTile({
         <TileStatus item={item} onRemove={onRemove} />
       </div>
       <div className="flex min-w-0 items-center justify-between gap-2 px-1 pb-1">
-        <span title={item.file.name} className="truncate font-mono text-[11px] text-[#131d1d]">
+        <span title={item.file.name} className="truncate font-mono text-[11px] text-text-primary">
           {item.file.name}
         </span>
         <TileBadge status={item.status} />

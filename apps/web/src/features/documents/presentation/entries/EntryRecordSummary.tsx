@@ -10,14 +10,14 @@ export function EntryRecordSummary({ records }: { records: Records }) {
   const { prescription, labResults, measurements } = records;
   if (!prescription && labResults.length === 0 && measurements.length === 0) return null;
   return (
-    <ul className="flex flex-col gap-2 rounded-xl bg-[#eaf6f5] p-4 text-sm text-[#131d1d]">
+    <ul className="flex flex-col gap-2 rounded-xl bg-accent-soft p-4 text-sm text-text-primary">
       {prescription?.items.map((item) => (
         <li key={item.id} className="flex flex-wrap justify-between gap-x-3">
           <span className="font-semibold">
             {item.name}
             {item.strength ? ` ${item.strength}` : ''}
           </span>
-          <span className="text-[#404945]">
+          <span className="text-text-secondary">
             {doseLabel(item.quantityPerDose, item.doseUnit)} · {item.slots.map(doseSlotLabel).join(', ')} ·{' '}
             {item.longTerm ? 'Dài hạn' : `${item.durationDays} ngày`}
           </span>
@@ -32,7 +32,7 @@ export function EntryRecordSummary({ records }: { records: Records }) {
               {result.unit ? ` ${result.unit}` : ''}
             </span>
           </span>
-          <span className="text-xs text-[#55615f]">
+          <span className="text-xs text-text-secondary">
             {result.referenceRange
               ? `Khoảng tham chiếu trên phiếu: ${result.referenceRange}`
               : 'Phiếu không in khoảng tham chiếu'}

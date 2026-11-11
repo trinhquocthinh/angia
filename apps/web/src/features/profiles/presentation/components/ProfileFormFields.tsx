@@ -21,12 +21,12 @@ export function ProfileFormFields({
       <ProfileIdentityFields errors={errors} />
       <div>
         <label htmlFor="profile-account" className="text-sm font-semibold">
-          Liên kết tài khoản <span className="font-normal text-[#707975]">(tùy chọn)</span>
+          Liên kết tài khoản <span className="font-normal text-text-secondary">(tùy chọn)</span>
         </label>
         <select
           id="profile-account"
           name="linkedAccountId"
-          className="mt-1.5 block h-12 w-full rounded-xl border border-[#bfc9c4]/30 bg-[#eaf6f5] px-4 text-sm text-[#131d1d] max-md:border-[#bfc9c4]/60 max-md:bg-[#f8faf9] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
+          className="mt-1.5 block h-12 w-full rounded-xl border border-border/30 bg-accent-soft px-4 text-sm text-text-primary max-md:border-border/60 max-md:bg-bg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus"
           disabled={accountsLoading || accountsError}
           aria-invalid={Boolean(errors.linkedAccountId)}
           aria-describedby={errors.linkedAccountId ? 'account-error' : undefined}
@@ -41,11 +41,11 @@ export function ProfileFormFields({
           ))}
         </select>
         {errors.linkedAccountId && (
-          <p id="account-error" className="mt-2 text-sm text-[#b42318]">
+          <p id="account-error" className="mt-2 text-sm text-danger">
             {errors.linkedAccountId}
           </p>
         )}
-        <p className="mt-1.5 text-xs leading-5 text-[#55615f]">
+        <p className="mt-1.5 text-xs leading-5 text-text-secondary">
           Chỉ tài khoản trong gia đình chưa có hồ sơ liên kết được hiển thị.
         </p>
         {accountsLoading && (
@@ -54,7 +54,7 @@ export function ProfileFormFields({
           </p>
         )}
         {accountsError && (
-          <p role="alert" className="mt-2 text-sm text-[#b42318]">
+          <p role="alert" className="mt-2 text-sm text-danger">
             Không thể tải tài khoản.{' '}
             <button type="button" onClick={retry} className="min-h-11 underline">
               Thử lại

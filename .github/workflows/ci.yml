@@ -83,11 +83,45 @@ jobs:
           wait "$api_pid"
           wait "$worker_pid"
 
-  # Cổng gom 4 job: validator bên homelab-deploy chỉ chấp nhận job `verify` = success.
+  accessibility:
+    name: Accessibility (Hôm nay)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: yarn build:contracts
+      # Mirror apt của runner đôi khi mất DNS và treo đến hết timeout job: giới hạn 6 phút mỗi lần, thử lại 1 lần.
+      - name: Cài trình duyệt Playwright
+        run: |
+          for attempt in 1 2; do
+            timeout 6m yarn playwright install --with-deps chromium webkit && exit 0
+            echo "::warning::Cài Playwright lần $attempt thất bại hoặc quá 6 phút"
+          done
+          exit 1
+      - run: yarn workspace @angia/web build
+      - name: axe hai nền ở 360 px
+        run: yarn playwright test --config playwright.a11y.config.ts
+      - name: Lighthouse Accessibility hai nền
+        run: yarn lhci autorun
+      - name: Lưu báo cáo accessibility (dữ liệu giả)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: today-accessibility
+          path: |
+            .playwright/a11y/
+            .playwright/lighthouse/
+            .lighthouseci/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+
+  # Cổng gom 5 job: validator bên homelab-deploy chỉ chấp nhận job `verify` = success.
   # `always()` để job thất bại/bị hủy làm `verify` đỏ thay vì skipped (skipped vẫn qua branch protection).
   verify:
     name: verify
-    needs: [lint-and-types, unit-and-coverage, rls-integration, build-artifacts]
+    needs: [lint-and-types, unit-and-coverage, rls-integration, build-artifacts, accessibility]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 2

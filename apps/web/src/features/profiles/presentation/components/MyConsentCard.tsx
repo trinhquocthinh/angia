@@ -19,12 +19,12 @@ export function MyConsentCard({
   if (!profile) return null;
   const { consentStatus, withdrawnAt } = profile;
   return (
-    <section className="mb-8 rounded-[20px] bg-white p-6 shadow-sm" aria-labelledby="my-consent-title">
-      <h2 id="my-consent-title" className="text-lg font-semibold text-[#004135]">
+    <section className="mb-8 rounded-[20px] bg-surface p-6 shadow-sm" aria-labelledby="my-consent-title">
+      <h2 id="my-consent-title" className="text-lg font-semibold text-accent">
         Đồng thuận lưu thông tin sức khỏe
       </h2>
       <p className="mt-2 break-words text-sm font-medium">{profile.displayName}</p>
-      <p className="mt-1 text-sm leading-6 text-[#55615f]">
+      <p className="mt-1 text-sm leading-6 text-text-secondary">
         {consentStatus === 'withdrawn'
           ? `Bạn đã rút đồng thuận lúc ${withdrawnAt ? formatWithdrawnAt(withdrawnAt) : ''}.`
           : consentStatus === 'confirmed'
@@ -34,7 +34,7 @@ export function MyConsentCard({
       {consentStatus === 'confirmed' && (
         <button
           type="button"
-          className="mt-4 inline-flex min-h-[52px] items-center justify-center rounded-xl border border-[#c1c8c5] px-5 py-3 text-sm font-semibold text-[#004135] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
+          className="mt-4 inline-flex min-h-[52px] items-center justify-center rounded-xl border border-border px-5 py-3 text-sm font-semibold text-accent cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus"
           onClick={onWithdraw}
         >
           Rút đồng thuận
@@ -42,7 +42,7 @@ export function MyConsentCard({
       )}
       <button
         type="button"
-        className="mt-4 ml-3 inline-flex min-h-[52px] items-center justify-center rounded-xl px-3 py-3 text-sm font-semibold text-[#404945] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#286958]"
+        className="mt-4 ml-3 inline-flex min-h-[52px] items-center justify-center rounded-xl px-3 py-3 text-sm font-semibold text-text-secondary cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus"
         onClick={onUnlink}
       >
         Gỡ liên kết

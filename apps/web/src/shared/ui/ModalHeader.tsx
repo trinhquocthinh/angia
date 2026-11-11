@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Button } from './button/Button';
 
 type Props = {
   titleId: string;
@@ -13,11 +14,11 @@ type Props = {
 };
 
 const TONES = {
-  warning: { tile: 'bg-[#ffdbc9] text-[#833b00]', chip: 'bg-[#ffdbc9] text-[#753400]' },
-  accent: { tile: 'bg-[#e3efea] text-[#20594b]', chip: 'bg-[#e3efea] text-[#20594b]' },
+  warning: { tile: 'bg-warning-soft text-warning', chip: 'bg-warning-soft text-warning' },
+  accent: { tile: 'bg-accent-soft text-accent', chip: 'bg-accent-soft text-accent' },
 };
 
-// Đầu hộp thoại: ô biểu tượng (bật nhẹ khi mở), nhãn nhỏ, tiêu đề serif Newsreader và nút đóng.
+// Đầu hộp thoại theo Design §11.3: chữ sans, nhãn 16px, tiêu đề 22/30px.
 export function ModalHeader({
   titleId,
   icon,
@@ -30,35 +31,33 @@ export function ModalHeader({
   onClose,
 }: Props) {
   return (
-    <div className="flex shrink-0 items-start gap-4 px-6 pt-6 pb-4 max-md:px-5 max-md:pt-3">
+    <div className="grid shrink-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-2 px-6 pt-6 pb-4 max-md:px-5 max-md:pt-3">
       <span
         aria-hidden="true"
-        className={`angia-modal-pop flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-[0_6px_16px_#83390018] ${TONES[tone].tile}`}
+        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-[0_6px_16px_color-mix(in_srgb,var(--color-shadow)_9%,transparent)] ${TONES[tone].tile}`}
       >
         {icon}
       </span>
-      <div className="min-w-0 flex-1">
+      <div className="col-span-2 row-start-2 min-w-0 break-words">
         {eyebrow && (
           <span
-            className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-wide uppercase ${TONES[tone].chip}`}
+            className={`inline-flex rounded-full px-2.5 py-0.5 text-base leading-6 font-medium ${TONES[tone].chip}`}
           >
             {eyebrow}
           </span>
         )}
-        <h2
-          id={titleId}
-          className="font-['Newsreader',Georgia,serif] text-[22px] leading-7 font-semibold text-[#004135]"
-        >
+        <h2 id={titleId} className="font-sans text-[1.375rem] leading-[1.875rem] font-semibold text-accent">
           {title}
         </h2>
-        {subtitle && <p className="text-sm leading-5 text-[#55615f]">{subtitle}</p>}
+        {subtitle && <p className="text-base leading-6 text-text-secondary">{subtitle}</p>}
       </div>
-      <button
+      <Button
+        className="col-start-2 row-start-1"
+        variant="icon"
         type="button"
         disabled={pending}
         onClick={onClose}
         aria-label={closeLabel}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#eaf6f5] text-[#404945] transition-colors duration-200 hover:bg-[#deebea] hover:text-[#131d1d] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
       >
         <svg
           width="18"
@@ -71,7 +70,7 @@ export function ModalHeader({
         >
           <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
         </svg>
-      </button>
+      </Button>
     </div>
   );
 }

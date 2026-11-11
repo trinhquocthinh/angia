@@ -21,8 +21,8 @@ export function ProfileLinkRow({
   const [confirming, setConfirming] = useState(false);
   const target = candidates.find((account) => account.id === selected)?.displayName;
   return (
-    <li className="flex flex-col gap-2 rounded-xl bg-[#eaf6f5]/70 p-3">
-      <p className="m-0 text-sm font-semibold text-[#131d1d] [overflow-wrap:anywhere]">
+    <li className="flex flex-col gap-2 rounded-xl bg-accent-soft/70 p-3">
+      <p className="m-0 text-sm font-semibold text-text-primary [overflow-wrap:anywhere]">
         {profile.displayName}
       </p>
       <ProfileLinkSelect
@@ -39,7 +39,7 @@ export function ProfileLinkRow({
         <button
           type="button"
           disabled={pending}
-          className="min-h-11 rounded-xl bg-[#004135] px-4 text-[13px] font-semibold text-white disabled:opacity-65"
+          className="min-h-11 rounded-xl bg-accent px-4 text-[13px] font-semibold text-on-accent disabled:opacity-65"
           onClick={() => setConfirming(true)}
         >
           {selected === NONE ? 'Gỡ liên kết' : 'Chuyển liên kết'}

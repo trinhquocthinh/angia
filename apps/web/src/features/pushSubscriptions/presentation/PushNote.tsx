@@ -14,12 +14,12 @@ export function PushNote({
 }) {
   return (
     <section className={`flex items-start gap-3 rounded-[20px] p-4 lg:gap-4 lg:p-6 ${className}`}>
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#aef0da] text-[#055141] lg:h-11 lg:w-11 lg:rounded-xl lg:bg-[#e4f0f0] lg:text-[#004135]">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent lg:h-11 lg:w-11 lg:rounded-xl lg:bg-accent-soft lg:text-accent">
         <PushIcon name={icon} />
       </span>
       <div className="min-w-0 flex-1">
-        <h2 className="mb-1 text-base font-semibold text-[#131d1d]">{title}</h2>
-        <div className="text-sm leading-relaxed text-[#404945]">{children}</div>
+        <h2 className="mb-1 text-base font-semibold text-text-primary">{title}</h2>
+        <div className="text-sm leading-relaxed text-text-secondary">{children}</div>
       </div>
     </section>
   );

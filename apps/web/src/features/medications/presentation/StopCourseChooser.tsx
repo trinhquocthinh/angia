@@ -18,7 +18,7 @@ export function StopCourseChooser({ courses, list, selected, selectedId, pending
     <div className="flex flex-col gap-5 px-6 pt-5">
       {courses.isFetching && <p role="status">Đang tải các đợt thuốc…</p>}
       {courses.isError && (
-        <div role="alert" className={`${notice} flex flex-col items-start gap-2 bg-[#fdecea]`}>
+        <div role="alert" className={`${notice} flex flex-col items-start gap-2 bg-danger-soft`}>
           <p>Không thể tải các đợt thuốc.</p>
           <button
             type="button"
@@ -30,7 +30,7 @@ export function StopCourseChooser({ courses, list, selected, selectedId, pending
         </div>
       )}
       {error && (
-        <p role="alert" className={`${notice} bg-[#fdecea] text-[#b42318]`}>
+        <p role="alert" className={`${notice} bg-danger-soft text-danger`}>
           {error}
         </p>
       )}
@@ -50,9 +50,9 @@ export function StopCourseChooser({ courses, list, selected, selectedId, pending
 
 function EmptyBox({ title, body }: { title: string; body?: string }) {
   return (
-    <div className="rounded-2xl border-2 border-dashed border-[#d9e5e4] bg-[#f6fbfa] px-4 py-8 text-center">
-      <p className="text-sm font-semibold text-[#131d1d]">{title}</p>
-      {body && <p className="mx-auto mt-1 max-w-xs text-xs text-[#55615f]">{body}</p>}
+    <div className="rounded-2xl border-2 border-dashed border-border bg-bg px-4 py-8 text-center">
+      <p className="text-sm font-semibold text-text-primary">{title}</p>
+      {body && <p className="mx-auto mt-1 max-w-xs text-xs text-text-secondary">{body}</p>}
     </div>
   );
 }

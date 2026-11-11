@@ -26,8 +26,8 @@ export function BodyMapDrawing({
               data-body-region={`${region}/${side}`}
               transform={transform}
               d={path}
-              fill={active ? '#E3EFEA' : '#ECE8E2'}
-              stroke={active ? '#2F6F5E' : '#9AA3A1'}
+              fill={active ? 'var(--color-accent-soft)' : 'var(--color-body-fill)'}
+              stroke={active ? 'var(--color-accent)' : 'var(--color-body-stroke)'}
               strokeWidth={active ? 2 : 1}
               strokeLinejoin="round"
               vectorEffect="non-scaling-stroke"
@@ -38,7 +38,7 @@ export function BodyMapDrawing({
               x2={buttonX}
               y2={buttonY}
               transform={transform}
-              stroke="#55615F"
+              stroke="var(--color-text-secondary)"
               vectorEffect="non-scaling-stroke"
             />
           </g>

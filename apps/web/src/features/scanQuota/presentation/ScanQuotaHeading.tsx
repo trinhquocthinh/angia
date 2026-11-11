@@ -9,7 +9,7 @@ export function ScanQuotaHeading({ month }: { month: string | null }) {
       title="Hạn mức lượt nhận diện"
       aside={
         month && (
-          <span className="shrink-0 rounded-full bg-[#e4f0f0] px-2.5 py-1 text-xs font-medium text-[#404945]">
+          <span className="shrink-0 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-medium text-text-secondary">
             Tháng {month}
           </span>
         )

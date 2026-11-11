@@ -42,7 +42,7 @@ export function AdminWorkspaceView(props: AdminWorkspaceViewProps) {
       />
       {action.isSuccess && !task && (
         <p
-          className="rounded-[12px] py-3 px-4 m-0 text-[13px] leading-[20px] text-[#055141] bg-[#aef0da]"
+          className="rounded-[12px] py-3 px-4 m-0 text-[13px] leading-[20px] text-accent bg-accent-soft"
           role="status"
         >
           Đã lưu thay đổi thành công.

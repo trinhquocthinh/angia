@@ -31,7 +31,7 @@ export function PainLevelPicker({ value, onChange, disabled = false }: Props) {
         {Array.from({ length: 10 }, (_, index) => index + 1).map((level) => (
           <label
             key={level}
-            className={`pain-level-option ${value === level ? 'bg-accent text-white border-accent' : 'bg-surface border-border'}`}
+            className={`pain-level-option ${value === level ? 'bg-accent text-on-accent border-accent' : 'bg-surface border-border'}`}
           >
             <input
               type="radio"

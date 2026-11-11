@@ -20,9 +20,9 @@ export function PrivacyCanvas({ src, edits, mode, disabled, onBegin, onRectangle
   const gesture = usePrivacyDrag(disabled || !loaded, onBegin, onRectangle);
   const rotated = edits.rotation === 90 || edits.rotation === 270;
   return (
-    <div className="rounded-xl bg-[#273232] p-2 text-[#deebea] shadow-inner sm:p-4">
+    <div className="rounded-xl bg-overlay p-2 text-on-overlay shadow-inner sm:p-4">
       {failed && (
-        <p role="alert" className="p-4 text-sm text-[#ffb68c]">
+        <p role="alert" className="p-4 text-sm text-on-overlay">
           Không mở được ảnh này trên trình duyệt. Hãy chụp lại hoặc chọn ảnh JPG.
         </p>
       )}
@@ -59,13 +59,13 @@ export function PrivacyCanvas({ src, edits, mode, disabled, onBegin, onRectangle
             <PrivacyToolIcon name="pointer" />
             Kéo trên ảnh để tạo vùng cắt hoặc che
           </span>
-          <span className="font-mono text-[#bfc9c4]">
+          <span className="font-mono text-on-overlay">
             Xem trước: {rotated ? size.height : size.width} × {rotated ? size.width : size.height}
           </span>
         </div>
       )}
       {!loaded && !failed && (
-        <p role="status" className="p-2 text-sm text-[#bfc9c4]">
+        <p role="status" className="p-2 text-sm text-on-overlay">
           Đang tải ảnh xem trước…
         </p>
       )}

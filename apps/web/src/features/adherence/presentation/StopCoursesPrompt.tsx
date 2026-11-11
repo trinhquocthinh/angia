@@ -25,12 +25,12 @@ export function StopCoursesPrompt({
 }: Props) {
   if (stopped)
     return (
-      <p role="status" className="mx-6 mt-4 rounded-xl bg-[#e4f0ef] p-4 text-sm">
+      <p role="status" className="mx-6 mt-4 rounded-xl bg-accent-soft p-4 text-sm">
         Đã dừng đợt thuốc trong danh mục từ {formatDay(stopDate)}.
       </p>
     );
   return (
-    <section className="mx-6 mt-4 flex flex-col gap-3 rounded-xl border border-[#ffb68c] bg-[#fff4ec] p-4 text-sm text-[#321200]">
+    <section className="mx-6 mt-4 flex flex-col gap-3 rounded-xl border border-warning-soft bg-warning-soft p-4 text-sm text-warning">
       <p className="font-semibold">Danh mục thuốc điều trị vẫn còn:</p>
       <MatchingCourseList courses={courses} />
       <p>
@@ -39,7 +39,7 @@ export function StopCoursesPrompt({
         {formatDay(stopDate)}?
       </p>
       {failed && (
-        <p role="alert" className="rounded-lg bg-[#fdecea] p-3">
+        <p role="alert" className="rounded-lg bg-danger-soft p-3">
           Không dừng được đợt thuốc. Vui lòng thử lại hoặc dừng ở tab Thuốc điều trị.
         </p>
       )}
@@ -48,7 +48,7 @@ export function StopCoursesPrompt({
           type="button"
           disabled={pending}
           onClick={onConfirm}
-          className="min-h-11 rounded-xl bg-[#004135] px-4 font-semibold text-white disabled:opacity-55"
+          className="min-h-11 rounded-xl bg-accent px-4 font-semibold text-on-accent disabled:opacity-55"
         >
           {pending ? 'Đang dừng…' : 'Dừng đợt thuốc'}
         </button>
@@ -56,7 +56,7 @@ export function StopCoursesPrompt({
           type="button"
           disabled={pending}
           onClick={onDismiss}
-          className="min-h-11 rounded-xl border border-[#602900] px-4 font-semibold"
+          className="min-h-11 rounded-xl border border-warning px-4 font-semibold"
         >
           Giữ nguyên danh mục
         </button>

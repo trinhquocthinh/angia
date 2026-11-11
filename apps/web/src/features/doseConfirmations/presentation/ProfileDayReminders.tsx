@@ -17,7 +17,7 @@ export function ProfileDayReminders({
   const reminders = useProfileDayReminders(repository, session, profile);
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold text-[#004135]">Lời nhắc hôm nay</h2>
+      <h2 className="text-lg font-semibold text-accent">Lời nhắc hôm nay</h2>
       {reminders.isError ? (
         <SelfLoadError label="lời nhắc" retry={() => void reminders.refetch()} />
       ) : reminders.data ? (

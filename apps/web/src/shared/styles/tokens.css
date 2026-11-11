@@ -1,0 +1,73 @@
+/* Design §11.2: một bộ token cho cả hai nền, kể cả các tiện ích Tailwind. */
+@theme static {
+  --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+  --color-bg: #faf8f5;
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-border: #e4e0da;
+  --color-text-primary: #1f2a2a;
+  --color-text-secondary: #55615f;
+  --color-accent: #2f6f5e;
+  --color-accent-hover: #255a4c;
+  --color-accent-soft: #e3efea;
+  --color-on-accent: #ffffff;
+  --color-danger: #b42318;
+  --color-warning: #b54708;
+  --color-success: #2e7d4f;
+  --color-focus: #2f6f5e;
+  --color-series-diastolic: #6b4fa8;
+  --color-series-glucose: #b54708;
+  --color-series-pain: #1f2a2a;
+  --color-body-fill: #ece8e2;
+  --color-body-stroke: #9aa3a1;
+  --color-period-stopped: #f1ece4;
+  --color-period-hatch: #6b5e51;
+  --color-danger-soft: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface));
+  --color-warning-soft: color-mix(in srgb, var(--color-warning) 10%, var(--color-surface));
+  --color-shadow: #000000;
+  --color-overlay: #002019;
+  --color-on-overlay: #ffffff;
+  --color-redaction-mask: #000000;
+  --color-shimmer: rgb(255 255 255 / 0.7);
+  --color-scan-guide: #7fe0c6;
+  --color-paper: #ffffff;
+  --color-print-text: #1f2a2a;
+  --color-print-muted: #55615f;
+  --color-print-border: #e4e0da;
+  --color-print-accent: #2f6f5e;
+  --color-print-accent-soft: #e3efea;
+  --color-print-stopped: #f1ece4;
+  --shadow-card: 0 2px 10px rgb(31 42 42 / 0.05);
+}
+
+:root {
+  color-scheme: light;
+  --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2355615f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8b3b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  --color-bg: #121716;
+  --color-surface: #1a2120;
+  --color-surface-raised: #222b29;
+  --color-border: #2c3533;
+  --color-text-primary: #edefee;
+  --color-text-secondary: #a8b3b0;
+  --color-accent: #6fbfa6;
+  --color-accent-hover: #85cdb6;
+  --color-accent-soft: #1e3530;
+  --color-on-accent: #0e1413;
+  --color-danger: #f97066;
+  --color-warning: #fdb022;
+  --color-success: #6ccb8f;
+  --color-focus: #85cdb6;
+  --color-series-diastolic: #b39ddb;
+  --color-series-glucose: #fdb022;
+  --color-series-pain: #edefee;
+  --color-body-fill: #2a3230;
+  --color-body-stroke: #6e7a77;
+  --color-period-stopped: #2a2622;
+  --color-period-hatch: #a8b3b0;
+  --color-shimmer: rgb(255 255 255 / 0.1);
+}

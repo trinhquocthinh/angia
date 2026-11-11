@@ -40,7 +40,7 @@ export function CourseConflictDialog<T>(props: Props<T>) {
       />
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 pb-4 text-sm leading-6 max-md:px-5">
         {intro && (
-          <p className="flex gap-3 rounded-2xl bg-[#e4f0f0] p-4 text-[#20594b]">
+          <p className="flex gap-3 rounded-2xl bg-accent-soft p-4 text-accent">
             <span className="mt-0.5">
               <DocumentIcon name="checkCircle" size={18} />
             </span>

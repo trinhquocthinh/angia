@@ -38,7 +38,7 @@ export function AdherenceForm({ today, groups, suggestions, pending, error, onSu
         <fieldset disabled={pending} className="flex min-w-0 flex-col gap-5 border-0 p-0">
           <AdherenceFields form={form} today={today} suggestions={suggestions} />
           {error && (
-            <p role="alert" className="rounded-xl bg-[#fdecea] p-3 text-sm text-[#b42318]">
+            <p role="alert" className="rounded-xl bg-danger-soft p-3 text-sm text-danger">
               {error}
             </p>
           )}

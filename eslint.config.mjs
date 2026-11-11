@@ -1,3 +1,4 @@
+import noHardcodedColors from './tooling/eslint/noHardcodedColors.js';
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
@@ -36,7 +37,15 @@ const crossAppZones = APPS.map((app) => ({
 
 export default defineConfig(
   {
-    ignores: ['**/dist/**', '**/coverage/**', '.yarn/**', 'design/**', '.playwright/**', '**/*.gen.ts'],
+    ignores: [
+      '**/dist/**',
+      '**/coverage/**',
+      '.yarn/**',
+      'design/**',
+      '.playwright/**',
+      '.lighthouseci/**',
+      '**/*.gen.ts',
+    ],
   },
   js.configs.recommended,
   tsConfigs.recommended,
@@ -98,6 +107,11 @@ export default defineConfig(
     languageOptions: { globals: { ...globals.browser } },
     plugins: { 'react-hooks': reactHooks },
     rules: reactHooks.configs.recommended.rules,
+  },
+  {
+    files: ['apps/web/src/**/*.{ts,tsx}'],
+    plugins: { theme: { rules: { 'no-hardcoded-colors': noHardcodedColors } } },
+    rules: { 'theme/no-hardcoded-colors': 'error' },
   },
   {
     files: ['**/*.test.ts', '**/*.test.tsx'],

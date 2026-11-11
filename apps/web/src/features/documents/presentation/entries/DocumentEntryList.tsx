@@ -35,12 +35,12 @@ export function DocumentEntryList({
           <div className="flex items-baseline justify-between gap-3">
             <h2
               id={`month-${month.key}`}
-              className="flex items-center gap-2 text-lg font-semibold text-[#004135]"
+              className="flex items-center gap-2 text-lg font-semibold text-accent"
             >
-              <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-[#286958]" />
+              <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-accent" />
               {month.label}
             </h2>
-            <span className="text-xs text-[#55615f]">{month.items.length} mục</span>
+            <span className="text-xs text-text-secondary">{month.items.length} mục</span>
           </div>
           {month.items.map((entry) => (
             <DocumentEntryCard key={entry.id} entry={entry} onOpen={onOpen} />
@@ -52,7 +52,7 @@ export function DocumentEntryList({
           type="button"
           disabled={loadingMore}
           onClick={loadMore}
-          className="min-h-11 self-center rounded-xl border border-[#bfc9c4] bg-white px-5 text-sm font-semibold text-[#004135] disabled:opacity-55"
+          className="min-h-11 self-center rounded-xl border border-border bg-surface px-5 text-sm font-semibold text-accent disabled:opacity-55"
         >
           {loadingMore ? 'Đang tải…' : 'Xem thêm'}
         </button>

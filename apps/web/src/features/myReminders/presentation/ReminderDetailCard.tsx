@@ -10,14 +10,14 @@ export function ReminderDetailCard({ reminder, session }: { reminder: MyReminder
   return (
     <section
       aria-labelledby="reminder-profile"
-      className="flex flex-col gap-4 rounded-[20px] bg-white p-5 shadow-[0_1px_2px_rgba(19,29,29,0.04)] lg:p-6"
+      className="flex flex-col gap-4 rounded-[20px] bg-surface p-5 shadow-[0_1px_2px_color-mix(in_srgb,var(--color-shadow)_4%,transparent)] lg:p-6"
     >
       <div className="flex flex-col gap-1">
-        <p className="text-xs font-semibold tracking-wide text-[#286958] uppercase">Hồ sơ</p>
-        <h2 id="reminder-profile" className="text-lg font-semibold break-words text-[#131d1d]">
+        <p className="text-xs font-semibold tracking-wide text-accent uppercase">Hồ sơ</p>
+        <h2 id="reminder-profile" className="text-lg font-semibold break-words text-text-primary">
           {reminder.profileName}
         </h2>
-        <p className="text-sm text-[#404945] tabular-nums">
+        <p className="text-sm text-text-secondary tabular-nums">
           {`${schedule.slot} · ${schedule.date} · ${schedule.time}`}
         </p>
       </div>
@@ -25,7 +25,7 @@ export function ReminderDetailCard({ reminder, session }: { reminder: MyReminder
         {reminder.medications.map((medication, index) => (
           <li
             key={`${index}-${medication.name}`}
-            className="rounded-xl bg-[#f6fbfa] px-4 py-3 text-base leading-snug break-words text-[#131d1d]"
+            className="rounded-xl bg-bg px-4 py-3 text-base leading-snug break-words text-text-primary"
           >
             {reminderMedicationLine(medication)}
           </li>

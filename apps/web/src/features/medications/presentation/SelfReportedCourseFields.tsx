@@ -16,7 +16,7 @@ export function SelfReportedCourseFields({ form }: { form: UseFormReturn<SelfRep
           <div key={name} className={name === 'name' ? 'sm:col-span-2' : ''}>
             <label
               htmlFor={`supplement-${name}`}
-              className="mb-2 block text-xs font-bold tracking-wider text-[#55615f] uppercase"
+              className="mb-2 block text-xs font-bold tracking-wider text-text-secondary uppercase"
             >
               {label}
             </label>
@@ -28,10 +28,10 @@ export function SelfReportedCourseFields({ form }: { form: UseFormReturn<SelfRep
               inputMode={name === 'quantityPerDose' ? 'decimal' : undefined}
               aria-invalid={Boolean(message) || undefined}
               aria-describedby={message ? `supplement-${name}-error` : undefined}
-              className="h-12 w-full rounded-xl border border-[#d9e5e4] bg-white px-3.5 text-base text-[#131d1d] placeholder:text-[#8a9592] focus:border-[#004135] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#004135]/20 aria-invalid:border-[#b42318]"
+              className="h-12 w-full rounded-xl border border-border bg-surface px-3.5 text-base text-text-primary placeholder:text-text-secondary focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/20 aria-invalid:border-danger"
             />
             {message && (
-              <p id={`supplement-${name}-error`} className="mt-1 text-sm text-[#b42318]">
+              <p id={`supplement-${name}-error`} className="mt-1 text-sm text-danger">
                 {message}
               </p>
             )}

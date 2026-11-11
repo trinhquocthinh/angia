@@ -3,14 +3,14 @@ import type { AdherenceFormValues } from '../application/adherenceForm';
 import { STATUS_LABEL } from '../application/periodText';
 
 const INPUT =
-  'h-12 w-full rounded-xl border border-[#d9e5e4] bg-white px-3.5 text-base text-[#131d1d] placeholder:text-[#8a9592] focus:border-[#004135] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#004135]/20 aria-invalid:border-[#b42318]';
-const LABEL = 'mb-2 block text-xs font-bold tracking-wider text-[#55615f] uppercase';
+  'h-12 w-full rounded-xl border border-border bg-surface px-3.5 text-base text-text-primary placeholder:text-text-secondary focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/20 aria-invalid:border-danger';
+const LABEL = 'mb-2 block text-xs font-bold tracking-wider text-text-secondary uppercase';
 
 type Props = { form: UseFormReturn<AdherenceFormValues>; today: string; suggestions: string[] };
 
 const FieldError = ({ id, message }: { id: string; message: string | undefined }) =>
   message ? (
-    <p id={id} className="mt-1 text-sm text-[#b42318]">
+    <p id={id} className="mt-1 text-sm text-danger">
       {message}
     </p>
   ) : null;
@@ -46,9 +46,9 @@ export function AdherenceFields({ form, today, suggestions }: Props) {
           {(['taking', 'stopped'] as const).map((status) => (
             <label
               key={status}
-              className="flex min-h-12 cursor-pointer items-center gap-2 rounded-xl border border-[#d9e5e4] px-3.5 text-sm font-medium has-checked:border-[#2f6f5e] has-checked:bg-[#e3efea] has-checked:text-[#004135]"
+              className="flex min-h-12 cursor-pointer items-center gap-2 rounded-xl border border-border px-3.5 text-sm font-medium has-checked:border-accent has-checked:bg-accent-soft has-checked:text-accent"
             >
-              <input type="radio" value={status} {...form.register('status')} className="accent-[#2f6f5e]" />
+              <input type="radio" value={status} {...form.register('status')} className="accent-accent" />
               {STATUS_LABEL[status]}
             </label>
           ))}

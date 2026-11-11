@@ -14,7 +14,7 @@ export function AiBudgetSpentNotice({
   return (
     <div
       role="status"
-      className="flex items-start gap-2.5 rounded-xl bg-[#fff1ea] p-3 text-[13px] leading-5 text-[#602900]"
+      className="flex items-start gap-2.5 rounded-xl bg-warning-soft p-3 text-[13px] leading-5 text-warning"
     >
       <span className="mt-0.5">
         <PrivacyToolIcon name="info" />

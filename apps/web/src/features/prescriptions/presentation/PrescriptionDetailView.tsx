@@ -20,11 +20,9 @@ export function PrescriptionDetailView({
         previousId={previousId}
         nextId={nextId}
       />
-      <section className="min-w-0 rounded-[20px] bg-white p-5 break-words">
-        <h2 className="text-xl font-semibold text-[#004135]">
-          Đơn ngày {formatDay(prescription.issuedDate)}
-        </h2>
-        <p className="mt-2 text-sm text-[#55615f]">
+      <section className="min-w-0 rounded-[20px] bg-surface p-5 break-words">
+        <h2 className="text-xl font-semibold text-accent">Đơn ngày {formatDay(prescription.issuedDate)}</h2>
+        <p className="mt-2 text-sm text-text-secondary">
           {prescription.sourceDocumentId ? 'Từ giấy tờ' : 'Nhập tay'}
         </p>
         {prescription.facility && <p className="mt-2 text-sm">Nơi khám: {prescription.facility}</p>}
@@ -39,7 +37,7 @@ export function PrescriptionDetailView({
             href={documentImageUrl(prescription.sourceDocumentId)}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[#004135] underline underline-offset-4"
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-accent underline underline-offset-4"
           >
             Xem ảnh giấy tờ (mở tab mới)
           </a>

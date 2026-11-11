@@ -22,27 +22,29 @@ export function ReviewQueue(props: ReviewQueueProps) {
   return (
     <section
       aria-labelledby="review-queue-title"
-      className="flex flex-col overflow-hidden rounded-[20px] bg-white shadow-card"
+      className="flex flex-col overflow-hidden rounded-[20px] bg-surface shadow-card"
     >
-      <div className="flex flex-col gap-1 bg-[#eaf6f5]/60 p-4">
+      <div className="flex flex-col gap-1 bg-accent-soft/60 p-4">
         <div className="flex items-center justify-between gap-2">
           <h1
             id="review-queue-title"
-            className="flex items-center gap-2 whitespace-nowrap text-lg font-semibold text-[#004135]"
+            className="flex items-center gap-2 whitespace-nowrap text-lg font-semibold text-accent"
           >
-            <span className="text-[#286958]">
+            <span className="text-accent">
               <DocumentIcon name="file" size={20} />
             </span>
             Chờ xác nhận
           </h1>
           {!loading && !error && (
-            <span className="whitespace-nowrap rounded-full bg-[#aef0da] px-2 py-0.5 text-xs font-bold text-[#2f6f5e]">
+            <span className="whitespace-nowrap rounded-full bg-accent-soft px-2 py-0.5 text-xs font-bold text-accent">
               {documents.length}
               {more ? '+' : ''} giấy tờ
             </span>
           )}
         </div>
-        <p className="text-sm text-[#404945]">Kiểm tra thông tin đọc từ ảnh chụp trước khi lưu vào sổ.</p>
+        <p className="text-sm text-text-secondary">
+          Kiểm tra thông tin đọc từ ảnh chụp trước khi lưu vào sổ.
+        </p>
       </div>
       <div className="flex flex-col gap-3 p-2">
         <QueueBody {...props} />
@@ -57,18 +59,18 @@ function QueueBody({ documents, profileNames, activeId, loading, error, retry }:
     return (
       <div role="status" aria-label="Đang tải hàng đợi" className="flex flex-col gap-2">
         {[0, 1, 2].map((key) => (
-          <div key={key} className="review-shimmer h-20 rounded-xl bg-[#eaf6f5]" />
+          <div key={key} className="review-shimmer h-20 rounded-xl bg-accent-soft" />
         ))}
       </div>
     );
   if (error)
     return (
-      <div role="alert" className="flex flex-col items-start gap-3 rounded-xl bg-[#fdecea] p-4 text-sm">
+      <div role="alert" className="flex flex-col items-start gap-3 rounded-xl bg-danger-soft p-4 text-sm">
         <p>Không tải được danh sách chờ kiểm tra.</p>
         <button
           type="button"
           onClick={retry}
-          className="min-h-11 rounded-xl bg-white px-4 font-semibold text-[#004135]"
+          className="min-h-11 rounded-xl bg-surface px-4 font-semibold text-accent"
         >
           Thử lại
         </button>
@@ -76,8 +78,8 @@ function QueueBody({ documents, profileNames, activeId, loading, error, retry }:
     );
   if (documents.length === 0)
     return (
-      <p className="flex flex-col items-center gap-2 rounded-xl bg-[#eaf6f5] p-6 text-center text-sm text-[#55615f]">
-        <span className="text-[#286958]">
+      <p className="flex flex-col items-center gap-2 rounded-xl bg-accent-soft p-6 text-center text-sm text-text-secondary">
+        <span className="text-accent">
           <DocumentIcon name="checkCircle" size={28} />
         </span>
         Không còn giấy tờ nào chờ kiểm tra.
@@ -87,7 +89,7 @@ function QueueBody({ documents, profileNames, activeId, loading, error, retry }:
     <div className="flex flex-col gap-4 py-1">
       {groupQueueByDay(documents, new Date()).map((group) => (
         <div key={group.label} className="flex flex-col gap-1">
-          <div className="flex items-center justify-between gap-2 px-2 text-xs text-[#707975]">
+          <div className="flex items-center justify-between gap-2 px-2 text-xs text-text-secondary">
             <h2 className="font-semibold uppercase tracking-wider">{group.label}</h2>
             <span className="whitespace-nowrap font-medium">{group.documents.length} tài liệu</span>
           </div>

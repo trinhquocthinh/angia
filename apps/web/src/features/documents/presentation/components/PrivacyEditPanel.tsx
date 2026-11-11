@@ -35,7 +35,7 @@ export function PrivacyEditPanel(props: Props) {
     >
       {(toolbar, fields) => (
         <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_280px] xl:grid-cols-[minmax(0,1fr)_320px]">
-          <section className="flex min-w-0 flex-col gap-4 rounded-2xl bg-white p-4 shadow-sm lg:p-6">
+          <section className="flex min-w-0 flex-col gap-4 rounded-2xl bg-surface p-4 shadow-sm lg:p-6">
             <PrivacyStudioHeading />
             <PrivacyCanvas
               key={src}
@@ -56,7 +56,7 @@ export function PrivacyEditPanel(props: Props) {
             {toolbar}
             {preview && props.tools}
             {preview && suggestion}
-            <p className="text-[13px] leading-5 text-[#404945]">
+            <p className="text-[13px] leading-5 text-text-secondary">
               Kéo trên ảnh để cắt hoặc che thông tin. Xoay ảnh sẽ đặt lại toàn bộ vùng cắt và vùng che. Bạn có
               thể tinh chỉnh qua các ô số bên phải. Ảnh vẫn chỉ nằm trên máy của bạn cho tới khi tải lên.
             </p>

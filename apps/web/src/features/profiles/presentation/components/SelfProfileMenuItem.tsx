@@ -5,7 +5,7 @@ import { AdminIcon } from '@src/features/family/presentation/components/AdminIco
 export function SelfProfileMenuItem({ className }: { className: string }) {
   return (
     <Link to="/my-profile" className={className}>
-      <span className="text-[#20594b]">
+      <span className="text-accent">
         <AdminIcon name="person" />
       </span>
       Hồ sơ của tôi

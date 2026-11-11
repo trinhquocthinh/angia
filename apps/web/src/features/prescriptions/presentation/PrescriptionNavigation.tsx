@@ -14,7 +14,7 @@ export function PrescriptionNavigation({ profileId, previousId, nextId }: Props)
               key={label}
               to="/profiles/$profileId/prescriptions/$prescriptionId"
               params={{ profileId, prescriptionId: id }}
-              className="inline-flex min-h-11 items-center rounded-full border border-[#bfcfc7] bg-white px-5 text-sm font-semibold text-[#004135]"
+              className="inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-5 text-sm font-semibold text-accent"
             >
               {label}
             </Link>

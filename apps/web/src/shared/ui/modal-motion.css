@@ -1,31 +1,41 @@
-/* Chuyển động hộp thoại theo 09-design-criteria: modal 200ms, backdrop 180ms, nội dung 320ms.
-   Dưới 768px hộp thoại là bottom sheet trượt lên từ đáy màn hình. */
+/* Design §11.4: chỉ chuyển động mở sheet trong 150–200ms; không xuất hiện so le. */
 .angia-modal[open] {
-  animation: angia-modal-enter 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  box-shadow: var(--shadow-card);
+  animation: angia-modal-enter 200ms ease-out both;
 }
 .angia-modal[open]::backdrop {
   animation: angia-modal-fade 180ms ease-out both;
 }
-.angia-modal-reveal {
-  animation: angia-modal-reveal 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  animation-delay: calc(80ms + var(--reveal-index, 0) * 50ms);
+.angia-modal.angia-side[open] {
+  animation-name: angia-side-enter;
 }
-.angia-modal-pop {
-  animation: angia-modal-pop 200ms cubic-bezier(0.3, 1.4, 0.5, 1) both;
+:root[data-theme='dark'] .angia-modal[open] {
+  box-shadow: none;
 }
 @media (width < 48rem) {
-  .angia-modal[open] {
+  .angia-modal[open],
+  .angia-modal.angia-side[open] {
     animation-name: angia-sheet-enter;
   }
 }
 @keyframes angia-modal-enter {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.97);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
+  }
+}
+@keyframes angia-side-enter {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 @keyframes angia-sheet-enter {
@@ -44,31 +54,9 @@
     opacity: 1;
   }
 }
-@keyframes angia-modal-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes angia-modal-pop {
-  from {
-    opacity: 0;
-    transform: scale(0.4);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   .angia-modal[open],
-  .angia-modal[open]::backdrop,
-  .angia-modal-reveal,
-  .angia-modal-pop {
+  .angia-modal[open]::backdrop {
     animation: none;
   }
 }

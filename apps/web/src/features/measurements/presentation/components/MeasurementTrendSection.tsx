@@ -28,20 +28,20 @@ export function MeasurementTrendSection({
   return (
     <section
       aria-labelledby="measurement-trend-title"
-      className="flex flex-col gap-4 rounded-xl bg-white p-5 shadow-sm lg:p-6"
+      className="flex flex-col gap-4 rounded-xl bg-surface p-5 shadow-sm lg:p-6"
     >
-      <h2 id="measurement-trend-title" className="text-lg font-semibold text-[#004135]">
+      <h2 id="measurement-trend-title" className="text-lg font-semibold text-accent">
         {TITLE[kind]} {weeks} tuần
       </h2>
       {query.isPending ? (
         <ChartSkeleton />
       ) : query.isError ? (
-        <div role="alert" className="flex flex-col items-start gap-3 rounded-2xl bg-[#fdecea] p-4 text-sm">
+        <div role="alert" className="flex flex-col items-start gap-3 rounded-2xl bg-danger-soft p-4 text-sm">
           <p>Không tải được biểu đồ.</p>
           <button
             type="button"
             onClick={() => void query.refetch()}
-            className="min-h-11 rounded-xl bg-white px-4 font-semibold text-[#004135]"
+            className="min-h-11 rounded-xl bg-surface px-4 font-semibold text-accent"
           >
             Thử lại
           </button>

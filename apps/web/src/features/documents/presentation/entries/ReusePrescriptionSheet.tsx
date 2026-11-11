@@ -28,12 +28,12 @@ export function ReusePrescriptionSheet({ prescription, session, repository, onCl
       onClose={onClose}
     >
       {state.saved ? (
-        <div role="status" className="mx-6 mt-5 flex flex-col gap-3 rounded-xl bg-[#e4f0ef] p-4 text-sm">
+        <div role="status" className="mx-6 mt-5 flex flex-col gap-3 rounded-xl bg-accent-soft p-4 text-sm">
           <p>Đã tạo {state.saved.length} đợt thuốc.</p>
           <Link
             to="/profiles/$profileId/medications"
             params={{ profileId: prescription.healthProfileId }}
-            className="font-semibold text-[#004135] underline"
+            className="font-semibold text-accent underline"
           >
             Xem tab Thuốc điều trị
           </Link>

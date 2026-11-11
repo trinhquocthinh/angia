@@ -19,7 +19,10 @@ export function TemperatureWorkspace({
   const { query, mutation, editable } = state;
   if (!consentConfirmed) return <p role="alert">Hồ sơ chưa được đồng ý lưu dữ liệu.</p>;
   return (
-    <section aria-label="Nhiệt độ" className="flex min-w-0 flex-col gap-4 rounded-xl bg-white p-5 shadow-sm">
+    <section
+      aria-label="Nhiệt độ"
+      className="flex min-w-0 flex-col gap-4 rounded-xl bg-surface p-5 shadow-sm"
+    >
       <TemperatureHeader
         editable={editable}
         pending={mutation.pending}
@@ -49,7 +52,7 @@ export function TemperatureWorkspace({
         />
       )}
       {!state.recording && mutation.error && (
-        <p role="alert" className="text-sm text-[#b42318]">
+        <p role="alert" className="text-sm text-danger">
           {mutation.error}
         </p>
       )}

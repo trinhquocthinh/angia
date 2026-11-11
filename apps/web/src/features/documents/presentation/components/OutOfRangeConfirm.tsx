@@ -17,7 +17,7 @@ type OutOfRangeConfirmProps = {
 export function OutOfRangeConfirm({ fields, confirmed, onConfirm }: OutOfRangeConfirmProps) {
   const names = fields.map((field) => FIELD_LABELS[field] ?? field).join(', ');
   return (
-    <div role="alert" className="flex gap-3 rounded-2xl bg-[#fff4e5] p-4 text-[#5c3a00]">
+    <div role="alert" className="flex gap-3 rounded-2xl bg-warning-soft p-4 text-warning">
       <span aria-hidden="true" className="mt-0.5 shrink-0">
         <DocumentIcon name="warning" />
       </span>
@@ -31,7 +31,7 @@ export function OutOfRangeConfirm({ fields, confirmed, onConfirm }: OutOfRangeCo
             type="checkbox"
             checked={confirmed}
             onChange={(event) => onConfirm(event.target.checked)}
-            className="h-5 w-5 accent-[#004135]"
+            className="h-5 w-5 accent-accent"
           />
           Tôi đã đối chiếu với ảnh, số đo đúng như trên máy
         </label>

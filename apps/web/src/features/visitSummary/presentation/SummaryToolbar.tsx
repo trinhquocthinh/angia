@@ -22,17 +22,19 @@ type Props = {
 // Đầu màn tóm tắt (Design Web §6): về hồ sơ, tiêu đề + khoảng, chọn 1/3/6 tháng, "In / Lưu PDF" là hành động chính.
 export function SummaryToolbar({ profileId, displayName, range, months, onMonthsChange, canPrint }: Props) {
   return (
-    <div className="flex flex-col gap-4 rounded-xl bg-white p-5 shadow-sm lg:flex-row lg:items-center">
+    <div className="flex flex-col gap-4 rounded-xl bg-surface p-5 shadow-sm lg:flex-row lg:items-center">
       <Link
         to="/profiles/$profileId"
         params={{ profileId }}
-        className="min-h-11 self-start content-center rounded-lg px-1 text-[15px] font-medium text-[#2f6f5e] hover:bg-[#e3efea] lg:self-center"
+        className="min-h-11 self-start content-center rounded-lg px-1 text-[15px] font-medium text-accent hover:bg-accent-soft lg:self-center"
       >
         ‹ {displayName}
       </Link>
       <div className="flex min-w-0 flex-1 flex-col">
-        <h1 className="text-2xl font-semibold break-words text-[#131d1d]">Tóm tắt đi khám · {displayName}</h1>
-        <p className="text-[15px] font-medium text-[#55615f] tabular-nums">
+        <h1 className="text-2xl font-semibold break-words text-text-primary">
+          Tóm tắt đi khám · {displayName}
+        </h1>
+        <p className="text-[15px] font-medium text-text-secondary tabular-nums">
           Xem trước khổ A4 · {formatDay(range.from)} – {formatDay(range.to)}
         </p>
       </div>
@@ -47,7 +49,7 @@ export function SummaryToolbar({ profileId, displayName, range, months, onMonths
           type="button"
           disabled={!canPrint}
           onClick={() => window.print()}
-          className="flex min-h-[52px] items-center gap-2 rounded-xl bg-[#2f6f5e] px-5 text-[17px] font-semibold text-white hover:bg-[#255a4c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958] disabled:opacity-60"
+          className="flex min-h-[52px] items-center gap-2 rounded-xl bg-accent px-5 text-[17px] font-semibold text-on-accent hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-60"
         >
           <PrinterIcon />
           In / Lưu PDF

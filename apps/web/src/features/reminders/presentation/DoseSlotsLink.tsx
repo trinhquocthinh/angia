@@ -6,7 +6,7 @@ export function DoseSlotsLink({ profileId }: { profileId: string }) {
     <Link
       to="/profiles/$profileId/reminders"
       params={{ profileId }}
-      className="flex min-h-11 items-center rounded-xl bg-[#e4f0f0] px-4 text-sm font-semibold text-[#404945] transition-colors hover:bg-[#deebea] hover:text-[#131d1d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958]"
+      className="flex min-h-11 items-center rounded-xl bg-accent-soft px-4 text-sm font-semibold text-text-secondary transition-colors hover:bg-border hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
     >
       Nhắc thuốc
     </Link>

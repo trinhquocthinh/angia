@@ -4,7 +4,7 @@ type UploadSummaryProps = {
   summary: { needsRedaction: number; ready: number; total: number; done: number; active: number };
 };
 
-const Dot = () => <span className="h-1.5 w-1.5 rounded-full bg-[#bfc9c4]" aria-hidden="true" />;
+const Dot = () => <span className="h-1.5 w-1.5 rounded-full bg-border" aria-hidden="true" />;
 const Part = ({ count, className, children }: { count: number; className: string; children: ReactNode }) =>
   count > 0 ? (
     <>
@@ -16,18 +16,18 @@ const Part = ({ count, className, children }: { count: number; className: string
 // Dòng tổng hợp phía trên lưới ảnh: số ảnh đã chọn, chưa che, chưa gửi, đã gửi, đang gửi.
 export function UploadSummary({ summary }: UploadSummaryProps) {
   return (
-    <p className="flex flex-wrap items-center gap-2 text-sm font-bold text-[#131d1d]">
+    <p className="flex flex-wrap items-center gap-2 text-sm font-bold text-text-primary">
       {summary.total} ảnh đã chọn
-      <Part count={summary.needsRedaction} className="text-[#833b00]">
+      <Part count={summary.needsRedaction} className="text-warning">
         {summary.needsRedaction} chưa che
       </Part>
-      <Part count={summary.ready} className="text-[#404945]">
+      <Part count={summary.ready} className="text-text-secondary">
         {summary.ready} chưa gửi
       </Part>
-      <Part count={summary.done} className="text-[#286958]">
+      <Part count={summary.done} className="text-accent">
         {summary.done} đã gửi
       </Part>
-      <Part count={summary.active} className="text-[#833b00]">
+      <Part count={summary.active} className="text-warning">
         {summary.active} đang gửi
       </Part>
     </p>

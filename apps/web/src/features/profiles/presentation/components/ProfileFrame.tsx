@@ -36,7 +36,7 @@ export function ProfileFrame({
     />
   );
   return (
-    <div className="flex min-h-dvh flex-col bg-[#f0fcfb] text-[#131d1d] lg:pt-[72px]">
+    <div className="flex min-h-dvh flex-col bg-bg text-text-primary lg:pt-[72px]">
       <ProfileTopbar
         profiles={profiles}
         hasFamily={Boolean(session.family)}

@@ -37,10 +37,10 @@ export function RedactionConfirmStep({ previewUrl, maskCount, onBack, onConfirm,
   return (
     <section
       aria-label="Xem bản sẽ tải lên"
-      className="flex flex-col gap-5 rounded-2xl bg-white p-4 shadow-sm sm:p-6 lg:p-8"
+      className="flex flex-col gap-5 rounded-2xl bg-surface p-4 shadow-sm sm:p-6 lg:p-8"
     >
       <RedactionConfirmHeading maskCount={maskCount} />
-      <div className="flex justify-center overflow-hidden rounded-2xl bg-[#273232] p-3 shadow-inner sm:p-6">
+      <div className="flex justify-center overflow-hidden rounded-2xl bg-overlay p-3 shadow-inner sm:p-6">
         <img
           src={previewUrl}
           alt="Bản đã che sẽ được tải lên"
@@ -57,11 +57,11 @@ export function RedactionConfirmStep({ previewUrl, maskCount, onBack, onConfirm,
       {asking && (
         <NoMaskWarning busy={false} onBack={onBack} onSendAnyway={() => onConfirm(choice === 'ai')} />
       )}
-      <div className="flex flex-col-reverse gap-2 border-t border-[#bfc9c4]/30 pt-4 sm:flex-row sm:justify-end">
+      <div className="flex flex-col-reverse gap-2 border-t border-border/30 pt-4 sm:flex-row sm:justify-end">
         <button
           type="button"
           onClick={onBack}
-          className="min-h-11 rounded-xl px-5 text-sm font-semibold text-[#404945] transition-colors hover:bg-[#e4f0f0] hover:text-[#131d1d]"
+          className="min-h-11 rounded-xl px-5 text-sm font-semibold text-text-secondary transition-colors hover:bg-accent-soft hover:text-text-primary"
         >
           Quay lại che
         </button>
@@ -69,7 +69,7 @@ export function RedactionConfirmStep({ previewUrl, maskCount, onBack, onConfirm,
           type="button"
           disabled={decision === 'disabled'}
           onClick={submit}
-          className="min-h-11 rounded-xl bg-[#004135] px-8 text-sm font-semibold text-white shadow-sm transition-colors enabled:hover:bg-[#20594b] disabled:cursor-not-allowed disabled:opacity-40"
+          className="min-h-11 rounded-xl bg-accent px-8 text-sm font-semibold text-on-accent shadow-sm transition-colors enabled:hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
         >
           Xác nhận
         </button>

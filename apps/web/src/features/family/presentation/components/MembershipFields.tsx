@@ -49,7 +49,7 @@ export function MembershipFields({
         </AdminSelect>
       </label>
       {emptyFamily && (
-        <p className="admin-hint text-[#286958] m-0">Tài khoản đầu tiên của nhóm phải là Quản trị chính.</p>
+        <p className="admin-hint text-accent m-0">Tài khoản đầu tiên của nhóm phải là Quản trị chính.</p>
       )}
     </>
   );

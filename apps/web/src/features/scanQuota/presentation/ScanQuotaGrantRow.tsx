@@ -16,13 +16,13 @@ export function ScanQuotaGrantRow({
   return (
     <div
       className={`grid min-w-0 gap-2 rounded-xl border p-3 transition-colors ${
-        draft.selected ? 'border-[#286958] bg-[#eaf6f5]/40' : 'border-[#deebea]'
+        draft.selected ? 'border-accent bg-accent-soft/40' : 'border-border'
       }`}
     >
       <label title={family.familyId} className="flex min-h-6 items-center gap-2 text-sm font-semibold">
         <input
           type="checkbox"
-          className="h-5 w-5 shrink-0 accent-[#286958]"
+          className="h-5 w-5 shrink-0 accent-accent"
           checked={draft.selected}
           onChange={(event) => onChange({ ...draft, selected: event.target.checked })}
         />
@@ -36,7 +36,7 @@ export function ScanQuotaGrantRow({
         onChange={onChange}
       />
       {error && (
-        <p role="alert" className="m-0 text-[12px] text-[#93000a]">
+        <p role="alert" className="m-0 text-[12px] text-danger">
           {error}
         </p>
       )}

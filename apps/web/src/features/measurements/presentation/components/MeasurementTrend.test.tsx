@@ -120,13 +120,13 @@ describe('TC-265 markArea giai đoạn dùng thuốc (SPEC-023, BR-033, Design �
       ['2026-09-14T00:00', '2026-09-20T23:59', 'Đang dùng'],
       ['2026-09-21T00:00', '2026-10-11T23:59', 'Ngưng'],
     ]);
-    expect(data[0]![0].itemStyle).toEqual({ color: '#E3EFEA' });
-    // Hoa văn sọc chéo nền #F1ECE4 dựng bằng pattern ảnh SVG (decal không áp cho markArea).
+    expect(data[0]![0].itemStyle).toEqual({ color: 'var(--color-accent-soft)' });
+    // Hoa văn sọc chéo nền var(--color-period-stopped) dựng bằng pattern ảnh SVG (decal không áp cho markArea).
     expect(data[1]![0].itemStyle.color).toEqual({
-      image: expect.stringContaining('F1ECE4'),
+      image: expect.stringContaining(encodeURIComponent('var(--color-period-stopped)')),
       repeat: 'repeat',
     });
-    expect(JSON.stringify(data)).not.toMatch(/tăng|giảm|cao|thấp|bất thường|tốt|xấu|#B42318/i);
+    expect(JSON.stringify(data)).not.toMatch(/tăng|giảm|cao|thấp|bất thường|tốt|xấu|danger/i);
   });
 
   it('không có giai đoạn → không thêm series nền', () => {

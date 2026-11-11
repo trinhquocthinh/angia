@@ -9,9 +9,9 @@ export function AiRoutingModelFields({ editor }: { editor: ReturnType<typeof use
   const name = 'OpenRouter';
   const models = OPENROUTER_OCR_MODELS;
   return (
-    <fieldset className="grid min-w-0 gap-3 rounded-xl border border-[#e4f0f0] p-3">
-      <legend className="px-1 text-[12px] font-semibold text-[#286958]">{name}</legend>
-      <label className="grid gap-1.5 text-[12px] font-medium text-[#404945]">
+    <fieldset className="grid min-w-0 gap-3 rounded-xl border border-border p-3">
+      <legend className="px-1 text-[12px] font-semibold text-accent">{name}</legend>
+      <label className="grid gap-1.5 text-[12px] font-medium text-text-secondary">
         Model chính {name}
         <AdminSelect
           name={primary}
@@ -28,11 +28,11 @@ export function AiRoutingModelFields({ editor }: { editor: ReturnType<typeof use
         </AdminSelect>
       </label>
       {editor.errors[primary] && (
-        <p id={`${primary}-error`} role="alert" className="m-0 text-[12px] text-[#93000a]">
+        <p id={`${primary}-error`} role="alert" className="m-0 text-[12px] text-danger">
           {editor.errors[primary]}
         </p>
       )}
-      <label className="grid gap-1.5 text-[12px] font-medium text-[#404945]">
+      <label className="grid gap-1.5 text-[12px] font-medium text-text-secondary">
         Model dự phòng {name}
         <AdminSelect
           name={fallback}
@@ -49,7 +49,7 @@ export function AiRoutingModelFields({ editor }: { editor: ReturnType<typeof use
         </AdminSelect>
       </label>
       {editor.errors[fallback] && (
-        <p id={`${fallback}-error`} role="alert" className="m-0 text-[12px] text-[#93000a]">
+        <p id={`${fallback}-error`} role="alert" className="m-0 text-[12px] text-danger">
           {editor.errors[fallback]}
         </p>
       )}

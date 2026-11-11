@@ -15,10 +15,10 @@ export function AdminCardHeading({
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="flex min-w-0 items-center gap-2.5">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#004135]/10 text-[#004135]">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
           {icon}
         </span>
-        <h2 id={id} className="m-0 text-[18px] leading-6 font-semibold text-[#131d1d]">
+        <h2 id={id} className="m-0 text-[18px] leading-6 font-semibold text-text-primary">
           {title}
         </h2>
       </div>

@@ -36,7 +36,7 @@ export function AsNeededDoseForm({ course, pending, error, onSubmit, onCancel }:
         </p>
         <AsNeededDoseFields form={form} />
         {error && (
-          <p role="alert" className="text-sm text-[#b42318]">
+          <p role="alert" className="text-sm text-danger">
             {error}
           </p>
         )}

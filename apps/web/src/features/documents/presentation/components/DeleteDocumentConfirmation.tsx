@@ -20,7 +20,7 @@ export function DeleteDocumentConfirmation(props: Props) {
         disabled={props.busy}
         autoComplete="off"
         spellCheck={false}
-        className="min-h-11 rounded-lg border border-[#738780] px-3"
+        className="min-h-11 rounded-lg border border-border px-3"
       />
       <div className="flex justify-end gap-3">
         <button
@@ -34,7 +34,7 @@ export function DeleteDocumentConfirmation(props: Props) {
         <button
           type="submit"
           disabled={!props.canConfirm}
-          className="min-h-11 rounded-lg bg-[#a32622] px-4 font-semibold text-white disabled:opacity-55"
+          className="min-h-11 rounded-lg bg-danger px-4 font-semibold text-on-accent disabled:opacity-55"
         >
           {props.busy ? 'Đang xóa…' : 'Xóa vĩnh viễn'}
         </button>

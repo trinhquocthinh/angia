@@ -38,17 +38,17 @@ export function InvitationManagerBody({
           create={create}
           revoke={revoke}
         />
-        <p role="status" aria-live="polite" className="mt-4 text-sm leading-6 text-[#286958]">
+        <p role="status" aria-live="polite" className="mt-4 text-sm leading-6 text-accent">
           {message}
         </p>
         {error && (
-          <p role="alert" className="mt-4 text-sm leading-6 text-[#b42318]">
+          <p role="alert" className="mt-4 text-sm leading-6 text-danger">
             {error.message}
           </p>
         )}
       </div>
-      <footer className="flex items-start gap-3 border-t border-[#e4f0f0] bg-[#eaf6f5] p-6 text-[#404945]">
-        <span className="text-[#286958]">
+      <footer className="flex items-start gap-3 border-t border-border bg-accent-soft p-6 text-text-secondary">
+        <span className="text-accent">
           <InvitationIcon name="shield" />
         </span>
         <div>

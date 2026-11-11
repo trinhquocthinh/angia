@@ -22,7 +22,7 @@ export function ProfilePicker({
       {profiles.length === 0 && (
         <p className="text-sm text-text-secondary">
           Chưa có hồ sơ.{' '}
-          <Link to="/profiles/new" className="font-semibold text-[#286958] underline">
+          <Link to="/profiles/new" className="font-semibold text-accent underline">
             Tạo hồ sơ
           </Link>
         </p>
@@ -39,11 +39,11 @@ export function ProfilePicker({
             onClick={() => onSelect(profile.id)}
           >
             {selected ? (
-              <span className="angia-modal-pop text-[#b3eddf]">
+              <span className="angia-modal-pop text-accent-soft">
                 <DocumentIcon name="checkCircle" size={16} />
               </span>
             ) : (
-              <span className="h-2 w-2 rounded-full bg-[#bfc9c4]" aria-hidden="true" />
+              <span className="h-2 w-2 rounded-full bg-border" aria-hidden="true" />
             )}
             <span className="break-words">{profile.displayName}</span>
             {!ready && <span className="font-normal">· chưa xác nhận</span>}
@@ -51,9 +51,9 @@ export function ProfilePicker({
         );
       })}
       {waiting.length > 0 && (
-        <p className="w-full text-xs leading-5 text-[#55615f]">
+        <p className="w-full text-xs leading-5 text-text-secondary">
           Hồ sơ chưa có xác nhận cần gửi link mời ở{' '}
-          <Link to="/" className="font-semibold text-[#286958] underline">
+          <Link to="/" className="font-semibold text-accent underline">
             Trang chủ
           </Link>{' '}
           trước khi tải ảnh.

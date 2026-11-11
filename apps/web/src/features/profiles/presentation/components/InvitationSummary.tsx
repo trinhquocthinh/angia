@@ -3,35 +3,35 @@ import { InvitationIcon } from './InvitationIcon';
 export function InvitationSummary({ view }: { view: InvitationView }) {
   return (
     <>
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e4f0f0] px-2.5 py-1 text-[11px] text-[#404945]">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-2.5 py-1 text-[11px] text-text-secondary">
         <InvitationIcon name="shield" />
         Xác nhận quyền riêng tư
       </span>
-      <h1 className="auth-heading mt-3 text-2xl font-semibold leading-8 text-[#004135]">
+      <h1 className="auth-heading mt-3 text-2xl font-semibold leading-8 text-accent">
         Liên kết tài khoản với hồ sơ sức khỏe
       </h1>
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-[#eaf6f5] p-3.5">
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-accent-soft p-3.5">
         <div className="flex min-w-0 items-center gap-2">
           <span
             aria-hidden="true"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#aef0da] text-lg font-semibold text-[#2f6f5e]"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-soft text-lg font-semibold text-accent"
           >
             {Array.from(view.profileName)[0]}
           </span>
           <div className="min-w-0">
-            <p className="text-[11px] text-[#404945]">Hồ sơ</p>
-            <p className="break-words text-sm font-semibold text-[#004135]">{view.profileName}</p>
+            <p className="text-[11px] text-text-secondary">Hồ sơ</p>
+            <p className="break-words text-sm font-semibold text-accent">{view.profileName}</p>
           </div>
         </div>
         {view.inviterName && (
           <div className="min-w-0 text-right">
-            <p className="text-[11px] text-[#404945]">Người gửi link</p>
-            <p className="break-words text-sm font-medium text-[#286958]">{view.inviterName}</p>
+            <p className="text-[11px] text-text-secondary">Người gửi link</p>
+            <p className="break-words text-sm font-medium text-accent">{view.inviterName}</p>
           </div>
         )}
       </div>
-      <div className="mt-6 flex items-start gap-3 rounded-xl bg-[#e4f0f0] p-4 text-[#404945]">
-        <span className="mt-0.5 text-[#286958]">
+      <div className="mt-6 flex items-start gap-3 rounded-xl bg-accent-soft p-4 text-text-secondary">
+        <span className="mt-0.5 text-accent">
           <InvitationIcon name="shield" />
         </span>
         <div className="space-y-3 text-[13px] leading-6">

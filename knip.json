@@ -7,6 +7,8 @@
         "tooling/**/*.test.ts",
         "scripts/**/*.test.ts",
         "scripts/heic-spike/measureOne.ts",
+        "scripts/spike/identityProvider.ts!",
+        "scripts/spike/identityMeasurements.ts!",
         "e2e/**/*.spec.ts"
       ],
       "project": ["tooling/**/*.ts", "scripts/**/*.ts", "e2e/**/*.ts"]
@@ -35,8 +37,12 @@
         "e2e/newPainIssueHarness.tsx",
         "e2e/quickPainEntryHarness.tsx",
         "e2e/painIssueDetailHarness.tsx",
+        "e2e/themeHarness.tsx",
         "e2e/**/*.spec.ts",
-        "vite.body-map.config.ts"
+        "vite.body-map.config.ts",
+        "e2e/uiFoundationHarness.tsx",
+        "src/shared/ui/{button/Button,field/Field,sheet/Sheet,card/Card}.tsx!",
+        "e2e/a11y/lighthouseServer.ts"
       ],
       "project": [
         "src/**/*.{ts,tsx,css}!",

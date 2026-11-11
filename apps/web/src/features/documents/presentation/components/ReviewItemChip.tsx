@@ -4,22 +4,22 @@ import type { ReviewItemState } from '../../application/reviewQueuePolling';
 const CHIPS: Record<ReviewItemState, { label: string; className: string; dot: string; busy?: boolean }> = {
   preparing: {
     label: 'Đang chuẩn bị ảnh…',
-    className: 'bg-[#d9e5e4] text-[#404945]',
-    dot: 'bg-[#707975]',
+    className: 'bg-border text-text-secondary',
+    dot: 'bg-text-secondary',
     busy: true,
   },
   reading: {
     label: 'Đang tự động nhận diện…',
-    className: 'bg-[#d9e5e4] text-[#404945]',
-    dot: 'bg-[#707975]',
+    className: 'bg-border text-text-secondary',
+    dot: 'bg-text-secondary',
     busy: true,
   },
-  ready: { label: 'Đã đọc xong', className: 'bg-[#aef0da] text-[#2f6f5e]', dot: 'bg-[#286958]' },
-  manual: { label: 'Cần nhập tay', className: 'bg-[#ffdbc9] text-[#753400]', dot: 'bg-[#602900]' },
+  ready: { label: 'Đã đọc xong', className: 'bg-accent-soft text-accent', dot: 'bg-accent' },
+  manual: { label: 'Cần nhập tay', className: 'bg-warning-soft text-warning', dot: 'bg-warning' },
   budget: {
     label: 'Chờ lượt tự động nhận diện',
-    className: 'bg-[#ffdbc9] text-[#753400]',
-    dot: 'bg-[#602900]',
+    className: 'bg-warning-soft text-warning',
+    dot: 'bg-warning',
   },
 };
 

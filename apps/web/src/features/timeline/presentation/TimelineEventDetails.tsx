@@ -50,7 +50,7 @@ export function TimelineEventDetails({ event, profileId }: Props) {
                   <Link
                     to="/profiles/$profileId/prescriptions/$prescriptionId"
                     params={{ profileId, prescriptionId }}
-                    className="inline-flex min-h-11 items-center font-semibold text-[#004135] underline underline-offset-4"
+                    className="inline-flex min-h-11 items-center font-semibold text-accent underline underline-offset-4"
                   >
                     Xem đơn thuốc {index + 1}
                   </Link>

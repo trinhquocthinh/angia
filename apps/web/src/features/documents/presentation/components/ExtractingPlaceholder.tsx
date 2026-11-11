@@ -6,21 +6,21 @@ export function ExtractingPlaceholder() {
     <section
       role="status"
       aria-live="polite"
-      className="flex flex-col gap-5 rounded-[20px] bg-white p-5 shadow-card lg:p-6"
+      className="flex flex-col gap-5 rounded-[20px] bg-surface p-5 shadow-card lg:p-6"
     >
-      <p className="flex items-center gap-2 text-sm font-medium text-[#004135]">
+      <p className="flex items-center gap-2 text-sm font-medium text-accent">
         <span
           aria-hidden="true"
-          className="h-2 w-2 animate-pulse rounded-full bg-[#286958] motion-reduce:animate-none"
+          className="h-2 w-2 animate-pulse rounded-full bg-accent motion-reduce:animate-none"
         />
         Đang phân tích hình ảnh… thường dưới 15 giây
       </p>
-      <p className="text-sm text-[#55615f]">
+      <p className="text-sm text-text-secondary">
         Bạn có thể đối chiếu ảnh trong lúc chờ; thông tin sẽ tự hiện ở đây.
       </p>
       <div aria-hidden="true" className="grid gap-4 sm:grid-cols-2">
         {[0, 1, 2, 3].map((key) => (
-          <div key={key} className="review-shimmer h-12 rounded-xl bg-[#eaf6f5]" />
+          <div key={key} className="review-shimmer h-12 rounded-xl bg-accent-soft" />
         ))}
       </div>
     </section>

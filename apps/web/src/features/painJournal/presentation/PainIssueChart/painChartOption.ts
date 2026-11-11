@@ -1,3 +1,5 @@
+import { chartTooltipStyle } from '@src/shared/theme/chartTooltipStyle';
+import { readThemeColor } from '@src/shared/theme/readThemeColor';
 import type { EChartsCoreOption } from 'echarts/core';
 import type { PainContext } from '@angia/contracts';
 import type { PainChartPoint } from '../../application/buildPainChartData';
@@ -34,15 +36,16 @@ export function painChartOption(
     type: 'time',
     min: Date.parse(`${range.from}T00:00:00+07:00`),
     max: Date.parse(`${range.to}T23:59:59.999+07:00`),
-    axisLabel: { formatter: axisDay, color: '#55615F', hideOverlap: true },
+    axisLabel: { formatter: axisDay, color: readThemeColor('text-secondary'), hideOverlap: true },
     splitLine: { show: false },
-    axisLine: { lineStyle: { color: '#E4E0DA' } },
+    axisLine: { lineStyle: { color: readThemeColor('border') } },
   };
   return {
     animation,
     textStyle: { fontFamily: 'Be Vietnam Pro, system-ui, sans-serif' },
     tooltip: {
       trigger: 'item',
+      ...chartTooltipStyle(),
       confine: true,
       position: 'top',
       renderMode: 'richText',
@@ -59,8 +62,8 @@ export function painChartOption(
         min: 1,
         max: 10,
         interval: 1,
-        axisLabel: { color: '#55615F' },
-        splitLine: { lineStyle: { color: '#E4E0DA' } },
+        axisLabel: { color: readThemeColor('text-secondary') },
+        splitLine: { lineStyle: { color: readThemeColor('border') } },
       },
       { type: 'value', gridIndex: 1, min: -0.5, max: Math.max(0.5, rows - 0.5), inverse: true, show: false },
     ],
@@ -73,8 +76,8 @@ export function painChartOption(
         showAllSymbol: true,
         symbol: 'circle',
         symbolSize: 6,
-        itemStyle: { color: '#1F2A2A' },
-        lineStyle: { color: '#1F2A2A', width: 2 },
+        itemStyle: { color: readThemeColor('series-pain') },
+        lineStyle: { color: readThemeColor('series-pain'), width: 2 },
       },
       ...series,
     ],

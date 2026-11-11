@@ -27,7 +27,7 @@ export function ConsentAttestationDialog({ profile, repository, session, onClose
       ref={ref}
       aria-labelledby="consent-attestation-title"
       aria-describedby="consent-attestation-description"
-      className="fixed inset-0 m-auto max-h-[90dvh] w-[520px] max-w-[calc(100%-2rem)] overflow-y-auto rounded-[20px] border-0 bg-white p-0 text-[#131d1d] shadow-xl backdrop:bg-[#131d1d]/20 [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-offset-3 [&_button:focus-visible]:outline-[#286958]"
+      className="fixed inset-0 m-auto max-h-[90dvh] w-[520px] max-w-[calc(100%-2rem)] overflow-y-auto rounded-[20px] border-0 bg-surface p-0 text-text-primary shadow-xl backdrop:bg-overlay/20 [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-offset-3 [&_button:focus-visible]:outline-focus"
       onCancel={(event) => {
         event.preventDefault();
         if (!confirmation.pending) onClose();

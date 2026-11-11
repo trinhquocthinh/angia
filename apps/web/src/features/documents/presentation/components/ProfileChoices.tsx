@@ -27,15 +27,18 @@ export function ProfileChoices({
   onType: (value: DocumentType | null) => void;
 }) {
   if (loading)
-    return <div className="h-36 animate-pulse rounded-xl bg-[#e4f0f0] motion-reduce:animate-none" />;
+    return <div className="h-36 animate-pulse rounded-xl bg-accent-soft motion-reduce:animate-none" />;
   if (error) {
     return (
-      <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-white p-4">
-        <p className="text-sm text-[#93000a]">Không tải được danh sách hồ sơ.</p>
+      <div
+        role="alert"
+        className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface p-4"
+      >
+        <p className="text-sm text-danger">Không tải được danh sách hồ sơ.</p>
         <button
           type="button"
           onClick={retry}
-          className="min-h-11 rounded-xl px-4 text-sm font-semibold text-[#004135]"
+          className="min-h-11 rounded-xl px-4 text-sm font-semibold text-accent"
         >
           Thử lại
         </button>

@@ -606,3 +606,260 @@ API đã deploy. Còn kiểm lại tóm tắt/bản in trên image SIT mới, Li
 sau đăng nhập, TC-733 điện thoại thật, 3D trên thiết bị thật và backup
 Production đã restore-check/offsite. E23-S1-T2/E23-S2-T1 chưa PASS;
 Production vẫn giữ v0.2.
+
+## E25-S1-T1 — nền sáng/tối — 2026-11-11
+
+Đã tích hợp token Design §11.2, `ThemeProvider` và lựa chọn **Sáng / Tối /
+Theo máy** trong menu Tài khoản. Mặc định theo máy, theo dõi khi hệ thống đổi
+nền; lựa chọn lưu tại `localStorage` với khoá `angia-theme`, không gửi server.
+Storage bị chặn vẫn đổi được nền trong phiên hiện tại. Không đổi API, schema
+DB hoặc thêm dependency.
+
+Kiểm chứng local: `yarn verify:fast` PASS (2.878 test / 581 tệp); unit đọc lựa
+chọn nền 7/7; E2E 12/12 trên Chromium/WebKit ở 360 px. ESLint, Prettier và
+Knip PASS. Chạy lại E2E độc lập bằng:
+
+```bash
+yarn playwright test --config playwright.theme.config.ts
+```
+
+Harness dùng Vite localhost:5174, không cần API hoặc tài khoản. Phủ TC-856,
+TC-857 và TC-859: nền máy, lưu qua tải lại, storage bị chặn, bàn phím, vùng
+chạm ≥48 px, bản xem trước và CSS bản in nền trắng. Chưa kiểm PDF/máy in
+thật, chưa chạy `yarn verify` hoặc nghiệm thu SIT/Production. **TC-858 vẫn
+mở**; các màn còn màu cứng thuộc E25-S1-T2/E30-S5-T1.
+
+Đã đồng bộ ghi chú tại bộ tài liệu ngoài repository: SDD SPEC-080, Tech Spec
+§10.6, ma trận TC-856–859, Design §11.2 và Master Plan E25. Xem
+[Master Plan](../../Docs/angia/11-master-plan.md). Tiếp theo **E25-S1-T2**.
+
+## E25-S1-T2 — chuyển màu cứng sang token — 2026-11-11
+
+Đã chuyển màu trong TS/TSX/CSS của web sang token theo Design §11.2 và §4.1,
+bao gồm class Tailwind, SVG, bóng và mũi tên dropdown. Token biểu đồ và hình
+người có đủ hai nền; ECharts/Three.js đọc giá trị CSS thực và cập nhật khi
+`html[data-theme]` đổi. Vật liệu hình người dùng bản sao, khôi phục và giải
+phóng khi tháo. Mỗi mức đau vẫn dùng cùng một màu.
+
+Token giấy/bản in và lớp phủ ảnh giữ màu cố định. Chữ trên nền ảnh tối và
+nhãn vùng che đen luôn sáng; xuất ảnh vẫn che đen, nền trắng và giữ pixel
+không bị che. Không đổi API, domain, schema DB hoặc dependency.
+
+ESLint `theme/no-hardcoded-colors` chặn hex, màu CSS dạng hàm và bảng màu
+Tailwind cứng trong chuỗi TS/TSX; test tooling kiểm CSS ngoài `tokens.css`.
+Các tên màu `white`/`black` trong codec là màu pixel xuất ảnh cố định theo
+SPEC-080; tài liệu nguồn gốc GLB không phải stylesheet và được giữ nguyên.
+
+Kiểm chứng trên bản sao sạch `/tmp` để tránh metadata `._*` của ổ ngoài:
+unit 2.889/584 tệp PASS; Chromium/WebKit 360 px PASS 142/142, gồm 126 ca hồi
+quy và 16 ca theme/ảnh. Lint, format, kiểm trùng, Knip và build PASS. Đã xem
+ảnh sheet chọn vùng ở cả hai nền; review độc lập không còn finding.
+
+```bash
+yarn verify:fast
+yarn playwright test --config playwright.theme.config.ts
+yarn test:e2e:body-map
+yarn verify
+```
+
+`yarn verify` chưa xanh: dừng tại `perf:budget`, `/my-profile` và
+`/my-profile/pain/$issueId` khoảng 200,3 KB gzip, vượt ngưỡng 200 KB. Bản HEAD
+trước T2 đo riêng cũng lỗi ở 200,6 KB; chưa sửa cách tải route trong task
+màu. TC-861 giữ mở và cần xử lý trước PR. Build vẫn cảnh báo chunk lớn;
+harness có cảnh báo ECharts disposed/Three.Clock deprecated.
+
+TC-858 (tương phản toàn bộ route), TC-862, PDF/máy in thật và SIT/Production
+chưa nghiệm thu. Tài liệu SDD, Tech Spec, TC, Design và Master Plan ghi cùng
+checkpoint. Bộ `Docs/angia` nằm ngoài Git của source; chưa push/deploy.
+
+## E25-S2-T1 — component nền dễ đọc — 2026-11-11
+
+Đã thêm `Button`, `Field`, `Sheet`, `Card` tại `apps/web/src/shared/ui/`.
+`Button` mặc định là nút thường, cần truyền `type="submit"` để gửi form;
+variant `icon` yêu cầu `aria-label`. `Field` hiện bọc một input native,
+liên kết nhãn/hướng dẫn/lỗi và chuyển tiếp props/ref. `Card` là khối không
+tương tác. `Sheet` tái sử dụng native dialog và hook focus hiện có;
+`ModalDialog`/`SidePanel` giữ API cũ.
+
+Header/footer dùng chữ sans và vùng chạm mới: nút chính tối thiểu 56px,
+chữ 20/28px; nút phụ/đóng tối thiểu 48px; chữ phụ 18/24px, nhãn/lỗi 16/24px,
+focus 3px. Tiêu đề dùng rem, bố cục header chịu được chữ phóng 200%.
+Card/sheet tối dùng viền thay bóng. Mở sheet 200ms, backdrop 180ms ease-out;
+bỏ reveal/pop so le ở stylesheet modal chung, tắt chuyển động khi giảm motion.
+
+Kiểm chứng trên bản sao `/tmp`: `verify:fast` PASS 124 test/28 tệp liên quan;
+full unit PASS 2.891 test/585 tệp; lint/format, kiểm trùng, Knip và build PASS.
+E2E Chromium/WebKit 360px: component 24/24, theme 16/16 PASS. Hồi quy modal
+125/126 qua lượt đầu; ca còn lại bị reload trong lúc codegen và PASS khi chạy
+riêng sau codegen. Unit Field tại source sau áp dụng PASS 2/2; 17/17 tệp
+khớp bản kiểm chứng. Đã xem ảnh modal hai nền.
+
+```bash
+yarn playwright test --config playwright.ui-foundation.config.ts
+yarn playwright test --config playwright.theme.config.ts
+yarn test:e2e:body-map
+yarn verify:fast
+yarn verify
+```
+
+Full `verify` còn dừng ở budget hai route self: **200,9 KB/200 KB**
+(checkpoint T2: 200,3 KB). TC-861 giữ mở; bước `model:check` sau budget chưa
+được chạy trong chuỗi này. Còn cảnh báo chunk lớn, ECharts disposed,
+Three.Clock deprecated và hai gợi ý Knip có sẵn cho identity spike.
+
+Phạm vi này là nền cho E25-S3/E30; chưa chuyển mọi màn sang primitive,
+chưa bỏ Newsreader toàn app hoặc nghiệm thu NFR-9/TC-858/862 toàn route,
+focus chạm Safari, zoom hệ điều hành, điện thoại thật hay SIT/Production.
+Không đổi API, domain, DB hoặc dependency. Review độc lập không có finding.
+Bộ `Docs/angia` được cập nhật riêng ngoài Git source; chưa push/deploy.
+
+## E25-S3-T1 — dữ liệu Liều hôm nay — 2026-11-11
+
+`features/today/application/useTodayReminders.ts` nhận adapter, phiên và
+`TodayTarget | null`. Đích `self` dùng hồ sơ liên kết; đích `profile` dành cho
+`main` chọn hồ sơ trong cùng nhà. Hook chỉ bật khi có nhà, đúng phạm vi truy
+cập và hồ sơ `confirmed`; khi `enabled = false`, `data` được che dù cache còn
+bản cũ. API vẫn kiểm quyền và đồng thuận ở máy chủ.
+
+Hook trả snapshot lời nhắc hôm nay theo ngày Việt Nam, theo thứ tự
+Sáng/Trưa/Chiều/Tối, giữ nguyên thuốc, `confirmation`, `canConfirm`, `canUndo`.
+Không dựng liều từ danh sách thuốc hiện dùng. Khóa cache dùng chung với
+`/my-profile` và tab Thuốc, phân biệt tài khoản/nhà/hồ sơ/ngày.
+
+`createTodayRepository` bổ sung đọc tự xem, tái sử dụng đọc theo hồ sơ và
+ghi/hủy SPEC-046. Consumer tiêm cùng adapter vào `useDoseConfirmation` cho
+từng lời nhắc; hook này khóa bấm lặp và chờ đọc lại dữ liệu máy chủ để hiện
+người xác nhận và giờ. Hook đọc không tự chọn hồ sơ hay đổi điều hướng.
+
+Kiểm chứng: 10 test mới PASS; 35 test liên quan today/doseConfirmations PASS.
+`yarn verify:fast` PASS trên bản sao sạch `/tmp` (typecheck + 10 test/2 tệp).
+Chạy ở ổ nguồn bị metadata macOS `._*` có sẵn làm Vitest lỗi parse; không
+dọn metadata ngoài phạm vi task. Lint toàn repo trên bản sao sạch, format
+phần thay đổi, kiểm trùng và Knip PASS; Knip còn hai gợi ý identity spike
+đã có. Hai entry Knip tạm giữ API
+today dùng ở T2; bỏ entry khi màn mới trở thành consumer thực tế.
+
+```bash
+yarn vitest run --project unit-web apps/web/src/features/today apps/web/src/features/doseConfirmations
+yarn verify:fast
+```
+
+Chưa có giao diện/route mới; TC-852/853 chỉ được kiểm ở lớp dữ liệu, chưa
+PASS E2E của SPEC-079. Không đổi API/domain/DB/dependency. Chưa chạy full
+`yarn verify`, chưa đánh giá lại budget còn mở từ E25-S2-T1 hoặc SIT/Production.
+Tiếp theo E25-S3-T2.
+
+### E25-S3-T2 — Màn Liều hôm nay (local)
+
+Route `/` mở Liều hôm nay cho tài khoản có hồ sơ liên kết và người chăm sóc
+chính có nhà. Danh sách hồ sơ và các thao tác đồng thuận hiện có vẫn truy cập
+qua nút Hồ sơ gia đình tại `/?view=profiles`; có nút Hôm nay để quay lại.
+Tài khoản chưa có nhà hoặc thành viên chưa liên kết giữ luồng trước đó.
+
+`main` có bộ chọn hồ sơ dạng chip; mặc định là hồ sơ liên kết của chính tài
+khoản. Nếu chưa liên kết thì cần chọn hồ sơ, không tự chọn người khác. Mỗi
+buổi có tên, giờ Việt Nam, snapshot thuốc/liều và nút Đã dùng toàn chiều
+rộng, cao tối thiểu 56 px, chữ 20 px. Xác nhận/hủy dùng SPEC-046, khóa nút
+trong lúc gửi và đọc lại người/giờ máy chủ; thẻ đã xác nhận đổi nền token
+`accent-soft`. Không thêm đánh giá sức khỏe hoặc cảnh báo tuân thủ.
+
+Có trạng thái tải, lỗi và thử lại; rỗng có lối Xem thuốc đang dùng. Hồ sơ
+chưa đồng thuận/đã rút không đọc hoặc hiện liều, có hướng dẫn về luồng
+đồng thuận hiện có. Hai entry Knip tạm của today tại T1 đã được bỏ.
+
+```bash
+yarn workspace @angia/web build
+yarn exec playwright test --config playwright.today.config.ts
+yarn verify:fast
+```
+
+Kiểm chứng local trên bản sao sạch `/tmp`: 5 test trình bày mới PASS;
+toàn bộ unit 588 tệp / 2.906 test PASS; E2E route sản phẩm với API giả
+16/16 PASS trên Chromium/WebKit ở 360 px (hai nền, kích thước nút,
+xác nhận/hủy, tải, khóa gửi, lỗi thử lại, chuyển hồ sơ và withdrawn).
+Không đổi API/domain/DB/dependency. Thanh điều hướng v1.0 thuộc E30-S1-T1;
+axe/Lighthouse CI thuộc E25-S4-T1. Chưa nghiệm thu đăng nhập thật hoặc
+SIT/Production; không coi E2E API giả là nghiệm thu toàn bộ TC-852/853.
+
+`yarn verify:fast` PASS (typecheck + 11 test liên quan / 2 tệp); lint,
+format phần thay đổi, kiểm trùng và Knip PASS trên bản sao sạch. Knip còn
+hai gợi ý identity spike có sẵn. Build web PASS, còn cảnh báo chunk lớn.
+Budget hai route self hiện khoảng 202,2–202,3 KB / 200 KB (checkpoint trước
+200,9 KB); route Hôm nay khoảng 175,1 KB. Budget vẫn là việc mở trước PR;
+chưa chạy full `yarn verify`. Tiếp theo E25-S4-T1; chưa đóng Epic 25.
+
+### Accessibility CI — E25-S4-T1 (local 2026-11-11)
+
+CI thêm job `accessibility` vào cổng `verify`: bản build web thật, API giả,
+không đăng nhập/gọi SIT. Axe quét toàn trang Hôm nay ở 360 px trên
+Chromium/WebKit, main/member và nền sáng/tối, trước/sau xác nhận liều;
+chặn mọi vi phạm `serious`/`critical` thuộc WCAG A/AA đến 2.2. Kiểm riêng
+chữ nội dung ≥16 px, nút chính ≥18 px/cao ≥56 px, vùng chạm ≥48 × 48 px
+và không tràn ngang. Không dùng điểm Lighthouse để thay thế các kiểm tra này.
+
+Lighthouse CI đo Accessibility trên `/` với hai URL query phân biệt nền;
+server preview riêng chỉ bind loopback, phục vụ dữ liệu giả từ `todayState`,
+chặn API lạ và xác nhận tiêu đề/hai thẻ liều/nền trước khi báo sẵn sàng.
+Cấu hình dùng Chromium của Playwright, chặn lỗi `color-contrast`; báo cáo
+chỉ lưu filesystem và artifact GitHub Actions 7 ngày.
+
+```bash
+yarn install --immutable
+yarn build:contracts
+yarn playwright install chromium webkit
+yarn test:e2e:a11y
+yarn test:lighthouse
+yarn verify:fast
+```
+
+Báo cáo axe nằm ở `.playwright/a11y/` (macOS: thư mục tạm
+`angia-a11y-playwright`); báo cáo Lighthouse ở `.playwright/lighthouse/`
+và dữ liệu thu thập ở `.lighthouseci/`. Các thư mục này không commit.
+Job GitHub-hosted runner cài browser cùng thư viện hệ thống qua `--with-deps`.
+
+Kiểm tra toàn trang phát hiện layout chung còn vùng chạm 36/44 px và chữ
+11–14 px. Theo owner duyệt bổ sung, đã chỉnh kích thước mobile trong
+`MobileTopbar`, `AccountMenu`, `MobileBottomNav`, `ProfileFooter`; không đổi
+điều hướng/nghiệp vụ. Không thêm dependency runtime; thêm devDependencies
+`@axe-core/playwright`, `@lhci/cli` và peer `playwright-core` cùng bản Playwright.
+
+Kiểm chứng bản sao sạch `/tmp`: axe 8/8 PASS, E2E Hôm nay cũ 16/16 PASS;
+Lighthouse Accessibility 100/100 và tương phản PASS ở cả hai nền.
+Đã thử chèn nút không tên và lỗi tương phản trong bản sao: axe/Lighthouse
+đều báo đỏ đúng lỗi, sau đó bỏ phần chèn và chạy lại PASS.
+`verify:fast` PASS (typecheck + 2.906 test / 588 tệp); lint, format,
+kiểm trùng và Knip PASS (còn hai gợi ý identity spike có sẵn).
+Tại ổ nguồn, lệnh `verify:fast` mặc định chạy đủ 2.906 test PASS nhưng
+vẫn báo lỗi parse hai metadata AppleDouble có sẵn
+`._Field.test.tsx` / `._TodayPresentation.test.tsx`; không xóa metadata hay
+đổi cấu hình test trong task này. Chạy lại tại ổ nguồn bằng
+`yarn verify:fast --exclude '**/._*'` PASS: typecheck và 2.906 test / 588 tệp.
+Build web PASS; budget hai route self vẫn khoảng 202,3 KB / 200 KB,
+là việc đang mở trước merge. Full `yarn verify` đã chạy trên bản sao sạch:
+OpenAPI/typecheck/lint/format/unit/kiểm trùng/Knip/build PASS, dừng tại
+`perf:budget`; `model:check` chưa chạy trong chuỗi do bước budget thất bại.
+Chưa chạy GitHub CI, chưa nghiệm thu SIT/Production hay điện thoại thật; TC-876 mọi route
+và NFR-9 toàn app vẫn mở. Chưa đóng Epic 25.
+
+### Sửa budget hai route self — 2026-11-11
+
+Owner duyệt chuyển `LabSeriesList` trong `SelfSection` từ import tĩnh sang
+`lazy/Suspense`, theo mẫu tab Đau nhức/Nhiệt độ hiện có. Gói trang đầu không
+còn tải giao diện, danh mục và phần phân nhóm xét nghiệm trước khi mở mục
+xét nghiệm. Giữ nguyên API/cache/đồng thuận, quyền đọc và `readOnly`; khi
+nạp chunk có trạng thái “Đang tải kết quả xét nghiệm…”. Không đổi dependency,
+trần 200 KB hoặc thuật toán đo bundle.
+
+TC-861 E2E mới tái hiện việc tải sớm trên bản cũ; sau sửa chỉ tải chunk khi
+mở mục xét nghiệm, vẫn không có hành động ghi. Kiểm chứng trên snapshot
+commit PR #75 cộng đúng diff đã duyệt: build/typecheck/lint, 13 unit liên
+quan và 18 E2E tự xem hồ sơ/đau nhức/xét nghiệm Chromium/WebKit PASS.
+Full `yarn verify` PASS: OpenAPI/typecheck/lint/format, 2.906 unit/588 tệp,
+kiểm trùng/Knip/build/budget/model:check. Hai gợi ý Knip identity spike và
+cảnh báo chunk lớn có sẵn vẫn giữ riêng.
+
+Budget mới: `/my-profile` 198,6 KB; `/my-profile/pain/$issueId` 198,7 KB gzip,
+mọi trang đầu ≤200 KB; TC-729 không có Three.js/GLB trong gói ban đầu PASS.
+Kết quả này thay trạng thái budget đỏ ở checkpoint E25-S4-T1 phía trên.
+Dư địa chỉ khoảng 1,3 KB; vẫn cần cổng CI cho thay đổi sau. Chưa nghiệm thu
+SIT/Production, thiết bị thật, SPEC-081 hoặc TC-876 mọi route; chưa đóng Epic 25.

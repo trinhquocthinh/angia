@@ -9,7 +9,7 @@ type Props = {
   dispatch: (action: PrivacyEditorAction) => void;
 };
 const button =
-  'flex min-h-11 items-center gap-1.5 rounded-xl bg-[#e4f0f0] px-3 text-xs font-semibold text-[#131d1d] transition-colors not-aria-pressed:enabled:hover:bg-[#deebea] aria-pressed:bg-[#004135] aria-pressed:text-white aria-pressed:shadow-sm disabled:opacity-40';
+  'flex min-h-11 items-center gap-1.5 rounded-xl bg-accent-soft px-3 text-xs font-semibold text-text-primary transition-colors not-aria-pressed:enabled:hover:bg-border aria-pressed:bg-accent aria-pressed:text-on-accent aria-pressed:shadow-sm disabled:opacity-40';
 export function PrivacyModeControls({ disabled, mode, count, setMode, setSelected, dispatch }: Props) {
   return (
     <div className="flex flex-wrap gap-2">

@@ -17,17 +17,17 @@ export function ScanQuotaEditor({
 }) {
   const [snapshot] = useState(initial);
   return (
-    <div className="grid min-w-0 gap-3 border-t border-[#e4f0f0] pt-4">
-      <p className="m-0 text-xs text-[#55615f]">Bản sửa tháng {snapshot.month}</p>
+    <div className="grid min-w-0 gap-3 border-t border-border pt-4">
+      <p className="m-0 text-xs text-text-secondary">Bản sửa tháng {snapshot.month}</p>
       {error && (
-        <p role="alert" className="m-0 text-[12px] text-[#93000a]">
+        <p role="alert" className="m-0 text-[12px] text-danger">
           {error instanceof AdminRequestError
             ? error.message
             : 'Không thể lưu hạn mức. Bản đang sửa vẫn được giữ lại.'}
         </p>
       )}
       {saved && (
-        <p role="status" className="m-0 text-[12px] text-[#055141]">
+        <p role="status" className="m-0 text-[12px] text-accent">
           Đã lưu hạn mức lượt.
         </p>
       )}

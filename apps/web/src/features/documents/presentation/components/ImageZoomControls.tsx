@@ -13,9 +13,9 @@ type ImageZoomControlsProps = {
 
 const STEP = 1.25;
 const base =
-  'inline-flex min-h-11 items-center justify-center rounded-xl px-2.5 text-[13px] font-medium transition-[background-color,color,scale] duration-200 enabled:cursor-pointer enabled:active:scale-95 motion-reduce:transition-none sm:px-3 sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#286958] disabled:opacity-50';
+  'inline-flex min-h-11 items-center justify-center rounded-xl px-2.5 text-[13px] font-medium transition-[background-color,color,scale] duration-200 enabled:cursor-pointer enabled:active:scale-95 motion-reduce:transition-none sm:px-3 sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-50';
 const tone = (active: boolean) =>
-  active ? 'bg-[#004135] text-white' : 'text-[#004135] enabled:hover:bg-[#deebea]';
+  active ? 'bg-accent text-on-accent' : 'text-accent enabled:hover:bg-border';
 
 type FitModesProps = Pick<ImageZoomControlsProps, 'mode' | 'disabled' | 'onFitPage' | 'onFitWidth'>;
 
@@ -25,7 +25,7 @@ function FitModes({ mode, disabled, onFitPage, onFitWidth }: FitModesProps) {
     ['width', 'Vừa ngang', onFitWidth],
   ] as const;
   return (
-    <div className="flex rounded-xl bg-[#eaf6f5]">
+    <div className="flex rounded-xl bg-accent-soft">
       {modes.map(([value, label, onClick]) => (
         <button
           key={value}
@@ -55,19 +55,19 @@ export function ImageZoomControls({
   return (
     <div role="toolbar" aria-label="Điều khiển xem ảnh" className="flex flex-wrap items-center gap-1.5">
       <FitModes mode={mode} disabled={disabled} onFitPage={onFitPage} onFitWidth={onFitWidth} />
-      <div className="ml-auto flex items-center rounded-xl bg-[#eaf6f5]">
+      <div className="ml-auto flex items-center rounded-xl bg-accent-soft">
         <button
           type="button"
           aria-label="Thu nhỏ ảnh"
           disabled={disabled}
           onClick={() => onZoom(1 / STEP)}
-          className={`${base} w-11 text-lg text-[#004135] enabled:hover:bg-[#deebea]`}
+          className={`${base} w-11 text-lg text-accent enabled:hover:bg-border`}
         >
           −
         </button>
         <output
           aria-live="polite"
-          className="w-11 text-center text-xs font-semibold tabular-nums text-[#3f4946] max-sm:sr-only"
+          className="w-11 text-center text-xs font-semibold tabular-nums text-text-secondary max-sm:sr-only"
         >
           {Math.round(scale * 100)}%
         </output>
@@ -76,7 +76,7 @@ export function ImageZoomControls({
           aria-label="Phóng to ảnh"
           disabled={disabled}
           onClick={() => onZoom(STEP)}
-          className={`${base} w-11 text-lg text-[#004135] enabled:hover:bg-[#deebea]`}
+          className={`${base} w-11 text-lg text-accent enabled:hover:bg-border`}
         >
           +
         </button>
@@ -85,7 +85,7 @@ export function ImageZoomControls({
           aria-label="Xoay ảnh"
           disabled={disabled}
           onClick={onRotate}
-          className={`${base} w-11 text-[#004135] enabled:hover:bg-[#deebea]`}
+          className={`${base} w-11 text-accent enabled:hover:bg-border`}
         >
           <DocumentIcon name="rotate" size={18} />
         </button>
