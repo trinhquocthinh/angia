@@ -912,3 +912,35 @@ ESLint/Prettier hai tệp và `yarn verify:fast` PASS (typecheck toàn workspace
 Đây là bằng chứng nền DB của TC-896, chưa nghiệm thu transaction đăng ký qua
 application hoặc hành vi worker TC-898/899. Chưa full `yarn verify`, SIT,
 push/PR/deploy hoặc cutover; chưa đóng T2 theo DoD, E26 giữ 0/13 task đóng.
+
+### E26-S2-T1 — port, fake và adapter xác thực local — 2026-11-12
+
+Đã thêm port Application cho IdentityProvider/PasswordHasher/CredentialRepository,
+fake phục vụ unit test, repository Drizzle nhận DB hoặc transaction ngoài và
+adapter Argon2id async. Pin `argon2@0.45.2`; cấu hình ADR: 65536 KiB, timeCost 3,
+parallelism 1, salt ngẫu nhiên 16 byte, hash 32 byte. Credential bắt đầu version 1;
+thay hash tăng version nguyên tử với điều kiện version cũ còn khớp. Không ghi đè
+credential khi insert trùng. Username không tồn tại vẫn verify dummy hash tạo
+một lần cùng chính sách; sai mật khẩu/username trả cùng null cho tầng login.
+Lỗi DB/hash truyền lên caller; snapshot trả về chỉ có trường xác thực, không hash.
+
+Kiểm chứng: 12 unit mới và 7 integration repository PASS; cả nhóm identity/fake
+37/37 unit PASS. Repository được kiểm bằng role app trên PostgreSQL Testcontainers,
+gồm cập nhật đồng thời và rollback account/credential trong transaction ngoài.
+`yarn verify:fast` exit 0: typecheck toàn workspace và 2921/2921 unit PASS.
+ESLint/Prettier phần thay đổi, `git diff --check` và audit dependency production
+PASS (audit không báo advisory). Build stage API theo Dockerfile hiện có và
+smoke adapter đã biên dịch PASS trên Node 22.23.4 Linux arm64.
+
+Volume gốc tạo AppleDouble `._*` khiến native loader/Vitest/Docker đọc nhầm
+metadata; kiểm chứng unit/verify:fast/build dùng bản sao sạch trong
+`/private/tmp/angia-e26-s2-t1/source`, đã đối chiếu SHA-256 source/dependency.
+Không sửa cấu hình dự án để né lỗi môi trường. Log và manifest nằm trong
+`/private/tmp/angia-e26-s2-t1/` (tạm thời).
+
+Chưa nối adapter vào runtime. Benchmark SIT 50 vòng, giới hạn đồng thời/hàng đợi
+và kiểm image runtime còn thuộc E26-S2-T3; thu hồi phiên/worker thuộc S2-T2,
+transaction đăng ký đầy đủ thuộc S3-T1, login/recheck version thuộc S4-T1.
+Không coi test snapshot thay bằng chứng DTO/log/export của luồng local hoàn chỉnh
+hoặc TC-895/896/907 đầu-cuối. Chưa full `yarn verify`, SIT, push/PR/deploy
+hoặc cutover; E26 giữ 0/13 task đóng, chờ nghiệm thu theo DoD.
