@@ -890,3 +890,25 @@ Chỉ role owner chạy migration; chạy lại phải báo `No pending migratio
 Không cấp lại quyền UPDATE/DELETE/TRUNCATE cho `legal_acceptances` sau migrate.
 Chi tiết đặc tả và hồ sơ nghiệm thu lưu riêng trong bộ `Docs/angia`:
 `11-master-plan.md` và `acceptance/v1.0/epic26-acceptance.md`.
+
+### E26-S1-T2 — ràng buộc và quyền xác thực local — 2026-11-12
+
+Đã bổ sung 33 integration test trong `localIdentityConstraints.int.test.ts`
+và `identitySourcesConstraints.int.test.ts`, chạy bằng role app trên PostgreSQL
+Testcontainers. Kiểm unique/FK, định dạng PHC và version credential, cascade,
+username/legal_ref; lỗi tại credential/legal/membership rollback account,
+credential và bản đồng ý. Role app không superuser/BYPASSRLS hay sở hữu bảng legal;
+INSERT/SELECT thực tế thành công, UPDATE/DELETE/TRUNCATE bị từ chối và bản đồng ý
+đã commit giữ nguyên. Xoá account không làm mất lịch sử đồng ý.
+
+Phiên/Push nhận `local` hoặc `oidc`, từ chối nguồn khác/NULL; cùng account giữ
+được hai nguồn và Push giữ nguồn sau khi FK phiên chuyển NULL. Không đổi schema,
+migration, dependency hoặc hành vi runtime.
+
+Kiểm chứng local: 38/38 integration trong hai tệp mới và test migration T1 PASS;
+ESLint/Prettier hai tệp và `yarn verify:fast` PASS (typecheck toàn workspace;
+`--changed` không chọn unit test). `git diff --check` PASS.
+
+Đây là bằng chứng nền DB của TC-896, chưa nghiệm thu transaction đăng ký qua
+application hoặc hành vi worker TC-898/899. Chưa full `yarn verify`, SIT,
+push/PR/deploy hoặc cutover; chưa đóng T2 theo DoD, E26 giữ 0/13 task đóng.
