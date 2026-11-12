@@ -15,7 +15,7 @@ export async function savePushDevice(
 ) {
   if (!(await lockPushAccount(tx, a))) return 'expired' as const;
   const sessions =
-    await tx.execute(sql`SELECT created_at::text AS created_at FROM sessions WHERE id=${a.sessionId}
+    await tx.execute(sql`SELECT created_at::text AS created_at,auth_method FROM sessions WHERE id=${a.sessionId}
     AND account_id=${a.accountId} AND expires_at>${now.toISOString()}::timestamptz FOR KEY SHARE`);
   const session = sessions.rows[0];
   if (!session) return 'expired' as const;
@@ -30,14 +30,14 @@ export async function savePushDevice(
   const count = await tx.execute(sql`SELECT count(*)::int AS n FROM push_subscriptions
     WHERE account_id=${a.accountId} AND id<>${id}`);
   if (Number(count.rows[0]?.n) >= 10) return 'quota' as const;
-  // authorized_at lấy từ lần OIDC tạo phiên, không lấy thời điểm sync để né snapshot IdP.
+  // Lưu nguồn và thời điểm từ phiên thật; sync không được né snapshot IdP.
   const authorizedAt = String(session.created_at);
   await tx.execute(sql`INSERT INTO push_subscriptions
-    (id,family_id,account_id,last_session_id,authorized_at,endpoint,endpoint_hash,p256dh,auth,updated_at)
-    VALUES(${id},${a.familyId},${a.accountId},${a.sessionId},${authorizedAt}::timestamptz,
+    (id,family_id,account_id,last_session_id,auth_method,authorized_at,endpoint,endpoint_hash,p256dh,auth,updated_at)
+    VALUES(${id},${a.familyId},${a.accountId},${a.sessionId},${session.auth_method},${authorizedAt}::timestamptz,
       ${value.endpoint},${hash},${value.keys.p256dh},${value.keys.auth},${now.toISOString()}::timestamptz)
     ON CONFLICT(id) DO UPDATE SET last_session_id=excluded.last_session_id,
-      authorized_at=excluded.authorized_at, endpoint=excluded.endpoint, endpoint_hash=excluded.endpoint_hash,
+      auth_method=excluded.auth_method,authorized_at=excluded.authorized_at, endpoint=excluded.endpoint, endpoint_hash=excluded.endpoint_hash,
       p256dh=excluded.p256dh,auth=excluded.auth,updated_at=excluded.updated_at`);
   return { deviceId: id };
 }

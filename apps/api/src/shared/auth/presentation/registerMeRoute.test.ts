@@ -5,6 +5,7 @@ import type { SessionContext } from '../domain/SessionContext.js';
 import { registerMeRoute } from './registerMeRoute.js';
 
 const session: SessionContext = {
+  authMethod: 'oidc',
   sessionId: 's1',
   csrfToken: 'csrf',
   expiresAt: new Date('2026-12-01T00:00:00Z'),

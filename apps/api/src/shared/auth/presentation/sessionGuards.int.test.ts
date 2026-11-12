@@ -178,7 +178,7 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
     }
   });
 
-  it('requireAdmin: chỉ is_system_admin qua; main thường nhận ERR_FORBIDDEN', async () => {
+  it('requireAdmin: chỉ OIDC và is_system_admin qua; main thường nhận ERR_FORBIDDEN', async () => {
     const admin = await seedSession(await seedAccount({ admin: true }));
     const main = await seedSession(await seedAccount({ familyRole: 'main' }));
     expect((await app.request('/api/test/admin-only', { headers: { cookie: admin.cookie } })).status).toBe(
@@ -187,5 +187,30 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
     expect((await app.request('/api/test/admin-only', { headers: { cookie: main.cookie } })).status).toBe(
       403,
     );
+  });
+  it('TC-897: phiên local bị cấm admin dù account có cờ; OIDC mất cờ cũng bị cấm', async () => {
+    const accountId = await seedAccount({ admin: true });
+    const local = await seedSession(accountId);
+    const oidc = await seedSession(accountId);
+    await owner.query("UPDATE sessions SET auth_method='local' WHERE id=$1", [local.id]);
+    expect((await app.request('/api/test/admin-only', { headers: { cookie: local.cookie } })).status).toBe(
+      403,
+    );
+    expect((await app.request('/api/test/admin-only', { headers: { cookie: oidc.cookie } })).status).toBe(
+      200,
+    );
+    await owner.query('UPDATE accounts SET is_system_admin=false WHERE id=$1', [accountId]);
+    expect((await app.request('/api/test/admin-only', { headers: { cookie: oidc.cookie } })).status).toBe(
+      403,
+    );
+  });
+
+  it('TC-904: account bị khoá không resolve được cả phiên local và OIDC', async () => {
+    const accountId = await seedAccount();
+    const session = await seedSession(accountId);
+    await owner.query('UPDATE accounts SET locked_at=now() WHERE id=$1', [accountId]);
+    expect((await app.request('/api/me', { headers: { cookie: session.cookie } })).status).toBe(401);
+    await owner.query("UPDATE sessions SET auth_method='local' WHERE id=$1", [session.id]);
+    expect((await app.request('/api/me', { headers: { cookie: session.cookie } })).status).toBe(401);
   });
 });

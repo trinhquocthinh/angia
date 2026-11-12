@@ -3,6 +3,7 @@ type FamilyRole = 'main' | 'member';
 // Ngữ cảnh của một phiên còn hạn: tài khoản, nhóm và vai trò; family/role null = chờ gán nhóm (/waiting).
 export interface SessionContext {
   sessionId: string;
+  authMethod: 'local' | 'oidc';
   csrfToken: string;
   expiresAt: Date;
   account: {

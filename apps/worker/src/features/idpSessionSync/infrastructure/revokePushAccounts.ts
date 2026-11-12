@@ -14,10 +14,10 @@ export async function revokePushAccounts(
   for (const row of rows) {
     if (!row.family_id) continue;
     await withFamilyScope(client, row.family_id, async (scoped) => {
-      await scoped.query('DELETE FROM push_subscriptions WHERE account_id=$1 AND authorized_at<$2', [
-        row.id,
-        snapshotAt,
-      ]);
+      await scoped.query(
+        "DELETE FROM push_subscriptions WHERE account_id=$1 AND auth_method='oidc' AND authorized_at<$2",
+        [row.id, snapshotAt],
+      );
     });
   }
 }
