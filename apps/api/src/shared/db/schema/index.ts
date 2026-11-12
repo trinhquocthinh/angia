@@ -39,3 +39,8 @@ export { ocrOperations } from './ocrOperations.js';
 export { objectPurges } from './objectPurges.js';
 export { profileLinkInvitations } from './profileLinkInvitations.js';
 export { profileLinkEvents } from './profileLinkEvents.js';
+export { accountCredentials } from './accountCredentials.js';
+export { legalDocumentVersions } from './legalDocumentVersions.js';
+export { legalAcceptances } from './legalAcceptances.js';
+export { systemSettings } from './systemSettings.js';
+export { rateLimitBuckets } from './rateLimitBuckets.js';

@@ -1,16 +1,36 @@
 import { sql } from 'drizzle-orm';
-import { type AnyPgColumn, boolean, check, index, pgTable, text, unique, uuid } from 'drizzle-orm/pg-core';
+import {
+  type AnyPgColumn,
+  boolean,
+  check,
+  index,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+  uuid,
+} from 'drizzle-orm/pg-core';
 import { createdAtColumn, idColumn } from './columns.js';
 import { families } from './families.js';
 import { healthProfiles } from './healthProfiles.js';
 
 // Không RLS: tra cứu tài khoản diễn ra trước khi biết family (đăng nhập, phiên).
-// family_id/family_role null = tài khoản chờ Quản trị viên gán vào nhóm (màn /waiting).
+// Username cũ chờ mapping owner duyệt; legal_ref không chứa định danh người dùng.
 export const accounts = pgTable(
   'accounts',
   {
     id: idColumn(),
-    oidcSubject: text('oidc_subject').notNull().unique(),
+    oidcSubject: text('oidc_subject').unique(),
+    usernameNormalized: text('username_normalized').unique(),
+    legalRef: text('legal_ref')
+      .notNull()
+      .default(sql`gen_random_uuid()::text`)
+      .unique(),
+    email: text('email'),
+    mustChangePassword: boolean('must_change_password').notNull().default(false),
+    tempPasswordExpiresAt: timestamp('temp_password_expires_at', { withTimezone: true }),
+    lockedAt: timestamp('locked_at', { withTimezone: true }),
+    lockReason: text('lock_reason'),
     displayName: text('display_name').notNull(),
     familyId: uuid('family_id').references(() => families.id),
     familyRole: text('family_role', { enum: ['main', 'member'] }),
@@ -21,6 +41,7 @@ export const accounts = pgTable(
     createdAt: createdAtColumn(),
   },
   (table) => [
+    check('accounts_username_normalized_valid', sql`${table.usernameNormalized} ~ '^[a-z0-9._-]{3,32}$'`),
     unique('accounts_id_family_unique').on(table.id, table.familyId),
     index('accounts_family_id_idx').on(table.familyId),
     check('accounts_family_role_valid', sql`${table.familyRole} IN ('main', 'member')`),

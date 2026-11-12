@@ -863,3 +863,30 @@ mọi trang đầu ≤200 KB; TC-729 không có Three.js/GLB trong gói ban đ�
 Kết quả này thay trạng thái budget đỏ ở checkpoint E25-S4-T1 phía trên.
 Dư địa chỉ khoảng 1,3 KB; vẫn cần cổng CI cho thay đổi sau. Chưa nghiệm thu
 SIT/Production, thiết bị thật, SPEC-081 hoặc TC-876 mọi route; chưa đóng Epic 25.
+
+### E26-S1-T1 — nền schema xác thực local — 2026-11-12
+
+Đã thêm migration `0040_local_identity_foundation` và schema cho
+`account_credentials`, thông tin account local, nguồn phiên/Push,
+`legal_document_versions`, `legal_acceptances`, `system_settings` và
+`rate_limit_buckets`. Giữ UUID, subject OIDC, gia đình và liên kết hồ sơ cũ;
+username cũ để NULL chờ mapping owner duyệt, không tự sinh credential.
+
+Owner đã duyệt `accounts.legal_ref` ngẫu nhiên, duy nhất; bản đồng ý lưu mã
+này từ đầu và không FK về account. Xoá account không sửa/xoá lịch sử đồng ý.
+Role app chỉ được INSERT/SELECT `legal_acceptances`; runtime vẫn NOBYPASSRLS.
+Phiên/Push cũ mang nguồn `oidc`, `oidc_auth_time` giữ NULL; luồng local sau
+này phải ghi nguồn rõ ràng. Chưa thay hành vi login, admin guard hoặc worker.
+
+Kiểm chứng trên source đã áp dụng: `yarn verify:fast` PASS (typecheck toàn
+workspace; `--changed` không chọn unit), 13/13 integration trong 3 tệp PASS,
+ESLint/Prettier phần thay đổi và `git diff --check` PASS. Test nâng cấp từ
+0039 có dữ liệu kiểm việc giữ account/gia đình/hồ sơ/phiên/Push, quyền app,
+bản đồng ý sau xoá account và chạy migration lặp lại.
+
+**Chưa chạy migration lên DB ứng dụng local/SIT; T1 chưa PASS theo DoD,
+E26 giữ 0/13 task đóng.** Chưa full `yarn verify`, push/PR/deploy hoặc cutover.
+Chỉ role owner chạy migration; chạy lại phải báo `No pending migrations`.
+Không cấp lại quyền UPDATE/DELETE/TRUNCATE cho `legal_acceptances` sau migrate.
+Chi tiết đặc tả và hồ sơ nghiệm thu lưu riêng trong bộ `Docs/angia`:
+`11-master-plan.md` và `acceptance/v1.0/epic26-acceptance.md`.
