@@ -36,6 +36,7 @@
     "heic:spike": "tsx scripts/heic-spike/runHeicSpike.ts",
     "identity:spike": "tsx scripts/spike/identityProvider.ts",
     "identity:spike:measure": "tsx scripts/spike/identityMeasurements.ts",
+    "identity:local:measure": "tsx scripts/spike/localIdentityMeasurements.ts",
     "heic:spike:docker": "bash scripts/heic-spike/runInDocker.sh",
     "perf:budget": "tsx scripts/perf/checkBundleBudget.ts",
     "model:optimize": "tsx scripts/model/modelOptimize.ts",

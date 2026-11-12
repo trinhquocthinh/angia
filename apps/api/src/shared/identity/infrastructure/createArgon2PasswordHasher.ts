@@ -1,6 +1,9 @@
 import { randomBytes } from 'node:crypto';
 import { argon2id, hash, needsRehash, verify } from 'argon2';
 import type { PasswordHasher } from '../application/ports.js';
+import { createPasswordHashLimiter } from './createPasswordHashLimiter.js';
+
+const runHash = createPasswordHashLimiter();
 
 const options = {
   type: argon2id,
@@ -11,11 +14,11 @@ const options = {
   hashLength: 32,
 } as const;
 
-// Chưa nối runtime; giới hạn đồng thời/hàng đợi theo benchmark E26-S2-T3.
+// Chia sẻ ngân sách giữa mọi instance trong cùng tiến trình, kể cả dummy hash.
 export function createArgon2PasswordHasher(): PasswordHasher {
   return {
-    hash: (password) => hash(password, { ...options, salt: randomBytes(16) }),
-    verify: (digest, password) => verify(digest, password),
+    hash: (password) => runHash(() => hash(password, { ...options, salt: randomBytes(16) })),
+    verify: (digest, password) => runHash(() => verify(digest, password)),
     needsRehash: (digest) => needsRehash(digest, options),
   };
 }

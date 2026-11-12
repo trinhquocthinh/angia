@@ -944,3 +944,37 @@ transaction đăng ký đầy đủ thuộc S3-T1, login/recheck version thuộc
 Không coi test snapshot thay bằng chứng DTO/log/export của luồng local hoàn chỉnh
 hoặc TC-895/896/907 đầu-cuối. Chưa full `yarn verify`, SIT, push/PR/deploy
 hoặc cutover; E26 giữ 0/13 task đóng, chờ nghiệm thu theo DoD.
+
+### E26-S2-T3 — giới hạn hash và benchmark local/Linux — 2026-11-12
+
+Owner duyệt áp dụng phạm vi adapter/repository và build runtime; giữ nghiệm thu
+lifecycle TC-906 mở đến khi các luồng phụ thuộc hoàn thành. Hash/verify/dummy hash
+chia sẻ giới hạn 1 tác vụ đang chạy + 2 chờ FIFO trên mọi instance trong cùng
+tiến trình; đầy trả ERR_PASSWORD_HASH_BUSY, lỗi vẫn trả slot. Không thay cấu hình
+Argon2id, dependency, schema, port hoặc Dockerfile. Repository chỉ đổi hai import
+sang tương đối để runner dùng mã thật từ scripts. Thêm lệnh
+`yarn identity:local:measure --origin=...`; hướng dẫn ở scripts/spike/README.md.
+
+50/50 vòng adapter/repository local PASS và dọn sạch account/credential tổng hợp:
+Mac Node 24.15.0 median verifyPassword 99,10 ms; image runtime Node 22.23.4 Linux
+arm64, user 10001, giới hạn 1 CPU/256 MiB/no swap median 117,25 ms, peak RSS
+134,39 MiB. Giữ mẫu đầu; đo lookup repository + verify, chưa gồm HTTP/session.
+Bão hoà thực nhận đúng 3 verify và từ chối tác vụ thứ tư. Linux runtime build và
+smoke đúng/sai mật khẩu PASS theo Dockerfile hiện có. Ngân sách 1+2 là ứng viên,
+chưa coi số đo local Docker là benchmark backend SIT.
+
+8 unit mới; nhóm identity/benchmark 43/43 PASS, hồi quy repository 7/7 integration
+PASS. `yarn verify:fast` exit 0 trên bản sao sạch: typecheck toàn workspace và
+2929/2929 unit PASS. 10/10 tệp source/test/config áp dụng khớp SHA-256 bản kiểm.
+ESLint/Prettier phần thay đổi và git diff --check PASS. Volume gốc vẫn lỗi
+AppleDouble/native loader; lượt unit đồng thời có timeout, đã chạy lại tuần tự
+PASS, không nới timeout/config. Knip production chưa PASS: VerifiedIdentity và
+CredentialIdentity từ S2-T1 chỉ có consumer ngoài tệp trong test; không sửa port
+ngoài phạm vi. Log/manifest tạm: /private/tmp/angia-e26-s2-t3/.
+Báo cáo và bằng chứng đã lưu trong bộ Docs riêng tại
+`Docs/angia/acceptance/v1.0/evidence/e26-s2-t3-2026-11-12/`.
+
+Chưa nối adapter vào API runtime, chưa đo backend SIT hoặc HTTP đầu-cuối,
+429/503/không session, khoá/mở khoá/thu hồi phiên, backup/restore/cutover TC-908.
+Chưa full yarn verify, push/PR/deploy; chưa đóng T3/TC-905/906/908 theo DoD,
+E26 giữ 0/13 task đóng. Thay đổi README E25 có sẵn được giữ nguyên.

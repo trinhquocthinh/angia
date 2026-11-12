@@ -114,3 +114,76 @@ duyệt kết luận A23; không gửi token, mật khẩu, cookie hoặc respon
 Tham khảo API chính thức: [Flow executor](https://api.goauthentik.io/flow-executor/),
 [tạo user](https://api.goauthentik.io/reference/core-users-create/),
 [đặt mật khẩu](https://api.goauthentik.io/reference/core-users-set-password-create/).
+
+## Đo local identity — E26-S2-T3
+
+Dùng adapter Argon2id và repository thật, không gọi Authentik. Chỉ chạy với
+`STACK=sit` và `DATABASE_URL` đã được nạp vào môi trường; không tự đọc `.env`.
+Role phải là `angia_sit_app` hoặc `angia_test_app`, không superuser,
+BYPASSRLS hoặc sở hữu bảng accounts. Runner không chạy migration.
+
+```sh
+STACK=sit yarn identity:local:measure --origin=backend-sit
+```
+
+Chỉ dùng `backend-sit` khi chạy trên backend SIT thực tế (role phải là
+`angia_sit_app`). Phép đo từ máy khác dùng `--origin=local-macos` hoặc
+`--origin=local-linux`; nhãn do người chạy khai báo, không tự chứng minh vị trí
+máy. PostgreSQL thử phải có đủ migration và role app trước khi chạy.
+Không dùng URL owner/Production hoặc đưa URL/token/mật khẩu vào lệnh hay log.
+
+Mỗi vòng: tạo account/credential tổng hợp trong transaction → verify đúng,
+sai và username không tồn tại → thay credential, kiểm version tăng → verify
+mật khẩu mới, từ chối mật khẩu cũ → xoá account và kiểm credential đã cascade.
+Mỗi UUID được ghi trước khi tạo; chỉ xoá UUID đó trong finally. Nếu bị kill
+cưỡng bức hoặc cleanup lỗi, đối chiếu bản ghi fixture/cleanup và dọn đúng UUID
+còn sót. Không đụng tài khoản có sẵn. Ctrl+C/SIGTERM ngừng vòng tiếp theo,
+để vòng đang chạy hoàn tất và dọn dữ liệu.
+
+50 vòng tuần tự, không retry hoặc bỏ mẫu đầu. Median lấy thời gian toàn bộ
+`IdentityProvider.verifyPassword` đầu mỗi vòng, gồm truy vấn repository;
+không gộp các lần verify khác. Sau đó gửi đồng thời 4 verify thật: 3 hoàn tất,
+1 phải bị từ chối bằng `ERR_PASSWORD_HASH_BUSY`. Hash/verify và dummy hash dùng
+chung giới hạn **1 đang chạy + 2 chờ** trên mọi instance trong một tiến trình.
+Đây là ngân sách ứng viên cần xác nhận trên SIT; không đổi tham số bảo vệ
+Argon2id 65536 KiB/t=3/p=1, salt 16 byte, hash 32 byte.
+
+Runner in thư mục tạm chứa measurements.jsonl: metadata nguồn/Node/CPU/RAM/tải,
+từng fixture/cleanup/vòng, saturation và summary. Không ghi password, hash,
+URL DB hoặc lỗi DB gốc. CPU là thời gian CPU của tiến trình; peak RSS là
+high-water mark suốt đời tiến trình, gồm khởi tạo, không phải RAM riêng một
+hash. Giới hạn CPU container phải ghi riêng cùng báo cáo vận hành.
+
+Exit 0 chỉ khi đủ 50/50, median ≤ 1000 ms và phép thử hàng đợi đúng; thiếu
+summary hoặc có fatal không được coi đạt. `lifecycleAccepted=false` luôn được
+giữ: phép đo này chưa nghiệm thu khoá/mở khoá/thu hồi phiên, transaction đăng
+ký đầy đủ, HTTP 429/503 hoặc thời gian đầu-cuối HTTP. Không tự coi nhãn
+local-linux là kết quả backend SIT. Backup/restore/cutover TC-908 kiểm riêng.
+
+Kiểm source:
+
+```sh
+yarn vitest run --project unit apps/api/src/shared/identity scripts/spike/runLocalIdentityBenchmark.test.ts
+yarn verify:fast
+```
+
+Build runtime (context là gốc repo) và smoke native không cần DB:
+
+```sh
+docker build --target runtime -f apps/api/Dockerfile -t angia-local-identity:runtime .
+docker run --rm --cpus=1 --memory=256m --memory-swap=256m angia-local-identity:runtime \
+  node --input-type=module -e '
+    import assert from "node:assert/strict";
+    import { createArgon2PasswordHasher } from "./apps/api/dist/shared/identity/infrastructure/createArgon2PasswordHasher.js";
+    assert.equal(process.platform, "linux");
+    assert.equal(process.versions.node.split(".")[0], "22");
+    assert.equal(process.getuid(), 10001);
+    const hasher = createArgon2PasswordHasher();
+    const digest = await hasher.hash("Mật khẩu tổng hợp kiểm Linux");
+    assert.equal(await hasher.verify(digest, "Mật khẩu tổng hợp kiểm Linux"), true);
+    assert.equal(await hasher.verify(digest, "Sai mật khẩu"), false);
+    console.info(JSON.stringify({ node: process.version, arch: process.arch, smoke: "PASS" }));
+  '
+```
+
+Smoke này chỉ kiểm image runtime/native; không thay 50 vòng repository/SIT.

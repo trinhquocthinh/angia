@@ -1,6 +1,6 @@
 import { and, eq, sql } from 'drizzle-orm';
-import type { Database } from '@src/shared/db/createDatabase.js';
-import { accountCredentials, accounts } from '@src/shared/db/schema/index.js';
+import type { Database } from '../../db/createDatabase.js';
+import { accountCredentials, accounts } from '../../db/schema/index.js';
 import type { CredentialRepository } from '../application/ports.js';
 
 // Tra trước khi biết nhà; dùng role app, nhận cả transaction ngoài để ghi cùng account/legal.
