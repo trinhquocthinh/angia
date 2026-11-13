@@ -30,10 +30,11 @@ export interface AccountRepository {
   upsertFromIdentity(identity: AccountIdentity): Promise<{ id: string }>;
 }
 
-interface NewSession {
+export interface NewSession {
   accountId: string;
   csrfToken: string;
   expiresAt: Date;
+  authMethod?: 'local' | 'oidc';
 }
 
 export interface SessionRepository {
