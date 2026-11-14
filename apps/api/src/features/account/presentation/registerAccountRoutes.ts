@@ -9,10 +9,12 @@ import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { errorJson, errorResponse } from '@src/shared/http/errorResponse.js';
 import type { CookieSettings } from '@src/shared/auth/presentation/pendingLoginCookie.js';
 import { writeSessionCookie } from '@src/shared/auth/presentation/sessionCookie.js';
+import { registerLocalCredentialRoute } from './registerLocalCredentialRoute.js';
 import { registerChangePasswordRoute } from './registerChangePasswordRoute.js';
 import { loginLocalAccount } from '../application/loginLocalAccount.js';
 import { registerLocalAccount } from '../application/registerLocalAccount.js';
 import type {
+  EnrollLocalCredentialDeps,
   ChangeLocalPasswordDeps,
   LoginLocalAccountDeps,
   RegisterLocalAccountDeps,
@@ -21,7 +23,8 @@ import { passwordLoginRoute, registerAccountRoute } from './registerAccountRoute
 
 type AccountRouteDeps = RegisterLocalAccountDeps &
   LoginLocalAccountDeps &
-  ChangeLocalPasswordDeps & {
+  ChangeLocalPasswordDeps &
+  EnrollLocalCredentialDeps & {
     appBaseUrl: string;
     cookies: CookieSettings;
     rateLimit: RateLimitDependencies;
@@ -32,6 +35,7 @@ type AccountRouteDeps = RegisterLocalAccountDeps &
 export function registerAccountRoutes(app: OpenAPIHono<AppEnv>, deps: AccountRouteDeps): void {
   registerPasswordLogin(app, deps);
   registerChangePasswordRoute(app, deps);
+  registerLocalCredentialRoute(app, deps);
   requireTrustedJson(app, registerAccountRoute.path, deps.appBaseUrl);
   app.use(
     registerAccountRoute.path,

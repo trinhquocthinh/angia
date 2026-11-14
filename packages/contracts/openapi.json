@@ -135,6 +135,19 @@
           "newPassword"
         ]
       },
+      "LocalCredentialRequest": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "password"
+        ]
+      },
       "RegisterAccountResponse": {
         "type": "object",
         "properties": {
@@ -7866,6 +7879,100 @@
           },
           "503": {
             "description": "ERR_AUTH_UNAVAILABLE: DB/rate limiter/hash lỗi hoặc hash bận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/local-credential": {
+      "post": {
+        "tags": [
+          "account"
+        ],
+        "summary": "Thiết lập mật khẩu local một lần trước cutover (SPEC-060)",
+        "description": "Cần LOCAL_ENROLLMENT_ENABLED, phiên OIDC reauth tối đa 300 giây và X-CSRF-Token. Cache-Control: no-store.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocalCredentialRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Đã thiết lập mật khẩu, giữ nguyên tài khoản và phiên"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED: thiếu phiên hoặc account/phiên đã bị xoá",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: CSRF sai hoặc chưa reauth OIDC hợp lệ; ERR_ACCOUNT_LOCKED: tài khoản đã bị khoá",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: cờ enrollment tắt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CREDENTIAL_ALREADY_SET: đã có credential, không ghi đè",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: body hoặc mật khẩu không hợp lệ, details.field=password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: DB/hash lỗi hoặc hash bận",
             "content": {
               "application/json": {
                 "schema": {

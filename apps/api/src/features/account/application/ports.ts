@@ -130,3 +130,43 @@ export type ChangeLocalPasswordOutcome =
   | { ok: false; code: 'ERR_VALIDATION'; details: { field: string } }
   | { ok: false; code: 'ERR_RATE_LIMITED'; retryAfterSeconds: number }
   | { ok: false; code: 'ERR_AUTH_UNAVAILABLE'; reason: string };
+
+export interface EnrollmentAccount {
+  oidcSubject: string | null;
+  usernameNormalized: string | null;
+  lockedAt: Date | null;
+}
+
+export type EnrollmentInsertOutcome =
+  { ok: true } | { ok: false; reason: 'gone' | 'locked' | 'forbidden' | 'exists' };
+
+export interface LocalCredentialEnrollments {
+  findAccount(accountId: string): Promise<EnrollmentAccount | null>;
+  insertIfAbsent(input: {
+    accountId: string;
+    sessionId: string;
+    passwordHash: string;
+    now: Date;
+  }): Promise<EnrollmentInsertOutcome>;
+}
+
+export interface EnrollLocalCredentialDeps {
+  enrollmentEnabled: boolean;
+  enrollments: LocalCredentialEnrollments;
+  hasher: PasswordHasher;
+  now(): Date;
+}
+
+export type EnrollLocalCredentialOutcome =
+  | { ok: true }
+  | {
+      ok: false;
+      code:
+        | 'ERR_NOT_FOUND'
+        | 'ERR_FORBIDDEN'
+        | 'ERR_UNAUTHENTICATED'
+        | 'ERR_ACCOUNT_LOCKED'
+        | 'ERR_CREDENTIAL_ALREADY_SET';
+    }
+  | { ok: false; code: 'ERR_VALIDATION'; details: { field: 'password' } }
+  | { ok: false; code: 'ERR_AUTH_UNAVAILABLE'; reason: string };

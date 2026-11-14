@@ -4,6 +4,7 @@ type FamilyRole = 'main' | 'member';
 export interface SessionContext {
   sessionId: string;
   authMethod: 'local' | 'oidc';
+  oidcAuthTime: Date | null;
   passwordChangeRequired: boolean;
   csrfToken: string;
   expiresAt: Date;

@@ -20,6 +20,7 @@ const profiles = [
 ];
 const session: SessionContext = {
   authMethod: 'oidc',
+  oidcAuthTime: null,
   passwordChangeRequired: false,
   sessionId: 'session-a',
   csrfToken: 'csrf',

@@ -1,10 +1,12 @@
 import type { RateLimitDependencies } from '@src/shared/rateLimit/application/ports.js';
 import type { ClientIpResolver } from '@src/shared/rateLimit/application/ClientIpResolver.js';
 import type {
+  EnrollLocalCredentialDeps,
   ChangeLocalPasswordDeps,
   LoginLocalAccountDeps,
   RegisterLocalAccountDeps,
 } from '@src/features/account/application/ports.js';
+import { localCredentialGate } from '@src/features/account/presentation/localCredentialGate.js';
 import { registerAccountRoutes } from '@src/features/account/presentation/registerAccountRoutes.js';
 import { registerHealthDataCacheHeaders } from '@src/registerHealthDataCacheHeaders.js';
 import type { PainJournalDependencies } from '@src/features/painJournal/presentation/painJournalDependencies.js';
@@ -92,7 +94,8 @@ export type AppDependencies = {
   auth: AuthRouteDeps;
   account: RegisterLocalAccountDeps &
     LoginLocalAccountDeps &
-    ChangeLocalPasswordDeps & {
+    ChangeLocalPasswordDeps &
+    EnrollLocalCredentialDeps & {
       appBaseUrl: string;
       rateLimit: RateLimitDependencies;
       clientIp: ClientIpResolver;
@@ -154,6 +157,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
     deps.auth.logger.error({ reason: error.name }, 'Lỗi chưa xử lý');
     return errorResponse(c, 'ERR_INTERNAL');
   });
+  app.use('/api/me/local-credential', localCredentialGate(deps.account.enrollmentEnabled));
   registerHealthDataCacheHeaders(app);
   registerScanQuotaHeaders(app);
   app.use(
@@ -169,8 +173,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   registerAuthRoutes(app, deps.auth);
   registerAccountRoutes(app, { ...deps.account, cookies, logger: deps.auth.logger });
   registerMeRoute(app, { redactionSuggestions: Boolean(deps.redactionSuggestions) });
-  if (deps.push)
-    registerPushRoutes(app, deps.push, { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies });
+  if (deps.push) registerPushRoutes(app, deps.push, cookies);
   registerAdminRoutes(app, deps.familyAdmin, deps.scanQuota.now);
   registerScanQuotaRoutes(app, deps.scanQuota);
   registerAiBudgetRoutes(app, deps.aiBudget);

@@ -1,5 +1,5 @@
 import * as oidc from 'openid-client';
-import type { OidcClient } from '../application/ports.js';
+import type { OidcClient, PendingLogin } from '../application/ports.js';
 import { toIdentityClaims } from './toIdentityClaims.js';
 
 export interface OidcSettings {
@@ -26,12 +26,13 @@ export function createOpenIdClient(settings: OidcSettings): OidcClient {
   };
 
   return {
-    async createAuthorizationRequest() {
+    async createAuthorizationRequest(options) {
       const config = await getConfiguration();
-      const pending = {
+      const pending: PendingLogin = {
         state: oidc.randomState(),
         codeVerifier: oidc.randomPKCECodeVerifier(),
         nonce: oidc.randomNonce(),
+        ...(options?.reauth ? { maxAge: 0 as const } : {}),
       };
       const url = oidc.buildAuthorizationUrl(config, {
         redirect_uri: settings.redirectUri,
@@ -40,6 +41,7 @@ export function createOpenIdClient(settings: OidcSettings): OidcClient {
         code_challenge_method: 'S256',
         state: pending.state,
         nonce: pending.nonce,
+        ...(pending.maxAge === 0 ? { max_age: '0' } : {}),
       });
       return { url, pending };
     },
@@ -55,6 +57,7 @@ export function createOpenIdClient(settings: OidcSettings): OidcClient {
         expectedState: pending.state,
         expectedNonce: pending.nonce,
         idTokenExpected: true,
+        ...(pending.maxAge === 0 ? { maxAge: pending.maxAge } : {}),
       });
       const claims = tokens.claims();
       if (!claims) {

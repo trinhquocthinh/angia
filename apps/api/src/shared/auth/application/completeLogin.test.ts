@@ -62,6 +62,7 @@ describe('completeLogin', () => {
       accountId: 'account-1',
       csrfToken: 'csrf-token',
       expiresAt,
+      oidcAuthTime: null,
     });
     expect(result).toEqual({ sessionId: 'session-1', expiresAt });
   });
@@ -73,4 +74,21 @@ describe('completeLogin', () => {
     expect(deps.accounts.upsertFromIdentity).not.toHaveBeenCalled();
     expect(deps.sessions.create).not.toHaveBeenCalled();
   });
+});
+
+it('TC-900: reauth lưu authTime vào phiên mới', async () => {
+  const deps = setup({ subject: 'sub', groups: [], authTime: NOW });
+  await completeLogin(deps, new URLSearchParams(), { ...PENDING, maxAge: 0 });
+  expect(deps.sessions.create).toHaveBeenCalledWith(expect.objectContaining({ oidcAuthTime: NOW }));
+});
+it('TC-901: login thường không lưu authTime dù claim có', async () => {
+  const deps = setup({ subject: 'sub', groups: [], authTime: NOW });
+  await completeLogin(deps, new URLSearchParams(), PENDING);
+  expect(deps.sessions.create).toHaveBeenCalledWith(expect.objectContaining({ oidcAuthTime: null }));
+});
+it('TC-901: reauth thiếu authTime từ chối trước ghi account và phiên', async () => {
+  const deps = setup({ subject: 'sub', groups: [] });
+  await expect(completeLogin(deps, new URLSearchParams(), { ...PENDING, maxAge: 0 })).rejects.toThrow();
+  expect(deps.accounts.upsertFromIdentity).not.toHaveBeenCalled();
+  expect(deps.sessions.create).not.toHaveBeenCalled();
 });

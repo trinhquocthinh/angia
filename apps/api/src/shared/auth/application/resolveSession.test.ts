@@ -9,6 +9,7 @@ function sessionExpiringAt(expiresAt: Date): SessionContext {
   return {
     sessionId: 'session-1',
     authMethod: 'oidc',
+    oidcAuthTime: null,
     passwordChangeRequired: false,
     csrfToken: 'csrf-1',
     expiresAt,

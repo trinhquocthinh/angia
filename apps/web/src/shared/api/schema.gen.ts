@@ -364,6 +364,110 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/me/local-credential': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Thiết lập mật khẩu local một lần trước cutover (SPEC-060)
+     * @description Cần LOCAL_ENROLLMENT_ENABLED, phiên OIDC reauth tối đa 300 giây và X-CSRF-Token. Cache-Control: no-store.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['LocalCredentialRequest'];
+        };
+      };
+      responses: {
+        /** @description Đã thiết lập mật khẩu, giữ nguyên tài khoản và phiên */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_UNAUTHENTICATED: thiếu phiên hoặc account/phiên đã bị xoá */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: CSRF sai hoặc chưa reauth OIDC hợp lệ; ERR_ACCOUNT_LOCKED: tài khoản đã bị khoá */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND: cờ enrollment tắt */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_CREDENTIAL_ALREADY_SET: đã có credential, không ghi đè */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: body hoặc mật khẩu không hợp lệ, details.field=password */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE: DB/hash lỗi hoặc hash bận */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/auth/register': {
     parameters: {
       query?: never;
@@ -10192,6 +10296,9 @@ export interface components {
     ChangePasswordRequest: {
       currentPassword?: string;
       newPassword: string;
+    };
+    LocalCredentialRequest: {
+      password: string;
     };
     RegisterAccountResponse: {
       account: {

@@ -27,6 +27,7 @@ export function createSessionRepository(db: Database): SessionRepository {
         .select({
           sessionId: sessions.id,
           authMethod: sessions.authMethod,
+          oidcAuthTime: sessions.oidcAuthTime,
           passwordChangeRequired: sessions.passwordChangeRequired,
           csrfToken: sessions.csrfToken,
           expiresAt: sessions.expiresAt,

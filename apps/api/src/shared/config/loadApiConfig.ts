@@ -6,6 +6,10 @@ const apiEnvSchema = z.object({
   WEB_PUSH_PUBLIC_KEY: z.string().default(''),
   WEB_PUSH_PRIVATE_KEY: z.string().default(''),
   WEB_PUSH_SUBJECT: z.string().default(''),
+  LOCAL_ENROLLMENT_ENABLED: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((v) => v === 'true'),
   STACK: z.enum(['dev', 'sit', 'prod']),
   PORT: z.coerce.number().int().positive().default(3000),
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),

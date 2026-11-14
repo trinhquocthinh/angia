@@ -3,6 +3,7 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_CREDENTIAL_ALREADY_SET: { status: 409, message: 'Bạn đã thiết lập mật khẩu. Vui lòng đăng nhập.' },
   ERR_PASSWORD_CHANGE_REQUIRED: { status: 403, message: 'Bạn cần đặt mật khẩu mới trước khi tiếp tục.' },
   ERR_INVALID_CREDENTIALS: { status: 401, message: 'Tên đăng nhập hoặc mật khẩu chưa đúng.' },
   ERR_ACCOUNT_LOCKED: { status: 403, message: 'Tài khoản đang bị khoá. Liên hệ quản trị.' },

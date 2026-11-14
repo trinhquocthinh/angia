@@ -6,6 +6,7 @@ export interface PendingLogin {
   state: string;
   codeVerifier: string;
   nonce: string;
+  maxAge?: 0 | undefined;
 }
 
 interface AuthorizationRequest {
@@ -14,7 +15,7 @@ interface AuthorizationRequest {
 }
 
 export interface OidcClient {
-  createAuthorizationRequest(): Promise<AuthorizationRequest>;
+  createAuthorizationRequest(options?: { reauth?: boolean }): Promise<AuthorizationRequest>;
   // Kiểm state, đổi code (kèm code_verifier) lấy token và xác thực id_token; chỉ trả claim, token không rời adapter.
   exchangeCode(callbackParams: URLSearchParams, pending: PendingLogin): Promise<IdentityClaims>;
 }
@@ -35,6 +36,7 @@ export interface NewSession {
   csrfToken: string;
   expiresAt: Date;
   authMethod?: 'local' | 'oidc';
+  oidcAuthTime?: Date | null;
 }
 
 export interface SessionRepository {

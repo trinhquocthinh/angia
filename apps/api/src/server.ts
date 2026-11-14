@@ -1,3 +1,4 @@
+import { createLocalCredentialEnrollments } from '@src/features/account/infrastructure/createLocalCredentialEnrollments.js';
 import { createLocalPasswordChanges } from '@src/features/account/infrastructure/createLocalPasswordChanges.js';
 import { createLocalLoginSessions } from '@src/features/account/infrastructure/createLocalLoginSessions.js';
 import { createLocalIdentityProvider } from '@src/shared/identity/infrastructure/createLocalIdentityProvider.js';
@@ -135,6 +136,8 @@ const app = createApp({
     identity,
     localLoginSessions: createLocalLoginSessions(db),
     passwords: createLocalPasswordChanges(db),
+    enrollments: createLocalCredentialEnrollments(db),
+    enrollmentEnabled: config.LOCAL_ENROLLMENT_ENABLED,
     sessions: sessionRepository,
     generateToken: () => randomBytes(32).toString('base64url'),
     now: () => new Date(),

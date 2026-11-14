@@ -59,7 +59,10 @@ export function registerAuthRoutes(app: OpenAPIHono<AppEnv>, deps: AuthRouteDeps
   const cookies = { secret: deps.cookieSecret, secure: deps.secureCookies };
 
   app.openapi(loginRoute, async (c) => {
-    const request = await deps.login.oidc.createAuthorizationRequest();
+    const request =
+      c.req.query('reauth') === '1'
+        ? await deps.login.oidc.createAuthorizationRequest({ reauth: true })
+        : await deps.login.oidc.createAuthorizationRequest();
     await writePendingLogin(c, request.pending, cookies);
     c.header('Cache-Control', 'no-store');
     return c.redirect(request.url.toString(), 302);

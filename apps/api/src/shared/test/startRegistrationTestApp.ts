@@ -1,3 +1,4 @@
+import { createLocalCredentialEnrollments } from '@src/features/account/infrastructure/createLocalCredentialEnrollments.js';
 import { createLocalPasswordChanges } from '@src/features/account/infrastructure/createLocalPasswordChanges.js';
 import { createLocalLoginSessions } from '@src/features/account/infrastructure/createLocalLoginSessions.js';
 import { createLocalIdentityProvider } from '@src/shared/identity/infrastructure/createLocalIdentityProvider.js';
@@ -25,7 +26,7 @@ import { createStubReviewDeps } from './createStubReviewDeps.js';
 import { TEST_COOKIE_SECRET } from './seedAuthFixtures.js';
 import { startTestDatabase } from './startTestDatabase.js';
 
-export async function startRegistrationTestApp() {
+export async function startRegistrationTestApp(enrollmentEnabled = false) {
   const testDb = await startTestDatabase();
   await runMigrations(testDb.ownerUrl);
   const owner = new pg.Client({ connectionString: testDb.ownerUrl });
@@ -52,6 +53,8 @@ export async function startRegistrationTestApp() {
     identity,
     localLoginSessions: createLocalLoginSessions(db),
     passwords: createLocalPasswordChanges(db),
+    enrollments: createLocalCredentialEnrollments(db),
+    enrollmentEnabled: enrollmentEnabled,
     accounts: createAccountRegistrationUnitOfWork(db),
     sessions,
     generateToken: () => randomBytes(32).toString('base64url'),

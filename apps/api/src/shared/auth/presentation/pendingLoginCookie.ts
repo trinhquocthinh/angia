@@ -11,6 +11,7 @@ const pendingLoginSchema = z.object({
   state: z.string().min(1),
   codeVerifier: z.string().min(1),
   nonce: z.string().min(1),
+  maxAge: z.literal(0).optional(),
 });
 
 export interface CookieSettings {
