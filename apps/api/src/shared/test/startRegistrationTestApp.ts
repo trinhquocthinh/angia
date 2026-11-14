@@ -1,6 +1,8 @@
+import { createRateLimitStore } from '@src/shared/rateLimit/infrastructure/createRateLimitStore.js';
+import { createRateLimitKeyHasher } from '@src/shared/rateLimit/infrastructure/createRateLimitKeyHasher.js';
 import { randomBytes, randomUUID } from 'node:crypto';
 import pg from 'pg';
-import { createApp } from '@src/createApp.js';
+import { createApp, type AppDependencies } from '@src/createApp.js';
 import { createAccountRegistrationUnitOfWork } from '@src/features/account/infrastructure/createAccountRegistrationUnitOfWork.js';
 import { createInvitationVerifier } from '@src/features/account/infrastructure/createInvitationVerifier.js';
 import { createLegalVersions } from '@src/features/account/infrastructure/createLegalVersions.js';
@@ -37,6 +39,23 @@ export async function startRegistrationTestApp() {
   const db = createDatabase(pool);
   const sessions = createSessionRepository(db);
   const stub = createStubAuthDeps();
+  const account: AppDependencies['account'] = {
+    clientIp: (c) => c.req.header('x-test-ip') ?? 'test',
+    rateLimit: {
+      store: createRateLimitStore(db),
+      keyHasher: createRateLimitKeyHasher(TEST_COOKIE_SECRET),
+      now: Date.now,
+    },
+    appBaseUrl: 'https://angia.example/app',
+    gate: createRegistrationGate(db),
+    legalVersions: createLegalVersions(db, () => new Date()),
+    invitationVerifier: createInvitationVerifier(),
+    hasher: createArgon2PasswordHasher(),
+    accounts: createAccountRegistrationUnitOfWork(db),
+    sessions,
+    generateToken: () => randomBytes(32).toString('base64url'),
+    now: () => new Date(),
+  };
   const app = createApp({
     ...createStubReviewDeps(),
     profileLinks: createStubProfileLinkDeps(),
@@ -46,20 +65,11 @@ export async function startRegistrationTestApp() {
     aiBudget: createStubAiBudgetDeps(),
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
     auth: { ...stub, cookieSecret: TEST_COOKIE_SECRET, login: { ...stub.login, sessions } },
-    account: {
-      appBaseUrl: 'https://angia.example/app',
-      gate: createRegistrationGate(db),
-      legalVersions: createLegalVersions(db, () => new Date()),
-      invitationVerifier: createInvitationVerifier(),
-      hasher: createArgon2PasswordHasher(),
-      accounts: createAccountRegistrationUnitOfWork(db),
-      sessions,
-      generateToken: () => randomBytes(32).toString('base64url'),
-      now: () => new Date(),
-    },
+    account,
   });
   return {
     app,
+    account,
     owner,
     pool,
     legalAcceptance,

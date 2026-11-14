@@ -1,6 +1,7 @@
+import { PasswordHashBusyError } from '@src/shared/identity/application/PasswordHashBusyError.js';
 import { registerAccountResponseSchema } from '@angia/contracts';
 import { randomUUID } from 'node:crypto';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { startRegistrationTestApp } from '@src/shared/test/startRegistrationTestApp.js';
 
 describe('POST /api/auth/register (SPEC-059)', () => {
@@ -10,6 +11,10 @@ describe('POST /api/auth/register (SPEC-059)', () => {
   });
   afterAll(async () => {
     await t?.close();
+  });
+  let testIp = '';
+  beforeEach(() => {
+    testIp = randomUUID();
   });
   const input = () => ({
     username: 'Me.Lan',
@@ -24,9 +29,55 @@ describe('POST /api/auth/register (SPEC-059)', () => {
       origin: 'https://angia.example',
       'content-type': 'application/json',
     },
-  ) => t.app.request('/api/auth/register', { method: 'POST', headers, body: JSON.stringify(body) });
+  ) =>
+    t.app.request('/api/auth/register', {
+      method: 'POST',
+      headers: { 'x-test-ip': testIp, ...headers },
+      body: JSON.stringify(body),
+    });
   const countAccounts = async () =>
     (await t.pool.query('SELECT count(*)::int AS total FROM accounts')).rows[0].total;
+
+  it('TC-846/851: năm request đầu đi tiếp, request sáu chặn trước validate/hash, IP khác được đăng ký', async () => {
+    expect((await request({ ...input(), username: 'rate.exists' })).status).toBe(201);
+    const before = await countAccounts();
+    for (let i = 0; i < 4; i++) expect((await request({})).status).toBe(422);
+    const existing = await request({ ...input(), username: 'RATE.EXISTS' });
+    const fresh = await request({ ...input(), username: 'limited.new' });
+    expect(existing.status).toBe(429);
+    expect(fresh.status).toBe(429);
+    expect(await existing.json()).toEqual(await fresh.json());
+    expect(existing.headers.get('retry-after')).toMatch(/^[1-9][0-9]*$/);
+    expect(existing.headers.get('set-cookie')).toBeNull();
+    expect(await countAccounts()).toBe(before);
+    testIp = randomUUID();
+    expect((await request({ ...input(), username: 'other.ip' })).status).toBe(201);
+  });
+  it('Origin sai không tiêu hao bucket', async () => {
+    for (let i = 0; i < 6; i++)
+      expect(
+        (await request({}, { origin: 'https://evil.example', 'content-type': 'application/json' })).status,
+      ).toBe(403);
+    for (let i = 0; i < 5; i++) expect((await request({})).status).toBe(422);
+  });
+
+  it('TC-905: hash busy trả HTTP 503, không có account/session/cookie', async () => {
+    const before = await countAccounts();
+    const sessionsBefore = (await t.pool.query('SELECT count(*)::int AS total FROM sessions')).rows[0].total;
+    const hash = vi.spyOn(t.account.hasher, 'hash').mockRejectedValueOnce(new PasswordHashBusyError());
+    try {
+      const response = await request({ ...input(), username: 'busy.hash' });
+      expect(response.status).toBe(503);
+      expect(await response.json()).toMatchObject({ error: { code: 'ERR_AUTH_UNAVAILABLE' } });
+      expect(response.headers.get('set-cookie')).toBeNull();
+      expect(await countAccounts()).toBe(before);
+      expect((await t.pool.query('SELECT count(*)::int AS total FROM sessions')).rows[0].total).toBe(
+        sessionsBefore,
+      );
+    } finally {
+      hash.mockRestore();
+    }
+  });
 
   it('TC-736: tạo Me.Lan thành me.lan, cookie phiên dùng được tại /api/me', async () => {
     const response = await request();

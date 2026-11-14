@@ -1,3 +1,6 @@
+import { getSocketClientIp } from '@src/shared/rateLimit/infrastructure/getSocketClientIp.js';
+import { createRateLimitStore } from '@src/shared/rateLimit/infrastructure/createRateLimitStore.js';
+import { createRateLimitKeyHasher } from '@src/shared/rateLimit/infrastructure/createRateLimitKeyHasher.js';
 import { createAccountRegistrationUnitOfWork } from '@src/features/account/infrastructure/createAccountRegistrationUnitOfWork.js';
 import { createRegistrationGate } from '@src/features/account/infrastructure/createRegistrationGate.js';
 import { createLegalVersions } from '@src/features/account/infrastructure/createLegalVersions.js';
@@ -112,6 +115,12 @@ const scanQuotaDefaults = {
 const sessionRepository = createSessionRepository(db);
 const app = createApp({
   account: {
+    clientIp: getSocketClientIp,
+    rateLimit: {
+      store: createRateLimitStore(db),
+      keyHasher: createRateLimitKeyHasher(config.SESSION_COOKIE_SECRET),
+      now: Date.now,
+    },
     accounts: createAccountRegistrationUnitOfWork(db),
     gate: createRegistrationGate(db),
     legalVersions: createLegalVersions(db, () => new Date()),

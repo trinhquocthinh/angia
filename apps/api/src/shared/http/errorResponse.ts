@@ -152,7 +152,12 @@ const ERROR_CATALOG = {
     status: 429,
     message: 'Đang có nhiều ảnh chờ xử lý. Vui lòng đợi xử lý xong rồi gửi tiếp.',
   },
+  // SDD §4.6 ghi "quá nhanh…" cho SPEC-078; owner chốt 2026-11-14 giữ câu SPEC-030 tới khi SDD thống nhất.
   ERR_RATE_LIMITED: { status: 429, message: 'Bạn thao tác hơi nhanh. Vui lòng thử lại sau ít giây.' },
+  ERR_AUTH_UNAVAILABLE: {
+    status: 503,
+    message: 'Hệ thống xác thực đang bận hoặc tạm gián đoạn. Vui lòng thử lại sau.',
+  },
   ERR_INTERNAL: { status: 500, message: 'Đã xảy ra lỗi nội bộ hệ thống. Vui lòng thử lại sau.' },
 } as const;
 

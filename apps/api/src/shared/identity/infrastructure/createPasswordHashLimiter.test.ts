@@ -1,3 +1,4 @@
+import { PasswordHashBusyError } from '../application/PasswordHashBusyError.js';
 import { describe, expect, it, vi } from 'vitest';
 import { createPasswordHashLimiter } from './createPasswordHashLimiter.js';
 
@@ -22,7 +23,7 @@ describe('Giới hạn tài nguyên băm mật khẩu', () => {
       return 3;
     });
     const overflow = vi.fn(async () => 4);
-    await expect(run(overflow)).rejects.toThrow('ERR_PASSWORD_HASH_BUSY');
+    await expect(run(overflow)).rejects.toBeInstanceOf(PasswordHashBusyError);
     expect(overflow).not.toHaveBeenCalled();
     expect(order).toEqual([1]);
     release();

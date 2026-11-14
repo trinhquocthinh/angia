@@ -1,3 +1,5 @@
+import { PasswordHashBusyError } from '../application/PasswordHashBusyError.js';
+
 // Ngân sách ứng viên: 1 tác vụ 64 MiB, tối đa 2 yêu cầu chờ; cần số đo SIT trước khi chốt runtime.
 export const PASSWORD_HASH_LIMITS = { concurrency: 1, maxQueue: 2 } as const;
 
@@ -7,7 +9,7 @@ export function createPasswordHashLimiter() {
   return async <T>(work: () => Promise<T>): Promise<T> => {
     if (active >= PASSWORD_HASH_LIMITS.concurrency) {
       if (waiting.length >= PASSWORD_HASH_LIMITS.maxQueue) {
-        throw new Error('ERR_PASSWORD_HASH_BUSY');
+        throw new PasswordHashBusyError();
       }
       await new Promise<void>((resolve) => waiting.push(resolve));
     } else {

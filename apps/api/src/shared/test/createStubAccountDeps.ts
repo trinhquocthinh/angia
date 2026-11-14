@@ -1,11 +1,17 @@
-import type { RegisterLocalAccountDeps } from '@src/features/account/application/ports.js';
+import type { AppDependencies } from '@src/createApp.js';
 import { createStubAuthDeps } from './createStubAuthDeps.js';
 
 const notConfigured = () => Promise.reject(new Error('Đăng ký chưa cấu hình trong ngữ cảnh này'));
 
-export function createStubAccountDeps(): RegisterLocalAccountDeps & { appBaseUrl: string } {
+export function createStubAccountDeps(): AppDependencies['account'] {
   const { login } = createStubAuthDeps();
   return {
+    rateLimit: {
+      store: { increment: async () => 1, read: async () => 0 },
+      keyHasher: () => 'stub',
+      now: () => 0,
+    },
+    clientIp: () => 'stub',
     appBaseUrl: 'https://angia.test',
     gate: { isOpen: notConfigured },
     legalVersions: { current: notConfigured },

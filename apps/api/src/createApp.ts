@@ -1,3 +1,5 @@
+import type { RateLimitDependencies } from '@src/shared/rateLimit/application/ports.js';
+import type { ClientIpResolver } from '@src/shared/rateLimit/application/ClientIpResolver.js';
 import type { RegisterLocalAccountDeps } from '@src/features/account/application/ports.js';
 import { registerAccountRoutes } from '@src/features/account/presentation/registerAccountRoutes.js';
 import { registerHealthDataCacheHeaders } from '@src/registerHealthDataCacheHeaders.js';
@@ -83,7 +85,11 @@ export type AppDependencies = {
   redactionSuggestions?: RedactionSuggestionDependencies;
   healthProbes: HealthProbes;
   auth: AuthRouteDeps;
-  account: RegisterLocalAccountDeps & { appBaseUrl: string };
+  account: RegisterLocalAccountDeps & {
+    appBaseUrl: string;
+    rateLimit: RateLimitDependencies;
+    clientIp: ClientIpResolver;
+  };
   familyAdmin: FamilyAdminRepository;
   aiBudget: AiBudgetDependencies;
   aiRouting: AiRoutingDependencies;
