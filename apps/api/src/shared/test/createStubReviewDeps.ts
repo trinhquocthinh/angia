@@ -1,3 +1,4 @@
+import { createStubAccountDeps } from './createStubAccountDeps.js';
 import { createStubScanQuotaDeps } from './createStubScanQuotaDeps.js';
 import { createStubAiBillingDeps } from './createStubAiBillingDeps.js';
 import { createStubAiRoutingDeps } from './createStubAiRoutingDeps.js';
@@ -8,6 +9,7 @@ const notConfigured = () => Promise.reject(new Error('Kho duyệt/số đo chưa
 
 type StubbedDeps = Pick<
   AppDependencies,
+  | 'account'
   | 'scanQuota'
   | 'aiBilling'
   | 'aiRouting'
@@ -38,6 +40,7 @@ type StubbedDeps = Pick<
 // Sinh OpenAPI hoặc test feature khác: không được gọi hạ tầng duyệt chứng từ và số đo.
 export function createStubReviewDeps(): StubbedDeps {
   return {
+    account: createStubAccountDeps(),
     scanQuota: createStubScanQuotaDeps(),
     aiRouting: createStubAiRoutingDeps(),
     aiBilling: createStubAiBillingDeps(),

@@ -169,6 +169,85 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/auth/register': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Tạo tài khoản local và phiên (SPEC-059)
+     * @description Không cần phiên. Bắt buộc application/json và Origin khớp chính xác origin APP_BASE_URL. Cookie angia_session HttpOnly, SameSite=Lax; phản hồi Cache-Control: no-store.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['RegisterAccountRequest'];
+        };
+      };
+      responses: {
+        /** @description Tài khoản và CSRF token; sessionId chỉ nằm trong cookie đã ký */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['RegisterAccountResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: thiếu/sai Origin hoặc không phải JSON; ERR_REGISTRATION_CLOSED: chưa mở đăng ký và không có lời mời hợp lệ */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_USERNAME_TAKEN; ERR_LEGAL_VERSION_OUTDATED kèm details.current = { termsVersionId, privacyVersionId } */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: body thiếu/sai kiểu hoặc quy tắc domain không hợp lệ (details.field) */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/me': {
     parameters: {
       query?: never;
@@ -9884,6 +9963,35 @@ export interface components {
           [key: string]: unknown;
         };
       };
+    };
+    RegisterAccountResponse: {
+      account: {
+        /** Format: uuid */
+        id: string;
+        username: string;
+        displayName: string;
+        /** Format: uuid */
+        familyId: string | null;
+      };
+      session: {
+        csrfToken: string;
+        /** Format: date-time */
+        expiresAt: string;
+      };
+    };
+    RegisterAccountRequest: {
+      username: string;
+      password: string;
+      displayName: string;
+      email?: string;
+      ageConfirmed: boolean;
+      legalAcceptance: {
+        /** Format: uuid */
+        termsVersionId: string;
+        /** Format: uuid */
+        privacyVersionId: string;
+      };
+      invitationToken?: string;
     };
     MeContextResponse: {
       account: {

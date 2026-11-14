@@ -70,6 +70,106 @@
           "error"
         ]
       },
+      "RegisterAccountResponse": {
+        "type": "object",
+        "properties": {
+          "account": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "username": {
+                "type": "string"
+              },
+              "displayName": {
+                "type": "string"
+              },
+              "familyId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "id",
+              "username",
+              "displayName",
+              "familyId"
+            ]
+          },
+          "session": {
+            "type": "object",
+            "properties": {
+              "csrfToken": {
+                "type": "string"
+              },
+              "expiresAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "csrfToken",
+              "expiresAt"
+            ]
+          }
+        },
+        "required": [
+          "account",
+          "session"
+        ]
+      },
+      "RegisterAccountRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "ageConfirmed": {
+            "type": "boolean"
+          },
+          "legalAcceptance": {
+            "type": "object",
+            "properties": {
+              "termsVersionId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "privacyVersionId": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "termsVersionId",
+              "privacyVersionId"
+            ]
+          },
+          "invitationToken": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password",
+          "displayName",
+          "ageConfirmed",
+          "legalAcceptance"
+        ]
+      },
       "MeContextResponse": {
         "type": "object",
         "properties": {
@@ -7509,6 +7609,77 @@
           },
           "403": {
             "description": "ERR_FORBIDDEN: thiếu hoặc sai X-CSRF-Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Tạo tài khoản local và phiên (SPEC-059)",
+        "description": "Không cần phiên. Bắt buộc application/json và Origin khớp chính xác origin APP_BASE_URL. Cookie angia_session HttpOnly, SameSite=Lax; phản hồi Cache-Control: no-store.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterAccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tài khoản và CSRF token; sessionId chỉ nằm trong cookie đã ký",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterAccountResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: thiếu/sai Origin hoặc không phải JSON; ERR_REGISTRATION_CLOSED: chưa mở đăng ký và không có lời mời hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_USERNAME_TAKEN; ERR_LEGAL_VERSION_OUTDATED kèm details.current = { termsVersionId, privacyVersionId }",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: body thiếu/sai kiểu hoặc quy tắc domain không hợp lệ (details.field)",
             "content": {
               "application/json": {
                 "schema": {

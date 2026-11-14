@@ -3,6 +3,15 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_REGISTRATION_CLOSED: {
+    status: 403,
+    message: 'Hiện chưa mở đăng ký. Bạn cần lời mời để tham gia.',
+  },
+  ERR_LEGAL_VERSION_OUTDATED: {
+    status: 409,
+    message: 'Điều khoản vừa được cập nhật, vui lòng đọc lại.',
+  },
+  ERR_USERNAME_TAKEN: { status: 409, message: 'Tên đăng nhập này đã có người dùng.' },
   ERR_PAIN_ISSUE_EXISTS: {
     status: 409,
     message: 'Vùng này đang có một vấn đề đau đang theo dõi. Hãy ghi thêm vào vấn đề đó.',

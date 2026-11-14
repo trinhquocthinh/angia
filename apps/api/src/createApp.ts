@@ -1,3 +1,5 @@
+import type { RegisterLocalAccountDeps } from '@src/features/account/application/ports.js';
+import { registerAccountRoutes } from '@src/features/account/presentation/registerAccountRoutes.js';
 import { registerHealthDataCacheHeaders } from '@src/registerHealthDataCacheHeaders.js';
 import type { PainJournalDependencies } from '@src/features/painJournal/presentation/painJournalDependencies.js';
 import { registerPainJournalRoutes } from '@src/features/painJournal/presentation/painJournalRoutes.js';
@@ -81,6 +83,7 @@ export type AppDependencies = {
   redactionSuggestions?: RedactionSuggestionDependencies;
   healthProbes: HealthProbes;
   auth: AuthRouteDeps;
+  account: RegisterLocalAccountDeps & { appBaseUrl: string };
   familyAdmin: FamilyAdminRepository;
   aiBudget: AiBudgetDependencies;
   aiRouting: AiRoutingDependencies;
@@ -118,6 +121,7 @@ export type AppDependencies = {
 const PUBLIC_PATHS = [
   '/api/health',
   '/api/auth/login',
+  '/api/auth/register',
   '/api/auth/callback',
   '/api/consent-invitations/view',
   '/api/consent-invitations/respond',
@@ -148,6 +152,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   app.use('/api/*', except(PUBLIC_PATHS, requireSession()), limitRequestBody());
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth);
+  registerAccountRoutes(app, { ...deps.account, cookies });
   registerMeRoute(app, { redactionSuggestions: Boolean(deps.redactionSuggestions) });
   if (deps.push)
     registerPushRoutes(app, deps.push, { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies });
