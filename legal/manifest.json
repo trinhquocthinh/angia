@@ -1,0 +1,16 @@
+[
+  {
+    "kind": "terms",
+    "version": "0.0-draft",
+    "publishedAt": "2026-11-14T00:00:00.000Z",
+    "material": true,
+    "file": "legal/terms.md"
+  },
+  {
+    "kind": "privacy",
+    "version": "0.0-draft",
+    "publishedAt": "2026-11-14T00:00:00.000Z",
+    "material": true,
+    "file": "legal/privacy.md"
+  }
+]

@@ -1,3 +1,4 @@
+import { seedLegalAcceptance } from '@src/shared/test/seedLegalAcceptance.js';
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { startRegistrationTestApp } from '@src/shared/test/startRegistrationTestApp.js';
@@ -28,6 +29,7 @@ describe('Đổi mật khẩu qua HTTP và PostgreSQL', () => {
       accountId,
       await t.account.hasher.hash(oldPassword),
     ]);
+    await seedLegalAcceptance(t.owner, accountId);
     device = await seedSession(t.owner, accountId);
   });
   const me = (cookie = device.cookie) => t.app.request('/api/me', { headers: { cookie } });

@@ -1,3 +1,4 @@
+import { seedLegalAcceptance } from './seedLegalAcceptance.js';
 import { randomUUID } from 'node:crypto';
 import { serializeSigned } from 'hono/utils/cookie';
 import type pg from 'pg';
@@ -12,6 +13,7 @@ export interface SeededSession {
 }
 
 interface AccountFields {
+  legalAccepted?: boolean;
   familyId?: string;
   familyRole?: 'main' | 'member';
   admin?: boolean;
@@ -33,6 +35,7 @@ export async function seedAccount(owner: pg.Client, fields: AccountFields = {}):
       fields.admin ?? false,
     ],
   );
+  if (fields.legalAccepted !== false) await seedLegalAcceptance(owner, id);
   return id;
 }
 

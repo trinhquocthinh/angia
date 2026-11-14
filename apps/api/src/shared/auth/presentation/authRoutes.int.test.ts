@@ -1,3 +1,4 @@
+import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
 import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
 import { createStubReviewDeps } from '@src/shared/test/createStubReviewDeps.js';
 import { createStubDocumentDeps } from '@src/shared/test/createStubDocumentDeps.js';
@@ -63,6 +64,7 @@ describe('GET /api/auth/login + /api/auth/callback', () => {
       profileLinks: createStubProfileLinkDeps(),
       documents: createStubDocumentDeps(),
       ...createStubReviewDeps(),
+      legal: createLegalRepository(database),
       healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
       auth: {
         login: {

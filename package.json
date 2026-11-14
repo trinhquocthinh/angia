@@ -41,6 +41,7 @@
     "perf:budget": "tsx scripts/perf/checkBundleBudget.ts",
     "model:optimize": "tsx scripts/model/modelOptimize.ts",
     "model:check": "tsx scripts/model/modelCheck.ts",
+    "ops:legal-seed": "tsx --env-file-if-exists=.env scripts/ops/seedLegalDocuments.ts",
     "ops:ocr-latency": "tsx --env-file-if-exists=.env scripts/ops/measureOcrLatency.ts",
     "ops:reminder-audit": "tsx --env-file-if-exists=.env scripts/ops/auditReminders.ts",
     "postinstall": "husky",

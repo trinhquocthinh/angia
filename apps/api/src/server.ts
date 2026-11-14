@@ -1,3 +1,4 @@
+import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
 import { createLocalCredentialEnrollments } from '@src/features/account/infrastructure/createLocalCredentialEnrollments.js';
 import { createLocalPasswordChanges } from '@src/features/account/infrastructure/createLocalPasswordChanges.js';
 import { createLocalLoginSessions } from '@src/features/account/infrastructure/createLocalLoginSessions.js';
@@ -121,6 +122,7 @@ const sessionRepository = createSessionRepository(db);
 const hasher = createArgon2PasswordHasher();
 const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
 const app = createApp({
+  legal: createLegalRepository(db),
   account: {
     clientIp: getSocketClientIp,
     rateLimit: {

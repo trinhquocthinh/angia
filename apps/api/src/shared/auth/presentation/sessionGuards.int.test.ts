@@ -1,3 +1,4 @@
+import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
 import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.js';
 import { createStubReviewDeps } from '@src/shared/test/createStubReviewDeps.js';
 import { createStubDocumentDeps } from '@src/shared/test/createStubDocumentDeps.js';
@@ -59,6 +60,7 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
       profileLinks: createStubProfileLinkDeps(),
       documents: createStubDocumentDeps(),
       ...createStubReviewDeps(),
+      legal: createLegalRepository(createDatabase(pool)),
       healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
       auth: {
         ...stub,

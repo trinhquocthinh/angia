@@ -1,3 +1,4 @@
+import { seedLegalAcceptance } from '@src/shared/test/seedLegalAcceptance.js';
 import { passwordLoginResponseSchema } from '@angia/contracts';
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -16,6 +17,7 @@ describe('POST /api/auth/password-login (SPEC-060)', () => {
       "INSERT INTO accounts(id,username_normalized,display_name) VALUES($1,'me.lan','Mẹ Lan')",
       [accountId],
     );
+    await seedLegalAcceptance(t.owner, accountId);
     await t.owner.query('INSERT INTO account_credentials(account_id,password_hash) VALUES($1,$2)', [
       accountId,
       await t.account.hasher.hash(password),

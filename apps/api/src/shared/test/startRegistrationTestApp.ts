@@ -1,3 +1,5 @@
+import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
+import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
 import { createLocalCredentialEnrollments } from '@src/features/account/infrastructure/createLocalCredentialEnrollments.js';
 import { createLocalPasswordChanges } from '@src/features/account/infrastructure/createLocalPasswordChanges.js';
 import { createLocalLoginSessions } from '@src/features/account/infrastructure/createLocalLoginSessions.js';
@@ -62,6 +64,8 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
   };
   const app = createApp({
     ...createStubReviewDeps(),
+    legal: createLegalRepository(db),
+    medications: createMedicationRepository(db),
     profileLinks: createStubProfileLinkDeps(),
     documents: createStubDocumentDeps(),
     profiles: createStubProfileDeps(),

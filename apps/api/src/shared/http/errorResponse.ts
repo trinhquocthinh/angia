@@ -3,6 +3,10 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_LEGAL_ACCEPTANCE_REQUIRED: {
+    status: 403,
+    message: 'Vui lòng đọc và đồng ý Điều khoản mới để tiếp tục.',
+  },
   ERR_CREDENTIAL_ALREADY_SET: { status: 409, message: 'Bạn đã thiết lập mật khẩu. Vui lòng đăng nhập.' },
   ERR_PASSWORD_CHANGE_REQUIRED: { status: 403, message: 'Bạn cần đặt mật khẩu mới trước khi tiếp tục.' },
   ERR_INVALID_CREDENTIALS: { status: 401, message: 'Tên đăng nhập hoặc mật khẩu chưa đúng.' },

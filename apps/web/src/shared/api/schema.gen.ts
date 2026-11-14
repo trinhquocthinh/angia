@@ -4,6 +4,171 @@
  */
 
 export interface paths {
+  '/api/legal/current': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Văn bản pháp lý hiện hành (SPEC-061) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Hai văn bản đã phát hành mới nhất */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              terms: {
+                /** Format: uuid */
+                id: string;
+                /** @enum {string} */
+                kind: 'terms' | 'privacy';
+                version: string;
+                /** Format: date-time */
+                publishedAt: string;
+                material: boolean;
+                url: string;
+              };
+              privacy: {
+                /** Format: uuid */
+                id: string;
+                /** @enum {string} */
+                kind: 'terms' | 'privacy';
+                version: string;
+                /** Format: date-time */
+                publishedAt: string;
+                material: boolean;
+                url: string;
+              };
+            };
+          };
+        };
+        /** @description ERR_INTERNAL: chưa có đủ văn bản */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/me/legal-acceptances': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Đồng ý văn bản hiện hành (SPEC-061)
+     * @description Cần phiên và X-CSRF-Token. Cache-Control: no-store. Chỉ ghi đồng ý của chính tài khoản phiên.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            versionIds: string[];
+          };
+        };
+      };
+      responses: {
+        /** @description Đã ghi nhận đồng ý, không sửa lịch sử */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN; ERR_PASSWORD_CHANGE_REQUIRED */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_LEGAL_VERSION_OUTDATED kèm details.current như đăng ký */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_INTERNAL */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/health': {
     parameters: {
       query?: never;
@@ -10264,14 +10429,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
-    HealthResponse: {
-      /** @enum {string} */
-      status: 'ok' | 'degraded';
-      /** @enum {string} */
-      db: 'ok' | 'down';
-      /** @enum {string} */
-      storage: 'ok' | 'down';
-    };
     ErrorResponse: {
       error: {
         code: string;
@@ -10280,6 +10437,14 @@ export interface components {
           [key: string]: unknown;
         };
       };
+    };
+    HealthResponse: {
+      /** @enum {string} */
+      status: 'ok' | 'degraded';
+      /** @enum {string} */
+      db: 'ok' | 'down';
+      /** @enum {string} */
+      storage: 'ok' | 'down';
     };
     PasswordLoginResponse: {
       session: {
