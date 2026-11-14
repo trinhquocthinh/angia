@@ -1,5 +1,7 @@
 import type { SessionRepository } from '@src/shared/auth/application/ports.js';
-import type { PasswordHasher } from '@src/shared/identity/application/ports.js';
+import type { IdentityProvider, PasswordHasher } from '@src/shared/identity/application/ports.js';
+
+import type { RateLimitDependencies } from '@src/shared/rateLimit/application/ports.js';
 
 export type { PasswordHasher, SessionRepository };
 
@@ -73,3 +75,27 @@ export type RegisterLocalAccountOutcome =
   | { ok: false; code: 'ERR_REGISTRATION_CLOSED' }
   | { ok: false; code: 'ERR_LEGAL_VERSION_OUTDATED'; details: { current: CurrentLegalVersions } }
   | { ok: false; code: 'ERR_USERNAME_TAKEN' };
+
+export interface LocalLoginSessions {
+  createIfCurrent(input: {
+    accountId: string;
+    expectedCredentialVersion: number;
+    csrfToken: string;
+    expiresAt: Date;
+    passwordChangeRequired: boolean;
+  }): Promise<{ ok: true; sessionId: string } | { ok: false; reason: 'gone' | 'locked' | 'stale' }>;
+}
+
+export interface LoginLocalAccountDeps {
+  identity: IdentityProvider;
+  localLoginSessions: LocalLoginSessions;
+  rateLimit: RateLimitDependencies;
+  generateToken(): string;
+  now(): Date;
+}
+
+export type LoginLocalAccountOutcome =
+  | { ok: true; session: LocalAccountSession & { passwordChangeRequired: boolean } }
+  | { ok: false; code: 'ERR_INVALID_CREDENTIALS' | 'ERR_ACCOUNT_LOCKED' }
+  | { ok: false; code: 'ERR_AUTH_UNAVAILABLE'; reason: string }
+  | { ok: false; code: 'ERR_RATE_LIMITED'; retryAfterSeconds: number };

@@ -1,3 +1,6 @@
+import { createLocalLoginSessions } from '@src/features/account/infrastructure/createLocalLoginSessions.js';
+import { createLocalIdentityProvider } from '@src/shared/identity/infrastructure/createLocalIdentityProvider.js';
+import { createCredentialRepository } from '@src/shared/identity/infrastructure/createCredentialRepository.js';
 import { createRateLimitStore } from '@src/shared/rateLimit/infrastructure/createRateLimitStore.js';
 import { createRateLimitKeyHasher } from '@src/shared/rateLimit/infrastructure/createRateLimitKeyHasher.js';
 import { randomBytes, randomUUID } from 'node:crypto';
@@ -26,19 +29,13 @@ export async function startRegistrationTestApp() {
   await runMigrations(testDb.ownerUrl);
   const owner = new pg.Client({ connectionString: testDb.ownerUrl });
   await owner.connect();
-  const legalAcceptance = { termsVersionId: randomUUID(), privacyVersionId: randomUUID() };
-  await owner.query(
-    `INSERT INTO legal_document_versions
-       (id, kind, version, published_at, material, content_path, sha256)
-     VALUES
-       ($1, 'terms', '1.0.0', '2026-01-01', true, 'legal/terms.md', repeat('a', 64)),
-       ($2, 'privacy', '1.0.0', '2026-01-01', true, 'legal/privacy.md', repeat('b', 64))`,
-    [legalAcceptance.termsVersionId, legalAcceptance.privacyVersionId],
-  );
+  const legalAcceptance = await seedLegalVersions(owner);
   const pool = new pg.Pool({ connectionString: testDb.appUrl });
   const db = createDatabase(pool);
   const sessions = createSessionRepository(db);
   const stub = createStubAuthDeps();
+  const hasher = createArgon2PasswordHasher();
+  const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
   const account: AppDependencies['account'] = {
     clientIp: (c) => c.req.header('x-test-ip') ?? 'test',
     rateLimit: {
@@ -50,7 +47,9 @@ export async function startRegistrationTestApp() {
     gate: createRegistrationGate(db),
     legalVersions: createLegalVersions(db, () => new Date()),
     invitationVerifier: createInvitationVerifier(),
-    hasher: createArgon2PasswordHasher(),
+    hasher,
+    identity,
+    localLoginSessions: createLocalLoginSessions(db),
     accounts: createAccountRegistrationUnitOfWork(db),
     sessions,
     generateToken: () => randomBytes(32).toString('base64url'),
@@ -79,4 +78,17 @@ export async function startRegistrationTestApp() {
       await testDb.container.stop();
     },
   };
+}
+
+async function seedLegalVersions(owner: pg.Client) {
+  const legalAcceptance = { termsVersionId: randomUUID(), privacyVersionId: randomUUID() };
+  await owner.query(
+    `INSERT INTO legal_document_versions
+       (id, kind, version, published_at, material, content_path, sha256)
+     VALUES
+       ($1, 'terms', '1.0.0', '2026-01-01', true, 'legal/terms.md', repeat('a', 64)),
+       ($2, 'privacy', '1.0.0', '2026-01-01', true, 'legal/privacy.md', repeat('b', 64))`,
+    [legalAcceptance.termsVersionId, legalAcceptance.privacyVersionId],
+  );
+  return legalAcceptance;
 }

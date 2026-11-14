@@ -70,6 +70,53 @@
           "error"
         ]
       },
+      "PasswordLoginResponse": {
+        "type": "object",
+        "properties": {
+          "session": {
+            "type": "object",
+            "properties": {
+              "csrfToken": {
+                "type": "string"
+              },
+              "expiresAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "passwordChangeRequired": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "csrfToken",
+              "expiresAt",
+              "passwordChangeRequired"
+            ]
+          }
+        },
+        "required": [
+          "session"
+        ]
+      },
+      "PasswordLoginRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
       "RegisterAccountResponse": {
         "type": "object",
         "properties": {
@@ -7609,6 +7656,106 @@
           },
           "403": {
             "description": "ERR_FORBIDDEN: thiếu hoặc sai X-CSRF-Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/password-login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Đăng nhập local và cấp phiên (SPEC-060)",
+        "description": "Không cần phiên. Origin khớp chính xác APP_BASE_URL, application/json. Cache-Control: no-store; cookie angia_session đã ký, HttpOnly, SameSite=Lax.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordLoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "CSRF, hạn phiên 30 ngày và cờ bắt đổi mật khẩu; không trả sessionId",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasswordLoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_INVALID_CREDENTIALS: sai/thiếu credential, mật khẩu tạm hết hạn hoặc snapshot không còn hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: Origin/JSON sai; ERR_ACCOUNT_LOCKED: tài khoản đã bị khoá",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: username/password thiếu, rỗng hoặc quá giới hạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_RATE_LIMITED: 10 lần sai/15 phút theo IP và username chữ thường",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "description": "Số giây tới hết cửa sổ"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: DB/hash/rate limiter lỗi, timeout hoặc hash bận; không cấp phiên",
             "content": {
               "application/json": {
                 "schema": {

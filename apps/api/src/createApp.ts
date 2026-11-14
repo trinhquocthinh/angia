@@ -1,6 +1,9 @@
 import type { RateLimitDependencies } from '@src/shared/rateLimit/application/ports.js';
 import type { ClientIpResolver } from '@src/shared/rateLimit/application/ClientIpResolver.js';
-import type { RegisterLocalAccountDeps } from '@src/features/account/application/ports.js';
+import type {
+  LoginLocalAccountDeps,
+  RegisterLocalAccountDeps,
+} from '@src/features/account/application/ports.js';
 import { registerAccountRoutes } from '@src/features/account/presentation/registerAccountRoutes.js';
 import { registerHealthDataCacheHeaders } from '@src/registerHealthDataCacheHeaders.js';
 import type { PainJournalDependencies } from '@src/features/painJournal/presentation/painJournalDependencies.js';
@@ -85,11 +88,12 @@ export type AppDependencies = {
   redactionSuggestions?: RedactionSuggestionDependencies;
   healthProbes: HealthProbes;
   auth: AuthRouteDeps;
-  account: RegisterLocalAccountDeps & {
-    appBaseUrl: string;
-    rateLimit: RateLimitDependencies;
-    clientIp: ClientIpResolver;
-  };
+  account: RegisterLocalAccountDeps &
+    LoginLocalAccountDeps & {
+      appBaseUrl: string;
+      rateLimit: RateLimitDependencies;
+      clientIp: ClientIpResolver;
+    };
   familyAdmin: FamilyAdminRepository;
   aiBudget: AiBudgetDependencies;
   aiRouting: AiRoutingDependencies;
@@ -128,6 +132,7 @@ const PUBLIC_PATHS = [
   '/api/health',
   '/api/auth/login',
   '/api/auth/register',
+  '/api/auth/password-login',
   '/api/auth/callback',
   '/api/consent-invitations/view',
   '/api/consent-invitations/respond',
@@ -158,7 +163,7 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   app.use('/api/*', except(PUBLIC_PATHS, requireSession()), limitRequestBody());
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth);
-  registerAccountRoutes(app, { ...deps.account, cookies });
+  registerAccountRoutes(app, { ...deps.account, cookies, logger: deps.auth.logger });
   registerMeRoute(app, { redactionSuggestions: Boolean(deps.redactionSuggestions) });
   if (deps.push)
     registerPushRoutes(app, deps.push, { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies });

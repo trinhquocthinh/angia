@@ -132,6 +132,7 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'GET /api/auth/callback',
   'POST /api/auth/logout',
   'POST /api/auth/register',
+  'POST /api/auth/password-login',
   'GET /api/me',
   'GET /api/me/push-config',
   'PUT /api/me/push-subscription',

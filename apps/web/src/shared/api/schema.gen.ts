@@ -169,6 +169,105 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/auth/password-login': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Đăng nhập local và cấp phiên (SPEC-060)
+     * @description Không cần phiên. Origin khớp chính xác APP_BASE_URL, application/json. Cache-Control: no-store; cookie angia_session đã ký, HttpOnly, SameSite=Lax.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['PasswordLoginRequest'];
+        };
+      };
+      responses: {
+        /** @description CSRF, hạn phiên 30 ngày và cờ bắt đổi mật khẩu; không trả sessionId */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['PasswordLoginResponse'];
+          };
+        };
+        /** @description ERR_INVALID_CREDENTIALS: sai/thiếu credential, mật khẩu tạm hết hạn hoặc snapshot không còn hợp lệ */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: Origin/JSON sai; ERR_ACCOUNT_LOCKED: tài khoản đã bị khoá */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: username/password thiếu, rỗng hoặc quá giới hạn */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_RATE_LIMITED: 10 lần sai/15 phút theo IP và username chữ thường */
+        429: {
+          headers: {
+            /** @description Số giây tới hết cửa sổ */
+            'Retry-After'?: number;
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE: DB/hash/rate limiter lỗi, timeout hoặc hash bận; không cấp phiên */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/auth/register': {
     parameters: {
       query?: never;
@@ -9981,6 +10080,18 @@ export interface components {
           [key: string]: unknown;
         };
       };
+    };
+    PasswordLoginResponse: {
+      session: {
+        csrfToken: string;
+        /** Format: date-time */
+        expiresAt: string;
+        passwordChangeRequired: boolean;
+      };
+    };
+    PasswordLoginRequest: {
+      username: string;
+      password: string;
     };
     RegisterAccountResponse: {
       account: {

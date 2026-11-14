@@ -3,6 +3,8 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_INVALID_CREDENTIALS: { status: 401, message: 'Tên đăng nhập hoặc mật khẩu chưa đúng.' },
+  ERR_ACCOUNT_LOCKED: { status: 403, message: 'Tài khoản đang bị khoá. Liên hệ quản trị.' },
   ERR_REGISTRATION_CLOSED: {
     status: 403,
     message: 'Hiện chưa mở đăng ký. Bạn cần lời mời để tham gia.',

@@ -1,3 +1,6 @@
+import { createLocalLoginSessions } from '@src/features/account/infrastructure/createLocalLoginSessions.js';
+import { createLocalIdentityProvider } from '@src/shared/identity/infrastructure/createLocalIdentityProvider.js';
+import { createCredentialRepository } from '@src/shared/identity/infrastructure/createCredentialRepository.js';
 import { getSocketClientIp } from '@src/shared/rateLimit/infrastructure/getSocketClientIp.js';
 import { createRateLimitStore } from '@src/shared/rateLimit/infrastructure/createRateLimitStore.js';
 import { createRateLimitKeyHasher } from '@src/shared/rateLimit/infrastructure/createRateLimitKeyHasher.js';
@@ -113,6 +116,8 @@ const scanQuotaDefaults = {
   initialCostPerScanUsd: config.SCAN_QUOTA_INITIAL_COST_PER_SCAN_USD,
 };
 const sessionRepository = createSessionRepository(db);
+const hasher = createArgon2PasswordHasher();
+const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
 const app = createApp({
   account: {
     clientIp: getSocketClientIp,
@@ -125,7 +130,9 @@ const app = createApp({
     gate: createRegistrationGate(db),
     legalVersions: createLegalVersions(db, () => new Date()),
     invitationVerifier: createInvitationVerifier(),
-    hasher: createArgon2PasswordHasher(),
+    hasher,
+    identity,
+    localLoginSessions: createLocalLoginSessions(db),
     sessions: sessionRepository,
     generateToken: () => randomBytes(32).toString('base64url'),
     now: () => new Date(),

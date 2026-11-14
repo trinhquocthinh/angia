@@ -1,4 +1,5 @@
 import { PasswordHashBusyError } from '@src/shared/identity/application/PasswordHashBusyError.js';
+import { createStubAccountDeps } from '@src/shared/test/createStubAccountDeps.js';
 import { randomUUID } from 'node:crypto';
 import { describe, expect, it, vi } from 'vitest';
 import { createApp } from '@src/createApp.js';
@@ -22,6 +23,7 @@ const input = {
 function fixture() {
   const auth = createStubAuthDeps();
   const account = {
+    ...createStubAccountDeps(),
     appBaseUrl: 'https://angia.example/app',
     clientIp: () => 'test-ip',
     rateLimit: {
