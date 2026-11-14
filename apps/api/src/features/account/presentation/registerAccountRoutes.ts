@@ -9,13 +9,19 @@ import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { errorJson, errorResponse } from '@src/shared/http/errorResponse.js';
 import type { CookieSettings } from '@src/shared/auth/presentation/pendingLoginCookie.js';
 import { writeSessionCookie } from '@src/shared/auth/presentation/sessionCookie.js';
+import { registerChangePasswordRoute } from './registerChangePasswordRoute.js';
 import { loginLocalAccount } from '../application/loginLocalAccount.js';
 import { registerLocalAccount } from '../application/registerLocalAccount.js';
-import type { LoginLocalAccountDeps, RegisterLocalAccountDeps } from '../application/ports.js';
+import type {
+  ChangeLocalPasswordDeps,
+  LoginLocalAccountDeps,
+  RegisterLocalAccountDeps,
+} from '../application/ports.js';
 import { passwordLoginRoute, registerAccountRoute } from './registerAccountRouteDefinitions.js';
 
 type AccountRouteDeps = RegisterLocalAccountDeps &
-  LoginLocalAccountDeps & {
+  LoginLocalAccountDeps &
+  ChangeLocalPasswordDeps & {
     appBaseUrl: string;
     cookies: CookieSettings;
     rateLimit: RateLimitDependencies;
@@ -25,6 +31,7 @@ type AccountRouteDeps = RegisterLocalAccountDeps &
 
 export function registerAccountRoutes(app: OpenAPIHono<AppEnv>, deps: AccountRouteDeps): void {
   registerPasswordLogin(app, deps);
+  registerChangePasswordRoute(app, deps);
   requireTrustedJson(app, registerAccountRoute.path, deps.appBaseUrl);
   app.use(
     registerAccountRoute.path,

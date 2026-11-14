@@ -9,6 +9,7 @@ function sessionExpiringAt(expiresAt: Date): SessionContext {
   return {
     sessionId: 'session-1',
     authMethod: 'oidc',
+    passwordChangeRequired: false,
     csrfToken: 'csrf-1',
     expiresAt,
     account: { id: 'account-1', displayName: 'Thịnh', isSystemAdmin: false, healthProfileId: null },

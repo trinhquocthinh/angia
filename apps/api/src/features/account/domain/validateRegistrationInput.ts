@@ -1,3 +1,4 @@
+import { validateNewPassword } from './validateNewPassword.js';
 import type { RegistrationInput, RegistrationValidationOutcome } from './RegistrationInput.js';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -13,7 +14,7 @@ export function validateRegistrationInput(input: RegistrationInput): Registratio
     return { ok: false, code: 'ERR_VALIDATION', details: { field: 'username' } };
   }
   const password = input.password ?? '';
-  if (password.length < 8 || password.toLowerCase() === usernameNormalized) {
+  if (!validateNewPassword(password, usernameNormalized)) {
     return { ok: false, code: 'ERR_VALIDATION', details: { field: 'password' } };
   }
   const displayName = input.displayName?.trim() ?? '';

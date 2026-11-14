@@ -19,6 +19,7 @@ export function createStubAccountDeps(): AppDependencies['account'] {
     hasher: { hash: notConfigured, verify: notConfigured, needsRehash: () => false },
     accounts: { isUsernameTaken: notConfigured, register: notConfigured },
     identity: { verifyPassword: notConfigured },
+    passwords: { findCredential: notConfigured, replaceIfCurrent: notConfigured },
     localLoginSessions: { createIfCurrent: notConfigured },
     sessions: login.sessions,
     generateToken: login.generateToken,

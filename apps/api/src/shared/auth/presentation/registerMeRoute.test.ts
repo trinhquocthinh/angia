@@ -6,6 +6,7 @@ import { registerMeRoute } from './registerMeRoute.js';
 
 const session: SessionContext = {
   authMethod: 'oidc',
+  passwordChangeRequired: false,
   sessionId: 's1',
   csrfToken: 'csrf',
   expiresAt: new Date('2026-12-01T00:00:00Z'),

@@ -1,6 +1,4 @@
-export * from './auth/passwordLoginSchemas.js';
-export * from './auth/registerAccountSchemas.js';
-export { meContextResponseSchema, type MeContextResponse } from './auth/meContextResponseSchema.js';
+export * from './auth/index.js';
 export { errorResponseSchema, type ErrorResponse } from './errors/errorResponseSchema.js';
 export {
   accountSchema,

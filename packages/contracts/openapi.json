@@ -117,6 +117,24 @@
           "password"
         ]
       },
+      "ChangePasswordRequest": {
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "newPassword"
+        ]
+      },
       "RegisterAccountResponse": {
         "type": "object",
         "properties": {
@@ -7756,6 +7774,98 @@
           },
           "503": {
             "description": "ERR_AUTH_UNAVAILABLE: DB/hash/rate limiter lỗi, timeout hoặc hash bận; không cấp phiên",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/password": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Đổi mật khẩu local và thu hồi phiên khác (SPEC-060)",
+        "description": "Cần phiên và X-CSRF-Token. Cache-Control: no-store. Giữ nguyên cookie, CSRF và hạn phiên hiện tại.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Đã đổi mật khẩu; phiên hiện tại trở về bình thường"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED; ERR_INVALID_CREDENTIALS: mật khẩu cũ sai, không có local credential hoặc version đã đổi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: CSRF sai; ERR_ACCOUNT_LOCKED: tài khoản đã bị khoá",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: body hoặc mật khẩu không hợp lệ, details.field",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_RATE_LIMITED: quá nhiều lần sai",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: DB/rate limiter/hash lỗi hoặc hash bận",
             "content": {
               "application/json": {
                 "schema": {

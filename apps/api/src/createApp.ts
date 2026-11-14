@@ -1,6 +1,7 @@
 import type { RateLimitDependencies } from '@src/shared/rateLimit/application/ports.js';
 import type { ClientIpResolver } from '@src/shared/rateLimit/application/ClientIpResolver.js';
 import type {
+  ChangeLocalPasswordDeps,
   LoginLocalAccountDeps,
   RegisterLocalAccountDeps,
 } from '@src/features/account/application/ports.js';
@@ -73,6 +74,7 @@ import { registerHealthRoute } from '@src/features/health/presentation/registerH
 import { loadSession } from '@src/shared/auth/presentation/loadSession.js';
 import { type AuthRouteDeps, registerAuthRoutes } from '@src/shared/auth/presentation/registerAuthRoutes.js';
 import { registerMeRoute } from '@src/shared/auth/presentation/registerMeRoute.js';
+import { requirePasswordChanged } from '@src/shared/auth/presentation/requirePasswordChanged.js';
 import { requireSession } from '@src/shared/auth/presentation/requireSession.js';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { createSlidingWindowLimiter } from '@src/shared/http/createSlidingWindowLimiter.js';
@@ -89,7 +91,8 @@ export type AppDependencies = {
   healthProbes: HealthProbes;
   auth: AuthRouteDeps;
   account: RegisterLocalAccountDeps &
-    LoginLocalAccountDeps & {
+    LoginLocalAccountDeps &
+    ChangeLocalPasswordDeps & {
       appBaseUrl: string;
       rateLimit: RateLimitDependencies;
       clientIp: ClientIpResolver;
@@ -160,7 +163,8 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
       loadSession(deps.auth.login, cookies),
     ),
   );
-  app.use('/api/*', except(PUBLIC_PATHS, requireSession()), limitRequestBody());
+  app.use('/api/*', except(PUBLIC_PATHS, requireSession()));
+  app.use('/api/*', except(PUBLIC_PATHS, requirePasswordChanged()), limitRequestBody());
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth);
   registerAccountRoutes(app, { ...deps.account, cookies, logger: deps.auth.logger });

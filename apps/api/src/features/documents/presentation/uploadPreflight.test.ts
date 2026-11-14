@@ -20,6 +20,7 @@ const profiles = [
 ];
 const session: SessionContext = {
   authMethod: 'oidc',
+  passwordChangeRequired: false,
   sessionId: 'session-a',
   csrfToken: 'csrf',
   expiresAt: new Date('2030-01-01'),

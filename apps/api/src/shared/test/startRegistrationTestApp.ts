@@ -1,3 +1,4 @@
+import { createLocalPasswordChanges } from '@src/features/account/infrastructure/createLocalPasswordChanges.js';
 import { createLocalLoginSessions } from '@src/features/account/infrastructure/createLocalLoginSessions.js';
 import { createLocalIdentityProvider } from '@src/shared/identity/infrastructure/createLocalIdentityProvider.js';
 import { createCredentialRepository } from '@src/shared/identity/infrastructure/createCredentialRepository.js';
@@ -50,6 +51,7 @@ export async function startRegistrationTestApp() {
     hasher,
     identity,
     localLoginSessions: createLocalLoginSessions(db),
+    passwords: createLocalPasswordChanges(db),
     accounts: createAccountRegistrationUnitOfWork(db),
     sessions,
     generateToken: () => randomBytes(32).toString('base64url'),

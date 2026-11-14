@@ -99,3 +99,34 @@ export type LoginLocalAccountOutcome =
   | { ok: false; code: 'ERR_INVALID_CREDENTIALS' | 'ERR_ACCOUNT_LOCKED' }
   | { ok: false; code: 'ERR_AUTH_UNAVAILABLE'; reason: string }
   | { ok: false; code: 'ERR_RATE_LIMITED'; retryAfterSeconds: number };
+
+export interface LocalPasswordCredential {
+  usernameNormalized: string;
+  passwordHash: string;
+  credentialVersion: number;
+}
+
+export interface LocalPasswordChanges {
+  findCredential(accountId: string): Promise<LocalPasswordCredential | null>;
+  replaceIfCurrent(input: {
+    accountId: string;
+    sessionId: string;
+    expectedCredentialVersion: number;
+    passwordHash: string;
+    now: Date;
+  }): Promise<{ ok: true } | { ok: false; reason: 'gone' | 'locked' | 'stale' }>;
+}
+
+export interface ChangeLocalPasswordDeps {
+  passwords: LocalPasswordChanges;
+  hasher: PasswordHasher;
+  rateLimit: RateLimitDependencies;
+  now(): Date;
+}
+
+export type ChangeLocalPasswordOutcome =
+  | { ok: true }
+  | { ok: false; code: 'ERR_INVALID_CREDENTIALS' | 'ERR_ACCOUNT_LOCKED' }
+  | { ok: false; code: 'ERR_VALIDATION'; details: { field: string } }
+  | { ok: false; code: 'ERR_RATE_LIMITED'; retryAfterSeconds: number }
+  | { ok: false; code: 'ERR_AUTH_UNAVAILABLE'; reason: string };
