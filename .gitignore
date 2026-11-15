@@ -45,3 +45,6 @@ fixtures/heic/*
 
 # Lighthouse CI: báo cáo và dữ liệu thu thập cục bộ
 .lighthouseci/
+
+# Mapping danh tính riêng tư do owner duyệt — không commit
+ops-private/
