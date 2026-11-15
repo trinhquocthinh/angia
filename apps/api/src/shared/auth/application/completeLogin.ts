@@ -14,6 +14,9 @@ export async function completeLogin(
   pending: PendingLogin,
 ): Promise<CompletedLogin> {
   const claims = await deps.oidc.exchangeCode(callbackParams, pending);
+  if (pending.maxAge === 0 && !claims.authTime) {
+    throw new Error('Reauth OIDC thiếu auth_time');
+  }
   const account = await deps.accounts.upsertFromIdentity({
     oidcSubject: claims.subject,
     displayName: resolveDisplayName(claims),
@@ -24,6 +27,7 @@ export async function completeLogin(
     accountId: account.id,
     csrfToken: deps.generateToken(),
     expiresAt,
+    oidcAuthTime: pending.maxAge === 0 ? (claims.authTime ?? null) : null,
   });
   return { sessionId: session.id, expiresAt };
 }

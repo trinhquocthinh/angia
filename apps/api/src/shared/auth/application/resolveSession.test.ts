@@ -8,6 +8,9 @@ const NOW = new Date('2026-10-05T03:00:00.000Z');
 function sessionExpiringAt(expiresAt: Date): SessionContext {
   return {
     sessionId: 'session-1',
+    authMethod: 'oidc',
+    oidcAuthTime: null,
+    passwordChangeRequired: false,
     csrfToken: 'csrf-1',
     expiresAt,
     account: { id: 'account-1', displayName: 'Thịnh', isSystemAdmin: false, healthProfileId: null },

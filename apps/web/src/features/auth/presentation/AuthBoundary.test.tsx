@@ -11,7 +11,9 @@ const waiting: components['schemas']['MeContextResponse'] = {
   family: null,
   role: null,
   csrfToken: 'csrf',
-  features: { redactionSuggestions: false },
+  authMethod: 'local',
+  hasLocalCredential: true,
+  features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 
 const router = vi.hoisted(() => ({ pathname: '/', navigate: vi.fn() }));
@@ -104,5 +106,28 @@ describe('Quay lại lời nhắc sau đăng nhập (SPEC-035)', () => {
     router.pathname = reminderPath;
     expect(renderWithEffects(member)).toContain('Nội dung gia đình');
     expect(router.navigate).not.toHaveBeenCalled();
+  });
+});
+
+describe('Luồng tài khoản bắt buộc', () => {
+  it('TC-748: vẫn hiển thị trang đổi mật khẩu khi /api/me không trả ngữ cảnh', () => {
+    router.pathname = '/account/change-password';
+    expect(renderWithEffects(null)).toContain('Nội dung gia đình');
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+  it.each(['/account/legal-update', '/account/local-password'])('TC-755: %s yêu cầu đăng nhập', (path) => {
+    router.pathname = path;
+    renderWithEffects(null);
+    expect(router.navigate).toHaveBeenCalledWith({ to: '/login', replace: true });
+  });
+  it('TC-900: callback quay về trang chủ dẫn tới enrollment dù đã Để sau', () => {
+    stubSessionStorage({ 'angia.enrollLater': '1', 'angia.enrollReauth': String(Date.now()) });
+    renderWithEffects({
+      ...member,
+      authMethod: 'oidc',
+      hasLocalCredential: false,
+      features: { localEnrollmentEnabled: true, redactionSuggestions: false },
+    });
+    expect(router.navigate).toHaveBeenCalledWith({ to: '/account/local-password', replace: true });
   });
 });

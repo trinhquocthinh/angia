@@ -1,3 +1,5 @@
+import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
+import { createStubAccountDeps } from './createStubAccountDeps.js';
 import { createPainJournalDependencies } from '@src/features/painJournal/infrastructure/createPainJournalDependencies.js';
 import { createSelfProfileRepository } from '@src/features/selfProfile/infrastructure/createSelfProfileRepository.js';
 import { createTimelineRepository } from '@src/features/timeline/infrastructure/createTimelineRepository.js';
@@ -102,6 +104,8 @@ function buildApp(
   const quota = { ...TEST_QUOTA_POLICY, limits: { ...TEST_QUOTA_POLICY.limits, ...options.quota } };
   const stub = createStubAuthDeps();
   return createApp({
+    legal: createLegalRepository(database),
+    account: createStubAccountDeps(),
     ...(options.push ? { push: options.push(database) } : {}),
     ...(options.redactionSuggestions ? { redactionSuggestions: options.redactionSuggestions } : {}),
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },

@@ -6,7 +6,9 @@ export const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà' },
   role: 'main',
   csrfToken: 'csrf',
-  features: { redactionSuggestions: false },
+  authMethod: 'local',
+  hasLocalCredential: true,
+  features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 export const reminder: SelfReminder = {
   id: '00000000-0000-4000-8000-000000000001',

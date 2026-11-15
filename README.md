@@ -863,3 +863,126 @@ mọi trang đầu ≤200 KB; TC-729 không có Three.js/GLB trong gói ban đ�
 Kết quả này thay trạng thái budget đỏ ở checkpoint E25-S4-T1 phía trên.
 Dư địa chỉ khoảng 1,3 KB; vẫn cần cổng CI cho thay đổi sau. Chưa nghiệm thu
 SIT/Production, thiết bị thật, SPEC-081 hoặc TC-876 mọi route; chưa đóng Epic 25.
+
+### E26-S1-T1 — nền schema xác thực local — 2026-11-12
+
+Đã thêm migration `0040_local_identity_foundation` và schema cho
+`account_credentials`, thông tin account local, nguồn phiên/Push,
+`legal_document_versions`, `legal_acceptances`, `system_settings` và
+`rate_limit_buckets`. Giữ UUID, subject OIDC, gia đình và liên kết hồ sơ cũ;
+username cũ để NULL chờ mapping owner duyệt, không tự sinh credential.
+
+Owner đã duyệt `accounts.legal_ref` ngẫu nhiên, duy nhất; bản đồng ý lưu mã
+này từ đầu và không FK về account. Xoá account không sửa/xoá lịch sử đồng ý.
+Role app chỉ được INSERT/SELECT `legal_acceptances`; runtime vẫn NOBYPASSRLS.
+Phiên/Push cũ mang nguồn `oidc`, `oidc_auth_time` giữ NULL; luồng local sau
+này phải ghi nguồn rõ ràng. Chưa thay hành vi login, admin guard hoặc worker.
+
+Kiểm chứng trên source đã áp dụng: `yarn verify:fast` PASS (typecheck toàn
+workspace; `--changed` không chọn unit), 13/13 integration trong 3 tệp PASS,
+ESLint/Prettier phần thay đổi và `git diff --check` PASS. Test nâng cấp từ
+0039 có dữ liệu kiểm việc giữ account/gia đình/hồ sơ/phiên/Push, quyền app,
+bản đồng ý sau xoá account và chạy migration lặp lại.
+
+**Chưa chạy migration lên DB ứng dụng local/SIT; T1 chưa PASS theo DoD,
+E26 giữ 0/13 task đóng.** Chưa full `yarn verify`, push/PR/deploy hoặc cutover.
+Chỉ role owner chạy migration; chạy lại phải báo `No pending migrations`.
+Không cấp lại quyền UPDATE/DELETE/TRUNCATE cho `legal_acceptances` sau migrate.
+Chi tiết đặc tả và hồ sơ nghiệm thu lưu riêng trong bộ `Docs/angia`:
+`11-master-plan.md` và `acceptance/v1.0/epic26-acceptance.md`.
+
+### E26-S1-T2 — ràng buộc và quyền xác thực local — 2026-11-12
+
+Đã bổ sung 33 integration test trong `localIdentityConstraints.int.test.ts`
+và `identitySourcesConstraints.int.test.ts`, chạy bằng role app trên PostgreSQL
+Testcontainers. Kiểm unique/FK, định dạng PHC và version credential, cascade,
+username/legal_ref; lỗi tại credential/legal/membership rollback account,
+credential và bản đồng ý. Role app không superuser/BYPASSRLS hay sở hữu bảng legal;
+INSERT/SELECT thực tế thành công, UPDATE/DELETE/TRUNCATE bị từ chối và bản đồng ý
+đã commit giữ nguyên. Xoá account không làm mất lịch sử đồng ý.
+
+Phiên/Push nhận `local` hoặc `oidc`, từ chối nguồn khác/NULL; cùng account giữ
+được hai nguồn và Push giữ nguồn sau khi FK phiên chuyển NULL. Không đổi schema,
+migration, dependency hoặc hành vi runtime.
+
+Kiểm chứng local: 38/38 integration trong hai tệp mới và test migration T1 PASS;
+ESLint/Prettier hai tệp và `yarn verify:fast` PASS (typecheck toàn workspace;
+`--changed` không chọn unit test). `git diff --check` PASS.
+
+Đây là bằng chứng nền DB của TC-896, chưa nghiệm thu transaction đăng ký qua
+application hoặc hành vi worker TC-898/899. Chưa full `yarn verify`, SIT,
+push/PR/deploy hoặc cutover; chưa đóng T2 theo DoD, E26 giữ 0/13 task đóng.
+
+### E26-S2-T1 — port, fake và adapter xác thực local — 2026-11-12
+
+Đã thêm port Application cho IdentityProvider/PasswordHasher/CredentialRepository,
+fake phục vụ unit test, repository Drizzle nhận DB hoặc transaction ngoài và
+adapter Argon2id async. Pin `argon2@0.45.2`; cấu hình ADR: 65536 KiB, timeCost 3,
+parallelism 1, salt ngẫu nhiên 16 byte, hash 32 byte. Credential bắt đầu version 1;
+thay hash tăng version nguyên tử với điều kiện version cũ còn khớp. Không ghi đè
+credential khi insert trùng. Username không tồn tại vẫn verify dummy hash tạo
+một lần cùng chính sách; sai mật khẩu/username trả cùng null cho tầng login.
+Lỗi DB/hash truyền lên caller; snapshot trả về chỉ có trường xác thực, không hash.
+
+Kiểm chứng: 12 unit mới và 7 integration repository PASS; cả nhóm identity/fake
+37/37 unit PASS. Repository được kiểm bằng role app trên PostgreSQL Testcontainers,
+gồm cập nhật đồng thời và rollback account/credential trong transaction ngoài.
+`yarn verify:fast` exit 0: typecheck toàn workspace và 2921/2921 unit PASS.
+ESLint/Prettier phần thay đổi, `git diff --check` và audit dependency production
+PASS (audit không báo advisory). Build stage API theo Dockerfile hiện có và
+smoke adapter đã biên dịch PASS trên Node 22.23.4 Linux arm64.
+
+Volume gốc tạo AppleDouble `._*` khiến native loader/Vitest/Docker đọc nhầm
+metadata; kiểm chứng unit/verify:fast/build dùng bản sao sạch trong
+`/private/tmp/angia-e26-s2-t1/source`, đã đối chiếu SHA-256 source/dependency.
+Không sửa cấu hình dự án để né lỗi môi trường. Log và manifest nằm trong
+`/private/tmp/angia-e26-s2-t1/` (tạm thời).
+
+Chưa nối adapter vào runtime. Benchmark SIT 50 vòng, giới hạn đồng thời/hàng đợi
+và kiểm image runtime còn thuộc E26-S2-T3; thu hồi phiên/worker thuộc S2-T2,
+transaction đăng ký đầy đủ thuộc S3-T1, login/recheck version thuộc S4-T1.
+Không coi test snapshot thay bằng chứng DTO/log/export của luồng local hoàn chỉnh
+hoặc TC-895/896/907 đầu-cuối. Chưa full `yarn verify`, SIT, push/PR/deploy
+hoặc cutover; E26 giữ 0/13 task đóng, chờ nghiệm thu theo DoD.
+
+### E26-S2-T3 — giới hạn hash và benchmark local/Linux — 2026-11-12
+
+Owner duyệt áp dụng phạm vi adapter/repository và build runtime; giữ nghiệm thu
+lifecycle TC-906 mở đến khi các luồng phụ thuộc hoàn thành. Hash/verify/dummy hash
+chia sẻ giới hạn 1 tác vụ đang chạy + 2 chờ FIFO trên mọi instance trong cùng
+tiến trình; đầy trả ERR_PASSWORD_HASH_BUSY, lỗi vẫn trả slot. Không thay cấu hình
+Argon2id, dependency, schema, port hoặc Dockerfile. Repository chỉ đổi hai import
+sang tương đối để runner dùng mã thật từ scripts. Thêm lệnh
+`yarn identity:local:measure --origin=...`; hướng dẫn ở scripts/spike/README.md.
+
+50/50 vòng adapter/repository local PASS và dọn sạch account/credential tổng hợp:
+Mac Node 24.15.0 median verifyPassword 99,10 ms; image runtime Node 22.23.4 Linux
+arm64, user 10001, giới hạn 1 CPU/256 MiB/no swap median 117,25 ms, peak RSS
+134,39 MiB. Giữ mẫu đầu; đo lookup repository + verify, chưa gồm HTTP/session.
+Bão hoà thực nhận đúng 3 verify và từ chối tác vụ thứ tư. Linux runtime build và
+smoke đúng/sai mật khẩu PASS theo Dockerfile hiện có. Ngân sách 1+2 là ứng viên,
+chưa coi số đo local Docker là benchmark backend SIT.
+
+8 unit mới; nhóm identity/benchmark 43/43 PASS, hồi quy repository 7/7 integration
+PASS. `yarn verify:fast` exit 0 trên bản sao sạch: typecheck toàn workspace và
+2929/2929 unit PASS. 10/10 tệp source/test/config áp dụng khớp SHA-256 bản kiểm.
+ESLint/Prettier phần thay đổi và git diff --check PASS. Volume gốc vẫn lỗi
+AppleDouble/native loader; lượt unit đồng thời có timeout, đã chạy lại tuần tự
+PASS, không nới timeout/config. Knip production chưa PASS: VerifiedIdentity và
+CredentialIdentity từ S2-T1 chỉ có consumer ngoài tệp trong test; không sửa port
+ngoài phạm vi. Log/manifest tạm: /private/tmp/angia-e26-s2-t3/.
+Báo cáo và bằng chứng đã lưu trong bộ Docs riêng tại
+`Docs/angia/acceptance/v1.0/evidence/e26-s2-t3-2026-11-12/`.
+
+Chưa nối adapter vào API runtime, chưa đo backend SIT hoặc HTTP đầu-cuối,
+429/503/không session, khoá/mở khoá/thu hồi phiên, backup/restore/cutover TC-908.
+Chưa full yarn verify, push/PR/deploy; chưa đóng T3/TC-905/906/908 theo DoD,
+E26 giữ 0/13 task đóng. Thay đổi README E25 có sẵn được giữ nguyên.
+
+## E26-S2-T2 — lifecycle local và phân nguồn (2026-11-12)
+
+**Checkpoint E26-S2-T2 — 2026-11-12:** owner duyệt và áp dụng 21 tệp source/test. Port/fake/lifecycle local nhận transaction ngoài; khoá/revokeAll thu hồi phiên/Push cả hai nguồn và tăng credential_version, mở khoá không hồi sinh, primitive xoá rollback cùng transaction. Caller vẫn chịu kiểm quyền/điều kiện xoá/audit. Repository phiên đọc authMethod từ DB, từ chối account khoá và giữ khoá account trước cấp phiên OIDC; admin cần phiên OIDC + cờ quyền. Uỷ quyền/cập nhật Push chép nguồn từ phiên thật. Worker chỉ xét account liên kết OIDC, đếm/thu hồi phiên/Push OIDC kể cả last_session_id NULL, giữ local và các lan can snapshot/trần/lỗi IdP. Hồi quy 60/60 integration trong 11 tệp PASS; bản cuối lifecycle 9/9 và worker 6/6 PASS (các lượt có trùng test). Toàn bộ unit 2930/2930 PASS. ESLint/Prettier source và git diff --check PASS; 21/21 tệp áp dụng khớp SHA-256 bản sao sạch. verify:fast tại volume gốc typecheck PASS nhưng Vitest lỗi parse AppleDouble scripts/spike/._runLocalIdentityBenchmark.test.ts; bản sao sạch verify:fast PASS (typecheck toàn workspace + unit liên quan). Không nới config/xoá metadata. BR-045/Tech Spec đã làm rõ nguồn phiên và vô hiệu snapshot sau thu hồi. Chưa nối lifecycle vào route khoá/xoá/audit v1.0; login local/hash/version đầu-cuối TC-904 còn S4-T1. Chưa full yarn verify, SIT, push/PR/deploy hoặc cutover; **chưa đóng T2 theo DoD, E26 giữ 0/13 task đóng**.
+
+## E26-S3-T1 — đăng ký local trong một transaction (2026-11-13)
+
+**Checkpoint E26-S3-T1 — 2026-11-13:** owner chốt thiết kế: port + adapter tối thiểu, phiên tạo sau commit, có tầng infrastructure. Feature `apps/api/src/features/account` thêm domain `validateRegistrationInput` (username chuẩn hoá chữ thường `^[a-z0-9._-]{3,32}$`, mật khẩu ≥ 8 và khác username, displayName 1–60, email tuỳ chọn, `ageConfirmed` bắt buộc), use case `registerLocalAccount` (validate → công tắc/lời mời → phiên bản legal hiện hành → username trùng → hash ngoài transaction → transaction account + credential + 2 legal_acceptances + membership → commit → phiên `authMethod: 'local'`). Adapter: công tắc đọc `system_settings.registration_open` (thiếu dòng = mở); legal lấy bản `published_at` mới nhất mỗi loại; lời mời là stub trả `null` tới E27-S3-T3. Race unique `accounts_username_normalized_unique` → `ERR_USERNAME_TAKEN`, lỗi khác rollback và ném tiếp; lỗi tạo phiên không rollback tài khoản. `NewSession` thêm `authMethod` tuỳ chọn. **20/20 unit + 11/11 integration PASS** (PostgreSQL Testcontainers role app: TC-736/737 kèm race/738/742/743/896 rollback legal và membership, đếm account/credential/legal trước–sau; công tắc/legal). ESLint/Prettier PASS; `yarn verify:fast` exit 0 sau khi xoá AppleDouble `._*`. TC-741 chỉ PASS mức unit với fake lời mời. Chưa route/OpenAPI (S3-T2), rate limit (S3-T3), full `yarn verify`/knip, SIT, push/PR/deploy; **chưa đóng T1 theo DoD, E26 giữ 0/13 task đóng**.

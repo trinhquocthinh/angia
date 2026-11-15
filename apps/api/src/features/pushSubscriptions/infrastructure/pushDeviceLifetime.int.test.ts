@@ -74,3 +74,27 @@ it('TC-364: phiên hết hạn không giải phóng quota, endpoint mới không
   ).toBe('gone');
   expect(await d.repository.read(actor, new Date())).toEqual(updated);
 });
+
+it('TC-899: uỷ quyền Push ghi và đổi nguồn theo phiên thật, giữ nguồn khi session bị xoá', async () => {
+  const d = await device();
+  await t.owner.query("UPDATE sessions SET auth_method='local' WHERE id=$1", [d.user.id]);
+  await d.repository.save(d.actor, d.subscription, new Date());
+  const source = async () =>
+    (
+      await t.owner.query('SELECT auth_method,last_session_id FROM push_subscriptions WHERE id=$1', [
+        d.actor.deviceId,
+      ])
+    ).rows[0];
+  expect(await source()).toEqual({ auth_method: 'local', last_session_id: d.user.id });
+  await t.owner.query('DELETE FROM sessions WHERE id=$1', [d.user.id]);
+  expect(await source()).toEqual({ auth_method: 'local', last_session_id: null });
+  const oidc = await seedSession(t.owner, d.user.accountId);
+  await d.repository.save({ ...d.actor, sessionId: oidc.id }, d.subscription, new Date());
+  expect(await source()).toEqual({ auth_method: 'oidc', last_session_id: oidc.id });
+});
+
+it('TC-904: account khoá không uỷ quyền lại Push dù dòng phiên còn tồn tại', async () => {
+  const d = await device();
+  await t.owner.query('UPDATE accounts SET locked_at=now() WHERE id=$1', [d.user.accountId]);
+  expect(await d.repository.save(d.actor, value(), new Date())).toBe('expired');
+});

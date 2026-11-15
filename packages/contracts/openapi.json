@@ -12,6 +12,33 @@
       }
     },
     "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object",
+                "additionalProperties": {}
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
       "HealthResponse": {
         "type": "object",
         "properties": {
@@ -43,31 +70,182 @@
           "storage"
         ]
       },
-      "ErrorResponse": {
+      "PasswordLoginResponse": {
         "type": "object",
         "properties": {
-          "error": {
+          "session": {
             "type": "object",
             "properties": {
-              "code": {
+              "csrfToken": {
                 "type": "string"
               },
-              "message": {
-                "type": "string"
+              "expiresAt": {
+                "type": "string",
+                "format": "date-time"
               },
-              "details": {
-                "type": "object",
-                "additionalProperties": {}
+              "passwordChangeRequired": {
+                "type": "boolean"
               }
             },
             "required": [
-              "code",
-              "message"
+              "csrfToken",
+              "expiresAt",
+              "passwordChangeRequired"
             ]
           }
         },
         "required": [
-          "error"
+          "session"
+        ]
+      },
+      "PasswordLoginRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "ChangePasswordRequest": {
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "newPassword"
+        ]
+      },
+      "LocalCredentialRequest": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "password"
+        ]
+      },
+      "RegisterAccountResponse": {
+        "type": "object",
+        "properties": {
+          "account": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "username": {
+                "type": "string"
+              },
+              "displayName": {
+                "type": "string"
+              },
+              "familyId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "id",
+              "username",
+              "displayName",
+              "familyId"
+            ]
+          },
+          "session": {
+            "type": "object",
+            "properties": {
+              "csrfToken": {
+                "type": "string"
+              },
+              "expiresAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "csrfToken",
+              "expiresAt"
+            ]
+          }
+        },
+        "required": [
+          "account",
+          "session"
+        ]
+      },
+      "RegisterAccountRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "ageConfirmed": {
+            "type": "boolean"
+          },
+          "legalAcceptance": {
+            "type": "object",
+            "properties": {
+              "termsVersionId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "privacyVersionId": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "termsVersionId",
+              "privacyVersionId"
+            ]
+          },
+          "invitationToken": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password",
+          "displayName",
+          "ageConfirmed",
+          "legalAcceptance"
         ]
       },
       "MeContextResponse": {
@@ -134,15 +312,29 @@
           "csrfToken": {
             "type": "string"
           },
+          "authMethod": {
+            "type": "string",
+            "enum": [
+              "local",
+              "oidc"
+            ]
+          },
+          "hasLocalCredential": {
+            "type": "boolean"
+          },
           "features": {
             "type": "object",
             "properties": {
               "redactionSuggestions": {
                 "type": "boolean"
+              },
+              "localEnrollmentEnabled": {
+                "type": "boolean"
               }
             },
             "required": [
-              "redactionSuggestions"
+              "redactionSuggestions",
+              "localEnrollmentEnabled"
             ]
           }
         },
@@ -151,6 +343,8 @@
           "family",
           "role",
           "csrfToken",
+          "authMethod",
+          "hasLocalCredential",
           "features"
         ]
       },
@@ -7431,6 +7625,214 @@
     "parameters": {}
   },
   "paths": {
+    "/api/legal/current": {
+      "get": {
+        "tags": [
+          "legal"
+        ],
+        "summary": "Văn bản pháp lý hiện hành (SPEC-061)",
+        "responses": {
+          "200": {
+            "description": "Hai văn bản đã phát hành mới nhất",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "terms": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "terms",
+                            "privacy"
+                          ]
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "publishedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "material": {
+                          "type": "boolean"
+                        },
+                        "url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "kind",
+                        "version",
+                        "publishedAt",
+                        "material",
+                        "url"
+                      ]
+                    },
+                    "privacy": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "terms",
+                            "privacy"
+                          ]
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "publishedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "material": {
+                          "type": "boolean"
+                        },
+                        "url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "kind",
+                        "version",
+                        "publishedAt",
+                        "material",
+                        "url"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "terms",
+                    "privacy"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "ERR_INTERNAL: chưa có đủ văn bản",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/legal-acceptances": {
+      "post": {
+        "tags": [
+          "legal"
+        ],
+        "summary": "Đồng ý văn bản hiện hành (SPEC-061)",
+        "description": "Cần phiên và X-CSRF-Token. Cache-Control: no-store. Chỉ ghi đồng ý của chính tài khoản phiên.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "versionIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                },
+                "required": [
+                  "versionIds"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Đã ghi nhận đồng ý, không sửa lịch sử"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN; ERR_PASSWORD_CHANGE_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_LEGAL_VERSION_OUTDATED kèm details.current như đăng ký",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "ERR_INTERNAL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/health": {
       "get": {
         "tags": [
@@ -7509,6 +7911,383 @@
           },
           "403": {
             "description": "ERR_FORBIDDEN: thiếu hoặc sai X-CSRF-Token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/password-login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Đăng nhập local và cấp phiên (SPEC-060)",
+        "description": "Không cần phiên. Origin khớp chính xác APP_BASE_URL, application/json. Cache-Control: no-store; cookie angia_session đã ký, HttpOnly, SameSite=Lax.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordLoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "CSRF, hạn phiên 30 ngày và cờ bắt đổi mật khẩu; không trả sessionId",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasswordLoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_INVALID_CREDENTIALS: sai/thiếu credential, mật khẩu tạm hết hạn hoặc snapshot không còn hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: Origin/JSON sai; ERR_ACCOUNT_LOCKED: tài khoản đã bị khoá",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: username/password thiếu, rỗng hoặc quá giới hạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_RATE_LIMITED: 10 lần sai/15 phút theo IP và username chữ thường",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "description": "Số giây tới hết cửa sổ"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: DB/hash/rate limiter lỗi, timeout hoặc hash bận; không cấp phiên",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/password": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Đổi mật khẩu local và thu hồi phiên khác (SPEC-060)",
+        "description": "Cần phiên và X-CSRF-Token. Cache-Control: no-store. Giữ nguyên cookie, CSRF và hạn phiên hiện tại.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Đã đổi mật khẩu; phiên hiện tại trở về bình thường"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED; ERR_INVALID_CREDENTIALS: mật khẩu cũ sai, không có local credential hoặc version đã đổi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: CSRF sai; ERR_ACCOUNT_LOCKED: tài khoản đã bị khoá",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: body hoặc mật khẩu không hợp lệ, details.field",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_RATE_LIMITED: quá nhiều lần sai",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: DB/rate limiter/hash lỗi hoặc hash bận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/local-credential": {
+      "post": {
+        "tags": [
+          "account"
+        ],
+        "summary": "Thiết lập mật khẩu local một lần trước cutover (SPEC-060)",
+        "description": "Cần LOCAL_ENROLLMENT_ENABLED, phiên OIDC reauth tối đa 300 giây và X-CSRF-Token. Cache-Control: no-store.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocalCredentialRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Đã thiết lập mật khẩu, giữ nguyên tài khoản và phiên"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED: thiếu phiên hoặc account/phiên đã bị xoá",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: CSRF sai hoặc chưa reauth OIDC hợp lệ; ERR_ACCOUNT_LOCKED: tài khoản đã bị khoá",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND: cờ enrollment tắt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_CREDENTIAL_ALREADY_SET: đã có credential, không ghi đè",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: body hoặc mật khẩu không hợp lệ, details.field=password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: DB/hash lỗi hoặc hash bận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Tạo tài khoản local và phiên (SPEC-059)",
+        "description": "Không cần phiên. Bắt buộc application/json và Origin khớp chính xác origin APP_BASE_URL. Cookie angia_session HttpOnly, SameSite=Lax; phản hồi Cache-Control: no-store.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterAccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tài khoản và CSRF token; sessionId chỉ nằm trong cookie đã ký",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterAccountResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: thiếu/sai Origin hoặc không phải JSON; ERR_REGISTRATION_CLOSED: chưa mở đăng ký và không có lời mời hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_USERNAME_TAKEN; ERR_LEGAL_VERSION_OUTDATED kèm details.current = { termsVersionId, privacyVersionId }",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: body thiếu/sai kiểu hoặc quy tắc domain không hợp lệ (details.field)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_RATE_LIMITED: vượt 5 request/IP/giờ; header Retry-After là số giây nguyên tới hết cửa sổ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: rate limiter gián đoạn hoặc hàng đợi hash đã đầy; không tạo phiên",
             "content": {
               "application/json": {
                 "schema": {

@@ -19,6 +19,9 @@ const profiles = [
   { id: otherId, familyId: 'family-b', consentStatus: 'confirmed' as const },
 ];
 const session: SessionContext = {
+  authMethod: 'oidc',
+  oidcAuthTime: null,
+  passwordChangeRequired: false,
   sessionId: 'session-a',
   csrfToken: 'csrf',
   expiresAt: new Date('2030-01-01'),

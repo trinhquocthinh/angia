@@ -91,3 +91,13 @@ describe('Trần AI theo gia đình (SPEC-031, BR-018)', () => {
     expect(() => loadApiConfig({ ...env, SCAN_QUOTA_INITIAL_COST_PER_SCAN_USD: '1e-3' })).toThrow();
   });
 });
+
+describe('Cờ thiết lập mật khẩu trước cutover', () => {
+  it('TC-902: mặc định false, chỉ nhận true hoặc false', () => {
+    expect(loadApiConfig(env).LOCAL_ENROLLMENT_ENABLED).toBe(false);
+    expect(loadApiConfig({ ...env, LOCAL_ENROLLMENT_ENABLED: 'true' }).LOCAL_ENROLLMENT_ENABLED).toBe(true);
+    expect(loadApiConfig({ ...env, LOCAL_ENROLLMENT_ENABLED: 'false' }).LOCAL_ENROLLMENT_ENABLED).toBe(false);
+    for (const value of ['1', 'TRUE', ''])
+      expect(() => loadApiConfig({ ...env, LOCAL_ENROLLMENT_ENABLED: value })).toThrow();
+  });
+});

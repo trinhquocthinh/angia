@@ -10,7 +10,9 @@ const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà An' },
   role: 'member',
   csrfToken: 'csrf',
-  features: { redactionSuggestions: false },
+  authMethod: 'local',
+  hasLocalCredential: true,
+  features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 const myConsentKey = (s: ProfileSession) => [...profileScopeKey(s), 'my-consent'];
 describe('TC-386 — useMyConsent', () => {

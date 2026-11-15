@@ -1,0 +1,24 @@
+.account-link {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.account-link:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.account-screen fieldset {
+  min-width: 0;
+}
+.account-screen fieldset:disabled input,
+.account-screen fieldset:disabled button {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+:root[data-theme='dark'] .account-card {
+  box-shadow: none;
+}
+.account-screen .account-admin {
+  color: var(--color-text-secondary);
+}

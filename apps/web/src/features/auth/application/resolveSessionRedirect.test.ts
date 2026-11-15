@@ -8,7 +8,9 @@ const waiting: Session = {
   family: null,
   role: null,
   csrfToken: 'csrf',
-  features: { redactionSuggestions: false },
+  authMethod: 'local',
+  hasLocalCredential: true,
+  features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 const assigned: Session = { ...waiting, family: { id: 'family', name: 'Nhà An' }, role: 'main' };
 
@@ -19,13 +21,13 @@ describe('Điều hướng theo phiên hiện hành', () => {
   it('chưa có phiên ở /login: giữ màn đăng nhập, không lặp điều hướng', () => {
     expect(resolveSessionRedirect(null, '/login')).toBeNull();
   });
-  it.each(['/', '/login', '/profiles/new'])('chưa có nhóm tại %s: về màn chờ', (path) => {
+  it.each(['/', '/login', '/register', '/profiles/new'])('chưa có nhóm tại %s: về màn chờ', (path) => {
     expect(resolveSessionRedirect(waiting, path)).toBe('/waiting');
   });
   it('đã ở /waiting: giữ màn chờ', () => {
     expect(resolveSessionRedirect(waiting, '/waiting')).toBeNull();
   });
-  it.each(['/login', '/waiting'])('đã có nhóm tại %s: về trang chủ', (path) => {
+  it.each(['/login', '/register', '/waiting'])('đã có nhóm tại %s: về trang chủ', (path) => {
     expect(resolveSessionRedirect(assigned, path)).toBe('/');
   });
   it('đã có nhóm: giữ tuyến nội bộ đang truy cập', () => {
@@ -43,7 +45,7 @@ describe('Điều hướng quản trị hệ thống', () => {
   it('admin chưa có nhóm được vào /admin', () => {
     expect(resolveSessionRedirect(admin, '/admin')).toBeNull();
   });
-  it.each(['/login', '/waiting'])('admin tại %s: vào quản trị', (path) => {
+  it.each(['/login', '/register', '/waiting'])('admin tại %s: vào quản trị', (path) => {
     expect(resolveSessionRedirect(admin, path)).toBe('/admin');
   });
   it('người thường có nhóm không được vào /admin', () => {
@@ -56,3 +58,18 @@ describe('Điều hướng quản trị hệ thống', () => {
     expect(resolveSessionRedirect(null, '/admin')).toBe('/login');
   });
 });
+
+it('chưa có phiên tại /register được ở lại màn tạo tài khoản', () => {
+  expect(resolveSessionRedirect(null, '/register')).toBeNull();
+});
+
+it('TC-748: màn đổi mật khẩu hiển thị được khi /api/me bị hạn chế', () => {
+  expect(resolveSessionRedirect(null, '/account/change-password')).toBeNull();
+});
+it.each(['/account/legal-update', '/account/local-password'])(
+  'TC-755: màn %s cần có phiên nhưng không cần nhà',
+  (path) => {
+    expect(resolveSessionRedirect(null, path)).toBe('/login');
+    expect(resolveSessionRedirect(waiting, path)).toBeNull();
+  },
+);

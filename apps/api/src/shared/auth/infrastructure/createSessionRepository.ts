@@ -1,5 +1,5 @@
 import { deleteSessionAndPushDevice } from './deleteSessionAndPushDevice.js';
-import { and, eq, gt } from 'drizzle-orm';
+import { and, eq, gt, isNull } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { accounts, families, sessions } from '@src/shared/db/schema/index.js';
 import type { SessionRepository } from '../application/ports.js';
@@ -9,17 +9,26 @@ import type { SessionContext } from '../domain/SessionContext.js';
 export function createSessionRepository(db: Database): SessionRepository {
   return {
     async create(session) {
-      const [row] = await db.insert(sessions).values(session).returning({ id: sessions.id });
-      if (!row) {
-        throw new Error('INSERT sessions không trả về dòng nào');
-      }
-      return row;
+      return db.transaction(async (tx) => {
+        const [account] = await tx
+          .select({ lockedAt: accounts.lockedAt })
+          .from(accounts)
+          .where(eq(accounts.id, session.accountId))
+          .for('update');
+        if (!account || account.lockedAt) throw new Error('Tài khoản không tồn tại hoặc đã bị khoá');
+        const [row] = await tx.insert(sessions).values(session).returning({ id: sessions.id });
+        if (!row) throw new Error('INSERT sessions không trả về dòng nào');
+        return row;
+      });
     },
 
     async findActive(sessionId, now) {
       const [row] = await db
         .select({
           sessionId: sessions.id,
+          authMethod: sessions.authMethod,
+          oidcAuthTime: sessions.oidcAuthTime,
+          passwordChangeRequired: sessions.passwordChangeRequired,
           csrfToken: sessions.csrfToken,
           expiresAt: sessions.expiresAt,
           account: {
@@ -35,7 +44,7 @@ export function createSessionRepository(db: Database): SessionRepository {
         .from(sessions)
         .innerJoin(accounts, eq(accounts.id, sessions.accountId))
         .leftJoin(families, eq(families.id, accounts.familyId))
-        .where(and(eq(sessions.id, sessionId), gt(sessions.expiresAt, now)))
+        .where(and(eq(sessions.id, sessionId), gt(sessions.expiresAt, now), isNull(accounts.lockedAt)))
         .limit(1);
       if (!row) {
         return null;

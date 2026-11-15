@@ -36,3 +36,10 @@ describe('toIdentityClaims', () => {
     expect(() => toIdentityClaims({ name: 'X' })).toThrow('sub');
   });
 });
+
+it('TC-900: chuyển auth_time giây epoch thành Date', () => {
+  expect(toIdentityClaims({ sub: 'sub', auth_time: 1794614400 }).authTime).toEqual(new Date(1794614400000));
+});
+it.each([undefined, '1794614400', NaN, Infinity])('TC-901: không nhận auth_time sai kiểu %s', (auth_time) => {
+  expect(toIdentityClaims({ sub: 'sub', auth_time }).authTime).toBeUndefined();
+});

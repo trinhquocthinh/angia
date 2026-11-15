@@ -1,3 +1,4 @@
+import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
 import { createScanQuotaRepository } from '@src/features/scanQuota/infrastructure/createScanQuotaRepository.js';
 import { createAiBillingRepository } from '@src/features/aiBilling/infrastructure/createAiBillingRepository.js';
 import { createAiRoutingRepository } from '@src/features/aiRouting/infrastructure/createAiRoutingRepository.js';
@@ -74,6 +75,7 @@ export async function startAdminTestApp(options: AdminTestOptions = {}) {
     profileLinks: createStubProfileLinkDeps(),
     documents: createStubDocumentDeps(),
     ...createStubReviewDeps(),
+    legal: createLegalRepository(database),
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
     auth: {
       ...stub,

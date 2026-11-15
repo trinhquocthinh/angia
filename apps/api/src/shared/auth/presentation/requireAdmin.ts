@@ -9,7 +9,7 @@ export function requireAdmin() {
     if (!session) {
       return errorResponse(c, 'ERR_UNAUTHENTICATED');
     }
-    if (!session.account.isSystemAdmin) {
+    if (session.authMethod !== 'oidc' || !session.account.isSystemAdmin) {
       return errorResponse(c, 'ERR_FORBIDDEN');
     }
     await next();

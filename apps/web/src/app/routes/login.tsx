@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { LoginPage } from '@src/features/auth/presentation/LoginPage';
+import { LoginPage } from '@src/features/account/presentation/LoginPage';
 
 export const Route = createFileRoute('/login')({
   validateSearch: (search: Record<string, unknown>): { error?: 'auth' } =>

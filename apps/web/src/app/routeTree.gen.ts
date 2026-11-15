@@ -16,8 +16,12 @@ import { Route as LinkInviteRouteImport } from './routes/link-invite'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MyProfileRouteImport } from './routes/my-profile'
 import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as UploadRouteImport } from './routes/upload'
 import { Route as WaitingRouteImport } from './routes/waiting'
+import { Route as AccountChangePasswordRouteImport } from './routes/account.change-password'
+import { Route as AccountLegalUpdateRouteImport } from './routes/account.legal-update'
+import { Route as AccountLocalPasswordRouteImport } from './routes/account.local-password'
 import { Route as ProfilesProfileIdRouteImport } from './routes/profiles.$profileId'
 import { Route as ProfilesNewRouteImport } from './routes/profiles.new'
 import { Route as RemindersReminderIdRouteImport } from './routes/reminders.$reminderId'
@@ -74,6 +78,11 @@ const NotificationsRoute = NotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UploadRoute = UploadRouteImport.update({
   id: '/upload',
   path: '/upload',
@@ -82,6 +91,21 @@ const UploadRoute = UploadRouteImport.update({
 const WaitingRoute = WaitingRouteImport.update({
   id: '/waiting',
   path: '/waiting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountChangePasswordRoute = AccountChangePasswordRouteImport.update({
+  id: '/account/change-password',
+  path: '/account/change-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountLegalUpdateRoute = AccountLegalUpdateRouteImport.update({
+  id: '/account/legal-update',
+  path: '/account/legal-update',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountLocalPasswordRoute = AccountLocalPasswordRouteImport.update({
+  id: '/account/local-password',
+  path: '/account/local-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfilesProfileIdRoute = ProfilesProfileIdRouteImport.update({
@@ -204,8 +228,12 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/my-profile': typeof MyProfileRoute
   '/notifications': typeof NotificationsRoute
+  '/register': typeof RegisterRoute
   '/upload': typeof UploadRoute
   '/waiting': typeof WaitingRoute
+  '/account/change-password': typeof AccountChangePasswordRoute
+  '/account/legal-update': typeof AccountLegalUpdateRoute
+  '/account/local-password': typeof AccountLocalPasswordRoute
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
   '/reminders/$reminderId': typeof RemindersReminderIdRoute
@@ -235,8 +263,12 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/my-profile': typeof MyProfileRoute
   '/notifications': typeof NotificationsRoute
+  '/register': typeof RegisterRoute
   '/upload': typeof UploadRoute
   '/waiting': typeof WaitingRoute
+  '/account/change-password': typeof AccountChangePasswordRoute
+  '/account/legal-update': typeof AccountLegalUpdateRoute
+  '/account/local-password': typeof AccountLocalPasswordRoute
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
   '/reminders/$reminderId': typeof RemindersReminderIdRoute
@@ -267,8 +299,12 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/my-profile': typeof MyProfileRoute
   '/notifications': typeof NotificationsRoute
+  '/register': typeof RegisterRoute
   '/upload': typeof UploadRoute
   '/waiting': typeof WaitingRoute
+  '/account/change-password': typeof AccountChangePasswordRoute
+  '/account/legal-update': typeof AccountLegalUpdateRoute
+  '/account/local-password': typeof AccountLocalPasswordRoute
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
   '/reminders/$reminderId': typeof RemindersReminderIdRoute
@@ -300,8 +336,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/my-profile'
     | '/notifications'
+    | '/register'
     | '/upload'
     | '/waiting'
+    | '/account/change-password'
+    | '/account/legal-update'
+    | '/account/local-password'
     | '/profiles/$profileId'
     | '/profiles/new'
     | '/reminders/$reminderId'
@@ -331,8 +371,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/my-profile'
     | '/notifications'
+    | '/register'
     | '/upload'
     | '/waiting'
+    | '/account/change-password'
+    | '/account/legal-update'
+    | '/account/local-password'
     | '/profiles/$profileId'
     | '/profiles/new'
     | '/reminders/$reminderId'
@@ -362,8 +406,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/my-profile'
     | '/notifications'
+    | '/register'
     | '/upload'
     | '/waiting'
+    | '/account/change-password'
+    | '/account/legal-update'
+    | '/account/local-password'
     | '/profiles/$profileId'
     | '/profiles/new'
     | '/reminders/$reminderId'
@@ -394,8 +442,12 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MyProfileRoute: typeof MyProfileRoute
   NotificationsRoute: typeof NotificationsRoute
+  RegisterRoute: typeof RegisterRoute
   UploadRoute: typeof UploadRoute
   WaitingRoute: typeof WaitingRoute
+  AccountChangePasswordRoute: typeof AccountChangePasswordRoute
+  AccountLegalUpdateRoute: typeof AccountLegalUpdateRoute
+  AccountLocalPasswordRoute: typeof AccountLocalPasswordRoute
   ProfilesProfileIdRoute: typeof ProfilesProfileIdRoute
   ProfilesNewRoute: typeof ProfilesNewRoute
   RemindersReminderIdRoute: typeof RemindersReminderIdRoute
@@ -469,6 +521,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/upload': {
       id: '/upload'
       path: '/upload'
@@ -481,6 +540,27 @@ declare module '@tanstack/react-router' {
       path: '/waiting'
       fullPath: '/waiting'
       preLoaderRoute: typeof WaitingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/change-password': {
+      id: '/account/change-password'
+      path: '/account/change-password'
+      fullPath: '/account/change-password'
+      preLoaderRoute: typeof AccountChangePasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/legal-update': {
+      id: '/account/legal-update'
+      path: '/account/legal-update'
+      fullPath: '/account/legal-update'
+      preLoaderRoute: typeof AccountLegalUpdateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/local-password': {
+      id: '/account/local-password'
+      path: '/account/local-password'
+      fullPath: '/account/local-password'
+      preLoaderRoute: typeof AccountLocalPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profiles/$profileId': {
@@ -634,8 +714,12 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MyProfileRoute: MyProfileRoute,
   NotificationsRoute: NotificationsRoute,
+  RegisterRoute: RegisterRoute,
   UploadRoute: UploadRoute,
   WaitingRoute: WaitingRoute,
+  AccountChangePasswordRoute: AccountChangePasswordRoute,
+  AccountLegalUpdateRoute: AccountLegalUpdateRoute,
+  AccountLocalPasswordRoute: AccountLocalPasswordRoute,
   ProfilesProfileIdRoute: ProfilesProfileIdRoute,
   ProfilesNewRoute: ProfilesNewRoute,
   RemindersReminderIdRoute: RemindersReminderIdRoute,

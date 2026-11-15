@@ -16,6 +16,8 @@ import { createPostgresProbe } from '../infrastructure/createPostgresProbe.js';
 
 const POSTGRES_IMAGE = 'postgres:16-alpine';
 
+const waitPastHealthCache = () => new Promise((resolve) => setTimeout(resolve, 300));
+
 // Cố định host port để container mới (sau khi "bật lại") nhận đúng địa chỉ pool đang giữ.
 async function startPostgres(hostPort: number): Promise<StartedPostgreSqlContainer> {
   return new PostgreSqlContainer(POSTGRES_IMAGE)
@@ -59,11 +61,14 @@ describe('GET /api/health với PostgreSQL thật', () => {
     expect(await healthy.json()).toEqual({ status: 'ok', db: 'ok', storage: 'ok' });
 
     await container.stop();
+    // Route cache kết quả 250 ms; container dừng nhanh hơn thế thì sẽ nhận lại 200 cũ.
+    await waitPastHealthCache();
     const down = await app.request('/api/health');
     expect(down.status).toBe(503);
     expect(await down.json()).toEqual({ status: 'degraded', db: 'down', storage: 'ok' });
 
     container = await startPostgres(hostPort);
+    await waitPastHealthCache();
     const recovered = await app.request('/api/health');
     expect(recovered.status).toBe(200);
   });

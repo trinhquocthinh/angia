@@ -1,7 +1,5 @@
-export { meContextResponseSchema } from './auth/meContextResponseSchema.js';
-export type { MeContextResponse } from './auth/meContextResponseSchema.js';
-export { errorResponseSchema } from './errors/errorResponseSchema.js';
-export type { ErrorResponse } from './errors/errorResponseSchema.js';
+export * from './auth/index.js';
+export { errorResponseSchema, type ErrorResponse } from './errors/errorResponseSchema.js';
 export {
   accountSchema,
   assignMembershipRequestSchema,

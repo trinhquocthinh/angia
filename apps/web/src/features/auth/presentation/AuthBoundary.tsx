@@ -1,3 +1,10 @@
+import {
+  ENROLL_LATER_KEY,
+  ENROLL_REAUTH_KEY,
+  readAccountStorage,
+} from '@src/features/account/application/accountSessionStorage';
+import { enrollmentStage } from '@src/features/account/application/enrollmentStage';
+import { resolveEnrollmentRedirect } from '../application/resolveEnrollmentRedirect';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
@@ -35,6 +42,18 @@ export function AuthBoundary({ children }: { children: ReactNode }) {
   const hasFamily = Boolean(session.data?.family);
 
   useEffect(() => {
+    const invitation = session.isSuccess
+      ? resolveEnrollmentRedirect(
+          session.data,
+          pathname,
+          readAccountStorage(ENROLL_LATER_KEY) === '1',
+          enrollmentStage(readAccountStorage(ENROLL_REAUTH_KEY), Date.now()) !== 'unverified',
+        )
+      : null;
+    if (invitation) {
+      void navigate({ to: invitation, replace: true });
+      return;
+    }
     // SPEC-035, SPEC-040: mở link khi chưa đăng nhập → nhớ đường dẫn (không có fragment); OIDC xong quay về / rồi khôi phục.
     if (destination === '/login' && isReturnPath(pathname)) saveReminderReturnPath(pathname);
     if (destination) {
@@ -43,7 +62,7 @@ export function AuthBoundary({ children }: { children: ReactNode }) {
     }
     const back = hasFamily && pathname === '/' ? takeReminderReturnPath() : null;
     if (back) void navigate({ to: back, replace: true });
-  }, [destination, hasFamily, pathname, navigate]);
+  }, [destination, hasFamily, pathname, navigate, session.isSuccess, session.data]);
 
   if (session.isPending || (session.isError && session.isFetching) || destination) {
     return <SessionStatus state="loading" />;

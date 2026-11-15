@@ -3,6 +3,23 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_LEGAL_ACCEPTANCE_REQUIRED: {
+    status: 403,
+    message: 'Vui lòng đọc và đồng ý Điều khoản mới để tiếp tục.',
+  },
+  ERR_CREDENTIAL_ALREADY_SET: { status: 409, message: 'Bạn đã thiết lập mật khẩu. Vui lòng đăng nhập.' },
+  ERR_PASSWORD_CHANGE_REQUIRED: { status: 403, message: 'Bạn cần đặt mật khẩu mới trước khi tiếp tục.' },
+  ERR_INVALID_CREDENTIALS: { status: 401, message: 'Tên đăng nhập hoặc mật khẩu chưa đúng.' },
+  ERR_ACCOUNT_LOCKED: { status: 403, message: 'Tài khoản đang bị khoá. Liên hệ quản trị.' },
+  ERR_REGISTRATION_CLOSED: {
+    status: 403,
+    message: 'Hiện chưa mở đăng ký. Bạn cần lời mời để tham gia.',
+  },
+  ERR_LEGAL_VERSION_OUTDATED: {
+    status: 409,
+    message: 'Điều khoản vừa được cập nhật, vui lòng đọc lại.',
+  },
+  ERR_USERNAME_TAKEN: { status: 409, message: 'Tên đăng nhập này đã có người dùng.' },
   ERR_PAIN_ISSUE_EXISTS: {
     status: 409,
     message: 'Vùng này đang có một vấn đề đau đang theo dõi. Hãy ghi thêm vào vấn đề đó.',
@@ -143,7 +160,12 @@ const ERROR_CATALOG = {
     status: 429,
     message: 'Đang có nhiều ảnh chờ xử lý. Vui lòng đợi xử lý xong rồi gửi tiếp.',
   },
+  // SDD §4.6 ghi "quá nhanh…" cho SPEC-078; owner chốt 2026-11-14 giữ câu SPEC-030 tới khi SDD thống nhất.
   ERR_RATE_LIMITED: { status: 429, message: 'Bạn thao tác hơi nhanh. Vui lòng thử lại sau ít giây.' },
+  ERR_AUTH_UNAVAILABLE: {
+    status: 503,
+    message: 'Hệ thống xác thực đang bận hoặc tạm gián đoạn. Vui lòng thử lại sau.',
+  },
   ERR_INTERNAL: { status: 500, message: 'Đã xảy ra lỗi nội bộ hệ thống. Vui lòng thử lại sau.' },
 } as const;
 

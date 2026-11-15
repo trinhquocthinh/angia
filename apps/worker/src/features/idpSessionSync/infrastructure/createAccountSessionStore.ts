@@ -15,8 +15,8 @@ export function createAccountSessionStore(pool: pg.Pool): AccountSessionStore {
         family_id: string | null;
       }>(
         `SELECT a.id, a.oidc_subject, a.is_system_admin, a.family_id,
-           EXISTS (SELECT 1 FROM sessions s WHERE s.account_id = a.id AND s.expires_at > $1) AS has_session
-         FROM accounts a ORDER BY a.id`,
+           EXISTS (SELECT 1 FROM sessions s WHERE s.account_id = a.id AND s.auth_method = 'oidc' AND s.expires_at > $1) AS has_session
+         FROM accounts a WHERE a.oidc_subject IS NOT NULL ORDER BY a.id`,
         [now],
       );
       const push = await listPushAccounts(
@@ -38,10 +38,10 @@ export function createAccountSessionStore(pool: pg.Pool): AccountSessionStore {
       try {
         await client.query('BEGIN');
         await revokePushAccounts(client, change.revoke, createdBefore);
-        await client.query('DELETE FROM sessions WHERE account_id = ANY($1::uuid[]) AND created_at < $2', [
-          change.revoke,
-          createdBefore,
-        ]);
+        await client.query(
+          "DELETE FROM sessions WHERE account_id = ANY($1::uuid[]) AND auth_method = 'oidc' AND created_at < $2",
+          [change.revoke, createdBefore],
+        );
         await client.query('UPDATE accounts SET is_system_admin = true WHERE id = ANY($1::uuid[])', [
           change.adminOn,
         ]);

@@ -11,6 +11,7 @@ import {
 import { runMigrations } from './runMigrations.js';
 
 const SKELETON_TABLES = [
+  'account_credentials',
   'accounts',
   'adherence_periods',
   'ai_billing_sources',
@@ -31,6 +32,8 @@ const SKELETON_TABLES = [
   'family_scan_quotas',
   'health_profiles',
   'lab_results',
+  'legal_acceptances',
+  'legal_document_versions',
   'measurements',
   'medication_courses',
   'object_purges',
@@ -43,6 +46,7 @@ const SKELETON_TABLES = [
   'profile_link_events',
   'profile_link_invitations',
   'push_subscriptions',
+  'rate_limit_buckets',
   'reminder_deliveries',
   'reminder_recipients',
   'reminders',
@@ -53,6 +57,7 @@ const SKELETON_TABLES = [
   'scan_quota_policy_audit',
   'sessions',
   'source_documents',
+  'system_settings',
   'temperature_readings',
   'upload_batches',
 ];

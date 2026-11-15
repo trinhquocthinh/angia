@@ -1,3 +1,18 @@
+import { createLocalCredentialLookup } from '@src/features/account/infrastructure/createLocalCredentialLookup.js';
+import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
+import { createLocalCredentialEnrollments } from '@src/features/account/infrastructure/createLocalCredentialEnrollments.js';
+import { createLocalPasswordChanges } from '@src/features/account/infrastructure/createLocalPasswordChanges.js';
+import { createLocalLoginSessions } from '@src/features/account/infrastructure/createLocalLoginSessions.js';
+import { createLocalIdentityProvider } from '@src/shared/identity/infrastructure/createLocalIdentityProvider.js';
+import { createCredentialRepository } from '@src/shared/identity/infrastructure/createCredentialRepository.js';
+import { getSocketClientIp } from '@src/shared/rateLimit/infrastructure/getSocketClientIp.js';
+import { createRateLimitStore } from '@src/shared/rateLimit/infrastructure/createRateLimitStore.js';
+import { createRateLimitKeyHasher } from '@src/shared/rateLimit/infrastructure/createRateLimitKeyHasher.js';
+import { createAccountRegistrationUnitOfWork } from '@src/features/account/infrastructure/createAccountRegistrationUnitOfWork.js';
+import { createRegistrationGate } from '@src/features/account/infrastructure/createRegistrationGate.js';
+import { createLegalVersions } from '@src/features/account/infrastructure/createLegalVersions.js';
+import { createInvitationVerifier } from '@src/features/account/infrastructure/createInvitationVerifier.js';
+import { createArgon2PasswordHasher } from '@src/shared/identity/infrastructure/createArgon2PasswordHasher.js';
 import { createPainJournalDependencies } from '@src/features/painJournal/infrastructure/createPainJournalDependencies.js';
 import { createSelfProfileRepository } from '@src/features/selfProfile/infrastructure/createSelfProfileRepository.js';
 import { createTimelineRepository } from '@src/features/timeline/infrastructure/createTimelineRepository.js';
@@ -104,7 +119,34 @@ const scanQuotaDefaults = {
   reserveBasisPoints: Math.round(config.SCAN_QUOTA_RESERVE_PERCENT * 100),
   initialCostPerScanUsd: config.SCAN_QUOTA_INITIAL_COST_PER_SCAN_USD,
 };
+const sessionRepository = createSessionRepository(db);
+const hasher = createArgon2PasswordHasher();
+const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
 const app = createApp({
+  legal: createLegalRepository(db),
+  account: {
+    clientIp: getSocketClientIp,
+    rateLimit: {
+      store: createRateLimitStore(db),
+      keyHasher: createRateLimitKeyHasher(config.SESSION_COOKIE_SECRET),
+      now: Date.now,
+    },
+    accounts: createAccountRegistrationUnitOfWork(db),
+    gate: createRegistrationGate(db),
+    legalVersions: createLegalVersions(db, () => new Date()),
+    invitationVerifier: createInvitationVerifier(),
+    hasher,
+    identity,
+    localLoginSessions: createLocalLoginSessions(db),
+    passwords: createLocalPasswordChanges(db),
+    lookupLocalCredential: createLocalCredentialLookup(db),
+    enrollments: createLocalCredentialEnrollments(db),
+    enrollmentEnabled: config.LOCAL_ENROLLMENT_ENABLED,
+    sessions: sessionRepository,
+    generateToken: () => randomBytes(32).toString('base64url'),
+    now: () => new Date(),
+    appBaseUrl: config.APP_BASE_URL,
+  },
   push: createPushDependencies(db, config),
   ...(config.OCR_MASK_URL
     ? { redactionSuggestions: { analyzer: createOcrMaskAnalyzer(config.OCR_MASK_URL), logger } }
@@ -122,7 +164,7 @@ const app = createApp({
         redirectUri: config.OIDC_REDIRECT_URI,
       }),
       accounts: createAccountRepository(db),
-      sessions: createSessionRepository(db),
+      sessions: sessionRepository,
       adminGroupName: config.ADMIN_GROUP_NAME,
       generateToken: () => randomBytes(32).toString('base64url'),
       now: () => new Date(),

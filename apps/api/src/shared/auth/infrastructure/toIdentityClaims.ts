@@ -19,5 +19,9 @@ export function toIdentityClaims(claims: Record<string, unknown>): IdentityClaim
   if (name !== undefined) result.name = name;
   if (preferredUsername !== undefined) result.preferredUsername = preferredUsername;
   if (email !== undefined) result.email = email;
+  if (typeof claims.auth_time === 'number' && Number.isFinite(claims.auth_time)) {
+    const authTime = new Date(claims.auth_time * 1000);
+    if (Number.isFinite(authTime.getTime())) result.authTime = authTime;
+  }
   return result;
 }
