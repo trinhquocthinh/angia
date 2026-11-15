@@ -3,7 +3,7 @@ import type { RegistrationInput, RegistrationValidationOutcome } from './Registr
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const USERNAME_REGEX = /^[a-z0-9._-]{3,32}$/;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/;
 
 export function validateRegistrationInput(input: RegistrationInput): RegistrationValidationOutcome {
   if (input.ageConfirmed !== true) {
@@ -23,9 +23,12 @@ export function validateRegistrationInput(input: RegistrationInput): Registratio
   }
   if (input.email !== undefined && input.email !== null) {
     const emailTrimmed = input.email.trim();
-    if (!EMAIL_REGEX.test(emailTrimmed)) {
+    if (emailTrimmed.length > 254 || !EMAIL_REGEX.test(emailTrimmed)) {
       return { ok: false, code: 'ERR_VALIDATION', details: { field: 'email' } };
     }
+  }
+  if (input.invitationToken !== undefined && input.invitationToken.length > 512) {
+    return { ok: false, code: 'ERR_VALIDATION', details: { field: 'invitationToken' } };
   }
   if (!isValidLegalAcceptance(input.legalAcceptance)) {
     return { ok: false, code: 'ERR_VALIDATION', details: { field: 'legalAcceptance' } };
