@@ -19,8 +19,8 @@ export type RegistrationValues = LoginRequest & {
   legalAgreed: boolean;
 };
 
-export type AccountActionPath = '/api/me/password' | '/api/me/local-credential' | '/api/me/legal-acceptances';
-export type AccountActionBody = { newPassword: string } | { password: string } | { versionIds: string[] };
+type AccountActionPath = '/api/me/password' | '/api/me/local-credential' | '/api/me/legal-acceptances';
+type AccountActionBody = { newPassword: string } | { password: string } | { versionIds: string[] };
 export type SubmitAccountAction = (
   path: AccountActionPath,
   body: AccountActionBody,

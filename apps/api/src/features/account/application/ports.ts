@@ -3,8 +3,6 @@ import type { IdentityProvider, PasswordHasher } from '@src/shared/identity/appl
 
 import type { RateLimitDependencies } from '@src/shared/rateLimit/application/ports.js';
 
-export type { PasswordHasher, SessionRepository };
-
 export interface RegistrationGate {
   isOpen(): Promise<boolean>;
 }
@@ -100,7 +98,7 @@ export type LoginLocalAccountOutcome =
   | { ok: false; code: 'ERR_AUTH_UNAVAILABLE'; reason: string }
   | { ok: false; code: 'ERR_RATE_LIMITED'; retryAfterSeconds: number };
 
-export interface LocalPasswordCredential {
+interface LocalPasswordCredential {
   usernameNormalized: string;
   passwordHash: string;
   credentialVersion: number;
@@ -131,13 +129,13 @@ export type ChangeLocalPasswordOutcome =
   | { ok: false; code: 'ERR_RATE_LIMITED'; retryAfterSeconds: number }
   | { ok: false; code: 'ERR_AUTH_UNAVAILABLE'; reason: string };
 
-export interface EnrollmentAccount {
+interface EnrollmentAccount {
   oidcSubject: string | null;
   usernameNormalized: string | null;
   lockedAt: Date | null;
 }
 
-export type EnrollmentInsertOutcome =
+type EnrollmentInsertOutcome =
   { ok: true } | { ok: false; reason: 'gone' | 'locked' | 'forbidden' | 'exists' };
 
 export interface LocalCredentialEnrollments {

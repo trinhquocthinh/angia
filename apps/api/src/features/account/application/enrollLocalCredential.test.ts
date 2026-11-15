@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 import { PasswordHashBusyError } from '@src/shared/identity/application/PasswordHashBusyError.js';
 import { enrollLocalCredential } from './enrollLocalCredential.js';
-import type { EnrollLocalCredentialDeps, EnrollmentAccount, EnrollmentInsertOutcome } from './ports.js';
+import type { EnrollLocalCredentialDeps, LocalCredentialEnrollments } from './ports.js';
+
+type EnrollmentAccount = NonNullable<Awaited<ReturnType<LocalCredentialEnrollments['findAccount']>>>;
+type EnrollmentInsertOutcome = Awaited<ReturnType<LocalCredentialEnrollments['insertIfAbsent']>>;
 
 function fixture() {
   const account: EnrollmentAccount = { oidcSubject: 'sub', usernameNormalized: 'me.lan123', lockedAt: null };

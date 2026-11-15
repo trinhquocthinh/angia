@@ -7,7 +7,7 @@ import { createDatabase } from '../../apps/api/src/shared/db/createDatabase.js';
 import { createArgon2PasswordHasher } from '../../apps/api/src/shared/identity/infrastructure/createArgon2PasswordHasher.js';
 import { createCredentialRepository } from '../../apps/api/src/shared/identity/infrastructure/createCredentialRepository.js';
 import { createLocalIdentityProvider } from '../../apps/api/src/shared/identity/infrastructure/createLocalIdentityProvider.js';
-import { PASSWORD_HASH_LIMITS } from '../../apps/api/src/shared/identity/infrastructure/createPasswordHashLimiter.js';
+import { PASSWORD_HASH_LIMITS } from '../../apps/api/src/shared/identity/infrastructure/passwordHashLimits.js';
 import { runLocalIdentityBenchmark } from './runLocalIdentityBenchmark.js';
 import { runLocalIdentityRound } from './runLocalIdentityRound.js';
 

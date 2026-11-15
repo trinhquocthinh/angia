@@ -31,7 +31,7 @@ export interface AccountRepository {
   upsertFromIdentity(identity: AccountIdentity): Promise<{ id: string }>;
 }
 
-export interface NewSession {
+interface NewSession {
   accountId: string;
   csrfToken: string;
   expiresAt: Date;

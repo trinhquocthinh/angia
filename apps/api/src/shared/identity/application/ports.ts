@@ -1,4 +1,4 @@
-export interface VerifiedIdentity {
+interface VerifiedIdentity {
   accountId: string;
   credentialVersion: number;
   lockedAt: Date | null;
@@ -6,7 +6,7 @@ export interface VerifiedIdentity {
   tempPasswordExpiresAt: Date | null;
 }
 
-export interface CredentialIdentity extends VerifiedIdentity {
+interface CredentialIdentity extends VerifiedIdentity {
   passwordHash: string;
 }
 

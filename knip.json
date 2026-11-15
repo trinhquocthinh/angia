@@ -7,8 +7,6 @@
         "tooling/**/*.test.ts",
         "scripts/**/*.test.ts",
         "scripts/heic-spike/measureOne.ts",
-        "scripts/spike/identityProvider.ts!",
-        "scripts/spike/identityMeasurements.ts!",
         "e2e/**/*.spec.ts"
       ],
       "project": ["tooling/**/*.ts", "scripts/**/*.ts", "e2e/**/*.ts"]
@@ -18,9 +16,13 @@
       "project": [
         "src/**/*.ts!",
         "!src/shared/test/**!",
+        "!src/shared/config/loadIdentitySpikeConfig.ts!",
+        "!src/shared/identity/application/LocalIdentityLifecycle.ts!",
+        "!src/shared/identity/infrastructure/{authentikIdentityProvider,createAuthentikRequest,createAuthentikUser,verifyAuthentikIdentity,verifyAuthentikPassword,createLocalIdentityLifecycle,revokeIdentityAccess,withLockedIdentityAccount}.ts!",
         "scripts/**/*.ts",
         "!src/features/painJournal/application/painIssueTestFixture.ts!",
         "!src/features/painJournal/infrastructure/painRepositoryFixture.ts!",
+        "!src/features/account/infrastructure/identityMigrationFixtures.ts!",
         "!src/features/painJournal/infrastructure/waitForPainLocks.ts!",
         "!src/features/painJournal/presentation/painJournalHttpFixture.ts!",
         "!src/features/painJournal/presentation/painJournalScenario.ts!"

@@ -1,7 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { VerifiedIdentity } from '@src/shared/identity/application/ports.js';
+import type { IdentityProvider } from '@src/shared/identity/application/ports.js';
 import { PasswordHashBusyError } from '@src/shared/identity/application/PasswordHashBusyError.js';
 import { loginLocalAccount } from './loginLocalAccount.js';
+
+type VerifiedIdentity = NonNullable<Awaited<ReturnType<IdentityProvider['verifyPassword']>>>;
 
 const now = new Date('2026-11-14T00:00:00Z');
 const input = { username: 'Me.Lan', password: 'secret', ip: 'ip' };

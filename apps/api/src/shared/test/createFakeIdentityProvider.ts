@@ -1,9 +1,9 @@
-import type { IdentityProvider, VerifiedIdentity } from '../identity/application/ports.js';
+import type { IdentityProvider } from '../identity/application/ports.js';
 
 interface FakeIdentity {
   username: string;
   password: string;
-  identity: VerifiedIdentity;
+  identity: NonNullable<Awaited<ReturnType<IdentityProvider['verifyPassword']>>>;
 }
 
 // Chỉ cho unit test; mật khẩu fixture không dùng làm credential lưu trữ.

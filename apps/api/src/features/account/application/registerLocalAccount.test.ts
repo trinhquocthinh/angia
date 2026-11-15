@@ -1,4 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
+import type { SessionRepository } from '@src/shared/auth/application/ports.js';
+import type { PasswordHasher } from '@src/shared/identity/application/ports.js';
 import type { RegistrationInput } from '../domain/RegistrationInput.js';
 import type {
   AccountRegistrationUnitOfWork,
@@ -6,12 +8,10 @@ import type {
   InvitationVerifier,
   LegalVersions,
   NewLocalAccountRecord,
-  PasswordHasher,
   RegisteredLocalAccount,
   RegisterLocalAccountDeps,
   RegisterLocalAccountRecordOutcome,
   RegistrationGate,
-  SessionRepository,
 } from './ports.js';
 import { registerLocalAccount } from './registerLocalAccount.js';
 

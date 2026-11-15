@@ -1,6 +1,6 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { describe, expect, it, vi } from 'vitest';
-import type { VerifiedIdentity } from '@src/shared/identity/application/ports.js';
+import type { IdentityProvider } from '@src/shared/identity/application/ports.js';
 import type { LocalLoginSessions } from '../application/ports.js';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { errorResponse } from '@src/shared/http/errorResponse.js';
@@ -12,7 +12,7 @@ function fixture() {
   const deps = {
     ...createStubAccountDeps(),
     identity: {
-      verifyPassword: vi.fn(async (): Promise<VerifiedIdentity | null> => ({
+      verifyPassword: vi.fn<IdentityProvider['verifyPassword']>(async () => ({
         accountId: 'account',
         credentialVersion: 1,
         lockedAt: null,

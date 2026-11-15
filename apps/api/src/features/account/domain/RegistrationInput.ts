@@ -1,4 +1,4 @@
-export interface RegistrationLegalAcceptance {
+interface RegistrationLegalAcceptance {
   termsVersionId: string;
   privacyVersionId: string;
 }
@@ -13,7 +13,7 @@ export interface RegistrationInput {
   invitationToken?: string | undefined;
 }
 
-export interface ValidatedRegistrationInput {
+interface ValidatedRegistrationInput {
   usernameNormalized: string;
   password: string;
   displayName: string;

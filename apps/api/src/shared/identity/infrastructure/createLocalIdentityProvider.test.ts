@@ -1,7 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { CredentialIdentity, PasswordHasher } from '../application/ports.js';
+import type { CredentialRepository, PasswordHasher } from '../application/ports.js';
 import { createArgon2PasswordHasher } from './createArgon2PasswordHasher.js';
 import { createLocalIdentityProvider } from './createLocalIdentityProvider.js';
+
+type CredentialIdentity = NonNullable<Awaited<ReturnType<CredentialRepository['findByUsername']>>>;
 
 const identity = {
   accountId: 'account-1',
