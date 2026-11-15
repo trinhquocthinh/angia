@@ -9,7 +9,9 @@ export const session = {
   family: { id: 'f', name: 'Nhà' },
   role: 'main',
   csrfToken: 'csrf',
-  features: { redactionSuggestions: false },
+  authMethod: 'local',
+  hasLocalCredential: true,
+  features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 } satisfies ProfileSession;
 export const profile = { id: profileId, familyId: 'f', consentStatus: 'confirmed' } as HealthProfile;
 export const item = {

@@ -20,7 +20,13 @@ export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencie
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth);
   registerAccountRoutes(app, { ...deps.account, cookies, logger: deps.auth.logger });
-  registerMeRoute(app, { redactionSuggestions: Boolean(deps.redactionSuggestions) });
+  registerMeRoute(app, {
+    features: {
+      redactionSuggestions: Boolean(deps.redactionSuggestions),
+      localEnrollmentEnabled: deps.account.enrollmentEnabled,
+    },
+    lookupLocalCredential: deps.account.lookupLocalCredential,
+  });
   if (deps.push) registerPushRoutes(app, deps.push, cookies);
   registerAdminRoutes(app, deps.familyAdmin, deps.scanQuota.now);
   registerScanQuotaRoutes(app, deps.scanQuota);

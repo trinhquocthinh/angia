@@ -1,7 +1,7 @@
 import type { components, paths } from '@src/shared/api/schema.gen';
 export type CurrentLegal =
   paths['/api/legal/current']['get']['responses'][200]['content']['application/json'];
-export type AccountFailure = { ok: false; code: string; field?: string; current?: unknown };
+export type AccountFailure = { ok: false; code: string; field?: string; current?: unknown; status?: number };
 export type AccountResult<T> = { ok: true; data: T } | AccountFailure;
 export type LoginRequest = components['schemas']['PasswordLoginRequest'];
 export type RegistrationRequest = components['schemas']['RegisterAccountRequest'];
@@ -18,3 +18,11 @@ export type RegistrationValues = LoginRequest & {
   ageConfirmed: boolean;
   legalAgreed: boolean;
 };
+
+export type AccountActionPath = '/api/me/password' | '/api/me/local-credential' | '/api/me/legal-acceptances';
+export type AccountActionBody = { newPassword: string } | { password: string } | { versionIds: string[] };
+export type SubmitAccountAction = (
+  path: AccountActionPath,
+  body: AccountActionBody,
+  csrfToken: string,
+) => Promise<AccountResult<void>>;

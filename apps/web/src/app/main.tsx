@@ -1,3 +1,4 @@
+import { registerAccountNavigator } from '@src/shared/api/accountRedirectMiddleware';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { StrictMode } from 'react';
@@ -13,12 +14,13 @@ import { routeTree } from './routeTree.gen';
 import './styles.css';
 
 const queryClient = new QueryClient();
+// Design §11.4.1: chuyển trang mờ dần qua View Transitions; trình duyệt không hỗ trợ thì đổi trang tức thì.
+const router = createRouter({ routeTree, defaultViewTransition: true });
+registerAccountNavigator((to) => router.navigate({ to, replace: true }));
 // Trang mời đồng thuận không cần phiên (SessionBoundary bỏ qua AuthBoundary) nên không gọi /api/me.
 if (!isConsentInvitationRoute(window.location.pathname)) {
   void prefetchCurrentSession(queryClient, fetchCurrentSession);
 }
-// Design §11.4.1: chuyển trang mờ dần qua View Transitions; trình duyệt không hỗ trợ thì đổi trang tức thì.
-const router = createRouter({ routeTree, defaultViewTransition: true });
 
 declare module '@tanstack/react-router' {
   interface Register {

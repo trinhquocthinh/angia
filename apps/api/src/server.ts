@@ -1,3 +1,4 @@
+import { createLocalCredentialLookup } from '@src/features/account/infrastructure/createLocalCredentialLookup.js';
 import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
 import { createLocalCredentialEnrollments } from '@src/features/account/infrastructure/createLocalCredentialEnrollments.js';
 import { createLocalPasswordChanges } from '@src/features/account/infrastructure/createLocalPasswordChanges.js';
@@ -138,6 +139,7 @@ const app = createApp({
     identity,
     localLoginSessions: createLocalLoginSessions(db),
     passwords: createLocalPasswordChanges(db),
+    lookupLocalCredential: createLocalCredentialLookup(db),
     enrollments: createLocalCredentialEnrollments(db),
     enrollmentEnabled: config.LOCAL_ENROLLMENT_ENABLED,
     sessions: sessionRepository,

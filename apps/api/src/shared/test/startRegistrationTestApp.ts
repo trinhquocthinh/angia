@@ -1,3 +1,4 @@
+import { createLocalCredentialLookup } from '@src/features/account/infrastructure/createLocalCredentialLookup.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
 import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
 import { createLocalCredentialEnrollments } from '@src/features/account/infrastructure/createLocalCredentialEnrollments.js';
@@ -36,7 +37,6 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
   const legalAcceptance = await seedLegalVersions(owner);
   const pool = new pg.Pool({ connectionString: testDb.appUrl });
   const db = createDatabase(pool);
-  const sessions = createSessionRepository(db);
   const stub = createStubAuthDeps();
   const hasher = createArgon2PasswordHasher();
   const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
@@ -55,10 +55,11 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
     identity,
     localLoginSessions: createLocalLoginSessions(db),
     passwords: createLocalPasswordChanges(db),
+    lookupLocalCredential: createLocalCredentialLookup(db),
     enrollments: createLocalCredentialEnrollments(db),
     enrollmentEnabled: enrollmentEnabled,
     accounts: createAccountRegistrationUnitOfWork(db),
-    sessions,
+    sessions: createSessionRepository(db),
     generateToken: () => randomBytes(32).toString('base64url'),
     now: () => new Date(),
   };
@@ -72,7 +73,7 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
     familyAdmin: createFakeFamilyAdminRepository().repository,
     aiBudget: createStubAiBudgetDeps(),
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
-    auth: { ...stub, cookieSecret: TEST_COOKIE_SECRET, login: { ...stub.login, sessions } },
+    auth: { ...stub, cookieSecret: TEST_COOKIE_SECRET, login: { ...stub.login, sessions: account.sessions } },
     account,
   });
   return {

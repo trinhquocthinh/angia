@@ -42,3 +42,11 @@ describe('Đọc ngữ cảnh phiên từ /api/me', () => {
     await expect(fetchCurrentSession()).rejects.toThrow('Không thể kiểm tra phiên. Vui lòng thử lại.');
   });
 });
+
+it('TC-748: /api/me bị hạn chế trả null để màn đổi mật khẩu vẫn hiển thị', async () => {
+  get.mockResolvedValue({
+    response: new Response(null, { status: 403 }),
+    error: { error: { code: 'ERR_PASSWORD_CHANGE_REQUIRED', message: '' } },
+  });
+  await expect(fetchCurrentSession()).resolves.toBeNull();
+});

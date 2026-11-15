@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { Field } from '@src/shared/ui/field/Field';
-import { completeAccountAccess } from '../application/completeAccountAccess';
+import { completePasswordLogin } from '../application/completePasswordLogin';
 import { useLoginForm } from '../application/useLoginForm';
 import { submitPasswordLogin } from '../infrastructure/submitPasswordLogin';
 import { AccountLayout } from './AccountLayout';
@@ -13,7 +13,7 @@ export function LoginPage({ hasAuthError = false }: { hasAuthError?: boolean }) 
   const navigate = useNavigate();
   const { form, error, submit } = useLoginForm(
     submitPasswordLogin,
-    () => completeAccountAccess((options) => client.invalidateQueries(options), navigate),
+    (session) => completePasswordLogin(session, (options) => client.invalidateQueries(options), navigate),
     hasAuthError,
   );
   const busy = form.formState.isSubmitting;

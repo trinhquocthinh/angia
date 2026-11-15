@@ -16,7 +16,9 @@ const linked = {
   family: { id: 'family', name: 'Nhà An' },
   role: 'member',
   csrfToken: 'csrf',
-  features: { redactionSuggestions: false },
+  authMethod: 'local',
+  hasLocalCredential: true,
+  features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 } as const;
 const summary: SelfProfile = {
   id: 'p1',

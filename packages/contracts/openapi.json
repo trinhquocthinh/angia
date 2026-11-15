@@ -312,15 +312,29 @@
           "csrfToken": {
             "type": "string"
           },
+          "authMethod": {
+            "type": "string",
+            "enum": [
+              "local",
+              "oidc"
+            ]
+          },
+          "hasLocalCredential": {
+            "type": "boolean"
+          },
           "features": {
             "type": "object",
             "properties": {
               "redactionSuggestions": {
                 "type": "boolean"
+              },
+              "localEnrollmentEnabled": {
+                "type": "boolean"
               }
             },
             "required": [
-              "redactionSuggestions"
+              "redactionSuggestions",
+              "localEnrollmentEnabled"
             ]
           }
         },
@@ -329,6 +343,8 @@
           "family",
           "role",
           "csrfToken",
+          "authMethod",
+          "hasLocalCredential",
           "features"
         ]
       },

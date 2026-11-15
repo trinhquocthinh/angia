@@ -45,7 +45,9 @@ async function accountRoute(route: Route, state: Awaited<ReturnType<typeof accou
             family: null,
             role: null,
             csrfToken: 'csrf',
-            features: { redactionSuggestions: false },
+            authMethod: 'local',
+            hasLocalCredential: true,
+            features: { redactionSuggestions: false, localEnrollmentEnabled: false },
           }
         : { error: { code: 'ERR_UNAUTHENTICATED', message: 'Chưa đăng nhập' } },
     });

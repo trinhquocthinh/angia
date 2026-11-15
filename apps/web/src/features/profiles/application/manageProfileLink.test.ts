@@ -7,7 +7,9 @@ const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà An' },
   role: 'main',
   csrfToken: 'csrf',
-  features: { redactionSuggestions: false },
+  authMethod: 'local',
+  hasLocalCredential: true,
+  features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 function repository(): ProfilesRepository {
   return {

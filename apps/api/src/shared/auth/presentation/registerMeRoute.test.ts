@@ -21,13 +21,23 @@ const session: SessionContext = {
   role: null,
 };
 
-async function meWith(redactionSuggestions: boolean) {
+async function meWith(
+  redactionSuggestions: boolean,
+  hasLocalCredential = false,
+  localEnrollmentEnabled = false,
+) {
   const app = new OpenAPIHono<AppEnv>();
   app.use('*', async (c, next) => {
     c.set('session', session);
     await next();
   });
-  registerMeRoute(app, { redactionSuggestions });
+  registerMeRoute(app, {
+    features: { redactionSuggestions, localEnrollmentEnabled },
+    lookupLocalCredential: async (accountId) => {
+      expect(accountId).toBe(session.account.id);
+      return { hasLocalCredential };
+    },
+  });
   return (await app.request('/api/me')).json();
 }
 
@@ -35,5 +45,20 @@ describe('GET /api/me — cờ tính năng (SPEC-083)', () => {
   it('TC-890: features.redactionSuggestions theo cấu hình OCR_MASK_URL', async () => {
     expect(await meWith(true)).toMatchObject({ features: { redactionSuggestions: true } });
     expect(await meWith(false)).toMatchObject({ features: { redactionSuggestions: false } });
+  });
+});
+
+describe('GET /api/me — điều kiện enrollment local', () => {
+  it('TC-900: trả nguồn OIDC, credential và cờ enrollment bật/tắt', async () => {
+    expect(await meWith(false, false, true)).toMatchObject({
+      authMethod: 'oidc',
+      hasLocalCredential: false,
+      features: { localEnrollmentEnabled: true },
+    });
+    expect(await meWith(false, true, false)).toMatchObject({
+      authMethod: 'oidc',
+      hasLocalCredential: true,
+      features: { localEnrollmentEnabled: false },
+    });
   });
 });

@@ -61,3 +61,12 @@ it('giữ trạng thái gửi trong lúc chờ phản hồi rồi mở lại for
   expect(success).not.toHaveBeenCalled();
   unsubscribe();
 });
+
+it('TC-748: chuyển thông tin phiên hạn chế cho bước hoàn tất đăng nhập', async () => {
+  const data = {
+    session: { csrfToken: 'restricted', expiresAt: '2026-12-01T00:00:00Z', passwordChangeRequired: true },
+  };
+  const { model, success } = loginModel(async () => ({ ok: true, data }));
+  await model.submit();
+  expect(success).toHaveBeenCalledWith(data.session);
+});

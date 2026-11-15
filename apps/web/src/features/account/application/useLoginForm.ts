@@ -4,7 +4,11 @@ import { accountErrorMessage } from './accountErrorMessage';
 import type { LoginRequest, SubmitPasswordLogin } from './ports';
 export function useLoginForm(
   submitLogin: SubmitPasswordLogin,
-  onSuccess: () => Promise<unknown>,
+  onSuccess: (session: {
+    csrfToken: string;
+    expiresAt: string;
+    passwordChangeRequired: boolean;
+  }) => Promise<unknown>,
   hasAuthError: boolean,
 ) {
   const form = useForm<LoginRequest>({ defaultValues: { username: '', password: '' } });
@@ -14,7 +18,7 @@ export function useLoginForm(
   const submit = form.handleSubmit(async (values) => {
     setError(null);
     const result = await submitLogin(values);
-    if (result.ok) await onSuccess();
+    if (result.ok) await onSuccess(result.data.session);
     else setError(accountErrorMessage(result.code));
   });
   return { form, error, submit };

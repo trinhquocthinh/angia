@@ -13,8 +13,10 @@ export const meContextResponseSchema = z
     role: z.enum(['main', 'member']).nullable(),
     // Web gửi lại qua header X-CSRF-Token ở mọi POST/PUT/PATCH/DELETE (Tech Spec §5.1).
     csrfToken: z.string(),
+    authMethod: z.enum(['local', 'oidc']),
+    hasLocalCredential: z.boolean(),
     // SPEC-083: true khi API có cấu hình OCR_MASK_URL → web hiện nút "Gợi ý vùng che".
-    features: z.object({ redactionSuggestions: z.boolean() }),
+    features: z.object({ redactionSuggestions: z.boolean(), localEnrollmentEnabled: z.boolean() }),
   })
   .meta({ id: 'MeContextResponse' });
 

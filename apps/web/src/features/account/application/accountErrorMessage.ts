@@ -7,6 +7,8 @@ const messages: Record<string, string> = {
   ERR_REGISTRATION_CLOSED: 'Hiện chưa mở đăng ký. Bạn cần lời mời để tham gia.',
   ERR_LEGAL_VERSION_OUTDATED: 'Điều khoản vừa được cập nhật, vui lòng đọc lại.',
   ERR_VALIDATION: 'Dữ liệu gửi lên không đúng định dạng quy định.',
+  ERR_PASSWORD_CHANGE_REQUIRED: 'Bạn cần đặt mật khẩu mới trước khi tiếp tục.',
+  ERR_CREDENTIAL_ALREADY_SET: 'Bạn đã thiết lập mật khẩu. Vui lòng đăng nhập.',
   NETWORK: 'Mất kết nối. Kiểm tra mạng rồi thử lại.',
 };
 export function accountErrorMessage(code: string): string {

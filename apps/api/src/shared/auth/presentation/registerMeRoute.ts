@@ -1,6 +1,7 @@
 import { createRoute, type OpenAPIHono } from '@hono/zod-openapi';
 import { errorResponseSchema, type MeContextResponse, meContextResponseSchema } from '@angia/contracts';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
+import type { LocalCredentialLookup } from '../application/ports.js';
 import type { SessionContext } from '../domain/SessionContext.js';
 import { currentSession } from './currentSession.js';
 
@@ -23,20 +24,31 @@ const meRoute = createRoute({
 
 type MeFeatures = MeContextResponse['features'];
 
-function toMeContextResponse(session: SessionContext, features: MeFeatures): MeContextResponse {
+function toMeContextResponse(
+  session: SessionContext,
+  features: MeFeatures,
+  hasLocalCredential: boolean,
+): MeContextResponse {
   return {
     account: session.account,
     family: session.family,
     role: session.role,
     csrfToken: session.csrfToken,
+    authMethod: session.authMethod,
+    hasLocalCredential,
     features,
   };
 }
 
 // Phiên đã được loadSession + requireSession kiểm tra trước khi tới handler.
-export function registerMeRoute(app: OpenAPIHono<AppEnv>, features: MeFeatures): void {
-  app.openapi(meRoute, (c) => {
+export function registerMeRoute(
+  app: OpenAPIHono<AppEnv>,
+  deps: { features: MeFeatures; lookupLocalCredential: LocalCredentialLookup },
+): void {
+  app.openapi(meRoute, async (c) => {
     c.header('Cache-Control', 'no-store');
-    return c.json(toMeContextResponse(currentSession(c), features), 200);
+    const session = currentSession(c);
+    const { hasLocalCredential } = await deps.lookupLocalCredential(session.account.id);
+    return c.json(toMeContextResponse(session, deps.features, hasLocalCredential), 200);
   });
 }

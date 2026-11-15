@@ -1,3 +1,6 @@
+import { accountEnrollmentCases } from './accountEnrollmentCases.js';
+import { accountPasswordCases } from './accountPasswordCases.js';
+import { accountLegalUpdateCases } from './accountLegalUpdateCases.js';
 import { accountValidationCases } from './accountValidationCases.js';
 import { accountRegistrationErrorCases } from './accountRegistrationErrorCases.js';
 import { accountLegalCurrentCase } from './accountLegalCurrentCase.js';
@@ -18,6 +21,9 @@ test.beforeEach(async ({ page }, info) => {
 });
 
 for (const theme of ['light', 'dark']) {
+  accountEnrollmentCases(theme);
+  accountPasswordCases(theme);
+  accountLegalUpdateCases(theme);
   accountValidationCases(theme);
   accountRegistrationErrorCases(theme);
   accountLegalCurrentCase(theme);

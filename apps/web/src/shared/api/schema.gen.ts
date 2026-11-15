@@ -10511,8 +10511,12 @@ export interface components {
       /** @enum {string|null} */
       role: 'main' | 'member' | null;
       csrfToken: string;
+      /** @enum {string} */
+      authMethod: 'local' | 'oidc';
+      hasLocalCredential: boolean;
       features: {
         redactionSuggestions: boolean;
+        localEnrollmentEnabled: boolean;
       };
     };
     PushConfig: {

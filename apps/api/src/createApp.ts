@@ -1,3 +1,4 @@
+import type { LocalCredentialLookup } from '@src/shared/auth/application/ports.js';
 import { registerAppRoutes } from './registerAppRoutes.js';
 import type { LegalRepository } from '@src/features/legal/application/ports.js';
 import { requireLegalAcceptance } from '@src/features/legal/presentation/requireLegalAcceptance.js';
@@ -67,6 +68,7 @@ export type AppDependencies = {
     LoginLocalAccountDeps &
     ChangeLocalPasswordDeps &
     EnrollLocalCredentialDeps & {
+      lookupLocalCredential: LocalCredentialLookup;
       appBaseUrl: string;
       rateLimit: RateLimitDependencies;
       clientIp: ClientIpResolver;

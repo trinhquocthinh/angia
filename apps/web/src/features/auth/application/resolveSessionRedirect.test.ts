@@ -8,7 +8,9 @@ const waiting: Session = {
   family: null,
   role: null,
   csrfToken: 'csrf',
-  features: { redactionSuggestions: false },
+  authMethod: 'local',
+  hasLocalCredential: true,
+  features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 const assigned: Session = { ...waiting, family: { id: 'family', name: 'Nhà An' }, role: 'main' };
 
@@ -60,3 +62,14 @@ describe('Điều hướng quản trị hệ thống', () => {
 it('chưa có phiên tại /register được ở lại màn tạo tài khoản', () => {
   expect(resolveSessionRedirect(null, '/register')).toBeNull();
 });
+
+it('TC-748: màn đổi mật khẩu hiển thị được khi /api/me bị hạn chế', () => {
+  expect(resolveSessionRedirect(null, '/account/change-password')).toBeNull();
+});
+it.each(['/account/legal-update', '/account/local-password'])(
+  'TC-755: màn %s cần có phiên nhưng không cần nhà',
+  (path) => {
+    expect(resolveSessionRedirect(null, path)).toBe('/login');
+    expect(resolveSessionRedirect(waiting, path)).toBeNull();
+  },
+);

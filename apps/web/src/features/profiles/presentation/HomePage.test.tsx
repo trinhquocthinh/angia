@@ -20,7 +20,9 @@ const session: ProfileSession = {
   family: { id: 'family', name: 'Nhà kiểm thử' },
   role: 'main',
   csrfToken: 'csrf',
-  features: { redactionSuggestions: false },
+  authMethod: 'local',
+  hasLocalCredential: true,
+  features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 const base: ProfileListItem = {
   id: 'own',

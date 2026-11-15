@@ -9,7 +9,9 @@ const session: ProfileSession = {
   family: { id: 'f', name: 'Nhà An' },
   role: 'main',
   csrfToken: 'csrf',
-  features: { redactionSuggestions: false },
+  authMethod: 'local',
+  hasLocalCredential: true,
+  features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 function mount(client: QueryClient, repo: ProfilesRepository, context = session) {
   let workspace: ReturnType<typeof useInvitationManager> | undefined;
