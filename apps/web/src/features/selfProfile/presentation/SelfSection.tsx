@@ -3,11 +3,13 @@ import type { SelfProfile } from '@angia/contracts';
 import type { ProfileSession } from '@src/features/profiles/application/ports';
 import type { SelfSectionKey } from '../application/selfSections';
 import { useSelfQuery } from '../application/useSelfQuery';
-import { SelfHealth } from './SelfHealth';
 import { selfProfileRepository as repository } from './selfProfileRepository';
 import { SelfRevisits } from './SelfRevisits';
 import { SelfTimeline } from './SelfTimeline';
 import { SelfToday } from './SelfToday';
+
+// Chỉ tải biểu đồ khi mở tab Chỉ số, giống các tab xét nghiệm và đau nhức.
+const SelfHealth = lazy(() => import('./SelfHealth').then((module) => ({ default: module.SelfHealth })));
 
 const LabSeriesList = lazy(() =>
   import('@src/features/labResults/presentation/LabSeriesList').then((module) => ({
@@ -43,7 +45,11 @@ export function SelfSection({ session, section, profile, issueId }: Props) {
     case 'timeline':
       return <SelfTimeline session={session} />;
     case 'health':
-      return <SelfHealth session={session} />;
+      return (
+        <Suspense fallback={<p role="status">Đang tải chỉ số sức khỏe…</p>}>
+          <SelfHealth session={session} />
+        </Suspense>
+      );
     case 'lab-results':
       return <SelfLabResults session={session} />;
     case 'pain':
