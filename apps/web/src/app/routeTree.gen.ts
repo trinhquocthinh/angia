@@ -16,6 +16,7 @@ import { Route as LinkInviteRouteImport } from './routes/link-invite'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MyProfileRouteImport } from './routes/my-profile'
 import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as UploadRouteImport } from './routes/upload'
 import { Route as WaitingRouteImport } from './routes/waiting'
 import { Route as ProfilesProfileIdRouteImport } from './routes/profiles.$profileId'
@@ -72,6 +73,11 @@ const MyProfileRoute = MyProfileRouteImport.update({
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UploadRoute = UploadRouteImport.update({
@@ -204,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/my-profile': typeof MyProfileRoute
   '/notifications': typeof NotificationsRoute
+  '/register': typeof RegisterRoute
   '/upload': typeof UploadRoute
   '/waiting': typeof WaitingRoute
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/my-profile': typeof MyProfileRoute
   '/notifications': typeof NotificationsRoute
+  '/register': typeof RegisterRoute
   '/upload': typeof UploadRoute
   '/waiting': typeof WaitingRoute
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
@@ -267,6 +275,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/my-profile': typeof MyProfileRoute
   '/notifications': typeof NotificationsRoute
+  '/register': typeof RegisterRoute
   '/upload': typeof UploadRoute
   '/waiting': typeof WaitingRoute
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
@@ -300,6 +309,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/my-profile'
     | '/notifications'
+    | '/register'
     | '/upload'
     | '/waiting'
     | '/profiles/$profileId'
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/my-profile'
     | '/notifications'
+    | '/register'
     | '/upload'
     | '/waiting'
     | '/profiles/$profileId'
@@ -362,6 +373,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/my-profile'
     | '/notifications'
+    | '/register'
     | '/upload'
     | '/waiting'
     | '/profiles/$profileId'
@@ -394,6 +406,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MyProfileRoute: typeof MyProfileRoute
   NotificationsRoute: typeof NotificationsRoute
+  RegisterRoute: typeof RegisterRoute
   UploadRoute: typeof UploadRoute
   WaitingRoute: typeof WaitingRoute
   ProfilesProfileIdRoute: typeof ProfilesProfileIdRoute
@@ -467,6 +480,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/upload': {
@@ -634,6 +654,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MyProfileRoute: MyProfileRoute,
   NotificationsRoute: NotificationsRoute,
+  RegisterRoute: RegisterRoute,
   UploadRoute: UploadRoute,
   WaitingRoute: WaitingRoute,
   ProfilesProfileIdRoute: ProfilesProfileIdRoute,
