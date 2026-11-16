@@ -49,6 +49,7 @@
     "ops:reminder-audit": "tsx --env-file-if-exists=.env scripts/ops/auditReminders.ts",
     "postinstall": "husky",
     "test:e2e": "node --env-file-if-exists=.env.e2e node_modules/@playwright/test/cli.js test",
+    "test:e2e:sit-smoke": "node --env-file-if-exists=.env.e2e node_modules/@playwright/test/cli.js test e2e/e26-account-smoke.spec.ts --project chromium",
     "e2e:auth": "node --env-file-if-exists=.env.e2e node_modules/@playwright/test/cli.js codegen --save-storage=.playwright/auth/sit.json https://angia-sit.toniboy.io.vn",
     "test:e2e:body-map": "playwright test --config playwright.body-map.config.ts",
     "test:e2e:account": "yarn workspace @angia/web build && playwright test --config playwright.account.config.ts",
