@@ -14,7 +14,41 @@ async function savePassword(page: Page) {
   await byLabel(page, 'Nhập lại mật khẩu mới').fill('matkhaumoi123');
   await page.getByRole('button', { name: 'Lưu mật khẩu', exact: true }).click();
 }
+async function enrollmentSettles(page: Page, adminWithoutFamily: boolean) {
+  const state = await accountSecurityFixture(page);
+  Object.assign(state, { enrollment: true, adminWithoutFamily });
+  await page.goto('/account/local-password');
+  await returnFromReauth(page);
+  const readsBeforeSave = state.meReads;
+  let navigations = 0;
+  page.on('framenavigated', (frame) => {
+    if (frame === page.mainFrame()) navigations += 1;
+  });
+  await savePassword(page);
+  const destination = adminWithoutFamily ? /\/admin$/ : /\/$/;
+  const heading = adminWithoutFamily ? 'Quản trị hệ thống' : 'Liều hôm nay';
+  await expect(page).toHaveURL(destination);
+  await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
+  // Quan sát đủ ba giây để phát hiện vòng lặp, không dùng để đồng bộ thao tác lưu.
+  await page.waitForTimeout(3000);
+  await expect(page).toHaveURL(destination);
+  await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
+  expect(state.meReads - readsBeforeSave).toBeLessThanOrEqual(5);
+  expect(navigations).toBeLessThanOrEqual(3);
+  expect(state.hasLocalCredential).toBe(true);
+  expect(state.enrollment).toBe(true);
+  expect(await page.evaluate(() => sessionStorage.getItem('angia.enrollReauth'))).toBeNull();
+}
+function enrollmentCompletionCases(theme: string) {
+  test(`TC-900: admin không nhà lưu mật khẩu xong về /admin không treo — ${theme}`, async ({ page }) => {
+    await enrollmentSettles(page, true);
+  });
+  test(`TC-900: account có nhà lưu mật khẩu xong về / không treo — ${theme}`, async ({ page }) => {
+    await enrollmentSettles(page, false);
+  });
+}
 export function accountEnrollmentCases(theme: string) {
+  enrollmentCompletionCases(theme);
   test(`TC-751/900: mời enrollment, xác minh lại rồi lưu mật khẩu — ${theme}`, async ({ page }) => {
     const state = await accountSecurityFixture(page);
     state.enrollment = true;
