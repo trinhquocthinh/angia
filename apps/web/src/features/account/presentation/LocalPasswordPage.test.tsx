@@ -43,14 +43,19 @@ function renderPage(hasLocalCredential: boolean, adminWithoutFamily: boolean) {
   vi.mocked(useEffect).mockImplementation((effect) => {
     effects.push(effect);
   });
-  renderToStaticMarkup(
+  const markup = renderToStaticMarkup(
     <QueryClientProvider client={client}>
       <LocalPasswordPage />
     </QueryClientProvider>,
   );
   effects.forEach((effect) => effect());
-  return client;
+  return { client, markup };
 }
+it('TC-900: admin OIDC chưa có mật khẩu mở thẳng enrollment về /admin và không thấy form', () => {
+  const { markup } = renderPage(false, true);
+  expect(markup).toBe('');
+  expect(mocks.navigate).toHaveBeenCalledExactlyOnceWith({ to: '/admin', replace: true });
+});
 it.each([true, false])(
   'TC-900: phiên đã có credential chọn thẳng đích ổn định, admin không nhà=%s',
   (admin) => {
@@ -59,7 +64,7 @@ it.each([true, false])(
   },
 );
 it('TC-900: lưu thành công chỉ làm mới phiên, để effect sở hữu điều hướng', async () => {
-  const client = renderPage(false, true);
+  const { client } = renderPage(false, false);
   const invalidate = vi.spyOn(client, 'invalidateQueries').mockResolvedValue();
   expect(mocks.success).toBeDefined();
   await mocks.success!();

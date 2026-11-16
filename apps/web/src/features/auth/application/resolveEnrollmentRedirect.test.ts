@@ -1,10 +1,16 @@
 import { expect, it } from 'vitest';
 import { resolveEnrollmentRedirect } from './resolveEnrollmentRedirect';
 const eligible = {
+  account: { isSystemAdmin: false },
   authMethod: 'oidc' as const,
   hasLocalCredential: false,
   features: { localEnrollmentEnabled: true },
 };
+it('TC-900: admin OIDC chưa có mật khẩu không được mời enrollment tại trang chủ', () => {
+  const admin = { ...eligible, account: { isSystemAdmin: true } };
+  expect(resolveEnrollmentRedirect(admin, '/', false, false)).toBeNull();
+  expect(resolveEnrollmentRedirect(admin, '/', true, true)).toBeNull();
+});
 it('TC-751: mời một lần mỗi tab tại trang chủ', () => {
   expect(resolveEnrollmentRedirect(eligible, '/', false, false)).toBe('/account/local-password');
   expect(resolveEnrollmentRedirect(eligible, '/', true, false)).toBeNull();

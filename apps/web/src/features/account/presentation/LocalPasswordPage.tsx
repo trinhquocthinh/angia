@@ -21,6 +21,7 @@ export function LocalPasswordPage() {
   const navigate = useNavigate();
   const eligible =
     session.data?.authMethod === 'oidc' &&
+    !session.data.account.isSystemAdmin &&
     !session.data.hasLocalCredential &&
     session.data.features.localEnrollmentEnabled;
   useEffect(() => {

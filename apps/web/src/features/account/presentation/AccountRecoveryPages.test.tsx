@@ -12,6 +12,9 @@ vi.mock('@tanstack/react-router', () => ({
 function markup(page: React.ReactNode) {
   const client = new QueryClient();
   client.setQueryData(['current-session'], {
+    account: { id: 'account', displayName: 'Lan', isSystemAdmin: false, healthProfileId: null },
+    family: { id: 'family', name: 'Nhà thử' },
+    role: 'main',
     authMethod: 'oidc',
     hasLocalCredential: false,
     features: { localEnrollmentEnabled: true },

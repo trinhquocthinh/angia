@@ -14,9 +14,9 @@ async function savePassword(page: Page) {
   await byLabel(page, 'Nhập lại mật khẩu mới').fill('matkhaumoi123');
   await page.getByRole('button', { name: 'Lưu mật khẩu', exact: true }).click();
 }
-async function enrollmentSettles(page: Page, adminWithoutFamily: boolean) {
+async function enrollmentSettles(page: Page, withoutFamily: boolean) {
   const state = await accountSecurityFixture(page);
-  Object.assign(state, { enrollment: true, adminWithoutFamily });
+  Object.assign(state, { enrollment: true, withoutFamily });
   await page.goto('/account/local-password');
   await returnFromReauth(page);
   const readsBeforeSave = state.meReads;
@@ -25,8 +25,8 @@ async function enrollmentSettles(page: Page, adminWithoutFamily: boolean) {
     if (frame === page.mainFrame()) navigations += 1;
   });
   await savePassword(page);
-  const destination = adminWithoutFamily ? /\/admin$/ : /\/$/;
-  const heading = adminWithoutFamily ? 'Quản trị hệ thống' : 'Liều hôm nay';
+  const destination = withoutFamily ? /\/waiting$/ : /\/$/;
+  const heading = withoutFamily ? 'Chờ vào nhóm gia đình' : 'Liều hôm nay';
   await expect(page).toHaveURL(destination);
   await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
   // Quan sát đủ ba giây để phát hiện vòng lặp, không dùng để đồng bộ thao tác lưu.
@@ -40,7 +40,27 @@ async function enrollmentSettles(page: Page, adminWithoutFamily: boolean) {
   expect(await page.evaluate(() => sessionStorage.getItem('angia.enrollReauth'))).toBeNull();
 }
 function enrollmentCompletionCases(theme: string) {
-  test(`TC-900: admin không nhà lưu mật khẩu xong về /admin không treo — ${theme}`, async ({ page }) => {
+  test(`TC-900: admin không được mời enrollment — ${theme}`, async ({ page }) => {
+    const state = await accountSecurityFixture(page);
+    Object.assign(state, { enrollment: true, adminWithoutFamily: true });
+    const paths: string[] = [];
+    page.on('framenavigated', (frame) => {
+      if (frame === page.mainFrame()) paths.push(new URL(frame.url()).pathname);
+    });
+    await page.goto('/');
+    await expect(page).toHaveURL(/\/admin$/);
+    await expect(page.getByRole('heading', { name: 'Quản trị hệ thống', exact: true })).toBeVisible();
+    expect(paths).not.toContain('/account/local-password');
+    await page.goto('/account/local-password');
+    await expect(page).toHaveURL(/\/admin$/);
+    await expect(page.getByRole('heading', { name: 'Quản trị hệ thống', exact: true })).toBeVisible();
+    await expect(byLabel(page, 'Mật khẩu mới')).toHaveCount(0);
+    expect(state.hasLocalCredential).toBe(false);
+    expect(state.writes.some((write) => write.path === '/api/me/local-credential')).toBe(false);
+  });
+  test(`TC-900: account thường không nhà lưu mật khẩu xong về /waiting không treo — ${theme}`, async ({
+    page,
+  }) => {
     await enrollmentSettles(page, true);
   });
   test(`TC-900: account có nhà lưu mật khẩu xong về / không treo — ${theme}`, async ({ page }) => {

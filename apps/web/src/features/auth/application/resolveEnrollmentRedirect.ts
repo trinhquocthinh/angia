@@ -1,4 +1,5 @@
 type EnrollmentSession = {
+  account: { isSystemAdmin: boolean };
   authMethod: 'local' | 'oidc';
   hasLocalCredential: boolean;
   features: { localEnrollmentEnabled: boolean };
@@ -13,6 +14,7 @@ export function resolveEnrollmentRedirect(
   if (
     pathname !== '/' ||
     !session ||
+    session.account.isSystemAdmin ||
     session.authMethod !== 'oidc' ||
     session.hasLocalCredential ||
     !session.features.localEnrollmentEnabled
