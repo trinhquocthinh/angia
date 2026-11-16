@@ -32,5 +32,7 @@ FROM ${NGINX_IMAGE} AS runtime
 LABEL org.opencontainers.image.source=https://github.com/trinhquocthinh/angia
 COPY apps/web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/apps/web/dist /usr/share/nginx/html
+COPY legal/terms.md /usr/share/nginx/html/legal/
+COPY legal/privacy.md /usr/share/nginx/html/legal/
 USER 10001:0
 EXPOSE 8080
