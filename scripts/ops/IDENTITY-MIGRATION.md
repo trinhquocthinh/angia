@@ -30,7 +30,7 @@ Pha local này chỉ chuẩn bị công cụ và test với dữ liệu giả; c
 
 Chạy từ gốc repo. Truyền `DATABASE_OWNER_URL` của **DB sao chép** qua môi trường
 shell được owner quản lý (không ghi URL vào log/lịch sử lệnh). Công cụ kiểm URL bằng
-Zod và dùng `pg.Client` như legal seed; ba lệnh mới không tự nạp `.env`.
+Zod và dùng `pg.Client` như legal seed; các lệnh không tự nạp `.env`.
 
 ```sh
 corepack yarn ops:identity-inventory
@@ -102,7 +102,21 @@ apply. Dừng enrollment trong khi rollback. Hàm
 `rollbackIdentityUsernames(client, mapping: IdentityMapping)` trong
 `rollbackIdentityUsernames.ts` chỉ lấy dòng `status='migrate'` có
 `currentUsername === null`. `$1::uuid[]` là mảng accountId, `$2::text[]` là mảng
-username tương ứng từ các dòng này; dùng tham số, không nội suy:
+username tương ứng từ các dòng này; dùng tham số, không nội suy.
+
+Chạy CLI từ gốc repo với `DATABASE_OWNER_URL` của **DB sao chép** như trên:
+
+```sh
+corepack yarn ops:identity-rollback
+corepack yarn ops:identity-rollback ops-private/identity-mapping.json
+corepack yarn ops:identity-rollback ops-private/identity-mapping.json --apply
+```
+
+Đường dẫn mapping là tùy chọn, mặc định `ops-private/identity-mapping.json`.
+Mặc định dry-run: `BEGIN` → UPDATE thật để đếm số dòng → `ROLLBACK`.
+Chỉ `--apply` mới `COMMIT`; lỗi trong transaction thì `ROLLBACK` rồi báo thất bại
+(exit code 1). CLI chỉ in mode và số dòng, không in URL, username hay accountId.
+SQL được hàm rollback sử dụng:
 
 ```sql
 UPDATE accounts a SET username_normalized = NULL FROM unnest($1::uuid[], $2::text[]) AS m(id, username) WHERE a.id = m.id AND a.username_normalized = m.username AND NOT EXISTS (SELECT 1 FROM account_credentials c WHERE c.account_id = a.id)
