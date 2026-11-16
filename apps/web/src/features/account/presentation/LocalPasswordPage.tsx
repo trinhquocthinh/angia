@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { CURRENT_SESSION_KEY, useCurrentSession } from '@src/features/auth/application/useCurrentSession';
 import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
+import { resolveSessionRedirect } from '@src/features/auth/application/resolveSessionRedirect';
 import {
   ENROLL_LATER_KEY,
   ENROLL_REAUTH_KEY,
@@ -23,12 +24,12 @@ export function LocalPasswordPage() {
     !session.data.hasLocalCredential &&
     session.data.features.localEnrollmentEnabled;
   useEffect(() => {
-    if (session.data && !eligible) void navigate({ to: '/' });
+    if (session.data && !eligible)
+      void navigate({ to: resolveSessionRedirect(session.data, '/') ?? '/', replace: true });
   }, [session.data, eligible, navigate]);
   async function success() {
     writeAccountStorage(ENROLL_REAUTH_KEY, null);
     await client.invalidateQueries({ queryKey: CURRENT_SESSION_KEY });
-    await navigate({ to: '/' });
   }
   function defer() {
     writeAccountStorage(ENROLL_LATER_KEY, '1');
