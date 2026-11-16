@@ -34,6 +34,16 @@ yarn test:e2e tc093
 
 Không chạy E2E mặc định trong `yarn verify:fast`/`yarn verify`: bộ này cần phiên SIT, Worker và OCR thật. Test thiếu cấu hình, sai role/family, phiên hết hạn hoặc OCR chuyển nhập tay/chờ ngân sách phải báo lỗi; không skip để tạo kết quả xanh.
 
+## E26 — Smoke SIT công khai, chỉ đọc
+
+`e2e/e26-account-smoke.spec.ts` dùng cấu hình gốc và origin SIT, chỉ GET/điều hướng, không đăng nhập hay submit form. Bỏ `E2E_STORAGE_STATE` khỏi cả môi trường và `.env.e2e` trước khi chạy; nếu biến được đặt, toàn bộ spec sẽ skip để tránh dùng phiên có sẵn.
+
+```bash
+corepack yarn test:e2e:sit-smoke
+```
+
+Kiểm health (AT-E26-01), legal (AT-E26-18), login desktop/mobile sáng/tối, trường đăng ký và trạng thái account khi chưa đăng nhập (phần công khai AT-E26-27). Annotation `legal-seed` ghi nhận `500 ERR_INTERNAL` khi chưa seed (cần owner), hoặc `200` đủ hai văn bản sau seed. Theo source, `/account/change-password` giữ nguyên URL và hiện “Vui lòng đăng nhập lại.” cùng link `/login`; `/account/legal-update` và `/account/local-password` chuyển về `/login`. Request trình duyệt khác GET bị chặn; không dùng fixture SIT tạo dữ liệu. Bộ smoke này không thay thế nghiệm thu đăng nhập, axe/Lighthouse hoặc kiểm tra trực quan toàn bộ AT-E26-27.
+
 ## Ghép vào luồng push sit
 
 Luồng giữ nguyên ranh giới hai repo:
