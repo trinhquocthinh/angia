@@ -1,7 +1,7 @@
+import { writeAdminAuditEvent } from '@src/shared/audit/writeAdminAuditEvent.js';
 import { and, eq, isNull, sql } from 'drizzle-orm';
 import {
   accounts,
-  adminAuditEvents,
   families,
   familyDeletionRequests,
   familyInvitations,
@@ -55,12 +55,11 @@ export async function acceptStoredJoinInvitation(
     .update(accounts)
     .set({ familyId: family.id, familyRole: current.role })
     .where(eq(accounts.id, accountId));
-  await tx.insert(adminAuditEvents).values({
+  await writeAdminAuditEvent(tx, {
     actorAccountId: accountId,
     familyId: family.id,
     targetAccountId: accountId,
     action: 'invitation_accepted',
-    metadata: {},
   });
   return { ok: true, familyId: family.id };
 }

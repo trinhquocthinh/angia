@@ -1185,3 +1185,57 @@ và [runbook isolation](apps/api/test/isolation/README.md#e27-s3-t3--probe-xác-
 Các checkpoint T1/T2 và ghi chú stub tại E26 ở trên là lịch sử; verifier thật
 và trạng thái source hiện hành theo checkpoint T3. Bước phát triển kế tiếp là
 E27-S4-T1; các cổng nghiệm thu còn thiếu vẫn giữ nguyên.
+
+## E27-S4-T1 — Bộ ghi nhật ký quản lý (2026-11-17)
+
+Đã áp dụng theo phạm vi owner duyệt: `apps/api/src/shared/audit/writeAdminAuditEvent.ts`
+nhận transaction hiện tại, chỉ nhận bốn action đã triển khai (`family_created`,
+`invitation_created`, `invitation_revoked`, `invitation_accepted`), từ chối action
+khác ở runtime và luôn tự tạo `metadata: {}`. Không chuyển tiếp metadata/ID
+sự kiện từ DTO; thời điểm do DB cấp. Không bắt lỗi ghi hoặc mở transaction riêng.
+Năm tệp infrastructure nhà dùng chung bộ ghi; đăng ký kèm join tiếp tục dùng
+luồng xác nhận hiện có nên không thêm sự kiện trùng. Không đổi schema hoặc API.
+
+Tạo nhà bằng lời mời lập nhà giữ hai sự kiện: một `family_created` và một
+`invitation_accepted`; mỗi thao tác nghiệp vụ đúng một sự kiện tương ứng.
+Bộ test mới kiểm tra bảy luồng, actor/đối tượng/thời điểm/metadata, đúng số
+sự kiện và rollback ở commit bằng deferred trigger; so sánh toàn bộ snapshot
+accounts/families/invitations/audit trước và sau lỗi. Test bảo vệ metadata còn
+truyền thử mật khẩu/token/tên thuốc/số đo và xác nhận không lưu các trường đó.
+
+Phần TC-839/840 chưa triển khai tiếp tục là điều kiện nghiệm thu tại task nhận:
+
+| Thao tác                          | Task nhận    |
+| --------------------------------- | ------------ |
+| Đổi vai trò, gỡ thành viên        | E28-S1-T1    |
+| Rời nhà                           | E28-S1-T2    |
+| Chuyển Chủ hộ                     | E28-S2-T1    |
+| Yêu cầu/thu hồi/thực hiện xoá nhà | E28-S2-T2    |
+| Người giám hộ                     | E28-S2-T3    |
+| Đặt lại mật khẩu                  | E29-S1-T1/T2 |
+| Đổi công tắc đăng ký              | E31-S1-T1    |
+| Khoá/mở khoá tài khoản            | E31-S1-T2    |
+
+Mỗi task nhận bổ sung action khi triển khai, ghi trong transaction nghiệp vụ
+và kiểm tra đúng một sự kiện/rollback trước nghiệm thu. Worker triển khai
+adapter trong app worker theo cùng hợp đồng; không import source app API.
+TC-841/842 và quét toàn bộ v1.0 TC-880 vẫn theo E31/các cổng nghiệm thu tương ứng;
+không lấy test metadata cục bộ thay cho quét toàn bộ.
+
+Kiểm chứng: integration nhà/audit/đăng ký **10 suite / 92 PASS**, gồm **17 test mới**;
+unit household/account và kiểm tra phân tầng **16 suite / 170 PASS**. Typecheck
+workspace, ESLint/Prettier phần source đổi và `git diff --check` đạt.
+`yarn verify:fast` exit 1 sau typecheck PASS vì Vitest đọc metadata macOS `._*`
+chứa NUL. Lượt kiểm chứng bổ sung dùng cấu hình tạm ngoài repository chỉ loại
+metadata ở từng project; Testcontainers chạy ngoài sandbox qua Colima.
+Không sửa cấu hình test nguồn hoặc xoá metadata. Không gọi lượt bổ sung là
+`verify:fast` PASS. Chưa full verify, commit/push/PR/deploy; không đóng toàn bộ
+TC-839 hoặc tăng tổng task nghiệm thu. Giữ nguyên thay đổi Legal Update có trước.
+
+Tài liệu liên quan: [đối chiếu TC-839/840](../../Docs/angia/08-test-cases-specification.md#1318-spec-076--nhật-ký-quản-lý),
+[runbook S4](../../Docs/angia/10-setup-and-ops-guide.md#e27-s4-t1--ghi-nhật-ký-quản-lý-2026-11-17),
+[bàn giao S4](../../Docs/angia/12-onboarding-guide.md#e27-s4-t1--bàn-giao-bộ-ghi-audit-2026-11-17)
+và [báo cáo bằng chứng](../../Docs/angia/acceptance/v1.0/evidence/e27-s4-t1-2026-11-17/report.md).
+Bước phát triển kế tiếp là **E27-S5-T1**, phụ thuộc bản Stitch; các cổng nghiệm
+thu còn mở của E27 giữ nguyên. Ghi chú chưa commit ở trên mô tả checkpoint
+trước commit; mã commit source và kết quả hook được ghi tại hồ sơ E27.

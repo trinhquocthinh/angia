@@ -1,5 +1,6 @@
+import { writeAdminAuditEvent } from '@src/shared/audit/writeAdminAuditEvent.js';
 import { and, eq, isNull, sql } from 'drizzle-orm';
-import { adminAuditEvents, familyInvitations } from '@src/shared/db/schema/index.js';
+import { familyInvitations } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import type { HouseholdInvitationRepository } from '../application/invitationPorts.js';
 import { lockInvitationActor } from './lockInvitationActor.js';
@@ -40,11 +41,10 @@ export async function revokeStoredHouseholdInvitation(
     )
     .returning({ id: familyInvitations.id });
   if (!revoked) return { ok: false, code: 'ERR_NOT_FOUND' };
-  await tx.insert(adminAuditEvents).values({
+  await writeAdminAuditEvent(tx, {
     actorAccountId: actor.accountId,
     familyId: actor.familyId,
     action: 'invitation_revoked',
-    metadata: {},
   });
   return { ok: true };
 }

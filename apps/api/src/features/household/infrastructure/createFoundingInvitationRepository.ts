@@ -1,8 +1,9 @@
+import { writeAdminAuditEvent } from '@src/shared/audit/writeAdminAuditEvent.js';
 import { newId } from '@src/shared/db/schema/newId.js';
 import { randomBytes } from 'node:crypto';
 import { eq, sql } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { accounts, adminAuditEvents } from '@src/shared/db/schema/index.js';
+import { accounts } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import type { FoundingInvitationRepository } from '../application/acceptancePorts.js';
 import { hashInvitationSecret } from './hashInvitationSecret.js';
@@ -28,9 +29,7 @@ export function createFoundingInvitationRepository(db: Database): FoundingInvita
         );
         const row = rows[0];
         if (!row) return { ok: false, code: 'ERR_FORBIDDEN' };
-        await tx
-          .insert(adminAuditEvents)
-          .values({ actorAccountId: accountId, action: 'invitation_created', metadata: {} });
+        await writeAdminAuditEvent(tx, { actorAccountId: accountId, action: 'invitation_created' });
         return {
           ok: true,
           value: { invitationId: row.id, token, code, expiresAt: new Date(row.expires_at) },
@@ -43,9 +42,7 @@ export function createFoundingInvitationRepository(db: Database): FoundingInvita
           sql`SELECT public.revoke_founding_invitation(${accountId}::uuid, ${invitationId}::uuid) AS revoked`,
         );
         if (!rows[0]?.revoked) return { ok: false, code: 'ERR_NOT_FOUND' };
-        await tx
-          .insert(adminAuditEvents)
-          .values({ actorAccountId: accountId, action: 'invitation_revoked', metadata: {} });
+        await writeAdminAuditEvent(tx, { actorAccountId: accountId, action: 'invitation_revoked' });
         return { ok: true };
       }),
   };

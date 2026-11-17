@@ -1,7 +1,8 @@
+import { writeAdminAuditEvent } from '@src/shared/audit/writeAdminAuditEvent.js';
 import { eq } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
-import { accounts, adminAuditEvents, families } from '@src/shared/db/schema/index.js';
+import { accounts, families } from '@src/shared/db/schema/index.js';
 import { createRegistrationGate } from '@src/features/account/infrastructure/createRegistrationGate.js';
 import { checkHouseholdCreation } from './checkHouseholdCreation.js';
 import { claimFoundingInvitation } from './claimFoundingInvitation.js';
@@ -27,16 +28,9 @@ async function insertHousehold(
     .set({ familyId: family.id, familyRole: 'main' })
     .where(eq(accounts.id, accountId));
   // CP5.5: nhà mới tự có lượt mặc định; không tạo lượt dùng thử hoặc ghi dòng quota tháng.
-  const actions = claimedInvitation ? ['family_created', 'invitation_accepted'] : ['family_created'];
-  await tx.insert(adminAuditEvents).values(
-    actions.map((action) => ({
-      actorAccountId: accountId,
-      familyId: family.id,
-      targetAccountId: accountId,
-      action,
-      metadata: {},
-    })),
-  );
+  const event = { actorAccountId: accountId, familyId: family.id, targetAccountId: accountId };
+  await writeAdminAuditEvent(tx, { ...event, action: 'family_created' });
+  if (claimedInvitation) await writeAdminAuditEvent(tx, { ...event, action: 'invitation_accepted' });
   return { ok: true, family };
 }
 

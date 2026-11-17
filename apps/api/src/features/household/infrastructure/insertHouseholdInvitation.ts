@@ -1,6 +1,7 @@
+import { writeAdminAuditEvent } from '@src/shared/audit/writeAdminAuditEvent.js';
 import { createHash, randomBytes } from 'node:crypto';
 import { and, eq, sql } from 'drizzle-orm';
-import { adminAuditEvents, familyDeletionRequests, familyInvitations } from '@src/shared/db/schema/index.js';
+import { familyDeletionRequests, familyInvitations } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import type { HouseholdInvitationRepository } from '../application/invitationPorts.js';
 import { lockInvitationActor } from './lockInvitationActor.js';
@@ -46,11 +47,10 @@ export async function insertHouseholdInvitation(
     })
     .returning({ id: familyInvitations.id });
   if (!invitation) throw new Error('INSERT lời mời không trả về ID');
-  await tx.insert(adminAuditEvents).values({
+  await writeAdminAuditEvent(tx, {
     actorAccountId: actor.accountId,
     familyId: actor.familyId,
     action: 'invitation_created',
-    metadata: {},
   });
   return { ok: true, value: { invitationId: invitation.id, token, code, expiresAt } };
 }
