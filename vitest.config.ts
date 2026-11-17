@@ -56,7 +56,7 @@ export default defineConfig({
         resolve: { alias: aliasFor(apiSrc) },
         test: {
           name: 'int',
-          include: ['apps/api/src/**/*.int.test.ts'],
+          include: ['apps/api/src/**/*.int.test.ts', 'apps/api/test/**/*.int.test.ts'],
           // Đo hiệu năng chạy riêng (`yarn test:perf`): chạy song song với cả bộ int thì số đo nhiễu theo tải máy.
           exclude: ['**/*.perf.int.test.ts', '**/node_modules/**'],
           environment: 'node',
