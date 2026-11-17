@@ -1016,3 +1016,42 @@ E26 giữ 0/13 task đóng. Thay đổi README E25 có sẵn được giữ nguy
 ## E26-S3-T1 — đăng ký local trong một transaction (2026-11-13)
 
 **Checkpoint E26-S3-T1 — 2026-11-13:** owner chốt thiết kế: port + adapter tối thiểu, phiên tạo sau commit, có tầng infrastructure. Feature `apps/api/src/features/account` thêm domain `validateRegistrationInput` (username chuẩn hoá chữ thường `^[a-z0-9._-]{3,32}$`, mật khẩu ≥ 8 và khác username, displayName 1–60, email tuỳ chọn, `ageConfirmed` bắt buộc), use case `registerLocalAccount` (validate → công tắc/lời mời → phiên bản legal hiện hành → username trùng → hash ngoài transaction → transaction account + credential + 2 legal_acceptances + membership → commit → phiên `authMethod: 'local'`). Adapter: công tắc đọc `system_settings.registration_open` (thiếu dòng = mở); legal lấy bản `published_at` mới nhất mỗi loại; lời mời là stub trả `null` tới E27-S3-T3. Race unique `accounts_username_normalized_unique` → `ERR_USERNAME_TAKEN`, lỗi khác rollback và ném tiếp; lỗi tạo phiên không rollback tài khoản. `NewSession` thêm `authMethod` tuỳ chọn. **20/20 unit + 11/11 integration PASS** (PostgreSQL Testcontainers role app: TC-736/737 kèm race/738/742/743/896 rollback legal và membership, đếm account/credential/legal trước–sau; công tắc/legal). ESLint/Prettier PASS; `yarn verify:fast` exit 0 sau khi xoá AppleDouble `._*`. TC-741 chỉ PASS mức unit với fake lời mời. Chưa route/OpenAPI (S3-T2), rate limit (S3-T3), full `yarn verify`/knip, SIT, push/PR/deploy; **chưa đóng T1 theo DoD, E26 giữ 0/13 task đóng**.
+
+## E27-S1-T2 — Kiểm kê quyền RLS (2026-11-17)
+
+Chạy từ gốc repository, cung cấp `DATABASE_OWNER_URL` của đúng môi trường qua
+môi trường chạy hoặc `.env` hiện có:
+
+```sh
+yarn ops:rls-inventory
+```
+
+Lệnh không có tuỳ chọn chọn môi trường `--env`; URL kết nối quyết định DB đích.
+Công cụ dùng transaction `REPEATABLE READ READ ONLY`, timeout mỗi statement 10 giây,
+xuất JSON metadata role, membership, schema/ACL, bảng/view/sequence và RLS, quyền cột,
+policy, hàm `SECURITY DEFINER`/`search_path`/ACL và default privileges.
+Không đọc dữ liệu nghiệp vụ. Mã thoát 0 nghĩa là kiểm kê thành công; 1 là lỗi kiểm kê.
+Báo cáo không tự kết luận quyền tối thiểu đạt; cần review ACL cùng owner và membership.
+
+Kiểm tra riêng T2:
+
+```sh
+yarn vitest run --project unit scripts/ops/readRlsInventory.test.ts
+DOCKER_HOST="unix://$HOME/.colima/default/docker.sock" TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock yarn vitest run --project int apps/api/test/isolation/outsideRls.int.test.ts
+```
+
+Đã kiểm chứng local: 3 unit PASS; 3 integration PASS, 3 TODO trên PostgreSQL 16
+Testcontainers. Phép nới BYPASSRLS làm cùng assertion thất bại, khôi phục lại xanh;
+chỉ tác động container dùng một lần. Typecheck và lint/format phần đổi PASS.
+`verify:fast` chưa xanh do sandbox cấm mở socket và metadata macOS `._*` bị thu thập
+thành test. Lượt unit bổ sung ngoài sandbox có 3.363 test PASS nhưng vẫn exit 1 vì
+một suite metadata. Chưa coi các cổng verify toàn bộ là PASS.
+
+Owner nghiệm thu T2 theo phạm vi duyệt, giữ thứ tự phát triển và chuyển TC-868–870
+chưa thực thi thành nợ kỹ thuật: **E27-T2-D1** → E27-S3-T2/T3;
+**E27-T2-D2** → E28-S2-T2; **E27-T2-D3** → E29-S3-T1/T2.
+Mỗi task nhận nợ phải thay TODO bằng test trên đường thật, có ca hợp lệ và phép
+nới quyền làm cùng assertion thất bại, khôi phục lại xanh trước nghiệm thu đường đó.
+Xem [hồ sơ nghiệm thu E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md)
+và [sổ nợ trong master plan](../../Docs/angia/11-master-plan.md).
+T1 vẫn chưa đóng toàn bộ DoD; tiếp theo E27-S2-T1. Chưa push/PR/deploy.

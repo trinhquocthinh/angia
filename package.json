@@ -42,6 +42,7 @@
     "model:optimize": "tsx scripts/model/modelOptimize.ts",
     "model:check": "tsx scripts/model/modelCheck.ts",
     "ops:identity-inventory": "tsx scripts/ops/identityInventory.ts",
+    "ops:rls-inventory": "tsx --env-file-if-exists=.env scripts/ops/rlsInventory.ts",
     "ops:identity-migrate": "tsx scripts/ops/identityMigrate.ts",
     "ops:identity-rollback": "tsx scripts/ops/identityRollback.ts",
     "ops:identity-reconcile": "tsx scripts/ops/identityReconcile.ts",
