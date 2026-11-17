@@ -1,3 +1,4 @@
+import { registerHouseholdRoutes } from '@src/features/household/presentation/registerHouseholdRoutes.js';
 import { registerClinicalRoutes } from './registerClinicalRoutes.js';
 import type { AppDependencies } from './createApp.js';
 import type { OpenAPIHono } from '@hono/zod-openapi';
@@ -17,6 +18,7 @@ import { registerPushRoutes } from '@src/features/pushSubscriptions/presentation
 
 export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencies): void {
   const cookies = { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies };
+  registerHouseholdRoutes(app, deps.household);
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth);
   registerAccountRoutes(app, { ...deps.account, cookies, logger: deps.auth.logger });

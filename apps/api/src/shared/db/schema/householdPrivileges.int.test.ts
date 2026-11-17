@@ -18,14 +18,14 @@ describe('E27-S2-T1: quyền app, RLS và trạng thái bảng nhà', () => {
     const a = await t.seed();
     await seedHouseholdSchema(t.owner, a.family, a.profile, a.accounts[0]!, a.accounts[1]!);
     for (const table of HOUSEHOLD_RLS_TABLES) {
-      expect((await t.app.query(`SELECT * FROM ${table}`)).rows).toEqual([]);
+      expect((await t.app.query(`SELECT family_id FROM ${table}`)).rows).toEqual([]);
       await t.app.query('BEGIN');
       try {
         await t.app.query(
           "SELECT set_config('app.family_id',$1,true), set_config('app.self_profile_id',$2,true)",
           [a.family, a.profile],
         );
-        expect((await t.app.query(`SELECT * FROM ${table}`)).rows).toEqual([]);
+        expect((await t.app.query(`SELECT family_id FROM ${table}`)).rows).toEqual([]);
       } finally {
         await t.app.query('ROLLBACK');
       }
@@ -107,7 +107,7 @@ describe('E27-S2-T1: quyền app, RLS và trạng thái bảng nhà', () => {
     await t.app.query('BEGIN');
     try {
       await t.app.query("SELECT set_config('app.family_id',$1,true)", [a.family]);
-      expect((await t.app.query("SELECT * FROM family_invitations WHERE kind='found_family'")).rows).toEqual(
+      expect((await t.app.query("SELECT id FROM family_invitations WHERE kind='found_family'")).rows).toEqual(
         [],
       );
     } finally {

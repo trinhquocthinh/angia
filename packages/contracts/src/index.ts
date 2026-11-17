@@ -1,4 +1,5 @@
 export * from './auth/index.js';
+export * from './household/createHouseholdRequestSchema.js';
 export { errorResponseSchema, type ErrorResponse } from './errors/errorResponseSchema.js';
 export {
   accountSchema,

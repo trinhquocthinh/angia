@@ -57,7 +57,10 @@ import { errorResponse } from '@src/shared/http/errorResponse.js';
 import { limitRequestBody } from '@src/shared/http/limitRequestBody.js';
 import type { PushDependencies } from '@src/features/pushSubscriptions/application/ports.js';
 
+import type { HouseholdRepository } from '@src/features/household/application/ports.js';
+
 export type AppDependencies = {
+  household: HouseholdRepository;
   legal: LegalRepository;
   push?: PushDependencies;
   // SPEC-083: chỉ có khi cấu hình OCR_MASK_URL; vắng thì tắt gợi ý vùng che.

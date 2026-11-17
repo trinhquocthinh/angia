@@ -1,3 +1,4 @@
+import { createHouseholdRepository } from '@src/features/household/infrastructure/createHouseholdRepository.js';
 import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
 import { createStubAccountDeps } from './createStubAccountDeps.js';
 import { createPainJournalDependencies } from '@src/features/painJournal/infrastructure/createPainJournalDependencies.js';
@@ -104,6 +105,7 @@ function buildApp(
   const quota = { ...TEST_QUOTA_POLICY, limits: { ...TEST_QUOTA_POLICY.limits, ...options.quota } };
   const stub = createStubAuthDeps();
   return createApp({
+    household: createHouseholdRepository(database),
     legal: createLegalRepository(database),
     account: createStubAccountDeps(),
     ...(options.push ? { push: options.push(database) } : {}),

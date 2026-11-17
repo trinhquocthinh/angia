@@ -1089,3 +1089,27 @@ Chưa chạy migration trên DB ứng dụng local/SIT, chưa đóng DoD E27-S2-
 chưa push/PR/deploy. Chỉ role owner chạy `yarn db:migrate`; chạy lại phải
 không còn migration chờ. Hồ sơ và các bước nghiệm thu còn lại nằm tại
 [nghiệm thu E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md).
+
+### E27-S3-T1 — API tạo nhà (2026-11-17)
+
+`POST /api/families` nhận `{ name, invitationToken? }`, trả `Family` (201).
+Phiên, CSRF, đổi mật khẩu bắt buộc và đồng ý pháp lý dùng gate hiện có.
+Transaction khóa tài khoản, kiểm lại membership/pháp lý, tạo nhà, gán `main`
+và `owner_account_id`, ghi `family_created`. Nhà mới hưởng lượt mặc định CP5.5
+mà không cần tạo dòng quota tháng. Hai request cùng tài khoản chỉ tạo một nhà.
+
+Khi đóng đăng ký, cần lời mời `found_family` hợp lệ. Migration
+`0042_founding_invitation_access.sql` thêm hai hàm đặc quyền nhận hash, chỉ trả
+ID hoặc boolean; claim lời mời cùng transaction với tạo nhà, thêm một sự kiện
+`invitation_accepted`. Runtime không có SELECT toàn bảng lời mời hoặc hai cột
+hash; các cột quản lý còn lại vẫn qua RLS. Chỉ role owner chạy migration.
+API phát hành/thu hồi, `join_family` và verifier đăng ký bằng lời mời tiếp tục
+ở T2/T3; chưa nghiệm thu luồng tạo tài khoản bằng lời mời khi đóng đăng ký.
+
+Source đã áp dụng theo review owner duyệt. Integration bổ sung: 6 suite,
+352 PASS, 19 TODO; unit toàn workspace bổ sung: 652 suite, 3.370 PASS.
+Hai lượt dùng cấu hình tạm ngoài dự án chỉ loại metadata macOS `._*`.
+`yarn verify:fast` qua typecheck toàn workspace nhưng exit 1 do metadata
+`._AccountPages.test.tsx` chứa NUL; không gọi lượt bổ sung là verify PASS.
+Lint/format phần T1 và diff check đạt. Chưa full `yarn verify`, chưa migrate
+DB ứng dụng local/SIT, push hoặc deploy; chưa đóng toàn bộ DoD.
