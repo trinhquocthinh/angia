@@ -1,3 +1,4 @@
+import { createHouseholdInvitationRepository } from '@src/features/household/infrastructure/createHouseholdInvitationRepository.js';
 import { createHouseholdRepository } from '@src/features/household/infrastructure/createHouseholdRepository.js';
 import { createLocalCredentialLookup } from '@src/features/account/infrastructure/createLocalCredentialLookup.js';
 import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
@@ -125,6 +126,10 @@ const hasher = createArgon2PasswordHasher();
 const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
 const app = createApp({
   household: createHouseholdRepository(db),
+  householdInvitations: {
+    repository: createHouseholdInvitationRepository(db),
+    appBaseUrl: config.APP_BASE_URL,
+  },
   legal: createLegalRepository(db),
   account: {
     clientIp: getSocketClientIp,

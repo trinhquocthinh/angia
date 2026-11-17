@@ -302,6 +302,13 @@
       "when": 1794906130404,
       "tag": "0042_founding_invitation_access",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1794906130405,
+      "tag": "0043_join_invitation_lookup",
+      "breakpoints": true
     }
   ]
 }

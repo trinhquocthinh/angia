@@ -70,3 +70,34 @@ Bộ hồ sơ gốc nằm ngoài Git source tại `../../Docs/angia/` tính từ
 
 Trong fixture, `POST /api/health-profiles/:id/manual-records` kỳ vọng `200` theo
 hợp đồng hiện hành; không đổi API thành `201`.
+
+## E27-S3-T2 — Probe lời mời và TC-868 (2026-11-17)
+
+Hai route phát hành/thu hồi đã rời danh sách TODO trong `householdIsolationPlan.ts`:
+ca hợp lệ, nhà khác, chưa có nhà, cookie cũ đã rời/chuyển nhà và rollback audit
+nằm tại `features/household/presentation/householdInvitations.int.test.ts`.
+Repository có test kiểm lại DB sau snapshot main đã bị hạ quyền/rời nhà/khoá.
+`outsideRls.int.test.ts` đã thay TODO join_family bằng lời gọi hàm thật
+`lookup_join_invitation(text)` cho hash token/mã, kiểm đúng bốn cột tối thiểu,
+chặn hash/SELECT toàn bảng và các trạng thái không còn hiệu lực. Cùng assertion
+quyền tối thiểu xanh → cấp SELECT thì thất bại → khôi phục lại xanh.
+Phần found_family đã có ở T1; TC-868 cả hai loại đã kiểm chứng local.
+TC-869/870 vẫn TODO cho E28/E29, không tính PASS.
+
+Lệnh kiểm chứng từ gốc source với Colima:
+
+```sh
+yarn vitest run --project int apps/api/src/features/household apps/api/test/isolation/household.int.test.ts apps/api/test/isolation/outsideRls.int.test.ts
+yarn vitest run --project int apps/api/src/shared/db/runMigrations.int.test.ts apps/api/src/shared/db/schema/householdPrivileges.int.test.ts
+```
+
+Kết quả T2: nhóm đầu 5 suite / 364 PASS, 16 TODO; nhóm sau 2 suite / 9 PASS.
+Migration `0043_join_invitation_lookup` chạy trong PostgreSQL dùng một lần;
+không áp dụng các phép phá thử quyền lên DB ứng dụng local/SIT.
+Nếu máy có metadata macOS `._*`, lượt bổ sung dùng cấu hình Vitest tạm ngoài
+repository: import cấu hình gốc, nối `**/._*` vào `test.exclude` của từng project
+và truyền `--config` đến file tạm. CLI `--exclude` riêng vẫn có thể thu thập
+metadata do cấu hình nhiều project. Lượt này không thay thế `yarn verify:fast`:
+lệnh chính thức vẫn exit 1 do NUL trong metadata sau khi typecheck đạt.
+TC-775–776 xác nhận lời mời đã chuyển sang T3 theo owner duyệt; test T2 không
+nghiệm thu claim/membership, verifier đăng ký hoặc web nhận lời mời.

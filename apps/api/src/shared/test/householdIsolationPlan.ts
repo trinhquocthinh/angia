@@ -1,8 +1,7 @@
+// Probe hai route lời mời T2 nằm tại householdInvitations.int.test.ts.
 // Các route chưa có trên HEAD. Khi thêm route, thay mục kế hoạch bằng probe thực thi;
 // không chấp nhận 404 của router làm bằng chứng cô lập.
 export const HOUSEHOLD_ROUTE_PLAN = [
-  { route: 'POST /api/family/invitations', task: 'E27-S3-T2' },
-  { route: 'DELETE /api/family/invitations/:id', task: 'E27-S3-T2' },
   { route: 'POST /api/invitations/accept', task: 'E27-S3-T3' },
   { route: 'POST /api/admin/founding-invitations', task: 'E27-S3-T3' },
   { route: 'PATCH /api/family/members/:id', task: 'E28-S1-T1' },

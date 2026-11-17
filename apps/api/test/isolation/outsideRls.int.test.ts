@@ -178,7 +178,75 @@ describe('E27-S1-T2: kiểm kê quyền và theo dõi đường ngoài RLS', () 
       });
   });
 
-  it.todo('TC-868: join_family tiếp tục ở E27-S3-T2/T3, không tính phần này PASS');
+  it('TC-868: join_family tra token/mã thật, quyền tối thiểu và phá thử SELECT', async () => {
+    const actor = randomUUID();
+    const family = randomUUID();
+    const id = randomUUID();
+    const tokenHash = createHash('sha256').update(randomUUID()).digest('hex');
+    const codeHash = createHash('sha256').update(randomUUID()).digest('hex');
+    await owner.query("INSERT INTO families(id,name) VALUES($1,'Nhà mời')", [family]);
+    await owner.query(
+      "INSERT INTO accounts(id,display_name,family_id,family_role) VALUES($1,'Người mời',$2,'main')",
+      [actor, family],
+    );
+    await owner.query(
+      `INSERT INTO family_invitations(id,kind,family_id,role,token_hash,code_hash,created_by,expires_at)
+      VALUES($1,'join_family',$2,'member',$3,$4,$5,now()+interval '7 days')`,
+      [id, family, tokenHash, codeHash, actor],
+    );
+    const lookup = (hash: string) => app.query('SELECT * FROM public.lookup_join_invitation($1)', [hash]);
+    const assertMinimum = async () => {
+      expect(
+        (
+          await app.query(`SELECT
+        has_table_privilege(current_user,'public.family_invitations','SELECT') AS table_read,
+        has_column_privilege(current_user,'public.family_invitations','token_hash','SELECT') AS token_read,
+        has_column_privilege(current_user,'public.family_invitations','code_hash','SELECT') AS code_read`)
+        ).rows,
+      ).toEqual([{ table_read: false, token_read: false, code_read: false }]);
+      for (const hash of [tokenHash, codeHash]) {
+        expect((await lookup(hash)).rows).toEqual([
+          { id, family_id: family, role: 'member', status: 'pending' },
+        ]);
+      }
+      await expect(app.query('SELECT * FROM public.family_invitations')).rejects.toMatchObject({
+        code: '42501',
+      });
+    };
+    await assertMinimum();
+    try {
+      await owner.query('GRANT SELECT ON public.family_invitations TO angia_test_app');
+      await expect(assertMinimum()).rejects.toThrow();
+    } finally {
+      await owner.query('REVOKE SELECT ON public.family_invitations FROM angia_test_app');
+    }
+    await assertMinimum();
+    expect((await lookup(randomUUID())).rows).toEqual([]);
+    const changes = [
+      'revoked_at=now()',
+      'accepted_at=now(),accepted_by=created_by',
+      "created_at=now()-interval '8 days',expires_at=now()-interval '1 day'",
+      "kind='found_family',family_id=NULL,role=NULL",
+    ];
+    for (const change of changes) {
+      await owner.query(`UPDATE family_invitations SET ${change} WHERE id=$1`, [id]);
+      expect((await lookup(tokenHash)).rows).toEqual([]);
+      expect((await lookup(codeHash)).rows).toEqual([]);
+      await owner.query(
+        `UPDATE family_invitations SET kind='join_family',family_id=$2,role='member',
+        revoked_at=NULL,accepted_at=NULL,accepted_by=NULL,created_at=now(),expires_at=now()+interval '7 days' WHERE id=$1`,
+        [id, family],
+      );
+    }
+    await assertMinimum();
+    const result = await owner.query(`SELECT p.prosecdef,p.proconfig,
+      NOT EXISTS(SELECT 1 FROM aclexplode(p.proacl) a WHERE a.grantee=0 AND a.privilege_type='EXECUTE') AS no_public
+      FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
+      WHERE n.nspname='public' AND p.proname='lookup_join_invitation'`);
+    expect(result.rows).toEqual([
+      { prosecdef: true, proconfig: ['search_path=pg_catalog, pg_temp'], no_public: true },
+    ]);
+  });
   it.todo(
     'TC-869: E28-S2-T2 — chỉ đọc/xoá nhà có yêu cầu pending đến hạn; bỏ điều kiện làm cùng assertion đỏ',
   );

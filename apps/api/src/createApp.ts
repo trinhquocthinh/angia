@@ -1,3 +1,4 @@
+import type { HouseholdInvitationDependencies } from '@src/features/household/application/invitationPorts.js';
 import type { LocalCredentialLookup } from '@src/shared/auth/application/ports.js';
 import { registerAppRoutes } from './registerAppRoutes.js';
 import type { LegalRepository } from '@src/features/legal/application/ports.js';
@@ -61,6 +62,7 @@ import type { HouseholdRepository } from '@src/features/household/application/po
 
 export type AppDependencies = {
   household: HouseholdRepository;
+  householdInvitations: HouseholdInvitationDependencies;
   legal: LegalRepository;
   push?: PushDependencies;
   // SPEC-083: chỉ có khi cấu hình OCR_MASK_URL; vắng thì tắt gợi ý vùng che.

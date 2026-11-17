@@ -1113,3 +1113,30 @@ Hai lượt dùng cấu hình tạm ngoài dự án chỉ loại metadata macOS 
 `._AccountPages.test.tsx` chứa NUL; không gọi lượt bổ sung là verify PASS.
 Lint/format phần T1 và diff check đạt. Chưa full `yarn verify`, chưa migrate
 DB ứng dụng local/SIT, push hoặc deploy; chưa đóng toàn bộ DoD.
+
+## E27-S3-T2 — Lời mời vào nhà local (2026-11-17)
+
+Đã có `POST /api/family/invitations` (`kind: join_family`, `role: main | member`)
+và `DELETE /api/family/invitations/{id}`. Chủ hộ/Đồng quản lý tạo lời mời;
+người tạo còn cùng nhà hoặc `main` cùng nhà thu hồi được. Token/mã chỉ lưu SHA-256,
+hạn 7 ngày; audit và thay đổi lời mời cùng transaction. Link `/invite#token=…`;
+web nhận link thuộc E27-S5-T2, xác nhận và verifier đăng ký thuộc E27-S3-T3.
+TC-775–776 chuyển sang T3 theo owner duyệt, giữ nguyên tổng giờ.
+
+Migration `0043_join_invitation_lookup.sql` thêm hàm tra băm token/mã
+`lookup_join_invitation(text)`, chỉ trả dữ liệu tối thiểu; không mở quyền đọc hash.
+Hàm chỉ tra cứu; T3 phải khoá và kiểm lại hạn/trạng thái khi claim lời mời.
+Chạy migration bằng owner qua quy trình `yarn db:migrate` hiện hành khi triển khai;
+runtime tiếp tục dùng role app `NOBYPASSRLS`.
+
+Kiểm chứng Testcontainers: 5 suite / **364 PASS, 16 TODO**; migration/quyền app
+thêm 2 suite / **9 PASS**. TC-868 cả `found_family`/`join_family` có ca hợp lệ và
+phép nới SELECT làm cùng assertion thất bại rồi khôi phục xanh. Unit bổ sung:
+653 suite / **3.376 PASS**, dùng cấu hình tạm chỉ loại metadata macOS `._*` ở từng
+project. OpenAPI/kiểu client, typecheck, lint/format phần đổi và diff check đạt.
+`yarn verify:fast` vẫn exit 1 do metadata chứa NUL sau khi typecheck hoàn tất;
+không gọi lượt bổ sung là verify PASS. Source và tài liệu trong repository được
+commit cùng task; mã commit và kết quả hook ghi trong hồ sơ E27 ngoài Git source.
+Chưa full `yarn verify`, chưa migrate DB ứng dụng local/SIT, push/PR/deploy hoặc
+đóng toàn bộ DoD. Chi tiết tại
+[hồ sơ E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md).

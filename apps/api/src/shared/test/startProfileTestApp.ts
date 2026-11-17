@@ -1,3 +1,4 @@
+import { createHouseholdInvitationRepository } from '@src/features/household/infrastructure/createHouseholdInvitationRepository.js';
 import { createHouseholdRepository } from '@src/features/household/infrastructure/createHouseholdRepository.js';
 import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
 import { createStubAccountDeps } from './createStubAccountDeps.js';
@@ -106,6 +107,10 @@ function buildApp(
   const stub = createStubAuthDeps();
   return createApp({
     household: createHouseholdRepository(database),
+    householdInvitations: {
+      repository: createHouseholdInvitationRepository(database),
+      appBaseUrl,
+    },
     legal: createLegalRepository(database),
     account: createStubAccountDeps(),
     ...(options.push ? { push: options.push(database) } : {}),

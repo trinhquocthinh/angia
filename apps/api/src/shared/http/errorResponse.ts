@@ -3,6 +3,7 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_DELETION_PENDING: { status: 409, message: 'Nhà đang chờ xoá.' },
   ERR_LEGAL_ACCEPTANCE_REQUIRED: {
     status: 403,
     message: 'Vui lòng đọc và đồng ý Điều khoản mới để tiếp tục.',
