@@ -288,6 +288,13 @@
       "when": 1794464332457,
       "tag": "0040_local_identity_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1794906130403,
+      "tag": "0041_v1_household",
+      "breakpoints": true
     }
   ]
 }

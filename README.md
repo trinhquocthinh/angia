@@ -1055,3 +1055,37 @@ nới quyền làm cùng assertion thất bại, khôi phục lại xanh trướ
 Xem [hồ sơ nghiệm thu E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md)
 và [sổ nợ trong master plan](../../Docs/angia/11-master-plan.md).
 T1 vẫn chưa đóng toàn bộ DoD; tiếp theo E27-S2-T1. Chưa push/PR/deploy.
+
+### E27-S2-T1 — Schema nhà tự phục vụ (2026-11-17)
+
+Migration `apps/api/drizzle/0041_v1_household.sql` thêm Chủ hộ, thời điểm gỡ
+thành viên gần nhất và sáu bảng: lời mời, đề nghị trao quyền, yêu cầu xoá nhà,
+người giám hộ, cửa sổ người bị gỡ và nhật ký quản lý. Năm bảng theo nhà có RLS;
+role app chỉ INSERT nhật ký, không SELECT/UPDATE/DELETE/TRUNCATE. ID trong nhật
+ký là snapshot để còn sau khi xoá đối tượng. Chưa thêm ba đường ngoài RLS.
+
+Chuyển tiếp được owner duyệt: `owner_account_id` tạm nullable, không tự chọn
+Chủ hộ/người giám hộ cho dữ liệu cũ. Chủ hộ đã gán phải là `main` cùng nhà và
+không được bỏ giá trị. Hồ sơ chưa backfill được phép chưa có người giám hộ;
+khi đã có thì không được gỡ người cuối cùng của hồ sơ vị thành niên không liên
+kết còn tồn tại. Backfill và siết đầy đủ tiếp tục ở E27-S6/các luồng E28.
+
+Trigger kiểm cả thay đổi tài khoản, năm sinh và liên kết hồ sơ. Các cập nhật
+`id = id` có chủ đích tạo phiên bản hàng mới để snapshot cũ lỗi serialization
+thay vì phá bất biến; không đổi giá trị nghiệp vụ. Transaction cạnh tranh có
+thể bị PostgreSQL từ chối và phải được xử lý tại luồng gọi tương ứng.
+
+Kiểm chứng ba suite `householdConstraints`, `householdSnapshots`,
+`householdPrivileges`: 16 PASS trên PostgreSQL 16 Testcontainers. Phép phá RLS
+đã thay cổng “bảng chưa tồn tại” trong suite cô lập bằng fixture/probe thật cho
+cả năm bảng mới. Hồi quy cuối DB, hồ sơ/liên kết, tài khoản và cô lập:
+42 suite / 684 PASS, 20 TODO thuộc các đường chưa triển khai. Typecheck,
+lint/format phần API thay đổi đạt; `verify:fast`
+vẫn lỗi thu thập metadata macOS `._AccountPages.test.tsx` (ký tự NUL).
+Lượt unit bổ sung dùng cấu hình tạm chỉ loại `._*`: 650 suite / 3.363 test PASS;
+không đổi cấu hình kiểm tra dự án và không gọi đó là `verify:fast` PASS.
+
+Chưa chạy migration trên DB ứng dụng local/SIT, chưa đóng DoD E27-S2-T1,
+chưa push/PR/deploy. Chỉ role owner chạy `yarn db:migrate`; chạy lại phải
+không còn migration chờ. Hồ sơ và các bước nghiệm thu còn lại nằm tại
+[nghiệm thu E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md).

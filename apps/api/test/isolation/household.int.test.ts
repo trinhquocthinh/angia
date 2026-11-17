@@ -1,3 +1,4 @@
+import { seedHouseholdSchema } from '@src/shared/test/seedHouseholdSchema.js';
 import { randomUUID } from 'node:crypto';
 import { sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -137,10 +138,44 @@ describe('E27-S1-T1: cô lập nhà, phiên cũ và tài khoản chưa có nhà'
     expect(HOUSEHOLD_ROUTE_PLAN.filter(({ route }) => registered.has(route))).toEqual([]);
   });
 
-  it('TC-867: bảng nhà mới xuất hiện phải bổ sung fixture và phép phá RLS trước khi nghiệm thu', async () => {
+  it('TC-867: năm bảng nhà mới cô lập thật và cùng assertion đỏ khi tắt từng RLS', async () => {
+    const profile = randomUUID();
+    const guardian = await t.session(victim.familyId);
+    const target = await t.session(victim.familyId);
+    await t.owner.query(
+      `INSERT INTO health_profiles(id,family_id,display_name,birth_year)
+       VALUES($1,$2,'Bé',extract(year FROM now() AT TIME ZONE 'Asia/Ho_Chi_Minh')::int-10)`,
+      [profile, victim.familyId],
+    );
+    await seedHouseholdSchema(t.owner, victim.familyId, profile, guardian.accountId, target.accountId);
     for (const table of HOUSEHOLD_RLS_TABLES) {
-      const result = await t.owner.query('SELECT to_regclass($1) AS name', [`public.${table}`]);
-      expect(result.rows[0]?.name, `${table}: cần thêm fixture và probe RLS thật`).toBeNull();
+      const read = (family: string) =>
+        withFamilyScope(t.database, family, (tx) =>
+          tx.execute<{ family_id: string }>(sql`SELECT family_id FROM ${sql.raw(table)}`),
+        );
+      expect((await read(victim.familyId)).rows).toEqual([{ family_id: victim.familyId }]);
+      const assertIsolated = async () => {
+        expect((await read(otherFamily)).rows).toEqual([]);
+      };
+      await assertIsolated();
+      const deleted = await withFamilyScope(t.database, otherFamily, (tx) =>
+        tx.execute(
+          sql`DELETE FROM ${sql.raw(table)} WHERE family_id = ${victim.familyId}::uuid RETURNING family_id`,
+        ),
+      );
+      expect(deleted.rows).toEqual([]);
+      await expect(
+        withFamilyScope(t.database, victim.familyId, (tx) =>
+          tx.execute(sql`UPDATE ${sql.raw(table)} SET family_id = ${otherFamily}::uuid`),
+        ),
+      ).rejects.toThrow();
+      try {
+        await t.owner.query(`ALTER TABLE ${table} DISABLE ROW LEVEL SECURITY`);
+        await expect(assertIsolated()).rejects.toThrow();
+      } finally {
+        await t.owner.query(`ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY`);
+      }
+      await assertIsolated();
     }
   });
 
