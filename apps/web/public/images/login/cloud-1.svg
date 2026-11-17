@@ -1,0 +1,19 @@
+<svg  fill="none" viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="cloudGrad1" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#ffffff" stop-opacity="0.98"></stop>
+<stop offset="70%" stop-color="#f3faf8" stop-opacity="0.94"></stop>
+<stop offset="100%" stop-color="#dbece7" stop-opacity="0.88"></stop>
+</linearGradient>
+<filter height="140%" id="cloudInner1" width="140%" x="-20%" y="-20%">
+<feGaussianBlur in="SourceAlpha" result="blur" stdDeviation="4"></feGaussianBlur>
+<feOffset dx="-2" dy="-3"></feOffset>
+<feComponentTransfer><feFuncA slope="0.5" type="linear"></feFuncA></feComponentTransfer>
+<feMerge>
+<feMergeNode></feMergeNode>
+<feMergeNode in="SourceGraphic"></feMergeNode>
+</feMerge>
+</filter>
+</defs>
+<path d="M50 110 H210 A35 35 0 0 0 210 40 A45 45 0 0 0 135 25 A50 50 0 0 0 50 50 A35 35 0 0 0 50 110 Z" fill="url(#cloudGrad1)" filter="url(#cloudInner1)"></path>
+</svg>

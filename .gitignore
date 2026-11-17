@@ -48,3 +48,7 @@ fixtures/heic/*
 
 # Mapping danh tính riêng tư do owner duyệt — không commit
 ops-private/
+
+# Understanding graph: dữ liệu thu thập cục bộ, không commit
+understanding-graph/
+.ua/

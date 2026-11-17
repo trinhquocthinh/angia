@@ -12,5 +12,19 @@
     "publishedAt": "2026-11-14T00:00:00.000Z",
     "material": true,
     "file": "legal/privacy.md"
+  },
+  {
+    "kind": "terms",
+    "version": "0.1-draft",
+    "publishedAt": "2026-11-17T00:00:00.000Z",
+    "material": true,
+    "file": "legal/terms-v0-1-draft.md"
+  },
+  {
+    "kind": "privacy",
+    "version": "0.1-draft",
+    "publishedAt": "2026-11-17T00:00:00.000Z",
+    "material": true,
+    "file": "legal/privacy-v0-1-draft.md"
   }
 ]

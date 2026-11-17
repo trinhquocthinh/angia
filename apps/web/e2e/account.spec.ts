@@ -1,3 +1,4 @@
+import { accountRegistrationDesignCase } from './accountRegistrationDesignCase.js';
 import { accountEnrollmentCases } from './accountEnrollmentCases.js';
 import { accountPasswordCases } from './accountPasswordCases.js';
 import { accountLegalUpdateCases } from './accountLegalUpdateCases.js';
@@ -21,6 +22,7 @@ test.beforeEach(async ({ page }, info) => {
 });
 
 for (const theme of ['light', 'dark']) {
+  accountRegistrationDesignCase(theme);
   accountEnrollmentCases(theme);
   accountPasswordCases(theme);
   accountLegalUpdateCases(theme);
@@ -40,7 +42,7 @@ for (const theme of ['light', 'dark']) {
     await expect(page.getByRole('heading', { name: 'Đăng nhập', exact: true })).toBeVisible();
     await checkAccountLayout(page);
     await accountScreenshot(page, info, 'login-empty', theme);
-    await expect(page.getByRole('link', { name: 'Đăng nhập quản trị' })).toHaveAttribute(
+    await expect(page.getByRole('link', { name: 'Đăng nhập bằng Authentik' })).toHaveAttribute(
       'href',
       '/api/auth/login',
     );
@@ -48,7 +50,8 @@ for (const theme of ['light', 'dark']) {
       'href',
       '/forgot-password',
     );
-    await expect(page.getByText(/Authentik|Đăng nhập an toàn/)).toHaveCount(0);
+    await expect(page.getByRole('checkbox')).toHaveCount(0);
+    await expect(page.getByText('Sinh trắc', { exact: true })).toHaveCount(0);
     await fillLogin(page);
     const toggle = page.getByRole('button', { name: 'Hiện mật khẩu' });
     await toggle.click();

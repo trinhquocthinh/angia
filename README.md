@@ -29,6 +29,36 @@ yarn dev
 - Web: <http://localhost:5173>
 - Health: `curl -s http://localhost:3000/api/health` → `{"status":"ok","db":"ok","storage":"ok"}`
 
+## Giao diện đăng nhập — 2026-11-17
+
+`/login` dùng bố cục desktop hai cột, mobile một cột và nền gia đình đất sét.
+Trang đăng ký `/register` dùng chung layout và nút có ripple/loading của login;
+field và CSS của form đăng ký nằm trong `Registration*` và `registration-form.css`.
+Đổi mật khẩu và enrollment giữ layout hiện có. Token màu login
+có cả nền sáng/tối tại `shared/styles/tokens.css`.
+Mặc định toàn web dùng nền sáng khi chưa lưu lựa chọn; vẫn giữ lựa chọn sáng/tối/theo máy do người dùng tự chọn.
+Desktop căn giữa block tối đa 1280 px, nền phủ viewport; mây trôi và hiệu ứng bấm/loading lấy từ màn Stitch `f39345d438f942de8056e0b4350d3d79`, loading bám request thật và hỗ trợ giảm chuyển động.
+
+Asset lấy từ Stitch Project An Gia `12209147960511107004`: desktop
+`05630ed0952b4dd88affce877bc9ad26`, mobile `edc84c4692e14151bdd66c84fa02fa43`.
+Nền gốc 1376 × 768 và logo được tối ưu WebP tại `apps/web/public/images/login/`;
+SVG desktop và Authentik giữ hình dạng từ thiết kế. Icon mobile là subset Material
+Symbols lưu local tại `public/fonts/material-symbols/login-outlined.ttf`, cùng
+giấy phép Apache 2.0 trong thư mục đó. Login không gọi CDN ảnh hoặc font lúc chạy.
+Mobile dùng nền mint và hai SVG mây từ màn Stitch mobile; không hiển thị ba
+block tiện ích dưới form đăng nhập/đăng ký. Các block bên trái desktop dùng chung.
+Form đăng ký có thanh độ mạnh mật khẩu bốn mức theo mẫu Stitch; điểm chỉ là tham khảo,
+không thay quy tắc ít nhất 8 ký tự và khác tên đăng nhập. Hai liên kết pháp lý luôn
+gạch chân và dùng URL/phiên bản từ API. Form trống/lỗi có hiệu ứng rung, tôn trọng
+thiết lập giảm chuyển động. Không thay nghiệp vụ đăng ký local, thêm số điện thoại
+hay luồng đăng ký Authentik.
+
+Form vẫn đăng nhập local qua `/api/auth/password-login`; nút **Đăng nhập bằng
+Authentik** vẫn trỏ `/api/auth/login`. Không thay backend, schema, chính sách phiên,
+enrollment hay điều hướng sau xác thực. Không thêm đăng nhập số điện thoại, sinh
+trắc hoặc lựa chọn ghi nhớ phiên. Liên kết `/forgot-password` giữ nguyên; màn khôi
+phục tương ứng chưa được triển khai.
+
 ## Quản trị hệ thống
 
 Tài khoản có quyền quản trị hệ thống truy cập `/admin` để tạo nhóm gia đình, tìm tài khoản, gán nhóm, đổi vai trò và gỡ tài khoản khỏi nhóm. Quản trị hệ thống chưa có nhóm vẫn truy cập được trang này; tài khoản thường chưa có nhóm được chuyển đến trang chờ phân bổ. API kiểm tra quyền và các ràng buộc thành viên, bao gồm việc giữ ít nhất một Quản trị chính trong nhóm.

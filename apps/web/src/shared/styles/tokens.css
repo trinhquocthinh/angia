@@ -37,6 +37,18 @@
   --color-print-accent: #2f6f5e;
   --color-print-accent-soft: #e3efea;
   --color-print-stopped: #f1ece4;
+  --color-login-bg: #edf8f5;
+  --color-login-mobile-bg: #f0fcfb;
+  --color-login-panel: #ffffff;
+  --color-login-wash: #e4f2ec;
+  --color-login-ink: #0a3c30;
+  --color-login-muted: #507266;
+  --color-login-input: #eef5f3;
+  --color-login-border: #ccded6;
+  --color-login-accent: #0a3c30;
+  --color-login-accent-hover: #072e25;
+  --color-login-on-accent: #ffffff;
+  --color-login-rose: #fceae6;
   --shadow-card: 0 2px 10px rgb(31 42 42 / 0.05);
 }
 
@@ -67,6 +79,18 @@
   --color-series-pain: #edefee;
   --color-body-fill: #2a3230;
   --color-body-stroke: #6e7a77;
+  --color-login-bg: #14231f;
+  --color-login-mobile-bg: #14231f;
+  --color-login-panel: #1a2c25;
+  --color-login-wash: #203b30;
+  --color-login-ink: #e5f4ed;
+  --color-login-muted: #b1cbbf;
+  --color-login-input: #223b30;
+  --color-login-border: #476555;
+  --color-login-accent: #a7dcc2;
+  --color-login-accent-hover: #bee8d3;
+  --color-login-on-accent: #123024;
+  --color-login-rose: #49362f;
   --color-period-stopped: #2a2622;
   --color-period-hatch: #a8b3b0;
   --color-shimmer: rgb(255 255 255 / 0.1);

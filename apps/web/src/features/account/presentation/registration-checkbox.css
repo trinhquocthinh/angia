@@ -1,0 +1,22 @@
+.registration-agreement input[type='checkbox'] {
+  appearance: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface) center / 14px 14px no-repeat;
+  cursor: pointer;
+}
+.registration-agreement input[type='checkbox']:checked {
+  border-color: color-mix(in srgb, var(--color-accent) 75%, var(--color-overlay));
+  background-color: color-mix(in srgb, var(--color-accent) 75%, var(--color-overlay));
+  background-image: url('/images/register/check.svg');
+}
+.registration-agreement input[type='checkbox']:disabled {
+  cursor: not-allowed;
+}
+@media (forced-colors: active) {
+  .registration-agreement input[type='checkbox'] {
+    appearance: auto;
+    border: revert;
+    background: revert;
+  }
+}

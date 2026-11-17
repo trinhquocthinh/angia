@@ -2,6 +2,19 @@
 
 `terms.md` và `privacy.md` hiện chỉ là placeholder `0.0-draft`, **chưa được luật sư duyệt, không dùng cho Production**. Chưa chạy seed vào DB ứng dụng.
 
+## Bản nháp nội dung 0.1-draft (2026-11-17)
+
+`terms-v0-1-draft.md` và `privacy-v0-1-draft.md` là nội dung soạn theo Luật 91/2025/QH15, NĐ 356/2025/NĐ-CP và BR/SPEC của dự án. Đã có trong `manifest.json` (`publishedAt` 2026-11-17, `material=true`) và được phục vụ trên local/image; **chưa seed ở môi trường nào**. Seed bản này sẽ buộc mọi tài khoản đồng ý lại, và nội dung còn `[CẦN ĐIỀN]`/`[CẦN XÁC NHẬN]` — chỉ seed local/SIT để xem thử, không seed Production. Bản phát hành thật là tệp và version mới sau khi luật sư duyệt; allowlist local tự lấy từ manifest, chỉ cần thêm dòng `COPY` trong `apps/web/Dockerfile`. Không ghi đè `terms.md`/`privacy.md`: bản `0.0-draft` đã seed trên SIT ngày 2026-11-16, đổi byte sẽ làm seed lỗi hash.
+
+## Đọc văn bản trên local
+
+Khi chạy `yarn dev` hoặc `yarn workspace @angia/web dev`, Vite phục vụ công khai
+`/legal/terms.md` và `/legal/privacy.md` từ hai tệp trong thư mục `legal/` ở gốc repo.
+`yarn workspace @angia/web preview` dùng cùng cấu hình. Nội dung trả dạng văn bản
+UTF-8; đường dẫn khác trong `/legal/` trả 404, không chuyển về SPA.
+Không cần sao chép các tệp này vào `public/`. Docker/Nginx vẫn phục vụ bản được
+đóng gói trong image như trước.
+
 ## Seed vận hành
 
 Chạy từ gốc repo với `DATABASE_OWNER_URL` của môi trường đích:
