@@ -129,6 +129,9 @@ export type RouteOfKind<Kind extends string> = {
 export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'POST /api/families',
   // SPEC-065: quản lý lời mời, không chứa hồ sơ hoặc dữ liệu sức khỏe.
+  'POST /api/invitations/accept',
+  'POST /api/admin/founding-invitations',
+  'DELETE /api/admin/founding-invitations/:id',
   'POST /api/family/invitations',
   'DELETE /api/family/invitations/:id',
   'GET /api/legal/current',

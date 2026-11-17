@@ -1,3 +1,4 @@
+import { createHouseholdDependencies } from '@src/features/household/infrastructure/createHouseholdDependencies.js';
 import { createLocalCredentialLookup } from '@src/features/account/infrastructure/createLocalCredentialLookup.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
 import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
@@ -16,7 +17,7 @@ import { createInvitationVerifier } from '@src/features/account/infrastructure/c
 import { createLegalVersions } from '@src/features/account/infrastructure/createLegalVersions.js';
 import { createRegistrationGate } from '@src/features/account/infrastructure/createRegistrationGate.js';
 import { createSessionRepository } from '@src/shared/auth/infrastructure/createSessionRepository.js';
-import { createDatabase } from '@src/shared/db/createDatabase.js';
+import { createDatabase, type Database } from '@src/shared/db/createDatabase.js';
 import { runMigrations } from '@src/shared/db/runMigrations.js';
 import { createArgon2PasswordHasher } from '@src/shared/identity/infrastructure/createArgon2PasswordHasher.js';
 import { createFakeFamilyAdminRepository } from './createFakeFamilyAdminRepository.js';
@@ -37,7 +38,6 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
   const legalAcceptance = await seedLegalVersions(owner);
   const pool = new pg.Pool({ connectionString: testDb.appUrl });
   const db = createDatabase(pool);
-  const stub = createStubAuthDeps();
   const hasher = createArgon2PasswordHasher();
   const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
   const account: AppDependencies['account'] = {
@@ -50,7 +50,7 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
     appBaseUrl: 'https://angia.example/app',
     gate: createRegistrationGate(db),
     legalVersions: createLegalVersions(db, () => new Date()),
-    invitationVerifier: createInvitationVerifier(),
+    invitationVerifier: createInvitationVerifier(db),
     hasher,
     identity,
     localLoginSessions: createLocalLoginSessions(db),
@@ -63,19 +63,7 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
     generateToken: () => randomBytes(32).toString('base64url'),
     now: () => new Date(),
   };
-  const app = createApp({
-    ...createStubReviewDeps(),
-    legal: createLegalRepository(db),
-    medications: createMedicationRepository(db),
-    profileLinks: createStubProfileLinkDeps(),
-    documents: createStubDocumentDeps(),
-    profiles: createStubProfileDeps(),
-    familyAdmin: createFakeFamilyAdminRepository().repository,
-    aiBudget: createStubAiBudgetDeps(),
-    healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
-    auth: { ...stub, cookieSecret: TEST_COOKIE_SECRET, login: { ...stub.login, sessions: account.sessions } },
-    account,
-  });
+  const app = buildRegistrationApp(db, account);
   return {
     app,
     account,
@@ -101,4 +89,22 @@ async function seedLegalVersions(owner: pg.Client) {
     [legalAcceptance.termsVersionId, legalAcceptance.privacyVersionId],
   );
   return legalAcceptance;
+}
+
+function buildRegistrationApp(db: Database, account: AppDependencies['account']) {
+  const stub = createStubAuthDeps();
+  return createApp({
+    ...createStubReviewDeps(),
+    ...createHouseholdDependencies(db, account.appBaseUrl),
+    legal: createLegalRepository(db),
+    medications: createMedicationRepository(db),
+    profileLinks: createStubProfileLinkDeps(),
+    documents: createStubDocumentDeps(),
+    profiles: createStubProfileDeps(),
+    familyAdmin: createFakeFamilyAdminRepository().repository,
+    aiBudget: createStubAiBudgetDeps(),
+    healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },
+    auth: { ...stub, cookieSecret: TEST_COOKIE_SECRET, login: { ...stub.login, sessions: account.sessions } },
+    account,
+  });
 }

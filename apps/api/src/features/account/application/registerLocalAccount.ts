@@ -41,8 +41,7 @@ export async function registerLocalAccount(
     passwordHash,
     displayName: validated.displayName,
     email: validated.email ?? null,
-    familyId: invitation?.familyId ?? null,
-    familyRole: invitation?.role ?? null,
+    invitationToken: input.invitationToken,
     legalAcceptance: currentLegal,
   });
   if (!recordResult.ok) return recordResult;

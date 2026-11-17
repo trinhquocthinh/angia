@@ -1140,3 +1140,48 @@ commit cùng task; mã commit và kết quả hook ghi trong hồ sơ E27 ngoài
 Chưa full `yarn verify`, chưa migrate DB ứng dụng local/SIT, push/PR/deploy hoặc
 đóng toàn bộ DoD. Chi tiết tại
 [hồ sơ E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md).
+
+## E27-S3-T3 — Xác nhận lời mời và lời mời lập nhà (2026-11-17)
+
+Đã có `POST /api/invitations/accept` (204, `{ token }`, token hoặc mã),
+`POST /api/admin/founding-invitations` (201, `{ kind: "found_family" }`) và
+`DELETE /api/admin/founding-invitations/{id}` (204, người tạo thu hồi).
+Hai route quản trị chỉ cho SystemAdmin qua OIDC, kiểm lại quyền DB dưới khoá.
+Mã hex 12 ký tự không phân biệt hoa thường; token base64url phân biệt hoa thường.
+
+Xác nhận `join_family` dùng scope từ tra hash bí mật, khoá account → family →
+invitation, kiểm lại hạn/trạng thái sau khi chờ khoá. Claim, membership và một
+`invitation_accepted` cùng transaction; không tự liên kết hồ sơ. Nhà pending
+xoá bị chặn. Hai người tranh một token chỉ một người thành công; một tài khoản
+tranh hai lời mời chỉ vào một nhà.
+
+Verifier đăng ký đã dùng DB thật. Transaction đăng ký kiểm lại công tắc/pháp lý/
+lời mời; `join_family` được claim cùng account + credential + hai legal acceptances.
+Lỗi rollback tất cả; phiên vẫn tạo sau commit theo thiết kế E26. `found_family`
+cho phép đăng ký khi công tắc tắt nhưng chỉ được claim khi tạo nhà. Token được
+cung cấp mà không còn hiệu lực khi ghi: `ERR_NOT_FOUND` khi đăng ký mở,
+`ERR_REGISTRATION_CLOSED` khi đăng ký đóng; nhà pending xoá: `ERR_DELETION_PENDING`.
+
+Migration `0044_founding_invitation_management.sql` bổ sung phát hành/thu hồi lập
+nhà qua hàm SECURITY DEFINER, hỗ trợ mã ở đường lập nhà cũ; UUIDv7 do ứng dụng
+sinh, DB tính hạn 7 ngày. Không đổi cấu trúc bảng; không mở SELECT hash, không
+EXECUTE cho PUBLIC; runtime giữ NOBYPASSRLS. Triển khai theo quy trình migration
+owner hiện hành; **chưa chạy trên DB ứng dụng local/SIT**.
+
+Kiểm chứng: TC-775–781 PASS trên Testcontainers. Hồi quy nhà/cô lập: 11 suite /
+401 PASS, 14 TODO thuộc task sau. Hồi quy account/pháp lý: 12 suite / 97 PASS.
+Migration/quyền/snapshot và đăng ký (gồm rollback pháp lý bổ sung): 4 suite /
+20 PASS. Các nhóm có test trùng, không cộng tổng. Unit bổ sung toàn workspace:
+656 suite / 3.389 PASS. Dùng cấu hình tạm ngoài repository chỉ loại metadata
+macOS ở từng project; test socket/Testcontainers chạy ngoài sandbox.
+OpenAPI/client, typecheck toàn workspace, lint/format phần đổi và diff check đạt.
+`yarn verify:fast` exit 1 do Vitest đọc metadata `._*` chứa NUL sau khi typecheck
+PASS. Chưa full verify, commit/push/PR/deploy hoặc đóng toàn bộ DoD.
+Bằng chứng tại [hồ sơ E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md).
+
+Tài liệu thực thi T3: [runbook migration và kiểm chứng](../../Docs/angia/10-setup-and-ops-guide.md#e27-s3-t3--lời-mời-và-migration-0044-2026-11-17),
+[bảng TC/suite](../../Docs/angia/08-test-cases-specification.md#137-spec-065--lời-mời-vào-nhà-và-lời-mời-lập-nhà)
+và [runbook isolation](apps/api/test/isolation/README.md#e27-s3-t3--probe-xác-nhận-và-lập-nhà-2026-11-17).
+Các checkpoint T1/T2 và ghi chú stub tại E26 ở trên là lịch sử; verifier thật
+và trạng thái source hiện hành theo checkpoint T3. Bước phát triển kế tiếp là
+E27-S4-T1; các cổng nghiệm thu còn thiếu vẫn giữ nguyên.

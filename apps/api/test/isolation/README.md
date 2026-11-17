@@ -101,3 +101,37 @@ metadata do cấu hình nhiều project. Lượt này không thay thế `yarn ve
 lệnh chính thức vẫn exit 1 do NUL trong metadata sau khi typecheck đạt.
 TC-775–776 xác nhận lời mời đã chuyển sang T3 theo owner duyệt; test T2 không
 nghiệm thu claim/membership, verifier đăng ký hoặc web nhận lời mời.
+
+## E27-S3-T3 — Probe xác nhận và lập nhà (2026-11-17)
+
+Hai route POST xác nhận/lập nhà đã rời HOUSEHOLD_ROUTE_PLAN và có probe thật;
+route DELETE thu hồi lập nhà cũng có kiểm chứng creator/ID khác/ID không tồn tại.
+Các route này không chứa dữ liệu sức khỏe; kiểm kê ở NON_HEALTH_DATA_ROUTES.
+Không coi việc ra khỏi TODO là bằng chứng đã đóng DoD.
+
+- `features/household/presentation/acceptHouseholdInvitation.int.test.ts`: TC-775–778,
+  role/membership, mã, không liên kết hồ sơ, token sai/hết hạn/đã dùng/thu hồi,
+  tranh token, một account nhận hai lời mời, pending deletion và rollback audit.
+- `features/household/presentation/invitationConcurrency.int.test.ts`: kiểm lại
+  hạn/thu hồi/pending deletion sau khi chờ family lock; xác nhận so với thu hồi.
+- `features/household/presentation/foundingInvitations.int.test.ts`: admin OIDC,
+  chặn main/local admin, lập nhà bằng mã và thu hồi chỉ bởi creator.
+- `features/household/infrastructure/foundingInvitationAccess.int.test.ts`: quyền
+  hàm 0044, search_path, không EXECUTE PUBLIC/SELECT hash, rollback audit.
+- `features/account/infrastructure/registrationInvitations.int.test.ts`: verifier
+  thật, join claim cùng account/credential/legal; founding giữ pending tới tạo
+  nhà; API admin → đăng ký → lập nhà; tranh token và rollback pháp lý/audit.
+
+Đường tra hash dùng hàm đặc quyền; ghi join vẫn dùng withFamilyScope từ bí mật
+đã tra được, khoá account → family → invitation, kiểm lại sau chờ. Không mở quyền
+đọc hash để triển khai xác nhận. TC-868 thật và phép nới SELECT ở outsideRls giữ
+nguyên. TC-869/870 và các route của task sau vẫn TODO, không tính PASS.
+
+Hồi quy nhà/isolation: 11 suite / 401 PASS, 14 TODO. Account/pháp lý: 12 suite /
+97 PASS. Migration/quyền/snapshot/đăng ký bổ sung: 4 suite / 20 PASS; có test trùng
+nên không cộng tổng. Chưa migrate DB ứng dụng local/SIT hoặc đóng toàn bộ DoD.
+Hướng dẫn tạo cấu hình tạm loại metadata ở từng project và lệnh chạy lại tại
+[runbook T3](../../../../../../Docs/angia/10-setup-and-ops-guide.md#e27-s3-t3--lời-mời-và-migration-0044-2026-11-17).
+Từ gốc source, bảng suite này có tiền tố `apps/api/src/`; giữ các lệnh chạy
+Testcontainers ở phần T2 phía trên. Kết quả và giới hạn hiện tại theo T3;
+không gọi lượt bổ sung là verify:fast PASS.

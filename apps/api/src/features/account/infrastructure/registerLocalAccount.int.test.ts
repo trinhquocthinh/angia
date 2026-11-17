@@ -58,7 +58,7 @@ describe('Đăng ký tài khoản local trên PostgreSQL thật bằng role app 
   const createDeps = () => ({
     gate: createRegistrationGate(db),
     legalVersions: createLegalVersions(db, () => new Date('2026-06-01T00:00:00Z')),
-    invitationVerifier: createInvitationVerifier(),
+    invitationVerifier: createInvitationVerifier(db),
     hasher: createArgon2PasswordHasher(),
     accounts: createAccountRegistrationUnitOfWork(db),
     sessions: createSessionRepository(db),
@@ -183,7 +183,7 @@ describe('Đăng ký tài khoản local trên PostgreSQL thật bằng role app 
     });
   });
 
-  it('TC-743/TC-896: lỗi FK legal version trong transaction rollback toàn bộ, không mồ côi', async () => {
+  it('TC-743/TC-896: pháp lý cũ bị kiểm lại trong transaction, không mồ côi', async () => {
     const uow = createAccountRegistrationUnitOfWork(db);
     const hash = '$argon2id$v=19$m=65536,t=3,p=1$c2FsdA$aGFzaA';
     const nonExistentVersionId = randomUUID();
@@ -198,26 +198,28 @@ describe('Đăng ký tài khoản local trên PostgreSQL thật bằng role app 
     };
 
     const before = await countRows();
-    await expect(uow.register(record)).rejects.toThrow();
+    expect(await uow.register(record)).toMatchObject({ ok: false, code: 'ERR_LEGAL_VERSION_OUTDATED' });
 
-    // Lỗi ở bước legal (sau account + credential) phải rollback cả ba bảng.
+    // Pháp lý không còn hiện hành không được ghi account hoặc credential.
     expect(await countRows()).toEqual(before);
     const [acc] = await db.select().from(accounts).where(eq(accounts.usernameNormalized, 'rollback.user'));
     expect(acc).toBeUndefined();
   });
 
-  it('TC-896: lỗi membership (nhà không tồn tại) rollback account/credential/legal', async () => {
+  it('TC-896: token không tồn tại không ghi account/credential/legal', async () => {
     const before = await countRows();
     const record = {
       usernameNormalized: 'member.rollback',
       passwordHash: '$argon2id$v=19$m=65536,t=3,p=1$c2FsdA$aGFzaA',
       displayName: 'Người Dùng Lời Mời',
-      familyId: randomUUID(),
-      familyRole: 'member' as const,
+      invitationToken: randomUUID(),
       legalAcceptance: { termsVersionId: termsId, privacyVersionId: privacyId },
     };
 
-    await expect(createAccountRegistrationUnitOfWork(db).register(record)).rejects.toThrow();
+    expect(await createAccountRegistrationUnitOfWork(db).register(record)).toEqual({
+      ok: false,
+      code: 'ERR_NOT_FOUND',
+    });
     expect(await countRows()).toEqual(before);
   });
 });

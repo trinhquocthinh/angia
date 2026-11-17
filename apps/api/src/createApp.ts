@@ -1,3 +1,4 @@
+import type { InvitationAcceptanceDependencies } from '@src/features/household/presentation/registerInvitationAcceptanceRoutes.js';
 import type { HouseholdInvitationDependencies } from '@src/features/household/application/invitationPorts.js';
 import type { LocalCredentialLookup } from '@src/shared/auth/application/ports.js';
 import { registerAppRoutes } from './registerAppRoutes.js';
@@ -62,6 +63,7 @@ import type { HouseholdRepository } from '@src/features/household/application/po
 
 export type AppDependencies = {
   household: HouseholdRepository;
+  invitationAcceptance: InvitationAcceptanceDependencies;
   householdInvitations: HouseholdInvitationDependencies;
   legal: LegalRepository;
   push?: PushDependencies;

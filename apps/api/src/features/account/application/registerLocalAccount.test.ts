@@ -53,7 +53,10 @@ function createFixture(
   const invitationVerifier: InvitationVerifier = {
     verify: vi.fn(async (token: string) => {
       if (token === 'valid-invite')
-        return overrides.invitation ?? { familyId: 'fam-1', role: 'member' as const };
+        return {
+          kind: 'join_family' as const,
+          ...(overrides.invitation ?? { familyId: 'fam-1', role: 'member' as const }),
+        };
       return null;
     }),
   };
@@ -73,7 +76,8 @@ function createFixture(
         id: `acc-${store.length + 1}`,
         username: record.usernameNormalized,
         displayName: record.displayName,
-        familyId: record.familyId ?? null,
+        familyId:
+          record.invitationToken === 'valid-invite' ? (overrides.invitation?.familyId ?? 'fam-1') : null,
       };
       store.push(account);
       credentials[account.id] = record.passwordHash;
@@ -178,6 +182,15 @@ describe('registerLocalAccount: use case đăng ký tài khoản local', () => {
     const result = await registerLocalAccount(deps, { ...BASE_INPUT, invitationToken: 'invalid' });
     expect(result).toEqual({ ok: false, code: 'ERR_REGISTRATION_CLOSED' });
     expect(deps.accounts.register).not.toHaveBeenCalled();
+  });
+
+  it('TC-775: chuyển token gốc vào transaction để kiểm lại và claim, không dùng membership từ snapshot', async () => {
+    const { deps } = createFixture();
+    await registerLocalAccount(deps, { ...BASE_INPUT, invitationToken: 'valid-invite' });
+    expect(deps.accounts.register).toHaveBeenCalledWith(
+      expect.objectContaining({ invitationToken: 'valid-invite' }),
+    );
+    expect(deps.accounts.register).not.toHaveBeenCalledWith(expect.objectContaining({ familyId: 'fam-1' }));
   });
 
   it('TC-741 gate tắt, có lời mời hợp lệ -> tạo thành công với familyId/role', async () => {

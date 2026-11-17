@@ -1,6 +1,6 @@
-import { createHash } from 'node:crypto';
 import { sql } from 'drizzle-orm';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
+import { hashInvitationSecret } from './hashInvitationSecret.js';
 
 // Token thô chỉ tồn tại trong request; không ghi log, audit hoặc trả về client.
 export async function claimFoundingInvitation(
@@ -8,7 +8,7 @@ export async function claimFoundingInvitation(
   token: string,
   accountId: string,
 ): Promise<boolean> {
-  const hash = createHash('sha256').update(token).digest('hex');
+  const hash = hashInvitationSecret(token);
   const { rows } = await tx.execute<{ id: string }>(
     sql`SELECT id FROM public.lookup_founding_invitation(${hash})`,
   );

@@ -1,3 +1,5 @@
+import { createInvitationAcceptanceRepository } from '@src/features/household/infrastructure/createInvitationAcceptanceRepository.js';
+import { createFoundingInvitationRepository } from '@src/features/household/infrastructure/createFoundingInvitationRepository.js';
 import { createHouseholdInvitationRepository } from '@src/features/household/infrastructure/createHouseholdInvitationRepository.js';
 import { createHouseholdRepository } from '@src/features/household/infrastructure/createHouseholdRepository.js';
 import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
@@ -107,6 +109,11 @@ function buildApp(
   const stub = createStubAuthDeps();
   return createApp({
     household: createHouseholdRepository(database),
+    invitationAcceptance: {
+      acceptance: createInvitationAcceptanceRepository(database),
+      founding: createFoundingInvitationRepository(database),
+      appBaseUrl: appBaseUrl,
+    },
     householdInvitations: {
       repository: createHouseholdInvitationRepository(database),
       appBaseUrl,

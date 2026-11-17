@@ -10,6 +10,7 @@ const notConfigured = () => Promise.reject(new Error('Kho duyệt/số đo chưa
 
 type StubbedDeps = Pick<
   AppDependencies,
+  | 'invitationAcceptance'
   | 'household'
   | 'householdInvitations'
   | 'legal'
@@ -45,6 +46,11 @@ type StubbedDeps = Pick<
 export function createStubReviewDeps(): StubbedDeps {
   return {
     household: { create: notConfigured },
+    invitationAcceptance: {
+      acceptance: { accept: notConfigured },
+      founding: { create: notConfigured, revoke: notConfigured },
+      appBaseUrl: 'http://localhost:5173',
+    },
     householdInvitations: {
       repository: { create: notConfigured, revoke: notConfigured },
       appBaseUrl: 'http://localhost:5173',
