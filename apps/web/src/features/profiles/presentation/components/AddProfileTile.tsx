@@ -22,7 +22,7 @@ export function AddProfileTile() {
           Tạo hồ sơ thành viên mới
         </h2>
         <p className="text-[13px] leading-5 text-text-secondary lg:hidden">
-          Thêm người thân vào sổ sức khỏe gia đình
+          Thêm người thân vào sổ tay chăm sóc gia đình
         </p>
         <p className="hidden text-[15px] leading-6 text-text-secondary lg:block">
           Thêm ông bà, cha mẹ hoặc con nhỏ vào sổ gia đình để cùng chia sẻ và quản lý sức khỏe trọn vẹn.

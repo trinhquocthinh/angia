@@ -13,6 +13,7 @@ WORKDIR /app
 RUN corepack enable
 
 COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn/patches .yarn/patches
 COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 COPY apps/worker/package.json apps/worker/
@@ -34,5 +35,7 @@ COPY apps/web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/apps/web/dist /usr/share/nginx/html
 COPY legal/terms.md /usr/share/nginx/html/legal/
 COPY legal/privacy.md /usr/share/nginx/html/legal/
+COPY legal/terms-v0-1-draft.md /usr/share/nginx/html/legal/
+COPY legal/privacy-v0-1-draft.md /usr/share/nginx/html/legal/
 USER 10001:0
 EXPOSE 8080

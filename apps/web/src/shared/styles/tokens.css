@@ -1,20 +1,36 @@
-/* Design §11.2: một bộ token cho cả hai nền, kể cả các tiện ích Tailwind. */
+/* Design §11.2; owner khôi phục màu sáng cũ tại E27-S5-T1 (2026-11-17). */
 @theme static {
   --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
-  --color-bg: #faf8f5;
+  --color-bg: #f0fcfb;
   --color-surface: #ffffff;
   --color-surface-raised: #ffffff;
-  --color-border: #e4e0da;
-  --color-text-primary: #1f2a2a;
-  --color-text-secondary: #55615f;
-  --color-accent: #2f6f5e;
-  --color-accent-hover: #255a4c;
-  --color-accent-soft: #e3efea;
+  --color-border: #bfc9c4;
+  --color-text-primary: #131d1d;
+  --color-text-secondary: #404945;
+  --color-accent: #004135;
+  --color-accent-hover: #20594b;
+  --color-accent-soft: #eaf6f5;
   --color-on-accent: #ffffff;
   --color-danger: #b42318;
   --color-warning: #b54708;
   --color-success: #2e7d4f;
-  --color-focus: #2f6f5e;
+  --color-focus: #286958;
+  --color-secondary: #286958;
+  --color-accent-container: #20594b;
+  --color-accent-fixed: #b4eedc;
+  --color-secondary-container: #aef0da;
+  --color-on-secondary-container: #2f6f5e;
+  --color-surface-container: #e4f0f0;
+  --color-surface-container-high: #deebea;
+  --color-surface-variant: #d9e5e4;
+  --color-design-border: #e4e0da;
+  --color-household-shadow: #145042;
+  --color-menu-shadow: #1f2a2a;
+  --color-choice-soft: #e3efea;
+  --shadow-stitch-sm: 0 1px 2px color-mix(in srgb, var(--color-shadow) 5%, transparent);
+  --shadow-stitch-md:
+    0 4px 6px -1px color-mix(in srgb, var(--color-shadow) 10%, transparent),
+    0 2px 4px -2px color-mix(in srgb, var(--color-shadow) 10%, transparent);
   --color-series-diastolic: #6b4fa8;
   --color-series-glucose: #b54708;
   --color-series-pain: #1f2a2a;
@@ -37,6 +53,22 @@
   --color-print-accent: #2f6f5e;
   --color-print-accent-soft: #e3efea;
   --color-print-stopped: #f1ece4;
+  --color-legal-accent: #20594b;
+  --color-legal-ambient-a: #d8f3ee;
+  --color-legal-ambient-b: #c8ebd8;
+  --color-legal-ambient-c: #e3efea;
+  --color-login-bg: #edf8f5;
+  --color-login-mobile-bg: #f0fcfb;
+  --color-login-panel: #ffffff;
+  --color-login-wash: #e4f2ec;
+  --color-login-ink: #0a3c30;
+  --color-login-muted: #507266;
+  --color-login-input: #eef5f3;
+  --color-login-border: #ccded6;
+  --color-login-accent: #0a3c30;
+  --color-login-accent-hover: #072e25;
+  --color-login-on-accent: #ffffff;
+  --color-login-rose: #fceae6;
   --shadow-card: 0 2px 10px rgb(31 42 42 / 0.05);
 }
 
@@ -46,6 +78,20 @@
 }
 
 :root[data-theme='dark'] {
+  --color-secondary: #6fbfa6;
+  --color-accent-container: #6fbfa6;
+  --color-accent-fixed: #25483e;
+  --color-secondary-container: #25483e;
+  --color-on-secondary-container: #a7dcc2;
+  --color-surface-container: #222b29;
+  --color-surface-container-high: #2c3533;
+  --color-surface-variant: #35413d;
+  --color-design-border: #2c3533;
+  --color-choice-soft: #1e3530;
+  --color-legal-accent: var(--color-login-accent);
+  --color-legal-ambient-a: var(--color-accent-soft);
+  --color-legal-ambient-b: var(--color-login-wash);
+  --color-legal-ambient-c: var(--color-login-input);
   color-scheme: dark;
   --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8b3b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   --color-bg: #121716;
@@ -67,6 +113,18 @@
   --color-series-pain: #edefee;
   --color-body-fill: #2a3230;
   --color-body-stroke: #6e7a77;
+  --color-login-bg: #14231f;
+  --color-login-mobile-bg: #14231f;
+  --color-login-panel: #1a2c25;
+  --color-login-wash: #203b30;
+  --color-login-ink: #e5f4ed;
+  --color-login-muted: #b1cbbf;
+  --color-login-input: #223b30;
+  --color-login-border: #476555;
+  --color-login-accent: #a7dcc2;
+  --color-login-accent-hover: #bee8d3;
+  --color-login-on-accent: #123024;
+  --color-login-rose: #49362f;
   --color-period-stopped: #2a2622;
   --color-period-hatch: #a8b3b0;
   --color-shimmer: rgb(255 255 255 / 0.1);

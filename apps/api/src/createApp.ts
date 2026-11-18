@@ -1,3 +1,5 @@
+import type { InvitationAcceptanceDependencies } from '@src/features/household/presentation/registerInvitationAcceptanceRoutes.js';
+import type { HouseholdInvitationDependencies } from '@src/features/household/application/invitationPorts.js';
 import type { LocalCredentialLookup } from '@src/shared/auth/application/ports.js';
 import { registerAppRoutes } from './registerAppRoutes.js';
 import type { LegalRepository } from '@src/features/legal/application/ports.js';
@@ -57,7 +59,12 @@ import { errorResponse } from '@src/shared/http/errorResponse.js';
 import { limitRequestBody } from '@src/shared/http/limitRequestBody.js';
 import type { PushDependencies } from '@src/features/pushSubscriptions/application/ports.js';
 
+import type { HouseholdRepository } from '@src/features/household/application/ports.js';
+
 export type AppDependencies = {
+  household: HouseholdRepository;
+  invitationAcceptance: InvitationAcceptanceDependencies;
+  householdInvitations: HouseholdInvitationDependencies;
   legal: LegalRepository;
   push?: PushDependencies;
   // SPEC-083: chỉ có khi cấu hình OCR_MASK_URL; vắng thì tắt gợi ý vùng che.

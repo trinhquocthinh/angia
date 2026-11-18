@@ -1,0 +1,237 @@
+@import './registration-checkbox.css';
+
+@font-face {
+  font-family: 'An Gia Registration Icons';
+  src: url('/fonts/material-symbols/register-outlined.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+.registration-form fieldset {
+  gap: 20px;
+  min-width: 0;
+}
+.registration-control {
+  position: relative;
+  min-width: 0;
+}
+.registration-control::before {
+  position: absolute;
+  z-index: 1;
+  top: 47px;
+  left: 14px;
+  width: 20px;
+  height: 20px;
+  content: '';
+  background: var(--color-text-secondary);
+  mask: var(--registration-icon) center / contain no-repeat;
+  pointer-events: none;
+}
+.registration-user {
+  --registration-icon: url('/images/register/user.svg');
+}
+.registration-password {
+  --registration-icon: url('/images/register/key.svg');
+}
+.registration-name {
+  --registration-icon: url('/images/register/name.svg');
+}
+.registration-email {
+  --registration-icon: url('/images/register/email.svg');
+}
+.registration-control input {
+  min-height: 50px;
+  padding-inline: 44px 14px;
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  background: var(--color-login-input);
+  font-size: 16px;
+  line-height: 24px;
+  transition:
+    background-color var(--motion-fast),
+    border-color var(--motion-fast);
+}
+.registration-control label {
+  margin-bottom: 8px;
+  font-size: 16px;
+  line-height: 24px;
+}
+.registration-password input {
+  padding-right: 52px;
+}
+.registration-control input:hover {
+  border-color: var(--color-border);
+}
+.registration-control input:focus-visible {
+  background: var(--color-surface);
+  border-color: var(--color-accent);
+}
+.registration-control input[aria-invalid='true'],
+.registration-control input:user-invalid {
+  border-color: var(--color-danger);
+  background: var(--color-surface);
+}
+.registration-control input[aria-invalid='true'] {
+  animation: registration-shake 400ms ease-in-out;
+}
+.registration-contact {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.registration-agreement {
+  display: grid;
+  gap: 8px;
+}
+.registration-agreement label {
+  font-size: 16px;
+  line-height: 30px;
+}
+.registration-agreement input {
+  width: 20px;
+  height: 20px;
+}
+.registration-submit button {
+  min-height: 52px;
+  gap: 10px;
+  border-radius: 16px;
+  background: var(--color-login-accent);
+  color: var(--color-login-on-accent);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--color-overlay) 18%, transparent);
+  transition: transform var(--motion-fast) var(--motion-ease-out);
+}
+.registration-submit button:not(:disabled):active {
+  transform: scale(0.985);
+}
+.registration-submit button:not(:disabled):hover {
+  background: var(--color-login-accent-hover);
+}
+@keyframes registration-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+@media (min-width: 640px) {
+  .registration-contact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .registration-contact label {
+    min-height: 24px;
+  }
+  .registration-contact .registration-control::before {
+    top: 47px;
+  }
+}
+@media (max-width: 639px) {
+  .registration-control input {
+    background: var(--color-bg);
+    border-color: var(--color-border);
+  }
+  .registration-control::before {
+    mask: none;
+    background: none;
+    font-family: 'An Gia Registration Icons';
+    font-size: 20px;
+    line-height: 20px;
+    font-weight: 400;
+    font-feature-settings: 'liga';
+    color: var(--color-text-secondary);
+  }
+  .registration-user::before {
+    content: 'account_circle';
+  }
+  .registration-password::before {
+    content: 'key';
+  }
+  .registration-name::before {
+    content: 'badge';
+  }
+  .registration-email::before {
+    content: 'alternate_email';
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .registration-control input,
+  .registration-control input[aria-invalid='true'],
+  .registration-submit button {
+    animation: none;
+    transition: none;
+  }
+  .registration-submit button:not(:disabled):active {
+    transform: none;
+  }
+}
+
+.registration-strength {
+  margin-top: 10px;
+  --registration-strength-color: var(--color-border);
+}
+.registration-strength-bars {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+.registration-strength-bars span {
+  height: 5px;
+  border-radius: 999px;
+  background: var(--color-border);
+}
+.registration-strength p {
+  margin-top: 8px;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-text-secondary);
+}
+.registration-strength strong {
+  color: var(--registration-strength-color);
+  font-weight: 600;
+}
+.registration-strength[data-score='0'] strong {
+  color: var(--color-text-secondary);
+}
+.registration-strength[data-score='1'] {
+  --registration-strength-color: var(--color-danger);
+}
+.registration-strength[data-score='2'] {
+  --registration-strength-color: var(--color-warning);
+}
+.registration-strength[data-score='3'],
+.registration-strength[data-score='4'] {
+  --registration-strength-color: var(--color-success);
+}
+.registration-strength[data-score='1'] span:nth-child(-n + 1),
+.registration-strength[data-score='2'] span:nth-child(-n + 2),
+.registration-strength[data-score='3'] span:nth-child(-n + 3),
+.registration-strength[data-score='4'] span {
+  background: var(--registration-strength-color);
+}
+
+.registration-agreement a {
+  color: var(--color-login-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+.registration-agreement a:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.registration-form .registration-submit .login-submit {
+  min-height: 52px;
+}
+
+.registration-closed-notice {
+  color: var(--color-login-ink);
+}

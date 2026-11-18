@@ -9,12 +9,13 @@ import { readLegalManifest } from './readLegalManifest.js';
 it('TC-752: manifest thực chỉ chứa placeholder và sha256 khớp byte nội dung', async () => {
   const root = fileURLToPath(new URL('../../', import.meta.url));
   const docs = await readLegalManifest(root);
-  expect(docs.map((d) => d.kind).sort()).toEqual(['privacy', 'terms']);
+  expect([...new Set(docs.map((d) => d.kind))].sort()).toEqual(['privacy', 'terms']);
   for (const doc of docs) {
     const bytes = await readFile(join(root, doc.contentPath));
     expect(bytes.toString('utf8')).toMatch(/^BẢN NHÁP CHƯA ĐƯỢC LUẬT SƯ DUYỆT — KHÔNG DÙNG CHO PRODUCTION/);
     expect(doc.sha256).toBe(createHash('sha256').update(bytes).digest('hex'));
-    expect(doc).toMatchObject({ version: '0.0-draft', material: true });
+    expect(doc.version).toMatch(/-draft$/);
+    expect(doc.material).toBe(true);
   }
 });
 it('TC-752: không đọc symlink trỏ ra ngoài thư mục legal', async () => {

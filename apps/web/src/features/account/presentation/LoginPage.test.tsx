@@ -20,6 +20,10 @@ it('có form local, liên kết công khai và lỗi OIDC ngay dưới nút', ()
   expect(html).toContain('href="/register"');
   expect(html).toContain('href="/forgot-password"');
   expect(html).toContain('href="/api/auth/login"');
+  expect(html).toContain('Đăng nhập bằng Authentik');
+  expect(html).not.toContain('type="checkbox"');
+  expect(html).not.toContain('Sinh trắc');
+  expect(html).not.toContain('Số điện thoại');
   expect(html.indexOf('role="alert"')).toBeGreaterThan(html.indexOf('type="submit"'));
   expect(html).toContain('Không thể xác thực tài khoản. Vui lòng thử lại.');
   expect(html).not.toContain('Đăng nhập an toàn');

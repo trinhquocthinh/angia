@@ -1,0 +1,128 @@
+.household-name-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.household-name-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.household-name-label label {
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+}
+.household-name-label > span {
+  font-size: 0.6875rem;
+  line-height: 0.875rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+.household-name-input {
+  position: relative;
+}
+.household-name-input input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  padding: 12px 44px 12px 16px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-stitch-sm);
+  font-size: 1rem;
+  line-height: 1.625rem;
+}
+.household-name-input input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+.household-name-input input[aria-invalid='true'] {
+  box-shadow: 0 0 0 1px var(--color-danger);
+}
+.household-name-edit {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.household-name-home,
+.household-name-clear {
+  display: none;
+}
+.household-start-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+.household-name-suggestions {
+  display: none;
+}
+.household-start-role {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--color-accent-soft);
+}
+.household-start-role-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--color-secondary-container);
+  color: var(--color-on-secondary-container);
+  box-shadow: var(--shadow-stitch-sm);
+}
+.household-start-role > div {
+  min-width: 0;
+}
+.household-role-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.household-role-heading > strong {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+.household-role-heading b {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: 0.6875rem;
+  line-height: 0.875rem;
+  font-weight: 600;
+}
+.household-start-role p {
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  line-height: 1.375rem;
+  color: var(--color-text-secondary);
+}
+.household-start-role p strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+.household-role-mobile {
+  display: none;
+}

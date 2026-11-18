@@ -1,0 +1,141 @@
+.household-invite-revoke {
+  position: fixed;
+  inset: 0;
+  width: min(540px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+.household-invite-revoke::backdrop {
+  background: color-mix(in srgb, var(--color-overlay) 40%, transparent);
+  backdrop-filter: blur(3px);
+}
+.household-invite-revoke-content {
+  position: relative;
+  padding: 40px;
+  text-align: center;
+}
+.household-invite-revoke .household-invite-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+}
+.household-invite-revoke-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 24px;
+  border-radius: 50%;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+.household-invite-revoke-icon svg {
+  width: 28px;
+  height: 28px;
+}
+.household-invite-revoke h2 {
+  margin: 0 0 12px;
+  font-size: 1.375rem;
+  line-height: 1.875rem;
+  font-weight: 600;
+}
+.household-invite-revoke-content > p {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+.household-invite-revoke-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px;
+  margin: 24px 0 32px;
+  border-radius: 16px;
+  background: var(--color-accent-soft);
+  text-align: left;
+}
+.household-invite-revoke-summary > svg {
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+.household-invite-revoke-summary > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.household-invite-revoke-summary strong {
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+}
+.household-invite-revoke-summary span {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--color-text-secondary);
+}
+.household-invite-revoke-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+.household-invite-revoke-actions button {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  padding: 14px 10px;
+}
+.household-invite-revoke-actions button:first-child {
+  border: 0;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+.household-invite-revoke-actions .household-invite-danger {
+  background: var(--color-danger);
+  color: var(--color-surface);
+}
+.household-invite-handle {
+  display: none;
+}
+@media (max-width: 767px) {
+  .household-invite-revoke {
+    inset: auto 0 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 92dvh;
+    margin: 0;
+    border-radius: 28px 28px 0 0;
+  }
+  .household-invite-revoke-content {
+    padding: 12px 16px max(32px, env(safe-area-inset-bottom));
+  }
+  .household-invite-handle {
+    display: block;
+    width: 36px;
+    height: 5px;
+    margin: 0 auto 52px;
+    border-radius: 999px;
+    background: var(--color-border);
+  }
+  .household-invite-revoke .household-invite-close {
+    top: 28px;
+  }
+  .household-invite-revoke-actions {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .household-invite-revoke-actions button {
+    min-height: 56px;
+    font-size: 1.125rem;
+  }
+}

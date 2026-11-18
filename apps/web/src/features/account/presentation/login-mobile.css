@@ -1,0 +1,32 @@
+.login-mobile-clouds {
+  display: none;
+}
+@media (max-width: 1023px) {
+  .login-screen {
+    background: var(--color-login-mobile-bg);
+  }
+  .login-landscape,
+  .login-screen::before {
+    display: none;
+  }
+  .login-mobile-clouds {
+    position: absolute;
+    z-index: -1;
+    display: block;
+    inset: 0;
+    pointer-events: none;
+  }
+  .login-mobile-clouds img {
+    position: absolute;
+    opacity: 0.95;
+    filter: drop-shadow(0 4px 5px color-mix(in srgb, var(--color-overlay) 10%, transparent));
+  }
+  .login-mobile-clouds img:first-child {
+    top: 16px;
+    left: 16px;
+  }
+  .login-mobile-clouds img:last-child {
+    top: 40px;
+    right: 12px;
+  }
+}

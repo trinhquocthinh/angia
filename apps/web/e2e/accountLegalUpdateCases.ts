@@ -1,9 +1,13 @@
+import { accountLegalUpdateStateCases } from './accountLegalUpdateStateCases.js';
+import { accountLegalUpdateDesignCases } from './accountLegalUpdateDesignCases.js';
 import { expect, test } from '@playwright/test';
 import { checkAccountLayout } from './accountChecks.js';
 import { currentLegal } from './accountFixture.js';
 import { accountSecurityFixture } from './accountSecurityFixture.js';
 
 export function accountLegalUpdateCases(theme: string) {
+  accountLegalUpdateDesignCases(theme);
+  accountLegalUpdateStateCases(theme);
   test(`TC-752/753/755: API 403 chuyển màn đồng ý bản mới rồi tiếp tục — ${theme}`, async ({ page }) => {
     const state = await accountSecurityFixture(page);
     state.legalRequired = true;

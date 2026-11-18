@@ -10,6 +10,9 @@ const notConfigured = () => Promise.reject(new Error('Kho duyệt/số đo chưa
 
 type StubbedDeps = Pick<
   AppDependencies,
+  | 'invitationAcceptance'
+  | 'household'
+  | 'householdInvitations'
   | 'legal'
   | 'account'
   | 'scanQuota'
@@ -42,6 +45,22 @@ type StubbedDeps = Pick<
 // Sinh OpenAPI hoặc test feature khác: không được gọi hạ tầng duyệt chứng từ và số đo.
 export function createStubReviewDeps(): StubbedDeps {
   return {
+    household: { create: notConfigured },
+    invitationAcceptance: {
+      acceptance: { accept: notConfigured },
+      founding: { create: notConfigured, revoke: notConfigured },
+      appBaseUrl: 'http://localhost:5173',
+    },
+    householdInvitations: {
+      repository: {
+        current: notConfigured,
+        create: notConfigured,
+        revoke: notConfigured,
+        list: notConfigured,
+        replace: notConfigured,
+      },
+      appBaseUrl: 'http://localhost:5173',
+    },
     legal: createStubLegalDeps(),
     account: createStubAccountDeps(),
     scanQuota: createStubScanQuotaDeps(),

@@ -1,0 +1,188 @@
+@import './household-invite-details.css';
+@import './household-invite-revoke.css';
+@import './household-invite-switch.css';
+
+.household-invite {
+  width: 100%;
+  max-width: 620px;
+  margin: 24px auto 48px;
+  padding: 28px 24px;
+  border-radius: 28px;
+  background: var(--color-surface);
+  box-shadow: 0 12px 40px color-mix(in srgb, var(--color-household-shadow) 6%, transparent);
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+}
+.household-invite-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.household-invite-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  min-height: 48px;
+  border-radius: 50%;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+.household-invite-heading h1 {
+  margin: 0;
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 1.65rem;
+  line-height: 2.125rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+.household-invite-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--color-accent-soft);
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+.household-invite-status svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.household-invite-status[data-ended='true'] {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+.household-invite-roles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  border: 0;
+  padding: 0;
+  margin: 0 0 24px;
+  min-width: 0;
+}
+.household-invite-role {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  gap: 6px;
+  padding: 16px;
+  border-radius: 20px;
+  background: var(--color-accent-soft);
+  cursor: pointer;
+}
+.household-invite-role:has(input:checked) {
+  background: color-mix(in srgb, var(--color-secondary-container) 70%, var(--color-surface));
+}
+.household-invite-role:has(input:disabled) {
+  cursor: default;
+}
+.household-invite-role input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+.household-invite-role:has(input:focus-visible) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.household-invite-role-icon {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+  color: var(--color-accent);
+}
+.household-invite-role strong {
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+}
+.household-invite-role > span:last-child {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--color-text-secondary);
+}
+.household-invite-role-check {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+.household-invite-role-check svg {
+  width: 16px;
+  height: 16px;
+}
+.household-invite-role:has(input:checked) .household-invite-role-check {
+  display: flex;
+}
+.household-invite .household-invite-primary {
+  width: 100%;
+  box-shadow: var(--shadow-stitch-sm);
+}
+.household-invite-feedback {
+  margin-top: 16px;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  overflow-wrap: anywhere;
+}
+.household-invite :is(a, button, textarea):focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+:root[data-theme='dark'] .household-invite {
+  box-shadow: none;
+  outline: 1px solid var(--color-border);
+}
+@media (max-width: 1023px) {
+  .household-invite {
+    margin-top: 16px;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .household-invite-heading {
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .household-invite-heading h1 {
+    font-family: var(--font-sans);
+    font-size: 1.375rem;
+    line-height: 1.875rem;
+  }
+  .household-invite-back {
+    display: none;
+  }
+  .household-invite-role {
+    align-items: center;
+    padding: 20px 10px;
+    text-align: center;
+  }
+  .household-invite-role strong {
+    font-size: 1rem;
+  }
+  :root[data-theme='dark'] .household-invite {
+    outline: none;
+  }
+}

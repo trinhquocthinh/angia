@@ -29,9 +29,53 @@ yarn dev
 - Web: <http://localhost:5173>
 - Health: `curl -s http://localhost:3000/api/health` → `{"status":"ok","db":"ok","storage":"ok"}`
 
+## Giao diện đăng nhập — 2026-11-17
+
+`/login` dùng bố cục desktop hai cột, mobile một cột và nền gia đình đất sét.
+Trang đăng ký `/register` dùng chung layout và nút có ripple/loading của login;
+field và CSS của form đăng ký nằm trong `Registration*` và `registration-form.css`.
+Đổi mật khẩu và enrollment giữ layout hiện có. Token màu login
+có cả nền sáng/tối tại `shared/styles/tokens.css`.
+Mặc định toàn web dùng nền sáng khi chưa lưu lựa chọn; vẫn giữ lựa chọn sáng/tối/theo máy do người dùng tự chọn.
+Desktop căn giữa block tối đa 1280 px, nền phủ viewport; mây trôi và hiệu ứng bấm/loading lấy từ màn Stitch `f39345d438f942de8056e0b4350d3d79`, loading bám request thật và hỗ trợ giảm chuyển động.
+
+Asset lấy từ Stitch Project An Gia `12209147960511107004`: desktop
+`05630ed0952b4dd88affce877bc9ad26`, mobile `edc84c4692e14151bdd66c84fa02fa43`.
+Nền gốc 1376 × 768 và logo được tối ưu WebP tại `apps/web/public/images/login/`;
+SVG desktop và Authentik giữ hình dạng từ thiết kế. Icon mobile là subset Material
+Symbols lưu local tại `public/fonts/material-symbols/login-outlined.ttf`, cùng
+giấy phép Apache 2.0 trong thư mục đó. Login không gọi CDN ảnh hoặc font lúc chạy.
+Mobile dùng nền mint và hai SVG mây từ màn Stitch mobile; không hiển thị ba
+block tiện ích dưới form đăng nhập/đăng ký. Các block bên trái desktop dùng chung.
+Form đăng ký có thanh độ mạnh mật khẩu bốn mức theo mẫu Stitch; điểm chỉ là tham khảo,
+không thay quy tắc ít nhất 8 ký tự và khác tên đăng nhập. Hai liên kết pháp lý luôn
+gạch chân và dùng URL/phiên bản từ API. Form trống/lỗi có hiệu ứng rung, tôn trọng
+thiết lập giảm chuyển động. Không thay nghiệp vụ đăng ký local, thêm số điện thoại
+hay luồng đăng ký Authentik.
+
+Form vẫn đăng nhập local qua `/api/auth/password-login`; nút **Đăng nhập bằng
+Authentik** vẫn trỏ `/api/auth/login`. Không thay backend, schema, chính sách phiên,
+enrollment hay điều hướng sau xác thực. Không thêm đăng nhập số điện thoại, sinh
+trắc hoặc lựa chọn ghi nhớ phiên. Liên kết `/forgot-password` giữ nguyên; màn khôi
+phục tương ứng chưa được triển khai.
+
+## Giao diện cập nhật điều khoản — 2026-11-17
+
+`/account/legal-update` dùng layout một cột riêng: desktop tối đa 540 px, mobile
+hiển thị đầy đủ tên văn bản và ngày phiên bản. Nền mint có ba quầng ambient chạy
+18/22/20 giây trên desktop, đứng yên trên mobile và khi bật giảm chuyển động.
+SVG desktop giữ theo Stitch; sáu icon mobile lưu local tại
+`public/fonts/material-symbols/legal-update-outlined.ttf`.
+
+URL/ngày văn bản lấy từ API hiện hành. Nút đồng ý theo request thật, khóa khi đang
+gửi hoặc thiếu văn bản/CSRF; luồng ghi nhận phiên bản, đồng ý lại và đăng xuất giữ
+nguyên. Các style `legal-update-*` và token màu riêng không đổi layout các trang
+khác. Tham chiếu Stitch: desktop `54449e0d704649b1be3c951e7bea9024`, mobile
+`86f7ce7d28c941db9f555b6e20d17a2a`.
+
 ## Quản trị hệ thống
 
-Tài khoản có quyền quản trị hệ thống truy cập `/admin` để tạo nhóm gia đình, tìm tài khoản, gán nhóm, đổi vai trò và gỡ tài khoản khỏi nhóm. Quản trị hệ thống chưa có nhóm vẫn truy cập được trang này; tài khoản thường chưa có nhóm được chuyển đến trang chờ phân bổ. API kiểm tra quyền và các ràng buộc thành viên, bao gồm việc giữ ít nhất một Quản trị chính trong nhóm.
+Tài khoản có quyền quản trị hệ thống truy cập `/admin` để tạo nhóm gia đình, tìm tài khoản, gán nhóm, đổi vai trò và gỡ tài khoản khỏi nhóm. Quản trị hệ thống chưa có nhóm vẫn truy cập được trang này; tài khoản thường chưa có nhóm được chuyển đến màn Bắt đầu để tự tạo nhà. API kiểm tra quyền và các ràng buộc thành viên, bao gồm việc giữ ít nhất một Quản trị chính trong nhóm.
 
 Giao diện hỗ trợ desktop/mobile và giảm chuyển động theo thiết lập hệ điều hành. Icon Material Symbols được lưu tại `apps/web/public/fonts/material-symbols/` kèm giấy phép Apache 2.0. Các mục tải ảnh, chờ duyệt, tìm kiếm toàn cục và thông báo chưa khả dụng ở subtask E2-S3-T2.
 
@@ -986,3 +1030,393 @@ E26 giữ 0/13 task đóng. Thay đổi README E25 có sẵn được giữ nguy
 ## E26-S3-T1 — đăng ký local trong một transaction (2026-11-13)
 
 **Checkpoint E26-S3-T1 — 2026-11-13:** owner chốt thiết kế: port + adapter tối thiểu, phiên tạo sau commit, có tầng infrastructure. Feature `apps/api/src/features/account` thêm domain `validateRegistrationInput` (username chuẩn hoá chữ thường `^[a-z0-9._-]{3,32}$`, mật khẩu ≥ 8 và khác username, displayName 1–60, email tuỳ chọn, `ageConfirmed` bắt buộc), use case `registerLocalAccount` (validate → công tắc/lời mời → phiên bản legal hiện hành → username trùng → hash ngoài transaction → transaction account + credential + 2 legal_acceptances + membership → commit → phiên `authMethod: 'local'`). Adapter: công tắc đọc `system_settings.registration_open` (thiếu dòng = mở); legal lấy bản `published_at` mới nhất mỗi loại; lời mời là stub trả `null` tới E27-S3-T3. Race unique `accounts_username_normalized_unique` → `ERR_USERNAME_TAKEN`, lỗi khác rollback và ném tiếp; lỗi tạo phiên không rollback tài khoản. `NewSession` thêm `authMethod` tuỳ chọn. **20/20 unit + 11/11 integration PASS** (PostgreSQL Testcontainers role app: TC-736/737 kèm race/738/742/743/896 rollback legal và membership, đếm account/credential/legal trước–sau; công tắc/legal). ESLint/Prettier PASS; `yarn verify:fast` exit 0 sau khi xoá AppleDouble `._*`. TC-741 chỉ PASS mức unit với fake lời mời. Chưa route/OpenAPI (S3-T2), rate limit (S3-T3), full `yarn verify`/knip, SIT, push/PR/deploy; **chưa đóng T1 theo DoD, E26 giữ 0/13 task đóng**.
+
+## E27-S1-T2 — Kiểm kê quyền RLS (2026-11-17)
+
+Chạy từ gốc repository, cung cấp `DATABASE_OWNER_URL` của đúng môi trường qua
+môi trường chạy hoặc `.env` hiện có:
+
+```sh
+yarn ops:rls-inventory
+```
+
+Lệnh không có tuỳ chọn chọn môi trường `--env`; URL kết nối quyết định DB đích.
+Công cụ dùng transaction `REPEATABLE READ READ ONLY`, timeout mỗi statement 10 giây,
+xuất JSON metadata role, membership, schema/ACL, bảng/view/sequence và RLS, quyền cột,
+policy, hàm `SECURITY DEFINER`/`search_path`/ACL và default privileges.
+Không đọc dữ liệu nghiệp vụ. Mã thoát 0 nghĩa là kiểm kê thành công; 1 là lỗi kiểm kê.
+Báo cáo không tự kết luận quyền tối thiểu đạt; cần review ACL cùng owner và membership.
+
+Kiểm tra riêng T2:
+
+```sh
+yarn vitest run --project unit scripts/ops/readRlsInventory.test.ts
+DOCKER_HOST="unix://$HOME/.colima/default/docker.sock" TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock yarn vitest run --project int apps/api/test/isolation/outsideRls.int.test.ts
+```
+
+Đã kiểm chứng local: 3 unit PASS; 3 integration PASS, 3 TODO trên PostgreSQL 16
+Testcontainers. Phép nới BYPASSRLS làm cùng assertion thất bại, khôi phục lại xanh;
+chỉ tác động container dùng một lần. Typecheck và lint/format phần đổi PASS.
+`verify:fast` chưa xanh do sandbox cấm mở socket và metadata macOS `._*` bị thu thập
+thành test. Lượt unit bổ sung ngoài sandbox có 3.363 test PASS nhưng vẫn exit 1 vì
+một suite metadata. Chưa coi các cổng verify toàn bộ là PASS.
+
+Owner nghiệm thu T2 theo phạm vi duyệt, giữ thứ tự phát triển và chuyển TC-868–870
+chưa thực thi thành nợ kỹ thuật: **E27-T2-D1** → E27-S3-T2/T3;
+**E27-T2-D2** → E28-S2-T2; **E27-T2-D3** → E29-S3-T1/T2.
+Mỗi task nhận nợ phải thay TODO bằng test trên đường thật, có ca hợp lệ và phép
+nới quyền làm cùng assertion thất bại, khôi phục lại xanh trước nghiệm thu đường đó.
+Xem [hồ sơ nghiệm thu E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md)
+và [sổ nợ trong master plan](../../Docs/angia/11-master-plan.md).
+T1 vẫn chưa đóng toàn bộ DoD; tiếp theo E27-S2-T1. Chưa push/PR/deploy.
+
+### E27-S2-T1 — Schema nhà tự phục vụ (2026-11-17)
+
+Migration `apps/api/drizzle/0041_v1_household.sql` thêm Chủ hộ, thời điểm gỡ
+thành viên gần nhất và sáu bảng: lời mời, đề nghị trao quyền, yêu cầu xoá nhà,
+người giám hộ, cửa sổ người bị gỡ và nhật ký quản lý. Năm bảng theo nhà có RLS;
+role app chỉ INSERT nhật ký, không SELECT/UPDATE/DELETE/TRUNCATE. ID trong nhật
+ký là snapshot để còn sau khi xoá đối tượng. Chưa thêm ba đường ngoài RLS.
+
+Chuyển tiếp được owner duyệt: `owner_account_id` tạm nullable, không tự chọn
+Chủ hộ/người giám hộ cho dữ liệu cũ. Chủ hộ đã gán phải là `main` cùng nhà và
+không được bỏ giá trị. Hồ sơ chưa backfill được phép chưa có người giám hộ;
+khi đã có thì không được gỡ người cuối cùng của hồ sơ vị thành niên không liên
+kết còn tồn tại. Backfill và siết đầy đủ tiếp tục ở E27-S6/các luồng E28.
+
+Trigger kiểm cả thay đổi tài khoản, năm sinh và liên kết hồ sơ. Các cập nhật
+`id = id` có chủ đích tạo phiên bản hàng mới để snapshot cũ lỗi serialization
+thay vì phá bất biến; không đổi giá trị nghiệp vụ. Transaction cạnh tranh có
+thể bị PostgreSQL từ chối và phải được xử lý tại luồng gọi tương ứng.
+
+Kiểm chứng ba suite `householdConstraints`, `householdSnapshots`,
+`householdPrivileges`: 16 PASS trên PostgreSQL 16 Testcontainers. Phép phá RLS
+đã thay cổng “bảng chưa tồn tại” trong suite cô lập bằng fixture/probe thật cho
+cả năm bảng mới. Hồi quy cuối DB, hồ sơ/liên kết, tài khoản và cô lập:
+42 suite / 684 PASS, 20 TODO thuộc các đường chưa triển khai. Typecheck,
+lint/format phần API thay đổi đạt; `verify:fast`
+vẫn lỗi thu thập metadata macOS `._AccountPages.test.tsx` (ký tự NUL).
+Lượt unit bổ sung dùng cấu hình tạm chỉ loại `._*`: 650 suite / 3.363 test PASS;
+không đổi cấu hình kiểm tra dự án và không gọi đó là `verify:fast` PASS.
+
+Chưa chạy migration trên DB ứng dụng local/SIT, chưa đóng DoD E27-S2-T1,
+chưa push/PR/deploy. Chỉ role owner chạy `yarn db:migrate`; chạy lại phải
+không còn migration chờ. Hồ sơ và các bước nghiệm thu còn lại nằm tại
+[nghiệm thu E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md).
+
+### E27-S3-T1 — API tạo nhà (2026-11-17)
+
+`POST /api/families` nhận `{ name, invitationToken? }`, trả `Family` (201).
+Phiên, CSRF, đổi mật khẩu bắt buộc và đồng ý pháp lý dùng gate hiện có.
+Transaction khóa tài khoản, kiểm lại membership/pháp lý, tạo nhà, gán `main`
+và `owner_account_id`, ghi `family_created`. Nhà mới hưởng lượt mặc định CP5.5
+mà không cần tạo dòng quota tháng. Hai request cùng tài khoản chỉ tạo một nhà.
+
+Khi đóng đăng ký, cần lời mời `found_family` hợp lệ. Migration
+`0042_founding_invitation_access.sql` thêm hai hàm đặc quyền nhận hash, chỉ trả
+ID hoặc boolean; claim lời mời cùng transaction với tạo nhà, thêm một sự kiện
+`invitation_accepted`. Runtime không có SELECT toàn bảng lời mời hoặc hai cột
+hash; các cột quản lý còn lại vẫn qua RLS. Chỉ role owner chạy migration.
+API phát hành/thu hồi, `join_family` và verifier đăng ký bằng lời mời tiếp tục
+ở T2/T3; chưa nghiệm thu luồng tạo tài khoản bằng lời mời khi đóng đăng ký.
+
+Source đã áp dụng theo review owner duyệt. Integration bổ sung: 6 suite,
+352 PASS, 19 TODO; unit toàn workspace bổ sung: 652 suite, 3.370 PASS.
+Hai lượt dùng cấu hình tạm ngoài dự án chỉ loại metadata macOS `._*`.
+`yarn verify:fast` qua typecheck toàn workspace nhưng exit 1 do metadata
+`._AccountPages.test.tsx` chứa NUL; không gọi lượt bổ sung là verify PASS.
+Lint/format phần T1 và diff check đạt. Chưa full `yarn verify`, chưa migrate
+DB ứng dụng local/SIT, push hoặc deploy; chưa đóng toàn bộ DoD.
+
+## E27-S3-T2 — Lời mời vào nhà local (2026-11-17)
+
+Đã có `POST /api/family/invitations` (`kind: join_family`, `role: main | member`)
+và `DELETE /api/family/invitations/{id}`. Chủ hộ/Đồng quản lý tạo lời mời;
+người tạo còn cùng nhà hoặc `main` cùng nhà thu hồi được. Token/mã chỉ lưu SHA-256,
+hạn 7 ngày; audit và thay đổi lời mời cùng transaction. Link `/invite#token=…`;
+web nhận link thuộc E27-S5-T2, xác nhận và verifier đăng ký thuộc E27-S3-T3.
+TC-775–776 chuyển sang T3 theo owner duyệt, giữ nguyên tổng giờ.
+
+Migration `0043_join_invitation_lookup.sql` thêm hàm tra băm token/mã
+`lookup_join_invitation(text)`, chỉ trả dữ liệu tối thiểu; không mở quyền đọc hash.
+Hàm chỉ tra cứu; T3 phải khoá và kiểm lại hạn/trạng thái khi claim lời mời.
+Chạy migration bằng owner qua quy trình `yarn db:migrate` hiện hành khi triển khai;
+runtime tiếp tục dùng role app `NOBYPASSRLS`.
+
+Kiểm chứng Testcontainers: 5 suite / **364 PASS, 16 TODO**; migration/quyền app
+thêm 2 suite / **9 PASS**. TC-868 cả `found_family`/`join_family` có ca hợp lệ và
+phép nới SELECT làm cùng assertion thất bại rồi khôi phục xanh. Unit bổ sung:
+653 suite / **3.376 PASS**, dùng cấu hình tạm chỉ loại metadata macOS `._*` ở từng
+project. OpenAPI/kiểu client, typecheck, lint/format phần đổi và diff check đạt.
+`yarn verify:fast` vẫn exit 1 do metadata chứa NUL sau khi typecheck hoàn tất;
+không gọi lượt bổ sung là verify PASS. Source và tài liệu trong repository được
+commit cùng task; mã commit và kết quả hook ghi trong hồ sơ E27 ngoài Git source.
+Chưa full `yarn verify`, chưa migrate DB ứng dụng local/SIT, push/PR/deploy hoặc
+đóng toàn bộ DoD. Chi tiết tại
+[hồ sơ E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md).
+
+## E27-S3-T3 — Xác nhận lời mời và lời mời lập nhà (2026-11-17)
+
+Đã có `POST /api/invitations/accept` (204, `{ token }`, token hoặc mã),
+`POST /api/admin/founding-invitations` (201, `{ kind: "found_family" }`) và
+`DELETE /api/admin/founding-invitations/{id}` (204, người tạo thu hồi).
+Hai route quản trị chỉ cho SystemAdmin qua OIDC, kiểm lại quyền DB dưới khoá.
+Mã hex 12 ký tự không phân biệt hoa thường; token base64url phân biệt hoa thường.
+
+Xác nhận `join_family` dùng scope từ tra hash bí mật, khoá account → family →
+invitation, kiểm lại hạn/trạng thái sau khi chờ khoá. Claim, membership và một
+`invitation_accepted` cùng transaction; không tự liên kết hồ sơ. Nhà pending
+xoá bị chặn. Hai người tranh một token chỉ một người thành công; một tài khoản
+tranh hai lời mời chỉ vào một nhà.
+
+Verifier đăng ký đã dùng DB thật. Transaction đăng ký kiểm lại công tắc/pháp lý/
+lời mời; `join_family` được claim cùng account + credential + hai legal acceptances.
+Lỗi rollback tất cả; phiên vẫn tạo sau commit theo thiết kế E26. `found_family`
+cho phép đăng ký khi công tắc tắt nhưng chỉ được claim khi tạo nhà. Token được
+cung cấp mà không còn hiệu lực khi ghi: `ERR_NOT_FOUND` khi đăng ký mở,
+`ERR_REGISTRATION_CLOSED` khi đăng ký đóng; nhà pending xoá: `ERR_DELETION_PENDING`.
+
+Migration `0044_founding_invitation_management.sql` bổ sung phát hành/thu hồi lập
+nhà qua hàm SECURITY DEFINER, hỗ trợ mã ở đường lập nhà cũ; UUIDv7 do ứng dụng
+sinh, DB tính hạn 7 ngày. Không đổi cấu trúc bảng; không mở SELECT hash, không
+EXECUTE cho PUBLIC; runtime giữ NOBYPASSRLS. Triển khai theo quy trình migration
+owner hiện hành; **chưa chạy trên DB ứng dụng local/SIT**.
+
+Kiểm chứng: TC-775–781 PASS trên Testcontainers. Hồi quy nhà/cô lập: 11 suite /
+401 PASS, 14 TODO thuộc task sau. Hồi quy account/pháp lý: 12 suite / 97 PASS.
+Migration/quyền/snapshot và đăng ký (gồm rollback pháp lý bổ sung): 4 suite /
+20 PASS. Các nhóm có test trùng, không cộng tổng. Unit bổ sung toàn workspace:
+656 suite / 3.389 PASS. Dùng cấu hình tạm ngoài repository chỉ loại metadata
+macOS ở từng project; test socket/Testcontainers chạy ngoài sandbox.
+OpenAPI/client, typecheck toàn workspace, lint/format phần đổi và diff check đạt.
+`yarn verify:fast` exit 1 do Vitest đọc metadata `._*` chứa NUL sau khi typecheck
+PASS. Chưa full verify, commit/push/PR/deploy hoặc đóng toàn bộ DoD.
+Bằng chứng tại [hồ sơ E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md).
+
+Tài liệu thực thi T3: [runbook migration và kiểm chứng](../../Docs/angia/10-setup-and-ops-guide.md#e27-s3-t3--lời-mời-và-migration-0044-2026-11-17),
+[bảng TC/suite](../../Docs/angia/08-test-cases-specification.md#137-spec-065--lời-mời-vào-nhà-và-lời-mời-lập-nhà)
+và [runbook isolation](apps/api/test/isolation/README.md#e27-s3-t3--probe-xác-nhận-và-lập-nhà-2026-11-17).
+Các checkpoint T1/T2 và ghi chú stub tại E26 ở trên là lịch sử; verifier thật
+và trạng thái source hiện hành theo checkpoint T3. Bước phát triển kế tiếp là
+E27-S4-T1; các cổng nghiệm thu còn thiếu vẫn giữ nguyên.
+
+## E27-S4-T1 — Bộ ghi nhật ký quản lý (2026-11-17)
+
+Đã áp dụng theo phạm vi owner duyệt: `apps/api/src/shared/audit/writeAdminAuditEvent.ts`
+nhận transaction hiện tại, chỉ nhận bốn action đã triển khai (`family_created`,
+`invitation_created`, `invitation_revoked`, `invitation_accepted`), từ chối action
+khác ở runtime và luôn tự tạo `metadata: {}`. Không chuyển tiếp metadata/ID
+sự kiện từ DTO; thời điểm do DB cấp. Không bắt lỗi ghi hoặc mở transaction riêng.
+Năm tệp infrastructure nhà dùng chung bộ ghi; đăng ký kèm join tiếp tục dùng
+luồng xác nhận hiện có nên không thêm sự kiện trùng. Không đổi schema hoặc API.
+
+Tạo nhà bằng lời mời lập nhà giữ hai sự kiện: một `family_created` và một
+`invitation_accepted`; mỗi thao tác nghiệp vụ đúng một sự kiện tương ứng.
+Bộ test mới kiểm tra bảy luồng, actor/đối tượng/thời điểm/metadata, đúng số
+sự kiện và rollback ở commit bằng deferred trigger; so sánh toàn bộ snapshot
+accounts/families/invitations/audit trước và sau lỗi. Test bảo vệ metadata còn
+truyền thử mật khẩu/token/tên thuốc/số đo và xác nhận không lưu các trường đó.
+
+Phần TC-839/840 chưa triển khai tiếp tục là điều kiện nghiệm thu tại task nhận:
+
+| Thao tác                          | Task nhận    |
+| --------------------------------- | ------------ |
+| Đổi vai trò, gỡ thành viên        | E28-S1-T1    |
+| Rời nhà                           | E28-S1-T2    |
+| Chuyển Chủ hộ                     | E28-S2-T1    |
+| Yêu cầu/thu hồi/thực hiện xoá nhà | E28-S2-T2    |
+| Người giám hộ                     | E28-S2-T3    |
+| Đặt lại mật khẩu                  | E29-S1-T1/T2 |
+| Đổi công tắc đăng ký              | E31-S1-T1    |
+| Khoá/mở khoá tài khoản            | E31-S1-T2    |
+
+Mỗi task nhận bổ sung action khi triển khai, ghi trong transaction nghiệp vụ
+và kiểm tra đúng một sự kiện/rollback trước nghiệm thu. Worker triển khai
+adapter trong app worker theo cùng hợp đồng; không import source app API.
+TC-841/842 và quét toàn bộ v1.0 TC-880 vẫn theo E31/các cổng nghiệm thu tương ứng;
+không lấy test metadata cục bộ thay cho quét toàn bộ.
+
+Kiểm chứng: integration nhà/audit/đăng ký **10 suite / 92 PASS**, gồm **17 test mới**;
+unit household/account và kiểm tra phân tầng **16 suite / 170 PASS**. Typecheck
+workspace, ESLint/Prettier phần source đổi và `git diff --check` đạt.
+`yarn verify:fast` exit 1 sau typecheck PASS vì Vitest đọc metadata macOS `._*`
+chứa NUL. Lượt kiểm chứng bổ sung dùng cấu hình tạm ngoài repository chỉ loại
+metadata ở từng project; Testcontainers chạy ngoài sandbox qua Colima.
+Không sửa cấu hình test nguồn hoặc xoá metadata. Không gọi lượt bổ sung là
+`verify:fast` PASS. Chưa full verify, commit/push/PR/deploy; không đóng toàn bộ
+TC-839 hoặc tăng tổng task nghiệm thu. Giữ nguyên thay đổi Legal Update có trước.
+
+Tài liệu liên quan: [đối chiếu TC-839/840](../../Docs/angia/08-test-cases-specification.md#1318-spec-076--nhật-ký-quản-lý),
+[runbook S4](../../Docs/angia/10-setup-and-ops-guide.md#e27-s4-t1--ghi-nhật-ký-quản-lý-2026-11-17),
+[bàn giao S4](../../Docs/angia/12-onboarding-guide.md#e27-s4-t1--bàn-giao-bộ-ghi-audit-2026-11-17)
+và [báo cáo bằng chứng](../../Docs/angia/acceptance/v1.0/evidence/e27-s4-t1-2026-11-17/report.md).
+Bước phát triển kế tiếp là **E27-S5-T1**, phụ thuộc bản Stitch; các cổng nghiệm
+thu còn mở của E27 giữ nguyên. Ghi chú chưa commit ở trên mô tả checkpoint
+trước commit; mã commit source và kết quả hook được ghi tại hồ sơ E27.
+
+## E27-S5-T1 — Bắt đầu và tạo nhà
+
+**UI được owner duyệt ngày 2026-11-18** với xác nhận “UI đã đạt”.
+Chuỗi nhận diện trên web/mobile là **Sổ tay chăm sóc gia đình**.
+
+Tài khoản chưa có nhà vào `/waiting` (Bắt đầu); `/waiting?step=create` là form
+Tạo nhà mới. Tên mặc định trống, trim và kiểm tra 1–60 ký tự; gửi
+`POST /api/families` kèm CSRF. API thành công hoặc báo đã thuộc nhà thì tải lại
+phiên rồi điều hướng vào ứng dụng. Nếu tải phiên lỗi sau khi tạo, thử lại chỉ
+GET phiên, không POST tạo nhà lần nữa. Lỗi giữ tên, không lộ message nội bộ.
+Thẻ Tôi có mã mời hiện chưa khả dụng; luồng mã/link và chuyển tiếp token lập nhà
+thuộc E27-S5-T2. Backend dùng mã 12 ký tự.
+
+Giữ header/footer chung; chưa có nhà ẩn search và điều hướng chính, `/admin`
+ẩn ba tab và điều hướng đáy. Người đã có nhà giữ điều hướng theo quyền hiện tại.
+Menu gộp Hồ sơ cá nhân/Hồ sơ của tôi thành một lối vào `/my-profile` khi đã liên
+kết, bỏ Cài đặt gia đình. Trạng thái chưa có nhà lấy từ phiên, không suy ra vai
+trò hoặc dùng email mẫu.
+
+Hai trang giữ layout, typography, radius, shadow và glow theo Stitch owner chọn.
+Bắt đầu desktop dùng khung 580px/bo 28px; mobile không có thẻ trắng bao ngoài.
+Form desktop 560px, padding 32px, bo 16px; mobile có gợi ý tên và nút xóa ô nhập.
+Menu desktop dropdown 280px; mobile bottom sheet tối đa 420px, bo 28px, scrim
+40%/blur 3px, trượt 300ms. Native dialog giữ focus, Escape/bấm ngoài/nút đóng
+đều đóng được và trả focus; reduced motion tắt transition. Bộ chọn nền bằng
+icon cập nhật theme và localStorage thật. Hàng Cần hỗ trợ thiết lập?/Chính sách
+quyền riêng tư dưới Bắt đầu đã bỏ trên cả hai breakpoint theo owner 2026-11-18.
+
+Màu sáng khôi phục: nền `#F0FCFB`, xanh `#004135`, hover `#20594B`, nền nhấn
+`#EAF6F5`, chữ `#131D1D`/`#404945`, viền `#BFC9C4`, focus `#286958`.
+Không đổi màu dữ liệu sức khỏe hoặc bản in. Các khối dùng dữ liệu/câu mô tả đúng
+nghiệp vụ, không nhập tuyên bố chuẩn y khoa/HL7, lịch tiêm, hứa đổi tên, phiên bản
+mẫu hoặc script thành công giả trong HTML tham chiếu. Các ngoại lệ thị giác chỉ
+áp dụng vào hai trang/menu đã được owner chỉ định.
+
+Tham chiếu Stitch project `12209147960511107004`: Bắt đầu mobile
+`1e48d365401b4fa18a916ce014ca7bb7`, desktop `154a6f5498bc4ba8b32546bbfed77ea7`;
+Tạo nhà mobile `1a50e856b8fc48e4a9d3ae25b1b6276f`, desktop
+`482d847868674af790fb11815cb19fba`; menu desktop
+`04d3d0020b954ccea0fb4f250427e18f`, mobile `a3cd15e51d024bad8c2c5bb0e1e05a34`.
+Minh họa và icon/font tự lưu trữ; không tải CDN lúc mở trang.
+
+Kiểm chứng local: 15 suite / 92 unit và phân tầng PASS; 72 E2E PASS trên
+Chromium mobile/desktop và WebKit, hai nền, 360px/chữ 200% và animation thật.
+Hồi quy đăng nhập/enrollment trước đó 24 PASS. Typecheck, build, lint/format
+phần đổi đạt. Chạy E2E sau build bằng:
+
+```bash
+yarn exec playwright test --config playwright.account.config.ts householdStart.spec.ts
+```
+
+`yarn verify:fast` exit 1 sau typecheck PASS vì Vitest đọc metadata macOS `._*`;
+lượt unit bổ sung loại metadata bằng CLI không thay cổng chính thức.
+Đây là duyệt UI của owner, chưa phải nghiệm thu SIT hoặc đóng toàn bộ E27.
+Chưa full verify, smoke API/DB thật trong task web hoặc deploy. Bước tiếp theo
+là **E27-S5-T2**; các cổng migration, verify và SIT của E27 tiếp tục giữ mở.
+Tài liệu chi tiết tại [hồ sơ E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md).
+
+## E27-S5-T2 — Lời mời vào nhà và giao diện dùng chung (2026-11-18, local)
+
+Owner đã duyệt triển khai và xác nhận giao diện hiện tại đạt trong chat.
+
+- **Gửi lời mời:** Tài khoản → Mời người thân (`/family/invite`). Chọn Thành viên
+  hoặc Đồng quản lý rồi bấm Tạo lời mời. Mỗi vai trò có mã/link riêng; chuyển vai
+  trò chỉ đổi mã đang xem. Ra/vào và reload lấy lại mã từ server, giữ nguyên hạn.
+  GET `/api/family/invitations/current` trả tối đa hai lời mời của chính người tạo.
+- **Chia sẻ:** copy/share có kết quả thật và một toast cố định, không đẩy bố cục
+  khi bấm lặp; có sao chép thủ công nếu clipboard không dùng được. Mã hết hạn
+  mờ/gạch ngang, khóa share/copy và có Tạo lời mời mới. Thu hồi có xác nhận.
+  Lịch sử và nút thu hồi-kèm-tạo mới không hiện trên UI; lịch sử chờ quyết định sau.
+- **Nhận mã:** “Tôi có mã mời” mở `/waiting?step=join`; chuẩn hóa mã hex 12 ký tự,
+  POST nhận lời mời với CSRF, sau 204 tải lại phiên. GET phiên lỗi thì chỉ tải
+  lại GET, không nhận mã lần hai. Không tự liên kết tài khoản với hồ sơ.
+- **Tạo nhà:** form gọn trong một block, giữ kiểm tra tên và phục hồi phiên hiện có.
+- **Khung dùng chung:** header có back/title không logo; member chưa liên kết
+  không có search/tab desktop hoặc bottom nav mobile. Member đã liên kết giữ
+  điều hướng cá nhân, main giữ giao diện quản lý. Footer hai nhóm trên desktop,
+  xếp hàng trên mobile, dùng shadow thay border. Button dùng cursor pointer;
+  indicator vai trò trượt 200ms, hỗ trợ reduced-motion. Menu tải khi mở để giữ budget.
+
+Lời mời mới lưu hash cùng AES-GCM ciphertext. API cần khóa độc lập
+`INVITATION_ENCRYPTION_KEY` tối thiểu 32 ký tự, giữ ổn định và sao lưu riêng
+ngoài DB/repo. Mất/đổi khóa khi chưa tái mã hóa sẽ không đọc lại được mã cũ.
+Không lưu mã/link/token vào browser storage; chỉ lưu lựa chọn vai trò theo
+account/family. Legacy hash-only không khôi phục mã được, vẫn thu hồi được.
+
+Dev `localhost:5433/angia_dev` đã backup trước migration 0041–0045; journal 46,
+chạy lại no pending. Runtime vẫn `angia_dev_app` NOBYPASSRLS; RLS và quyền đọc
+hash/audit đã kiểm tra. Không chạy smoke ghi dữ liệu trên tài khoản dev; API
+integration dùng PostgreSQL Testcontainers tạm. Không thay SIT/Production.
+
+Tham chiếu Stitch project `12209147960511107004`: gửi desktop
+`e8d584145aa44f24836a56f0e8a02019`, mobile `3cc7b3c52c9346c6902ed33b867c26d4`;
+hết hạn desktop `cb6582ee6870458ea9b74aa5acbc822c`, mobile
+`0b4fd0a920c84f0ab3813be4cc128ac2`; thu hồi desktop
+`30aa5e305ea74da7b61bdd4a52f1659f`, mobile `4babd60ba7594db2ae02d2bb47d03237`;
+Tạo nhà desktop `fafff946ed7b4a74b5a5844ebb8ddb81`, mobile
+`cfd254f045364a9193ea1f696cbd8df1`. Giữ mô tả quyền đúng sản phẩm.
+
+API household/audit: 91 integration PostgreSQL tạm PASS ở checkpoint triển khai.
+Build/typecheck, lint/format phần đổi và budget mọi route PASS, lớn nhất
+199,2 KB/200 KB. Official `verify:fast` còn metadata macOS `._*` sau typecheck;
+knip còn LegalDocumentLink/HouseholdRequest ngoài phạm vi. Không ghi full verify PASS.
+
+Kiểm tra trước commit: **228/228 E2E** (Chromium touch/desktop và WebKit, hai nền)
+và **79 unit/phân tầng liên quan** PASS. `verify:fast` còn lỗi metadata như trên.
+
+**Chưa đóng toàn bộ E27-S5-T2:** nhận link `/invite#token`, chuyển tiếp qua đăng
+nhập/đăng ký và token lập nhà trên web còn chờ. Xác nhận UI của owner không thay
+nghiệm thu SIT hoặc các cổng API/ACL của E27. Bộ Docs/angia cập nhật riêng ngoài
+Git source; thay đổi Legal Update và chỉnh spacing có trước giữ ngoài commit này.
+
+## E27-S6-T1 — Chuyển đổi Chủ hộ của nhà hiện có
+
+Lệnh vận hành SPEC-071 dùng `DATABASE_OWNER_URL`, không dùng role runtime.
+Không đổi schema. Chuẩn bị hai tệp JSON riêng tư do owner xác nhận:
+
+- `family-owners.json`: `{ "<familyId>": "<ownerAccountId>" }`, khớp mọi nhà trong DB;
+  mỗi Chủ hộ phải là `main` cùng nhà.
+- `profile-creators.json`: `{ "<profileId>": "<creatorAccountId>" }`, khớp mọi hồ sơ
+  dưới 18 tuổi theo năm Việt Nam, chưa liên kết tài khoản. Không có hồ sơ thuộc
+  diện này thì dùng `{}`. Dùng UUID người tạo thực tế, kể cả người đã rời hoặc
+  bị xoá; thiếu căn cứ thì dừng, không tự suy từ người xác nhận đồng thuận.
+
+Schema lịch sử không lưu người tạo, nên tệp thứ hai là căn cứ chuyển đổi được
+owner duyệt. Người tạo còn `main` cùng nhà trở thành giám hộ; trường hợp khác
+dùng Chủ hộ đã chỉ định. Không đưa các tệp ánh xạ vào Git hoặc báo cáo công khai.
+
+```bash
+yarn ops:v1-family-owners --env sit --mapping /private/path/family-owners.json --creators /private/path/profile-creators.json --dry-run
+yarn ops:v1-family-owners --env sit --mapping /private/path/family-owners.json --creators /private/path/profile-creators.json
+```
+
+`--env` kiểm tên DB và role hiện tại là `angia_<env>` (`dev`, `sit`, `prod`, `test`);
+không chọn URL thay cho `DATABASE_OWNER_URL`. Bỏ `--env` vẫn kiểm role sở hữu bảng.
+Một transaction khoá các bảng đối chiếu; dry-run thực hiện đủ kiểm tra/constraint
+rồi rollback. Báo cáo JSON đếm trước/sau theo nhà cho sáu bảng dữ liệu chính,
+quota và operation OCR; kiểm checksum nội bộ bảo toàn cả nội dung, liên kết,
+đồng thuận và số lượt. Lệch hoặc xung đột với Chủ hộ/giám hộ đã gán thì rollback,
+exit 1. Chạy lại cùng ánh xạ không ghi thêm; không dùng lệnh này để chuyển quyền.
+Lệnh có thể chặn ghi trong thời gian ngắn; lock timeout 5 giây, statement timeout
+60 giây. Chỉ chạy trên bản sao đã chọn cho E27-S6-T2 trước khi xét Production.
+
+Kiểm tra local E27-S6-T1: **28 integration và 16 unit/phân tầng PASS**, gồm
+TC-815–818 và các ca rollback trên PostgreSQL Testcontainers dữ liệu giả.
+`verify:fast` chưa xanh vì metadata AppleDouble `._*`
+và hai test ngoài phần thay đổi (`healthDataRoutes`, `ProfileFrameNavigation`).
+Chưa chạy chuyển đổi trên DB ứng dụng, bản sao SIT hoặc Production; chưa đóng
+toàn bộ DoD E27. Hướng dẫn đối chiếu: `../../Docs/angia/10-setup-and-ops-guide.md` §10.3.
+
+## Cô lập dependency glob của build native
+
+Ghim node-gyp 13.0.2 bằng Yarn patch và thay riêng dependency
+node-gyp/tinyglobby bằng glob 14.0.4 đã có trong lockfile. Helper chỉ nhận
+hai mẫu `build/*.sln` và `build/*.mk`; lọc bằng stat để giữ hành vi chỉ lấy tệp,
+bao gồm symlink tới tệp, loại thư mục và symlink hỏng. Không thay Argon2,
+tham số băm mật khẩu, cơ chế xác thực hoặc phân quyền dữ liệu.
+
+Giữ nguyên lệnh audit production, không ignore advisory. Đồ thị production
+được loại đường dẫn tới picomatch; các công cụ dev vẫn còn picomatch và
+không được coi đã vá toàn bộ GHSA-fc5q-39xc-vjpf.
+
+Trước phát hành phải chạy regression tooling/nativeBuildGlobs.test.ts,
+kiểm thử hash/verify Argon2 và build image Linux Node 22. Không ghi đã
+kiểm native build Windows khi chỉ thử fixture trên Linux. Xem xét gỡ
+patch khi upstream cung cấp đường dependency phù hợp đã được kiểm chứng.

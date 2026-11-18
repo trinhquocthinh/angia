@@ -1,0 +1,10 @@
+<svg  fill="none" viewBox="0 0 280 150" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="cloudGrad2" x1="20%" x2="30%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#ffffff" stop-opacity="0.99"></stop>
+<stop offset="75%" stop-color="#edf7f4" stop-opacity="0.92"></stop>
+<stop offset="100%" stop-color="#d5eae3" stop-opacity="0.85"></stop>
+</linearGradient>
+</defs>
+<path d="M60 120 H220 A38 38 0 0 0 220 44 A48 48 0 0 0 140 22 A55 55 0 0 0 55 52 A38 38 0 0 0 60 120 Z" fill="url(#cloudGrad2)"></path>
+</svg>

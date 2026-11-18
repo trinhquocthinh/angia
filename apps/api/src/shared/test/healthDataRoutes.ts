@@ -127,6 +127,16 @@ export type RouteOfKind<Kind extends string> = {
 // Không chứa dữ liệu sức khỏe: hạ tầng, xác thực, quản trị nhóm/tài khoản (BR-006) và trần ngân sách AI
 // toàn hệ thống (SPEC-013, chỉ số tiền theo tháng).
 export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
+  'POST /api/families',
+  // SPEC-065: quản lý lời mời, không chứa hồ sơ hoặc dữ liệu sức khỏe.
+  'POST /api/invitations/accept',
+  'POST /api/admin/founding-invitations',
+  'DELETE /api/admin/founding-invitations/:id',
+  'GET /api/family/invitations',
+  'GET /api/family/invitations/current',
+  'POST /api/family/invitations',
+  'POST /api/family/invitations/:id/replace',
+  'DELETE /api/family/invitations/:id',
   'GET /api/legal/current',
   'POST /api/me/legal-acceptances',
   'POST /api/me/local-credential',

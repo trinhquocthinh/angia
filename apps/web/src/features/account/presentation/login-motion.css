@@ -1,0 +1,118 @@
+.login-clouds {
+  display: none;
+}
+.login-submit {
+  position: relative;
+  overflow: hidden;
+}
+.login-button-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.login-screen .login-submit {
+  transition:
+    transform var(--motion-fast) var(--motion-ease-out),
+    background-color var(--motion-fast) ease;
+}
+.login-submit:active,
+.login-fields:disabled .login-submit {
+  transform: scale(0.985);
+}
+.login-button-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--color-login-on-accent) 42%, transparent);
+  animation: login-ripple var(--motion-base) var(--motion-ease-out) both;
+}
+@keyframes login-ripple {
+  from {
+    transform: scale(0.2);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+@media (min-width: 1024px) {
+  .login-clouds {
+    position: absolute;
+    z-index: -1;
+    display: block;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .login-cloud {
+    position: absolute;
+    width: clamp(120px, 15vw, 260px);
+    height: auto;
+    opacity: 0.85;
+  }
+  .login-cloud-1 {
+    top: 2%;
+    left: -2%;
+    animation: login-cloud-a 9s ease-in-out infinite;
+  }
+  .login-cloud-2 {
+    top: 3%;
+    right: -1%;
+    animation: login-cloud-b 11s ease-in-out infinite;
+  }
+  .login-cloud-3 {
+    top: 36%;
+    left: -4%;
+    animation: login-cloud-a 8s ease-in-out infinite reverse;
+  }
+  .login-cloud-4 {
+    top: 28%;
+    right: -4%;
+    animation: login-cloud-b 10s ease-in-out infinite reverse;
+  }
+  .login-fields:disabled .login-submit {
+    background: var(--color-login-accent-hover);
+  }
+}
+@keyframes login-cloud-a {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(14px, 8px);
+  }
+}
+@keyframes login-cloud-b {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-12px, 10px);
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .login-submit:not(:disabled):hover .login-icon {
+    transform: translateX(2px);
+  }
+  .login-submit .login-icon {
+    transition: transform var(--motion-fast) var(--motion-ease-out);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .login-cloud {
+    animation: none;
+  }
+  .login-button-ripple {
+    display: none;
+  }
+  .login-screen .login-submit,
+  .login-submit .login-icon {
+    transition: none;
+    transform: none !important;
+  }
+}

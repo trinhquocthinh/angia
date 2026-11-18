@@ -17,7 +17,7 @@ export function Button({ variant = 'primary', type = 'button', className = '', .
     <button
       {...props}
       type={type}
-      className={`inline-flex min-w-12 items-center justify-center gap-2 px-4 py-2 font-sans font-semibold break-words transition-colors duration-150 ease-out disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none ${VARIANTS[variant]} ${className}`}
+      className={`inline-flex min-w-12 items-center justify-center gap-2 px-4 py-2 font-sans font-semibold break-words transition-colors duration-150 ease-out disabled:opacity-50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none ${VARIANTS[variant]} ${className}`}
     />
   );
 }

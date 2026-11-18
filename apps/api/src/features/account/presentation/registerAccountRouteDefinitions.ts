@@ -30,8 +30,9 @@ export const registerAccountRoute = createRoute({
     403: error(
       'ERR_FORBIDDEN: thiếu/sai Origin hoặc không phải JSON; ERR_REGISTRATION_CLOSED: chưa mở đăng ký và không có lời mời hợp lệ',
     ),
+    404: error('ERR_NOT_FOUND: lời mời đã hết hiệu lực trước khi ghi đăng ký'),
     409: error(
-      'ERR_USERNAME_TAKEN; ERR_LEGAL_VERSION_OUTDATED kèm details.current = { termsVersionId, privacyVersionId }',
+      'ERR_DELETION_PENDING; ERR_USERNAME_TAKEN; ERR_LEGAL_VERSION_OUTDATED kèm details.current = { termsVersionId, privacyVersionId }',
     ),
     429: error(
       'ERR_RATE_LIMITED: vượt 5 request/IP/giờ; header Retry-After là số giây nguyên tới hết cửa sổ',

@@ -66,13 +66,13 @@ for (const viewport of [
       await expect(page.getByLabel(/^Tên đăng nhập/)).toBeVisible();
       await expect(page.getByLabel(/^Mật khẩu/)).toBeVisible();
       await expect(page.getByRole('button', { name: 'Đăng nhập', exact: true })).toBeVisible();
-      const admin = page.getByRole('link', { name: 'Đăng nhập quản trị', exact: true });
-      await expect(admin).toBeVisible();
-      await expect(admin).toHaveAttribute('href', '/api/auth/login');
+      const authentik = page.getByRole('link', { name: 'Đăng nhập bằng Authentik', exact: true });
+      await expect(authentik).toBeVisible();
+      await expect(authentik).toHaveAttribute('href', '/api/auth/login');
       const recovery = page.getByRole('link', { name: 'Quên mật khẩu', exact: true });
       await expect(recovery).toBeVisible();
       await expect(recovery).toHaveAttribute('href', '/forgot-password');
-      await expect(page.locator('body')).not.toContainText(/Authentik/i);
+      await expect(page.getByRole('checkbox')).toHaveCount(0);
       await page.evaluate(() => document.fonts.ready);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     });

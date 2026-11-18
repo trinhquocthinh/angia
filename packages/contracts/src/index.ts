@@ -1,4 +1,5 @@
 export * from './auth/index.js';
+export * from './household/createHouseholdRequestSchema.js';
 export { errorResponseSchema, type ErrorResponse } from './errors/errorResponseSchema.js';
 export {
   accountSchema,
@@ -257,3 +258,5 @@ export * from './painJournal/bodyRegions.js';
 export * from './painJournal/limits.js';
 export * from './painJournal/forbiddenWords.js';
 export * from './painJournal/schemas.js';
+
+export * from './household/householdInvitationSchemas.js';

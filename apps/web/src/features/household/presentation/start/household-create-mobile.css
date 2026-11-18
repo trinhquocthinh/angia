@@ -1,0 +1,178 @@
+@media (max-width: 1023px) {
+  .household-start-creating {
+    max-width: 580px;
+  }
+  .household-start-step {
+    margin-bottom: 24px;
+  }
+  .household-start-step .household-start-kicker {
+    display: none;
+  }
+  .household-start-step > span:last-child {
+    margin-left: auto;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-secondary-container) 50%, transparent);
+    color: var(--color-on-secondary-container);
+    font-size: 0.6875rem;
+    line-height: 0.875rem;
+    font-weight: 600;
+  }
+  .household-start-back {
+    position: absolute;
+    top: -8px;
+    margin-bottom: 0;
+    min-height: 44px;
+    font-size: 0.875rem;
+  }
+  .household-create-heading {
+    margin-bottom: 24px;
+  }
+  .household-create-heading > span {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    color: var(--color-secondary);
+    text-transform: uppercase;
+  }
+  .household-create-heading h1 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    margin-bottom: 6px;
+  }
+  .household-start-form {
+    gap: 20px;
+    padding: 20px;
+    border-radius: 12px;
+  }
+  .household-start-form::before {
+    display: none;
+  }
+  .household-start-form fieldset {
+    gap: 20px;
+  }
+  .household-name-label label {
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
+  }
+  .household-name-input input {
+    min-height: 48px;
+    padding-left: 44px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--color-text-primary) 6%, transparent);
+  }
+  .household-name-home {
+    display: inline-flex;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 14px;
+    height: 100%;
+    color: var(--color-secondary);
+    pointer-events: none;
+  }
+  .household-name-edit {
+    display: none;
+  }
+  .household-name-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    color: var(--color-text-secondary);
+  }
+  .household-name-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .household-name-suggestions > span {
+    font-size: 0.6875rem;
+    line-height: 0.875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+  .household-name-suggestions > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .household-name-suggestions button {
+    min-height: 30px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--color-text-secondary);
+    background: var(--color-accent-soft);
+  }
+  .household-start-role {
+    gap: 12px;
+    padding: 14px;
+    background: color-mix(in srgb, var(--color-secondary-container) 40%, transparent);
+  }
+  .household-start-role-icon {
+    background: var(--color-accent-container);
+    color: var(--color-on-accent);
+  }
+  .household-role-heading > strong {
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
+  }
+  .household-role-heading b {
+    border-radius: 999px;
+    background: var(--color-secondary);
+  }
+  .household-role-desktop {
+    display: none;
+  }
+  .household-role-mobile {
+    display: inline;
+  }
+  .household-create-highlights {
+    display: none;
+  }
+  .household-create-footnote {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 0 16px;
+    font-size: 0.8125rem;
+    line-height: 1.25rem;
+    text-align: center;
+  }
+  .household-create-ready {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 32px;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--color-accent-soft);
+  }
+  .household-create-ready .household-start-icon {
+    background: var(--color-surface-variant);
+  }
+  .household-create-ready strong {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+  }
+  .household-create-ready p {
+    font-size: 0.8125rem;
+    line-height: 1.25rem;
+    color: var(--color-text-secondary);
+  }
+  :root[data-theme='dark'] .household-start-welcome {
+    outline: none;
+  }
+}

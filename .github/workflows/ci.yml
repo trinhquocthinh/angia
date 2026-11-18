@@ -56,7 +56,8 @@ jobs:
   rls-integration:
     name: Integration (Testcontainers)
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Bộ integration ~1.455 tests cần >10 phút trên runner chậm; không hủy DB giữa test.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup
@@ -85,20 +86,22 @@ jobs:
 
   accessibility:
     name: Accessibility (Hôm nay)
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Pin bản Ubuntu được Playwright hỗ trợ; tránh thay đổi mirror khi ubuntu-latest nâng phiên bản.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup
       - run: yarn build:contracts
-      # Mirror apt của runner đôi khi mất DNS và treo đến hết timeout job: giới hạn 6 phút mỗi lần, thử lại 1 lần.
+      # Retry tại APT để không giết Playwright giữa chừng và để lại apt-get giữ khóa dpkg.
       - name: Cài trình duyệt Playwright
         run: |
-          for attempt in 1 2; do
-            timeout 6m yarn playwright install --with-deps chromium webkit && exit 0
-            echo "::warning::Cài Playwright lần $attempt thất bại hoặc quá 6 phút"
-          done
-          exit 1
+          sudo tee /etc/apt/apt.conf.d/80-ci-download-retries >/dev/null <<'EOF'
+          Acquire::Retries "3";
+          Acquire::http::Timeout "45";
+          Acquire::https::Timeout "45";
+          EOF
+          yarn playwright install --with-deps chromium webkit
       - run: yarn workspace @angia/web build
       - name: axe hai nền ở 360 px
         run: yarn playwright test --config playwright.a11y.config.ts

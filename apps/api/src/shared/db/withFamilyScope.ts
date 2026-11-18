@@ -16,7 +16,7 @@ export async function withFamilyScope<T>(
   work: (tx: FamilyScopedTx) => Promise<T>,
 ): Promise<T> {
   if (!UUID_PATTERN.test(familyId)) {
-    throw new Error('withFamilyScope: familyId phải là UUID lấy từ phiên đăng nhập');
+    throw new Error('withFamilyScope: familyId phải là UUID từ phiên hoặc lời mời đã kiểm chứng');
   }
   return db.transaction(async (tx) => {
     await tx.execute(sql`SELECT set_config('app.family_id', ${familyId}, true)`);

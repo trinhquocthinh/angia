@@ -16,10 +16,8 @@ export interface LegalVersions {
   current(): Promise<CurrentLegalVersions>;
 }
 
-export interface VerifiedInvitation {
-  familyId: string;
-  role: 'main' | 'member';
-}
+export type VerifiedInvitation =
+  { kind: 'join_family'; familyId: string; role: 'main' | 'member' } | { kind: 'found_family' };
 
 export interface InvitationVerifier {
   verify(token: string): Promise<VerifiedInvitation | null>;
@@ -30,8 +28,7 @@ export interface NewLocalAccountRecord {
   passwordHash: string;
   displayName: string;
   email?: string | null;
-  familyId?: string | null;
-  familyRole?: 'main' | 'member' | null;
+  invitationToken?: string | undefined;
   legalAcceptance: CurrentLegalVersions;
 }
 
@@ -42,8 +39,15 @@ export interface RegisteredLocalAccount {
   familyId: string | null;
 }
 
+export type RegistrationWriteFailure =
+  | {
+      ok: false;
+      code: 'ERR_USERNAME_TAKEN' | 'ERR_REGISTRATION_CLOSED' | 'ERR_NOT_FOUND' | 'ERR_DELETION_PENDING';
+    }
+  | { ok: false; code: 'ERR_LEGAL_VERSION_OUTDATED'; details: { current: CurrentLegalVersions } };
+
 export type RegisterLocalAccountRecordOutcome =
-  { ok: true; account: RegisteredLocalAccount } | { ok: false; code: 'ERR_USERNAME_TAKEN' };
+  { ok: true; account: RegisteredLocalAccount } | RegistrationWriteFailure;
 
 export interface AccountRegistrationUnitOfWork {
   isUsernameTaken(usernameNormalized: string): Promise<boolean>;
@@ -72,7 +76,7 @@ export type RegisterLocalAccountOutcome =
   | { ok: false; code: 'ERR_VALIDATION'; details: { field: string } }
   | { ok: false; code: 'ERR_REGISTRATION_CLOSED' }
   | { ok: false; code: 'ERR_LEGAL_VERSION_OUTDATED'; details: { current: CurrentLegalVersions } }
-  | { ok: false; code: 'ERR_USERNAME_TAKEN' };
+  | RegistrationWriteFailure;
 
 export interface LocalLoginSessions {
   createIfCurrent(input: {

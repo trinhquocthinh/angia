@@ -8,5 +8,5 @@
       "@src/*": ["src/*"]
     }
   },
-  "include": ["src", "scripts"]
+  "include": ["src", "scripts", "test"]
 }

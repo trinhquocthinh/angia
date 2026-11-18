@@ -12,6 +12,7 @@ WORKDIR /app
 RUN corepack enable
 
 COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn/patches .yarn/patches
 COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 COPY apps/worker/package.json apps/worker/
@@ -40,6 +41,7 @@ RUN corepack enable \
   && useradd --uid 10001 --gid angia --no-create-home --shell /usr/sbin/nologin angia
 
 COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn/patches .yarn/patches
 COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 COPY apps/worker/package.json apps/worker/

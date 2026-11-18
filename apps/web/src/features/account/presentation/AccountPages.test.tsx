@@ -18,7 +18,11 @@ vi.mock('../application/useLoginForm', () => ({
 }));
 vi.mock('../application/useRegistrationForm', () => ({
   useRegistrationForm: () => ({
-    form: { register: (name: string) => ({ name }), formState: { isSubmitting: state.busy, errors: {} } },
+    form: {
+      register: (name: string) => ({ name }),
+      watch: () => '',
+      formState: { isSubmitting: state.busy, errors: {} },
+    },
     submit: vi.fn(),
     error: state.error,
     legal: null,

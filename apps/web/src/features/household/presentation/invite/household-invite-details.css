@@ -1,0 +1,149 @@
+.household-invite-code-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  margin-bottom: 24px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
+  border-radius: 20px;
+  background: var(--color-accent-soft);
+  text-align: center;
+  gap: 12px;
+}
+.household-invite-code-role {
+  max-width: 100%;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-accent);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  box-shadow: var(--shadow-stitch-sm);
+}
+.household-invite-code-label {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--color-text-secondary);
+}
+.household-invite-code {
+  display: block;
+  max-width: 100%;
+  font-size: 2.25rem;
+  line-height: 2.75rem;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-accent);
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+.household-invite-expiry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--color-text-secondary);
+}
+.household-invite-expiry svg {
+  width: 18px;
+  height: 18px;
+}
+.household-invite-code-card[data-status='expired'] {
+  background: var(--color-surface-container-high);
+}
+.household-invite-code-card[data-status='expired'] .household-invite-code {
+  color: var(--color-text-secondary);
+  text-decoration: line-through;
+  text-decoration-color: var(--color-danger);
+}
+.household-invite-ended {
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--color-surface);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--color-text-secondary);
+}
+.household-invite-share-hint {
+  margin: 8px 0 16px;
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--color-text-secondary);
+}
+.household-invite-copy-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.household-invite-inactive-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.household-invite-copy-actions button {
+  min-width: 0;
+  border: 0;
+  padding: 12px 8px;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--color-accent);
+  background: var(--color-surface-container-high);
+}
+.household-invite-copy-actions svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.household-invite-revoke-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 8px 16px;
+  margin: 40px auto 0;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+.household-invite-revoke-trigger svg {
+  width: 18px;
+  height: 18px;
+}
+.household-invite-manual {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+.household-invite-manual textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1023px) {
+  .household-invite-inactive-actions .household-invite-copy-actions {
+    order: -1;
+  }
+  .household-invite-code {
+    font-size: 1.75rem;
+    line-height: 2.5rem;
+    letter-spacing: 0.025em;
+  }
+}
+@media (max-width: 359px) {
+  .household-invite-copy-actions {
+    grid-template-columns: 1fr;
+  }
+}

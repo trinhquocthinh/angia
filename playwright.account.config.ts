@@ -5,7 +5,13 @@ import { join } from 'node:path';
 // Route sản phẩm từ bản build, API giả, không ghi dữ liệu thật.
 export default defineConfig({
   testDir: './apps/web/e2e',
-  testMatch: '**/account.spec.ts',
+  testMatch: [
+    '**/account.spec.ts',
+    '**/householdStart.spec.ts',
+    '**/householdInvitations.spec.ts',
+    '**/householdJoin.spec.ts',
+    '**/householdInvitationManagement.spec.ts',
+  ],
   testIgnore: '**/._*',
   forbidOnly: Boolean(process.env.CI),
   retries: 0,

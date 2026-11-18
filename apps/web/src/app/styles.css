@@ -3,6 +3,11 @@
 @import '../shared/styles/tokens.css';
 @import '../shared/ui/motion.css';
 
+button,
+[role='button'] {
+  cursor: pointer !important;
+}
+
 body {
   background-color: var(--color-bg);
   color: var(--color-text-primary);

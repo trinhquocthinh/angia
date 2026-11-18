@@ -1,0 +1,123 @@
+@font-face {
+  font-family: 'AN GIA Login Symbols';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url('/fonts/material-symbols/login-outlined.ttf') format('truetype');
+}
+.login-icon {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.login-icon-mobile {
+  font-family: 'AN GIA Login Symbols';
+  font-feature-settings: 'liga';
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
+.login-icon-desktop {
+  display: none;
+}
+.login-features {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.login-mobile-features {
+  margin-top: 20px;
+}
+.login-feature {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 8px;
+  border: 1px solid color-mix(in srgb, var(--color-login-border) 50%, transparent);
+  border-radius: 22px;
+  background: var(--color-login-panel);
+  text-align: center;
+}
+.login-feature-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-login-wash);
+  color: var(--color-login-ink);
+  flex-shrink: 0;
+}
+.login-feature-heart .login-feature-icon {
+  background: var(--color-login-rose);
+  color: var(--color-danger);
+}
+.login-feature h3 {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+.login-feature p {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .login-icon-desktop {
+    display: block;
+  }
+  .login-icon-mobile {
+    display: none;
+  }
+  .login-features {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .login-feature {
+    flex-direction: row;
+    gap: 14px;
+    padding: 14px;
+    border-radius: 18px;
+    text-align: left;
+  }
+  .login-feature-icon {
+    border-radius: 14px;
+  }
+  .login-feature p {
+    display: block;
+    margin-top: 3px;
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--color-login-muted);
+  }
+}
+
+@media (min-width: 1024px) {
+  .login-feature {
+    border: 0;
+    box-shadow: 0 4px 18px color-mix(in srgb, var(--color-overlay) 4%, transparent);
+    padding: 16px;
+    gap: 16px;
+  }
+  .login-feature h3 {
+    font-weight: 700;
+  }
+  .login-feature p {
+    line-height: 26px;
+  }
+  .login-feature-icon {
+    background: color-mix(in srgb, var(--color-login-wash) 60%, var(--color-login-panel));
+  }
+  .login-feature-heart .login-feature-icon {
+    background: var(--color-login-rose);
+  }
+}

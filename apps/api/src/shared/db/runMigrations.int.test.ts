@@ -1,4 +1,5 @@
 import pg from 'pg';
+import { HOUSEHOLD_RLS_TABLES } from '@src/shared/test/householdIsolationPlan.js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startTestDatabase, type TestDatabase } from '@src/shared/test/startTestDatabase.js';
 import {
@@ -14,6 +15,7 @@ const SKELETON_TABLES = [
   'account_credentials',
   'accounts',
   'adherence_periods',
+  'admin_audit_events',
   'ai_billing_sources',
   'ai_provider_charges',
   'ai_routing_audit',
@@ -28,7 +30,9 @@ const SKELETON_TABLES = [
   'extraction_spend',
   'extractions',
   'families',
+  'family_deletion_requests',
   'family_extraction_spend',
+  'family_invitations',
   'family_scan_quotas',
   'health_profiles',
   'lab_results',
@@ -38,11 +42,13 @@ const SKELETON_TABLES = [
   'medication_courses',
   'object_purges',
   'ocr_operations',
+  'ownership_transfer_offers',
   'pain_entries',
   'pain_issue_status_events',
   'pain_issues',
   'prescription_items',
   'prescriptions',
+  'profile_guardians',
   'profile_link_events',
   'profile_link_invitations',
   'push_subscriptions',
@@ -50,6 +56,7 @@ const SKELETON_TABLES = [
   'reminder_deliveries',
   'reminder_recipients',
   'reminders',
+  'removed_member_windows',
   'revisit_reminders',
   'scan_quota_audit',
   'scan_quota_months',
@@ -110,8 +117,12 @@ describe('runMigrations trên PostgreSQL rỗng', () => {
        WHERE schemaname = 'public'
        ORDER BY tablename, policyname`,
     );
-    expect([...PAIN_JOURNAL_TABLES, ...SELF_READ_ONLY_TABLES].sort()).toEqual(RLS_TABLES);
-    expect(new Set([...PAIN_JOURNAL_TABLES, ...SELF_READ_ONLY_TABLES]).size).toBe(RLS_TABLES.length);
+    expect([...PAIN_JOURNAL_TABLES, ...SELF_READ_ONLY_TABLES, ...HOUSEHOLD_RLS_TABLES].sort()).toEqual(
+      RLS_TABLES,
+    );
+    expect(new Set([...PAIN_JOURNAL_TABLES, ...SELF_READ_ONLY_TABLES, ...HOUSEHOLD_RLS_TABLES]).size).toBe(
+      RLS_TABLES.length,
+    );
     const expected: typeof policies.rows = RLS_TABLES.map((tablename) => ({
       tablename,
       policyname: 'family_isolation_policy',

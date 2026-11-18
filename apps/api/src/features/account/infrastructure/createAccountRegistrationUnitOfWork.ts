@@ -2,6 +2,9 @@ import { eq } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { accounts, legalAcceptances } from '@src/shared/db/schema/index.js';
 import { createCredentialRepository } from '@src/shared/identity/infrastructure/createCredentialRepository.js';
+import { checkRegistrationInvitation } from './checkRegistrationInvitation.js';
+import { acceptRegistrationInvitation } from './acceptRegistrationInvitation.js';
+import { RegistrationRejected } from './RegistrationRejected.js';
 import type {
   AccountRegistrationUnitOfWork,
   NewLocalAccountRecord,
@@ -15,14 +18,13 @@ async function insertRegistrationEntities(
   tx: TransactionHandle,
   record: NewLocalAccountRecord,
 ): Promise<RegisteredLocalAccount> {
+  const invitation = await checkRegistrationInvitation(tx, record);
   const [account] = await tx
     .insert(accounts)
     .values({
       usernameNormalized: record.usernameNormalized,
       displayName: record.displayName,
       email: record.email ?? null,
-      familyId: record.familyId ?? null,
-      familyRole: record.familyRole ?? null,
     })
     .returning({
       id: accounts.id,
@@ -44,11 +46,15 @@ async function insertRegistrationEntities(
     { accountRef: account.legalRef, versionId: record.legalAcceptance.privacyVersionId },
   ]);
 
+  const familyId =
+    invitation?.kind === 'join_family' && record.invitationToken
+      ? await acceptRegistrationInvitation(tx, account.id, record.invitationToken)
+      : null;
   return {
     id: account.id,
     username: account.usernameNormalized,
     displayName: account.displayName,
-    familyId: account.familyId,
+    familyId,
   };
 }
 
@@ -75,6 +81,7 @@ export function createAccountRegistrationUnitOfWork(db: Database): AccountRegist
         const account = await db.transaction(async (tx) => insertRegistrationEntities(tx, record));
         return { ok: true, account };
       } catch (error) {
+        if (error instanceof RegistrationRejected) return error.outcome;
         if (isUsernameUniqueViolation(error)) {
           return { ok: false, code: 'ERR_USERNAME_TAKEN' };
         }
