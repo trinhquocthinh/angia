@@ -1420,3 +1420,20 @@ Trước phát hành phải chạy regression tooling/nativeBuildGlobs.test.ts,
 kiểm thử hash/verify Argon2 và build image Linux Node 22. Không ghi đã
 kiểm native build Windows khi chỉ thử fixture trên Linux. Xem xét gỡ
 patch khi upstream cung cấp đường dependency phù hợp đã được kiểm chứng.
+
+## Kiểm tra trình duyệt theo yêu cầu
+
+CI tự động giữ audit dependency runtime, hợp đồng API, typecheck/lint/format,
+unit/coverage, integration Testcontainers/RLS và build/budget/model/Docker.
+Job verify phụ thuộc bốn nhóm kiểm tra này; lỗi hoặc hủy một nhóm vẫn chặn
+triển khai. Bước Playwright --list chỉ thu thập bộ test, không cài hoặc mở
+trình duyệt.
+
+Accessibility/axe/Lighthouse chuyển sang workflow Accessibility (manual),
+chỉ chạy bằng Actions → Run workflow khi cần kiểm giao diện hoặc chuẩn bị
+phát hành Production. Workflow dùng image Playwright có sẵn browser và thư
+viện hệ thống, ghim đúng phiên bản của package.json; không chạy apt hoặc
+playwright install mỗi lượt. Bộ test và báo cáo vẫn được giữ.
+
+Các thay đổi UI không còn tự động bị chặn bởi accessibility trên mọi PR;
+người phụ trách cần chủ động chạy workflow này khi đánh giá chất lượng UI.
