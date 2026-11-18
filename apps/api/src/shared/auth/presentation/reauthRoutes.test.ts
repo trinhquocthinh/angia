@@ -17,7 +17,7 @@ describe('Reauth OIDC và cookie PKCE', () => {
       pending: { state: 's', codeVerifier: 'c', nonce: 'n' },
     }));
     const app = new OpenAPIHono<AppEnv>();
-    registerAuthRoutes(app, deps);
+    registerAuthRoutes(app, deps, { status: vi.fn() });
     expect((await app.request('/api/auth/login' + query)).status).toBe(302);
     if (options) expect(deps.login.oidc.createAuthorizationRequest).toHaveBeenCalledWith(options);
     else expect(deps.login.oidc.createAuthorizationRequest).toHaveBeenCalledWith();
@@ -44,7 +44,7 @@ describe('Reauth OIDC và cookie PKCE', () => {
     deps.login.accounts.upsertFromIdentity = vi.fn(async () => ({ id: 'account' }));
     deps.login.sessions.create = vi.fn(async () => ({ id: 'session' }));
     const app = new OpenAPIHono<AppEnv>();
-    registerAuthRoutes(app, deps);
+    registerAuthRoutes(app, deps, { status: vi.fn() });
     app.get('/pending', async (c) => {
       await writePendingLogin(
         c,

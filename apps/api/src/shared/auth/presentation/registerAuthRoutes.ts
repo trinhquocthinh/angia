@@ -1,3 +1,4 @@
+import type { LegalRepository } from '@src/features/legal/application/ports.js';
 import { readPushDevice, clearPushDevice } from './pushDeviceCookie.js';
 import { createRoute, type OpenAPIHono } from '@hono/zod-openapi';
 import { errorResponseSchema } from '@angia/contracts';
@@ -55,7 +56,11 @@ const logoutRoute = createRoute({
   },
 });
 
-export function registerAuthRoutes(app: OpenAPIHono<AppEnv>, deps: AuthRouteDeps): void {
+export function registerAuthRoutes(
+  app: OpenAPIHono<AppEnv>,
+  deps: AuthRouteDeps,
+  legal: Pick<LegalRepository, 'status'>,
+): void {
   const cookies = { secret: deps.cookieSecret, secure: deps.secureCookies };
 
   app.openapi(loginRoute, async (c) => {
@@ -78,8 +83,11 @@ export function registerAuthRoutes(app: OpenAPIHono<AppEnv>, deps: AuthRouteDeps
     try {
       const params = new URL(c.req.url).searchParams;
       const session = await completeLogin(deps.login, params, pending);
+      const active = await deps.login.sessions.findActive(session.sessionId, deps.login.now());
+      if (!active) throw new Error('Phiên OIDC vừa tạo không còn hiệu lực');
+      const status = await legal.status(active.account.id);
       await writeSessionCookie(c, session, cookies);
-      return c.redirect('/', 302);
+      return c.redirect(status.missingDocuments || !status.accepted ? '/account/legal-update' : '/', 302);
     } catch (error) {
       // Chỉ ghi thông điệp lỗi, không ghi query (chứa code) hay token.
       deps.logger.warn(
