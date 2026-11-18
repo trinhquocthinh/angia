@@ -50,6 +50,7 @@
         "src/**/*.{ts,tsx,css}!",
         "!src/**/*.test-helper.ts!",
         "!src/features/scanQuota/test/**!",
+        "!src/shared/theme/ThemeSwitch.tsx!",
         "e2e/**/*.{ts,tsx}"
       ],
       "ignoreDependencies": ["@fontsource/be-vietnam-pro", "@fontsource/newsreader"]

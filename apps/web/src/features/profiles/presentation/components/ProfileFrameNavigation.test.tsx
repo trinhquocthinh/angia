@@ -57,8 +57,21 @@ it('TC-767: chưa có nhà không hiện search hoặc điều hướng chính',
   expect(html).toContain('Chưa có nhà');
 });
 it.each(['main', 'member'] as const)('TC-767: đã có nhà giữ điều hướng cho vai trò %s', (role) => {
-  const html = render({ ...session, role, family: { id: 'family', name: 'Nhà Lan' } }, '/');
+  const html = render(
+    {
+      ...session,
+      role,
+      family: { id: 'family', name: 'Nhà Lan' },
+      account: { ...session.account, healthProfileId: role === 'member' ? 'profile' : null },
+    },
+    '/',
+  );
   expect(html).toContain('Điều hướng chính');
+});
+it('TC-767: member chưa liên kết không hiện điều hướng hoặc tìm hồ sơ', () => {
+  const html = render({ ...session, role: 'member', family: { id: 'family', name: 'Nhà Lan' } }, '/');
+  expect(html).not.toContain('Điều hướng chính');
+  expect(html).not.toContain('Tìm hồ sơ thành viên');
 });
 it('TC-767: trang admin không hiện ba tab dù admin đang có nhà', () => {
   const html = render(
