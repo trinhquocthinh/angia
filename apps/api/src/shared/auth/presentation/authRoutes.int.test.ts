@@ -106,7 +106,7 @@ describe('GET /api/auth/login + /api/auth/callback', () => {
     });
 
     expect(response.status).toBe(302);
-    expect(response.headers.get('location')).toBe('/');
+    expect(response.headers.get('location')).toBe('/account/legal-update');
     const setCookie = cookiesOf(response).join('\n');
     expect(setCookie).toMatch(/angia_session=.+; Path=\/; Expires=[^;]+; HttpOnly; Secure; SameSite=Lax/);
     expect(setCookie).toMatch(/angia_oidc=; Max-Age=0; Path=\/api\/auth/);

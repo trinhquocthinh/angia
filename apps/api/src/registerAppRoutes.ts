@@ -24,7 +24,7 @@ export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencie
   registerInvitationAcceptanceRoutes(app, deps.invitationAcceptance);
   registerHouseholdInvitationRoutes(app, deps.householdInvitations);
   registerHealthRoute(app, deps.healthProbes);
-  registerAuthRoutes(app, deps.auth);
+  registerAuthRoutes(app, deps.auth, deps.legal);
   registerAccountRoutes(app, { ...deps.account, cookies, logger: deps.auth.logger });
   registerMeRoute(app, {
     features: {
