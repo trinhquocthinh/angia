@@ -1,0 +1,201 @@
+.account-menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+.account-menu-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 4px;
+}
+.account-menu-initial {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: 15px;
+  font-weight: 600;
+}
+.account-menu-initial i {
+  display: none;
+}
+.account-menu-person {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+.account-menu-person > strong {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.account-menu-person > span {
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--color-text-secondary);
+}
+.account-menu-role {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: color-mix(in srgb, var(--color-secondary-container) 70%, transparent);
+  color: var(--color-on-secondary-container);
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 600;
+}
+.account-menu-close {
+  display: none;
+}
+.account-menu-context {
+  display: none;
+}
+.account-menu-theme {
+  min-width: 0;
+  margin: 0;
+  border: 0;
+  padding: 4px 0 0;
+}
+.account-menu-theme-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  line-height: 14px;
+}
+.account-menu-theme-heading strong {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+.account-menu-theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  padding: 4px;
+  border: 1px solid color-mix(in srgb, var(--color-design-border) 60%, transparent);
+  border-radius: 12px;
+  background: var(--color-accent-soft);
+}
+.account-menu-theme-options label {
+  position: relative;
+  min-width: 0;
+  cursor: pointer;
+}
+.account-menu-theme-options input {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.account-menu-theme-options label > span {
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  transition:
+    background-color 200ms ease-out,
+    color 200ms ease-out,
+    transform 150ms ease-out;
+}
+.account-menu-theme-options input:checked + span {
+  background: var(--color-accent-container);
+  color: var(--color-on-accent);
+  box-shadow: var(--shadow-stitch-sm);
+}
+.account-menu-theme-options input:focus-visible + span,
+.account-menu-trigger:focus-visible,
+.account-menu-content :is(a, button):focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.account-menu-theme-options input:active + span {
+  transform: scale(0.95);
+}
+.account-menu-divider {
+  height: 1px;
+  flex-shrink: 0;
+  width: 100%;
+  background: var(--color-design-border);
+}
+.account-menu-logout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background-color 150ms ease-out,
+    color 150ms ease-out;
+}
+.account-menu-logout > span:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+}
+.account-menu-logout strong {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+.account-menu-logout small,
+.account-menu-logout-chevron,
+.account-menu-footnote {
+  display: none;
+}
+.account-menu-logout:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.account-menu-links {
+  display: grid;
+  gap: 4px;
+}
+.account-menu-links a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .account-menu-trigger:hover {
+    background: var(--color-accent-soft);
+  }
+  .account-menu-logout:hover {
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
+  }
+  .account-menu-links a:hover {
+    background: var(--color-accent-soft);
+  }
+  .account-menu-theme-options input:not(:checked):hover + span {
+    background: color-mix(in srgb, var(--color-secondary-container) 40%, transparent);
+  }
+}

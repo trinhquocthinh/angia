@@ -11,7 +11,7 @@ export function ProfileFooter() {
         <div className="hidden items-center gap-2 lg:flex">
           <span className="text-lg font-bold text-accent">AN GIA</span>
           <span className="text-text-secondary">•</span>
-          <span>Sổ Sức Khỏe Gia Đình</span>
+          <span>Sổ tay chăm sóc gia đình</span>
         </div>
         <div className="flex items-center justify-center gap-6 text-base font-medium text-accent lg:text-xs lg:font-semibold lg:text-text-secondary">
           <span aria-disabled="true" title="Sắp ra mắt" className={soon}>
@@ -31,7 +31,7 @@ export function ProfileFooter() {
           </span>
         </div>
         <p className="text-base text-text-secondary lg:text-[11px] lg:tracking-[0.03em]">
-          AN GIA © {year} • Sổ Sức Khỏe Gia Đình. Bảo lưu mọi quyền.
+          AN GIA © {year} • Sổ tay chăm sóc gia đình. Bảo lưu mọi quyền.
         </p>
       </div>
     </footer>

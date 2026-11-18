@@ -1,71 +1,61 @@
 import { Link } from '@tanstack/react-router';
-import { ThemeSwitch } from '@src/shared/theme/ThemeSwitch';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
-import { SelfProfileMenuItem } from './SelfProfileMenuItem';
-import { SoonMenuItem } from './SoonMenuItem';
-import type { ProfileSession } from '../../application/ports';
-import { roleLabel } from './roleLabel';
-
-const item =
-  'flex min-h-12 w-full cursor-pointer items-center gap-3 px-4 py-3 text-left text-sm text-text-primary transition-colors hover:bg-accent-soft disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus';
-
-// Nội dung menu tài khoản; mục chưa có trang (hồ sơ cá nhân, cài đặt gia đình) để vô hiệu.
-type Props = {
-  session: ProfileSession;
-  pending: boolean;
-  error: boolean;
-  onLogout: () => void;
-};
-
-export function AccountMenuPanel({ session, pending, error, onLogout }: Props) {
+import { AccountMenuIdentity } from './AccountMenuIdentity';
+import { AccountThemeSwitch } from './AccountThemeSwitch';
+import type { AccountMenuProps } from './accountMenuTypes';
+type Props = AccountMenuProps & { onClose?: (() => void) | undefined };
+export function AccountMenuPanel({ session, pending, error, onLogout, onClose }: Props) {
   return (
-    <>
-      <div className="flex flex-col border-b border-border px-4 pt-2 pb-3">
-        <span className="truncate text-sm font-semibold text-text-primary">
-          {session.account.displayName}
-        </span>
-        <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-accent-soft/60 px-2.5 py-1 text-xs font-medium text-accent">
-          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-          {roleLabel(session.role)}
-        </span>
-      </div>
-      <div className="flex flex-col py-1">
-        {session.account.healthProfileId && <SelfProfileMenuItem className={item} />}
-        <SoonMenuItem icon="account_circle" label="Hồ sơ cá nhân" className={item} />
-        {session.account.isSystemAdmin && (
-          <Link to="/admin" className={`${item} justify-between`}>
-            <span className="flex items-center gap-3">
-              <span className="text-accent">
-                <AdminIcon name="admin_panel_settings" />
-              </span>
+    <div className="account-menu-content">
+      <AccountMenuIdentity session={session} onClose={onClose} />
+      {!session.family && !session.account.isSystemAdmin && (
+        <Link to="/waiting" search={{ step: 'create' }} className="account-menu-context" onClick={onClose}>
+          <AdminIcon name="home_health" size={24} />
+          <span>
+            <strong>Gia đình số AN GIA</strong>
+            <span>Tạo nhà đầu tiên để thêm người thân</span>
+          </span>
+          <b>
+            Khởi tạo <AdminIcon name="chevron_right" size={16} />
+          </b>
+        </Link>
+      )}
+      {(session.account.healthProfileId || session.account.isSystemAdmin) && (
+        <div className="account-menu-links">
+          {session.account.healthProfileId && (
+            <Link to="/my-profile" onClick={onClose}>
+              <AdminIcon name="person" />
+              Hồ sơ của tôi
+            </Link>
+          )}
+          {session.account.isSystemAdmin && (
+            <Link to="/admin" onClick={onClose}>
+              <AdminIcon name="admin_panel_settings" />
               Quản trị hệ thống
-            </span>
-            <span className="rounded-md bg-accent-soft px-2 py-0.5 text-[11px] font-bold tracking-wider text-text-primary uppercase">
-              Admin
-            </span>
-          </Link>
-        )}
-        <SoonMenuItem icon="group_add" label="Cài đặt gia đình" className={item} />
-      </div>
-      <div className="border-t border-border bg-surface px-4 py-3">
-        <ThemeSwitch />
-      </div>
-      <div className="mt-1 border-t border-border pt-1">
-        <button
-          type="button"
-          className={`${item} text-danger hover:bg-danger-soft/20`}
-          disabled={pending}
-          onClick={onLogout}
-        >
+            </Link>
+          )}
+        </div>
+      )}
+      <AccountThemeSwitch />
+      <div className="account-menu-divider" />
+      <button type="button" className="account-menu-logout" disabled={pending} onClick={onLogout}>
+        <span className="account-menu-logout-icon">
           <AdminIcon name="logout" />
-          {pending ? 'Đang đăng xuất…' : 'Đăng xuất'}
-        </button>
-        {error && (
-          <p role="alert" className="px-4 pb-1 text-xs text-danger">
-            Không thể đăng xuất. Vui lòng thử lại.
-          </p>
-        )}
-      </div>
-    </>
+        </span>
+        <span>
+          <strong>{pending ? 'Đang đăng xuất…' : 'Đăng xuất'}</strong>
+          <small>Rời khỏi tài khoản hiện tại</small>
+        </span>
+        <span className="account-menu-logout-chevron">
+          <AdminIcon name="chevron_right" />
+        </span>
+      </button>
+      {error && (
+        <p role="alert" className="text-danger">
+          Không thể đăng xuất. Vui lòng thử lại.
+        </p>
+      )}
+      <p className="account-menu-footnote">AN GIA • Sổ tay chăm sóc gia đình</p>
+    </div>
   );
 }

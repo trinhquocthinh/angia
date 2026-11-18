@@ -6,7 +6,7 @@ export function UploadIntro() {
     <>
       <div className="angia-modal-reveal flex flex-col gap-1.5" style={revealStyle(0)}>
         <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-accent">
-          <DocumentIcon name="shield" size={16} /> Sổ sức khỏe gia đình
+          <DocumentIcon name="shield" size={16} /> Sổ tay chăm sóc gia đình
         </p>
         <h1 className="auth-heading text-[28px] font-semibold leading-tight tracking-tight text-accent sm:text-4xl">
           Thêm giấy tờ

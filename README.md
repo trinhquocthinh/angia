@@ -61,7 +61,7 @@ phục tương ứng chưa được triển khai.
 
 ## Quản trị hệ thống
 
-Tài khoản có quyền quản trị hệ thống truy cập `/admin` để tạo nhóm gia đình, tìm tài khoản, gán nhóm, đổi vai trò và gỡ tài khoản khỏi nhóm. Quản trị hệ thống chưa có nhóm vẫn truy cập được trang này; tài khoản thường chưa có nhóm được chuyển đến trang chờ phân bổ. API kiểm tra quyền và các ràng buộc thành viên, bao gồm việc giữ ít nhất một Quản trị chính trong nhóm.
+Tài khoản có quyền quản trị hệ thống truy cập `/admin` để tạo nhóm gia đình, tìm tài khoản, gán nhóm, đổi vai trò và gỡ tài khoản khỏi nhóm. Quản trị hệ thống chưa có nhóm vẫn truy cập được trang này; tài khoản thường chưa có nhóm được chuyển đến màn Bắt đầu để tự tạo nhà. API kiểm tra quyền và các ràng buộc thành viên, bao gồm việc giữ ít nhất một Quản trị chính trong nhóm.
 
 Giao diện hỗ trợ desktop/mobile và giảm chuyển động theo thiết lập hệ điều hành. Icon Material Symbols được lưu tại `apps/web/public/fonts/material-symbols/` kèm giấy phép Apache 2.0. Các mục tải ảnh, chờ duyệt, tìm kiếm toàn cục và thông báo chưa khả dụng ở subtask E2-S3-T2.
 
@@ -1239,3 +1239,61 @@ và [báo cáo bằng chứng](../../Docs/angia/acceptance/v1.0/evidence/e27-s4-
 Bước phát triển kế tiếp là **E27-S5-T1**, phụ thuộc bản Stitch; các cổng nghiệm
 thu còn mở của E27 giữ nguyên. Ghi chú chưa commit ở trên mô tả checkpoint
 trước commit; mã commit source và kết quả hook được ghi tại hồ sơ E27.
+
+## E27-S5-T1 — Bắt đầu và tạo nhà
+
+**UI được owner duyệt ngày 2026-11-18** với xác nhận “UI đã đạt”.
+Chuỗi nhận diện trên web/mobile là **Sổ tay chăm sóc gia đình**.
+
+Tài khoản chưa có nhà vào `/waiting` (Bắt đầu); `/waiting?step=create` là form
+Tạo nhà mới. Tên mặc định trống, trim và kiểm tra 1–60 ký tự; gửi
+`POST /api/families` kèm CSRF. API thành công hoặc báo đã thuộc nhà thì tải lại
+phiên rồi điều hướng vào ứng dụng. Nếu tải phiên lỗi sau khi tạo, thử lại chỉ
+GET phiên, không POST tạo nhà lần nữa. Lỗi giữ tên, không lộ message nội bộ.
+Thẻ Tôi có mã mời hiện chưa khả dụng; luồng mã/link và chuyển tiếp token lập nhà
+thuộc E27-S5-T2. Backend dùng mã 12 ký tự.
+
+Giữ header/footer chung; chưa có nhà ẩn search và điều hướng chính, `/admin`
+ẩn ba tab và điều hướng đáy. Người đã có nhà giữ điều hướng theo quyền hiện tại.
+Menu gộp Hồ sơ cá nhân/Hồ sơ của tôi thành một lối vào `/my-profile` khi đã liên
+kết, bỏ Cài đặt gia đình. Trạng thái chưa có nhà lấy từ phiên, không suy ra vai
+trò hoặc dùng email mẫu.
+
+Hai trang giữ layout, typography, radius, shadow và glow theo Stitch owner chọn.
+Bắt đầu desktop dùng khung 580px/bo 28px; mobile không có thẻ trắng bao ngoài.
+Form desktop 560px, padding 32px, bo 16px; mobile có gợi ý tên và nút xóa ô nhập.
+Menu desktop dropdown 280px; mobile bottom sheet tối đa 420px, bo 28px, scrim
+40%/blur 3px, trượt 300ms. Native dialog giữ focus, Escape/bấm ngoài/nút đóng
+đều đóng được và trả focus; reduced motion tắt transition. Bộ chọn nền bằng
+icon cập nhật theme và localStorage thật. Hàng Cần hỗ trợ thiết lập?/Chính sách
+quyền riêng tư dưới Bắt đầu đã bỏ trên cả hai breakpoint theo owner 2026-11-18.
+
+Màu sáng khôi phục: nền `#F0FCFB`, xanh `#004135`, hover `#20594B`, nền nhấn
+`#EAF6F5`, chữ `#131D1D`/`#404945`, viền `#BFC9C4`, focus `#286958`.
+Không đổi màu dữ liệu sức khỏe hoặc bản in. Các khối dùng dữ liệu/câu mô tả đúng
+nghiệp vụ, không nhập tuyên bố chuẩn y khoa/HL7, lịch tiêm, hứa đổi tên, phiên bản
+mẫu hoặc script thành công giả trong HTML tham chiếu. Các ngoại lệ thị giác chỉ
+áp dụng vào hai trang/menu đã được owner chỉ định.
+
+Tham chiếu Stitch project `12209147960511107004`: Bắt đầu mobile
+`1e48d365401b4fa18a916ce014ca7bb7`, desktop `154a6f5498bc4ba8b32546bbfed77ea7`;
+Tạo nhà mobile `1a50e856b8fc48e4a9d3ae25b1b6276f`, desktop
+`482d847868674af790fb11815cb19fba`; menu desktop
+`04d3d0020b954ccea0fb4f250427e18f`, mobile `a3cd15e51d024bad8c2c5bb0e1e05a34`.
+Minh họa và icon/font tự lưu trữ; không tải CDN lúc mở trang.
+
+Kiểm chứng local: 15 suite / 92 unit và phân tầng PASS; 72 E2E PASS trên
+Chromium mobile/desktop và WebKit, hai nền, 360px/chữ 200% và animation thật.
+Hồi quy đăng nhập/enrollment trước đó 24 PASS. Typecheck, build, lint/format
+phần đổi đạt. Chạy E2E sau build bằng:
+
+```bash
+yarn exec playwright test --config playwright.account.config.ts householdStart.spec.ts
+```
+
+`yarn verify:fast` exit 1 sau typecheck PASS vì Vitest đọc metadata macOS `._*`;
+lượt unit bổ sung loại metadata bằng CLI không thay cổng chính thức.
+Đây là duyệt UI của owner, chưa phải nghiệm thu SIT hoặc đóng toàn bộ E27.
+Chưa full verify, smoke API/DB thật trong task web hoặc deploy. Bước tiếp theo
+là **E27-S5-T2**; các cổng migration, verify và SIT của E27 tiếp tục giữ mở.
+Tài liệu chi tiết tại [hồ sơ E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md).

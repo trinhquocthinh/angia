@@ -1,0 +1,67 @@
+.account-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 6px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.account-menu-trigger-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  box-shadow: var(--shadow-stitch-sm);
+}
+.account-menu-trigger-name {
+  display: none;
+  min-width: 0;
+  max-width: 160px;
+  flex-direction: column;
+  text-align: left;
+}
+.account-menu-trigger-name strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.account-menu-trigger-name > span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--color-secondary);
+}
+.account-menu-trigger i,
+.account-menu-role i {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+}
+.account-menu-trigger-chevron {
+  display: none;
+  transition: transform 200ms ease-out;
+}
+.account-menu-trigger-chevron[data-open='true'] {
+  transform: rotate(180deg);
+}
+@media (min-width: 1024px) {
+  .account-menu-trigger-name,
+  .account-menu-trigger-chevron {
+    display: flex;
+  }
+}

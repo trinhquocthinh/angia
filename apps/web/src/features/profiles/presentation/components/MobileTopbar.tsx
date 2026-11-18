@@ -13,7 +13,7 @@ export function MobileTopbar({
   account: ReactNode;
 }) {
   return (
-    <header className="sticky top-0 z-40 bg-surface-raised/85 pt-[env(safe-area-inset-top)] shadow-[0_1px_8px_color-mix(in_srgb,var(--color-shadow)_3%,transparent)] backdrop-blur-xl lg:hidden">
+    <header className="sticky top-0 z-40 bg-bg/85 pt-[env(safe-area-inset-top)] shadow-[0_1px_8px_color-mix(in_srgb,var(--color-shadow)_3%,transparent)] backdrop-blur-xl lg:hidden">
       <div className="flex h-16 items-center justify-between gap-2 px-4">
         <div className="flex min-w-0 items-center gap-2.5">
           {title && (
@@ -42,7 +42,7 @@ export function MobileTopbar({
                 AN GIA
               </span>
               <span className="truncate text-[11px] leading-[14px] font-medium tracking-[0.03em] text-text-secondary">
-                Sổ Sức Khỏe Gia Đình • Trang Chủ
+                Sổ tay chăm sóc gia đình • Trang Chủ
               </span>
             </div>
           )}

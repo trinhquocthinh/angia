@@ -12,15 +12,17 @@ export function ProfileTopbar({
   pendingCount,
   account,
   personal,
+  showNavigation,
 }: {
   profiles: HealthProfile[];
   hasFamily: boolean;
   pendingCount?: number | undefined;
   account: ReactNode;
   personal: boolean;
+  showNavigation: boolean;
 }) {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 hidden bg-surface-raised/90 shadow-[0_1px_8px_color-mix(in_srgb,var(--color-shadow)_4%,transparent)] backdrop-blur-xl lg:block">
+    <header className="fixed inset-x-0 top-0 z-50 hidden bg-bg/90 shadow-[0_1px_8px_color-mix(in_srgb,var(--color-shadow)_4%,transparent)] backdrop-blur-xl lg:block">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-8">
         <a href="/" className="flex shrink-0 items-center gap-3">
           <img src="/logo.webp" alt="" className="h-9 w-9 object-contain" />
@@ -28,12 +30,12 @@ export function ProfileTopbar({
             <span className="font-['Newsreader',Georgia,serif] text-lg leading-tight font-bold tracking-tight text-accent">
               AN GIA
             </span>
-            <span className="text-[11px] leading-none text-text-secondary">Sổ Sức Khỏe Gia Đình</span>
+            <span className="text-[11px] leading-none text-text-secondary">Sổ tay chăm sóc gia đình</span>
           </span>
         </a>
         <div className="flex max-w-2xl flex-1 items-center justify-center gap-3 px-2">
-          {!personal && <ProfileSearch profiles={profiles} className="w-80 shrink-0" />}
-          <TopbarNav pendingCount={pendingCount} personal={personal} />
+          {hasFamily && !personal && <ProfileSearch profiles={profiles} className="w-80 shrink-0" />}
+          {showNavigation && <TopbarNav pendingCount={pendingCount} personal={personal} />}
         </div>
         <div className="flex shrink-0 items-center gap-3">
           {hasFamily && (

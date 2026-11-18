@@ -35,7 +35,7 @@ export function HomePage() {
   const main = session.data.role === 'main';
   const memberNotice = session.data.account.healthProfileId ? <SelfProfileEntry /> : <RecipientNotice />;
   const subtitle =
-    main && workspace.profiles.isSuccess ? `${profiles.length} hồ sơ thành viên` : 'Sổ sức khỏe gia đình';
+    main && workspace.profiles.isSuccess ? `${profiles.length} hồ sơ thành viên` : 'Sổ tay chăm sóc gia đình';
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
       <MyConsentSection

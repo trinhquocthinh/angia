@@ -1,0 +1,111 @@
+.household-start-choices {
+  display: grid;
+  gap: 16px;
+  margin-top: 32px;
+}
+.household-start-choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 20px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  text-align: left;
+  text-decoration: none;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-menu-shadow) 4%, transparent);
+  transition:
+    transform 150ms ease-out,
+    background-color 200ms ease-out;
+}
+.household-start-choice-primary {
+  box-shadow:
+    0 0 0 2px var(--color-accent),
+    0 4px 16px color-mix(in srgb, var(--color-accent) 8%, transparent);
+}
+.household-start-choice:disabled {
+  cursor: not-allowed;
+}
+.household-start-icon,
+.household-start-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--color-secondary-container) 40%, transparent);
+  color: var(--color-secondary);
+}
+.household-start-choice-primary .household-start-icon {
+  background: var(--color-choice-soft);
+  color: var(--color-accent);
+}
+.household-start-chevron {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-left: auto;
+  background: var(--color-accent-soft);
+}
+.household-start-chevron svg {
+  width: 20px;
+  height: 20px;
+}
+.household-start-choice-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+  overflow-wrap: anywhere;
+}
+.household-choice-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.household-choice-title strong {
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+}
+.household-start-choice-primary strong {
+  color: var(--color-accent);
+}
+.household-choice-title b {
+  display: none;
+}
+.household-start-choice-copy > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  color: var(--color-text-secondary);
+}
+@media (hover: hover) and (pointer: fine) {
+  .household-start-choice-primary:hover {
+    background: color-mix(in srgb, var(--color-accent-soft) 40%, var(--color-surface));
+  }
+  .household-start-choice-primary:hover .household-start-icon {
+    transform: scale(1.05);
+  }
+  .household-start-choice-primary:hover .household-start-chevron {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+}
+.household-start-choice-primary:active {
+  transform: scale(0.99);
+}
+@media (prefers-reduced-motion: reduce) {
+  .household-start-choice,
+  .household-start-icon {
+    transition: none;
+    transform: none !important;
+  }
+}

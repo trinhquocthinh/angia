@@ -26,7 +26,7 @@ async function enrollmentSettles(page: Page, withoutFamily: boolean) {
   });
   await savePassword(page);
   const destination = withoutFamily ? /\/waiting$/ : /\/$/;
-  const heading = withoutFamily ? 'Chờ vào nhóm gia đình' : 'Liều hôm nay';
+  const heading = withoutFamily ? 'Bắt đầu' : 'Liều hôm nay';
   await expect(page).toHaveURL(destination);
   await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
   // Quan sát đủ ba giây để phát hiện vòng lặp, không dùng để đồng bộ thao tác lưu.
