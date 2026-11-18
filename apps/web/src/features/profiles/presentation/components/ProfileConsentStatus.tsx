@@ -18,7 +18,7 @@ const term = 'font-medium text-text-primary';
 export function ProfileConsentStatus({ profile }: Props) {
   const confirmed = profile.consentStatus === 'confirmed';
   return (
-    <div className="mt-3.5 flex flex-1 flex-col gap-2 rounded-xl border border-border/20 bg-accent-soft p-3 lg:mt-5 lg:p-4">
+    <div className="mt-3.5 mb-4 flex flex-1 flex-col gap-2 rounded-xl border border-border/20 bg-accent-soft p-3 lg:mt-5 lg:p-4">
       <div className="flex items-center justify-between gap-2">
         <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent">
           <AdminIcon name={confirmed ? 'verified_user' : 'info'} size={18} />

@@ -53,6 +53,10 @@
   --color-print-accent: #2f6f5e;
   --color-print-accent-soft: #e3efea;
   --color-print-stopped: #f1ece4;
+  --color-legal-accent: #20594b;
+  --color-legal-ambient-a: #d8f3ee;
+  --color-legal-ambient-b: #c8ebd8;
+  --color-legal-ambient-c: #e3efea;
   --color-login-bg: #edf8f5;
   --color-login-mobile-bg: #f0fcfb;
   --color-login-panel: #ffffff;
@@ -84,6 +88,10 @@
   --color-surface-variant: #35413d;
   --color-design-border: #2c3533;
   --color-choice-soft: #1e3530;
+  --color-legal-accent: var(--color-login-accent);
+  --color-legal-ambient-a: var(--color-accent-soft);
+  --color-legal-ambient-b: var(--color-login-wash);
+  --color-legal-ambient-c: var(--color-login-input);
   color-scheme: dark;
   --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8b3b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   --color-bg: #121716;

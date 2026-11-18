@@ -1,0 +1,143 @@
+@font-face {
+  font-family: 'An Gia Legal Update Icons';
+  src: url('/fonts/material-symbols/legal-update-outlined.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+.legal-update-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+.legal-update-icon-mobile {
+  display: none;
+}
+.legal-update-documents {
+  margin-top: 24px;
+  margin-bottom: 28px;
+  border-top: 1px solid var(--color-border);
+}
+.legal-update-document {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding-block: 16px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-legal-accent);
+  font-size: 16px;
+  line-height: 24px;
+}
+.legal-update-document-title {
+  min-width: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-weight: 500;
+}
+.legal-update-document > .legal-update-icon-document,
+.legal-update-document > .legal-update-icon-privacy,
+.legal-update-mobile-date {
+  display: none;
+}
+.legal-update-screen .legal-update-submit {
+  width: 100%;
+  min-height: 54px;
+  gap: 8px;
+  border-radius: 14px;
+  background: var(--color-legal-accent);
+  color: var(--color-on-accent);
+  font-size: 18px;
+  line-height: 26px;
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--color-overlay) 18%, transparent);
+}
+.legal-update-submit > .legal-update-icon {
+  display: none;
+}
+.legal-update-note {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+}
+.legal-update-note .legal-update-icon {
+  color: var(--color-legal-accent);
+}
+@media (max-width: 639px) {
+  .legal-update-icon-desktop {
+    display: none;
+  }
+  .legal-update-icon-mobile {
+    display: inline-block;
+    font-family: 'An Gia Legal Update Icons';
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 400;
+    font-feature-settings: 'liga';
+  }
+  .legal-update-icon-document,
+  .legal-update-icon-privacy {
+    font-variation-settings: 'FILL' 1;
+  }
+  .legal-update-documents {
+    display: grid;
+    gap: 8px;
+    padding-top: 16px;
+    margin: 16px 0 20px;
+  }
+  .legal-update-document {
+    grid-template-columns: 20px minmax(0, 1fr) 20px;
+    column-gap: 10px;
+    row-gap: 4px;
+    padding: 12px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--color-login-input);
+  }
+  .legal-update-document > .legal-update-icon-document,
+  .legal-update-document > .legal-update-icon-privacy {
+    display: inline-flex;
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .legal-update-document-title {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .legal-update-mobile-date {
+    display: block;
+    grid-column: 2;
+    grid-row: 2;
+    color: var(--color-text-secondary);
+  }
+  .legal-update-document > .legal-update-icon-external {
+    grid-column: 3;
+    grid-row: 1 / 3;
+  }
+  .legal-update-desktop-date {
+    display: none;
+  }
+  .legal-update-screen .legal-update-submit {
+    min-height: 52px;
+    border-radius: 12px;
+    font-size: 16px;
+  }
+  .legal-update-submit > .legal-update-icon {
+    display: inline-flex;
+  }
+}
+
+.legal-update-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

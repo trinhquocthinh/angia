@@ -59,6 +59,20 @@ enrollment hay điều hướng sau xác thực. Không thêm đăng nhập số
 trắc hoặc lựa chọn ghi nhớ phiên. Liên kết `/forgot-password` giữ nguyên; màn khôi
 phục tương ứng chưa được triển khai.
 
+## Giao diện cập nhật điều khoản — 2026-11-17
+
+`/account/legal-update` dùng layout một cột riêng: desktop tối đa 540 px, mobile
+hiển thị đầy đủ tên văn bản và ngày phiên bản. Nền mint có ba quầng ambient chạy
+18/22/20 giây trên desktop, đứng yên trên mobile và khi bật giảm chuyển động.
+SVG desktop giữ theo Stitch; sáu icon mobile lưu local tại
+`public/fonts/material-symbols/legal-update-outlined.ttf`.
+
+URL/ngày văn bản lấy từ API hiện hành. Nút đồng ý theo request thật, khóa khi đang
+gửi hoặc thiếu văn bản/CSRF; luồng ghi nhận phiên bản, đồng ý lại và đăng xuất giữ
+nguyên. Các style `legal-update-*` và token màu riêng không đổi layout các trang
+khác. Tham chiếu Stitch: desktop `54449e0d704649b1be3c951e7bea9024`, mobile
+`86f7ce7d28c941db9f555b6e20d17a2a`.
+
 ## Quản trị hệ thống
 
 Tài khoản có quyền quản trị hệ thống truy cập `/admin` để tạo nhóm gia đình, tìm tài khoản, gán nhóm, đổi vai trò và gỡ tài khoản khỏi nhóm. Quản trị hệ thống chưa có nhóm vẫn truy cập được trang này; tài khoản thường chưa có nhóm được chuyển đến màn Bắt đầu để tự tạo nhà. API kiểm tra quyền và các ràng buộc thành viên, bao gồm việc giữ ít nhất một Quản trị chính trong nhóm.

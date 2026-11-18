@@ -7,11 +7,7 @@ import { accountErrorMessage } from '../application/accountErrorMessage';
 import { useLegalDocuments } from '../application/useLegalDocuments';
 import { fetchCurrentLegal } from '../infrastructure/fetchCurrentLegal';
 import { submitAccountAction } from '../infrastructure/submitAccountAction';
-import { AccountLayout } from './AccountLayout';
-import { AccountLogout } from './AccountLogout';
-import { AccountSubmitButton } from './AccountSubmitButton';
-import { FormAlert } from './FormAlert';
-import { LegalDocumentLink } from './LegalDocumentLink';
+import { LegalUpdateView } from './LegalUpdateView';
 export function LegalUpdatePage() {
   const session = useCurrentSession(fetchCurrentSession);
   const documents = useLegalDocuments(fetchCurrentLegal);
@@ -44,27 +40,13 @@ export function LegalUpdatePage() {
     }
   }
   return (
-    <AccountLayout footer={<AccountLogout token={token} heading="Nếu chưa muốn đồng ý" />}>
-      <h2 className="mb-4 text-[22px] leading-[30px] font-semibold">Điều khoản đã thay đổi</h2>
-      <p className="mb-3 text-lg">Chúng tôi cập nhật cách lưu và xử lý dữ liệu sức khỏe của gia đình.</p>
-      <p className="mb-6 text-lg">Bạn cần đồng ý bản mới để tiếp tục dùng AN GIA.</p>
-      <div className="mb-6 border-t border-border">
-        {documents.legal && (
-          <>
-            <LegalDocumentLink document={documents.legal.terms} label="Điều khoản sử dụng" />
-            <LegalDocumentLink document={documents.legal.privacy} label="Chính sách quyền riêng tư" />
-          </>
-        )}
-      </div>
-      <form onSubmit={(event) => void submit(event)} aria-busy={busy} className="flex flex-col gap-4">
-        <AccountSubmitButton
-          busy={busy}
-          disabled={!token || !documents.legal || documents.loading}
-          label="Đồng ý và tiếp tục"
-          pending="Đang gửi…"
-        />
-        <FormAlert message={documents.error ?? error} />
-      </form>
-    </AccountLayout>
+    <LegalUpdateView
+      legal={documents.legal}
+      loading={documents.loading}
+      token={token}
+      busy={busy}
+      error={documents.error ?? error}
+      onSubmit={submit}
+    />
   );
 }

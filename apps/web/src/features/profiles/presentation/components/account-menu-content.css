@@ -183,6 +183,7 @@
   min-height: 48px;
   border-radius: 12px;
   font-size: 14px;
+  padding-left: 15px;
 }
 @media (hover: hover) and (pointer: fine) {
   .account-menu-trigger:hover {
