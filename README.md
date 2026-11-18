@@ -1351,3 +1351,41 @@ và **79 unit/phân tầng liên quan** PASS. `verify:fast` còn lỗi metadata 
 nhập/đăng ký và token lập nhà trên web còn chờ. Xác nhận UI của owner không thay
 nghiệm thu SIT hoặc các cổng API/ACL của E27. Bộ Docs/angia cập nhật riêng ngoài
 Git source; thay đổi Legal Update và chỉnh spacing có trước giữ ngoài commit này.
+
+## E27-S6-T1 — Chuyển đổi Chủ hộ của nhà hiện có
+
+Lệnh vận hành SPEC-071 dùng `DATABASE_OWNER_URL`, không dùng role runtime.
+Không đổi schema. Chuẩn bị hai tệp JSON riêng tư do owner xác nhận:
+
+- `family-owners.json`: `{ "<familyId>": "<ownerAccountId>" }`, khớp mọi nhà trong DB;
+  mỗi Chủ hộ phải là `main` cùng nhà.
+- `profile-creators.json`: `{ "<profileId>": "<creatorAccountId>" }`, khớp mọi hồ sơ
+  dưới 18 tuổi theo năm Việt Nam, chưa liên kết tài khoản. Không có hồ sơ thuộc
+  diện này thì dùng `{}`. Dùng UUID người tạo thực tế, kể cả người đã rời hoặc
+  bị xoá; thiếu căn cứ thì dừng, không tự suy từ người xác nhận đồng thuận.
+
+Schema lịch sử không lưu người tạo, nên tệp thứ hai là căn cứ chuyển đổi được
+owner duyệt. Người tạo còn `main` cùng nhà trở thành giám hộ; trường hợp khác
+dùng Chủ hộ đã chỉ định. Không đưa các tệp ánh xạ vào Git hoặc báo cáo công khai.
+
+```bash
+yarn ops:v1-family-owners --env sit --mapping /private/path/family-owners.json --creators /private/path/profile-creators.json --dry-run
+yarn ops:v1-family-owners --env sit --mapping /private/path/family-owners.json --creators /private/path/profile-creators.json
+```
+
+`--env` kiểm tên DB và role hiện tại là `angia_<env>` (`dev`, `sit`, `prod`, `test`);
+không chọn URL thay cho `DATABASE_OWNER_URL`. Bỏ `--env` vẫn kiểm role sở hữu bảng.
+Một transaction khoá các bảng đối chiếu; dry-run thực hiện đủ kiểm tra/constraint
+rồi rollback. Báo cáo JSON đếm trước/sau theo nhà cho sáu bảng dữ liệu chính,
+quota và operation OCR; kiểm checksum nội bộ bảo toàn cả nội dung, liên kết,
+đồng thuận và số lượt. Lệch hoặc xung đột với Chủ hộ/giám hộ đã gán thì rollback,
+exit 1. Chạy lại cùng ánh xạ không ghi thêm; không dùng lệnh này để chuyển quyền.
+Lệnh có thể chặn ghi trong thời gian ngắn; lock timeout 5 giây, statement timeout
+60 giây. Chỉ chạy trên bản sao đã chọn cho E27-S6-T2 trước khi xét Production.
+
+Kiểm tra local E27-S6-T1: **28 integration và 16 unit/phân tầng PASS**, gồm
+TC-815–818 và các ca rollback trên PostgreSQL Testcontainers dữ liệu giả.
+`verify:fast` chưa xanh vì metadata AppleDouble `._*`
+và hai test ngoài phần thay đổi (`healthDataRoutes`, `ProfileFrameNavigation`).
+Chưa chạy chuyển đổi trên DB ứng dụng, bản sao SIT hoặc Production; chưa đóng
+toàn bộ DoD E27. Hướng dẫn đối chiếu: `../../Docs/angia/10-setup-and-ops-guide.md` §10.3.
