@@ -19,7 +19,7 @@
 }
 .profile-footer-copyright {
   min-width: 0;
-  font-size: 0.75rem;
+  font-size: 1rem;
   line-height: 1.25rem;
   overflow-wrap: anywhere;
 }
@@ -30,7 +30,7 @@
   flex-wrap: wrap;
   gap: 12px 20px;
   max-width: 100%;
-  font-size: 0.875rem;
+  font-size: 1rem;
   line-height: 1.5rem;
   font-weight: 500;
 }
@@ -57,7 +57,7 @@
     text-align: left;
   }
   .profile-footer-links {
-    font-size: 0.75rem;
+    font-size: 1rem;
     font-weight: 600;
   }
   .profile-footer-icon,
