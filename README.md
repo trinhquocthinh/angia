@@ -1403,3 +1403,20 @@ TC-815–818 và các ca rollback trên PostgreSQL Testcontainers dữ liệu gi
 và hai test ngoài phần thay đổi (`healthDataRoutes`, `ProfileFrameNavigation`).
 Chưa chạy chuyển đổi trên DB ứng dụng, bản sao SIT hoặc Production; chưa đóng
 toàn bộ DoD E27. Hướng dẫn đối chiếu: `../../Docs/angia/10-setup-and-ops-guide.md` §10.3.
+
+## Cô lập dependency glob của build native
+
+Ghim node-gyp 13.0.2 bằng Yarn patch và thay riêng dependency
+node-gyp/tinyglobby bằng glob 14.0.4 đã có trong lockfile. Helper chỉ nhận
+hai mẫu `build/*.sln` và `build/*.mk`; lọc bằng stat để giữ hành vi chỉ lấy tệp,
+bao gồm symlink tới tệp, loại thư mục và symlink hỏng. Không thay Argon2,
+tham số băm mật khẩu, cơ chế xác thực hoặc phân quyền dữ liệu.
+
+Giữ nguyên lệnh audit production, không ignore advisory. Đồ thị production
+được loại đường dẫn tới picomatch; các công cụ dev vẫn còn picomatch và
+không được coi đã vá toàn bộ GHSA-fc5q-39xc-vjpf.
+
+Trước phát hành phải chạy regression tooling/nativeBuildGlobs.test.ts,
+kiểm thử hash/verify Argon2 và build image Linux Node 22. Không ghi đã
+kiểm native build Windows khi chỉ thử fixture trên Linux. Xem xét gỡ
+patch khi upstream cung cấp đường dependency phù hợp đã được kiểm chứng.

@@ -87,6 +87,7 @@
     "jscpd": "5.3.2",
     "knip": "6.38.0",
     "lint-staged": "17.5.1",
+    "node-gyp": "13.0.2",
     "pdfjs-dist": "6.4.299",
     "pg": "8.23.0",
     "playwright-core": "1.64.1",
@@ -103,6 +104,8 @@
     "@tanstack/router-core/seroval": "1.6.11",
     "concurrently/shell-quote": "1.12.0",
     "source-map-js": "1.2.2",
-    "@esbuild-kit/core-utils/esbuild": "0.25.12"
+    "@esbuild-kit/core-utils/esbuild": "0.25.12",
+    "node-gyp/tinyglobby": "npm:glob@14.0.4",
+    "node-gyp": "patch:node-gyp@npm%3A13.0.2#~/.yarn/patches/node-gyp-npm-13.0.2-e24de51cbd.patch"
   }
 }

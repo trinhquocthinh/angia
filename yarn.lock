@@ -4377,6 +4377,7 @@ __metadata:
     jscpd: "npm:5.3.2"
     knip: "npm:6.38.0"
     lint-staged: "npm:17.5.1"
+    node-gyp: "npm:13.0.2"
     pdfjs-dist: "npm:6.4.299"
     pg: "npm:8.23.0"
     playwright-core: "npm:1.64.1"
@@ -7416,7 +7417,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^14.0.3":
+"glob@npm:^14.0.3, tinyglobby@npm:glob@14.0.4":
   version: 14.0.4
   resolution: "glob@npm:14.0.4"
   dependencies:
@@ -9553,7 +9554,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp@npm:latest":
+"node-gyp@npm:13.0.2":
   version: 13.0.2
   resolution: "node-gyp@npm:13.0.2"
   dependencies:
@@ -9570,6 +9571,26 @@ __metadata:
   bin:
     node-gyp: bin/node-gyp.js
   checksum: 10c0/29d33ccf47ffeeb5e7af925550b416f698a26a72eb10975c7eb5775c1d0cecacd76d164a4aa45503d3ddcece209db65c712be00423c69381a4cd14e2e6540559
+  languageName: node
+  linkType: hard
+
+"node-gyp@patch:node-gyp@npm%3A13.0.2#~/.yarn/patches/node-gyp-npm-13.0.2-e24de51cbd.patch":
+  version: 13.0.2
+  resolution: "node-gyp@patch:node-gyp@npm%3A13.0.2#~/.yarn/patches/node-gyp-npm-13.0.2-e24de51cbd.patch::version=13.0.2&hash=d57b2f"
+  dependencies:
+    env-paths: "npm:^2.2.0"
+    exponential-backoff: "npm:^3.1.1"
+    graceful-fs: "npm:^4.2.6"
+    nopt: "npm:^10.0.0"
+    proc-log: "npm:^7.0.0"
+    semver: "npm:^7.3.5"
+    tar: "npm:^7.5.4"
+    tinyglobby: "npm:^0.2.12"
+    undici: "npm:^8.4.1"
+    which: "npm:^7.0.0"
+  bin:
+    node-gyp: bin/node-gyp.js
+  checksum: 10c0/fc43d2e108f2ce826ba9601c340ae699ca121fb21fae65a962d1783f45a293e877a297c5b270af63329818aa114aa061479958e864a510f2c8d7d037f20f2db6
   languageName: node
   linkType: hard
 
@@ -12224,7 +12245,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinyglobby@npm:^0.2.12, tinyglobby@npm:^0.2.14, tinyglobby@npm:^0.2.15, tinyglobby@npm:^0.2.17":
+"tinyglobby@npm:^0.2.14, tinyglobby@npm:^0.2.15, tinyglobby@npm:^0.2.17":
   version: 0.2.17
   resolution: "tinyglobby@npm:0.2.17"
   dependencies:

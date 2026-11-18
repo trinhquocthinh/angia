@@ -1,0 +1,42 @@
+diff --git a/lib/build.js b/lib/build.js
+index e6ec08def84556df47d67ae036796397a20b7dc8..06d39bdb366572de9f88fdb2c0830fdbd2873963 100644
+--- a/lib/build.js
++++ b/lib/build.js
+@@ -3,7 +3,7 @@
+ const gracefulFs = require('graceful-fs')
+ const fs = gracefulFs.promises
+ const path = require('path')
+-const { glob } = require('tinyglobby')
++const { glob } = require('./find-build-files')
+ const log = require('./log')
+ const which = require('which')
+ const win = process.platform === 'win32'
+diff --git a/lib/find-build-files.js b/lib/find-build-files.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..f28914be736a6147bfee9ebcb207a94d716cdcd7
+--- /dev/null
++++ b/lib/find-build-files.js
+@@ -0,0 +1,23 @@
++'use strict'
++
++const { glob: findPaths } = require('tinyglobby')
++const { stat } = require('node:fs/promises')
++const path = require('node:path')
++
++async function glob (pattern, options = {}) {
++  if (pattern !== 'build/*.sln' && pattern !== 'build/*.mk') {
++    throw new Error('Unsupported node-gyp build-file pattern')
++  }
++  const matches = await findPaths(pattern, { ...options, nodir: true })
++  const files = await Promise.all(matches.map(async file => {
++    try {
++      return (await stat(path.resolve(options.cwd || process.cwd(), file))).isFile() ? file : null
++    } catch (error) {
++      if (error.code === 'ENOENT' || error.code === 'ENOTDIR') return null
++      throw error
++    }
++  }))
++  return files.filter(file => file !== null).sort()
++}
++
++module.exports = { glob }
