@@ -95,7 +95,7 @@ function buildRegistrationApp(db: Database, account: AppDependencies['account'])
   const stub = createStubAuthDeps();
   return createApp({
     ...createStubReviewDeps(),
-    ...createHouseholdDependencies(db, account.appBaseUrl),
+    ...createHouseholdDependencies(db, account.appBaseUrl, 'test-invitation-key'.repeat(3)),
     legal: createLegalRepository(db),
     medications: createMedicationRepository(db),
     profileLinks: createStubProfileLinkDeps(),

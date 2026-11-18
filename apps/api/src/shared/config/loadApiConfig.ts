@@ -26,6 +26,7 @@ const apiEnvSchema = z.object({
   OIDC_REDIRECT_URI: z.string().url(),
   // Khóa ký cookie phiên, tối thiểu 32 byte (`openssl rand -base64 48`).
   SESSION_COOKIE_SECRET: z.string().min(32),
+  INVITATION_ENCRYPTION_KEY: z.string().min(32),
   APP_BASE_URL: z.string().url(),
   ADMIN_GROUP_NAME: z.string().min(1),
   // BR-018: trần hiển thị/khởi tạo khi extraction_spend chưa có tháng nào; phải trùng giá trị của worker.

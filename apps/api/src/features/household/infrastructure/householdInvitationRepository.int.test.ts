@@ -14,10 +14,10 @@ describe('Kho lời mời kiểm lại quyền DB sau snapshot phiên', () => {
   it('TC-773: port ghi lời mời bằng role app và trả hạn dùng', async () => {
     const familyId = await t.family();
     const user = await t.session(familyId);
-    const result = await createHouseholdInvitationRepository(t.database).create(
-      { accountId: user.accountId, familyId, role: 'main' },
-      'member',
-    );
+    const result = await createHouseholdInvitationRepository(
+      t.database,
+      'test-invitation-key'.repeat(3),
+    ).create({ accountId: user.accountId, familyId, role: 'main' }, 'member');
     expect(result).toMatchObject({ ok: true, value: { expiresAt: expect.any(Date) } });
   });
   it.each(['hạ quyền', 'rời nhà', 'khoá', 'admin'])(
@@ -32,10 +32,10 @@ describe('Kho lời mời kiểm lại quyền DB sau snapshot phiên', () => {
         admin: 'is_system_admin=true',
       }[state]!;
       await t.owner.query(`UPDATE accounts SET ${change} WHERE id=$1`, [user.accountId]);
-      const result = await createHouseholdInvitationRepository(t.database).create(
-        { accountId: user.accountId, familyId, role: 'main' },
-        'member',
-      );
+      const result = await createHouseholdInvitationRepository(
+        t.database,
+        'test-invitation-key'.repeat(3),
+      ).create({ accountId: user.accountId, familyId, role: 'main' }, 'member');
       expect(result).toEqual({ ok: false, code: state === 'khoá' ? 'ERR_UNAUTHENTICATED' : 'ERR_FORBIDDEN' });
       expect(
         (await t.owner.query('SELECT id FROM family_invitations WHERE created_by=$1', [user.accountId])).rows,
@@ -45,7 +45,7 @@ describe('Kho lời mời kiểm lại quyền DB sau snapshot phiên', () => {
   it('TC-871: người tạo đã rời nhà không thu hồi được bằng snapshot cũ', async () => {
     const familyId = await t.family();
     const user = await t.session(familyId);
-    const repository = createHouseholdInvitationRepository(t.database);
+    const repository = createHouseholdInvitationRepository(t.database, 'test-invitation-key'.repeat(3));
     const actor = { accountId: user.accountId, familyId, role: 'main' as const };
     const created = await repository.create(actor, 'member');
     expect(created.ok).toBe(true);

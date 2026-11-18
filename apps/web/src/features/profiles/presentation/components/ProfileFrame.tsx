@@ -26,7 +26,8 @@ export function ProfileFrame({
   children: ReactNode;
 }) {
   const { pathname } = useLocation();
-  const showNavigation = Boolean(session.family) && pathname !== '/admin';
+  const unlinkedMember = session.role === 'member' && !session.account.healthProfileId;
+  const showNavigation = Boolean(session.family) && !unlinkedMember && pathname !== '/admin';
   const queue = useReviewQueue(reviewRepository, session);
   const pendingCount = queue.data?.pages.reduce((sum, page) => sum + page.items.length, 0);
   const personal = session.role !== 'main' && Boolean(session.account.healthProfileId);
@@ -44,6 +45,7 @@ export function ProfileFrame({
         profiles={profiles}
         hasFamily={Boolean(session.family)}
         showNavigation={showNavigation}
+        showSearch={!unlinkedMember}
         pendingCount={pendingCount}
         account={account}
         personal={personal}

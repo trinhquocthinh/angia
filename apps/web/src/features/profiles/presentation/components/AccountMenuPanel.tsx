@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { AccountMenuIdentity } from './AccountMenuIdentity';
 import { AccountThemeSwitch } from './AccountThemeSwitch';
+import { AccountMenuDestinations } from './AccountMenuDestinations';
 import type { AccountMenuProps } from './accountMenuTypes';
 type Props = AccountMenuProps & { onClose?: (() => void) | undefined };
 export function AccountMenuPanel({ session, pending, error, onLogout, onClose }: Props) {
@@ -20,22 +21,7 @@ export function AccountMenuPanel({ session, pending, error, onLogout, onClose }:
           </b>
         </Link>
       )}
-      {(session.account.healthProfileId || session.account.isSystemAdmin) && (
-        <div className="account-menu-links">
-          {session.account.healthProfileId && (
-            <Link to="/my-profile" onClick={onClose}>
-              <AdminIcon name="person" />
-              Hồ sơ của tôi
-            </Link>
-          )}
-          {session.account.isSystemAdmin && (
-            <Link to="/admin" onClick={onClose}>
-              <AdminIcon name="admin_panel_settings" />
-              Quản trị hệ thống
-            </Link>
-          )}
-        </div>
-      )}
+      <AccountMenuDestinations session={session} onClose={onClose} />
       <AccountThemeSwitch />
       <div className="account-menu-divider" />
       <button type="button" className="account-menu-logout" disabled={pending} onClick={onLogout}>

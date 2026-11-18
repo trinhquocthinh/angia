@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { check, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { check, index, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
 import { families } from './families.js';
 import { createdAtColumn, familyIsolationPolicy, idColumn } from './columns.js';
@@ -13,6 +13,7 @@ export const familyInvitations = pgTable(
     role: text('role', { enum: ['main', 'member'] }),
     tokenHash: text('token_hash').notNull().unique(),
     codeHash: text('code_hash').notNull().unique(),
+    secretCiphertext: text('secret_ciphertext'),
     createdBy: uuid('created_by')
       .notNull()
       .references(() => accounts.id),
@@ -23,6 +24,7 @@ export const familyInvitations = pgTable(
     acceptedBy: uuid('accepted_by').references(() => accounts.id),
   },
   (t) => [
+    index('family_invitations_management_idx').on(t.familyId, t.createdAt.desc(), t.id.desc()),
     check(
       'family_invitations_kind_shape',
       sql`(${t.kind} = 'join_family' AND ${t.familyId} IS NOT NULL AND ${t.role} IS NOT NULL AND ${t.role} IN ('main','member')) OR (${t.kind} = 'found_family' AND ${t.familyId} IS NULL AND ${t.role} IS NULL)`,

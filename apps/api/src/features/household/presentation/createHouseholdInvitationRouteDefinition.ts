@@ -29,7 +29,7 @@ export const createHouseholdInvitationRoute = createRoute({
     401: error('ERR_UNAUTHENTICATED'),
     403: error('ERR_FORBIDDEN | ERR_PASSWORD_CHANGE_REQUIRED | ERR_LEGAL_ACCEPTANCE_REQUIRED'),
     404: error('ERR_NOT_FOUND'),
-    409: error('ERR_DELETION_PENDING'),
+    409: error('ERR_DELETION_PENDING | ERR_INVITATION_EXISTS'),
     422: error('ERR_VALIDATION'),
   },
 });

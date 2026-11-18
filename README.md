@@ -1297,3 +1297,57 @@ lượt unit bổ sung loại metadata bằng CLI không thay cổng chính th�
 Chưa full verify, smoke API/DB thật trong task web hoặc deploy. Bước tiếp theo
 là **E27-S5-T2**; các cổng migration, verify và SIT của E27 tiếp tục giữ mở.
 Tài liệu chi tiết tại [hồ sơ E27](../../Docs/angia/acceptance/v1.0/epic27-acceptance.md).
+
+## E27-S5-T2 — Lời mời vào nhà và giao diện dùng chung (2026-11-18, local)
+
+Owner đã duyệt triển khai và xác nhận giao diện hiện tại đạt trong chat.
+
+- **Gửi lời mời:** Tài khoản → Mời người thân (`/family/invite`). Chọn Thành viên
+  hoặc Đồng quản lý rồi bấm Tạo lời mời. Mỗi vai trò có mã/link riêng; chuyển vai
+  trò chỉ đổi mã đang xem. Ra/vào và reload lấy lại mã từ server, giữ nguyên hạn.
+  GET `/api/family/invitations/current` trả tối đa hai lời mời của chính người tạo.
+- **Chia sẻ:** copy/share có kết quả thật và một toast cố định, không đẩy bố cục
+  khi bấm lặp; có sao chép thủ công nếu clipboard không dùng được. Mã hết hạn
+  mờ/gạch ngang, khóa share/copy và có Tạo lời mời mới. Thu hồi có xác nhận.
+  Lịch sử và nút thu hồi-kèm-tạo mới không hiện trên UI; lịch sử chờ quyết định sau.
+- **Nhận mã:** “Tôi có mã mời” mở `/waiting?step=join`; chuẩn hóa mã hex 12 ký tự,
+  POST nhận lời mời với CSRF, sau 204 tải lại phiên. GET phiên lỗi thì chỉ tải
+  lại GET, không nhận mã lần hai. Không tự liên kết tài khoản với hồ sơ.
+- **Tạo nhà:** form gọn trong một block, giữ kiểm tra tên và phục hồi phiên hiện có.
+- **Khung dùng chung:** header có back/title không logo; member chưa liên kết
+  không có search/tab desktop hoặc bottom nav mobile. Member đã liên kết giữ
+  điều hướng cá nhân, main giữ giao diện quản lý. Footer hai nhóm trên desktop,
+  xếp hàng trên mobile, dùng shadow thay border. Button dùng cursor pointer;
+  indicator vai trò trượt 200ms, hỗ trợ reduced-motion. Menu tải khi mở để giữ budget.
+
+Lời mời mới lưu hash cùng AES-GCM ciphertext. API cần khóa độc lập
+`INVITATION_ENCRYPTION_KEY` tối thiểu 32 ký tự, giữ ổn định và sao lưu riêng
+ngoài DB/repo. Mất/đổi khóa khi chưa tái mã hóa sẽ không đọc lại được mã cũ.
+Không lưu mã/link/token vào browser storage; chỉ lưu lựa chọn vai trò theo
+account/family. Legacy hash-only không khôi phục mã được, vẫn thu hồi được.
+
+Dev `localhost:5433/angia_dev` đã backup trước migration 0041–0045; journal 46,
+chạy lại no pending. Runtime vẫn `angia_dev_app` NOBYPASSRLS; RLS và quyền đọc
+hash/audit đã kiểm tra. Không chạy smoke ghi dữ liệu trên tài khoản dev; API
+integration dùng PostgreSQL Testcontainers tạm. Không thay SIT/Production.
+
+Tham chiếu Stitch project `12209147960511107004`: gửi desktop
+`e8d584145aa44f24836a56f0e8a02019`, mobile `3cc7b3c52c9346c6902ed33b867c26d4`;
+hết hạn desktop `cb6582ee6870458ea9b74aa5acbc822c`, mobile
+`0b4fd0a920c84f0ab3813be4cc128ac2`; thu hồi desktop
+`30aa5e305ea74da7b61bdd4a52f1659f`, mobile `4babd60ba7594db2ae02d2bb47d03237`;
+Tạo nhà desktop `fafff946ed7b4a74b5a5844ebb8ddb81`, mobile
+`cfd254f045364a9193ea1f696cbd8df1`. Giữ mô tả quyền đúng sản phẩm.
+
+API household/audit: 91 integration PostgreSQL tạm PASS ở checkpoint triển khai.
+Build/typecheck, lint/format phần đổi và budget mọi route PASS, lớn nhất
+199,2 KB/200 KB. Official `verify:fast` còn metadata macOS `._*` sau typecheck;
+knip còn LegalDocumentLink/HouseholdRequest ngoài phạm vi. Không ghi full verify PASS.
+
+Kiểm tra trước commit: **228/228 E2E** (Chromium touch/desktop và WebKit, hai nền)
+và **79 unit/phân tầng liên quan** PASS. `verify:fast` còn lỗi metadata như trên.
+
+**Chưa đóng toàn bộ E27-S5-T2:** nhận link `/invite#token`, chuyển tiếp qua đăng
+nhập/đăng ký và token lập nhà trên web còn chờ. Xác nhận UI của owner không thay
+nghiệm thu SIT hoặc các cổng API/ACL của E27. Bộ Docs/angia cập nhật riêng ngoài
+Git source; thay đổi Legal Update và chỉnh spacing có trước giữ ngoài commit này.

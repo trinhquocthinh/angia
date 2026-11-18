@@ -7,11 +7,12 @@ import { createProfilesRepository } from '@src/features/profiles/infrastructure/
 import { ProfileFrame } from '@src/features/profiles/presentation/components/ProfileFrame';
 import { CreateHouseholdForm } from './CreateHouseholdForm';
 import { StartChoices } from './StartChoices';
+import { AcceptHouseholdInvitationForm } from '../invite/AcceptHouseholdInvitationForm';
 import './household-start.css';
 
 const profilesRepository = createProfilesRepository();
 
-export function HouseholdStartPage({ create = false }: { create?: boolean }) {
+export function HouseholdStartPage({ create = false, join = false }: { create?: boolean; join?: boolean }) {
   const session = useCurrentSession(fetchCurrentSession);
   const client = useQueryClient();
   const navigate = useNavigate();
@@ -27,7 +28,13 @@ export function HouseholdStartPage({ create = false }: { create?: boolean }) {
   return (
     <ProfileFrame session={session.data} profiles={[]} logout={workspace.logout}>
       <div className={`household-start${create ? ' household-start-creating' : ''}`}>
-        {create ? <CreateHouseholdForm token={session.data.csrfToken} refresh={refresh} /> : <StartChoices />}
+        {create ? (
+          <CreateHouseholdForm token={session.data.csrfToken} refresh={refresh} />
+        ) : join ? (
+          <AcceptHouseholdInvitationForm csrfToken={session.data.csrfToken} refresh={refresh} />
+        ) : (
+          <StartChoices />
+        )}
       </div>
     </ProfileFrame>
   );

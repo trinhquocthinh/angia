@@ -14,7 +14,7 @@ async function prepare(t: ProfileTestApp) {
   const owner = await seedAccount(t.owner, { familyId, familyRole: 'main' });
   const actor = { accountId: owner, familyId, role: 'main' as const };
   const household = createHouseholdRepository(t.database);
-  const invitations = createHouseholdInvitationRepository(t.database);
+  const invitations = createHouseholdInvitationRepository(t.database, 'test-invitation-key'.repeat(3));
   const acceptance = createInvitationAcceptanceRepository(t.database);
   const founding = createFoundingInvitationRepository(t.database);
   const join = await invitations.create(actor, 'member');
@@ -41,7 +41,7 @@ async function prepare(t: ProfileTestApp) {
       actor: owner,
       actions: ['invitation_created'],
       target: null,
-      run: () => invitations.create(actor, 'member'),
+      run: () => invitations.create(actor, 'main'),
     },
     {
       actor: owner,

@@ -115,7 +115,7 @@ function buildApp(
       appBaseUrl: appBaseUrl,
     },
     householdInvitations: {
-      repository: createHouseholdInvitationRepository(database),
+      repository: createHouseholdInvitationRepository(database, 'test-invitation-key'.repeat(3)),
       appBaseUrl,
     },
     legal: createLegalRepository(database),

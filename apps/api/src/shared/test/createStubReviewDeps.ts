@@ -52,7 +52,13 @@ export function createStubReviewDeps(): StubbedDeps {
       appBaseUrl: 'http://localhost:5173',
     },
     householdInvitations: {
-      repository: { create: notConfigured, revoke: notConfigured },
+      repository: {
+        current: notConfigured,
+        create: notConfigured,
+        revoke: notConfigured,
+        list: notConfigured,
+        replace: notConfigured,
+      },
       appBaseUrl: 'http://localhost:5173',
     },
     legal: createStubLegalDeps(),

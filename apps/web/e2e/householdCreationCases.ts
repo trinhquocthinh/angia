@@ -33,7 +33,10 @@ export function householdCreationCases() {
     await expect(page.getByRole('heading', { name: 'Tạo nhà mới', exact: true })).toBeVisible();
     await page.getByRole('link', { name: 'Quay lại', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Bắt đầu', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Tôi có mã mời/ })).toBeDisabled();
+    await expect(page.getByRole('link', { name: /Tôi có mã mời/ })).toHaveAttribute(
+      'href',
+      '/waiting?step=join',
+    );
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
   test('TC-771: đang gửi khóa form và chỉ tạo một lần', async ({ page }) => {

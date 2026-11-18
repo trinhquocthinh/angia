@@ -15,6 +15,7 @@ const env = {
   OIDC_CLIENT_SECRET: 'secret',
   OIDC_REDIRECT_URI: 'http://localhost:5173/api/auth/callback',
   SESSION_COOKIE_SECRET: 'a'.repeat(48),
+  INVITATION_ENCRYPTION_KEY: 'i'.repeat(48),
   ADMIN_GROUP_NAME: 'admin',
   APP_BASE_URL: 'http://localhost:5173',
 };
@@ -100,4 +101,9 @@ describe('Cờ thiết lập mật khẩu trước cutover', () => {
     for (const value of ['1', 'TRUE', ''])
       expect(() => loadApiConfig({ ...env, LOCAL_ENROLLMENT_ENABLED: value })).toThrow();
   });
+});
+
+it('TC-773: yêu cầu khóa mã hóa lời mời độc lập, không nhận khóa ngắn hoặc thiếu', () => {
+  expect(() => loadApiConfig({ ...env, INVITATION_ENCRYPTION_KEY: undefined })).toThrow();
+  expect(() => loadApiConfig({ ...env, INVITATION_ENCRYPTION_KEY: 'short' })).toThrow();
 });

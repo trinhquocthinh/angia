@@ -11,6 +11,9 @@ const invitation = {
   expiresAt: new Date('2026-11-24T00:00:00Z'),
 };
 const repository: HouseholdInvitationRepository = {
+  current: async () => ({ ok: true, value: [] }),
+  list: async () => ({ ok: true, value: { items: [], hasMore: false } }),
+  replace: async () => ({ ok: true, value: invitation }),
   create: async () => ({ ok: true, value: invitation }),
   revoke: async () => ({ ok: true }),
 };

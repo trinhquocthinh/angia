@@ -4,10 +4,13 @@ import { createHouseholdInvitationRepository } from './createHouseholdInvitation
 import { createInvitationAcceptanceRepository } from './createInvitationAcceptanceRepository.js';
 import { createFoundingInvitationRepository } from './createFoundingInvitationRepository.js';
 
-export function createHouseholdDependencies(db: Database, appBaseUrl: string) {
+export function createHouseholdDependencies(db: Database, appBaseUrl: string, invitationSecret: string) {
   return {
     household: createHouseholdRepository(db),
-    householdInvitations: { repository: createHouseholdInvitationRepository(db), appBaseUrl },
+    householdInvitations: {
+      repository: createHouseholdInvitationRepository(db, invitationSecret),
+      appBaseUrl,
+    },
     invitationAcceptance: {
       acceptance: createInvitationAcceptanceRepository(db),
       founding: createFoundingInvitationRepository(db),

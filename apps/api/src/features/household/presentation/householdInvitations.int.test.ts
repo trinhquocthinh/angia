@@ -25,38 +25,41 @@ describe('E27-S3-T2: phát hành và thu hồi lời mời vào nhà', () => {
       )
     ).rows;
 
-  it.each(['main', 'member'])('TC-773: Đồng quản lý mời %s, chỉ lưu hash, hạn đúng 7 ngày', async (role) => {
-    const family = await t.family();
-    const user = await t.session(family);
-    const response = await issue(user, role);
-    expect(response.status).toBe(201);
-    expect(response.headers.get('cache-control')).toBe('no-store');
-    const invitation = (await response.json()) as Issued;
-    const url = new URL(invitation.link);
-    const token = new URLSearchParams(url.hash.slice(1)).get('token')!;
-    expect(url.origin).toBe('http://localhost:5173');
-    expect(url.search).toBe('');
-    expect(token.length).toBeGreaterThanOrEqual(43);
-    expect(invitation.code).toMatch(/^[A-F0-9]{12}$/);
-    const { rows } = await t.owner.query('SELECT * FROM family_invitations WHERE id=$1', [
-      invitation.invitationId,
-    ]);
-    expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({
-      kind: 'join_family',
-      family_id: family,
-      role,
-      token_hash: digest(token),
-      code_hash: digest(invitation.code),
-      created_by: user.accountId,
-      revoked_at: null,
-      accepted_at: null,
-      accepted_by: null,
-    });
-    expect(rows[0].expires_at.getTime() - rows[0].created_at.getTime()).toBe(604800000);
-    expect(rows[0].expires_at.toISOString()).toBe(invitation.expiresAt);
-    expect(await audit(user.accountId)).toEqual([{ action: 'invitation_created', metadata: {} }]);
-  });
+  it.each(['main', 'member'])(
+    'TC-773: Đồng quản lý mời %s, lưu hash và bản mã, hạn đúng 7 ngày',
+    async (role) => {
+      const family = await t.family();
+      const user = await t.session(family);
+      const response = await issue(user, role);
+      expect(response.status).toBe(201);
+      expect(response.headers.get('cache-control')).toBe('no-store');
+      const invitation = (await response.json()) as Issued;
+      const url = new URL(invitation.link);
+      const token = new URLSearchParams(url.hash.slice(1)).get('token')!;
+      expect(url.origin).toBe('http://localhost:5173');
+      expect(url.search).toBe('');
+      expect(token.length).toBeGreaterThanOrEqual(43);
+      expect(invitation.code).toMatch(/^[A-F0-9]{12}$/);
+      const { rows } = await t.owner.query('SELECT * FROM family_invitations WHERE id=$1', [
+        invitation.invitationId,
+      ]);
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).toMatchObject({
+        kind: 'join_family',
+        family_id: family,
+        role,
+        token_hash: digest(token),
+        code_hash: digest(invitation.code),
+        created_by: user.accountId,
+        revoked_at: null,
+        accepted_at: null,
+        accepted_by: null,
+      });
+      expect(rows[0].expires_at.getTime() - rows[0].created_at.getTime()).toBe(604800000);
+      expect(rows[0].expires_at.toISOString()).toBe(invitation.expiresAt);
+      expect(await audit(user.accountId)).toEqual([{ action: 'invitation_created', metadata: {} }]);
+    },
+  );
 
   it('TC-774: Thành viên không phát hành lời mời', async () => {
     const user = await t.session(await t.family(), 'member');
@@ -225,7 +228,7 @@ describe('E27-S3-T2: phát hành và thu hồi lời mời vào nhà', () => {
     try {
       const result =
         action === 'invitation_created'
-          ? await issue(user)
+          ? await issue(user, 'main')
           : await t.call(user, 'DELETE', `/api/family/invitations/${invitationId}`);
       expect(result.status).toBe(500);
     } finally {

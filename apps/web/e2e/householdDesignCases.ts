@@ -1,8 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { householdStartFixture } from './householdStartFixture.js';
+import { saveHouseholdScreenshot } from './saveHouseholdScreenshot.js';
 
 export function householdDesignCases(theme: string) {
+  householdCompactCreationCase();
   test('Stitch: đúng khối Bắt đầu theo breakpoint, không thêm viền', async ({ page }, info) => {
     await householdStartFixture(page);
     await page.goto('/waiting');
@@ -57,5 +59,21 @@ export function householdDesignCases(theme: string) {
     await expect(dialog).toBeVisible();
     await page.mouse.click(2, 90);
     await expect(dialog).toHaveCount(0);
+  });
+}
+
+function householdCompactCreationCase() {
+  test('Stitch: Tạo nhà nằm chung một block, không lồng card form', async ({ page }, info) => {
+    await householdStartFixture(page);
+    await page.goto('/waiting?step=create');
+    const block = page.locator('.household-create-compact');
+    await expect(block).toBeVisible();
+    await saveHouseholdScreenshot(page, 'create');
+    await expect(block).toHaveCSS('border-top-left-radius', '28px');
+    await expect(block.getByRole('heading', { name: 'Tạo nhà mới', exact: true })).toBeVisible();
+    await expect(block.locator('form')).toHaveCSS('box-shadow', 'none');
+    await expect(block.locator('form')).toHaveCSS('padding-left', '0px');
+    if (info.project.name.includes('desktop')) await expect(block).toHaveCSS('padding-left', '40px');
+    await expect(page.getByText('Sẵn sàng lập sổ sức khỏe số', { exact: true })).toHaveCount(0);
   });
 }

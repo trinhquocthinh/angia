@@ -1,9 +1,12 @@
-import { useId, useState } from 'react';
-import { AccountMenuSurface } from './AccountMenuSurface';
+import { lazy, Suspense, useId, useState } from 'react';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { roleLabel } from './roleLabel';
 import type { AccountMenuProps } from './accountMenuTypes';
 import './account-menu.css';
+
+const AccountMenuSurface = lazy(() =>
+  import('./AccountMenuSurface').then((module) => ({ default: module.AccountMenuSurface })),
+);
 export function AccountMenu(props: AccountMenuProps) {
   const [open, setOpen] = useState(false);
   const [anchor, setAnchor] = useState({ top: 68, right: 16 });
@@ -39,7 +42,9 @@ export function AccountMenu(props: AccountMenuProps) {
         </span>
       </button>
       {open && (
-        <AccountMenuSurface {...props} anchor={anchor} panelId={panelId} onClose={() => setOpen(false)} />
+        <Suspense fallback={null}>
+          <AccountMenuSurface {...props} anchor={anchor} panelId={panelId} onClose={() => setOpen(false)} />
+        </Suspense>
       )}
     </div>
   );

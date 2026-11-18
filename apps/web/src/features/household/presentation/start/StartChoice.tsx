@@ -11,8 +11,8 @@ export function StartChoice({ create = false }: { create?: boolean }) {
           <strong>{create ? 'Tạo nhà mới' : 'Tôi có mã mời'}</strong>
           {create && <b>Mới</b>}
         </span>
-        <span id={create ? undefined : 'household-invite-unavailable'}>
-          {create ? 'Bắt đầu ghi sổ sức khỏe cho cả nhà.' : 'Nhập mã mời chưa khả dụng.'}
+        <span>
+          {create ? 'Bắt đầu ghi sổ sức khỏe cho cả nhà.' : 'Nhập mã mời từ người thân để vào nhà.'}
         </span>
       </span>
       <span className="household-start-chevron">
@@ -20,22 +20,13 @@ export function StartChoice({ create = false }: { create?: boolean }) {
       </span>
     </>
   );
-  return create ? (
+  return (
     <Link
       to="/waiting"
-      search={{ step: 'create' }}
-      className="household-start-choice household-start-choice-primary"
+      search={{ step: create ? 'create' : 'join' }}
+      className={`household-start-choice${create ? ' household-start-choice-primary' : ''}`}
     >
       {content}
     </Link>
-  ) : (
-    <button
-      type="button"
-      className="household-start-choice"
-      disabled
-      aria-describedby="household-invite-unavailable"
-    >
-      {content}
-    </button>
   );
 }

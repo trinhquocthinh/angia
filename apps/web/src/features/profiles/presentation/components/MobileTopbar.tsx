@@ -3,15 +3,12 @@ import type { ReactNode } from 'react';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 
 // Header di động (< lg): có `title` thì hiện nút quay lại + tên trang, không thì hiện thương hiệu.
-export function MobileTopbar({
-  title,
-  hasFamily,
-  account,
-}: {
+type Props = {
   title?: string | undefined;
   hasFamily: boolean;
   account: ReactNode;
-}) {
+};
+export function MobileTopbar({ title, hasFamily, account }: Props) {
   return (
     <header className="sticky top-0 z-40 bg-bg/85 pt-[env(safe-area-inset-top)] shadow-[0_1px_8px_color-mix(in_srgb,var(--color-shadow)_3%,transparent)] backdrop-blur-xl lg:hidden">
       <div className="flex h-16 items-center justify-between gap-2 px-4">
@@ -25,13 +22,15 @@ export function MobileTopbar({
               <AdminIcon name="arrow_back" size={24} />
             </Link>
           )}
-          <a
-            href="/"
-            className="inline-flex h-12 w-12 shrink-0 items-center justify-center"
-            aria-label="AN GIA"
-          >
-            <img src="/logo.webp" alt="" className="h-9 w-9 rounded-lg object-contain" />
-          </a>
+          {!title && (
+            <a
+              href="/"
+              className="inline-flex h-12 w-12 shrink-0 items-center justify-center"
+              aria-label="AN GIA"
+            >
+              <img src="/logo.webp" alt="" className="h-9 w-9 rounded-lg object-contain" />
+            </a>
+          )}
           {title ? (
             <p className="truncate font-['Newsreader',Georgia,serif] text-xl font-semibold tracking-tight text-accent">
               {title}

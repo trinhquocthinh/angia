@@ -124,7 +124,7 @@ const sessionRepository = createSessionRepository(db);
 const hasher = createArgon2PasswordHasher();
 const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
 const app = createApp({
-  ...createHouseholdDependencies(db, config.APP_BASE_URL),
+  ...createHouseholdDependencies(db, config.APP_BASE_URL, config.INVITATION_ENCRYPTION_KEY),
   legal: createLegalRepository(db),
   account: {
     clientIp: getSocketClientIp,

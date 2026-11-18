@@ -1,21 +1,19 @@
-import { writeAdminAuditEvent } from '@src/shared/audit/writeAdminAuditEvent.js';
-import { createHash, randomBytes } from 'node:crypto';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, isNull, sql } from 'drizzle-orm';
 import { familyDeletionRequests, familyInvitations } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
-import type { HouseholdInvitationRepository } from '../application/invitationPorts.js';
+import type { ScopedInvitationActor } from '../application/invitationPorts.js';
 import { lockInvitationActor } from './lockInvitationActor.js';
-
-type Actor = Parameters<HouseholdInvitationRepository['create']>[0];
-
+import { writeHouseholdInvitation } from './writeHouseholdInvitation.js';
+import type { InvitationSecretCipher } from './invitationSecretCipher.js';
 export async function insertHouseholdInvitation(
   tx: FamilyScopedTx,
-  actor: Actor,
+  actor: ScopedInvitationActor,
   role: 'main' | 'member',
-): ReturnType<HouseholdInvitationRepository['create']> {
+  cipher: InvitationSecretCipher,
+) {
   const access = await lockInvitationActor(tx, actor);
   if (!access.ok) return access;
-  if (access.role !== 'main') return { ok: false, code: 'ERR_FORBIDDEN' };
+  if (access.role !== 'main') return { ok: false, code: 'ERR_FORBIDDEN' } as const;
   const [pending] = await tx
     .select({ id: familyDeletionRequests.id })
     .from(familyDeletionRequests)
@@ -23,34 +21,35 @@ export async function insertHouseholdInvitation(
       and(eq(familyDeletionRequests.familyId, actor.familyId), eq(familyDeletionRequests.status, 'pending')),
     )
     .limit(1);
-  if (pending) return { ok: false, code: 'ERR_DELETION_PENDING' };
-  const token = randomBytes(32).toString('base64url');
-  const code = randomBytes(6).toString('hex').toUpperCase();
-  const hash = (value: string) => createHash('sha256').update(value).digest('hex');
-  const {
-    rows: [clock],
-  } = await tx.execute<{ at: string }>(sql`SELECT clock_timestamp() AS at`);
-  if (!clock) throw new Error('Không đọc được thời gian DB');
-  const createdAt = new Date(clock.at);
-  const expiresAt = new Date(createdAt.getTime() + 7 * 24 * 60 * 60 * 1000);
-  const [invitation] = await tx
-    .insert(familyInvitations)
-    .values({
-      kind: 'join_family',
-      familyId: actor.familyId,
-      role,
-      tokenHash: hash(token),
-      codeHash: hash(code),
-      createdBy: actor.accountId,
-      createdAt,
-      expiresAt,
+  if (pending) return { ok: false, code: 'ERR_DELETION_PENDING' } as const;
+  const [existing] = await tx
+    .select({
+      id: familyInvitations.id,
+      expiresAt: familyInvitations.expiresAt,
+      secret: familyInvitations.secretCiphertext,
     })
-    .returning({ id: familyInvitations.id });
-  if (!invitation) throw new Error('INSERT lời mời không trả về ID');
-  await writeAdminAuditEvent(tx, {
-    actorAccountId: actor.accountId,
-    familyId: actor.familyId,
-    action: 'invitation_created',
-  });
-  return { ok: true, value: { invitationId: invitation.id, token, code, expiresAt } };
+    .from(familyInvitations)
+    .where(
+      and(
+        eq(familyInvitations.familyId, actor.familyId),
+        eq(familyInvitations.createdBy, actor.accountId),
+        eq(familyInvitations.kind, 'join_family'),
+        eq(familyInvitations.role, role),
+        isNull(familyInvitations.acceptedAt),
+        isNull(familyInvitations.revokedAt),
+        sql`${familyInvitations.expiresAt}>clock_timestamp()`,
+      ),
+    )
+    .orderBy(familyInvitations.createdAt)
+    .limit(1)
+    .for('update');
+  if (existing) {
+    if (!existing.secret) return { ok: false, code: 'ERR_INVITATION_EXISTS' } as const;
+    const secrets = cipher.open(actor.familyId, existing.id, existing.secret);
+    return {
+      ok: true,
+      value: { invitationId: existing.id, expiresAt: existing.expiresAt, ...secrets },
+    } as const;
+  }
+  return writeHouseholdInvitation(tx, actor, role, cipher);
 }

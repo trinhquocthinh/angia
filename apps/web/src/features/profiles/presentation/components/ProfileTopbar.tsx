@@ -13,6 +13,7 @@ export function ProfileTopbar({
   account,
   personal,
   showNavigation,
+  showSearch,
 }: {
   profiles: HealthProfile[];
   hasFamily: boolean;
@@ -20,6 +21,7 @@ export function ProfileTopbar({
   account: ReactNode;
   personal: boolean;
   showNavigation: boolean;
+  showSearch: boolean;
 }) {
   return (
     <header className="fixed inset-x-0 top-0 z-50 hidden bg-bg/90 shadow-[0_1px_8px_color-mix(in_srgb,var(--color-shadow)_4%,transparent)] backdrop-blur-xl lg:block">
@@ -34,7 +36,9 @@ export function ProfileTopbar({
           </span>
         </a>
         <div className="flex max-w-2xl flex-1 items-center justify-center gap-3 px-2">
-          {hasFamily && !personal && <ProfileSearch profiles={profiles} className="w-80 shrink-0" />}
+          {hasFamily && !personal && showSearch && (
+            <ProfileSearch profiles={profiles} className="w-80 shrink-0" />
+          )}
           {showNavigation && <TopbarNav pendingCount={pendingCount} personal={personal} />}
         </div>
         <div className="flex shrink-0 items-center gap-3">

@@ -1,8 +1,10 @@
+import { memberHeaderCases } from './memberHeaderCases.js';
 import { expect, test } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { householdStartFixture } from './householdStartFixture.js';
 
 export function householdShellCases(theme: string) {
+  memberHeaderCases.forEach((register) => register());
   test('TC-767: hai màn không tràn ngang ở 360px và chữ 200%', async ({ page }, info) => {
     await householdStartFixture(page);
     const folder = '/tmp/angia-e27-s5-t1-stitch/screenshots';
@@ -33,10 +35,14 @@ export function householdShellCases(theme: string) {
     await expect(page.getByText('Hồ sơ cá nhân', { exact: true })).toHaveCount(0);
     await expect(page.getByText('Cài đặt gia đình', { exact: true })).toHaveCount(0);
   });
-  test('TC-767: Thành viên đã có nhà vẫn thấy điều hướng', async ({ page }) => {
+  test('TC-767: Thành viên chưa liên kết ẩn search và điều hướng', async ({ page }) => {
     const state = await householdStartFixture(page);
     Object.assign(state, { family: true, role: 'member' });
     await page.goto('/');
-    await expect(page.getByRole('navigation', { name: 'Điều hướng chính' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Tài khoản', exact: true })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Điều hướng chính' })).toHaveCount(0);
+    await expect(
+      page.getByRole('combobox', { name: 'Tìm hồ sơ thành viên', includeHidden: true }),
+    ).toHaveCount(0);
   });
 }
