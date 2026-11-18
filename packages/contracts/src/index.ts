@@ -98,8 +98,7 @@ export {
 export type { CourseConflict } from './medications/courseConflictSchemas.js';
 export { prescriptionSchema } from './prescriptions/prescriptionSchema.js';
 export type { Prescription } from './prescriptions/prescriptionSchema.js';
-export { labResultSchema } from './labResults/labResultSchema.js';
-export type { LabResult } from './labResults/labResultSchema.js';
+export { labResultSchema, type LabResult } from './labResults/labResultSchema.js';
 export {
   labSeriesQuerySchema,
   labSeriesResponseSchema,
@@ -260,3 +259,4 @@ export * from './painJournal/forbiddenWords.js';
 export * from './painJournal/schemas.js';
 
 export * from './household/householdInvitationSchemas.js';
+export { changeHouseholdMemberRequestSchema } from './household/changeHouseholdMemberRequestSchema.js';

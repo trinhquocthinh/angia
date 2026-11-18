@@ -263,6 +263,110 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/family/members/{targetAccountId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Đổi vai trò hoặc gỡ người khác khỏi nhà (SPEC-066) */
+    patch: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          targetAccountId: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json':
+            | {
+                /** @enum {string} */
+                action: 'change_role';
+                /** @enum {string} */
+                role: 'main' | 'member';
+              }
+            | {
+                /** @enum {string} */
+                action: 'remove';
+              };
+        };
+      };
+      responses: {
+        /** @description Đã cập nhật thành viên */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN | ERR_OWNER_PROTECTED | ERR_PASSWORD_CHANGE_REQUIRED | ERR_LEGAL_ACCEPTANCE_REQUIRED */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_LAST_GUARDIAN */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    trace?: never;
+  };
   '/api/invitations/accept': {
     parameters: {
       query?: never;

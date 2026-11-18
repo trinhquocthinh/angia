@@ -1,7 +1,4 @@
-import { createInvitationAcceptanceRepository } from '@src/features/household/infrastructure/createInvitationAcceptanceRepository.js';
-import { createFoundingInvitationRepository } from '@src/features/household/infrastructure/createFoundingInvitationRepository.js';
-import { createHouseholdInvitationRepository } from '@src/features/household/infrastructure/createHouseholdInvitationRepository.js';
-import { createHouseholdRepository } from '@src/features/household/infrastructure/createHouseholdRepository.js';
+import { createHouseholdDependencies } from '@src/features/household/infrastructure/createHouseholdDependencies.js';
 import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
 import { createStubAccountDeps } from './createStubAccountDeps.js';
 import { createPainJournalDependencies } from '@src/features/painJournal/infrastructure/createPainJournalDependencies.js';
@@ -108,16 +105,7 @@ function buildApp(
   const quota = { ...TEST_QUOTA_POLICY, limits: { ...TEST_QUOTA_POLICY.limits, ...options.quota } };
   const stub = createStubAuthDeps();
   return createApp({
-    household: createHouseholdRepository(database),
-    invitationAcceptance: {
-      acceptance: createInvitationAcceptanceRepository(database),
-      founding: createFoundingInvitationRepository(database),
-      appBaseUrl: appBaseUrl,
-    },
-    householdInvitations: {
-      repository: createHouseholdInvitationRepository(database, 'test-invitation-key'.repeat(3)),
-      appBaseUrl,
-    },
+    ...createHouseholdDependencies(database, appBaseUrl, 'test-invitation-key'.repeat(3)),
     legal: createLegalRepository(database),
     account: createStubAccountDeps(),
     ...(options.push ? { push: options.push(database) } : {}),

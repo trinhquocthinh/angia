@@ -12,6 +12,7 @@ type StubbedDeps = Pick<
   AppDependencies,
   | 'invitationAcceptance'
   | 'household'
+  | 'householdMembership'
   | 'householdInvitations'
   | 'legal'
   | 'account'
@@ -46,6 +47,7 @@ type StubbedDeps = Pick<
 export function createStubReviewDeps(): StubbedDeps {
   return {
     household: { create: notConfigured },
+    householdMembership: { change: notConfigured },
     invitationAcceptance: {
       acceptance: { accept: notConfigured },
       founding: { create: notConfigured, revoke: notConfigured },

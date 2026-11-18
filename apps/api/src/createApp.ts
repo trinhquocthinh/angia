@@ -60,9 +60,11 @@ import { limitRequestBody } from '@src/shared/http/limitRequestBody.js';
 import type { PushDependencies } from '@src/features/pushSubscriptions/application/ports.js';
 
 import type { HouseholdRepository } from '@src/features/household/application/ports.js';
+import type { HouseholdMembershipRepository } from '@src/features/household/application/membershipPorts.js';
 
 export type AppDependencies = {
   household: HouseholdRepository;
+  householdMembership: HouseholdMembershipRepository;
   invitationAcceptance: InvitationAcceptanceDependencies;
   householdInvitations: HouseholdInvitationDependencies;
   legal: LegalRepository;

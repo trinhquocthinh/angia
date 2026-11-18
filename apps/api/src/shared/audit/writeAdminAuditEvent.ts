@@ -7,6 +7,8 @@ const ACTIONS = [
   'invitation_created',
   'invitation_revoked',
   'invitation_accepted',
+  'member_role_changed',
+  'member_removed',
 ] as const;
 
 interface AdminAuditEventInput {
@@ -27,6 +29,6 @@ export async function writeAdminAuditEvent(tx: FamilyScopedTx, event: AdminAudit
     targetAccountId: event.targetAccountId,
     targetProfileId: event.targetProfileId,
     action: event.action,
-    metadata: {},
+    metadata: event.action === 'member_removed' ? { reason: 'removed_from_family' } : {},
   });
 }

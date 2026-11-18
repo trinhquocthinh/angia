@@ -3,6 +3,11 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_OWNER_PROTECTED: { status: 403, message: 'Không thể thực hiện thao tác này với Chủ hộ.' },
+  ERR_LAST_GUARDIAN: {
+    status: 409,
+    message: 'Bạn là người giám hộ duy nhất của một hồ sơ trẻ. Hãy thêm người giám hộ khác trước.',
+  },
   ERR_INVITATION_EXISTS: {
     status: 409,
     message: 'Đã có lời mời còn hiệu lực. Vui lòng mở lại hoặc thay mã.',

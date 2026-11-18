@@ -1221,7 +1221,6 @@ Phần TC-839/840 chưa triển khai tiếp tục là điều kiện nghiệm th
 
 | Thao tác                          | Task nhận    |
 | --------------------------------- | ------------ |
-| Đổi vai trò, gỡ thành viên        | E28-S1-T1    |
 | Rời nhà                           | E28-S1-T2    |
 | Chuyển Chủ hộ                     | E28-S2-T1    |
 | Yêu cầu/thu hồi/thực hiện xoá nhà | E28-S2-T2    |
@@ -1437,3 +1436,43 @@ playwright install mỗi lượt. Bộ test và báo cáo vẫn được giữ.
 
 Các thay đổi UI không còn tự động bị chặn bởi accessibility trên mọi PR;
 người phụ trách cần chủ động chạy workflow này khi đánh giá chất lượng UI.
+
+## E28-S1-T1 — Đổi vai trò và gỡ thành viên (local 2026-11-19)
+
+`PATCH /api/family/members/{targetAccountId}` nhận một trong hai body:
+
+```json
+{ "action": "change_role", "role": "main" }
+```
+
+```json
+{ "action": "remove" }
+```
+
+Vai trò nhận `main` hoặc `member`; thành công trả `204`, `Cache-Control: no-store`.
+Chỉ `main` cùng nhà quản lý người khác; tự thao tác bị chặn (`403 ERR_FORBIDDEN`),
+tự rời nhà thuộc E28-S1-T2. Chủ hộ được bảo vệ (`403 ERR_OWNER_PROTECTED`);
+người giám hộ cuối cùng không được hạ/gỡ (`409 ERR_LAST_GUARDIAN`).
+Đích khác nhà hoặc không tồn tại cùng trả `404 ERR_NOT_FOUND`.
+
+Một transaction `withFamilyScope` kiểm lại quyền DB, xử lý người giám hộ,
+giữ hồ sơ liên kết ở nhà với trạng thái `withdrawn`, bỏ liên kết, thu hồi push,
+ghi cửa sổ 168 giờ và `last_member_removed_at`, rồi gỡ tài khoản khỏi nhà.
+Bộ audit chung thêm `member_role_changed` và `member_removed`; chỉ sự kiện gỡ
+có metadata cố định `{ "reason": "removed_from_family" }`, không nhận metadata
+từ request. Lỗi audit rollback toàn bộ thao tác. Không đổi schema/migration.
+
+Hồi quy household/audit: **105/105 integration test PASS** trên bản sao tạm.
+`yarn verify:fast` trên bản sao không có metadata macOS: **3456/3456 unit test
+PASS**, typecheck PASS. Ở volume gốc, `verify:fast` lỗi parse `._*`; lint còn
+quét metadata và worktree cũ trong `.claude/worktrees`. Không coi hai cổng
+ở volume gốc đã PASS; không sửa cấu hình hoặc dọn các artifact đó trong task này.
+
+Kiểm cuối sau đồng bộ OIDC/CI: `yarn verify` trên bản sao mã hiện hành PASS,
+gồm **3460/3460 unit test** và các cổng lint/format/dup/knip/build/budget/model.
+Integration E28/audit ngay trên volume gốc: **14/14 PASS**; khung cô lập nhà:
+**315 PASS, 10 TODO** thuộc task sau. Manifest SHA-256 **27/27 tệp** và báo cáo:
+`../../Docs/angia/acceptance/v1.0/evidence/e28-s1-t1-2026-11-19.md`.
+
+TC-787 mới kiểm tiền đề tạo cửa sổ tải đúng 168 giờ; kiểm tải hồ sơ đầu-cuối
+chờ SPEC-072/E29. UI quản lý thành viên thuộc E28-S3; chưa nghiệm thu SIT.
