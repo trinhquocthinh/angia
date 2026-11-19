@@ -1,3 +1,4 @@
+import { listEffectiveReminderAssignments } from '@src/shared/db/listEffectiveReminderAssignments.js';
 import type pg from 'pg';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { DeliveryRepository, FanOutStore, ReminderKind, UnsentReminder } from '../application/ports.js';
@@ -54,14 +55,7 @@ function createFanOutStore(client: pg.PoolClient, familyId: string, newId: () =>
       );
     },
     listFamilyAccounts: () => queryFamilyAccounts(client, familyId),
-    listAssignments: async () =>
-      (
-        await client.query<{ profileId: string; accountId: string }>(
-          `SELECT health_profile_id AS "profileId", account_id AS "accountId"
-             FROM reminder_recipients WHERE family_id = $1`,
-          [familyId],
-        )
-      ).rows,
+    listAssignments: () => listEffectiveReminderAssignments(client, familyId),
     listDeviceIds: async (accountIds) => {
       if (accountIds.length === 0) return [];
       const { rows } = await client.query<{ id: string }>(

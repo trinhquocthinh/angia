@@ -7,18 +7,18 @@ import {
   profileConsentFixture,
 } from '@src/shared/test/profileConsentFixture.js';
 
-// Quan sát request thực sự chờ khóa; không suy đoán thứ tự bằng một khoảng sleep cố định.
-async function waitForProfileWaiters(t: ProfileTestApp, count: number) {
+// E28-S2-T3: writer khóa account trước hồ sơ. Quan sát request thực sự chờ khóa; không suy đoán thứ tự bằng một khoảng sleep cố định.
+async function waitForProfileWriteWaiters(t: ProfileTestApp, count: number) {
   const deadline = Date.now() + 10_000;
   while (Date.now() < deadline) {
     const row = (
       await t.pool.query(`SELECT count(*)::int AS n FROM pg_stat_activity
-      WHERE usename=current_user AND wait_event_type='Lock' AND query ILIKE '%health_profiles%'`)
+      WHERE usename=current_user AND wait_event_type='Lock' AND (query ILIKE '%health_profiles%' OR query ILIKE '%accounts%')`)
     ).rows[0];
     if (row.n >= count) return;
     await new Promise((resolve) => setTimeout(resolve, 10));
   }
-  throw new Error('Request không đi tới khóa hồ sơ');
+  throw new Error('Request không đi tới khóa account hoặc hồ sơ');
 }
 describe('LG-02: tranh chấp cam kết của main và link liên kết (SPEC-040)', () => {
   let t: ProfileTestApp;
@@ -44,9 +44,9 @@ describe('LG-02: tranh chấp cam kết của main và link liên kết (SPEC-04
       try {
         await t.owner.query('SELECT id FROM health_profiles WHERE id=$1 FOR UPDATE', [profile.id]);
         pending.push(Promise.resolve(calls[winner]()));
-        await waitForProfileWaiters(t, 1);
+        await waitForProfileWriteWaiters(t, 1);
         pending.push(Promise.resolve(calls[winner === 'attestation' ? 'invitation' : 'attestation']()));
-        await waitForProfileWaiters(t, 2);
+        await waitForProfileWriteWaiters(t, 2);
         await t.owner.query('COMMIT');
       } finally {
         await t.owner.query('ROLLBACK');

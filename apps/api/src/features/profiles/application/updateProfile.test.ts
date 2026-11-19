@@ -22,18 +22,34 @@ async function fixture(status: ConsentStatus = 'pending') {
 }
 
 describe('Sửa năm sinh và lựa chọn theo dõi số đo', () => {
+  it('TC-809: sửa người lớn thành trẻ không tự chọn người giám hộ', async () => {
+    const { repository, profile } = await fixture();
+    expect(
+      (await updateProfile(repository, 'family-a', profile.id, { birthYear: 1980 }, now, 'main')).ok,
+    ).toBe(true);
+    expect(await updateProfile(repository, 'family-a', profile.id, { birthYear: 2020 }, now, 'main')).toEqual(
+      { ok: false, code: 'ERR_VALIDATION' },
+    );
+    expect(profile.birthYear).toBe(1980);
+  });
   it('TC-443: bật lưu true, tắt lưu NULL và giữ trường không được gửi', async () => {
     const { repository, profile } = await fixture();
     const before = { ...profile };
-    expect(await updateProfile(repository, 'family-a', profile.id, { vitalsEnabled: true }, now)).toEqual({
+    expect(
+      await updateProfile(repository, 'family-a', profile.id, { vitalsEnabled: true }, now, 'main'),
+    ).toEqual({
       ok: true,
       value: { ...before, vitalsEnabled: true },
     });
-    expect(await updateProfile(repository, 'family-a', profile.id, { birthYear: 1980 }, now)).toEqual({
-      ok: true,
-      value: { ...before, birthYear: 1980, vitalsEnabled: true },
-    });
-    expect(await updateProfile(repository, 'family-a', profile.id, { vitalsEnabled: false }, now)).toEqual({
+    expect(await updateProfile(repository, 'family-a', profile.id, { birthYear: 1980 }, now, 'main')).toEqual(
+      {
+        ok: true,
+        value: { ...before, birthYear: 1980, vitalsEnabled: true },
+      },
+    );
+    expect(
+      await updateProfile(repository, 'family-a', profile.id, { vitalsEnabled: false }, now, 'main'),
+    ).toEqual({
       ok: true,
       value: { ...before, birthYear: 1980, vitalsEnabled: null },
     });
@@ -43,14 +59,21 @@ describe('Sửa năm sinh và lựa chọn theo dõi số đo', () => {
     const { repository, profile } = await fixture();
     const before = { ...profile };
     expect(
-      await updateProfile(repository, 'family-a', profile.id, { birthYear, vitalsEnabled: true }, now),
+      await updateProfile(
+        repository,
+        'family-a',
+        profile.id,
+        { birthYear, vitalsEnabled: true },
+        now,
+        'main',
+      ),
     ).toEqual({ ok: false, code: 'ERR_VALIDATION' });
     expect(profile).toEqual(before);
   });
 
   it('TC-443: từ chối bản sửa rỗng', async () => {
     const { repository, profile } = await fixture();
-    expect(await updateProfile(repository, 'family-a', profile.id, {}, now)).toEqual({
+    expect(await updateProfile(repository, 'family-a', profile.id, {}, now, 'main')).toEqual({
       ok: false,
       code: 'ERR_VALIDATION',
     });
@@ -60,19 +83,21 @@ describe('Sửa năm sinh và lựa chọn theo dõi số đo', () => {
     'TC-443: trạng thái %s vẫn sửa được theo SPEC-039',
     async (status) => {
       const { repository, profile } = await fixture(status);
-      expect(await updateProfile(repository, 'family-a', profile.id, { birthYear: 2021 }, now)).toMatchObject(
-        { ok: true, value: { birthYear: 2021, consentStatus: status } },
-      );
+      expect(
+        await updateProfile(repository, 'family-a', profile.id, { birthYear: 2021 }, now, 'main'),
+      ).toMatchObject({ ok: true, value: { birthYear: 2021, consentStatus: status } });
     },
   );
 
   it('TC-443: withdrawn bị chặn và không thay đổi hồ sơ', async () => {
     const { repository, profile } = await fixture('withdrawn');
     const before = { ...profile };
-    expect(await updateProfile(repository, 'family-a', profile.id, { birthYear: 2021 }, now)).toEqual({
-      ok: false,
-      code: 'ERR_CONSENT_REQUIRED',
-    });
+    expect(await updateProfile(repository, 'family-a', profile.id, { birthYear: 2021 }, now, 'main')).toEqual(
+      {
+        ok: false,
+        code: 'ERR_CONSENT_REQUIRED',
+      },
+    );
     expect(profile).toEqual(before);
   });
 
@@ -80,7 +105,7 @@ describe('Sửa năm sinh và lựa chọn theo dõi số đo', () => {
     const { repository, profile } = await fixture();
     const before = { ...profile };
     for (const id of [profile.id, 'missing']) {
-      expect(await updateProfile(repository, 'family-b', id, { vitalsEnabled: true }, now)).toEqual({
+      expect(await updateProfile(repository, 'family-b', id, { vitalsEnabled: true }, now, 'main')).toEqual({
         ok: false,
         code: 'ERR_NOT_FOUND',
       });
@@ -92,7 +117,14 @@ describe('Sửa năm sinh và lựa chọn theo dõi số đo', () => {
     const { repository, profile } = await fixture();
     profile.birthYear = null;
     expect(
-      await updateProfile(repository, 'family-a', profile.id, { birthYear: 2026, vitalsEnabled: true }, now),
+      await updateProfile(
+        repository,
+        'family-a',
+        profile.id,
+        { birthYear: 2026, vitalsEnabled: true },
+        now,
+        'main',
+      ),
     ).toMatchObject({ ok: true, value: { birthYear: 2026, vitalsEnabled: true } });
   });
 });

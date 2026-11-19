@@ -95,6 +95,10 @@ const recordProbes = (t: ProfileTestApp) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/dose-slots`),
     'PUT /api/health-profiles/:id/dose-slots': (u, x) =>
       t.call(u, 'PUT', `${profiles}/${x.profileId}/dose-slots`, { slots: { noon: '12:00' } }),
+    'POST /api/health-profiles/:id/guardians': (u, x) =>
+      t.call(u, 'POST', `${profiles}/${x.profileId}/guardians`, { guardianAccountId: x.accountId }),
+    'DELETE /api/health-profiles/:id/guardians/me': (u, x) =>
+      t.call(u, 'DELETE', `${profiles}/${x.profileId}/guardians/me`),
     'GET /api/health-profiles/:id/reminder-recipients': (u, x) =>
       t.call(u, 'GET', `${profiles}/${x.profileId}/reminder-recipients`),
     'PUT /api/health-profiles/:id/reminder-recipients': (u, x) =>

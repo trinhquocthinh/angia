@@ -7,6 +7,8 @@
 //  - self_write: POST/PATCH/DELETE /api/me/profile/pain-issues[/...], kiểm expectSelfWriteDenied.
 export type HealthDataRouteKind = 'scoped' | 'list' | 'uniform' | 'self' | 'self_write';
 export const HEALTH_DATA_ROUTES = {
+  'POST /api/health-profiles/:id/guardians': 'scoped',
+  'DELETE /api/health-profiles/:id/guardians/me': 'scoped',
   'GET /api/health-profiles/:id/pain-issues': 'scoped',
   'POST /api/health-profiles/:id/pain-issues': 'scoped',
   'GET /api/health-profiles/:id/pain-issues/:issueId': 'scoped',

@@ -11,6 +11,7 @@ export type MembershipResult =
       ok: false;
       code:
         | 'ERR_FORBIDDEN'
+        | 'ERR_VALIDATION'
         | 'ERR_NOT_FOUND'
         | 'ERR_UNAUTHENTICATED'
         | 'ERR_OWNER_PROTECTED'

@@ -1578,3 +1578,32 @@ TC-797–801 kiểm local: **14 integration mới PASS**, hồi quy household/au
 sạch metadata PASS (typecheck + 163 unit liên quan). Full `yarn verify` PASS (3470 unit test, sinh API, lint/format/dup/knip/build/budget/model). Volume gốc còn metadata macOS `._*` gây lỗi runner.
 Chưa nghiệm thu SIT/UI; UI trao quyền thuộc E28-S3-T2.
 Bằng chứng: `../../Docs/angia/acceptance/v1.0/evidence/e28-s2-t1-2026-11-19.md`.
+
+## E28-S2-T3 — Người giám hộ hồ sơ trẻ (local 2026-11-19)
+
+Hồ sơ dưới 18 tuổi theo năm Việt Nam, chưa liên kết tài khoản, tự gán người tạo
+làm giám hộ trong cùng transaction. Chỉ giám hộ hiện tại thêm được người thứ hai
+là `main` cùng nhà; tối đa hai người. Hai API cần phiên, CSRF và vai trò `main`:
+
+- `POST /api/health-profiles/{id}/guardians`, body strict `{ guardianAccountId }`.
+- `DELETE /api/health-profiles/{id}/guardians/me`, chỉ tự gỡ; người cuối bị chặn.
+
+Thành công trả 204/no-store. Thay đổi và audit cùng transaction `withFamilyScope`;
+khóa account theo UUID → family → profile. Không đổi schema. Sinh/gửi nhắc thuốc,
+đọc lời nhắc và xác nhận liều dùng giám hộ hiện hành làm người nhận cho hồ sơ trẻ;
+không cho cấu hình người nhận riêng. Nhắc tái khám giữ quy tắc SPEC-051 hiện có.
+
+Owner chọn chặn `ERR_VALIDATION` các chuyển đổi để lại hồ sơ trẻ không có giám hộ:
+sửa người lớn/không rõ năm sinh thành trẻ, tự/admin gỡ liên kết, gỡ thành viên hoặc
+rời nhà chọn giữ hồ sơ trẻ đang liên kết. Rời nhà chọn xoá hồ sơ vẫn được phép.
+Quy trình chọn giám hộ khi chuyển đổi để task sau. Khi liên kết hoặc hồ sơ trở
+thành người lớn, bỏ tư cách giám hộ và ghi audit cùng transaction.
+
+TC-809–814 kiểm local; hồi quy API/worker/cô lập **611 PASS/2 TODO có sẵn**.
+`yarn verify:fast` trên bản sao sạch metadata PASS (typecheck + 153 unit liên quan).
+Full `yarn verify` dừng tại TC-860 do màu cứng có sẵn trong `clay-icon.css`
+(3501 unit PASS/1 FAIL); duplication, knip, build, budget và model check chạy riêng PASS.
+Volume gốc còn lỗi runner do metadata macOS `._*`; không ghi full verify PASS.
+
+Chưa nghiệm thu SIT/UI; giao diện giám hộ thuộc E28-S3-T3. Bằng chứng và giới hạn
+kiểm chứng: `../../Docs/angia/acceptance/v1.0/evidence/e28-s2-t3-2026-11-19.md`.

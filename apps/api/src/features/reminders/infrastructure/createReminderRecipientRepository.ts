@@ -1,7 +1,7 @@
-import { findProfileInFamily } from '@src/features/profiles/infrastructure/findProfileInFamily.js';
-import { and, eq } from 'drizzle-orm';
+import { listEffectiveRecipientIds } from './listEffectiveRecipientIds.js';
+import { and, eq, sql } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { reminderRecipients } from '@src/shared/db/schema/index.js';
+import { healthProfiles, reminderRecipients } from '@src/shared/db/schema/index.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { ReminderRecipientRepository } from '../application/recipientPorts.js';
 import { listFamilyAccounts } from './listFamilyAccounts.js';
@@ -15,15 +15,19 @@ export function createReminderRecipientRepository(db: Database): ReminderRecipie
         const ofProfile = (profileId: string) =>
           and(eq(reminderRecipients.healthProfileId, profileId), eq(reminderRecipients.familyId, familyId));
         return work({
-          findProfile: (id) => findProfileInFamily(tx, familyId, id, 'update'),
-          listFamilyAccounts: () => listFamilyAccounts(tx, familyId),
-          listRecipientIds: async (profileId) =>
+          findProfile: async (id) =>
             (
               await tx
-                .select({ accountId: reminderRecipients.accountId })
-                .from(reminderRecipients)
-                .where(ofProfile(profileId))
-            ).map((r) => r.accountId),
+                .select({
+                  consentStatus: healthProfiles.consentStatus,
+                  guardianManaged: sql<boolean>`COALESCE(extract(year FROM clock_timestamp() AT TIME ZONE 'Asia/Ho_Chi_Minh')::int - ${healthProfiles.birthYear} < 18, false) AND NOT EXISTS (SELECT 1 FROM accounts WHERE health_profile_id=${healthProfiles.id})`,
+                })
+                .from(healthProfiles)
+                .where(and(eq(healthProfiles.id, id), eq(healthProfiles.familyId, familyId)))
+                .for('update')
+            )[0] ?? null,
+          listFamilyAccounts: () => listFamilyAccounts(tx, familyId),
+          listRecipientIds: (profileId) => listEffectiveRecipientIds(tx, familyId, profileId),
           replaceRecipients: async (profileId, accountIds) => {
             await tx.delete(reminderRecipients).where(ofProfile(profileId));
             await tx

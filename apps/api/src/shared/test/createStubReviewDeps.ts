@@ -10,6 +10,7 @@ const notConfigured = () => Promise.reject(new Error('Kho duyệt/số đo chưa
 
 type StubbedDeps = Pick<
   AppDependencies,
+  | 'profileGuardians'
   | 'invitationAcceptance'
   | 'householdOwnership'
   | 'householdDeletion'
@@ -53,6 +54,7 @@ const householdLeave = {
 };
 
 const householdManagement = {
+  profileGuardians: { change: notConfigured },
   householdDeletion: { request: notConfigured, revoke: notConfigured },
   householdOwnership: { offer: notConfigured, decide: notConfigured, revoke: notConfigured },
   householdLeave,

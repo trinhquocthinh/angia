@@ -1,8 +1,9 @@
+import { listEffectiveRecipientIds } from '@src/features/reminders/infrastructure/listEffectiveRecipientIds.js';
 import { and, eq, sql } from 'drizzle-orm';
 import { listDoseConfirmations } from '@src/features/doseConfirmations/infrastructure/listDoseConfirmations.js';
 import { listFamilyAccounts } from '@src/features/reminders/infrastructure/listFamilyAccounts.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { healthProfiles, reminderRecipients, reminders } from '@src/shared/db/schema/index.js';
+import { healthProfiles, reminders } from '@src/shared/db/schema/index.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { MyReminderRepository, StoredReminderMedication } from '../application/ports.js';
 
@@ -27,15 +28,7 @@ export function createMyReminderRepository(db: Database): MyReminderRepository {
           .innerJoin(healthProfiles, eq(healthProfiles.id, reminders.healthProfileId))
           .where(and(eq(reminders.id, reminderId), eq(reminders.familyId, familyId)));
         if (!row) return null;
-        const assigned = await tx
-          .select({ accountId: reminderRecipients.accountId })
-          .from(reminderRecipients)
-          .where(
-            and(
-              eq(reminderRecipients.healthProfileId, row.profileId),
-              eq(reminderRecipients.familyId, familyId),
-            ),
-          );
+        const assigned = await listEffectiveRecipientIds(tx, familyId, row.profileId);
         const { consentStatus, scheduledAt, medications, ...reminder } = row;
         const confirmations = await listDoseConfirmations(tx, row.profileId, row.date);
         return {
@@ -47,7 +40,7 @@ export function createMyReminderRepository(db: Database): MyReminderRepository {
             confirmation: confirmations.find((c) => c.slot === row.slot) ?? null,
           },
           familyAccounts: await listFamilyAccounts(tx, familyId),
-          assignedAccountIds: assigned.map((r) => r.accountId),
+          assignedAccountIds: assigned,
         };
       }),
   };

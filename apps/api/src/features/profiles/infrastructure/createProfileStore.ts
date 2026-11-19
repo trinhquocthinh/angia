@@ -1,3 +1,4 @@
+import { createProfileGuardianStore } from '../guardians/infrastructure/createProfileGuardianStore.js';
 import { createProfileConsentStore } from './createProfileConsentStore.js';
 import { PURGE_PROFILE_OBJECTS_DELAY_SECONDS, PURGE_PROFILE_OBJECTS_QUEUE } from '@angia/contracts';
 import { and, asc, eq, isNull } from 'drizzle-orm';
@@ -13,6 +14,7 @@ export function createProfileStore(tx: FamilyScopedTx, familyId: string, boss: P
   const sameProfile = (id: string) => and(eq(healthProfiles.id, id), eq(healthProfiles.familyId, familyId));
   return {
     ...createProfileConsentStore(tx, familyId),
+    ...createProfileGuardianStore(tx, familyId),
     listProfiles: () =>
       tx
         .select()

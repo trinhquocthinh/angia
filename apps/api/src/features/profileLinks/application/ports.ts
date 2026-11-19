@@ -34,6 +34,7 @@ export interface ProfileLinkStore {
   markDecided(invitationId: string, accountId: string, decision: LinkDecision, at: Date): Promise<void>;
   applyConsent(profileId: string, patch: ConsentPatch): Promise<void>;
   linkAccount(accountId: string, profileId: string): Promise<void>;
+  canUnlinkProfile(profileId: string): Promise<boolean>;
   unlinkAccount(accountId: string): Promise<void>;
   listProfileLinks(): Promise<AdminProfileLink[]>;
   clearReminderRecipients(profileId: string): Promise<void>;

@@ -1,3 +1,4 @@
+import { registerProfileGuardianRoutes } from '@src/features/profiles/guardians/presentation/registerProfileGuardianRoutes.js';
 import { registerHouseholdDeletionRoutes } from '@src/features/household/presentation/registerHouseholdDeletionRoutes.js';
 import { registerHouseholdOwnershipRoutes } from '@src/features/household/presentation/registerHouseholdOwnershipRoutes.js';
 import { registerHouseholdLeaveRoute } from '@src/features/household/presentation/registerHouseholdLeaveRoute.js';
@@ -49,5 +50,6 @@ export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencie
   registerAiBillingRoutes(app, deps.aiBilling);
   registerFamilyUsageRoute(app, deps.familyUsage);
   registerProfileRoutes(app, deps);
+  registerProfileGuardianRoutes(app, deps.profileGuardians);
   registerClinicalRoutes(app, deps);
 }

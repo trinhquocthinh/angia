@@ -42,6 +42,6 @@ export type ConsentPatch =
     }
   | { consentStatus: 'withdrawn'; consentWithdrawnAt: Date; consentWithdrawnBy: string }
   | { consentStatus: 'declined' };
-type ProfileLinkError = 'ERR_NOT_FOUND' | 'ERR_PROFILE_ALREADY_LINKED';
+type ProfileLinkError = 'ERR_NOT_FOUND' | 'ERR_PROFILE_ALREADY_LINKED' | 'ERR_VALIDATION';
 export type ProfileLinkOutcome<T, Code extends ProfileLinkError = ProfileLinkError> =
   { ok: true; value: T } | { ok: false; code: Code };

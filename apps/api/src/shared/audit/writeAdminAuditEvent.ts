@@ -3,6 +3,8 @@ import { adminAuditEvents } from '@src/shared/db/schema/index.js';
 
 // Chỉ mở rộng khi thao tác nghiệp vụ tương ứng được triển khai và có test.
 const ACTIONS = [
+  'guardian_added',
+  'guardian_removed',
   'family_created',
   'invitation_created',
   'invitation_revoked',

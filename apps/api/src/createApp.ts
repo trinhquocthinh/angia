@@ -65,7 +65,10 @@ import type { PushDependencies } from '@src/features/pushSubscriptions/applicati
 import type { HouseholdRepository } from '@src/features/household/application/ports.js';
 import type { HouseholdMembershipRepository } from '@src/features/household/application/membershipPorts.js';
 
+import type { ProfileGuardianRepository } from '@src/features/profiles/guardians/application/ports.js';
+
 export type AppDependencies = {
+  profileGuardians: ProfileGuardianRepository;
   householdDeletion: HouseholdDeletionRepository;
   householdOwnership: HouseholdOwnershipRepository;
   householdLeave: HouseholdLeaveDependencies;

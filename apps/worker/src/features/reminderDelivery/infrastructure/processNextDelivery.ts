@@ -1,3 +1,4 @@
+import { listEffectiveReminderAssignments } from '@src/shared/db/listEffectiveReminderAssignments.js';
 import type pg from 'pg';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
 import type { DeliveryCandidate, ReminderKind } from '../application/ports.js';
@@ -51,10 +52,7 @@ async function toCandidate(
     `SELECT consent_status = 'confirmed' AS confirmed FROM health_profiles WHERE id = $1 AND family_id = $2`,
     [row.profileId, familyId],
   );
-  const assigned = await client.query<{ accountId: string }>(
-    `SELECT account_id AS "accountId" FROM reminder_recipients WHERE health_profile_id = $1 AND family_id = $2`,
-    [row.profileId, familyId],
-  );
+  const assigned = await listEffectiveReminderAssignments(client, familyId, row.profileId);
   const { deviceId, accountId, endpoint, p256dh, auth } = row;
   const device =
     deviceId && accountId && endpoint && p256dh && auth
@@ -69,7 +67,7 @@ async function toCandidate(
     attempts: row.attempts,
     consentConfirmed: consent.rows[0]?.confirmed ?? false,
     familyAccounts: await queryFamilyAccounts(client, familyId),
-    assignedAccountIds: assigned.rows.map((r) => r.accountId),
+    assignedAccountIds: assigned.map((r) => r.accountId),
     device,
   };
 }

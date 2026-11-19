@@ -1,3 +1,4 @@
+import { canUnlinkStoredProfile } from '@src/features/profiles/guardians/infrastructure/canUnlinkStoredProfile.js';
 import { asc, eq, or } from 'drizzle-orm';
 import { accounts, families } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
@@ -34,6 +35,12 @@ export async function lockHouseholdLeave(
         : 'ERR_OWNER_MUST_DELETE_FAMILY',
     } as const;
   if (caller.healthProfileId && !input.ownProfileDisposition)
+    return { ok: false, code: 'ERR_VALIDATION' } as const;
+  if (
+    caller.healthProfileId &&
+    input.ownProfileDisposition === 'keep' &&
+    !(await canUnlinkStoredProfile(tx, actor.familyId, caller.healthProfileId))
+  )
     return { ok: false, code: 'ERR_VALIDATION' } as const;
   return { ok: true, caller } as const;
 }

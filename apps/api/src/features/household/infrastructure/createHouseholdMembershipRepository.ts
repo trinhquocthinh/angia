@@ -1,3 +1,4 @@
+import { canUnlinkStoredProfile } from '@src/features/profiles/guardians/infrastructure/canUnlinkStoredProfile.js';
 import { revokeMemberOwnershipOffers } from './revokeMemberOwnershipOffers.js';
 import { asc, eq, or } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
@@ -37,6 +38,12 @@ export function createHouseholdMembershipRepository(db: Database): HouseholdMemb
         const target = members.find((row) => row.id === targetId && row.familyId === actor.familyId);
         if (!family || !target) return { ok: false, code: 'ERR_NOT_FOUND' };
         if (family.ownerId === targetId) return { ok: false, code: 'ERR_OWNER_PROTECTED' };
+        if (
+          change.action === 'remove' &&
+          target.healthProfileId &&
+          !(await canUnlinkStoredProfile(tx, actor.familyId, target.healthProfileId))
+        )
+          return { ok: false, code: 'ERR_VALIDATION' };
         if (change.action === 'remove' || change.role === 'member') {
           const guardians = await releaseMemberGuardians(tx, actor.familyId, targetId);
           if (!guardians.ok) return guardians;

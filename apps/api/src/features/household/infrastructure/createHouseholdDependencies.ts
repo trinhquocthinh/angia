@@ -1,3 +1,4 @@
+import { createProfileGuardianRepository } from '@src/features/profiles/guardians/infrastructure/createProfileGuardianRepository.js';
 import { createHouseholdDeletionRepository } from './createHouseholdDeletionRepository.js';
 import { createHouseholdOwnershipRepository } from './createHouseholdOwnershipRepository.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
@@ -9,6 +10,7 @@ import { createFoundingInvitationRepository } from './createFoundingInvitationRe
 
 export function createHouseholdDependencies(db: Database, appBaseUrl: string, invitationSecret: string) {
   return {
+    profileGuardians: createProfileGuardianRepository(db),
     householdDeletion: createHouseholdDeletionRepository(db),
     householdOwnership: createHouseholdOwnershipRepository(db),
     household: createHouseholdRepository(db),
