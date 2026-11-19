@@ -1,4 +1,4 @@
-import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { MemberClayGlyph } from './MemberClayGlyph';
 import { Button } from '@src/shared/ui/button/Button';
 import type { HouseholdMember, HouseholdMemberRole } from '../../application/memberPorts';
 import { HouseholdMemberRow } from './HouseholdMemberRow';
@@ -55,7 +55,7 @@ export function HouseholdMembersCard({
       )}
       <p className="household-members-footnote">
         <span className="household-members-footnote-icon" aria-hidden="true">
-          <AdminIcon name="shield" size={18} />
+          <MemberClayGlyph name="member-lock" size={16} />
         </span>
         <span>Chủ hộ và tài khoản của bạn được bảo vệ. Rời nhà nằm trong mục Tài khoản.</span>
       </p>

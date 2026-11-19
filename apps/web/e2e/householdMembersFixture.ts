@@ -16,8 +16,11 @@ const defaultFixtureMembers = (): FixtureMember[] => [
   { accountId: 'main-tuan', displayName: 'Anh Tuấn', role: 'main', isOwner: false, isSelf: false },
 ];
 
-export async function householdMembersFixture(page: Page) {
-  const household = await householdStartFixture(page);
+export async function householdMembersFixture(
+  page: Page,
+  householdState?: Awaited<ReturnType<typeof householdStartFixture>>,
+) {
+  const household = householdState ?? (await householdStartFixture(page));
   household.family = true;
   household.name = 'Nhà Ngọc Lan';
 

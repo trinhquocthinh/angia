@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { canManageMember, memberInitials, memberRoleDescription, memberRoleLabel } from './memberDisplay';
+import { canManageMember, memberRoleTag, memberRoleDescription, memberRoleLabel } from './memberDisplay';
 
 it('SPEC-066: nhãn vai trò phân biệt Chủ hộ, Đồng quản lý và Thành viên', () => {
   expect(memberRoleLabel({ isOwner: true, role: 'main' })).toBe('Chủ hộ');
@@ -14,10 +14,16 @@ it('SPEC-066: chỉ main thao tác được người khác không phải Chủ h
   expect(canManageMember('member', { isOwner: false, isSelf: false })).toBe(false);
 });
 
-it('SPEC-066: mô tả vai trò khớp quyết định owner và tạo chữ cái đại diện từ tên', () => {
-  expect(memberRoleDescription('main')).toBe('Quản lý hồ sơ');
-  expect(memberRoleDescription('member')).toBe('Chỉ xem hồ sơ');
-  expect(memberInitials('Anh Tuấn')).toBe('AT');
-  expect(memberInitials('Lan')).toBe('L');
-  expect(memberInitials('   ')).toBe('?');
+it('SPEC-066: mô tả đầy đủ quyền quản lý và giới hạn của từng vai trò', () => {
+  expect(memberRoleDescription('main')).toBe(
+    'Quản lý hồ sơ sức khỏe và thành viên trong nhà: mời người thân, đổi vai trò và gỡ thành viên.',
+  );
+  expect(memberRoleDescription('member')).toBe(
+    'Chỉ xem hồ sơ được liên kết với mình. Không mời, đổi vai trò hay gỡ thành viên khác.',
+  );
+});
+
+it('SPEC-066: chip quyền hạn phân biệt Toàn quyền và Giới hạn', () => {
+  expect(memberRoleTag('main')).toBe('Toàn quyền');
+  expect(memberRoleTag('member')).toBe('Giới hạn');
 });

@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { MemberClayGlyph } from './MemberClayGlyph';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import type { HouseholdMemberRole } from '../../application/memberPorts';
 
@@ -14,7 +15,7 @@ export function HouseholdMembersHeader({ familyName, memberCount, viewerRole }: 
     <header className="household-members-header">
       <div className="household-members-topbar">
         <span className="household-members-family-pill">
-          <AdminIcon name="home_health" size={18} />
+          <MemberClayGlyph name="family-home" size={18} />
           <span>{subtitle}</span>
         </span>
         <Link to="/" aria-label="Quay lại" className="household-members-back">
@@ -32,7 +33,7 @@ export function HouseholdMembersHeader({ familyName, memberCount, viewerRole }: 
         </div>
         {viewerRole === 'main' && (
           <Link to="/family/invite" className="household-members-invite-btn">
-            <AdminIcon name="person_add" size={20} />
+            <MemberClayGlyph name="invite-add" size={20} />
             <span>+ Mời người thân</span>
           </Link>
         )}

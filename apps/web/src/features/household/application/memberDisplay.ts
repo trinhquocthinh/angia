@@ -6,7 +6,9 @@ export function memberRoleLabel(member: Pick<HouseholdMember, 'isOwner' | 'role'
 }
 
 export function memberRoleDescription(role: HouseholdMemberRole): string {
-  return role === 'main' ? 'Quản lý hồ sơ' : 'Chỉ xem hồ sơ';
+  return role === 'main'
+    ? 'Quản lý hồ sơ sức khỏe và thành viên trong nhà: mời người thân, đổi vai trò và gỡ thành viên.'
+    : 'Chỉ xem hồ sơ được liên kết với mình. Không mời, đổi vai trò hay gỡ thành viên khác.';
 }
 
 export function canManageMember(
@@ -16,9 +18,6 @@ export function canManageMember(
   return viewerRole === 'main' && !member.isOwner && !member.isSelf;
 }
 
-export function memberInitials(displayName: string): string {
-  const parts = displayName.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return '?';
-  if (parts.length === 1) return parts[0]!.slice(0, 1).toUpperCase();
-  return `${parts[0]!.slice(0, 1)}${parts[parts.length - 1]!.slice(0, 1)}`.toUpperCase();
+export function memberRoleTag(role: HouseholdMemberRole): string {
+  return role === 'main' ? 'Toàn quyền' : 'Giới hạn';
 }

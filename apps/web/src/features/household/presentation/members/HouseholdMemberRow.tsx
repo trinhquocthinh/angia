@@ -4,6 +4,7 @@ import { canManageMember } from '../../application/memberDisplay';
 import type { HouseholdMember, HouseholdMemberRole } from '../../application/memberPorts';
 import { HouseholdMemberRoleBadge } from './HouseholdMemberRoleBadge';
 import { MemberAvatar } from './MemberAvatar';
+import { MemberClayGlyph } from './MemberClayGlyph';
 
 export function HouseholdMemberRow({
   member,
@@ -24,9 +25,21 @@ export function HouseholdMemberRow({
       </div>
       <div className="household-member-row-meta">
         <HouseholdMemberRoleBadge member={member} />
-        {manageable && (
-          <span className="household-member-chevron" aria-hidden="true">
-            <AdminIcon name="chevron_right" size={20} />
+        {(manageable || member.isOwner || member.isSelf) && (
+          <span
+            className="household-member-chevron"
+            title={member.isOwner ? 'Chủ hộ được bảo vệ' : member.isSelf ? 'Tài khoản của bạn' : undefined}
+            aria-label={
+              member.isOwner ? 'Chủ hộ được bảo vệ' : member.isSelf ? 'Tài khoản của bạn' : undefined
+            }
+            role={manageable ? undefined : 'img'}
+            aria-hidden={manageable ? true : undefined}
+          >
+            {manageable ? (
+              <AdminIcon name="chevron_right" size={20} />
+            ) : (
+              <MemberClayGlyph name={member.isOwner ? 'member-protected' : 'member-lock'} size={16} />
+            )}
           </span>
         )}
       </div>

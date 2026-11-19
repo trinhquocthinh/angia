@@ -1,4 +1,4 @@
-import { memberInitials } from '../../application/memberDisplay';
+import { MemberClayGlyph } from './MemberClayGlyph';
 import type { HouseholdMember } from '../../application/memberPorts';
 
 export function MemberAvatar({
@@ -15,7 +15,7 @@ export function MemberAvatar({
       data-tone={tone}
       aria-hidden="true"
     >
-      {memberInitials(member.displayName)}
+      <MemberClayGlyph name={`member-avatar-${tone}`} size={size === 'lg' ? 96 : 44} />
     </span>
   );
 }

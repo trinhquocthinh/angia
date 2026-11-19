@@ -15,12 +15,6 @@ export function AccountMenuDestinations({
           Thành viên
         </Link>
       )}
-      {session.family && session.role === 'main' && (
-        <Link to="/family/invite" onClick={onClose}>
-          <AdminIcon name="group_add" />
-          Mời người thân
-        </Link>
-      )}
       {session.account.healthProfileId && (
         <Link to="/my-profile" onClick={onClose}>
           <AdminIcon name="person" />

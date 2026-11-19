@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { MemberClayGlyph } from './MemberClayGlyph';
 import type { HouseholdMemberRole } from '../../application/memberPorts';
 
 export function HouseholdMembersEmpty({ viewerRole }: { viewerRole: HouseholdMemberRole }) {
@@ -8,7 +8,7 @@ export function HouseholdMembersEmpty({ viewerRole }: { viewerRole: HouseholdMem
       <p className="household-members-empty-title">Mới có mình bạn</p>
       {viewerRole === 'main' && (
         <Link to="/family/invite" className="household-members-invite-btn">
-          <AdminIcon name="person_add" size={20} />
+          <MemberClayGlyph name="invite-add" size={20} />
           <span>Mời người thân</span>
         </Link>
       )}

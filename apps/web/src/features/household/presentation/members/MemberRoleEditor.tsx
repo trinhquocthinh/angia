@@ -1,6 +1,7 @@
 import { Button } from '@src/shared/ui/button/Button';
-import { ClayIcon } from '@src/shared/ui/ClayIcon';
-import { memberRoleDescription } from '../../application/memberDisplay';
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { MemberClayGlyph } from './MemberClayGlyph';
+import { memberRoleDescription, memberRoleTag } from '../../application/memberDisplay';
 import type { HouseholdMemberRole } from '../../application/memberPorts';
 
 type Props = {
@@ -23,7 +24,7 @@ export function MemberRoleEditor({ currentRole, selectedRole, pending, error, on
       <fieldset className="household-member-role-choices" disabled={pending}>
         <legend className="sr-only">Chọn vai trò trong nhà</legend>
         {(['main', 'member'] as const).map((role) => (
-          <label key={role} className="household-member-role-option">
+          <label key={role} className="household-member-role-option" data-role={role}>
             <input
               type="radio"
               name="member-role"
@@ -32,10 +33,13 @@ export function MemberRoleEditor({ currentRole, selectedRole, pending, error, on
               onChange={() => onSelect(role)}
             />
             <span className="household-member-role-option-icon" aria-hidden="true">
-              <ClayIcon name={role === 'main' ? 'manager' : 'member'} size={36} />
+              <MemberClayGlyph name={`role-option-${role}`} size={32} />
             </span>
             <span className="household-member-role-option-text">
-              <strong>{role === 'main' ? 'Đồng quản lý' : 'Thành viên'}</strong>
+              <span className="household-member-role-option-title">
+                <strong>{role === 'main' ? 'Đồng quản lý' : 'Thành viên'}</strong>
+                <span className="household-member-role-tag">{memberRoleTag(role)}</span>
+              </span>
               <span>{memberRoleDescription(role)}</span>
             </span>
             <span className="household-member-role-radio" aria-hidden="true" />
@@ -48,6 +52,7 @@ export function MemberRoleEditor({ currentRole, selectedRole, pending, error, on
         </p>
       )}
       <Button className="household-member-save-btn" disabled={unchanged || pending} onClick={onSave}>
+        <AdminIcon name="save" size={20} />
         {pending ? 'Đang lưu…' : 'Lưu thay đổi'}
       </Button>
     </section>
