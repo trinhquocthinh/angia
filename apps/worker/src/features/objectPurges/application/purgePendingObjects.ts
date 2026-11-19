@@ -13,10 +13,11 @@ const SAFE_ERRORS = new Set([
 export async function purgePendingObjects(
   deps: ObjectPurgeDependencies & { signal: AbortSignal },
   options: { batchSize: number; maxAttempts: number },
+  onlyFamilyId?: string,
 ): Promise<{ deleted: number; failed: number }> {
   const result = { deleted: 0, failed: 0 };
   if (deps.signal.aborted) return result;
-  for (const familyId of await deps.repository.listFamilies()) {
+  for (const familyId of onlyFamilyId ? [onlyFamilyId] : await deps.repository.listFamilies()) {
     let afterKey: string | undefined;
     while (!deps.signal.aborted) {
       const batch = await deps.repository.withFamily(familyId, async (store) => {

@@ -130,3 +130,20 @@ export const EXPECTED_POLICIES: Record<string, string> = {
   temperature_readings: selfPolicy('health_profile_id'),
   upload_batches: selfPolicy('health_profile_id'),
 };
+
+// E28-S2-T2 (0046, TC-869): role job xoá nhà chỉ chạm nhà có yêu cầu pending đến hạn.
+export const FAMILY_DELETION_ROLE = 'angia_test_family_deletion';
+const PENDING_DUE = `((status = 'pending'::text) AND (execute_at <= now()))`;
+const REVOKED_NOW = `((status = 'revoked'::text) AND (revoked_at = now()))`;
+// scan_quota_audit giữ lại làm nhật ký (D3); các bảng RLS còn lại đều có policy đến hạn.
+export const FAMILY_DELETION_DUE_TABLES = RLS_TABLES.filter((table) => table !== 'scan_quota_audit');
+export const familyDeletionDueOnly = (table: string) =>
+  table === 'family_deletion_requests'
+    ? { qual: `(${PENDING_DUE} OR ${REVOKED_NOW})`, withCheck: REVOKED_NOW }
+    : {
+        qual: `(EXISTS ( SELECT 1
+   FROM family_deletion_requests r
+  WHERE ((r.family_id = ${table}.family_id) AND (r.status = 'pending'::text) AND (r.execute_at <= now()))))`,
+        withCheck: null,
+      };
+export const FAMILY_DELETION_SCAN_QUAL = PENDING_DUE;

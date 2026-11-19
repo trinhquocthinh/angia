@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { purgePendingObjects } from './purgePendingObjects.js';
 import type { ObjectPurgeStore } from './ports.js';
 
@@ -105,5 +105,17 @@ describe('Dọn receipt object bền vững (SPEC-038)', () => {
     };
     await purgePendingObjects(f.deps, { batchSize: 100, maxAttempts: 10 });
     expect(f.rows.get('families/a/1')).toEqual({ attempts: 1, error: 'unknown' });
+  });
+
+  it('TC-806: có familyId thì chỉ vét nhà đó, không liệt kê families (nhà đã xoá không còn dòng families)', async () => {
+    const f = fixture(['families/a/1', 'families/b/1']);
+    const listFamilies = vi.fn(async () => ['a', 'b']);
+    f.deps.repository.listFamilies = listFamilies;
+    expect(await purgePendingObjects(f.deps, { batchSize: 10, maxAttempts: 10 }, 'b')).toEqual({
+      deleted: 1,
+      failed: 0,
+    });
+    expect(f.calls).toEqual(['families/b/1']);
+    expect(listFamilies).not.toHaveBeenCalled();
   });
 });

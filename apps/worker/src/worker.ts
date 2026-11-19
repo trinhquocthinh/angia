@@ -22,6 +22,8 @@ import { registerExtractDocumentJob } from '@src/jobs/registerExtractDocumentJob
 import { registerRecoverDeadExtractionJob } from '@src/jobs/registerRecoverDeadExtractionJob.js';
 import { registerRequeueAwaitingBudgetJob } from '@src/jobs/registerRequeueAwaitingBudgetJob.js';
 import { registerSweepOrphanObjectsJob } from '@src/jobs/registerSweepOrphanObjectsJob.js';
+import { registerExecuteFamilyDeletionJob } from '@src/jobs/registerExecuteFamilyDeletionJob.js';
+import { createFamilyDeletionRepository } from '@src/features/familyDeletion/infrastructure/createFamilyDeletionRepository.js';
 import { registerPurgeProfileObjectsJob } from '@src/jobs/registerPurgeProfileObjectsJob.js';
 import { registerPurgePendingObjectsJob } from '@src/jobs/registerPurgePendingObjectsJob.js';
 import { createObjectPurgeRepository } from '@src/features/objectPurges/infrastructure/createObjectPurgeRepository.js';
@@ -165,6 +167,12 @@ try {
     },
     logger,
   );
+  // SPEC-069: sau job vét hồ sơ để queue purge-profile-objects đã tồn tại khi job xoá nhà enqueue.
+  await registerExecuteFamilyDeletionJob(boss, {
+    repository: createFamilyDeletionRepository(pool, boss),
+    storage: createOrphanStorage(createS3Client(config), config.S3_BUCKET),
+    logger,
+  });
   await registerGenerateRemindersJob(
     boss,
     createReminderRepository(pool, newId),
@@ -183,7 +191,7 @@ try {
   const idpSyncEnabled = await registerIdpSessionSync(config, pool);
   logger.info(
     { aiRunMode: config.AI_RUN_MODE, aiRoutingSource: 'database', idpSyncEnabled },
-    `Worker sẵn sàng — đã đăng ký job sanitize-document-image, extract-document, ngân sách AI, purge-pending-objects, dọn object mồ côi, sinh lời nhắc${idpSyncEnabled ? ' và đồng bộ phiên IdP' : ''}`,
+    `Worker sẵn sàng — đã đăng ký job sanitize-document-image, extract-document, ngân sách AI, purge-pending-objects, execute-family-deletion, dọn object mồ côi, sinh lời nhắc${idpSyncEnabled ? ' và đồng bộ phiên IdP' : ''}`,
   );
 } catch (error) {
   logger.error({ reason: (error as Error).message }, 'Worker không khởi động được');

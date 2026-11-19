@@ -4,6 +4,10 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startTestDatabase, type TestDatabase } from '@src/shared/test/startTestDatabase.js';
 import {
   EXPECTED_POLICIES,
+  FAMILY_DELETION_DUE_TABLES,
+  FAMILY_DELETION_ROLE,
+  FAMILY_DELETION_SCAN_QUAL,
+  familyDeletionDueOnly,
   NOT_SELF,
   PAIN_JOURNAL_TABLES,
   RLS_TABLES,
@@ -145,6 +149,25 @@ describe('runMigrations trên PostgreSQL rỗng', () => {
         });
       }
     }
+    for (const tablename of FAMILY_DELETION_DUE_TABLES) {
+      expected.push({
+        tablename,
+        policyname: 'family_deletion_due_only',
+        permissive: 'RESTRICTIVE',
+        roles: [FAMILY_DELETION_ROLE],
+        cmd: 'ALL',
+        ...familyDeletionDueOnly(tablename),
+      });
+    }
+    expected.push({
+      tablename: 'family_deletion_requests',
+      policyname: 'family_deletion_job_scan',
+      permissive: 'PERMISSIVE',
+      roles: [FAMILY_DELETION_ROLE],
+      cmd: 'SELECT',
+      qual: FAMILY_DELETION_SCAN_QUAL,
+      withCheck: null,
+    });
     expect(policies.rows).toEqual(
       expected.sort(
         (a, b) => a.tablename.localeCompare(b.tablename) || a.policyname.localeCompare(b.policyname),

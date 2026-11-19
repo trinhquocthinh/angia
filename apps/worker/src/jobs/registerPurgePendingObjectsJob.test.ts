@@ -12,9 +12,10 @@ async function register(keys: string[] = [], fail = false) {
     },
     recordFailure: vi.fn(async () => undefined),
   };
+  const listFamilies = vi.fn(async () => ['a']);
   const deps = {
     repository: {
-      listFamilies: async () => ['a'],
+      listFamilies,
       withFamily: async <T>(_family: string, work: (s: ObjectPurgeStore) => Promise<T>) => work(store),
     },
     storage: {
@@ -34,7 +35,7 @@ async function register(keys: string[] = [], fail = false) {
     }[],
   ) => Promise<void>;
   const run = (data: unknown = {}) => handle([{ id: 'j1', data, signal: new AbortController().signal }]);
-  return { boss, logger, rows, store, run };
+  return { boss, logger, rows, store, run, listFamilies };
 }
 
 it('TC-421: enqueue khi khởi động có receipt, xóa thành công và log chỉ số đếm', async () => {
@@ -59,4 +60,12 @@ it('TC-421: lỗi S3 vẫn ghi receipt rồi ném lỗi an toàn để pg-boss r
   expect(f.rows.size).toBe(1);
   expect(f.store.recordFailure).toHaveBeenCalledWith('families/a/1', 'unknown');
   expect(JSON.stringify(f.logger.warn.mock.calls)).not.toContain('PII');
+});
+
+it('TC-806: job có familyId vét đúng nhà đó mà không liệt kê families', async () => {
+  const f = await register(['families/a/1']);
+  f.listFamilies.mockClear();
+  await f.run({ familyId: '0198f0c2-6f6c-7a52-8c0c-5f5f5f5f5f5f' });
+  expect(f.rows.size).toBe(0);
+  expect(f.listFamilies).not.toHaveBeenCalled();
 });

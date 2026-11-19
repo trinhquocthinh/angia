@@ -8,7 +8,8 @@ export function handlePurgePendingObjectsJob(
   logger: Pick<Logger, 'info' | 'warn' | 'error'>,
 ) {
   return async (job: { id: string; data: unknown; signal: AbortSignal }) => {
-    if (!purgePendingObjectsJobSchema.safeParse(job.data).success) {
+    const payload = purgePendingObjectsJobSchema.safeParse(job.data);
+    if (!payload.success) {
       logger.error({ jobId: job.id }, 'Payload dọn object không hợp lệ');
       return;
     }
@@ -17,6 +18,7 @@ export function handlePurgePendingObjectsJob(
       result = await purgePendingObjects(
         { ...deps, signal: job.signal },
         { batchSize: 100, maxAttempts: 10 },
+        payload.data.familyId,
       );
     } catch {
       // pg-boss lưu lỗi job: không chuyển raw message có thể chứa khóa object/PII.

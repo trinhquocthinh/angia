@@ -82,7 +82,9 @@ Repository có test kiểm lại DB sau snapshot main đã bị hạ quyền/r�
 chặn hash/SELECT toàn bảng và các trạng thái không còn hiệu lực. Cùng assertion
 quyền tối thiểu xanh → cấp SELECT thì thất bại → khôi phục lại xanh.
 Phần found_family đã có ở T1; TC-868 cả hai loại đã kiểm chứng local.
-TC-869/870 vẫn TODO cho E28/E29, không tính PASS.
+TC-870 vẫn TODO cho E29, không tính PASS. TC-869 (E28-S2-T2) đã thành test thật:
+`familyDeletionRole.int.test.ts` (hành vi role xoá nhà) và `familyDeletionPolicy.int.test.ts`
+(chống lệch, grant tối thiểu, phá thử bỏ điều kiện đến hạn → đỏ → khôi phục → xanh).
 
 Lệnh kiểm chứng từ gốc source với Colima:
 

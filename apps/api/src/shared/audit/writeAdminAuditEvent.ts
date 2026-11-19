@@ -14,6 +14,9 @@ const ACTIONS = [
   'ownership_transfer_accepted',
   'ownership_transfer_declined',
   'ownership_transfer_revoked',
+  'family_deletion_requested',
+  'family_deletion_revoked',
+  'family_deletion_executed',
 ] as const;
 
 interface AdminAuditEventInput {

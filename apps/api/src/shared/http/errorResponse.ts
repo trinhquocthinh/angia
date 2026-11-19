@@ -7,6 +7,12 @@ const ERROR_CATALOG = {
     status: 409,
     message: 'Đang có một đề nghị trao quyền Chủ hộ chờ trả lời.',
   },
+  ERR_FAMILY_NOT_EMPTY: { status: 409, message: 'Nhà còn người khác nên chưa xoá được.' },
+  // SDD §4.2 ghi {thời điểm}: mốc được phép nằm ở details.allowedAt (ISO 8601) để UI định dạng.
+  ERR_RECENT_REMOVAL: {
+    status: 409,
+    message: 'Vừa có người bị gỡ khỏi nhà; có thể xoá nhà sau thời điểm được nêu kèm.',
+  },
   ERR_OWNER_MUST_TRANSFER: { status: 409, message: 'Hãy trao quyền Chủ hộ cho người khác trước.' },
   ERR_OWNER_MUST_DELETE_FAMILY: {
     status: 409,

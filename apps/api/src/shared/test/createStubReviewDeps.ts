@@ -12,6 +12,7 @@ type StubbedDeps = Pick<
   AppDependencies,
   | 'invitationAcceptance'
   | 'householdOwnership'
+  | 'householdDeletion'
   | 'householdLeave'
   | 'household'
   | 'householdMembership'
@@ -52,6 +53,7 @@ const householdLeave = {
 };
 
 const householdManagement = {
+  householdDeletion: { request: notConfigured, revoke: notConfigured },
   householdOwnership: { offer: notConfigured, decide: notConfigured, revoke: notConfigured },
   householdLeave,
 };

@@ -1,3 +1,4 @@
+import { createHouseholdDeletionRepository } from './createHouseholdDeletionRepository.js';
 import { createHouseholdOwnershipRepository } from './createHouseholdOwnershipRepository.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { createHouseholdRepository } from './createHouseholdRepository.js';
@@ -8,6 +9,7 @@ import { createFoundingInvitationRepository } from './createFoundingInvitationRe
 
 export function createHouseholdDependencies(db: Database, appBaseUrl: string, invitationSecret: string) {
   return {
+    householdDeletion: createHouseholdDeletionRepository(db),
     householdOwnership: createHouseholdOwnershipRepository(db),
     household: createHouseholdRepository(db),
     householdMembership: createHouseholdMembershipRepository(db),

@@ -4,8 +4,13 @@ import type { ObjectPurgeRepository } from '../application/ports.js';
 
 export function createObjectPurgeRepository(pool: pg.Pool): ObjectPurgeRepository {
   return {
+    // Cộng thêm nhà đã xoá còn khoá chờ vét (không còn dòng families, RLS ẩn object_purges khi không GUC).
     listFamilies: async () =>
-      (await pool.query<{ id: string }>('SELECT id FROM families ORDER BY id')).rows.map((row) => row.id),
+      (
+        await pool.query<{ id: string }>(
+          `SELECT id FROM families UNION SELECT f FROM public.list_orphan_object_purge_families() AS f ORDER BY 1`,
+        )
+      ).rows.map((row) => row.id),
     withFamily: (familyId, work) =>
       withFamilyScope(pool, familyId, (client) =>
         work({
