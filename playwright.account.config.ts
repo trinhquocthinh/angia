@@ -13,6 +13,7 @@ export default defineConfig({
     '**/householdInvitations.spec.ts',
     '**/householdJoin.spec.ts',
     '**/householdInvitationManagement.spec.ts',
+    '**/householdMembers.spec.ts',
   ],
   testIgnore: '**/._*',
   forbidOnly: Boolean(process.env.CI),

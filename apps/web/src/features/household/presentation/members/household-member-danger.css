@@ -1,0 +1,42 @@
+.household-member-danger-zone {
+  margin-top: 24px;
+  padding: 20px;
+  border-radius: 20px;
+  background: var(--color-danger-soft);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.household-member-danger-copy {
+  min-width: 0;
+  flex: 1 1 240px;
+}
+.household-member-danger-copy h2 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.household-member-danger-copy p {
+  margin: 4px 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+  color: var(--color-text-secondary);
+}
+.household-member-danger-trigger {
+  border-color: color-mix(in srgb, var(--color-danger) 35%, var(--color-surface));
+  color: var(--color-danger);
+  background: var(--color-surface);
+}
+.household-member-danger-trigger:hover {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+@media (max-width: 1023px) {
+  .household-member-danger-trigger {
+    width: 100%;
+  }
+}

@@ -6,14 +6,15 @@ export function AccountMenuDestinations({
   session,
   onClose,
 }: Pick<AccountMenuProps, 'session'> & { onClose?: (() => void) | undefined }) {
-  if (
-    !session.account.healthProfileId &&
-    !session.account.isSystemAdmin &&
-    !(session.family && session.role === 'main')
-  )
-    return null;
+  if (!session.account.healthProfileId && !session.account.isSystemAdmin && !session.family) return null;
   return (
     <div className="account-menu-links">
+      {session.family && (
+        <Link to="/family/members" onClick={onClose}>
+          <AdminIcon name="group" />
+          Thành viên
+        </Link>
+      )}
       {session.family && session.role === 'main' && (
         <Link to="/family/invite" onClick={onClose}>
           <AdminIcon name="group_add" />
