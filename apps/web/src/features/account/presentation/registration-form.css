@@ -1,12 +1,5 @@
 @import './registration-checkbox.css';
 
-@font-face {
-  font-family: 'An Gia Registration Icons';
-  src: url('/fonts/material-symbols/register-outlined.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: block;
-}
 .registration-form fieldset {
   gap: 20px;
   min-width: 0;
@@ -23,21 +16,21 @@
   width: 20px;
   height: 20px;
   content: '';
-  background: var(--color-text-secondary);
-  mask: var(--registration-icon) center / contain no-repeat;
+  background: var(--registration-icon) center / contain no-repeat;
+  filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--color-shadow) 15%, transparent));
   pointer-events: none;
 }
 .registration-user {
-  --registration-icon: url('/images/register/user.svg');
+  --registration-icon: url('/images/register/clay/user.svg');
 }
 .registration-password {
-  --registration-icon: url('/images/register/key.svg');
+  --registration-icon: url('/images/register/clay/key.svg');
 }
 .registration-name {
-  --registration-icon: url('/images/register/name.svg');
+  --registration-icon: url('/images/register/clay/name.svg');
 }
 .registration-email {
-  --registration-icon: url('/images/register/email.svg');
+  --registration-icon: url('/images/register/clay/email.svg');
 }
 .registration-control input {
   min-height: 50px;
@@ -136,28 +129,6 @@
   .registration-control input {
     background: var(--color-bg);
     border-color: var(--color-border);
-  }
-  .registration-control::before {
-    mask: none;
-    background: none;
-    font-family: 'An Gia Registration Icons';
-    font-size: 20px;
-    line-height: 20px;
-    font-weight: 400;
-    font-feature-settings: 'liga';
-    color: var(--color-text-secondary);
-  }
-  .registration-user::before {
-    content: 'account_circle';
-  }
-  .registration-password::before {
-    content: 'key';
-  }
-  .registration-name::before {
-    content: 'badge';
-  }
-  .registration-email::before {
-    content: 'alternate_email';
   }
 }
 @media (prefers-reduced-motion: reduce) {

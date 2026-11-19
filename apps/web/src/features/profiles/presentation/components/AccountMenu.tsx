@@ -1,3 +1,4 @@
+import { ClayIcon } from '@src/shared/ui/ClayIcon';
 import { lazy, Suspense, useId, useState } from 'react';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { roleLabel } from './roleLabel';
@@ -28,7 +29,7 @@ export function AccountMenu(props: AccountMenuProps) {
         }}
       >
         <span className="account-menu-trigger-avatar">
-          <AdminIcon name="person" size={18} />
+          <ClayIcon name="avatar" size={32} />
         </span>
         <span className="account-menu-trigger-name">
           <strong>{props.session.account.displayName}</strong>

@@ -1,0 +1,43 @@
+.household-clay-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+}
+.household-clay-icon img {
+  display: block;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px color-mix(in srgb, var(--color-household-shadow) 18%, transparent));
+  transition: transform 180ms ease-out;
+}
+.household-clay-icon-family {
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--color-nav-icon-porcelain) 70%, transparent);
+  background: linear-gradient(135deg, var(--color-clay-porcelain), var(--color-clay-family));
+  box-shadow:
+    0 2px 6px color-mix(in srgb, var(--color-household-shadow) 10%, transparent),
+    inset 0 1px 1px color-mix(in srgb, var(--color-nav-icon-porcelain) 80%, transparent);
+}
+.household-clay-icon-family img {
+  width: 20px;
+  height: 20px;
+  filter: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .household-start-choice:hover .household-clay-icon img {
+    transform: scale(1.1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .household-clay-icon img {
+    transition: none;
+    transform: none !important;
+  }
+}

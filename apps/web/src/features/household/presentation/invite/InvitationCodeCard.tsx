@@ -13,22 +13,26 @@ export function InvitationCodeCard({
   const date = new Date(invitation.expiresAt);
   return (
     <div className="household-invite-code-card" data-status={status}>
-      <span className="household-invite-code-role">
-        {status === 'accepted'
-          ? 'Lời mời đã được dùng'
-          : status === 'expired'
-            ? 'Mã đã hết hạn'
-            : status === 'revoked'
-              ? 'Đã thu hồi lời mời'
-              : status === 'unavailable'
-                ? 'Lời mời không còn dùng được'
-                : invitation.role === 'main'
-                  ? 'Đồng quản lý'
-                  : 'Thành viên'}
-      </span>
+      <div className="household-invite-code-top">
+        <span className="household-invite-code-role">
+          {status === 'accepted'
+            ? 'Lời mời đã được dùng'
+            : status === 'expired'
+              ? 'Mã đã hết hạn'
+              : status === 'revoked'
+                ? 'Đã thu hồi lời mời'
+                : status === 'unavailable'
+                  ? 'Lời mời không còn dùng được'
+                  : invitation.role === 'main'
+                    ? 'Đồng quản lý'
+                    : 'Thành viên'}
+        </span>
+        {!inactive && invitation.code && status === 'active' && (
+          <span className="household-invite-code-label">Mã mời</span>
+        )}
+      </div>
       {!inactive && invitation.code && (
         <>
-          {status === 'active' && <span className="household-invite-code-label">Mã mời</span>}
           <output className="household-invite-code" aria-label="Mã mời">
             {invitation.code.match(/.{1,4}/g)?.join(' ')}
           </output>

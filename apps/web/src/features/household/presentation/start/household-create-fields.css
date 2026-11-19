@@ -126,3 +126,27 @@
 .household-role-mobile {
   display: none;
 }
+
+.household-create-heading > .clay-icon {
+  display: inline-flex;
+  margin-bottom: 14px;
+  padding: 0;
+}
+.household-name-home:has(.clay-icon) {
+  display: flex;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.household-name-input:has(.clay-icon) input {
+  padding-left: 48px;
+}
+.household-start-role-icon:has(.clay-icon) {
+  background: transparent;
+  box-shadow: none;
+}
+.household-create-highlights .clay-icon {
+  display: inline-flex;
+}

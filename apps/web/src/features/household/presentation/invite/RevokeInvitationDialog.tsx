@@ -1,3 +1,4 @@
+import { ClayIcon } from '@src/shared/ui/ClayIcon';
 import { useId } from 'react';
 import { useModalDialog } from '@src/shared/ui/useModalDialog';
 import { Button } from '@src/shared/ui/button/Button';
@@ -41,7 +42,7 @@ export function RevokeInvitationDialog({ invitation, pending, error, onClose, on
           <InvitationIcon name="close" />
         </Button>
         <div className="household-invite-revoke-icon">
-          <InvitationIcon name="trash" />
+          <ClayIcon name="revoke" size={80} />
         </div>
         <h2 id={titleId}>Thu hồi lời mời này?</h2>
         <p>Người nhận sẽ không dùng được mã hoặc link này nữa.</p>
@@ -53,10 +54,11 @@ export function RevokeInvitationDialog({ invitation, pending, error, onClose, on
         )}
         <div className="household-invite-revoke-actions">
           <Button autoFocus variant="secondary" disabled={pending} onClick={onClose}>
+            <ClayIcon name="keep" size={24} />
             Giữ lời mời
           </Button>
           <Button className="household-invite-danger" disabled={pending} onClick={onConfirm}>
-            <InvitationIcon name="trash" />
+            <ClayIcon name="revoke-button" size={24} />
             {pending ? 'Đang thu hồi…' : 'Thu hồi lời mời'}
           </Button>
         </div>

@@ -45,6 +45,16 @@ Nền gốc 1376 × 768 và logo được tối ưu WebP tại `apps/web/public/
 SVG desktop và Authentik giữ hình dạng từ thiết kế. Icon mobile là subset Material
 Symbols lưu local tại `public/fonts/material-symbols/login-outlined.ttf`, cùng
 giấy phép Apache 2.0 trong thư mục đó. Login không gọi CDN ảnh hoặc font lúc chạy.
+Owner duyệt cập nhật icon 3D ngày 2026-11-18: desktop lấy từ màn
+`f39345d438f942de8056e0b4350d3d79`, mobile từ `b91f19cefbd648208efc22fae503db8b`.
+Chín SVG gốc lưu tại `apps/web/public/images/login/clay/`: desktop có lịch, tim,
+gia đình, ổ khóa, người dùng và chìa khóa; mobile có ổ khóa, avatar và chìa khóa
+riêng. `LoginClayIcon` chọn ảnh bằng `picture` tại breakpoint 1024px. Các SVG 3D
+thay icon nét/phông ở các vị trí này; mắt hiện/ẩn, mũi tên, Authentik và icon phụ
+tiếp tục dùng tài nguyên hiện hành. Cờ `clayIcons` bật ở cả `/login` và `/register`:
+ba thẻ tiện ích dùng chung SVG 3D lịch, tim và gia đình. Kiểm tra ảnh theo breakpoint,
+hiện/ẩn mật khẩu và chữ 200% tại `apps/web/e2e/loginClayIcons.spec.ts`, dùng cấu
+hình `playwright.account.config.ts` sau khi build web.
 Mobile dùng nền mint và hai SVG mây từ màn Stitch mobile; không hiển thị ba
 block tiện ích dưới form đăng nhập/đăng ký. Các block bên trái desktop dùng chung.
 Form đăng ký có thanh độ mạnh mật khẩu bốn mức theo mẫu Stitch; điểm chỉ là tham khảo,
@@ -52,6 +62,16 @@ không thay quy tắc ít nhất 8 ký tự và khác tên đăng nhập. Hai li
 gạch chân và dùng URL/phiên bản từ API. Form trống/lỗi có hiệu ứng rung, tôn trọng
 thiết lập giảm chuyển động. Không thay nghiệp vụ đăng ký local, thêm số điện thoại
 hay luồng đăng ký Authentik.
+
+Owner duyệt cập nhật **chỉ icon form đăng ký** ngày 2026-11-18 từ màn Stitch
+`36f3713e39b84fdab8739e790faaaba5`: 5 SVG tại `apps/web/public/images/register/clay/`
+gồm tiêu đề tạo tài khoản, avatar hồng, chìa khóa vàng, thẻ tên xanh lá và email
+xanh dương. Form responsive dùng cùng bộ icon màu; bỏ mask đơn sắc và glyph
+mobile ở bốn ô nhập. Chuẩn hóa tên thẻ/thuộc tính SVG khi trích từ HTML để gradient
+đọc đúng trong tệp độc lập. Theo yêu cầu tiếp theo của owner, cột trái register
+dùng lại ba icon 3D của login, giữ năm icon form vừa cập nhật. Bố cục, chữ, nút,
+checkbox, mắt hiện/ẩn và nghiệp vụ giữ nguyên. Ca `accountRegistrationClayCase.ts`
+kiểm cả hai nhóm icon, hiện/ẩn mật khẩu, thanh độ mạnh và chữ 200%.
 
 Form vẫn đăng nhập local qua `/api/auth/password-login`; nút **Đăng nhập bằng
 Authentik** vẫn trỏ `/api/auth/login`. Không thay backend, schema, chính sách phiên,
@@ -72,6 +92,26 @@ gửi hoặc thiếu văn bản/CSRF; luồng ghi nhận phiên bản, đồng �
 nguyên. Các style `legal-update-*` và token màu riêng không đổi layout các trang
 khác. Tham chiếu Stitch: desktop `54449e0d704649b1be3c951e7bea9024`, mobile
 `86f7ce7d28c941db9f555b6e20d17a2a`.
+
+## Thanh điều hướng mobile — 2026-11-18
+
+Owner duyệt mẫu Stitch `1b24d17804194ed298e3613ac5f4e5cc`:
+thanh đáy dưới 1024px giữ ba nhãn Trang chủ / Thêm mới / Chờ duyệt và các route
+hiện hành; Thêm mới dẫn thẳng `/upload`, không mở menu thao tác mẫu. Thành viên
+đã liên kết chỉ có Trang chủ / Hồ sơ của tôi; chưa có nhà, thành viên chưa liên
+kết và trang admin tiếp tục ẩn điều hướng theo quy tắc hiện hành.
+
+SVG 3D lưu tại `apps/web/public/icons/mobile-nav-*-3d.svg`, dùng cố định theo yêu cầu
+owner; đã bỏ SVG 2D, bộ chuyển kiểu và font riêng của bộ chọn. Giữ nền tab chuyển
+300ms, nhấn 200ms, icon tab nảy và halo 2 giây; reduced motion tắt chuyển động.
+Chữ tối thiểu 16px, vùng chạm tối thiểu 48px; footer chừa khoảng cho thanh đáy.
+
+Kiểm tra trình duyệt bằng
+`yarn playwright test --config playwright.account.config.ts apps/web/e2e/mobileBottomNav.spec.ts`
+(build web trước), gồm hai nền, Chromium/WebKit, chữ 200%, liên kết và reduced
+motion. Phạm vi này chưa triển khai bộ bốn tab/rail/sidebar của E30-S1-T1 và chưa
+nghiệm thu SIT. `verify:fast` tại checkpoint bị metadata macOS `._*` chặn ở Vitest
+sau typecheck; không coi các kiểm tra riêng là cổng verify chính thức đã đạt.
 
 ## Quản trị hệ thống
 
@@ -1350,6 +1390,19 @@ hết hạn desktop `cb6582ee6870458ea9b74aa5acbc822c`, mobile
 `30aa5e305ea74da7b61bdd4a52f1659f`, mobile `4babd60ba7594db2ae02d2bb47d03237`;
 Tạo nhà desktop `fafff946ed7b4a74b5a5844ebb8ddb81`, mobile
 `cfd254f045364a9193ea1f696cbd8df1`. Giữ mô tả quyền đúng sản phẩm.
+
+**Cập nhật giao diện owner duyệt ngày 2026-11-19:** arrow 3D chỉ giữ ở hai lựa
+chọn trên màn Bắt đầu; các màn khác dùng lại mũi tên cũ. Tạo nhà mới dùng icon
+từ màn desktop nêu trên, giữ form và hành vi hiện có. Avatar tài khoản dùng
+chung trên desktop/mobile. Màn mời dùng tab và khối mã theo từng breakpoint,
+với bộ icon desktop dùng chung cho mobile; modal/bottom sheet thu hồi dùng bộ
+icon của màn xác nhận desktop. Mười lăm SVG lưu local tại
+`apps/web/public/images/household/stitch/`, hiển thị qua `ClayIcon`; không đổi
+API, quyền hoặc vòng đời lời mời. Build/typecheck, lint/format phần đổi,
+**228/228 E2E** và **16/16 kiểm tra giao diện** tại 360/390/768/1440 px ở hai
+nền PASS. **50 unit test liên quan** PASS trên bản sao sạch metadata;
+`yarn verify:fast` trên bản sao đó PASS (52 test liên quan). Lệnh trên volume
+gốc vẫn vướng metadata macOS `._*`; chưa ghi full `yarn verify` PASS cho đợt này.
 
 API household/audit: 91 integration PostgreSQL tạm PASS ở checkpoint triển khai.
 Build/typecheck, lint/format phần đổi và budget mọi route PASS, lớn nhất

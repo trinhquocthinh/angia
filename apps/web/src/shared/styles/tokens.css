@@ -1,5 +1,18 @@
 /* Design §11.2; owner khôi phục màu sáng cũ tại E27-S5-T1 (2026-11-17). */
 @theme static {
+  /* Màu clay Stitch cố định: nền icon sáng dùng chung cho hai chế độ. */
+  --color-clay-porcelain: #faf8f5;
+  --color-clay-mint: #e4f0ec;
+  --color-clay-jade: #cfe3dc;
+  --color-clay-family: #d5e7e1;
+  --color-clay-hover-start: #2f6f5e;
+  --color-clay-hover-end: #1b4d41;
+  /* Bảng màu minh hoạ SVG gốc Stitch cho thanh điều hướng. */
+  --color-nav-icon-jade-deep: #004135;
+  --color-nav-icon-porcelain: #ffffff;
+  --color-nav-icon-jade-light: #99d2c0;
+  --color-nav-badge-start: #833b00;
+  --color-nav-badge-end: #ba1a1a;
   --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
   --color-bg: #f0fcfb;
   --color-surface: #ffffff;

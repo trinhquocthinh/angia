@@ -1,4 +1,5 @@
 import { accountRegistrationDesignCase } from './accountRegistrationDesignCase.js';
+import { accountRegistrationClayCase } from './accountRegistrationClayCase.js';
 import { accountEnrollmentCases } from './accountEnrollmentCases.js';
 import { accountPasswordCases } from './accountPasswordCases.js';
 import { accountLegalUpdateCases } from './accountLegalUpdateCases.js';
@@ -23,6 +24,7 @@ test.beforeEach(async ({ page }, info) => {
 
 for (const theme of ['light', 'dark']) {
   accountRegistrationDesignCase(theme);
+  accountRegistrationClayCase(theme);
   accountEnrollmentCases(theme);
   accountPasswordCases(theme);
   accountLegalUpdateCases(theme);

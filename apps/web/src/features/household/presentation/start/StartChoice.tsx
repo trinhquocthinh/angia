@@ -1,10 +1,11 @@
 import { Link } from '@tanstack/react-router';
-import { StartIcon } from './StartIcon';
+import { Arrow3d } from '@src/shared/ui/Arrow3d';
+import { HouseholdClayIcon } from './HouseholdClayIcon';
 export function StartChoice({ create = false }: { create?: boolean }) {
   const content = (
     <>
       <span className="household-start-icon">
-        <StartIcon name={create ? 'house' : 'invite'} />
+        <HouseholdClayIcon name={create ? 'house' : 'invite'} />
       </span>
       <span className="household-start-choice-copy">
         <span className="household-choice-title">
@@ -16,7 +17,7 @@ export function StartChoice({ create = false }: { create?: boolean }) {
         </span>
       </span>
       <span className="household-start-chevron">
-        <StartIcon name="chevron" />
+        <Arrow3d size={40} />
       </span>
     </>
   );

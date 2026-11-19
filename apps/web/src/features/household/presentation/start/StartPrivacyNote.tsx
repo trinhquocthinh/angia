@@ -1,9 +1,9 @@
-import { StartIcon } from './StartIcon';
+import { HouseholdClayIcon } from './HouseholdClayIcon';
 export function StartPrivacyNote() {
   return (
     <aside className="household-start-privacy">
       <span className="household-privacy-icon">
-        <StartIcon name="shield" />
+        <HouseholdClayIcon name="family" />
       </span>
       <div>
         <strong>Sổ sức khỏe riêng của nhà</strong>

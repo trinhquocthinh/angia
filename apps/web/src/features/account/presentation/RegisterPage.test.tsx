@@ -15,6 +15,13 @@ it('đang tải legal: chưa có URL tự tạo, nút gửi vô hiệu và check
     </QueryClientProvider>,
   );
   expect(html).toContain('Tạo tài khoản');
+  expect(html).toContain('/images/register/clay/heading.svg');
+  for (const name of ['medication', 'heart', 'family']) {
+    expect(html).toContain(`/images/login/clay/desktop-${name}.svg`);
+  }
+  for (const name of ['lock', 'user', 'key']) {
+    expect(html).not.toContain(`/images/login/clay/desktop-${name}.svg`);
+  }
   expect(html).toContain('autoComplete="new-password"');
   expect(html).toContain('Ít nhất 8 ký tự, khác tên đăng nhập.');
   expect(html).toContain('type="email"');

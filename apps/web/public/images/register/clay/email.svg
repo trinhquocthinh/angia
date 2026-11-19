@@ -1,0 +1,12 @@
+<svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="clayMail_blue3D" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#93C5FD"></stop>
+<stop offset="60%" stop-color="#3B82F6"></stop>
+<stop offset="100%" stop-color="#1D4ED8"></stop>
+</linearGradient>
+</defs>
+<rect fill="url(#clayMail_blue3D)" height="14" rx="3.5" width="19" x="2.5" y="5"></rect>
+<path d="M3.5 7 L11.2 12.8 C11.7 13.1, 12.3 13.1, 12.8 12.8 L20.5 7" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+<ellipse cx="6" cy="8" fill="#FFFFFF" opacity="0.65" rx="1.5" ry="0.8"></ellipse>
+</svg>

@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="clayUserAvatar_3D" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#FB7185"></stop>
+<stop offset="100%" stop-color="#E11D48"></stop>
+</linearGradient>
+</defs>
+<circle cx="12" cy="7.5" fill="url(#clayUserAvatar_3D)" r="4.2"></circle>
+<path d="M4.5 19.5 C4.5 15.5, 7.8 13.5, 12 13.5 C16.2 13.5, 19.5 15.5, 19.5 19.5 C19.5 20.3, 18.8 21, 18 21 L6 21 C5.2 21, 4.5 20.3, 4.5 19.5 Z" fill="url(#clayUserAvatar_3D)"></path>
+<ellipse cx="10.5" cy="5.5" fill="#FFFFFF" opacity="0.6" rx="1.2" ry="0.8"></ellipse>
+</svg>

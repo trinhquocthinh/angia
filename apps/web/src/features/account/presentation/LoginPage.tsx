@@ -6,7 +6,7 @@ import { submitPasswordLogin } from '../infrastructure/submitPasswordLogin';
 import { LoginLayout } from './LoginLayout';
 import { LoginForm } from './LoginForm';
 import { LoginAlternative } from './LoginAlternative';
-import { LoginIcon } from './LoginIcon';
+import { LoginClayIcon } from './LoginClayIcon';
 export function LoginPage({ hasAuthError = false }: { hasAuthError?: boolean }) {
   const client = useQueryClient();
   const navigate = useNavigate();
@@ -16,10 +16,10 @@ export function LoginPage({ hasAuthError = false }: { hasAuthError?: boolean }) 
     hasAuthError,
   );
   return (
-    <LoginLayout>
+    <LoginLayout clayIcons>
       <div className="login-form-heading">
         <span className="login-heading-icon">
-          <LoginIcon name="lock" />
+          <LoginClayIcon name="lock" />
         </span>
         <div>
           <h2 id="login-title">Đăng nhập</h2>
