@@ -53,7 +53,7 @@ export function RevokeInvitationDialog({ invitation, pending, error, onClose, on
           </p>
         )}
         <div className="household-invite-revoke-actions">
-          <Button autoFocus variant="secondary" disabled={pending} onClick={onClose}>
+          <Button data-autofocus variant="secondary" disabled={pending} onClick={onClose}>
             <ClayIcon name="keep" size={24} />
             Giữ lời mời
           </Button>

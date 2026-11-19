@@ -7,6 +7,7 @@ export function useModalDialog() {
     const previous = document.activeElement;
     const dialog = ref.current;
     dialog?.showModal();
+    dialog?.querySelector<HTMLElement>('[data-autofocus]')?.focus();
     return () => {
       dialog?.close();
       if (previous instanceof HTMLElement && previous.isConnected) previous.focus();
