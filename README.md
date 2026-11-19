@@ -1476,3 +1476,29 @@ Integration E28/audit ngay trên volume gốc: **14/14 PASS**; khung cô lập n
 
 TC-787 mới kiểm tiền đề tạo cửa sổ tải đúng 168 giờ; kiểm tải hồ sơ đầu-cuối
 chờ SPEC-072/E29. UI quản lý thành viên thuộc E28-S3; chưa nghiệm thu SIT.
+
+## E28-S1-T2 — Tự rời nhà (local 2026-11-19)
+
+`POST /api/family/leave` nhận body strict `{ ownProfileDisposition?: "keep" | "delete" }`,
+trả `204`, `Cache-Control: no-store`; yêu cầu phiên và CSRF. Tài khoản có hồ sơ
+liên kết phải chọn giữ hoặc xoá. Chủ hộ còn người khác nhận
+`409 ERR_OWNER_MUST_TRANSFER`; Chủ hộ một mình nhận
+`409 ERR_OWNER_MUST_DELETE_FAMILY`. Người giám hộ cuối cùng nhận
+`409 ERR_LAST_GUARDIAN` kèm `details.profileIds`.
+
+Một transaction `withFamilyScope` khoá và kiểm lại DB, xử lý tư cách giám hộ,
+gỡ membership/liên kết và đăng ký Push, ghi audit `member_left`.
+`keep` giữ nguyên hồ sơ và đồng thuận. `delete` xoá hồ sơ cùng dữ liệu phụ thuộc,
+enqueue `purge-profile-objects` cùng transaction rồi dọn ảnh sau COMMIT.
+Cửa sổ tải lịch sử cùng hồ sơ được bỏ tham chiếu hồ sơ, giữ thời hạn;
+không tạo cửa sổ tải mới hay cập nhật thời điểm gỡ thành viên.
+Lỗi queue/audit rollback toàn bộ; lỗi storage sau COMMIT để job vét dọn tiếp.
+Không đổi schema hoặc migration.
+
+TC-790–796 kiểm local: **15 integration mới**, cùng hồi quy T1/audit
+**43/43 PASS**; khung truy cập chéo gia đình **4/4 PASS**.
+`yarn verify:fast` trên bản sao sạch metadata PASS (typecheck + 165 unit liên quan); full `yarn verify` PASS (3466 unit test/684 suite, sinh API, lint/format/dup/knip/build/budget/model). Build còn cảnh báo chunk lớn nhưng cổng budget PASS.
+Volume gốc còn lỗi metadata macOS `._*.ts`; không coi cổng verify tại volume gốc PASS.
+Bản sao tạm không chứa metadata được dùng để kiểm chứng cùng source.
+Chưa nghiệm thu Garage/SIT, Push service hoặc UI; UI rời nhà thuộc E28-S3-T2.
+Bằng chứng: `../../Docs/angia/acceptance/v1.0/evidence/e28-s1-t2-2026-11-19.md`.

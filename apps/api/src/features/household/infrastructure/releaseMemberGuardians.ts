@@ -24,14 +24,16 @@ export async function releaseMemberGuardians(tx: FamilyScopedTx, familyId: strin
     )
     .orderBy(asc(healthProfiles.id))
     .for('update');
+  const blocked: string[] = [];
   for (const profile of profiles) {
     const guardians = await tx
       .select({ id: profileGuardians.accountId })
       .from(profileGuardians)
       .where(and(eq(profileGuardians.familyId, familyId), eq(profileGuardians.healthProfileId, profile.id)));
-    if (profile.needsGuardian && guardians.every((row) => row.id === accountId))
-      return { ok: false, code: 'ERR_LAST_GUARDIAN' } as const;
+    if (profile.needsGuardian && guardians.every((row) => row.id === accountId)) blocked.push(profile.id);
   }
+  if (blocked.length > 0)
+    return { ok: false, code: 'ERR_LAST_GUARDIAN', details: { profileIds: blocked } } as const;
   await tx
     .delete(profileGuardians)
     .where(and(eq(profileGuardians.familyId, familyId), eq(profileGuardians.accountId, accountId)));

@@ -9,6 +9,7 @@ const ACTIONS = [
   'invitation_accepted',
   'member_role_changed',
   'member_removed',
+  'member_left',
 ] as const;
 
 interface AdminAuditEventInput {

@@ -1,3 +1,4 @@
+import { createHouseholdLeaveRepository } from '@src/features/household/infrastructure/createHouseholdLeaveRepository.js';
 import { createHouseholdDependencies } from '@src/features/household/infrastructure/createHouseholdDependencies.js';
 import { createLocalCredentialLookup } from '@src/features/account/infrastructure/createLocalCredentialLookup.js';
 import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
@@ -124,6 +125,11 @@ const sessionRepository = createSessionRepository(db);
 const hasher = createArgon2PasswordHasher();
 const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
 const app = createApp({
+  householdLeave: {
+    repository: createHouseholdLeaveRepository(db, boss),
+    storage: createProfileObjectStorage(s3, config.S3_BUCKET),
+    logger: logger,
+  },
   ...createHouseholdDependencies(db, config.APP_BASE_URL, config.INVITATION_ENCRYPTION_KEY),
   legal: createLegalRepository(db),
   account: {

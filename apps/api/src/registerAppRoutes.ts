@@ -1,3 +1,4 @@
+import { registerHouseholdLeaveRoute } from '@src/features/household/presentation/registerHouseholdLeaveRoute.js';
 import { registerInvitationAcceptanceRoutes } from '@src/features/household/presentation/registerInvitationAcceptanceRoutes.js';
 import { registerHouseholdInvitationRoutes } from '@src/features/household/presentation/registerHouseholdInvitationRoutes.js';
 import { registerHouseholdRoutes } from '@src/features/household/presentation/registerHouseholdRoutes.js';
@@ -21,6 +22,7 @@ import { registerPushRoutes } from '@src/features/pushSubscriptions/presentation
 
 export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencies): void {
   const cookies = { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies };
+  registerHouseholdLeaveRoute(app, deps.householdLeave);
   registerHouseholdRoutes(app, deps.household);
   registerHouseholdMembershipRoutes(app, deps.householdMembership);
   registerInvitationAcceptanceRoutes(app, deps.invitationAcceptance);

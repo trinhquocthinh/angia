@@ -259,4 +259,4 @@ export * from './painJournal/forbiddenWords.js';
 export * from './painJournal/schemas.js';
 
 export * from './household/householdInvitationSchemas.js';
-export { changeHouseholdMemberRequestSchema } from './household/changeHouseholdMemberRequestSchema.js';
+export * from './household/membershipSchemas.js';

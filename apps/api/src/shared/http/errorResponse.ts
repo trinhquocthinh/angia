@@ -3,6 +3,11 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_OWNER_MUST_TRANSFER: { status: 409, message: 'Hãy trao quyền Chủ hộ cho người khác trước.' },
+  ERR_OWNER_MUST_DELETE_FAMILY: {
+    status: 409,
+    message: 'Bạn là người duy nhất trong nhà. Hãy xoá nhà nếu không dùng nữa.',
+  },
   ERR_OWNER_PROTECTED: { status: 403, message: 'Không thể thực hiện thao tác này với Chủ hộ.' },
   ERR_LAST_GUARDIAN: {
     status: 409,

@@ -139,6 +139,8 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'DELETE /api/family/invitations/:id',
   // SPEC-066: thao tác quản lý, không trả dữ liệu sức khỏe; TC-789 kiểm khác nhà riêng.
   'PATCH /api/family/members/:targetAccountId',
+  // SPEC-067: tự thao tác; kiểm dữ liệu/ID nhà cũ và DTO strict tại leaveHousehold.int.test.ts.
+  'POST /api/family/leave',
   'GET /api/legal/current',
   'POST /api/me/legal-acceptances',
   'POST /api/me/local-credential',

@@ -1,3 +1,4 @@
+import type { HouseholdLeaveDependencies } from '@src/features/household/application/leavePorts.js';
 import type { InvitationAcceptanceDependencies } from '@src/features/household/presentation/registerInvitationAcceptanceRoutes.js';
 import type { HouseholdInvitationDependencies } from '@src/features/household/application/invitationPorts.js';
 import type { LocalCredentialLookup } from '@src/shared/auth/application/ports.js';
@@ -63,6 +64,7 @@ import type { HouseholdRepository } from '@src/features/household/application/po
 import type { HouseholdMembershipRepository } from '@src/features/household/application/membershipPorts.js';
 
 export type AppDependencies = {
+  householdLeave: HouseholdLeaveDependencies;
   household: HouseholdRepository;
   householdMembership: HouseholdMembershipRepository;
   invitationAcceptance: InvitationAcceptanceDependencies;
