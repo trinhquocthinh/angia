@@ -65,7 +65,7 @@ export function createStubReviewDeps(): StubbedDeps {
   return {
     ...householdManagement,
     household: { create: notConfigured },
-    householdMembership: { change: notConfigured },
+    householdMembership: { change: notConfigured, list: notConfigured },
     invitationAcceptance: {
       acceptance: { accept: notConfigured },
       founding: { create: notConfigured, revoke: notConfigured },

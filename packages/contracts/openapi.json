@@ -8540,6 +8540,96 @@
         }
       }
     },
+    "/api/family/members": {
+      "get": {
+        "tags": [
+          "household"
+        ],
+        "summary": "Danh sách tài khoản trong nhà của phiên hiện tại",
+        "responses": {
+          "200": {
+            "description": "Chủ hộ trước, rồi main, member; trong nhóm theo tên và UUID",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "no-store"
+                  ]
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "members": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "accountId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "displayName": {
+                            "type": "string"
+                          },
+                          "role": {
+                            "type": "string",
+                            "enum": [
+                              "main",
+                              "member"
+                            ]
+                          },
+                          "isOwner": {
+                            "type": "boolean"
+                          },
+                          "isSelf": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "accountId",
+                          "displayName",
+                          "role",
+                          "isOwner",
+                          "isSelf"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "members"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/family/members/{targetAccountId}": {
       "patch": {
         "tags": [

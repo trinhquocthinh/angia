@@ -1607,3 +1607,18 @@ Volume gốc còn lỗi runner do metadata macOS `._*`; không ghi full verify P
 
 Chưa nghiệm thu SIT/UI; giao diện giám hộ thuộc E28-S3-T3. Bằng chứng và giới hạn
 kiểm chứng: `../../Docs/angia/acceptance/v1.0/evidence/e28-s2-t3-2026-11-19.md`.
+
+## E28-S3-T1 — API danh sách thành viên
+
+`GET /api/family/members` trả `200`, `Cache-Control: no-store` và
+`{ members: [{ accountId, displayName, role, isOwner, isSelf }] }`.
+Cả `main` và `member` có nhà đều được đọc; chưa có nhà trả `403 ERR_FORBIDDEN`,
+chưa đăng nhập trả `401`. Chỉ chọn tài khoản có `family_id` của phiên, đọc trong
+`withFamilyScope` bằng role runtime và kiểm lại membership trong cùng câu SELECT.
+Chủ hộ đứng trước, rồi `main`, rồi `member`; mỗi nhóm theo `displayName`
+(collation mặc định của DB), cuối cùng theo UUID. Không trả email, username,
+ID hồ sơ hoặc dữ liệu sức khỏe. Không đổi schema, domain hay UI.
+
+Unit test: `application/listHouseholdMembers.test.ts`; kiểm quyền, thứ tự,
+cờ Chủ hộ/bản thân, khóa JSON và cô lập chéo nhà tại
+`apps/api/src/features/household/presentation/listHouseholdMembers.int.test.ts`.

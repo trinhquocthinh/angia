@@ -1,3 +1,4 @@
+import { readHouseholdMembers } from './readHouseholdMembers.js';
 import { canUnlinkStoredProfile } from '@src/features/profiles/guardians/infrastructure/canUnlinkStoredProfile.js';
 import { revokeMemberOwnershipOffers } from './revokeMemberOwnershipOffers.js';
 import { asc, eq, or } from 'drizzle-orm';
@@ -11,6 +12,7 @@ import { removeStoredHouseholdMember } from './removeStoredHouseholdMember.js';
 
 export function createHouseholdMembershipRepository(db: Database): HouseholdMembershipRepository {
   return {
+    list: (actor) => withFamilyScope(db, actor.familyId, (tx) => readHouseholdMembers(tx, actor)),
     change: (actor, targetId, change) =>
       withFamilyScope(db, actor.familyId, async (tx) => {
         // Khoá account theo UUID trước family, cùng thứ tự account → family của quản lý lời mời.

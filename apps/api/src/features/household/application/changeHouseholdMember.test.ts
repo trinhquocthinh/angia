@@ -5,6 +5,9 @@ import type { HouseholdMembershipRepository } from './membershipPorts.js';
 describe('SPEC-066: kiểm quyền trước khi quản lý thành viên', () => {
   const actor = { accountId: 'actor', familyId: 'family', role: 'main' as const };
   const unavailable: HouseholdMembershipRepository = {
+    list: async () => {
+      throw new Error('Không được đọc danh sách');
+    },
     change: () => {
       throw new Error('Không được truy cập kho khi không có quyền');
     },
@@ -25,6 +28,9 @@ describe('SPEC-066: kiểm quyền trước khi quản lý thành viên', () => 
   });
   it('TC-782: chuyển thao tác hợp lệ vào transaction và giữ lỗi kiểm lại quyền', async () => {
     const denied: HouseholdMembershipRepository = {
+      list: async () => {
+        throw new Error('Không được đọc danh sách');
+      },
       change: async () => ({ ok: false, code: 'ERR_OWNER_PROTECTED' }),
     };
     expect(

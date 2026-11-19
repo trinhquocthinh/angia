@@ -814,6 +814,71 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/family/members': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Danh sách tài khoản trong nhà của phiên hiện tại */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Chủ hộ trước, rồi main, member; trong nhóm theo tên và UUID */
+        200: {
+          headers: {
+            'Cache-Control'?: 'no-store';
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              members: {
+                /** Format: uuid */
+                accountId: string;
+                displayName: string;
+                /** @enum {string} */
+                role: 'main' | 'member';
+                isOwner: boolean;
+                isSelf: boolean;
+              }[];
+            };
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/family/members/{targetAccountId}': {
     parameters: {
       query?: never;

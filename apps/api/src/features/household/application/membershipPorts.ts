@@ -18,7 +18,21 @@ export type MembershipResult =
         | 'ERR_LAST_GUARDIAN';
     };
 
-export interface HouseholdMembershipRepository {
+export interface HouseholdMember {
+  accountId: string;
+  displayName: string;
+  role: 'main' | 'member';
+  isOwner: boolean;
+  isSelf: boolean;
+}
+
+export interface HouseholdMembersReader {
+  list(
+    actor: MembershipActor & { familyId: string },
+  ): Promise<{ ok: true; value: HouseholdMember[] } | { ok: false; code: 'ERR_FORBIDDEN' }>;
+}
+
+export interface HouseholdMembershipRepository extends HouseholdMembersReader {
   change(
     actor: MembershipActor & { familyId: string },
     targetId: string,

@@ -1,3 +1,4 @@
+// E28-S3-T1: GET /api/family/members kiểm cô lập tại listHouseholdMembers.int.test.ts.
 // Probe lời mời T2/T3 tại householdInvitations, acceptHouseholdInvitation và foundingInvitations.int.test.ts.
 // E28-S1-T1: PATCH /api/family/members/:targetAccountId (cả đổi vai trò/gỡ) tại householdMembership.int.test.ts.
 // E28-S1-T2: tự rời nhà và truy cập nhà cũ tại leaveHousehold.int.test.ts.
