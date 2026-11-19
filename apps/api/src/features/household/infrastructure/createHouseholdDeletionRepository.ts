@@ -6,8 +6,12 @@ import { requestStoredHouseholdDeletion } from './requestStoredHouseholdDeletion
 import { revokeStoredHouseholdDeletion } from './revokeStoredHouseholdDeletion.js';
 
 // Khoá account → family → yêu cầu, cùng thứ tự với trao quyền và job execute-family-deletion.
+import { readCurrentHouseholdDeletionRequest } from './readCurrentHouseholdDeletionRequest.js';
+
 export function createHouseholdDeletionRepository(db: Database): HouseholdDeletionRepository {
   return {
+    current: (actor) =>
+      withFamilyScope(db, actor.familyId, (tx) => readCurrentHouseholdDeletionRequest(tx, actor)),
     request: (actor, name) =>
       withFamilyScope(db, actor.familyId, async (tx) => {
         const locked = await lockHouseholdOwnership(tx, actor);

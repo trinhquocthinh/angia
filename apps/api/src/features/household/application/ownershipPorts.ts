@@ -19,7 +19,21 @@ export type OwnershipOfferResult =
   | OwnershipFailure;
 
 export interface HouseholdOwnershipRepository {
+  current(actor: OwnershipActor): Promise<CurrentOwnershipOfferResult>;
   offer(actor: OwnershipActor, targetAccountId: string): Promise<OwnershipOfferResult>;
   decide(actor: OwnershipActor, offerId: string, accept: boolean): Promise<OwnershipResult>;
   revoke(actor: OwnershipActor, offerId: string): Promise<OwnershipResult>;
 }
+
+export type CurrentOwnershipOfferResult =
+  | {
+      ok: true;
+      offer: {
+        id: string;
+        status: 'pending';
+        createdAt: Date;
+        offeredBy: { accountId: string; displayName: string };
+        target: { accountId: string; displayName: string };
+      };
+    }
+  | { ok: false; code: 'ERR_NOT_FOUND' | 'ERR_FORBIDDEN' | 'ERR_UNAUTHENTICATED' };

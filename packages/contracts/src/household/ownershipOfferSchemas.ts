@@ -8,3 +8,11 @@ export const ownershipOfferResponseSchema = z.object({
   status: z.literal('pending'),
   createdAt: z.iso.datetime(),
 });
+
+export const currentOwnershipOfferResponseSchema = z.object({
+  id: z.uuid(),
+  status: z.literal('pending'),
+  createdAt: z.iso.datetime(),
+  offeredBy: z.object({ accountId: z.uuid(), displayName: z.string() }),
+  target: z.object({ accountId: z.uuid(), displayName: z.string() }),
+});

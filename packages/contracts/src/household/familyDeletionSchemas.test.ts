@@ -37,3 +37,13 @@ describe('SPEC-069: dữ liệu yêu cầu xoá nhà', () => {
     ).toBe(true);
   });
 });
+
+it('TC-927: yêu cầu hiện tại chỉ nhận pending và thời điểm ISO', () => {
+  const value = { id: randomUUID(), status: 'pending', executeAt: new Date(0).toISOString() };
+  expect(familyDeletionResponseSchema.parse(value)).toEqual(value);
+  for (const invalid of [
+    { ...value, status: 'revoked' },
+    { ...value, executeAt: 'sai' },
+  ])
+    expect(familyDeletionResponseSchema.safeParse(invalid).success).toBe(false);
+});

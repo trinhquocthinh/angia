@@ -7,15 +7,29 @@ import { offerHouseholdOwnership } from '../application/offerHouseholdOwnership.
 import { decideHouseholdOwnership } from '../application/decideHouseholdOwnership.js';
 import { revokeHouseholdOwnership } from '../application/revokeHouseholdOwnership.js';
 import {
+  currentHouseholdOwnershipOfferRoute,
   offerHouseholdOwnershipRoute,
   decideHouseholdOwnershipRoute,
   revokeHouseholdOwnershipRoute,
 } from './ownershipOfferRouteDefinitions.js';
 
+import { getCurrentHouseholdOwnershipOffer } from '../application/getCurrentHouseholdOwnershipOffer.js';
+
 export function registerHouseholdOwnershipRoutes(
   app: OpenAPIHono<AppEnv>,
   repository: HouseholdOwnershipRepository,
 ) {
+  app.openapi(currentHouseholdOwnershipOfferRoute, async (c) => {
+    c.header('Cache-Control', 'no-store');
+    const s = currentSession(c);
+    const result = await getCurrentHouseholdOwnershipOffer(repository, {
+      accountId: s.account.id,
+      familyId: s.family?.id ?? null,
+      role: s.role,
+    });
+    if (!result.ok) return c.json(...errorJson(result.code));
+    return c.json(result.value, 200);
+  });
   app.openapi(offerHouseholdOwnershipRoute, async (c) => {
     c.header('Cache-Control', 'no-store');
     const s = currentSession(c);

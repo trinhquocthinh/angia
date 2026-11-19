@@ -49,3 +49,19 @@ export const revokeHouseholdDeletionRoute = createRoute({
     422: errors[422],
   },
 });
+
+export const currentHouseholdDeletionRequestRoute = createRoute({
+  method: 'get',
+  path: '/api/family/deletion-request/current',
+  tags: ['household'],
+  summary: 'Đọc yêu cầu xoá nhà đang chờ',
+  responses: {
+    200: {
+      description: 'Dữ liệu đang chờ',
+      content: { 'application/json': { schema: familyDeletionResponseSchema } },
+    },
+    401: errors[401],
+    403: errors[403],
+    404: errors[404],
+  },
+});

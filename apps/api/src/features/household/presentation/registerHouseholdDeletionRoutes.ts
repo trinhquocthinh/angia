@@ -6,14 +6,28 @@ import type { HouseholdDeletionRepository } from '../application/deletionPorts.j
 import { requestHouseholdDeletion } from '../application/requestHouseholdDeletion.js';
 import { revokeHouseholdDeletion } from '../application/revokeHouseholdDeletion.js';
 import {
+  currentHouseholdDeletionRequestRoute,
   requestHouseholdDeletionRoute,
   revokeHouseholdDeletionRoute,
 } from './deletionRequestRouteDefinitions.js';
+
+import { getCurrentHouseholdDeletionRequest } from '../application/getCurrentHouseholdDeletionRequest.js';
 
 export function registerHouseholdDeletionRoutes(
   app: OpenAPIHono<AppEnv>,
   repository: HouseholdDeletionRepository,
 ) {
+  app.openapi(currentHouseholdDeletionRequestRoute, async (c) => {
+    c.header('Cache-Control', 'no-store');
+    const s = currentSession(c);
+    const result = await getCurrentHouseholdDeletionRequest(repository, {
+      accountId: s.account.id,
+      familyId: s.family?.id ?? null,
+      role: s.role,
+    });
+    if (!result.ok) return c.json(...errorJson(result.code));
+    return c.json(result.value, 200);
+  });
   app.openapi(requestHouseholdDeletionRoute, async (c) => {
     c.header('Cache-Control', 'no-store');
     const s = currentSession(c);

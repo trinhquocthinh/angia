@@ -6,6 +6,7 @@ import type { HouseholdOwnershipRepository } from './ownershipPorts.js';
 
 const actor = { accountId: 'owner', familyId: 'family', role: 'main' as const };
 const unavailable: HouseholdOwnershipRepository = {
+  current: async () => ({ ok: false, code: 'ERR_NOT_FOUND' }),
   offer: async () => {
     throw new Error('Không được truy cập kho');
   },
@@ -38,6 +39,7 @@ describe('SPEC-068: điều phối trao quyền Chủ hộ', () => {
   });
   it('TC-797: chuyển tác vụ vào kho và giữ nguyên kết quả kiểm lại quyền', async () => {
     const repository: HouseholdOwnershipRepository = {
+      current: async () => ({ ok: false, code: 'ERR_NOT_FOUND' }),
       offer: async (_input, target) => ({
         ok: true,
         offer: { id: 'offer', targetAccountId: target, status: 'pending', createdAt: new Date(0) },

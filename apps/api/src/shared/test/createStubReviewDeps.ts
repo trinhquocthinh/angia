@@ -55,8 +55,13 @@ const householdLeave = {
 
 const householdManagement = {
   profileGuardians: { change: notConfigured },
-  householdDeletion: { request: notConfigured, revoke: notConfigured },
-  householdOwnership: { offer: notConfigured, decide: notConfigured, revoke: notConfigured },
+  householdDeletion: { current: notConfigured, request: notConfigured, revoke: notConfigured },
+  householdOwnership: {
+    current: notConfigured,
+    offer: notConfigured,
+    decide: notConfigured,
+    revoke: notConfigured,
+  },
   householdLeave,
 };
 

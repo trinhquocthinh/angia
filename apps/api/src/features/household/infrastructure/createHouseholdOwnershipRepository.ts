@@ -5,8 +5,12 @@ import { lockHouseholdOwnership } from './lockHouseholdOwnership.js';
 import { offerStoredHouseholdOwnership } from './offerStoredHouseholdOwnership.js';
 import { decideStoredHouseholdOwnership } from './decideStoredHouseholdOwnership.js';
 
+import { readCurrentHouseholdOwnershipOffer } from './readCurrentHouseholdOwnershipOffer.js';
+
 export function createHouseholdOwnershipRepository(db: Database): HouseholdOwnershipRepository {
   return {
+    current: (actor) =>
+      withFamilyScope(db, actor.familyId, (tx) => readCurrentHouseholdOwnershipOffer(tx, actor)),
     offer: (actor, targetId) =>
       withFamilyScope(db, actor.familyId, async (tx) => {
         const locked = await lockHouseholdOwnership(tx, actor);

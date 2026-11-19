@@ -19,6 +19,11 @@ export type DeletionRequestResult =
   { ok: true; request: { id: string; status: 'pending'; executeAt: Date } } | DeletionFailure;
 
 export interface HouseholdDeletionRepository {
+  current(actor: DeletionActor): Promise<CurrentDeletionRequestResult>;
   request(actor: DeletionActor, confirmFamilyName: string): Promise<DeletionRequestResult>;
   revoke(actor: DeletionActor, requestId: string): Promise<DeletionRevokeResult>;
 }
+
+export type CurrentDeletionRequestResult =
+  | { ok: true; request: { id: string; status: 'pending'; executeAt: Date } }
+  | { ok: false; code: 'ERR_NOT_FOUND' | 'ERR_FORBIDDEN' | 'ERR_UNAUTHENTICATED' };

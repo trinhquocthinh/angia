@@ -1,6 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi';
 import {
   errorResponseSchema,
+  currentOwnershipOfferResponseSchema,
   ownershipOfferRequestSchema,
   ownershipDecisionRequestSchema,
   ownershipOfferResponseSchema,
@@ -52,4 +53,20 @@ export const revokeHouseholdOwnershipRoute = createRoute({
   summary: 'Thu hồi đề nghị trao quyền Chủ hộ (SPEC-068)',
   request: { params },
   responses: { 204: { description: 'Đã thu hồi đề nghị' }, ...errors },
+});
+
+export const currentHouseholdOwnershipOfferRoute = createRoute({
+  method: 'get',
+  path: '/api/family/ownership-offers/current',
+  tags: ['household'],
+  summary: 'Đọc đề nghị trao quyền đang chờ',
+  responses: {
+    200: {
+      description: 'Dữ liệu đang chờ',
+      content: { 'application/json': { schema: currentOwnershipOfferResponseSchema } },
+    },
+    401: errors[401],
+    403: errors[403],
+    404: errors[404],
+  },
 });

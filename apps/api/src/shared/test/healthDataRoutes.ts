@@ -145,10 +145,12 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   // SPEC-067: tự thao tác; kiểm dữ liệu/ID nhà cũ và DTO strict tại leaveHousehold.int.test.ts.
   'POST /api/family/leave',
   // SPEC-068: trao quyền; probe chéo gia đình tại ownershipOffers.int.test.ts.
+  'GET /api/family/ownership-offers/current',
   'POST /api/family/ownership-offers',
   'POST /api/family/ownership-offers/:id/decision',
   'DELETE /api/family/ownership-offers/:id',
   // SPEC-069: xoá nhà; probe chéo gia đình tại familyDeletionRequests.int.test.ts.
+  'GET /api/family/deletion-request/current',
   'POST /api/family/deletion-request',
   'DELETE /api/family/deletion-request',
   'GET /api/legal/current',

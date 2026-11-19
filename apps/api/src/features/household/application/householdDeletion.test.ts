@@ -5,6 +5,7 @@ import type { HouseholdDeletionRepository } from './deletionPorts.js';
 
 const actor = { accountId: 'owner', familyId: 'family', role: 'main' as const };
 const unavailable: HouseholdDeletionRepository = {
+  current: async () => ({ ok: false, code: 'ERR_NOT_FOUND' }),
   request: async () => {
     throw new Error('Không được truy cập kho');
   },
@@ -31,6 +32,7 @@ describe('SPEC-069: điều phối yêu cầu xoá nhà', () => {
   it('TC-804: chuyển tác vụ vào kho và giữ nguyên kết quả kiểm lại từ DB', async () => {
     const executeAt = new Date(0);
     const repository: HouseholdDeletionRepository = {
+      current: async () => ({ ok: false, code: 'ERR_NOT_FOUND' }),
       request: async (_input, name) =>
         name === 'Nhà'
           ? { ok: true, request: { id: 'request', status: 'pending', executeAt } }
