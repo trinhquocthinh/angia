@@ -1,3 +1,4 @@
+import { revokeMemberOwnershipOffers } from './revokeMemberOwnershipOffers.js';
 import { and, eq } from 'drizzle-orm';
 import type { PgBoss } from 'pg-boss';
 import type { Database } from '@src/shared/db/createDatabase.js';
@@ -21,6 +22,7 @@ export function createHouseholdLeaveRepository(db: Database, boss: PgBoss): Hous
           throw new Error('Hồ sơ liên kết không thuộc nhà đã kiểm chứng');
         const guardians = await releaseMemberGuardians(tx, actor.familyId, actor.accountId);
         if (!guardians.ok) return guardians;
+        await revokeMemberOwnershipOffers(tx, actor.familyId, actor.accountId, actor.accountId);
         const deletedProfileId = input.ownProfileDisposition === 'delete' ? profileId : null;
         if (deletedProfileId) {
           // Cửa sổ lịch sử giữ thời hạn nhưng không tham chiếu hồ sơ đã bị chủ thể xoá.

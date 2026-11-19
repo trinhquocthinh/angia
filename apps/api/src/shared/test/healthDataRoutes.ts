@@ -141,6 +141,10 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'PATCH /api/family/members/:targetAccountId',
   // SPEC-067: tự thao tác; kiểm dữ liệu/ID nhà cũ và DTO strict tại leaveHousehold.int.test.ts.
   'POST /api/family/leave',
+  // SPEC-068: trao quyền; probe chéo gia đình tại ownershipOffers.int.test.ts.
+  'POST /api/family/ownership-offers',
+  'POST /api/family/ownership-offers/:id/decision',
+  'DELETE /api/family/ownership-offers/:id',
   'GET /api/legal/current',
   'POST /api/me/legal-acceptances',
   'POST /api/me/local-credential',

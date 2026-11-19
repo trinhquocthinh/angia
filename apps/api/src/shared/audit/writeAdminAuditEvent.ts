@@ -10,6 +10,10 @@ const ACTIONS = [
   'member_role_changed',
   'member_removed',
   'member_left',
+  'ownership_transfer_offered',
+  'ownership_transfer_accepted',
+  'ownership_transfer_declined',
+  'ownership_transfer_revoked',
 ] as const;
 
 interface AdminAuditEventInput {

@@ -3,6 +3,10 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_OWNERSHIP_TRANSFER_PENDING: {
+    status: 409,
+    message: 'Đang có một đề nghị trao quyền Chủ hộ chờ trả lời.',
+  },
   ERR_OWNER_MUST_TRANSFER: { status: 409, message: 'Hãy trao quyền Chủ hộ cho người khác trước.' },
   ERR_OWNER_MUST_DELETE_FAMILY: {
     status: 409,

@@ -11,6 +11,7 @@ const notConfigured = () => Promise.reject(new Error('Kho duyệt/số đo chưa
 type StubbedDeps = Pick<
   AppDependencies,
   | 'invitationAcceptance'
+  | 'householdOwnership'
   | 'householdLeave'
   | 'household'
   | 'householdMembership'
@@ -50,10 +51,15 @@ const householdLeave = {
   logger: { warn: () => {} },
 };
 
+const householdManagement = {
+  householdOwnership: { offer: notConfigured, decide: notConfigured, revoke: notConfigured },
+  householdLeave,
+};
+
 // Sinh OpenAPI hoặc test feature khác: không được gọi hạ tầng duyệt chứng từ và số đo.
 export function createStubReviewDeps(): StubbedDeps {
   return {
-    householdLeave,
+    ...householdManagement,
     household: { create: notConfigured },
     householdMembership: { change: notConfigured },
     invitationAcceptance: {

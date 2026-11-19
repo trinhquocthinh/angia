@@ -1,3 +1,4 @@
+import { revokeMemberOwnershipOffers } from './revokeMemberOwnershipOffers.js';
 import { asc, eq, or } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { accounts, families } from '@src/shared/db/schema/index.js';
@@ -40,6 +41,8 @@ export function createHouseholdMembershipRepository(db: Database): HouseholdMemb
           const guardians = await releaseMemberGuardians(tx, actor.familyId, targetId);
           if (!guardians.ok) return guardians;
         }
+        if (change.action === 'remove' || change.role === 'member')
+          await revokeMemberOwnershipOffers(tx, actor.familyId, targetId, actor.accountId);
         const at = new Date();
         if (change.action === 'remove') await removeStoredHouseholdMember(tx, actor, target, at);
         else await tx.update(accounts).set({ familyRole: change.role }).where(eq(accounts.id, targetId));

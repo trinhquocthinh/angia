@@ -1222,7 +1222,6 @@ Phần TC-839/840 chưa triển khai tiếp tục là điều kiện nghiệm th
 | Thao tác                          | Task nhận    |
 | --------------------------------- | ------------ |
 | Rời nhà                           | E28-S1-T2    |
-| Chuyển Chủ hộ                     | E28-S2-T1    |
 | Yêu cầu/thu hồi/thực hiện xoá nhà | E28-S2-T2    |
 | Người giám hộ                     | E28-S2-T3    |
 | Đặt lại mật khẩu                  | E29-S1-T1/T2 |
@@ -1502,3 +1501,27 @@ Volume gốc còn lỗi metadata macOS `._*.ts`; không coi cổng verify tại 
 Bản sao tạm không chứa metadata được dùng để kiểm chứng cùng source.
 Chưa nghiệm thu Garage/SIT, Push service hoặc UI; UI rời nhà thuộc E28-S3-T2.
 Bằng chứng: `../../Docs/angia/acceptance/v1.0/evidence/e28-s1-t2-2026-11-19.md`.
+
+## E28-S2-T1 — Trao quyền Chủ hộ (local 2026-11-19)
+
+- `POST /api/family/ownership-offers`: body strict `{ targetAccountId }`, trả `201`
+  với `{ id, targetAccountId, status: "pending", createdAt }`.
+- `POST /api/family/ownership-offers/{id}/decision`: body strict `{ accept: boolean }`, trả `204`.
+- `DELETE /api/family/ownership-offers/{id}`: Chủ hộ gửi đề nghị thu hồi, trả `204`.
+
+Yêu cầu phiên/CSRF và `Cache-Control: no-store`. Chỉ Chủ hộ đề nghị cho một
+Đồng quản lý khác cùng nhà; chỉ người nhận trả lời. Một nhà tối đa một đề nghị
+`pending` (`409 ERR_OWNERSHIP_TRANSFER_PENDING`). Quyền chỉ đổi khi chấp nhận;
+cả Chủ hộ mới và cũ vẫn có vai trò `main`.
+
+Trong `withFamilyScope`, khoá account theo UUID → family → offer, kiểm lại DB,
+đổi cờ sở hữu/kết thúc đề nghị và ghi audit cùng transaction. Hạ vai trò, gỡ hoặc
+tự rời nhà tự chuyển đề nghị liên quan từ `pending` sang `revoked` kèm `decidedAt`
+và audit `ownership_transfer_revoked` do người thực hiện thao tác; nâng vai trò
+lại không khôi phục đề nghị cũ. Lỗi audit rollback toàn bộ. Không đổi schema.
+
+TC-797–801 kiểm local: **14 integration mới PASS**, hồi quy household/audit
+**134/134 PASS**, khung cô lập **315 PASS/6 TODO**. `yarn verify:fast` trên bản sao
+sạch metadata PASS (typecheck + 163 unit liên quan). Full `yarn verify` PASS (3470 unit test, sinh API, lint/format/dup/knip/build/budget/model). Volume gốc còn metadata macOS `._*` gây lỗi runner.
+Chưa nghiệm thu SIT/UI; UI trao quyền thuộc E28-S3-T2.
+Bằng chứng: `../../Docs/angia/acceptance/v1.0/evidence/e28-s2-t1-2026-11-19.md`.
