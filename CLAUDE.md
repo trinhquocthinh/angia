@@ -31,5 +31,6 @@ Trước khi viết code: đọc SPEC liên quan trong `04-sdd.md` và mã subta
 - Thêm biến môi trường mới → cập nhật `.env.example` và schema Zod tại `apps/*/src/shared/config/`.
 - Import trong `apps/api`, `apps/worker`, `packages/contracts` (NodeNext) phải có đuôi `.js`.
 - Docker Compose luôn kèm `--project-directory .`.
+- Migration tạo role (ví dụ `0046` → `<owner>_family_deletion`): owner SIT/Prod không có `CREATEROLE`, nên trước khi deploy superuser phải tạo sẵn role và `GRANT ... TO <owner> WITH ADMIN TRUE, INHERIT FALSE, SET FALSE`. CI Testcontainers không bắt được lỗi này. Nếu release đã fail thì `homelab-project-apply` ghi `release_failed` và không thử lại cùng release.
 - UI theo Stitch: icon phải dùng **đúng y chang** icon trong design (trích SVG inline từ HTML màn Stitch thành file trong `apps/web/public/images/household/stitch/`), không thay bằng Material Symbols/`AdminIcon` hay icon gần giống.
 - Máy dùng Colima: Testcontainers cần `DOCKER_HOST=unix://$HOME/.colima/default/docker.sock` và `TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock`.
