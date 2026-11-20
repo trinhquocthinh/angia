@@ -3,6 +3,26 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_OWNERSHIP_TRANSFER_PENDING: {
+    status: 409,
+    message: 'Đang có một đề nghị trao quyền Chủ hộ chờ trả lời.',
+  },
+  ERR_FAMILY_NOT_EMPTY: { status: 409, message: 'Nhà còn người khác nên chưa xoá được.' },
+  // SDD §4.2 ghi {thời điểm}: mốc được phép nằm ở details.allowedAt (ISO 8601) để UI định dạng.
+  ERR_RECENT_REMOVAL: {
+    status: 409,
+    message: 'Vừa có người bị gỡ khỏi nhà; có thể xoá nhà sau thời điểm được nêu kèm.',
+  },
+  ERR_OWNER_MUST_TRANSFER: { status: 409, message: 'Hãy trao quyền Chủ hộ cho người khác trước.' },
+  ERR_OWNER_MUST_DELETE_FAMILY: {
+    status: 409,
+    message: 'Bạn là người duy nhất trong nhà. Hãy xoá nhà nếu không dùng nữa.',
+  },
+  ERR_OWNER_PROTECTED: { status: 403, message: 'Không thể thực hiện thao tác này với Chủ hộ.' },
+  ERR_LAST_GUARDIAN: {
+    status: 409,
+    message: 'Bạn là người giám hộ duy nhất của một hồ sơ trẻ. Hãy thêm người giám hộ khác trước.',
+  },
   ERR_INVITATION_EXISTS: {
     status: 409,
     message: 'Đã có lời mời còn hiệu lực. Vui lòng mở lại hoặc thay mã.',

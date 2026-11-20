@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createSanitizePgFixture } from '@src/shared/test/createSanitizePgFixture.test-helper.js';
 import { purgePendingObjects } from '../application/purgePendingObjects.js';
@@ -136,5 +137,40 @@ describe('Receipt dọn object qua PostgreSQL và role app NOBYPASSRLS', () => {
     expect((await fx.owner.query('SELECT object_key,attempts FROM object_purges')).rows).toEqual([
       { object_key: keys[101], attempts: 10 },
     ]);
+  });
+
+  it('TC-806: khoá của nhà đã xoá (mất dòng families) vẫn được lượt vét định kỳ xoá object và dọn khoá (BR-010)', async () => {
+    const familyId = randomUUID();
+    const key = `families/${familyId}/profiles/p/documents/d/upload.jpg`;
+    await fx.owner.query('INSERT INTO object_purges(object_key,family_id) VALUES ($1,$2)', [key, familyId]);
+    const deleted: string[] = [];
+    const deps = {
+      repository: createObjectPurgeRepository(fx.pool),
+      storage: { delete: async (k: string) => void deleted.push(k) },
+      signal: new AbortController().signal,
+    };
+    const options = { batchSize: 100, maxAttempts: 10 };
+    expect(await deps.repository.listFamilies()).toContain(familyId);
+    expect(await purgePendingObjects(deps, options)).toEqual({ deleted: 1, failed: 0 });
+    expect(deleted).toEqual([key]);
+    expect((await fx.owner.query('SELECT 1 FROM object_purges WHERE family_id=$1', [familyId])).rows).toEqual(
+      [],
+    );
+  });
+  it('TC-869: hàm liệt kê nhà mồ côi chỉ cho role app, chỉ trả family_id không còn dòng families', async () => {
+    const live = await fx.seed();
+    const gone = randomUUID();
+    await fx.owner.query('INSERT INTO object_purges(object_key,family_id) VALUES ($1,$2),($3,$4)', [
+      `families/${live.familyId}/x`,
+      live.familyId,
+      `families/${gone}/x`,
+      gone,
+    ]);
+    const rows = (await fx.pool.query('SELECT * FROM public.list_orphan_object_purge_families()')).rows;
+    expect(rows.map((row) => row.list_orphan_object_purge_families)).toEqual([gone]);
+    const acl = await fx.owner.query(
+      "SELECT proacl::text FROM pg_proc WHERE proname='list_orphan_object_purge_families'",
+    );
+    expect(acl.rows[0].proacl).not.toMatch(/^\{=/);
   });
 });

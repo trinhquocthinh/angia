@@ -1,3 +1,4 @@
+import { needsProfileGuardian } from '../guardians/application/needsProfileGuardian.js';
 import type { UpdateHealthProfileRequest } from '@angia/contracts';
 import type { HealthProfile, ProfileOutcome } from '../domain/HealthProfile.js';
 import { isValidBirthYear } from '../domain/isValidBirthYear.js';
@@ -9,6 +10,7 @@ export async function updateProfile(
   profileId: string,
   input: UpdateHealthProfileRequest,
   now: Clock,
+  actorId: string,
 ): Promise<ProfileOutcome<HealthProfile, 'ERR_NOT_FOUND' | 'ERR_VALIDATION' | 'ERR_CONSENT_REQUIRED'>> {
   if (
     (input.birthYear === undefined && input.vitalsEnabled === undefined) ||
@@ -17,11 +19,22 @@ export async function updateProfile(
     return { ok: false, code: 'ERR_VALIDATION' };
   }
   return repository.withFamily(familyId, async (store) => {
+    if (!(await store.prepareGuardianCreator(actorId))) return { ok: false, code: 'ERR_VALIDATION' };
     const profile = await store.lockProfile(profileId);
     if (!profile) return { ok: false, code: 'ERR_NOT_FOUND' };
     if (profile.consentStatus === 'withdrawn') {
       return { ok: false, code: 'ERR_CONSENT_REQUIRED' };
     }
+    if (!needsProfileGuardian(input.birthYear ?? profile.birthYear, false, now()))
+      await store.clearProfileGuardians(profileId, actorId);
+    const linked = await store.findLinkedAccount(profileId);
+    if (
+      input.birthYear !== undefined &&
+      needsProfileGuardian(input.birthYear, linked !== null, now()) &&
+      !needsProfileGuardian(profile.birthYear, linked !== null, now()) &&
+      !(await store.hasProfileGuardian(profileId))
+    )
+      return { ok: false, code: 'ERR_VALIDATION' };
     const patch = {
       ...(input.birthYear !== undefined ? { birthYear: input.birthYear } : {}),
       ...(input.vitalsEnabled !== undefined

@@ -7,7 +7,7 @@ import { unlinkOwnProfile } from './unlinkOwnProfile.js';
 const at = new Date('2026-11-02T03:00:00Z');
 const PROFILE = 'p-1';
 
-function setup(accounts: LinkAccount[], linkedId: string | null) {
+function setup(accounts: LinkAccount[], linkedId: string | null, canUnlink = true) {
   const calls: unknown[][] = [];
   const log =
     (name: string) =>
@@ -18,6 +18,7 @@ function setup(accounts: LinkAccount[], linkedId: string | null) {
     lockProfile: async (id: string) => (id === PROFILE ? { id, displayName: 'Mẹ' } : null),
     lockAccount: async (id: string) => accounts.find((a) => a.id === id) ?? null,
     findLinkedAccount: async () => (linkedId ? { id: linkedId } : null),
+    canUnlinkProfile: async () => canUnlink,
     unlinkAccount: log('unlink'),
     linkAccount: log('link'),
     clearReminderRecipients: log('clear'),
@@ -34,6 +35,17 @@ const account = (id: string, healthProfileId: string | null = null): LinkAccount
   id,
   displayName: `Tên ${id}`,
   healthProfileId,
+});
+
+describe('Chặn gỡ liên kết làm hồ sơ trẻ thiếu giám hộ', () => {
+  it('TC-809: tự gỡ và admin gỡ trả validation, không ghi gì', async () => {
+    const { deps, calls } = setup([account('m', PROFILE)], 'm', false);
+    expect(await unlinkOwnProfile(deps, 'f', 'm', PROFILE)).toEqual({ ok: false, code: 'ERR_VALIDATION' });
+    expect(
+      await setLinkedAccount(deps, { familyId: 'f', profileId: PROFILE, accountId: null, actorId: 'admin' }),
+    ).toEqual({ ok: false, code: 'ERR_VALIDATION' });
+    expect(calls).toEqual([]);
+  });
 });
 
 describe('unlinkOwnProfile (SPEC-050)', () => {

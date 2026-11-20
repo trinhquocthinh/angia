@@ -55,6 +55,7 @@ function setup(profile: Partial<LinkProfile> = {}, accountOverride: Partial<Link
     clearReminderRecipients: async () => void state.calls.push('clearRecipients'),
     revokeConsentInvitations: async () => void state.calls.push('revokeConsent'),
     recordLinkEvent: async () => void state.calls.push('event'),
+    canUnlinkProfile: async () => true,
     unlinkAccount: async () => void state.calls.push('unlink'),
     listProfileLinks: async () => [],
   };

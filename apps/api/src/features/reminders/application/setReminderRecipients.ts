@@ -14,6 +14,7 @@ export function setReminderRecipients(
   return repository.withFamily(request.familyId, async (store) => {
     const profile = await store.findProfile(request.profileId);
     if (!profile) return { ok: false, code: 'ERR_NOT_FOUND' };
+    if (profile.guardianManaged) return { ok: false, code: 'ERR_VALIDATION' };
     if (profile.consentStatus !== 'confirmed') return { ok: false, code: 'ERR_CONSENT_REQUIRED' };
     const accounts = await store.listFamilyAccounts();
     const plan = planReminderRecipients(request.profileId, accounts, request.recipientAccountIds);

@@ -1,3 +1,6 @@
+import type { HouseholdDeletionRepository } from '@src/features/household/application/deletionPorts.js';
+import type { HouseholdOwnershipRepository } from '@src/features/household/application/ownershipPorts.js';
+import type { HouseholdLeaveDependencies } from '@src/features/household/application/leavePorts.js';
 import type { InvitationAcceptanceDependencies } from '@src/features/household/presentation/registerInvitationAcceptanceRoutes.js';
 import type { HouseholdInvitationDependencies } from '@src/features/household/application/invitationPorts.js';
 import type { LocalCredentialLookup } from '@src/shared/auth/application/ports.js';
@@ -60,9 +63,17 @@ import { limitRequestBody } from '@src/shared/http/limitRequestBody.js';
 import type { PushDependencies } from '@src/features/pushSubscriptions/application/ports.js';
 
 import type { HouseholdRepository } from '@src/features/household/application/ports.js';
+import type { HouseholdMembershipRepository } from '@src/features/household/application/membershipPorts.js';
+
+import type { ProfileGuardianRepository } from '@src/features/profiles/guardians/application/ports.js';
 
 export type AppDependencies = {
+  profileGuardians: ProfileGuardianRepository;
+  householdDeletion: HouseholdDeletionRepository;
+  householdOwnership: HouseholdOwnershipRepository;
+  householdLeave: HouseholdLeaveDependencies;
   household: HouseholdRepository;
+  householdMembership: HouseholdMembershipRepository;
   invitationAcceptance: InvitationAcceptanceDependencies;
   householdInvitations: HouseholdInvitationDependencies;
   legal: LegalRepository;

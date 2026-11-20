@@ -85,5 +85,10 @@ export async function seedSelfProfileData(
 }
 
 export async function linkAccount(t: ProfileTestApp, accountId: string, profileId: string) {
-  await t.owner.query('UPDATE accounts SET health_profile_id = $1 WHERE id = $2', [profileId, accountId]);
+  // Liên kết hồ sơ trẻ phải bỏ tư cách giám hộ trong cùng câu lệnh (SPEC-070).
+  await t.owner.query(
+    `WITH cleared AS (DELETE FROM profile_guardians WHERE health_profile_id = $1)
+     UPDATE accounts SET health_profile_id = $1 WHERE id = $2`,
+    [profileId, accountId],
+  );
 }

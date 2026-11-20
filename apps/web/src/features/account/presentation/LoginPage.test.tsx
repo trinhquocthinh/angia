@@ -21,6 +21,12 @@ it('có form local, liên kết công khai và lỗi OIDC ngay dưới nút', ()
   expect(html).toContain('href="/forgot-password"');
   expect(html).toContain('href="/api/auth/login"');
   expect(html).toContain('Đăng nhập bằng Authentik');
+  for (const name of ['medication', 'heart', 'family', 'lock', 'user', 'key']) {
+    expect(html).toContain(`/images/login/clay/desktop-${name}.svg`);
+  }
+  for (const name of ['lock', 'user', 'key']) {
+    expect(html).toContain(`/images/login/clay/mobile-${name}.svg`);
+  }
   expect(html).not.toContain('type="checkbox"');
   expect(html).not.toContain('Sinh trắc');
   expect(html).not.toContain('Số điện thoại');

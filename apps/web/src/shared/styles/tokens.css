@@ -1,5 +1,30 @@
 /* Design §11.2; owner khôi phục màu sáng cũ tại E27-S5-T1 (2026-11-17). */
 @theme static {
+  /* Màu clay Stitch cố định: nền icon sáng dùng chung cho hai chế độ. */
+  --color-clay-porcelain: #faf8f5;
+  --color-clay-mint: #e4f0ec;
+  --color-clay-jade: #cfe3dc;
+  --color-clay-family: #d5e7e1;
+  --color-clay-hover-start: #2f6f5e;
+  --color-clay-hover-end: #1b4d41;
+  /* Nền icon ClayIcon (shared/ui/clay-icon.css) theo Stitch. */
+  --color-clay-icon-start: #e0f5ee;
+  --color-clay-icon-end: #a7e3d1;
+  --color-clay-manager-start: #c6f2e4;
+  --color-clay-manager-end: #60c2a5;
+  --color-clay-owner-mid: #20594b;
+  --color-clay-owner-end: #286958;
+  --color-clay-revoke-start: #fff2f0;
+  --color-clay-revoke-end: #ffe4e1;
+  --color-clay-revoke-glow: #d92d20;
+  --color-clay-key-start: #fff5e6;
+  --color-clay-key-end: #ffe2b8;
+  /* Bảng màu minh hoạ SVG gốc Stitch cho thanh điều hướng. */
+  --color-nav-icon-jade-deep: #004135;
+  --color-nav-icon-porcelain: #ffffff;
+  --color-nav-icon-jade-light: #99d2c0;
+  --color-nav-badge-start: #833b00;
+  --color-nav-badge-end: #ba1a1a;
   --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
   --color-bg: #f0fcfb;
   --color-surface: #ffffff;

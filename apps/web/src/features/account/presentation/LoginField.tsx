@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import type { ComponentPropsWithRef, ReactNode } from 'react';
-import { LoginIcon } from './LoginIcon';
+import { LoginClayIcon } from './LoginClayIcon';
 
 type Props = ComponentPropsWithRef<'input'> & {
   label: string;
@@ -18,7 +18,7 @@ export function LoginField({ label, icon, trailing, id, ...props }: Props) {
         {props.required && <span aria-hidden="true"> *</span>}
       </label>
       <div className="login-input-wrap">
-        <LoginIcon name={icon} />
+        <LoginClayIcon name={icon} />
         <input {...props} id={inputId} />
         {trailing}
       </div>

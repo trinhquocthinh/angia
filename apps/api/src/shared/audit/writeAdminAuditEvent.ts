@@ -3,10 +3,22 @@ import { adminAuditEvents } from '@src/shared/db/schema/index.js';
 
 // Chỉ mở rộng khi thao tác nghiệp vụ tương ứng được triển khai và có test.
 const ACTIONS = [
+  'guardian_added',
+  'guardian_removed',
   'family_created',
   'invitation_created',
   'invitation_revoked',
   'invitation_accepted',
+  'member_role_changed',
+  'member_removed',
+  'member_left',
+  'ownership_transfer_offered',
+  'ownership_transfer_accepted',
+  'ownership_transfer_declined',
+  'ownership_transfer_revoked',
+  'family_deletion_requested',
+  'family_deletion_revoked',
+  'family_deletion_executed',
 ] as const;
 
 interface AdminAuditEventInput {
@@ -27,6 +39,6 @@ export async function writeAdminAuditEvent(tx: FamilyScopedTx, event: AdminAudit
     targetAccountId: event.targetAccountId,
     targetProfileId: event.targetProfileId,
     action: event.action,
-    metadata: {},
+    metadata: event.action === 'member_removed' ? { reason: 'removed_from_family' } : {},
   });
 }

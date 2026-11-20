@@ -11,25 +11,30 @@ const LINKED_TABS = [
   { key: 'lab-results', label: 'Kết quả xét nghiệm', to: '/profiles/$profileId/lab-results' },
   { key: 'revisits', label: 'Lịch tái khám', to: '/profiles/$profileId/revisits' },
   { key: 'documents', label: 'Hồ sơ & Giấy tờ khám', to: '/profiles/$profileId/documents' },
+  { key: 'guardians', label: 'Người giám hộ', to: '/profiles/$profileId/guardians' },
 ] as const;
 
 export type ProfileTabKey = (typeof LINKED_TABS)[number]['key'];
 
 // Tab hồ sơ đều là route: Diễn biến sức khỏe, Thuốc điều trị (E4-S4-T1), Kết quả xét nghiệm (E5-S2-T1),
-// Hồ sơ & Giấy tờ khám (E5-S4-T1).
+// Hồ sơ & Giấy tờ khám (E5-S4-T1), Người giám hộ (E28-S3-T3).
 export function ProfileTabs({
   profileId,
   active,
   showsVitals = true,
+  showsGuardians = false,
 }: {
   profileId: string;
   active: ProfileTabKey;
   showsVitals?: boolean;
+  showsGuardians?: boolean;
 }) {
   const navRef = useScrollActiveTab(active);
   return (
     <nav ref={navRef} aria-label="Các mục hồ sơ" className="flex gap-2 overflow-x-auto pb-1">
-      {LINKED_TABS.filter((tab) => tab.key !== 'health' || showsVitals).map((tab) => (
+      {LINKED_TABS.filter(
+        (tab) => (tab.key !== 'health' || showsVitals) && (tab.key !== 'guardians' || showsGuardians),
+      ).map((tab) => (
         <Link
           key={tab.key}
           to={tab.to}

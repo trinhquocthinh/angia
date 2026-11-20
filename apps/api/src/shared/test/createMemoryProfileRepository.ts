@@ -1,3 +1,4 @@
+import { createMemoryProfileGuardianStore } from './createMemoryProfileGuardianStore.js';
 import type { ProfileRepository, ProfileStore } from '@src/features/profiles/application/ports.js';
 import type { HealthProfile } from '@src/features/profiles/domain/HealthProfile.js';
 
@@ -8,20 +9,24 @@ interface Account {
   healthProfileId: string | null;
 }
 
+const listLinkable = (accounts: Account[], familyId: string) =>
+  accounts
+    .filter((a) => a.familyId === familyId && !a.healthProfileId)
+    .map(({ id, displayName }) => ({ id, displayName }));
+
 // Kho giả trong bộ nhớ cho unit test; cạnh tranh đồng thời kiểm thử trên PostgreSQL thật.
 export function createMemoryProfileRepository(accounts: Account[] = []): ProfileRepository {
   const profiles: HealthProfile[] = [];
+  const guardianStore = createMemoryProfileGuardianStore();
   return {
     withFamily: async (familyId, work) => {
       const findAccount = (id: string) => accounts.find((a) => a.id === id && a.familyId === familyId);
       const findProfile = (id: string) => profiles.find((p) => p.id === id && p.familyId === familyId);
       const store: ProfileStore = {
+        ...guardianStore,
         listProfiles: async () => profiles.filter((p) => p.familyId === familyId),
         listConsentAccounts: async () => accounts.filter((a) => a.familyId === familyId),
-        listLinkableAccounts: async () =>
-          accounts
-            .filter((a) => a.familyId === familyId && !a.healthProfileId)
-            .map(({ id, displayName }) => ({ id, displayName })),
+        listLinkableAccounts: async () => listLinkable(accounts, familyId),
         lockAccount: async (id) => findAccount(id) ?? null,
         insertProfile: async (input, receipt) => {
           const profile: HealthProfile = {

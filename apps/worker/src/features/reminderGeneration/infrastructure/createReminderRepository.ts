@@ -1,3 +1,4 @@
+import { listEffectiveReminderAssignments } from '@src/shared/db/listEffectiveReminderAssignments.js';
 import type pg from 'pg';
 import { generateRevisitReminders } from './generateRevisitReminders.js';
 import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
@@ -33,10 +34,7 @@ async function listProfiles(
        FROM dose_slots WHERE family_id = $1`,
     [familyId],
   );
-  const recipients = await client.query<{ profileId: string; accountId: string }>(
-    `SELECT health_profile_id AS "profileId", account_id AS "accountId" FROM reminder_recipients WHERE family_id = $1`,
-    [familyId],
-  );
+  const recipients = await listEffectiveReminderAssignments(client, familyId);
   // Ép kiểu text: pg trả date thành Date theo múi giờ tiến trình, dễ lệch ngày.
   const courses = await client.query<CourseRow>(
     `SELECT id, health_profile_id AS "profileId", name, strength, quantity_per_dose::text AS "quantityPerDose",
@@ -48,7 +46,7 @@ async function listProfiles(
   );
   const [slotsOf, recipientsOf, coursesOf] = [
     groupBy(slots.rows),
-    groupBy(recipients.rows),
+    groupBy(recipients),
     groupBy(courses.rows),
   ];
   return profiles.rows.map((profile) => ({

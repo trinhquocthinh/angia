@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
+import { canManageProfileGuardians } from '@src/features/profiles/application/canManageProfileGuardians';
 import { profileShowsVitals } from '@src/features/profiles/application/profileShowsVitals';
 import { currentVietnamYear } from '@src/features/profiles/application/currentVietnamYear';
 import { ProfileEditControls } from '@src/features/profiles/presentation/components/ProfileEditControls';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileListItem, ProfileSession } from '@src/features/profiles/application/ports';
 import { VisitSummaryLink } from '@src/features/visitSummary/presentation/VisitSummaryLink';
 import { formatDay, readingText } from '../../application/formatMeasurement';
 import type { Measurement } from '../../application/ports';
@@ -10,7 +11,7 @@ import { ManualEntryLink } from './ManualEntryLink';
 import { ProfileTabs, type ProfileTabKey } from './ProfileTabs';
 
 type Props = {
-  profile: HealthProfile;
+  profile: ProfileListItem;
   session: ProfileSession;
   /** undefined: không hiện dòng chỉ số (tab không tải số đo). */
   latest?: Measurement | null;
@@ -24,6 +25,7 @@ type Props = {
 // hàng nút xuống dưới tên để 4 nút không bị gãy dòng lẻ (E6-S1-T2 thêm "Tóm tắt đi khám").
 export function ProfileHealthHeader({ profile, session, latest, active = 'health', actions }: Props) {
   const showsVitals = profileShowsVitals(profile);
+  const showsGuardians = canManageProfileGuardians(profile, session);
   const age = profile.birthYear ? currentVietnamYear() - profile.birthYear : null;
   return (
     <div className="flex flex-col gap-4">
@@ -60,7 +62,12 @@ export function ProfileHealthHeader({ profile, session, latest, active = 'health
           </div>
         </div>
       </section>
-      <ProfileTabs profileId={profile.id} active={active} showsVitals={showsVitals} />
+      <ProfileTabs
+        profileId={profile.id}
+        active={active}
+        showsVitals={showsVitals}
+        showsGuardians={showsGuardians}
+      />
     </div>
   );
 }

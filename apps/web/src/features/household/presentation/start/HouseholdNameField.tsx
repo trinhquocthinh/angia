@@ -1,3 +1,4 @@
+import { ClayIcon } from '@src/shared/ui/ClayIcon';
 import { useWatch, type UseFormReturn } from 'react-hook-form';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 export function HouseholdNameField({ form }: { form: UseFormReturn<{ name: string }> }) {
@@ -11,7 +12,7 @@ export function HouseholdNameField({ form }: { form: UseFormReturn<{ name: strin
       </div>
       <div className="household-name-input">
         <span className="household-name-home">
-          <AdminIcon name="home_health" size={22} />
+          <ClayIcon name="name-house" size={28} />
         </span>
         <input
           id="household-name"

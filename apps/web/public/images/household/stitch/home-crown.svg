@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <linearGradient id="crownGold3D" x1="4" y1="6" x2="28" y2="26" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFDF78" />
+      <stop offset="45%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#C25E00" />
+    </linearGradient>
+    <linearGradient id="crownPearlGlint" x1="8" y1="4" x2="24" y2="16" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#FFE082" stop-opacity="0" />
+    </linearGradient>
+    <filter id="dropClayCrown" x="0" y="2" width="32" height="28" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2.5" stdDeviation="1.5" flood-color="#833B00" flood-opacity="0.28" />
+    </filter>
+  </defs>
+  <path
+    filter="url(#dropClayCrown)"
+    d="M5 23C5 23.55 5.45 24 6 24H26C26.55 24 27 23.55 27 23L28 10C28 9.3 27.2 8.85 26.6 9.25L21 13.5L17.2 6.6C16.8 5.8 15.2 5.8 14.8 6.6L11 13.5L5.4 9.25C4.8 8.85 4 9.3 4 10L5 23Z"
+    fill="url(#crownGold3D)"
+  />
+  <path
+    d="M5.8 11.2L10.8 14.8C11.3 15.2 12.1 15 12.4 14.4L16 7.9L19.6 14.4C19.9 15 20.7 15.2 21.2 14.8L26.2 11.2L25.3 21H6.7L5.8 11.2Z"
+    fill="url(#crownPearlGlint)"
+    opacity="0.65"
+  />
+  <circle cx="16" cy="20" r="2.2" fill="#FFF9E6" stroke="#D97706" stroke-width="0.8" />
+  <circle cx="10" cy="20" r="1.6" fill="#FFF0D0" />
+  <circle cx="22" cy="20" r="1.6" fill="#FFF0D0" />
+  <circle cx="4.5" cy="9.5" r="1.8" fill="#FFFBEB" />
+  <circle cx="16" cy="6" r="2" fill="#FFFBEB" />
+  <circle cx="27.5" cy="9.5" r="1.8" fill="#FFFBEB" />
+</svg>

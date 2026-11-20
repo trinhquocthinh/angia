@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { DocumentEntry } from '@angia/contracts';
 import { ProfileHealthHeader } from '@src/features/measurements/presentation/components/ProfileHealthHeader';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileListItem, ProfileSession } from '@src/features/profiles/application/ports';
 import { ProfileSectionPage } from '@src/features/profiles/presentation/components/ProfileSectionPage';
 import type { EntryTypeFilter } from '../application/documentEntryPorts';
 import { useDocumentEntries } from '../application/useDocumentEntries';
@@ -26,7 +26,7 @@ export function DocumentsPage({ profileId }: { profileId: string }) {
   );
 }
 
-function DocumentsContent({ profile, session }: { profile: HealthProfile; session: ProfileSession }) {
+function DocumentsContent({ profile, session }: { profile: ProfileListItem; session: ProfileSession }) {
   const [deleted, setDeleted] = useState(false);
   const [type, setType] = useState<EntryTypeFilter | undefined>();
   const [opened, setOpened] = useState<DocumentEntry | null>(null);

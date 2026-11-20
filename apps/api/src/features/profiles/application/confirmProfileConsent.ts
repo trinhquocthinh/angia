@@ -1,3 +1,4 @@
+import { needsProfileGuardian } from '../guardians/application/needsProfileGuardian.js';
 import type { ConsentConfirmation } from '../domain/ConsentConfirmation.js';
 import { createConsentReceipt } from '../domain/createConsentReceipt.js';
 import type { HealthProfile, ProfileOutcome } from '../domain/HealthProfile.js';
@@ -34,6 +35,8 @@ export async function confirmProfileConsent(
     );
     if (!receipt.ok) return receipt;
     if (!receipt.value) return { ok: false, code: 'ERR_VALIDATION' };
+    if (!needsProfileGuardian(profile.birthYear, linked !== null, at))
+      await store.clearProfileGuardians(profileId, actorId);
     const confirmed = await store.saveConsentReceipt(profileId, receipt.value);
     await store.revokePendingInvitations(profileId, at);
     return { ok: true, value: confirmed };

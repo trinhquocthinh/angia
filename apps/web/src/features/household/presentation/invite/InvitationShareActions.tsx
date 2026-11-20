@@ -1,9 +1,9 @@
+import { ClayIcon } from '@src/shared/ui/ClayIcon';
 import { Button } from '@src/shared/ui/button/Button';
 import type { IssuedInvitation } from '../../application/invitationPorts';
 import { useInvitationSharing } from '../../application/useInvitationSharing';
 import { invitationIsExpired } from '../../application/invitationIsExpired';
 import { createInvitationSharing } from '../../infrastructure/invitationSharing';
-import { InvitationIcon } from './InvitationIcon';
 import { InvitationToast } from './InvitationToast';
 import { InvitationCopyFeedback } from './InvitationCopyFeedback';
 
@@ -30,7 +30,7 @@ export function InvitationShareActions({
             : model.copy(text, 'Đã sao chép lời mời. Dán vào Zalo để gửi cho người thân.'));
         }}
       >
-        <InvitationIcon name="send" />
+        <ClayIcon name="send" size={24} />
         {model.canShare ? 'Gửi qua Zalo' : 'Sao chép lời mời'}
       </Button>
       <p className="household-invite-share-hint">
@@ -46,7 +46,7 @@ export function InvitationShareActions({
             if (available()) void model.copy(invitation.code, 'Đã sao chép mã mời.');
           }}
         >
-          <InvitationIcon name="copy" />
+          <ClayIcon name="copy" size={24} />
           Sao chép mã
         </Button>
         <Button
@@ -56,7 +56,7 @@ export function InvitationShareActions({
             if (available()) void model.copy(invitation.link, 'Đã sao chép link lời mời.');
           }}
         >
-          <InvitationIcon name="link" />
+          <ClayIcon name="link" size={24} />
           Sao chép link
         </Button>
       </div>

@@ -1,3 +1,4 @@
+import { needsProfileGuardian } from '../guardians/application/needsProfileGuardian.js';
 import { createConsentReceipt } from '../domain/createConsentReceipt.js';
 import { isValidBirthYear } from '../domain/isValidBirthYear.js';
 import type { HealthProfile, NewProfile, ProfileOutcome } from '../domain/HealthProfile.js';
@@ -21,6 +22,9 @@ export async function createProfile(
     return { ok: false, code: 'ERR_VALIDATION' };
   }
   return repository.withFamily(familyId, async (store) => {
+    const guarded = needsProfileGuardian(input.birthYear, input.linkedAccountId === actorId, now());
+    if (guarded && !(await store.prepareGuardianCreator(actorId)))
+      return { ok: false, code: 'ERR_VALIDATION' };
     let account = null;
     if (input.linkedAccountId) {
       account = await store.lockAccount(input.linkedAccountId);
@@ -35,6 +39,7 @@ export async function createProfile(
     );
     if (!receipt.ok) return receipt;
     const profile = await store.insertProfile({ ...input, displayName }, receipt.value);
+    if (guarded) await store.addCreatorGuardian(profile.id, actorId);
     // SPEC-004 (E14): chỉ gắn ngay tài khoản của chính người tạo; tài khoản khác phải tự xác nhận qua link (SPEC-040).
     if (input.linkedAccountId === actorId) await store.linkAccount(actorId, profile.id);
     return { ok: true, value: profile };

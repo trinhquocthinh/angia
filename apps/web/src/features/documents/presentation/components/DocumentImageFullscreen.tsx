@@ -24,7 +24,7 @@ export function DocumentImageFullscreen({ src, turns, onError, onRotate, onClose
         </h2>
         <button
           type="button"
-          autoFocus
+          data-autofocus
           onClick={onClose}
           aria-label="Đóng xem toàn màn hình"
           className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-accent-soft text-text-secondary transition-colors duration-200 hover:bg-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none"

@@ -6,18 +6,13 @@ export function AccountMenuDestinations({
   session,
   onClose,
 }: Pick<AccountMenuProps, 'session'> & { onClose?: (() => void) | undefined }) {
-  if (
-    !session.account.healthProfileId &&
-    !session.account.isSystemAdmin &&
-    !(session.family && session.role === 'main')
-  )
-    return null;
+  if (!session.account.healthProfileId && !session.account.isSystemAdmin && !session.family) return null;
   return (
     <div className="account-menu-links">
-      {session.family && session.role === 'main' && (
-        <Link to="/family/invite" onClick={onClose}>
-          <AdminIcon name="group_add" />
-          Mời người thân
+      {session.family && (
+        <Link to="/family/home" onClick={onClose}>
+          <AdminIcon name="home_health" />
+          Nhà của tôi
         </Link>
       )}
       {session.account.healthProfileId && (

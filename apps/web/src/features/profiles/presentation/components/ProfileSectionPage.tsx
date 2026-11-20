@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useCurrentSession } from '@src/features/auth/application/useCurrentSession';
 import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurrentSession';
-import type { HealthProfile, ProfileSession } from '../../application/ports';
+import type { ProfileListItem, ProfileSession } from '../../application/ports';
 import { useProfileSessionRecovery } from '../../application/useProfileSessionRecovery';
 import { useProfilesWorkspace } from '../../application/useProfilesWorkspace';
 import { createProfilesRepository } from '../../infrastructure/createProfilesRepository';
@@ -13,7 +13,7 @@ const profilesRepository = createProfilesRepository();
 
 type Props = {
   profileId: string;
-  children: (profile: HealthProfile, session: ProfileSession) => ReactNode;
+  children: (profile: ProfileListItem, session: ProfileSession) => ReactNode;
 };
 
 // Khung chung của các tab hồ sơ: chỉ chính chủ gia đình xem; hồ sơ không thuộc gia đình → báo không tìm thấy.

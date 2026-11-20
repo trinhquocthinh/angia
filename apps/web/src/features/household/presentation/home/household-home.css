@@ -1,0 +1,157 @@
+@import './household-home-actions.css';
+@import './household-home-banners.css';
+@import './household-home-dialog.css';
+@import './household-home-governance.css';
+@import '../members/household-members-directory.css';
+@import '../members/household-members-row.css';
+@import '../members/household-member-panel.css';
+@import '../members/household-member-role-editor.css';
+@import '../members/household-member-danger.css';
+@import '../members/household-member-dialog.css';
+@import '../ownership/household-ownership.css';
+@import '../leave/household-leave.css';
+@import '../deletion/household-deletion.css';
+
+.household-home-shell {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto 48px;
+  padding: 0 24px;
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.household-home-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 28px 32px;
+  border-radius: 28px;
+  border: 1px solid var(--color-design-border);
+  background: var(--color-surface);
+  box-shadow: 0 12px 40px color-mix(in srgb, var(--color-accent) 5%, transparent);
+}
+.household-home-hero-main {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+  flex: 1 1 320px;
+}
+.household-home-hero-emblem {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, var(--color-accent-fixed), var(--color-secondary-container));
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--color-accent) 12%, transparent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.household-home-hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.household-home-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.household-home-title-row h1 {
+  margin: 0;
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 1.75rem;
+  line-height: 2.25rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+.household-home-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--color-secondary-container);
+  color: var(--color-on-secondary-container);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+}
+.household-home-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+}
+.household-home-status-warning {
+  background: var(--color-warning-soft);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 35%, var(--color-surface));
+  color: var(--color-warning);
+}
+.household-home-status-warning .household-home-status-dot {
+  background: var(--color-warning);
+}
+.household-home-count-line {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+  color: var(--color-text-secondary);
+}
+.household-home-invite-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 22px;
+  border-radius: 18px;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: 0.9375rem;
+  line-height: 1.375rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  transition: background-color 150ms ease-out;
+}
+.household-home-invite-btn:hover {
+  background: var(--color-accent-hover);
+}
+.household-home-banners {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.household-home-shell :is(a, button, input):focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+:root[data-theme='dark'] .household-home-hero {
+  box-shadow: none;
+}
+@media (max-width: 1023px) {
+  .household-home-shell {
+    margin-top: 12px;
+    padding: 0 16px;
+    gap: 20px;
+  }
+  .household-home-hero {
+    padding: 20px;
+    border-radius: 22px;
+  }
+  .household-home-invite-btn {
+    width: 100%;
+  }
+}

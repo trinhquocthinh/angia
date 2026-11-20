@@ -24,7 +24,7 @@ export function RegisterPage() {
   );
   const busy = form.formState.isSubmitting;
   return (
-    <LoginLayout titleId="register-title">
+    <LoginLayout titleId="register-title" clayIcons>
       <RegistrationHeading />
       {closed && <RegistrationClosedNotice />}
       <form

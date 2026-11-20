@@ -3,7 +3,7 @@ import type { FamilyAccount, ReminderRecipients } from '../domain/ReminderRecipi
 
 interface ReminderRecipientStore {
   /** Khóa dòng hồ sơ trong giao dịch hiện tại để tuần tự hóa các lệnh lưu. */
-  findProfile(profileId: string): Promise<{ consentStatus: ConsentStatus } | null>;
+  findProfile(profileId: string): Promise<{ consentStatus: ConsentStatus; guardianManaged?: boolean } | null>;
   /** Tài khoản đang thuộc gia đình, theo thứ tự tạo. */
   listFamilyAccounts(): Promise<FamilyAccount[]>;
   listRecipientIds(profileId: string): Promise<string[]>;

@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileListItem, ProfileSession } from '@src/features/profiles/application/ports';
 import { ProfileHealthHeader } from '@src/features/measurements/presentation/components/ProfileHealthHeader';
 import { usePrescriptionChain } from '../application/usePrescriptionChain';
 import { createPrescriptionRepository } from '../infrastructure/createPrescriptionRepository';
@@ -8,7 +8,7 @@ import { PrescriptionDetailContent } from './PrescriptionDetailContent';
 import { PrescriptionLoadState } from './PrescriptionLoadState';
 
 const repository = createPrescriptionRepository();
-type Props = { profile: HealthProfile; session: ProfileSession; prescriptionId?: string | undefined };
+type Props = { profile: ProfileListItem; session: ProfileSession; prescriptionId?: string | undefined };
 export function PrescriptionsContent({ profile, session, prescriptionId }: Props) {
   const chain = usePrescriptionChain(repository, session, profile);
   const retry = () => {

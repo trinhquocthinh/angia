@@ -1,0 +1,54 @@
+.clay-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 28%;
+  background: linear-gradient(135deg, var(--color-clay-icon-start), var(--color-clay-icon-end));
+  box-shadow:
+    0 2px 6px color-mix(in srgb, var(--color-nav-icon-jade-deep) 12%, transparent),
+    inset 0 1px 2px color-mix(in srgb, var(--color-nav-icon-porcelain) 80%, transparent);
+}
+.clay-icon img {
+  display: block;
+  width: 72%;
+  height: 72%;
+  filter: drop-shadow(0 2px 3px color-mix(in srgb, var(--color-nav-icon-jade-deep) 20%, transparent));
+}
+.clay-icon-member,
+.clay-icon-manager,
+.clay-icon-keep {
+  border-radius: 50%;
+}
+.clay-icon-manager {
+  background: linear-gradient(135deg, var(--color-clay-manager-start), var(--color-clay-manager-end));
+}
+.clay-icon-avatar,
+.clay-icon-owner {
+  background: linear-gradient(
+    135deg,
+    var(--color-nav-icon-jade-deep),
+    var(--color-clay-owner-mid),
+    var(--color-clay-owner-end)
+  );
+  border: 1px solid color-mix(in srgb, var(--color-nav-icon-porcelain) 60%, transparent);
+}
+.clay-icon-send {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-nav-icon-porcelain) 30%, transparent),
+    color-mix(in srgb, var(--color-nav-icon-porcelain) 10%, transparent)
+  );
+}
+.clay-icon-revoke,
+.clay-icon-revoke-button {
+  background: linear-gradient(var(--color-clay-revoke-start), var(--color-clay-revoke-end));
+}
+.clay-icon-key {
+  background: linear-gradient(135deg, var(--color-clay-key-start), var(--color-clay-key-end));
+}
+.clay-icon-revoke {
+  box-shadow:
+    0 12px 28px -6px color-mix(in srgb, var(--color-clay-revoke-glow) 22%, transparent),
+    inset 0 2px 4px color-mix(in srgb, var(--color-nav-icon-porcelain) 90%, transparent);
+}

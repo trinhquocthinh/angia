@@ -1,0 +1,159 @@
+.household-member-item {
+  min-width: 0;
+}
+.household-member-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 76px;
+  padding: 16px 18px;
+  border-radius: 22px;
+  border: 1px solid var(--color-design-border);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  text-align: left;
+  font-family: var(--font-sans);
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--color-household-shadow) 4%, transparent);
+  transition:
+    background-color 150ms ease-out,
+    border-color 150ms ease-out,
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out;
+}
+.household-member-row-btn {
+  cursor: pointer;
+}
+.household-member-row-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-household-shadow) 8%, transparent);
+  background: var(--color-accent-soft);
+  border-color: var(--color-border);
+}
+.household-member-row-selected {
+  border: 2px solid var(--color-accent);
+  background: linear-gradient(90deg, var(--color-surface), var(--color-accent-soft));
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+.household-member-row-main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.household-member-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.household-member-avatar-md {
+  width: 48px;
+  height: 48px;
+  font-size: 1rem;
+}
+.household-member-avatar-lg {
+  width: 64px;
+  height: 64px;
+  font-size: 1.5rem;
+}
+.household-member-avatar img {
+  display: block;
+}
+.household-member-row-identity {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+.household-member-name {
+  font-size: 1.0625rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.household-member-self-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--color-surface-container-high);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+}
+.household-member-selected-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--color-secondary-container);
+  color: var(--color-on-secondary-container);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+}
+.household-member-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.household-member-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid var(--color-border);
+}
+.household-member-role-badge[data-tone='owner'] {
+  background: linear-gradient(135deg, var(--color-clay-key-start), var(--color-clay-key-end));
+  border-color: color-mix(in srgb, var(--color-warning) 35%, var(--color-clay-key-end));
+  color: var(--color-warning);
+}
+.household-member-role-badge[data-tone='main'] {
+  background: linear-gradient(135deg, var(--color-accent-soft), var(--color-clay-mint));
+  border-color: var(--color-clay-jade);
+  color: var(--color-accent);
+}
+.household-member-role-badge[data-tone='member'] {
+  background: linear-gradient(135deg, var(--color-surface), var(--color-surface-container));
+  color: var(--color-text-secondary);
+}
+.household-member-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-clay-jade);
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+@media (max-width: 1023px) {
+  .household-member-row {
+    flex-wrap: wrap;
+    border-radius: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .household-member-row {
+    transition: none;
+  }
+  .household-member-row-btn:hover {
+    transform: none;
+  }
+}

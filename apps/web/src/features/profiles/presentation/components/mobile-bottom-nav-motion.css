@@ -1,0 +1,67 @@
+.mobile-nav-tab,
+.mobile-nav-icon,
+.mobile-nav-fab {
+  transition:
+    transform 200ms,
+    color 200ms,
+    background-color 200ms;
+}
+.mobile-nav-tab::before {
+  transition:
+    opacity 300ms ease-out,
+    transform 300ms ease-out;
+}
+.mobile-nav-tab:active {
+  transform: scale(0.95);
+}
+.mobile-nav-add:active .mobile-nav-fab {
+  transform: scale(0.9);
+}
+.mobile-nav-tab[aria-current='page'] .mobile-nav-icon {
+  animation: mobile-nav-bounce 400ms ease-out;
+}
+.mobile-nav-add::before {
+  animation: mobile-nav-breathe 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@media (hover: hover) {
+  .mobile-nav-tab:hover .mobile-nav-icon {
+    transform: scale(1.05);
+  }
+  .mobile-nav-add:hover .mobile-nav-fab {
+    transform: scale(1.05);
+  }
+  .mobile-nav-add:active .mobile-nav-fab {
+    transform: scale(0.9);
+  }
+}
+@keyframes mobile-nav-bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+@keyframes mobile-nav-breathe {
+  50% {
+    opacity: 0.5;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mobile-bottom-nav *,
+  .mobile-bottom-nav *::before {
+    animation: none;
+    transition: none;
+  }
+  .mobile-bottom-nav a:active,
+  .mobile-bottom-nav .mobile-nav-tab:hover .mobile-nav-icon,
+  .mobile-bottom-nav .mobile-nav-add:is(:hover, :active) .mobile-nav-fab,
+  .mobile-bottom-nav .mobile-nav-icon,
+  .mobile-bottom-nav .mobile-nav-fab {
+    transform: none;
+  }
+  .mobile-bottom-nav .mobile-nav-tab[aria-current='page'] .mobile-nav-icon {
+    animation: none;
+  }
+}

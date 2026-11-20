@@ -10,8 +10,13 @@ const notConfigured = () => Promise.reject(new Error('Kho duyệt/số đo chưa
 
 type StubbedDeps = Pick<
   AppDependencies,
+  | 'profileGuardians'
   | 'invitationAcceptance'
+  | 'householdOwnership'
+  | 'householdDeletion'
+  | 'householdLeave'
   | 'household'
+  | 'householdMembership'
   | 'householdInvitations'
   | 'legal'
   | 'account'
@@ -42,10 +47,30 @@ type StubbedDeps = Pick<
   | 'heavyRateLimit'
 >;
 
+const householdLeave = {
+  repository: { leave: notConfigured },
+  storage: { deletePrefix: notConfigured },
+  logger: { warn: () => {} },
+};
+
+const householdManagement = {
+  profileGuardians: { change: notConfigured, list: notConfigured },
+  householdDeletion: { current: notConfigured, request: notConfigured, revoke: notConfigured },
+  householdOwnership: {
+    current: notConfigured,
+    offer: notConfigured,
+    decide: notConfigured,
+    revoke: notConfigured,
+  },
+  householdLeave,
+};
+
 // Sinh OpenAPI hoặc test feature khác: không được gọi hạ tầng duyệt chứng từ và số đo.
 export function createStubReviewDeps(): StubbedDeps {
   return {
+    ...householdManagement,
     household: { create: notConfigured },
+    householdMembership: { change: notConfigured, list: notConfigured },
     invitationAcceptance: {
       acceptance: { accept: notConfigured },
       founding: { create: notConfigured, revoke: notConfigured },

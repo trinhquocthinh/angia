@@ -2,6 +2,18 @@ import { expect, test } from '@playwright/test';
 import { householdInvitationFixture } from './householdInvitationFixture.js';
 export const householdInvitationManagementCases = [
   () => {
+    test('TC-773: mở xác nhận thu hồi thì focus ở nút Giữ lời mời', async ({ page }) => {
+      await householdInvitationFixture(page);
+      await page.goto('/family/invite');
+      await page.getByRole('radio', { name: /Thành viên/ }).check();
+      await page.getByRole('button', { name: 'Tạo lời mời', exact: true }).click();
+      await page.getByRole('button', { name: 'Thu hồi lời mời', exact: true }).click();
+      await expect(
+        page.getByRole('dialog').getByRole('button', { name: 'Giữ lời mời', exact: true }),
+      ).toBeFocused();
+    });
+  },
+  () => {
     test('TC-773: chọn rồi tạo, hai mã độc lập; đi ra/vào và reload nhớ vai trò', async ({ page }) => {
       const state = await householdInvitationFixture(page);
       await page.goto('/family/invite');

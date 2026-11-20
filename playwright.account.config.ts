@@ -6,11 +6,16 @@ import { join } from 'node:path';
 export default defineConfig({
   testDir: './apps/web/e2e',
   testMatch: [
+    '**/loginClayIcons.spec.ts',
+    '**/mobileBottomNav.spec.ts',
     '**/account.spec.ts',
     '**/householdStart.spec.ts',
     '**/householdInvitations.spec.ts',
     '**/householdJoin.spec.ts',
     '**/householdInvitationManagement.spec.ts',
+    '**/householdMembers.spec.ts',
+    '**/householdHome.spec.ts',
+    '**/profileGuardians.spec.ts',
   ],
   testIgnore: '**/._*',
   forbidOnly: Boolean(process.env.CI),

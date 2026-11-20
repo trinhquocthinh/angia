@@ -1,6 +1,11 @@
+import { registerProfileGuardianRoutes } from '@src/features/profiles/guardians/presentation/registerProfileGuardianRoutes.js';
+import { registerHouseholdDeletionRoutes } from '@src/features/household/presentation/registerHouseholdDeletionRoutes.js';
+import { registerHouseholdOwnershipRoutes } from '@src/features/household/presentation/registerHouseholdOwnershipRoutes.js';
+import { registerHouseholdLeaveRoute } from '@src/features/household/presentation/registerHouseholdLeaveRoute.js';
 import { registerInvitationAcceptanceRoutes } from '@src/features/household/presentation/registerInvitationAcceptanceRoutes.js';
 import { registerHouseholdInvitationRoutes } from '@src/features/household/presentation/registerHouseholdInvitationRoutes.js';
 import { registerHouseholdRoutes } from '@src/features/household/presentation/registerHouseholdRoutes.js';
+import { registerHouseholdMembershipRoutes } from '@src/features/household/presentation/registerHouseholdMembershipRoutes.js';
 import { registerClinicalRoutes } from './registerClinicalRoutes.js';
 import type { AppDependencies } from './createApp.js';
 import type { OpenAPIHono } from '@hono/zod-openapi';
@@ -20,7 +25,11 @@ import { registerPushRoutes } from '@src/features/pushSubscriptions/presentation
 
 export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencies): void {
   const cookies = { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies };
+  registerHouseholdDeletionRoutes(app, deps.householdDeletion);
+  registerHouseholdOwnershipRoutes(app, deps.householdOwnership);
+  registerHouseholdLeaveRoute(app, deps.householdLeave);
   registerHouseholdRoutes(app, deps.household);
+  registerHouseholdMembershipRoutes(app, deps.householdMembership);
   registerInvitationAcceptanceRoutes(app, deps.invitationAcceptance);
   registerHouseholdInvitationRoutes(app, deps.householdInvitations);
   registerHealthRoute(app, deps.healthProbes);
@@ -41,5 +50,6 @@ export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencie
   registerAiBillingRoutes(app, deps.aiBilling);
   registerFamilyUsageRoute(app, deps.familyUsage);
   registerProfileRoutes(app, deps);
+  registerProfileGuardianRoutes(app, deps.profileGuardians);
   registerClinicalRoutes(app, deps);
 }

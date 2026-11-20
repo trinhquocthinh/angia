@@ -1,5 +1,5 @@
 import { ProfileHealthHeader } from '@src/features/measurements/presentation/components/ProfileHealthHeader';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileListItem, ProfileSession } from '@src/features/profiles/application/ports';
 import { ProfileSectionPage } from '@src/features/profiles/presentation/components/ProfileSectionPage';
 import { useLabSeries } from '../application/useLabSeries';
 import { createLabResultsRepository } from '../infrastructure/createLabResultsRepository';
@@ -16,7 +16,7 @@ export function LabResultsPage({ profileId }: { profileId: string }) {
   );
 }
 
-function LabResultsContent({ profile, session }: { profile: HealthProfile; session: ProfileSession }) {
+function LabResultsContent({ profile, session }: { profile: ProfileListItem; session: ProfileSession }) {
   const series = useLabSeries(labResultsRepository, session, profile);
   return (
     <div className="flex flex-col gap-6">

@@ -1,3 +1,4 @@
+import { lockGuardianAccounts } from '@src/features/profiles/guardians/infrastructure/lockGuardianAccounts.js';
 import type { PgBoss } from 'pg-boss';
 import type { ProfileRepository } from '../application/ports.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
@@ -7,6 +8,9 @@ import { createProfileStore } from './createProfileStore.js';
 export function createProfileRepository(db: Database, boss: PgBoss): ProfileRepository {
   return {
     withFamily: (familyId, work) =>
-      withFamilyScope(db, familyId, (tx) => work(createProfileStore(tx, familyId, boss))),
+      withFamilyScope(db, familyId, async (tx) => {
+        await lockGuardianAccounts(tx, familyId);
+        return work(createProfileStore(tx, familyId, boss));
+      }),
   };
 }

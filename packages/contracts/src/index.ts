@@ -1,3 +1,4 @@
+export * from './profiles/profileGuardianSchemas.js';
 export * from './auth/index.js';
 export * from './household/createHouseholdRequestSchema.js';
 export { errorResponseSchema, type ErrorResponse } from './errors/errorResponseSchema.js';
@@ -98,8 +99,7 @@ export {
 export type { CourseConflict } from './medications/courseConflictSchemas.js';
 export { prescriptionSchema } from './prescriptions/prescriptionSchema.js';
 export type { Prescription } from './prescriptions/prescriptionSchema.js';
-export { labResultSchema } from './labResults/labResultSchema.js';
-export type { LabResult } from './labResults/labResultSchema.js';
+export { labResultSchema, type LabResult } from './labResults/labResultSchema.js';
 export {
   labSeriesQuerySchema,
   labSeriesResponseSchema,
@@ -259,4 +259,4 @@ export * from './painJournal/limits.js';
 export * from './painJournal/forbiddenWords.js';
 export * from './painJournal/schemas.js';
 
-export * from './household/householdInvitationSchemas.js';
+export * from './household/index.js';

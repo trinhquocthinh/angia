@@ -1,0 +1,111 @@
+.household-member-role-section {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-design-border);
+}
+.household-member-section-head h3 {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+}
+.household-member-section-head p {
+  margin: 4px 0 14px;
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+  color: var(--color-text-secondary);
+}
+.household-member-role-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 0;
+  padding: 0;
+  margin: 0 0 16px;
+}
+.household-member-role-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 76px;
+  padding: 16px;
+  border-radius: 20px;
+  border: 2px solid var(--color-design-border);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition:
+    border-color 150ms ease-out,
+    background-color 150ms ease-out;
+}
+.household-member-role-option:has(input:checked) {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+.household-member-role-option:has(input:focus-visible) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.household-member-role-option input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+.household-member-role-option-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--color-surface), var(--color-surface-container-high));
+  box-shadow: var(--shadow-stitch-sm);
+}
+.household-member-role-option[data-role='main'] .household-member-role-option-icon {
+  background: linear-gradient(135deg, var(--color-accent-container), var(--color-accent));
+  box-shadow: 0 6px 12px color-mix(in srgb, var(--color-household-shadow) 30%, transparent);
+}
+.household-member-role-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+.household-member-role-option-text strong {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+}
+.household-member-role-option-text > span {
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+  color: var(--color-text-secondary);
+}
+.household-member-role-radio {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  flex-shrink: 0;
+}
+.household-member-role-option:has(input:checked) .household-member-role-radio {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  box-shadow:
+    inset 0 0 0 5px var(--color-accent),
+    inset 0 0 0 10px var(--color-nav-icon-porcelain);
+}
+.household-member-save-btn {
+  width: 100%;
+  min-height: 48px;
+  box-shadow: var(--shadow-stitch-sm);
+}
+@media (prefers-reduced-motion: reduce) {
+  .household-member-role-option {
+    transition: none;
+  }
+}

@@ -13,9 +13,11 @@ import './login-mobile.css';
 export function LoginLayout({
   children,
   titleId = 'login-title',
+  clayIcons = false,
 }: {
   children: ReactNode;
   titleId?: string;
+  clayIcons?: boolean;
 }) {
   return (
     <div className="login-screen">
@@ -41,7 +43,7 @@ export function LoginLayout({
             <p>Nơi lưu giữ những điều nhỏ mỗi ngày, cùng chăm sóc sức khỏe của cả nhà.</p>
           </div>
           <div className="login-desktop-features">
-            <LoginFeatures />
+            <LoginFeatures clayIcons={clayIcons} />
           </div>
           <p className="login-brand-trust">
             <LoginIcon name="shield" />

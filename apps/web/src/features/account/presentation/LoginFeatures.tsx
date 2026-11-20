@@ -1,4 +1,5 @@
 import { LoginIcon } from './LoginIcon';
+import { LoginClayIcon } from './LoginClayIcon';
 
 const features = [
   {
@@ -14,13 +15,13 @@ const features = [
   },
 ] as const;
 
-export function LoginFeatures() {
+export function LoginFeatures({ clayIcons = false }: { clayIcons?: boolean }) {
   return (
     <ul className="login-features" aria-label="Tiện ích AN GIA">
       {features.map(({ icon, title, description }) => (
         <li key={icon} className={`login-feature login-feature-${icon}`}>
           <span className="login-feature-icon">
-            <LoginIcon name={icon} />
+            {clayIcons ? <LoginClayIcon name={icon} /> : <LoginIcon name={icon} />}
           </span>
           <div>
             <h3>{title}</h3>

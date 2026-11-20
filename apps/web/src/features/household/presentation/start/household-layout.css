@@ -109,12 +109,7 @@
 }
 .household-privacy-icon {
   margin-top: 2px;
-  color: var(--color-secondary);
   flex-shrink: 0;
-}
-.household-privacy-icon svg {
-  width: 22px;
-  height: 22px;
 }
 .household-start-privacy strong {
   display: none;

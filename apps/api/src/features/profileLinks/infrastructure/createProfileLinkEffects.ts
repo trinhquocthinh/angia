@@ -1,3 +1,4 @@
+import { clearProfileGuardians } from '@src/features/profiles/guardians/infrastructure/clearProfileGuardians.js';
 import { and, eq, isNull } from 'drizzle-orm';
 import { consentInvitations, profileLinkEvents, reminderRecipients } from '@src/shared/db/schema/index.js';
 import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
@@ -30,6 +31,8 @@ export function createProfileLinkEffects(
         );
     },
     recordLinkEvent: async ({ at, ...event }) => {
+      if (event.action === 'link' || event.action === 'transfer')
+        await clearProfileGuardians(tx, familyId, event.profileId, event.actorAccountId);
       await tx.insert(profileLinkEvents).values({ familyId, ...event, createdAt: at });
     },
   };

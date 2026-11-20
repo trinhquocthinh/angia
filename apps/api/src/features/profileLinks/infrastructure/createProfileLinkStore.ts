@@ -1,3 +1,4 @@
+import { canUnlinkStoredProfile } from '@src/features/profiles/guardians/infrastructure/canUnlinkStoredProfile.js';
 import { and, eq, isNull } from 'drizzle-orm';
 import { accounts, healthProfiles, profileLinkInvitations } from '@src/shared/db/schema/index.js';
 import { createProfileLinkReads } from './createProfileLinkReads.js';
@@ -19,6 +20,7 @@ export function createProfileLinkStore(tx: FamilyScopedTx, familyId: string): Pr
   return {
     ...createProfileLinkReads(tx, familyId),
     ...createProfileLinkEffects(tx, familyId),
+    canUnlinkProfile: (id) => canUnlinkStoredProfile(tx, familyId, id),
     revokePending: async (profileId, at) => {
       await tx.update(profileLinkInvitations).set({ revokedAt: at }).where(pendingLinks(profileId));
     },

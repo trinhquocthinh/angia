@@ -247,9 +247,7 @@ describe('E27-S1-T2: kiểm kê quyền và theo dõi đường ngoài RLS', () 
       { prosecdef: true, proconfig: ['search_path=pg_catalog, pg_temp'], no_public: true },
     ]);
   });
-  it.todo(
-    'TC-869: E28-S2-T2 — chỉ đọc/xoá nhà có yêu cầu pending đến hạn; bỏ điều kiện làm cùng assertion đỏ',
-  );
+  // TC-869 (E28-S2-T2): familyDeletionRole.int.test.ts và familyDeletionPolicy.int.test.ts.
   it.todo(
     'TC-870: E29-S3-T1/T2 — chỉ đọc đúng hồ sơ trong cửa sổ; mở hồ sơ hoặc bỏ hạn làm cùng assertion đỏ',
   );

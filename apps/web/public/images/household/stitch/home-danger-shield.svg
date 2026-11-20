@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <linearGradient id="shieldRed3D" x1="4" y1="3" x2="28" y2="29" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#EF4444" />
+      <stop offset="40%" stop-color="#DC2626" />
+      <stop offset="100%" stop-color="#991B1B" />
+    </linearGradient>
+    <linearGradient id="shieldHighlight" x1="8" y1="5" x2="24" y2="18" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#FCA5A5" stop-opacity="0" />
+    </linearGradient>
+    <filter id="shieldClayShadow" x="2" y="2" width="28" height="28" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2.5" stdDeviation="1.6" flood-color="#5B0E07" flood-opacity="0.32" />
+    </filter>
+  </defs>
+  <path
+    filter="url(#shieldClayShadow)"
+    d="M16 4L6 8V15C6 21.6 10.3 26.8 16 28C21.7 26.8 26 21.6 26 15V8L16 4Z"
+    fill="url(#shieldRed3D)"
+  />
+  <path
+    d="M16 5.5L7.8 8.8V15C7.8 20.6 11.4 25.1 16 26.3C20.6 25.1 24.2 20.6 24.2 15V8.8L16 5.5Z"
+    stroke="url(#shieldHighlight)"
+    stroke-width="1.2"
+    fill="none"
+  />
+  <path d="M16 10V17M16 20.5V21" stroke="white" stroke-width="2.4" stroke-linecap="round" />
+</svg>

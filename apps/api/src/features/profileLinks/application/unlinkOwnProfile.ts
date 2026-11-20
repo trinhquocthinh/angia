@@ -7,12 +7,13 @@ export function unlinkOwnProfile(
   familyId: string,
   accountId: string,
   profileId: string,
-): Promise<ProfileLinkOutcome<null, 'ERR_NOT_FOUND'>> {
+): Promise<ProfileLinkOutcome<null, 'ERR_NOT_FOUND' | 'ERR_VALIDATION'>> {
   return deps.repository.withFamily(familyId, async (store) => {
     const profile = await store.lockProfile(profileId);
     const account = profile && (await store.lockAccount(accountId));
     // Kiểm lại sau khóa: phiên có thể đã cũ nếu quản trị vừa chuyển liên kết.
     if (account?.healthProfileId !== profileId) return { ok: false, code: 'ERR_NOT_FOUND' };
+    if (!(await store.canUnlinkProfile(profileId))) return { ok: false, code: 'ERR_VALIDATION' };
     await store.unlinkAccount(accountId);
     await store.clearReminderRecipients(profileId);
     await store.recordLinkEvent({

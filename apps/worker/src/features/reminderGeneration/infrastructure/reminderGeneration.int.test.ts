@@ -93,6 +93,27 @@ describe('Sinh lời nhắc trên PostgreSQL thật, role app NOBYPASSRLS (SPEC-
     ]);
   });
 
+  it('TC-809: hồ sơ trẻ lấy giám hộ thay danh sách chỉ định cũ, tự cập nhật khi gỡ', async () => {
+    const f = await seedFamily(fx.owner);
+    await fx.owner.query('UPDATE health_profiles SET birth_year=2020 WHERE id=$1', [f.profileId]);
+    await fx.owner.query(
+      'INSERT INTO profile_guardians(health_profile_id,family_id,account_id) VALUES($1,$2,$3)',
+      [f.profileId, f.familyId, f.motherId],
+    );
+    const repository = createReminderRepository(fx.pool, randomUUID);
+    const read = () => repository.withFamily(f.familyId, (store) => store.listProfiles(DATE));
+    expect((await read())[0]?.assignedAccountIds).toEqual([f.motherId]);
+    await fx.owner.query(
+      'INSERT INTO profile_guardians(health_profile_id,family_id,account_id) VALUES($1,$2,$3)',
+      [f.profileId, f.familyId, f.fatherId],
+    );
+    await fx.owner.query('DELETE FROM profile_guardians WHERE health_profile_id=$1 AND account_id=$2', [
+      f.profileId,
+      f.motherId,
+    ]);
+    expect((await read())[0]?.assignedAccountIds).toEqual([f.fatherId]);
+  });
+
   it('TC-381: hồ sơ withdrawn không sinh lời nhắc dù còn đợt thuốc đang dùng', async () => {
     const a = await seedFamily(fx.owner);
     await a.addCourse('Metformin', ['morning']);

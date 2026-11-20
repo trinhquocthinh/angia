@@ -323,6 +323,13 @@
       "when": 1794906130407,
       "tag": "0045_invitation_management",
       "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1794906130408,
+      "tag": "0046_family_deletion_job_role",
+      "breakpoints": true
     }
   ]
 }

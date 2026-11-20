@@ -2,13 +2,14 @@ import { selfReadOnlyPolicies } from './selfReadOnlyPolicies.js';
 import { sql } from 'drizzle-orm';
 import { bigint, check, jsonb, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { accounts } from './accounts.js';
-import { familyIdColumn, familyIsolationPolicy, idColumn } from './columns.js';
+import { familyIsolationPolicy, idColumn } from './columns.js';
 import { scanQuotaMonths } from './scanQuotaMonths.js';
 export const scanQuotaAudit = pgTable(
   'scan_quota_audit',
   {
     id: idColumn(),
-    familyId: familyIdColumn(),
+    // D3: nhật ký quota còn sau khi xoá nhà (0046): không FK tới families.
+    familyId: uuid('family_id').notNull(),
     month: text('month')
       .notNull()
       .references(() => scanQuotaMonths.month),

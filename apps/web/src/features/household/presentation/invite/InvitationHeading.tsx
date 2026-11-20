@@ -5,7 +5,7 @@ import { InvitationIcon } from './InvitationIcon';
 export function InvitationHeading({ status }: { status: InvitationDisplayStatus }) {
   return (
     <div className="household-invite-heading">
-      <Link to="/" search={{}} className="household-invite-back" aria-label="Quay lại">
+      <Link to="/family/home" className="household-invite-back" aria-label="Quay lại">
         <InvitationIcon name="back" />
       </Link>
       <h1 id="household-invite-title">Mời người thân</h1>

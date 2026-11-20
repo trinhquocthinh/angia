@@ -7,6 +7,9 @@
 //  - self_write: POST/PATCH/DELETE /api/me/profile/pain-issues[/...], kiểm expectSelfWriteDenied.
 export type HealthDataRouteKind = 'scoped' | 'list' | 'uniform' | 'self' | 'self_write';
 export const HEALTH_DATA_ROUTES = {
+  'POST /api/health-profiles/:id/guardians': 'scoped',
+  'GET /api/health-profiles/:id/guardians': 'scoped',
+  'DELETE /api/health-profiles/:id/guardians/me': 'scoped',
   'GET /api/health-profiles/:id/pain-issues': 'scoped',
   'POST /api/health-profiles/:id/pain-issues': 'scoped',
   'GET /api/health-profiles/:id/pain-issues/:issueId': 'scoped',
@@ -137,6 +140,20 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'POST /api/family/invitations',
   'POST /api/family/invitations/:id/replace',
   'DELETE /api/family/invitations/:id',
+  // SPEC-066: thao tác quản lý, không trả dữ liệu sức khỏe; TC-789 kiểm khác nhà riêng.
+  'GET /api/family/members',
+  'PATCH /api/family/members/:targetAccountId',
+  // SPEC-067: tự thao tác; kiểm dữ liệu/ID nhà cũ và DTO strict tại leaveHousehold.int.test.ts.
+  'POST /api/family/leave',
+  // SPEC-068: trao quyền; probe chéo gia đình tại ownershipOffers.int.test.ts.
+  'GET /api/family/ownership-offers/current',
+  'POST /api/family/ownership-offers',
+  'POST /api/family/ownership-offers/:id/decision',
+  'DELETE /api/family/ownership-offers/:id',
+  // SPEC-069: xoá nhà; probe chéo gia đình tại familyDeletionRequests.int.test.ts.
+  'GET /api/family/deletion-request/current',
+  'POST /api/family/deletion-request',
+  'DELETE /api/family/deletion-request',
   'GET /api/legal/current',
   'POST /api/me/legal-acceptances',
   'POST /api/me/local-credential',

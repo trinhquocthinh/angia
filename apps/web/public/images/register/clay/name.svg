@@ -1,0 +1,14 @@
+<svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="clayBadge_emerald3D" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#6EE7B7"></stop>
+<stop offset="60%" stop-color="#10B981"></stop>
+<stop offset="100%" stop-color="#047857"></stop>
+</linearGradient>
+</defs>
+<rect fill="url(#clayBadge_emerald3D)" height="16" rx="3.5" width="18" x="3" y="4"></rect>
+<circle cx="8" cy="10" fill="#FFFFFF" r="2.2"></circle>
+<rect fill="#FFFFFF" height="2" rx="1" width="6" x="12" y="8.5"></rect>
+<rect fill="#D1FAE5" height="1.8" rx="0.9" width="4.5" x="12" y="12"></rect>
+<path d="M5.5 16 C5.5 14.5, 6.8 13.5, 8 13.5 C9.2 13.5, 10.5 14.5, 10.5 16 Z" fill="#FFFFFF"></path>
+</svg>

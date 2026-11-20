@@ -27,6 +27,8 @@ export function setLinkedAccount(
       linkedAccount: target && { id: target.id, displayName: target.displayName },
     };
     if (!current && !target) return { ok: true, value };
+    if (current && !target && !(await store.canUnlinkProfile(profileId)))
+      return { ok: false, code: 'ERR_VALIDATION' };
     // health_profile_id là UNIQUE theo hồ sơ nên phải gỡ tài khoản cũ trước.
     if (current) await store.unlinkAccount(current.id);
     if (target) await store.linkAccount(target.id, profileId);

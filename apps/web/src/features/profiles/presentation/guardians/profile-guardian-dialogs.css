@@ -1,0 +1,206 @@
+.profile-guardian-dialog {
+  position: fixed;
+  inset: 0;
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+.profile-guardian-dialog::backdrop {
+  background: color-mix(in srgb, var(--color-overlay) 40%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.profile-guardian-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+}
+
+.profile-guardian-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.profile-guardian-dialog-head h3 {
+  margin: 0;
+  font-size: 1.1875rem;
+  line-height: 1.625rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.profile-guardian-dialog-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-surface-container);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.profile-guardian-dialog-close:hover {
+  background: var(--color-surface-container-high);
+}
+
+.profile-guardian-dialog-desc {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+  color: var(--color-text-secondary);
+}
+
+.profile-guardian-candidates {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-guardian-candidate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-design-border);
+  border-radius: 16px;
+  background: var(--color-accent-soft);
+  cursor: pointer;
+}
+
+.profile-guardian-candidate-selected {
+  border-color: var(--color-accent);
+  background: var(--color-surface-container);
+}
+
+.profile-guardian-candidate-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.profile-guardian-candidate-label {
+  font-size: 0.9375rem;
+  line-height: 1.375rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.profile-guardian-radio {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.profile-guardian-empty {
+  margin: 0;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--color-accent-soft);
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+  color: var(--color-text-secondary);
+}
+
+.profile-guardian-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--color-warning) 35%, var(--color-surface));
+  border-radius: 14px;
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+  font-weight: 500;
+}
+
+.profile-guardian-dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.profile-guardian-btn-cancel,
+.profile-guardian-btn-primary,
+.profile-guardian-btn-danger {
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-guardian-btn-cancel {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+.profile-guardian-btn-primary {
+  border: 0;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.profile-guardian-btn-primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.profile-guardian-btn-danger {
+  border: 0;
+  background: var(--color-danger);
+  color: var(--color-on-accent);
+}
+
+.profile-guardian-btn-danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-danger) 85%, var(--color-shadow));
+}
+
+.profile-guardian-btn-primary:disabled,
+.profile-guardian-btn-danger:disabled,
+.profile-guardian-btn-cancel:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 639px) {
+  .profile-guardian-dialog {
+    inset: auto 0 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 90dvh;
+    margin: 0;
+    border-radius: 24px 24px 0 0;
+  }
+
+  .profile-guardian-dialog-body {
+    padding: 20px 16px max(24px, env(safe-area-inset-bottom));
+  }
+
+  .profile-guardian-dialog-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}

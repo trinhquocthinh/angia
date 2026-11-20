@@ -3,6 +3,10 @@ import type { PurgeProfileObjectsJob } from '@angia/contracts';
 import type { HealthProfile, LinkableAccount, LinkCandidate, NewProfile } from '../domain/HealthProfile.js';
 
 export interface ProfileStore {
+  prepareGuardianCreator(actorId: string): Promise<boolean>;
+  addCreatorGuardian(profileId: string, actorId: string): Promise<void>;
+  clearProfileGuardians(profileId: string, actorId: string): Promise<void>;
+  hasProfileGuardian(profileId: string): Promise<boolean>;
   listProfiles(): Promise<HealthProfile[]>;
   listConsentAccounts(): Promise<{ id: string; displayName: string; healthProfileId: string | null }[]>;
   listLinkableAccounts(): Promise<LinkableAccount[]>;

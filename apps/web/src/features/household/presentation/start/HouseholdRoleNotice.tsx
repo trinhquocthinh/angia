@@ -1,9 +1,9 @@
-import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { ClayIcon } from '@src/shared/ui/ClayIcon';
 export function HouseholdRoleNotice() {
   return (
     <div className="household-start-role">
       <span className="household-start-role-icon">
-        <AdminIcon name="admin_panel_settings" size={22} />
+        <ClayIcon name="owner" size={40} />
       </span>
       <div>
         <div className="household-role-heading">

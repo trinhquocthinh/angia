@@ -1,0 +1,52 @@
+/* Bảng màu clay Stitch giữ nền sáng ở cả hai chế độ để nét chevron luôn tương phản. */
+.arrow-3d {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  vertical-align: middle;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--color-nav-icon-porcelain) 60%, transparent);
+  background: linear-gradient(
+    to bottom,
+    var(--color-clay-porcelain),
+    var(--color-clay-mint),
+    var(--color-clay-jade)
+  );
+  color: var(--color-nav-icon-jade-deep);
+  box-shadow:
+    0 3px 8px color-mix(in srgb, var(--color-household-shadow) 12%, transparent),
+    inset 0 1.5px 1.5px color-mix(in srgb, var(--color-nav-icon-porcelain) 90%, transparent);
+  transition:
+    color 180ms ease-out,
+    box-shadow 180ms ease-out;
+}
+.arrow-3d > .arrow-3d-chevron {
+  width: 55%;
+  height: 55%;
+  transition: transform 180ms ease-out;
+}
+@media (hover: hover) {
+  :is(a, button, [role='button']):not(:disabled):not([aria-disabled='true']):hover .arrow-3d {
+    background: linear-gradient(to bottom, var(--color-clay-hover-start), var(--color-clay-hover-end));
+    color: var(--color-nav-icon-porcelain);
+    box-shadow:
+      0 4px 12px color-mix(in srgb, var(--color-household-shadow) 30%, transparent),
+      inset 0 1.5px 1.5px color-mix(in srgb, var(--color-nav-icon-porcelain) 40%, transparent);
+  }
+  :is(a, button, [role='button']):not(:disabled):not([aria-disabled='true']):hover
+    .arrow-3d
+    > .arrow-3d-chevron {
+    transform: translateX(2px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arrow-3d,
+  .arrow-3d > .arrow-3d-chevron {
+    transition: none;
+  }
+  .arrow-3d > .arrow-3d-chevron {
+    transform: none !important;
+  }
+}

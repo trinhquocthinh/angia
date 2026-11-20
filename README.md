@@ -45,6 +45,16 @@ Nền gốc 1376 × 768 và logo được tối ưu WebP tại `apps/web/public/
 SVG desktop và Authentik giữ hình dạng từ thiết kế. Icon mobile là subset Material
 Symbols lưu local tại `public/fonts/material-symbols/login-outlined.ttf`, cùng
 giấy phép Apache 2.0 trong thư mục đó. Login không gọi CDN ảnh hoặc font lúc chạy.
+Owner duyệt cập nhật icon 3D ngày 2026-11-18: desktop lấy từ màn
+`f39345d438f942de8056e0b4350d3d79`, mobile từ `b91f19cefbd648208efc22fae503db8b`.
+Chín SVG gốc lưu tại `apps/web/public/images/login/clay/`: desktop có lịch, tim,
+gia đình, ổ khóa, người dùng và chìa khóa; mobile có ổ khóa, avatar và chìa khóa
+riêng. `LoginClayIcon` chọn ảnh bằng `picture` tại breakpoint 1024px. Các SVG 3D
+thay icon nét/phông ở các vị trí này; mắt hiện/ẩn, mũi tên, Authentik và icon phụ
+tiếp tục dùng tài nguyên hiện hành. Cờ `clayIcons` bật ở cả `/login` và `/register`:
+ba thẻ tiện ích dùng chung SVG 3D lịch, tim và gia đình. Kiểm tra ảnh theo breakpoint,
+hiện/ẩn mật khẩu và chữ 200% tại `apps/web/e2e/loginClayIcons.spec.ts`, dùng cấu
+hình `playwright.account.config.ts` sau khi build web.
 Mobile dùng nền mint và hai SVG mây từ màn Stitch mobile; không hiển thị ba
 block tiện ích dưới form đăng nhập/đăng ký. Các block bên trái desktop dùng chung.
 Form đăng ký có thanh độ mạnh mật khẩu bốn mức theo mẫu Stitch; điểm chỉ là tham khảo,
@@ -52,6 +62,16 @@ không thay quy tắc ít nhất 8 ký tự và khác tên đăng nhập. Hai li
 gạch chân và dùng URL/phiên bản từ API. Form trống/lỗi có hiệu ứng rung, tôn trọng
 thiết lập giảm chuyển động. Không thay nghiệp vụ đăng ký local, thêm số điện thoại
 hay luồng đăng ký Authentik.
+
+Owner duyệt cập nhật **chỉ icon form đăng ký** ngày 2026-11-18 từ màn Stitch
+`36f3713e39b84fdab8739e790faaaba5`: 5 SVG tại `apps/web/public/images/register/clay/`
+gồm tiêu đề tạo tài khoản, avatar hồng, chìa khóa vàng, thẻ tên xanh lá và email
+xanh dương. Form responsive dùng cùng bộ icon màu; bỏ mask đơn sắc và glyph
+mobile ở bốn ô nhập. Chuẩn hóa tên thẻ/thuộc tính SVG khi trích từ HTML để gradient
+đọc đúng trong tệp độc lập. Theo yêu cầu tiếp theo của owner, cột trái register
+dùng lại ba icon 3D của login, giữ năm icon form vừa cập nhật. Bố cục, chữ, nút,
+checkbox, mắt hiện/ẩn và nghiệp vụ giữ nguyên. Ca `accountRegistrationClayCase.ts`
+kiểm cả hai nhóm icon, hiện/ẩn mật khẩu, thanh độ mạnh và chữ 200%.
 
 Form vẫn đăng nhập local qua `/api/auth/password-login`; nút **Đăng nhập bằng
 Authentik** vẫn trỏ `/api/auth/login`. Không thay backend, schema, chính sách phiên,
@@ -72,6 +92,26 @@ gửi hoặc thiếu văn bản/CSRF; luồng ghi nhận phiên bản, đồng �
 nguyên. Các style `legal-update-*` và token màu riêng không đổi layout các trang
 khác. Tham chiếu Stitch: desktop `54449e0d704649b1be3c951e7bea9024`, mobile
 `86f7ce7d28c941db9f555b6e20d17a2a`.
+
+## Thanh điều hướng mobile — 2026-11-18
+
+Owner duyệt mẫu Stitch `1b24d17804194ed298e3613ac5f4e5cc`:
+thanh đáy dưới 1024px giữ ba nhãn Trang chủ / Thêm mới / Chờ duyệt và các route
+hiện hành; Thêm mới dẫn thẳng `/upload`, không mở menu thao tác mẫu. Thành viên
+đã liên kết chỉ có Trang chủ / Hồ sơ của tôi; chưa có nhà, thành viên chưa liên
+kết và trang admin tiếp tục ẩn điều hướng theo quy tắc hiện hành.
+
+SVG 3D lưu tại `apps/web/public/icons/mobile-nav-*-3d.svg`, dùng cố định theo yêu cầu
+owner; đã bỏ SVG 2D, bộ chuyển kiểu và font riêng của bộ chọn. Giữ nền tab chuyển
+300ms, nhấn 200ms, icon tab nảy và halo 2 giây; reduced motion tắt chuyển động.
+Chữ tối thiểu 16px, vùng chạm tối thiểu 48px; footer chừa khoảng cho thanh đáy.
+
+Kiểm tra trình duyệt bằng
+`yarn playwright test --config playwright.account.config.ts apps/web/e2e/mobileBottomNav.spec.ts`
+(build web trước), gồm hai nền, Chromium/WebKit, chữ 200%, liên kết và reduced
+motion. Phạm vi này chưa triển khai bộ bốn tab/rail/sidebar của E30-S1-T1 và chưa
+nghiệm thu SIT. `verify:fast` tại checkpoint bị metadata macOS `._*` chặn ở Vitest
+sau typecheck; không coi các kiểm tra riêng là cổng verify chính thức đã đạt.
 
 ## Quản trị hệ thống
 
@@ -1221,9 +1261,7 @@ Phần TC-839/840 chưa triển khai tiếp tục là điều kiện nghiệm th
 
 | Thao tác                          | Task nhận    |
 | --------------------------------- | ------------ |
-| Đổi vai trò, gỡ thành viên        | E28-S1-T1    |
 | Rời nhà                           | E28-S1-T2    |
-| Chuyển Chủ hộ                     | E28-S2-T1    |
 | Yêu cầu/thu hồi/thực hiện xoá nhà | E28-S2-T2    |
 | Người giám hộ                     | E28-S2-T3    |
 | Đặt lại mật khẩu                  | E29-S1-T1/T2 |
@@ -1353,6 +1391,19 @@ hết hạn desktop `cb6582ee6870458ea9b74aa5acbc822c`, mobile
 Tạo nhà desktop `fafff946ed7b4a74b5a5844ebb8ddb81`, mobile
 `cfd254f045364a9193ea1f696cbd8df1`. Giữ mô tả quyền đúng sản phẩm.
 
+**Cập nhật giao diện owner duyệt ngày 2026-11-19:** arrow 3D chỉ giữ ở hai lựa
+chọn trên màn Bắt đầu; các màn khác dùng lại mũi tên cũ. Tạo nhà mới dùng icon
+từ màn desktop nêu trên, giữ form và hành vi hiện có. Avatar tài khoản dùng
+chung trên desktop/mobile. Màn mời dùng tab và khối mã theo từng breakpoint,
+với bộ icon desktop dùng chung cho mobile; modal/bottom sheet thu hồi dùng bộ
+icon của màn xác nhận desktop. Mười lăm SVG lưu local tại
+`apps/web/public/images/household/stitch/`, hiển thị qua `ClayIcon`; không đổi
+API, quyền hoặc vòng đời lời mời. Build/typecheck, lint/format phần đổi,
+**228/228 E2E** và **16/16 kiểm tra giao diện** tại 360/390/768/1440 px ở hai
+nền PASS. **50 unit test liên quan** PASS trên bản sao sạch metadata;
+`yarn verify:fast` trên bản sao đó PASS (52 test liên quan). Lệnh trên volume
+gốc vẫn vướng metadata macOS `._*`; chưa ghi full `yarn verify` PASS cho đợt này.
+
 API household/audit: 91 integration PostgreSQL tạm PASS ở checkpoint triển khai.
 Build/typecheck, lint/format phần đổi và budget mọi route PASS, lớn nhất
 199,2 KB/200 KB. Official `verify:fast` còn metadata macOS `._*` sau typecheck;
@@ -1437,3 +1488,156 @@ playwright install mỗi lượt. Bộ test và báo cáo vẫn được giữ.
 
 Các thay đổi UI không còn tự động bị chặn bởi accessibility trên mọi PR;
 người phụ trách cần chủ động chạy workflow này khi đánh giá chất lượng UI.
+
+## E28-S1-T1 — Đổi vai trò và gỡ thành viên (local 2026-11-19)
+
+`PATCH /api/family/members/{targetAccountId}` nhận một trong hai body:
+
+```json
+{ "action": "change_role", "role": "main" }
+```
+
+```json
+{ "action": "remove" }
+```
+
+Vai trò nhận `main` hoặc `member`; thành công trả `204`, `Cache-Control: no-store`.
+Chỉ `main` cùng nhà quản lý người khác; tự thao tác bị chặn (`403 ERR_FORBIDDEN`),
+tự rời nhà thuộc E28-S1-T2. Chủ hộ được bảo vệ (`403 ERR_OWNER_PROTECTED`);
+người giám hộ cuối cùng không được hạ/gỡ (`409 ERR_LAST_GUARDIAN`).
+Đích khác nhà hoặc không tồn tại cùng trả `404 ERR_NOT_FOUND`.
+
+Một transaction `withFamilyScope` kiểm lại quyền DB, xử lý người giám hộ,
+giữ hồ sơ liên kết ở nhà với trạng thái `withdrawn`, bỏ liên kết, thu hồi push,
+ghi cửa sổ 168 giờ và `last_member_removed_at`, rồi gỡ tài khoản khỏi nhà.
+Bộ audit chung thêm `member_role_changed` và `member_removed`; chỉ sự kiện gỡ
+có metadata cố định `{ "reason": "removed_from_family" }`, không nhận metadata
+từ request. Lỗi audit rollback toàn bộ thao tác. Không đổi schema/migration.
+
+Hồi quy household/audit: **105/105 integration test PASS** trên bản sao tạm.
+`yarn verify:fast` trên bản sao không có metadata macOS: **3456/3456 unit test
+PASS**, typecheck PASS. Ở volume gốc, `verify:fast` lỗi parse `._*`; lint còn
+quét metadata và worktree cũ trong `.claude/worktrees`. Không coi hai cổng
+ở volume gốc đã PASS; không sửa cấu hình hoặc dọn các artifact đó trong task này.
+
+Kiểm cuối sau đồng bộ OIDC/CI: `yarn verify` trên bản sao mã hiện hành PASS,
+gồm **3460/3460 unit test** và các cổng lint/format/dup/knip/build/budget/model.
+Integration E28/audit ngay trên volume gốc: **14/14 PASS**; khung cô lập nhà:
+**315 PASS, 10 TODO** thuộc task sau. Manifest SHA-256 **27/27 tệp** và báo cáo:
+`../../Docs/angia/acceptance/v1.0/evidence/e28-s1-t1-2026-11-19.md`.
+
+TC-787 mới kiểm tiền đề tạo cửa sổ tải đúng 168 giờ; kiểm tải hồ sơ đầu-cuối
+chờ SPEC-072/E29. UI quản lý thành viên thuộc E28-S3; chưa nghiệm thu SIT.
+
+## E28-S1-T2 — Tự rời nhà (local 2026-11-19)
+
+`POST /api/family/leave` nhận body strict `{ ownProfileDisposition?: "keep" | "delete" }`,
+trả `204`, `Cache-Control: no-store`; yêu cầu phiên và CSRF. Tài khoản có hồ sơ
+liên kết phải chọn giữ hoặc xoá. Chủ hộ còn người khác nhận
+`409 ERR_OWNER_MUST_TRANSFER`; Chủ hộ một mình nhận
+`409 ERR_OWNER_MUST_DELETE_FAMILY`. Người giám hộ cuối cùng nhận
+`409 ERR_LAST_GUARDIAN` kèm `details.profileIds`.
+
+Một transaction `withFamilyScope` khoá và kiểm lại DB, xử lý tư cách giám hộ,
+gỡ membership/liên kết và đăng ký Push, ghi audit `member_left`.
+`keep` giữ nguyên hồ sơ và đồng thuận. `delete` xoá hồ sơ cùng dữ liệu phụ thuộc,
+enqueue `purge-profile-objects` cùng transaction rồi dọn ảnh sau COMMIT.
+Cửa sổ tải lịch sử cùng hồ sơ được bỏ tham chiếu hồ sơ, giữ thời hạn;
+không tạo cửa sổ tải mới hay cập nhật thời điểm gỡ thành viên.
+Lỗi queue/audit rollback toàn bộ; lỗi storage sau COMMIT để job vét dọn tiếp.
+Không đổi schema hoặc migration.
+
+TC-790–796 kiểm local: **15 integration mới**, cùng hồi quy T1/audit
+**43/43 PASS**; khung truy cập chéo gia đình **4/4 PASS**.
+`yarn verify:fast` trên bản sao sạch metadata PASS (typecheck + 165 unit liên quan); full `yarn verify` PASS (3466 unit test/684 suite, sinh API, lint/format/dup/knip/build/budget/model). Build còn cảnh báo chunk lớn nhưng cổng budget PASS.
+Volume gốc còn lỗi metadata macOS `._*.ts`; không coi cổng verify tại volume gốc PASS.
+Bản sao tạm không chứa metadata được dùng để kiểm chứng cùng source.
+Chưa nghiệm thu Garage/SIT, Push service hoặc UI; UI rời nhà thuộc E28-S3-T2.
+Bằng chứng: `../../Docs/angia/acceptance/v1.0/evidence/e28-s1-t2-2026-11-19.md`.
+
+## E28-S2-T1 — Trao quyền Chủ hộ (local 2026-11-19)
+
+- `POST /api/family/ownership-offers`: body strict `{ targetAccountId }`, trả `201`
+  với `{ id, targetAccountId, status: "pending", createdAt }`.
+- `POST /api/family/ownership-offers/{id}/decision`: body strict `{ accept: boolean }`, trả `204`.
+- `DELETE /api/family/ownership-offers/{id}`: Chủ hộ gửi đề nghị thu hồi, trả `204`.
+
+Yêu cầu phiên/CSRF và `Cache-Control: no-store`. Chỉ Chủ hộ đề nghị cho một
+Đồng quản lý khác cùng nhà; chỉ người nhận trả lời. Một nhà tối đa một đề nghị
+`pending` (`409 ERR_OWNERSHIP_TRANSFER_PENDING`). Quyền chỉ đổi khi chấp nhận;
+cả Chủ hộ mới và cũ vẫn có vai trò `main`.
+
+Trong `withFamilyScope`, khoá account theo UUID → family → offer, kiểm lại DB,
+đổi cờ sở hữu/kết thúc đề nghị và ghi audit cùng transaction. Hạ vai trò, gỡ hoặc
+tự rời nhà tự chuyển đề nghị liên quan từ `pending` sang `revoked` kèm `decidedAt`
+và audit `ownership_transfer_revoked` do người thực hiện thao tác; nâng vai trò
+lại không khôi phục đề nghị cũ. Lỗi audit rollback toàn bộ. Không đổi schema.
+
+TC-797–801 kiểm local: **14 integration mới PASS**, hồi quy household/audit
+**134/134 PASS**, khung cô lập **315 PASS/6 TODO**. `yarn verify:fast` trên bản sao
+sạch metadata PASS (typecheck + 163 unit liên quan). Full `yarn verify` PASS (3470 unit test, sinh API, lint/format/dup/knip/build/budget/model). Volume gốc còn metadata macOS `._*` gây lỗi runner.
+Chưa nghiệm thu SIT/UI; UI trao quyền thuộc E28-S3-T2.
+Bằng chứng: `../../Docs/angia/acceptance/v1.0/evidence/e28-s2-t1-2026-11-19.md`.
+
+## E28-S2-T3 — Người giám hộ hồ sơ trẻ (local 2026-11-19)
+
+Hồ sơ dưới 18 tuổi theo năm Việt Nam, chưa liên kết tài khoản, tự gán người tạo
+làm giám hộ trong cùng transaction. Chỉ giám hộ hiện tại thêm được người thứ hai
+là `main` cùng nhà; tối đa hai người. Hai API cần phiên, CSRF và vai trò `main`:
+
+- `POST /api/health-profiles/{id}/guardians`, body strict `{ guardianAccountId }`.
+- `DELETE /api/health-profiles/{id}/guardians/me`, chỉ tự gỡ; người cuối bị chặn.
+
+Thành công trả 204/no-store. Thay đổi và audit cùng transaction `withFamilyScope`;
+khóa account theo UUID → family → profile. Không đổi schema. Sinh/gửi nhắc thuốc,
+đọc lời nhắc và xác nhận liều dùng giám hộ hiện hành làm người nhận cho hồ sơ trẻ;
+không cho cấu hình người nhận riêng. Nhắc tái khám giữ quy tắc SPEC-051 hiện có.
+
+Owner chọn chặn `ERR_VALIDATION` các chuyển đổi để lại hồ sơ trẻ không có giám hộ:
+sửa người lớn/không rõ năm sinh thành trẻ, tự/admin gỡ liên kết, gỡ thành viên hoặc
+rời nhà chọn giữ hồ sơ trẻ đang liên kết. Rời nhà chọn xoá hồ sơ vẫn được phép.
+Quy trình chọn giám hộ khi chuyển đổi để task sau. Khi liên kết hoặc hồ sơ trở
+thành người lớn, bỏ tư cách giám hộ và ghi audit cùng transaction.
+
+TC-809–814 kiểm local; hồi quy API/worker/cô lập **611 PASS/2 TODO có sẵn**.
+`yarn verify:fast` trên bản sao sạch metadata PASS (typecheck + 153 unit liên quan).
+Full `yarn verify` dừng tại TC-860 do màu cứng có sẵn trong `clay-icon.css`
+(3501 unit PASS/1 FAIL); duplication, knip, build, budget và model check chạy riêng PASS.
+Volume gốc còn lỗi runner do metadata macOS `._*`; không ghi full verify PASS.
+
+Chưa nghiệm thu SIT/UI; giao diện giám hộ thuộc E28-S3-T3. Bằng chứng và giới hạn
+kiểm chứng: `../../Docs/angia/acceptance/v1.0/evidence/e28-s2-t3-2026-11-19.md`.
+
+## E28-S3-T1 — API danh sách thành viên
+
+`GET /api/family/members` trả `200`, `Cache-Control: no-store` và
+`{ members: [{ accountId, displayName, role, isOwner, isSelf }] }`.
+Cả `main` và `member` có nhà đều được đọc; chưa có nhà trả `403 ERR_FORBIDDEN`,
+chưa đăng nhập trả `401`. Chỉ chọn tài khoản có `family_id` của phiên, đọc trong
+`withFamilyScope` bằng role runtime và kiểm lại membership trong cùng câu SELECT.
+Chủ hộ đứng trước, rồi `main`, rồi `member`; mỗi nhóm theo `displayName`
+(collation mặc định của DB), cuối cùng theo UUID. Không trả email, username,
+ID hồ sơ hoặc dữ liệu sức khỏe. Không đổi schema, domain hay UI.
+
+Unit test: `application/listHouseholdMembers.test.ts`; kiểm quyền, thứ tự,
+cờ Chủ hộ/bản thân, khóa JSON và cô lập chéo nhà tại
+`apps/api/src/features/household/presentation/listHouseholdMembers.int.test.ts`.
+
+## E28-S3-T2b — Nhà của tôi và quản lý thành viên
+
+Menu tài khoản có một mục **Nhà của tôi** (`/family/home`). Trang dùng tên nhà,
+danh sách và số lượng từng vai trò từ API; không dựng số điện thoại, ngày tham gia
+hay mã nhà. Quyền mời, đổi vai trò, gỡ thành viên và quản trị nhà giữ luật hiện có.
+Chủ hộ và hàng “Bạn” không chọn được. Thiếu Đồng quản lý thì khối Trao quyền giữ
+câu hướng dẫn và vô hiệu hoá nút gửi.
+
+Chi tiết thành viên nằm ở panel bên phải từ 1024px; dưới mốc này là native modal
+bottom sheet. Sheet focus nút đóng, Escape đóng và trả focus về hàng đã chọn,
+dùng cơ chế khoá cuộn modal chung. Đổi kích thước giữ vai trò đang chọn và trạng
+thái request; khi xác nhận gỡ đang mở, giữ vỏ hiện tại đến lúc xác nhận đóng để
+không đảo thứ tự modal. Thành công tải lại danh sách và đề nghị trao quyền (có thể
+đã bị thu hồi khi đổi vai trò/gỡ người nhận), hiện toast và đóng chi tiết.
+
+E2E tại `apps/web/e2e/householdMembers.spec.ts`, gồm mốc 1023/1024px, focus sau
+click (WebKit), Escape, modal lồng nhau, resize và lỗi bảo vệ. Đã chạy
+`playwright.account.config.ts` (members, home, invitations): đạt; chưa nghiệm thu SIT.

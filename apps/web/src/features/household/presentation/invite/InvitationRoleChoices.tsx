@@ -1,4 +1,4 @@
-import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { ClayIcon } from '@src/shared/ui/ClayIcon';
 import type { InvitationRole } from '../../application/invitationPorts';
 import { InvitationIcon } from './InvitationIcon';
 
@@ -26,7 +26,7 @@ export function InvitationRoleChoices({
             <InvitationIcon name="check" />
           </span>
           <span className="household-invite-role-icon">
-            <AdminIcon name={role === 'main' ? 'admin_panel_settings' : 'person'} size={26} />
+            <ClayIcon name={role === 'main' ? 'manager' : 'member'} size={32} />
           </span>
           <strong>{role === 'main' ? 'Đồng quản lý' : 'Thành viên'}</strong>
           <span>{role === 'main' ? 'Quản lý hồ sơ và thành viên' : 'Xem hồ sơ liên kết với mình'}</span>

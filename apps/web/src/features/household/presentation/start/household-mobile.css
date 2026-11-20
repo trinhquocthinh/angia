@@ -66,17 +66,13 @@
     background: color-mix(in srgb, var(--color-secondary-container) 70%, transparent);
   }
   .household-start-icon {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: 12px;
     background: var(--color-surface-container-high);
   }
   .household-start-choice-primary .household-start-icon {
     margin-left: 4px;
-  }
-  .household-start-icon svg {
-    width: 26px;
-    height: 26px;
   }
   .household-choice-title strong {
     font-size: 1.0625rem;
@@ -96,35 +92,12 @@
     line-height: 0.875rem;
     text-transform: uppercase;
   }
-  .household-start-chevron {
-    width: 32px;
-    height: 32px;
-  }
-  .household-start-chevron svg {
-    width: 18px;
-    height: 18px;
-  }
   .household-start-privacy {
     margin: 0 0 32px;
     padding: 16px;
     border-radius: 12px;
     box-shadow: var(--shadow-stitch-sm);
     background: color-mix(in srgb, var(--color-accent-soft) 70%, transparent);
-  }
-  .household-privacy-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--color-surface);
-    color: var(--color-accent);
-    box-shadow: var(--shadow-stitch-sm);
-  }
-  .household-privacy-icon svg {
-    width: 20px;
-    height: 20px;
   }
   .household-start-privacy strong {
     display: block;

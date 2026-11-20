@@ -8,7 +8,7 @@
   z-index: 1;
   inset: 0 auto 0 0;
   width: calc((100% - 12px) / 2);
-  border-radius: 20px;
+  border-radius: 16px;
   background: color-mix(in srgb, var(--color-secondary-container) 70%, var(--color-surface));
   opacity: 0;
   pointer-events: none;
@@ -80,5 +80,15 @@
   }
   .household-invite-inactive-actions .household-invite-copy-actions {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1023px) {
+  .household-invite-role,
+  .household-invite-roles::before {
+    border-radius: 20px;
+  }
+  .household-invite-roles::before {
+    background: var(--color-secondary-container);
   }
 }

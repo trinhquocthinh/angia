@@ -55,6 +55,29 @@ describe('E27-S4-T1: bộ ghi nhật ký quản lý', () => {
     ).toEqual([]);
   });
 
+  it('TC-839: sự kiện thành viên chỉ nhận lý do do máy chủ cấp, không chuyển tiếp metadata', async () => {
+    const actorAccountId = await seedAccount(t.owner);
+    for (const action of ['member_removed', 'member_role_changed']) {
+      const input = {
+        actorAccountId,
+        action: action as Parameters<typeof writeAdminAuditEvent>[1]['action'],
+        metadata: { reason: 'Giá trị giả', password: 'BiMat', measurement: 123 },
+      };
+      await t.database.transaction((tx) => writeAdminAuditEvent(tx, input));
+    }
+    expect(
+      (
+        await t.owner.query(
+          'SELECT action,metadata FROM admin_audit_events WHERE actor_account_id=$1 ORDER BY action',
+          [actorAccountId],
+        )
+      ).rows,
+    ).toEqual([
+      { action: 'member_removed', metadata: { reason: 'removed_from_family' } },
+      { action: 'member_role_changed', metadata: {} },
+    ]);
+  });
+
   it('TC-839: từ chối action ngoài danh sách ngay cả khi đầu vào vượt qua kiểm tra kiểu', async () => {
     const actorAccountId = await seedAccount(t.owner);
     const action = 'unknown_action' as Parameters<typeof writeAdminAuditEvent>[1]['action'];

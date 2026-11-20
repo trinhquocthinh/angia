@@ -5,7 +5,7 @@ import { errorJson } from '@src/shared/http/errorResponse.js';
 import { confirmProfileConsent } from '../application/confirmProfileConsent.js';
 import { consentAttestationRoute } from './consentAttestationRoute.js';
 import { createProfileWithLink } from './createProfileWithLink.js';
-import { updateProfile } from '../application/updateProfile.js';
+import { registerProfileUpdateRoute } from './registerProfileUpdateRoute.js';
 import { deleteProfile } from '../application/deleteProfile.js';
 import { listProfiles } from '../application/listProfiles.js';
 import { listLinkableAccounts } from '../application/listLinkableAccounts.js';
@@ -15,7 +15,6 @@ import {
   listProfilesRoute,
   listLinkableAccountsRoute,
   createProfileRoute,
-  updateProfileRoute,
   confirmConsentRoute,
   deleteProfileRoute,
 } from './profileRouteDefinitions.js';
@@ -53,12 +52,7 @@ export function registerProfileRoutes(
     const result = await createProfileWithLink(repository, links, scope, c.req.valid('json'), now);
     return result.ok ? c.json(result.value, 201) : c.json(...errorJson(result.code));
   });
-  app.openapi(updateProfileRoute, async (c) => {
-    const familyId = c.get('session')!.family!.id;
-    const { id } = c.req.valid('param');
-    const result = await updateProfile(repository, familyId, id, c.req.valid('json'), now);
-    return result.ok ? c.json(toProfileResponse(result.value), 200) : c.json(...errorJson(result.code));
-  });
+  registerProfileUpdateRoute(app, repository, now);
   app.openapi(consentAttestationRoute, async (c) => {
     const session = c.get('session')!;
     const result = await confirmProfileConsent(

@@ -65,3 +65,8 @@
     display: flex;
   }
 }
+
+.account-menu-trigger-avatar:has(.clay-icon) {
+  background: transparent;
+  box-shadow: none;
+}

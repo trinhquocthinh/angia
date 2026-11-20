@@ -8,7 +8,12 @@ async function layoutSignature(page: Page) {
   return page.evaluate(() => ({
     background: getComputedStyle(document.querySelector('.login-screen')!).backgroundColor,
     landscape: document.querySelector('.login-landscape')?.getAttribute('src'),
-    brand: document.querySelector('.login-brand-panel')?.textContent,
+    brand: (() => {
+      const brand = document.querySelector('.login-brand-panel')?.cloneNode(true) as HTMLElement | undefined;
+      // Nội dung thương hiệu không bao gồm tên glyph hoặc SVG trang trí.
+      brand?.querySelectorAll('[aria-hidden="true"], svg').forEach((element) => element.remove());
+      return brand?.textContent;
+    })(),
     clouds: Array.from(document.querySelectorAll('.login-cloud')).map((element) => ({
       name: getComputedStyle(element).animationName,
       duration: getComputedStyle(element).animationDuration,

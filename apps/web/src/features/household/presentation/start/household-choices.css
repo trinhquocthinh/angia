@@ -29,8 +29,7 @@
 .household-start-choice:disabled {
   cursor: not-allowed;
 }
-.household-start-icon,
-.household-start-chevron {
+.household-start-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -46,15 +45,9 @@
   color: var(--color-accent);
 }
 .household-start-chevron {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  display: inline-flex;
+  flex-shrink: 0;
   margin-left: auto;
-  background: var(--color-accent-soft);
-}
-.household-start-chevron svg {
-  width: 20px;
-  height: 20px;
 }
 .household-start-choice-copy {
   display: flex;
@@ -90,13 +83,6 @@
 @media (hover: hover) and (pointer: fine) {
   .household-start-choice-primary:hover {
     background: color-mix(in srgb, var(--color-accent-soft) 40%, var(--color-surface));
-  }
-  .household-start-choice-primary:hover .household-start-icon {
-    transform: scale(1.05);
-  }
-  .household-start-choice-primary:hover .household-start-chevron {
-    background: var(--color-accent);
-    color: var(--color-on-accent);
   }
 }
 .household-start-choice-primary:active {

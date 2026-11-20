@@ -22,6 +22,7 @@ import { Route as WaitingRouteImport } from './routes/waiting'
 import { Route as AccountChangePasswordRouteImport } from './routes/account.change-password'
 import { Route as AccountLegalUpdateRouteImport } from './routes/account.legal-update'
 import { Route as AccountLocalPasswordRouteImport } from './routes/account.local-password'
+import { Route as FamilyHomeRouteImport } from './routes/family.home'
 import { Route as FamilyInviteRouteImport } from './routes/family.invite'
 import { Route as ProfilesProfileIdRouteImport } from './routes/profiles.$profileId'
 import { Route as ProfilesNewRouteImport } from './routes/profiles.new'
@@ -32,6 +33,7 @@ import { Route as RevisitRemindersReminderIdRouteImport } from './routes/revisit
 import { Route as SpikeBody3dRouteImport } from './routes/spike.body-3d'
 import { Route as MyProfilePainIssueIdRouteImport } from './routes/my-profile_.pain.$issueId'
 import { Route as ProfilesProfileIdDocumentsRouteImport } from './routes/profiles.$profileId_.documents'
+import { Route as ProfilesProfileIdGuardiansRouteImport } from './routes/profiles.$profileId_.guardians'
 import { Route as ProfilesProfileIdLabResultsRouteImport } from './routes/profiles.$profileId_.lab-results'
 import { Route as ProfilesProfileIdManualRouteImport } from './routes/profiles.$profileId_.manual'
 import { Route as ProfilesProfileIdMedicationsRouteImport } from './routes/profiles.$profileId_.medications'
@@ -109,6 +111,11 @@ const AccountLocalPasswordRoute = AccountLocalPasswordRouteImport.update({
   path: '/account/local-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FamilyHomeRoute = FamilyHomeRouteImport.update({
+  id: '/family/home',
+  path: '/family/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FamilyInviteRoute = FamilyInviteRouteImport.update({
   id: '/family/invite',
   path: '/family/invite',
@@ -159,6 +166,12 @@ const ProfilesProfileIdDocumentsRoute =
   ProfilesProfileIdDocumentsRouteImport.update({
     id: '/profiles/$profileId_/documents',
     path: '/profiles/$profileId/documents',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ProfilesProfileIdGuardiansRoute =
+  ProfilesProfileIdGuardiansRouteImport.update({
+    id: '/profiles/$profileId_/guardians',
+    path: '/profiles/$profileId/guardians',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ProfilesProfileIdLabResultsRoute =
@@ -240,6 +253,7 @@ export interface FileRoutesByFullPath {
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/legal-update': typeof AccountLegalUpdateRoute
   '/account/local-password': typeof AccountLocalPasswordRoute
+  '/family/home': typeof FamilyHomeRoute
   '/family/invite': typeof FamilyInviteRoute
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
@@ -250,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/review/': typeof ReviewIndexRoute
   '/my-profile/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
+  '/profiles/$profileId/guardians': typeof ProfilesProfileIdGuardiansRoute
   '/profiles/$profileId/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId/medications': typeof ProfilesProfileIdMedicationsRoute
@@ -276,6 +291,7 @@ export interface FileRoutesByTo {
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/legal-update': typeof AccountLegalUpdateRoute
   '/account/local-password': typeof AccountLocalPasswordRoute
+  '/family/home': typeof FamilyHomeRoute
   '/family/invite': typeof FamilyInviteRoute
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
@@ -286,6 +302,7 @@ export interface FileRoutesByTo {
   '/review': typeof ReviewIndexRoute
   '/my-profile/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
+  '/profiles/$profileId/guardians': typeof ProfilesProfileIdGuardiansRoute
   '/profiles/$profileId/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId/medications': typeof ProfilesProfileIdMedicationsRoute
@@ -313,6 +330,7 @@ export interface FileRoutesById {
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/legal-update': typeof AccountLegalUpdateRoute
   '/account/local-password': typeof AccountLocalPasswordRoute
+  '/family/home': typeof FamilyHomeRoute
   '/family/invite': typeof FamilyInviteRoute
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
@@ -323,6 +341,7 @@ export interface FileRoutesById {
   '/review/': typeof ReviewIndexRoute
   '/my-profile_/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId_/documents': typeof ProfilesProfileIdDocumentsRoute
+  '/profiles/$profileId_/guardians': typeof ProfilesProfileIdGuardiansRoute
   '/profiles/$profileId_/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId_/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId_/medications': typeof ProfilesProfileIdMedicationsRoute
@@ -351,6 +370,7 @@ export interface FileRouteTypes {
     | '/account/change-password'
     | '/account/legal-update'
     | '/account/local-password'
+    | '/family/home'
     | '/family/invite'
     | '/profiles/$profileId'
     | '/profiles/new'
@@ -361,6 +381,7 @@ export interface FileRouteTypes {
     | '/review/'
     | '/my-profile/pain/$issueId'
     | '/profiles/$profileId/documents'
+    | '/profiles/$profileId/guardians'
     | '/profiles/$profileId/lab-results'
     | '/profiles/$profileId/manual'
     | '/profiles/$profileId/medications'
@@ -387,6 +408,7 @@ export interface FileRouteTypes {
     | '/account/change-password'
     | '/account/legal-update'
     | '/account/local-password'
+    | '/family/home'
     | '/family/invite'
     | '/profiles/$profileId'
     | '/profiles/new'
@@ -397,6 +419,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/my-profile/pain/$issueId'
     | '/profiles/$profileId/documents'
+    | '/profiles/$profileId/guardians'
     | '/profiles/$profileId/lab-results'
     | '/profiles/$profileId/manual'
     | '/profiles/$profileId/medications'
@@ -423,6 +446,7 @@ export interface FileRouteTypes {
     | '/account/change-password'
     | '/account/legal-update'
     | '/account/local-password'
+    | '/family/home'
     | '/family/invite'
     | '/profiles/$profileId'
     | '/profiles/new'
@@ -433,6 +457,7 @@ export interface FileRouteTypes {
     | '/review/'
     | '/my-profile_/pain/$issueId'
     | '/profiles/$profileId_/documents'
+    | '/profiles/$profileId_/guardians'
     | '/profiles/$profileId_/lab-results'
     | '/profiles/$profileId_/manual'
     | '/profiles/$profileId_/medications'
@@ -460,6 +485,7 @@ export interface RootRouteChildren {
   AccountChangePasswordRoute: typeof AccountChangePasswordRoute
   AccountLegalUpdateRoute: typeof AccountLegalUpdateRoute
   AccountLocalPasswordRoute: typeof AccountLocalPasswordRoute
+  FamilyHomeRoute: typeof FamilyHomeRoute
   FamilyInviteRoute: typeof FamilyInviteRoute
   ProfilesProfileIdRoute: typeof ProfilesProfileIdRoute
   ProfilesNewRoute: typeof ProfilesNewRoute
@@ -470,6 +496,7 @@ export interface RootRouteChildren {
   ReviewIndexRoute: typeof ReviewIndexRoute
   MyProfilePainIssueIdRoute: typeof MyProfilePainIssueIdRoute
   ProfilesProfileIdDocumentsRoute: typeof ProfilesProfileIdDocumentsRoute
+  ProfilesProfileIdGuardiansRoute: typeof ProfilesProfileIdGuardiansRoute
   ProfilesProfileIdLabResultsRoute: typeof ProfilesProfileIdLabResultsRoute
   ProfilesProfileIdManualRoute: typeof ProfilesProfileIdManualRoute
   ProfilesProfileIdMedicationsRoute: typeof ProfilesProfileIdMedicationsRoute
@@ -576,6 +603,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountLocalPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/family/home': {
+      id: '/family/home'
+      path: '/family/home'
+      fullPath: '/family/home'
+      preLoaderRoute: typeof FamilyHomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/family/invite': {
       id: '/family/invite'
       path: '/family/invite'
@@ -644,6 +678,13 @@ declare module '@tanstack/react-router' {
       path: '/profiles/$profileId/documents'
       fullPath: '/profiles/$profileId/documents'
       preLoaderRoute: typeof ProfilesProfileIdDocumentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profiles/$profileId_/guardians': {
+      id: '/profiles/$profileId_/guardians'
+      path: '/profiles/$profileId/guardians'
+      fullPath: '/profiles/$profileId/guardians'
+      preLoaderRoute: typeof ProfilesProfileIdGuardiansRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profiles/$profileId_/lab-results': {
@@ -740,6 +781,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountChangePasswordRoute: AccountChangePasswordRoute,
   AccountLegalUpdateRoute: AccountLegalUpdateRoute,
   AccountLocalPasswordRoute: AccountLocalPasswordRoute,
+  FamilyHomeRoute: FamilyHomeRoute,
   FamilyInviteRoute: FamilyInviteRoute,
   ProfilesProfileIdRoute: ProfilesProfileIdRoute,
   ProfilesNewRoute: ProfilesNewRoute,
@@ -750,6 +792,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReviewIndexRoute: ReviewIndexRoute,
   MyProfilePainIssueIdRoute: MyProfilePainIssueIdRoute,
   ProfilesProfileIdDocumentsRoute: ProfilesProfileIdDocumentsRoute,
+  ProfilesProfileIdGuardiansRoute: ProfilesProfileIdGuardiansRoute,
   ProfilesProfileIdLabResultsRoute: ProfilesProfileIdLabResultsRoute,
   ProfilesProfileIdManualRoute: ProfilesProfileIdManualRoute,
   ProfilesProfileIdMedicationsRoute: ProfilesProfileIdMedicationsRoute,
