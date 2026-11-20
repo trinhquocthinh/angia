@@ -1,13 +1,16 @@
 -- E28-S2-T2 (D1, D3, D4): role job xoá nhà, chỉ chạm nhà có yêu cầu pending đã đến hạn (TC-869).
 -- Role NOLOGIN, không secret; worker vào withFamilyScope rồi SET LOCAL ROLE. App không INHERIT nên
--- policy gắn role không lan sang app. Cần owner có CREATEROLE (SIT/Prod: kiểm trước khi deploy).
+-- policy gắn role không lan sang app. Owner cần CREATEROLE hoặc role NOLOGIN tạo sẵn kèm ADMIN.
 DO $$
 DECLARE job_role text := current_user || '_family_deletion';
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = job_role) THEN
     EXECUTE format('CREATE ROLE %I NOLOGIN NOBYPASSRLS', job_role);
   END IF;
-  EXECUTE format('ALTER ROLE %I NOLOGIN', job_role);
+  -- PG16 cần CREATEROLE ngay cả khi ALTER ROLE không đổi gì, nên chỉ chạy khi role còn LOGIN.
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = job_role AND rolcanlogin) THEN
+    EXECUTE format('ALTER ROLE %I NOLOGIN', job_role);
+  END IF;
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = job_role AND (rolsuper OR rolbypassrls)) THEN
     RAISE EXCEPTION 'Role % không được SUPERUSER/BYPASSRLS', job_role;
   END IF;
