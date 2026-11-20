@@ -54,7 +54,7 @@ const householdLeave = {
 };
 
 const householdManagement = {
-  profileGuardians: { change: notConfigured },
+  profileGuardians: { change: notConfigured, list: notConfigured },
   householdDeletion: { current: notConfigured, request: notConfigured, revoke: notConfigured },
   householdOwnership: {
     current: notConfigured,

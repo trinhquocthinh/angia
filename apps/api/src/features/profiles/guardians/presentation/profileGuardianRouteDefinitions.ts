@@ -1,5 +1,9 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { errorResponseSchema, addProfileGuardianRequestSchema } from '@angia/contracts';
+import {
+  errorResponseSchema,
+  addProfileGuardianRequestSchema,
+  profileGuardiansResponseSchema,
+} from '@angia/contracts';
 const error = (description: string) => ({
   description,
   content: { 'application/json': { schema: errorResponseSchema } },
@@ -13,6 +17,22 @@ const responses = {
   422: error('ERR_VALIDATION'),
 };
 const params = z.object({ id: z.uuid() });
+export const listProfileGuardiansRoute = createRoute({
+  method: 'get',
+  path: '/api/health-profiles/{id}/guardians',
+  tags: ['profiles'],
+  summary: 'Đọc danh sách người giám hộ (SPEC-070)',
+  request: { params },
+  responses: {
+    200: {
+      description: 'Danh sách người giám hộ',
+      content: { 'application/json': { schema: profileGuardiansResponseSchema } },
+    },
+    401: error('ERR_UNAUTHENTICATED'),
+    403: error('ERR_FORBIDDEN'),
+    404: error('ERR_NOT_FOUND'),
+  },
+});
 export const addProfileGuardianRoute = createRoute({
   method: 'post',
   path: '/api/health-profiles/{id}/guardians',

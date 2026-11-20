@@ -33,6 +33,63 @@ describe('SPEC-070: người giám hộ hồ sơ trẻ', () => {
       )
     ).rows.map((r) => r.account_id as string);
   }
+  it('TC-815: đọc đúng danh sách, thứ tự tạo rồi UUID, isMe theo phiên và no-store', async () => {
+    const f = await setup();
+    expect((await t.call(f.an, 'POST', path(f.id), { guardianAccountId: f.binh.accountId })).status).toBe(
+      204,
+    );
+    await t.owner.query(
+      "UPDATE accounts SET display_name=CASE WHEN id=$1 THEN 'An' ELSE 'Bình' END WHERE id IN ($1,$2)",
+      [f.an.accountId, f.binh.accountId],
+    );
+    for (const tied of [false, true]) {
+      await t.owner.query(
+        "UPDATE profile_guardians SET created_at=CASE WHEN account_id=$1 OR $3 THEN '2026-01-01'::timestamptz ELSE '2026-01-02'::timestamptz END WHERE health_profile_id=$2",
+        [f.binh.accountId, f.id, tied],
+      );
+      const ordered = tied ? [f.an.accountId, f.binh.accountId].sort() : [f.binh.accountId, f.an.accountId];
+      for (const caller of [f.an, f.binh, await t.session(f.family)]) {
+        const r = await t.call(caller, 'GET', path(f.id));
+        expect(r.status).toBe(200);
+        expect(r.headers.get('cache-control')).toBe('no-store');
+        expect(await r.json()).toEqual({
+          guardians: ordered.map((accountId) => ({
+            accountId,
+            displayName: accountId === f.an.accountId ? 'An' : 'Bình',
+            isMe: accountId === caller.accountId,
+          })),
+        });
+      }
+    }
+  });
+  it('TC-815: hồ sơ người lớn, chưa có giám hộ hoặc đã liên kết trả mảng rỗng', async () => {
+    const f = await setup(1980);
+    const adult = await t.call(f.an, 'GET', path(f.id));
+    expect(adult.status).toBe(200);
+    expect(await adult.json()).toEqual({ guardians: [] });
+    const linked = await t.call(f.an, 'POST', '/api/health-profiles', {
+      displayName: 'Tôi',
+      birthYear: 2020,
+      linkedAccountId: f.an.accountId,
+      consent: { kind: 'self' },
+    });
+    expect(linked.status).toBe(201);
+    const { id } = (await linked.json()) as { id: string };
+    const r = await t.call(f.an, 'GET', path(id));
+    expect(r.status).toBe(200);
+    expect(await r.json()).toEqual({ guardians: [] });
+  });
+  it('TC-815: chặn member, thiếu phiên và không phân biệt hồ sơ ngoài nhà với UUID không tồn tại', async () => {
+    const a = await setup();
+    const b = await setup();
+    const member = await t.session(a.family, 'member');
+    expect((await t.call(member, 'GET', path(a.id))).status).toBe(403);
+    expect((await t.app.request(path(a.id))).status).toBe(401);
+    await expectCrossFamilyDenied(
+      () => t.call(a.an, 'GET', path(b.id)),
+      () => t.call(a.an, 'GET', path(randomUUID())),
+    );
+  });
   it('TC-809: tạo hồ sơ trẻ tự gán người tạo; đọc người nhận nhắc từ giám hộ', async () => {
     const f = await setup();
     expect(await guardians(f.id)).toEqual([f.an.accountId]);

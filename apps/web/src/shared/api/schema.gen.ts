@@ -4317,7 +4317,63 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    get?: never;
+    /** Đọc danh sách người giám hộ (SPEC-070) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Danh sách người giám hộ */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              guardians: {
+                /** Format: uuid */
+                accountId: string;
+                displayName: string;
+                isMe: boolean;
+              }[];
+            };
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
     put?: never;
     /** Thêm người giám hộ thứ hai (SPEC-070) */
     post: {

@@ -7,6 +7,7 @@ describe('Điều phối thay đổi giám hộ', () => {
   it('TC-810/811: main có nhà thêm và chỉ tự gỡ theo actor từ phiên', async () => {
     const ids = new Set(['an']);
     const repository: ProfileGuardianRepository = {
+      list: async () => ({ ok: true, guardians: [] }),
       change: async (actor, _profileId, target) => {
         if (target === null) ids.delete(actor.accountId);
         else ids.add(target);
@@ -21,6 +22,7 @@ describe('Điều phối thay đổi giám hộ', () => {
   });
   it('TC-813: từ chối trước transaction khi không có nhà hoặc không phải main', async () => {
     const repository: ProfileGuardianRepository = {
+      list: async () => ({ ok: true, guardians: [] }),
       change: () => {
         throw new Error('Không được chạm kho');
       },
