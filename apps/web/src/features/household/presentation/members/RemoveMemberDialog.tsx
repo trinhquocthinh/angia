@@ -1,8 +1,7 @@
+import { MemberClayGlyph } from './MemberClayGlyph';
 import { useId } from 'react';
-import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { Button } from '@src/shared/ui/button/Button';
-import { useModalDialog } from '@src/shared/ui/useModalDialog';
-import '@src/shared/ui/modal-motion.css';
+import { ModalSurface } from '@src/shared/ui/ModalSurface';
 
 type Props = {
   displayName: string;
@@ -13,20 +12,13 @@ type Props = {
 };
 
 export function RemoveMemberDialog({ displayName, pending, error, onClose, onConfirm }: Props) {
-  const ref = useModalDialog();
   const titleId = useId();
   return (
-    <dialog
-      ref={ref}
-      className="angia-modal household-member-remove-dialog"
-      aria-labelledby={titleId}
-      onCancel={(event) => {
-        event.preventDefault();
-        if (!pending) onClose();
-      }}
-      onClick={(event) => {
-        if (event.target === event.currentTarget && !pending) onClose();
-      }}
+    <ModalSurface
+      className="household-member-remove-dialog"
+      labelledBy={titleId}
+      pending={pending}
+      onClose={onClose}
     >
       <div className="household-member-remove-content" aria-busy={pending}>
         <span className="household-member-remove-handle" aria-hidden="true" />
@@ -37,10 +29,10 @@ export function RemoveMemberDialog({ displayName, pending, error, onClose, onCon
           disabled={pending}
           onClick={onClose}
         >
-          <AdminIcon name="close" size={20} />
+          <MemberClayGlyph name="home-close" size={20} />
         </Button>
         <div className="household-member-remove-icon" aria-hidden="true">
-          <AdminIcon name="person_remove" size={28} />
+          <MemberClayGlyph name="home-logout-danger" size={28} />
         </div>
         <h2 id={titleId}>Gỡ {displayName} khỏi nhà?</h2>
         <ul className="household-member-remove-points">
@@ -65,6 +57,6 @@ export function RemoveMemberDialog({ displayName, pending, error, onClose, onCon
           </Button>
         </div>
       </div>
-    </dialog>
+    </ModalSurface>
   );
 }

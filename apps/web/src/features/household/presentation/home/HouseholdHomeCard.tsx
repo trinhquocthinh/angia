@@ -7,7 +7,6 @@ import type {
 } from '../../application/householdHomePorts';
 import type { HouseholdMember, HouseholdMemberRole } from '../../application/memberPorts';
 import { HouseholdHomeHeader } from './HouseholdHomeHeader';
-import { useIsDesktopLayout } from './useIsDesktopLayout';
 
 export type HouseholdHomeCardProps = {
   familyName: string;
@@ -38,7 +37,6 @@ export type HouseholdHomeCardProps = {
 };
 
 export function HouseholdHomeCard(props: HouseholdHomeCardProps) {
-  const isDesktop = useIsDesktopLayout();
   const self = props.members?.find((member) => member.isSelf);
   const viewerRole = self?.role ?? props.viewerRole;
 
@@ -64,13 +62,7 @@ export function HouseholdHomeCard(props: HouseholdHomeCardProps) {
         </div>
       )}
       {props.members && self && (
-        <HouseholdHomeBody
-          props={props}
-          self={self}
-          members={props.members}
-          viewerRole={viewerRole}
-          isDesktop={isDesktop}
-        />
+        <HouseholdHomeBody props={props} self={self} members={props.members} viewerRole={viewerRole} />
       )}
     </div>
   );

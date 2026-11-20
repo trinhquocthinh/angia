@@ -1,5 +1,4 @@
 import { Link } from '@tanstack/react-router';
-import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { summarizeMemberCounts } from '../../application/summarizeMemberCounts';
 import type { HouseholdMember, HouseholdMemberRole } from '../../application/memberPorts';
 import { MemberClayGlyph } from '../members/MemberClayGlyph';
@@ -36,7 +35,7 @@ export function HouseholdHomeHeader({ familyName, members, viewerRole, hasPendin
           </div>
           {countLine && (
             <p className="household-home-count-line">
-              <AdminIcon name="family_restroom" size={18} />
+              <MemberClayGlyph name="family" size={18} />
               <span>{countLine}</span>
             </p>
           )}
@@ -44,7 +43,7 @@ export function HouseholdHomeHeader({ familyName, members, viewerRole, hasPendin
       </div>
       {viewerRole === 'main' && (
         <Link to="/family/invite" className="household-home-invite-btn">
-          <AdminIcon name="person_add" size={20} />
+          <MemberClayGlyph name="invite-add" size={20} />
           <span>+ Mời người thân</span>
         </Link>
       )}

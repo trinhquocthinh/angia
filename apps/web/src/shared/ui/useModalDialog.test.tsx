@@ -18,7 +18,7 @@ vi.mock('react', async (importOriginal) => ({
 
 afterEach(() => vi.unstubAllGlobals());
 
-function openDialog(connected = true, hasTarget = true) {
+function openDialog(connected = true, hasTarget = true, explicit = false) {
   // Môi trường unit là Node: giả lập phần DOM mà hook sử dụng, gồm showModal/close.
   class Element {
     isConnected = connected;
@@ -26,6 +26,9 @@ function openDialog(connected = true, hasTarget = true) {
   }
   const trigger = new Element();
   const target = new Element();
+  const fallback = new Element();
+  fallback.isConnected = true;
+  const explicitTrigger = new Element();
   let open = false;
   lifecycle.dialog = {
     showModal: () => {
@@ -34,6 +37,7 @@ function openDialog(connected = true, hasTarget = true) {
     close: () => {
       open = false;
     },
+    closest: vi.fn(() => fallback),
     querySelector: vi.fn(() => {
       expect(open).toBe(true);
       return hasTarget ? target : null;
@@ -42,12 +46,12 @@ function openDialog(connected = true, hasTarget = true) {
   vi.stubGlobal('HTMLElement', Element);
   vi.stubGlobal('document', { activeElement: trigger });
   function Probe() {
-    useModalDialog();
+    useModalDialog(explicit ? { current: explicitTrigger as unknown as HTMLButtonElement } : undefined);
     return null;
   }
   renderToStaticMarkup(<Probe />);
   const cleanup = lifecycle.mount?.();
-  return { trigger, target, cleanup };
+  return { trigger, target, fallback, explicitTrigger, cleanup };
 }
 
 it('mở dialog thì focus phần tử data-autofocus đầu tiên sau khi showModal', () => {
@@ -72,4 +76,17 @@ it('không có data-autofocus vẫn mở, không trả focus cho phần tử đ�
 
 it('Button chuyển tiếp data-autofocus xuống nút HTML', () => {
   expect(renderToStaticMarkup(<Button data-autofocus>Huỷ</Button>)).toContain('data-autofocus="true"');
+});
+
+it('nút mở đã biến mất sau tự gỡ thì focus về thẻ giám hộ', () => {
+  const { fallback, cleanup } = openDialog(false);
+  cleanup?.();
+  expect(fallback.focus).toHaveBeenCalledOnce();
+});
+
+it('popup thành viên trả focus về nút mở được chỉ định', () => {
+  const { trigger, explicitTrigger, cleanup } = openDialog(true, true, true);
+  cleanup?.();
+  expect(explicitTrigger.focus).toHaveBeenCalledOnce();
+  expect(trigger.focus).not.toHaveBeenCalled();
 });

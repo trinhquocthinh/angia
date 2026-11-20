@@ -15,6 +15,7 @@ export default defineConfig({
     '**/householdInvitationManagement.spec.ts',
     '**/householdMembers.spec.ts',
     '**/householdHome.spec.ts',
+    '**/profileGuardians.spec.ts',
   ],
   testIgnore: '**/._*',
   forbidOnly: Boolean(process.env.CI),

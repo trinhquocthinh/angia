@@ -1,7 +1,6 @@
-import type { MemberDetailLayoutProps } from './memberDetailLayoutProps';
 import type { HouseholdMember } from '../../application/memberPorts';
 
-export type MemberEditorProps = MemberDetailLayoutProps & {
+export type MemberEditorProps = {
   member: HouseholdMember;
   csrfToken: string;
   onReload: () => Promise<void>;

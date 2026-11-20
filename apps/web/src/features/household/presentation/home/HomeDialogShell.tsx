@@ -1,8 +1,7 @@
 import { HomeDialogActions } from './HomeDialogActions';
 import { HomeDialogHeading } from './HomeDialogHeading';
 import { useId, type ReactNode } from 'react';
-import { useModalDialog } from '@src/shared/ui/useModalDialog';
-import '@src/shared/ui/modal-motion.css';
+import { ModalSurface } from '@src/shared/ui/ModalSurface';
 
 export type HomeDialogShellProps = {
   iconName: 'home-logout-danger' | 'home-delete-shield';
@@ -17,21 +16,14 @@ export type HomeDialogShellProps = {
 };
 
 export function HomeDialogShell(props: HomeDialogShellProps) {
-  const ref = useModalDialog();
   const titleId = useId();
 
   return (
-    <dialog
-      ref={ref}
-      className="angia-modal household-home-dialog"
-      aria-labelledby={titleId}
-      onCancel={(event) => {
-        event.preventDefault();
-        if (!props.pending) props.onClose();
-      }}
-      onClick={(event) => {
-        if (event.target === event.currentTarget && !props.pending) props.onClose();
-      }}
+    <ModalSurface
+      className="household-home-dialog"
+      labelledBy={titleId}
+      pending={props.pending}
+      onClose={props.onClose}
     >
       <div className="household-home-dialog-body" aria-busy={props.pending}>
         <span className="household-home-dialog-handle" aria-hidden="true" />
@@ -39,6 +31,6 @@ export function HomeDialogShell(props: HomeDialogShellProps) {
         {props.children}
         <HomeDialogActions {...props} />
       </div>
-    </dialog>
+    </ModalSurface>
   );
 }

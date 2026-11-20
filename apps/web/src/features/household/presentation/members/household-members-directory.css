@@ -4,9 +4,6 @@
   gap: 24px;
   align-items: start;
 }
-.household-members-directory-split {
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-}
 .household-members-rail {
   display: flex;
   flex-direction: column;
@@ -51,9 +48,6 @@
   flex-direction: column;
   gap: 12px;
 }
-.household-members-detail-rail {
-  min-width: 0;
-}
 .household-members-empty {
   padding: 20px;
   border-radius: 20px;
@@ -90,9 +84,6 @@
   background: var(--color-accent-hover);
 }
 @media (max-width: 1023px) {
-  .household-members-directory-split {
-    grid-template-columns: minmax(0, 1fr);
-  }
   .household-members-invite-btn {
     width: 100%;
   }

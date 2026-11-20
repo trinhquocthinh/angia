@@ -1,13 +1,13 @@
 import { ProfileHealthHeader } from '@src/features/measurements/presentation/components/ProfileHealthHeader';
 import { TemperatureWorkspace } from '@src/features/temperatures/presentation/TemperatureWorkspace';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileListItem, ProfileSession } from '@src/features/profiles/application/ports';
 import { useProfileTimeline } from '../application/useProfileTimeline';
 import { createTimelineRepository } from '../infrastructure/createTimelineRepository';
 import { TimelineFeed } from './TimelineFeed';
 
 const repository = createTimelineRepository();
 
-export function TimelineContent({ profile, session }: { profile: HealthProfile; session: ProfileSession }) {
+export function TimelineContent({ profile, session }: { profile: ProfileListItem; session: ProfileSession }) {
   const query = useProfileTimeline(repository, session, profile);
   return (
     <div className="flex min-w-0 flex-col gap-6">

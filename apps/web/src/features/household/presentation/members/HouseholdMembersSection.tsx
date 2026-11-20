@@ -8,11 +8,10 @@ type Props = {
   members: HouseholdMember[];
   viewerRole: HouseholdMemberRole;
   csrfToken: string;
-  isDesktop: boolean;
   onReload: () => Promise<void>;
 };
 
-export function HouseholdMembersSection({ members, viewerRole, csrfToken, isDesktop, onReload }: Props) {
+export function HouseholdMembersSection({ members, viewerRole, csrfToken, onReload }: Props) {
   const returnFocusRef = useRef<HTMLButtonElement | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [panelNotice, setPanelNotice] = useState<string | null>(null);
@@ -24,21 +23,10 @@ export function HouseholdMembersSection({ members, viewerRole, csrfToken, isDesk
   function closeDetail() {
     setPanelNotice(null);
     setSelectedId(null);
-    returnFocusRef.current?.focus();
   }
 
   return (
-    <section
-      className={
-        canManageAny
-          ? 'household-members-directory household-members-directory-split'
-          : 'household-members-directory'
-      }
-      onKeyDown={(event) => {
-        if (event.key === 'Escape' && !(event.target as HTMLElement).closest('dialog')) closeDetail();
-      }}
-      aria-labelledby="household-members-section-title"
-    >
+    <section className="household-members-directory" aria-labelledby="household-members-section-title">
       <HouseholdMembersList
         members={members}
         viewerRole={viewerRole}
@@ -52,7 +40,6 @@ export function HouseholdMembersSection({ members, viewerRole, csrfToken, isDesk
       {canManageAny && (
         <MemberDetailPanel
           returnFocusRef={returnFocusRef}
-          isDesktop={isDesktop}
           member={selectedMember}
           notice={panelNotice}
           csrfToken={csrfToken}

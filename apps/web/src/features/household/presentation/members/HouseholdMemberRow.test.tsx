@@ -41,7 +41,8 @@ it('E28-S3-T2b: hàng thành viên quản lý được là nút có aria-pressed
   expect(html).toContain('<button');
   expect(html).toContain('aria-pressed="true"');
   expect(html).toContain('Đang chọn');
-  expect(html).toContain('arrow_forward');
+  expect(html).toContain('/images/household/stitch/member-chevron.svg');
+  expect(html).not.toContain('material-symbols');
 });
 
 it('SPEC-066: người xem là thành viên thường không thấy nút bấm trên bất kỳ hàng nào', () => {

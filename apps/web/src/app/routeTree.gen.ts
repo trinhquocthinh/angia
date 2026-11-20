@@ -33,6 +33,7 @@ import { Route as RevisitRemindersReminderIdRouteImport } from './routes/revisit
 import { Route as SpikeBody3dRouteImport } from './routes/spike.body-3d'
 import { Route as MyProfilePainIssueIdRouteImport } from './routes/my-profile_.pain.$issueId'
 import { Route as ProfilesProfileIdDocumentsRouteImport } from './routes/profiles.$profileId_.documents'
+import { Route as ProfilesProfileIdGuardiansRouteImport } from './routes/profiles.$profileId_.guardians'
 import { Route as ProfilesProfileIdLabResultsRouteImport } from './routes/profiles.$profileId_.lab-results'
 import { Route as ProfilesProfileIdManualRouteImport } from './routes/profiles.$profileId_.manual'
 import { Route as ProfilesProfileIdMedicationsRouteImport } from './routes/profiles.$profileId_.medications'
@@ -167,6 +168,12 @@ const ProfilesProfileIdDocumentsRoute =
     path: '/profiles/$profileId/documents',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ProfilesProfileIdGuardiansRoute =
+  ProfilesProfileIdGuardiansRouteImport.update({
+    id: '/profiles/$profileId_/guardians',
+    path: '/profiles/$profileId/guardians',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProfilesProfileIdLabResultsRoute =
   ProfilesProfileIdLabResultsRouteImport.update({
     id: '/profiles/$profileId_/lab-results',
@@ -257,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/review/': typeof ReviewIndexRoute
   '/my-profile/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
+  '/profiles/$profileId/guardians': typeof ProfilesProfileIdGuardiansRoute
   '/profiles/$profileId/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId/medications': typeof ProfilesProfileIdMedicationsRoute
@@ -294,6 +302,7 @@ export interface FileRoutesByTo {
   '/review': typeof ReviewIndexRoute
   '/my-profile/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
+  '/profiles/$profileId/guardians': typeof ProfilesProfileIdGuardiansRoute
   '/profiles/$profileId/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId/medications': typeof ProfilesProfileIdMedicationsRoute
@@ -332,6 +341,7 @@ export interface FileRoutesById {
   '/review/': typeof ReviewIndexRoute
   '/my-profile_/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId_/documents': typeof ProfilesProfileIdDocumentsRoute
+  '/profiles/$profileId_/guardians': typeof ProfilesProfileIdGuardiansRoute
   '/profiles/$profileId_/lab-results': typeof ProfilesProfileIdLabResultsRoute
   '/profiles/$profileId_/manual': typeof ProfilesProfileIdManualRoute
   '/profiles/$profileId_/medications': typeof ProfilesProfileIdMedicationsRoute
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/review/'
     | '/my-profile/pain/$issueId'
     | '/profiles/$profileId/documents'
+    | '/profiles/$profileId/guardians'
     | '/profiles/$profileId/lab-results'
     | '/profiles/$profileId/manual'
     | '/profiles/$profileId/medications'
@@ -408,6 +419,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/my-profile/pain/$issueId'
     | '/profiles/$profileId/documents'
+    | '/profiles/$profileId/guardians'
     | '/profiles/$profileId/lab-results'
     | '/profiles/$profileId/manual'
     | '/profiles/$profileId/medications'
@@ -445,6 +457,7 @@ export interface FileRouteTypes {
     | '/review/'
     | '/my-profile_/pain/$issueId'
     | '/profiles/$profileId_/documents'
+    | '/profiles/$profileId_/guardians'
     | '/profiles/$profileId_/lab-results'
     | '/profiles/$profileId_/manual'
     | '/profiles/$profileId_/medications'
@@ -483,6 +496,7 @@ export interface RootRouteChildren {
   ReviewIndexRoute: typeof ReviewIndexRoute
   MyProfilePainIssueIdRoute: typeof MyProfilePainIssueIdRoute
   ProfilesProfileIdDocumentsRoute: typeof ProfilesProfileIdDocumentsRoute
+  ProfilesProfileIdGuardiansRoute: typeof ProfilesProfileIdGuardiansRoute
   ProfilesProfileIdLabResultsRoute: typeof ProfilesProfileIdLabResultsRoute
   ProfilesProfileIdManualRoute: typeof ProfilesProfileIdManualRoute
   ProfilesProfileIdMedicationsRoute: typeof ProfilesProfileIdMedicationsRoute
@@ -666,6 +680,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfilesProfileIdDocumentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profiles/$profileId_/guardians': {
+      id: '/profiles/$profileId_/guardians'
+      path: '/profiles/$profileId/guardians'
+      fullPath: '/profiles/$profileId/guardians'
+      preLoaderRoute: typeof ProfilesProfileIdGuardiansRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profiles/$profileId_/lab-results': {
       id: '/profiles/$profileId_/lab-results'
       path: '/profiles/$profileId/lab-results'
@@ -771,6 +792,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReviewIndexRoute: ReviewIndexRoute,
   MyProfilePainIssueIdRoute: MyProfilePainIssueIdRoute,
   ProfilesProfileIdDocumentsRoute: ProfilesProfileIdDocumentsRoute,
+  ProfilesProfileIdGuardiansRoute: ProfilesProfileIdGuardiansRoute,
   ProfilesProfileIdLabResultsRoute: ProfilesProfileIdLabResultsRoute,
   ProfilesProfileIdManualRoute: ProfilesProfileIdManualRoute,
   ProfilesProfileIdMedicationsRoute: ProfilesProfileIdMedicationsRoute,

@@ -13,10 +13,9 @@ type BodyProps = {
   self: HouseholdMember;
   members: HouseholdMember[];
   viewerRole: HouseholdMemberRole;
-  isDesktop: boolean;
 };
 
-export function HouseholdHomeBody({ props, self, members, viewerRole, isDesktop }: BodyProps) {
+export function HouseholdHomeBody({ props, self, members, viewerRole }: BodyProps) {
   return (
     <>
       <HouseholdHomeBanners
@@ -36,7 +35,6 @@ export function HouseholdHomeBody({ props, self, members, viewerRole, isDesktop 
         members={members}
         viewerRole={viewerRole}
         csrfToken={props.csrfToken}
-        isDesktop={isDesktop}
         onReload={props.onReloadMembers}
       />
       <HouseholdGovernanceSection

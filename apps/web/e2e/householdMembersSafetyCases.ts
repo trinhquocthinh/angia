@@ -28,12 +28,14 @@ export const householdMembersSafetyCases = [
       }
       await page.keyboard.press('Escape');
       await expect(dialog).toHaveCount(0);
+      const detail = page.getByRole('dialog', { name: 'Chi tiết thành viên', exact: true });
+      await expect(detail).toBeVisible();
       await expect(trigger).toBeFocused();
-      if ((page.viewportSize()?.width ?? 1024) >= 1024) {
-        await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
-      } else {
-        await expect(page.locator('body')).toHaveCSS('overflow', 'hidden');
-      }
+      await expect(page.locator('body')).toHaveCSS('overflow', 'hidden');
+      await page.keyboard.press('Escape');
+      await expect(detail).toHaveCount(0);
+      await expect(page.getByRole('button', { name: /Mẹ Hoa/ })).toBeFocused();
+      await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
       expect(state.membersState.patches).toHaveLength(0);
     });
   },

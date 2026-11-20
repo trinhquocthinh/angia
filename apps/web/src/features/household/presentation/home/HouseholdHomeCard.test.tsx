@@ -74,9 +74,29 @@ it('SPEC-069: thành viên không phải Chủ hộ không thấy nút mời, kh
 
   expect(html).toContain('Nhà Ngọc Lan');
   expect(html).toContain('2 thành viên · 1 Chủ hộ / 0 Đồng quản lý / 1 Thành viên');
+  expect(html).toContain('household-home-non-owner-leave');
   expect(html).toContain('Rời nhà');
+  expect(html).not.toContain('household-members-directory-split');
   expect(html).not.toContain('+ Mời người thân');
   expect(html).not.toContain('Quản trị Quyền Chủ hộ &amp; Pháp lý nhà');
   expect(html).not.toContain('Trao quyền Chủ hộ');
   expect(html).not.toContain('Xoá nhà');
+});
+
+it('E28-S3-T3: Đồng quản lý không phải Chủ hộ thấy danh sách toàn hàng, nút mời và khối Rời nhà toàn hàng', () => {
+  const coManagerMembers = [
+    { accountId: 'owner-1', displayName: 'Ba Minh', role: 'main' as const, isOwner: true, isSelf: false },
+    { accountId: 'main-1', displayName: 'Anh Tuấn', role: 'main' as const, isOwner: false, isSelf: true },
+    { accountId: 'member-1', displayName: 'Mẹ Hoa', role: 'member' as const, isOwner: false, isSelf: false },
+  ];
+  const html = renderToStaticMarkup(
+    <HouseholdHomeCard {...baseProps()} viewerRole="main" members={coManagerMembers} />,
+  );
+
+  expect(html).toContain('+ Mời người thân');
+  expect(html).toContain('household-home-non-owner-leave');
+  expect(html).toContain('Rời nhà');
+  expect(html).not.toContain('household-members-directory-split');
+  expect(html).not.toContain('household-members-detail-rail');
+  expect(html).not.toContain('Quản trị Quyền Chủ hộ &amp; Pháp lý nhà');
 });

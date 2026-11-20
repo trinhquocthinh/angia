@@ -47,16 +47,18 @@ function renderPanel(member: typeof memberHoa | null = memberHoa, notice: string
   );
 }
 
-it('E28-S3-T2b: chưa chọn thành viên hiển thị trạng thái trống hướng dẫn chọn người trong danh sách', () => {
-  const html = renderPanel(null);
-  expect(html).toContain('Chọn một người trong danh sách để đổi vai trò hoặc gỡ khỏi nhà.');
+it('E28-S3-T3: chưa chọn thành viên và không có notice thì không render popup hay rail trống', () => {
+  expect(renderPanel(null)).toBe('');
 });
 
-it('E28-S3-T2b: hiển thị đổi vai trò và gỡ thành viên không có nhãn Toàn quyền/Giới hạn hay dữ liệu bịa', () => {
+it('E28-S3-T3: chọn thành viên mở popup modal chứa đổi vai trò và gỡ thành viên, không có dữ liệu bịa', () => {
   const html = renderPanel();
+  expect(html).toContain('<dialog');
+  expect(html).toContain('aria-label="Chi tiết thành viên"');
   expect(html).toContain('Mẹ Hoa');
   expect(html).toContain('Lưu thay đổi');
   expect(html).toContain('Gỡ khỏi nhà');
+  expect(html).not.toContain('household-members-detail-rail');
   expect(html).not.toContain('Toàn quyền');
   expect(html).not.toContain('Giới hạn');
   expect(html).not.toContain('Tham gia');
@@ -64,10 +66,11 @@ it('E28-S3-T2b: hiển thị đổi vai trò và gỡ thành viên không có nh
 });
 
 it.each(['role', 'removal'] as const)(
-  'SPEC-066: lỗi bảo vệ Chủ hộ khi %s hiện thông báo và ẩn thao tác',
+  'SPEC-066: lỗi bảo vệ Chủ hộ khi %s hiện thông báo trong popup và ẩn thao tác',
   (action) => {
     errors[action] = 'Không thể thao tác với Chủ hộ.';
     const html = renderPanel();
+    expect(html).toContain('<dialog');
     expect(html).toContain('Không thể thao tác với Chủ hộ.');
     expect(html).toContain('Đóng');
     expect(html).not.toContain('Lưu thay đổi');
@@ -83,8 +86,9 @@ it('SPEC-066: lỗi có thể thử lại vẫn giữ thao tác thành viên', (
   expect(html).toContain('Gỡ khỏi nhà');
 });
 
-it('SPEC-066: notice không tìm thấy thành viên hiển thị thông báo và nút Đóng', () => {
+it('SPEC-066: notice không tìm thấy thành viên hiển thị trong popup kèm nút Đóng', () => {
   const html = renderPanel(null, 'Người này không còn trong nhà.');
+  expect(html).toContain('<dialog');
   expect(html).toContain('Người này không còn trong nhà.');
   expect(html).toContain('Đóng');
   expect(html).not.toContain('Lưu thay đổi');

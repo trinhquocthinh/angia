@@ -1,8 +1,8 @@
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileListItem, ProfileSession } from '@src/features/profiles/application/ports';
 import { ProfileHealthHeader } from '@src/features/measurements/presentation/components/ProfileHealthHeader';
 import { RevisitSchedule } from './RevisitSchedule';
 
-export function RevisitsContent({ profile, session }: { profile: HealthProfile; session: ProfileSession }) {
+export function RevisitsContent({ profile, session }: { profile: ProfileListItem; session: ProfileSession }) {
   return (
     <div className="flex flex-col gap-6">
       <ProfileHealthHeader profile={profile} session={session} active="revisits" />

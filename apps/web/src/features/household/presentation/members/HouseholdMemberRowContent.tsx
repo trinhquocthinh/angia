@@ -1,4 +1,3 @@
-import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import type { HouseholdMember } from '../../application/memberPorts';
 import { HouseholdMemberRoleBadge } from './HouseholdMemberRoleBadge';
 import { MemberAvatar } from './MemberAvatar';
@@ -30,7 +29,7 @@ export function HouseholdMemberRowContent({ member, manageable, selected }: Prop
             aria-hidden={manageable ? true : undefined}
           >
             {manageable ? (
-              <AdminIcon name={selected ? 'arrow_forward' : 'chevron_right'} size={20} />
+              <MemberClayGlyph name="member-chevron" size={20} />
             ) : (
               <MemberClayGlyph name={member.isOwner ? 'member-protected' : 'member-lock'} size={16} />
             )}

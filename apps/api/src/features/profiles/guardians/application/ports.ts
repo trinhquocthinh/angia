@@ -1,6 +1,6 @@
 import type { MembershipActor } from '@src/features/household/application/membershipPorts.js';
 export type GuardianActor = MembershipActor;
-export type ProfileGuardian = { accountId: string; displayName: string; isMe: boolean };
+type ProfileGuardian = { accountId: string; displayName: string; isMe: boolean };
 export type ListProfileGuardiansResult =
   { ok: true; guardians: ProfileGuardian[] } | { ok: false; code: 'ERR_FORBIDDEN' | 'ERR_NOT_FOUND' };
 export type GuardianResult =

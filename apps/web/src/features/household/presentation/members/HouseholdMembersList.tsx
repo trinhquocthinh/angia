@@ -1,4 +1,4 @@
-import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { MemberClayGlyph } from './MemberClayGlyph';
 import type { HouseholdMember, HouseholdMemberRole } from '../../application/memberPorts';
 import { HouseholdMemberRow } from './HouseholdMemberRow';
 import { HouseholdMembersEmpty } from './HouseholdMembersEmpty';
@@ -15,7 +15,7 @@ export function HouseholdMembersList({ members, viewerRole, selectedId, onSelect
     <div className="household-members-rail">
       <div className="household-members-rail-head">
         <div className="household-members-rail-title">
-          <AdminIcon name="group" size={22} />
+          <MemberClayGlyph name="family" size={22} />
           <h2 id="household-members-section-title">Thành viên &amp; Phân quyền</h2>
         </div>
         {viewerRole === 'main' && (

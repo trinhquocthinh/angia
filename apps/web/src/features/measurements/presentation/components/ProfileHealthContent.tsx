@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StopCourseAction } from '@src/features/medications/presentation/StopCourseAction';
 import { SelfReportedCourseAction } from '@src/features/medications/presentation/SelfReportedCourseAction';
-import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
+import type { ProfileListItem, ProfileSession } from '@src/features/profiles/application/ports';
 import type { MeasurementKind } from '../../application/ports';
 import type { WeekSpan } from '../../application/seriesRange';
 import { useMeasurementSeries } from '../../application/useMeasurementSeries';
@@ -17,7 +17,7 @@ export function ProfileHealthContent({
   profile,
   session,
 }: {
-  profile: HealthProfile;
+  profile: ProfileListItem;
   session: ProfileSession;
 }) {
   const [kind, setKind] = useState<MeasurementKind>('blood_pressure');

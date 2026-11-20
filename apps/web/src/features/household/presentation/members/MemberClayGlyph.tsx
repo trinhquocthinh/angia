@@ -5,7 +5,13 @@ type Name =
   | 'member-protected'
   | 'member-lock'
   | 'family-home'
-  | 'invite-add';
+  | 'invite-add'
+  | 'home-close'
+  | 'home-logout-danger'
+  | 'home-send'
+  | 'home-delete-shield'
+  | 'family'
+  | 'member-chevron';
 
 export function MemberClayGlyph({ name, size }: { name: Name; size: number }) {
   return (

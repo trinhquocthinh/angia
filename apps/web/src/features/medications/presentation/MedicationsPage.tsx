@@ -1,6 +1,7 @@
 import { ProfileDayReminders } from '@src/features/doseConfirmations/presentation/ProfileDayReminders';
 import { AsNeededDoseActions } from '@src/features/asNeededDoses/presentation/AsNeededDoseActions';
 import { ProfileHealthHeader } from '@src/features/measurements/presentation/components/ProfileHealthHeader';
+import type { ProfileListItem, ProfileSession } from '@src/features/profiles/application/ports';
 import { ProfileSectionPage } from '@src/features/profiles/presentation/components/ProfileSectionPage';
 import { DoseSlotsLink } from '@src/features/reminders/presentation/DoseSlotsLink';
 import { useCurrentMedications } from '../application/useCurrentMedications';
@@ -20,10 +21,7 @@ export function MedicationsPage({ profileId }: { profileId: string }) {
   );
 }
 
-function MedicationsContent({
-  profile,
-  session,
-}: Pick<Parameters<typeof SelfReportedCourseAction>[0], 'profile' | 'session'>) {
+function MedicationsContent({ profile, session }: { profile: ProfileListItem; session: ProfileSession }) {
   const medications = useCurrentMedications(catalogRepository, session, profile);
   return (
     <div className="flex flex-col gap-6">

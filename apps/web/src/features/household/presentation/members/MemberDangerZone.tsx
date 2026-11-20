@@ -1,4 +1,4 @@
-import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { MemberClayGlyph } from './MemberClayGlyph';
 import { Button } from '@src/shared/ui/button/Button';
 
 export function MemberDangerZone({ disabled, onOpen }: { disabled: boolean; onOpen: () => void }) {
@@ -17,7 +17,7 @@ export function MemberDangerZone({ disabled, onOpen }: { disabled: boolean; onOp
           onOpen();
         }}
       >
-        <AdminIcon name="person_remove" size={20} />
+        <MemberClayGlyph name="home-logout-danger" size={20} />
         <span>Gỡ khỏi nhà</span>
       </Button>
     </section>

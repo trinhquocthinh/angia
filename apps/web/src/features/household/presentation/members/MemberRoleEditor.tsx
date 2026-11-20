@@ -1,5 +1,4 @@
 import { Button } from '@src/shared/ui/button/Button';
-import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { MemberClayGlyph } from './MemberClayGlyph';
 import { memberRoleDescription } from '../../application/memberDisplay';
 import type { HouseholdMemberRole } from '../../application/memberPorts';
@@ -49,7 +48,7 @@ export function MemberRoleEditor({ currentRole, selectedRole, pending, error, on
         </p>
       )}
       <Button className="household-member-save-btn" disabled={unchanged || pending} onClick={onSave}>
-        <AdminIcon name="save" size={20} />
+        <MemberClayGlyph name="home-send" size={20} />
         {pending ? 'Đang lưu…' : 'Lưu thay đổi'}
       </Button>
     </section>

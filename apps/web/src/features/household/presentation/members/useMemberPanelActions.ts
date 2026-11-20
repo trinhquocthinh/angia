@@ -13,19 +13,23 @@ export function useMemberPanelActions({
   onReload,
   onClose,
   onNotFound,
-  isDesktop = true,
 }: MemberEditorProps) {
   const { showToast } = useMemberToast();
   const [selectedRole, setSelectedRole] = useState<HouseholdMemberRole>(member.role);
-  const [confirmation, setConfirmation] = useState({ open: false, isDesktop });
-  const setConfirmOpen = (open: boolean) => setConfirmation({ open, isDesktop });
+  const [refreshing, setRefreshing] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const roleChange = useMemberRoleChange(householdMembersRepository.changeRole, csrfToken);
   const removal = useMemberRemoval(householdMembersRepository.remove, csrfToken);
 
   async function handleSuccess(message: string) {
-    await onReload();
-    showToast(message);
-    onClose();
+    setRefreshing(true);
+    try {
+      await onReload();
+      showToast(message);
+      onClose();
+    } finally {
+      setRefreshing(false);
+    }
   }
 
   async function handleNotFound() {
@@ -48,9 +52,9 @@ export function useMemberPanelActions({
 
   return {
     selectedRole,
+    pending: refreshing || roleChange.pending || removal.pending,
     setSelectedRole,
-    confirmOpen: confirmation.open,
-    confirmDesktop: confirmation.isDesktop,
+    confirmOpen,
     setConfirmOpen,
     roleChange,
     removal,

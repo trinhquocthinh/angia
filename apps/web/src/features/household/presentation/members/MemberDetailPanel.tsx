@@ -1,14 +1,14 @@
-import { MemberDetailLayout } from './MemberDetailLayout';
-import type { MemberDetailLayoutProps } from './memberDetailLayoutProps';
+import { useRef, useState, type RefObject } from 'react';
 import type { HouseholdMember } from '../../application/memberPorts';
-import { PanelEmptyState } from './PanelEmptyState';
-import { PanelNotice } from './PanelNotice';
+import { MemberDetailSheet } from './MemberDetailSheet';
 import { MemberEditorBody } from './MemberEditorBody';
+import { PanelNotice } from './PanelNotice';
 
-type Props = MemberDetailLayoutProps & {
+type Props = {
   member: HouseholdMember | null;
   notice?: string | null;
   csrfToken: string;
+  returnFocusRef?: RefObject<HTMLButtonElement | null>;
   onReload: () => Promise<void>;
   onClose: () => void;
   onNotFound?: (message: string) => void;
@@ -19,32 +19,32 @@ export function MemberDetailPanel({
   member,
   notice = null,
   csrfToken,
+  returnFocusRef,
   onReload,
   onClose,
   onNotFound,
   titleId,
-  isDesktop = true,
-  returnFocusRef,
 }: Props) {
-  if (!member || notice) {
-    if (!isDesktop && !notice) return null;
-    return (
-      <MemberDetailLayout isDesktop={isDesktop} returnFocusRef={returnFocusRef} onClose={onClose}>
-        {notice ? <PanelNotice message={notice} onClose={onClose} /> : <PanelEmptyState />}
-      </MemberDetailLayout>
-    );
-  }
+  const [pending, setPending] = useState(false);
+  const fallbackRef = useRef<HTMLButtonElement | null>(null);
+  if (!member && !notice) return null;
+
   return (
-    <MemberEditorBody
-      key={`${member.accountId}:${member.role}`}
-      isDesktop={isDesktop}
-      returnFocusRef={returnFocusRef}
-      member={member}
-      csrfToken={csrfToken}
-      onReload={onReload}
-      onClose={onClose}
-      onNotFound={onNotFound}
-      titleId={titleId}
-    />
+    <MemberDetailSheet pending={pending} returnFocusRef={returnFocusRef ?? fallbackRef} onClose={onClose}>
+      {notice || !member ? (
+        <PanelNotice message={notice ?? ''} onClose={onClose} />
+      ) : (
+        <MemberEditorBody
+          key={`${member.accountId}:${member.role}`}
+          onPendingChange={setPending}
+          member={member}
+          csrfToken={csrfToken}
+          onReload={onReload}
+          onClose={onClose}
+          onNotFound={onNotFound}
+          titleId={titleId}
+        />
+      )}
+    </MemberDetailSheet>
   );
 }

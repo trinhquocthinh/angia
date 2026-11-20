@@ -1,51 +1,40 @@
-import { useLayoutEffect, type ReactNode, type RefObject } from 'react';
-import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { MemberClayGlyph } from './MemberClayGlyph';
+import { type ReactNode, type RefObject } from 'react';
 import { Button } from '@src/shared/ui/button/Button';
-import { useModalDialog } from '@src/shared/ui/useModalDialog';
-import '@src/shared/ui/modal-motion.css';
+import { ModalSurface } from '@src/shared/ui/ModalSurface';
 
 type Props = {
+  pending?: boolean;
   returnFocusRef: RefObject<HTMLButtonElement | null>;
   onClose: () => void;
   children: ReactNode;
 };
 
-export function MemberDetailSheet({ onClose, returnFocusRef, children }: Props) {
-  useLayoutEffect(() => {
-    returnFocusRef.current?.focus();
-  }, [returnFocusRef]);
-  const ref = useModalDialog();
-
+export function MemberDetailSheet({ onClose, returnFocusRef, children, pending = false }: Props) {
   return (
-    <dialog
-      ref={ref}
-      className="angia-modal household-member-sheet"
-      aria-label="Chi tiết thành viên"
-      onCancel={(event) => {
-        // React nổi bọt sự kiện cancel của hộp xác nhận lồng bên trong; chỉ đóng khi Escape nhắm đúng sheet.
-        if (event.target !== event.currentTarget) return;
-        event.preventDefault();
-        onClose();
-      }}
-      onClick={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
+    <ModalSurface
+      className="household-member-sheet"
+      label="Chi tiết thành viên"
+      returnFocusRef={returnFocusRef}
+      pending={pending}
+      onClose={onClose}
     >
       <div className="household-member-sheet-body">
         <div className="household-member-sheet-bar">
           <span className="household-member-sheet-handle" aria-hidden="true" />
           <Button
+            disabled={pending}
             data-autofocus
             variant="icon"
             className="household-member-sheet-close"
             aria-label="Đóng chi tiết thành viên"
             onClick={onClose}
           >
-            <AdminIcon name="close" size={20} />
+            <MemberClayGlyph name="home-close" size={20} />
           </Button>
         </div>
         {children}
       </div>
-    </dialog>
+    </ModalSurface>
   );
 }

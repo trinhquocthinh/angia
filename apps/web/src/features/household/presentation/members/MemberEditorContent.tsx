@@ -22,7 +22,7 @@ export function MemberEditorContent({ member, titleId, actions }: Props) {
       <MemberRoleEditor
         currentRole={member.role}
         selectedRole={actions.selectedRole}
-        pending={actions.roleChange.pending}
+        pending={actions.pending}
         error={actions.roleChange.error}
         onSelect={(role) => {
           actions.setSelectedRole(role);
@@ -31,7 +31,7 @@ export function MemberEditorContent({ member, titleId, actions }: Props) {
         onSave={() => void actions.handleSaveRole()}
       />
       <MemberDangerZone
-        disabled={actions.roleChange.pending || actions.removal.pending}
+        disabled={actions.pending}
         onOpen={() => {
           actions.removal.clearError();
           actions.setConfirmOpen(true);

@@ -13,49 +13,35 @@ const members = [
   { accountId: 'member-hoa', displayName: 'Mẹ Hoa', role: 'member' as const, isOwner: false, isSelf: false },
 ];
 
-it('E28-S3-T2b: trên desktop Chủ hộ thấy bố cục 2 cột và panel trống hướng dẫn chọn thành viên', () => {
+it('E28-S3-T3: danh sách thành viên chiếm toàn chiều rộng, không có rail phải hay dialog khi chưa chọn ai', () => {
   const html = renderToStaticMarkup(
     <HouseholdMembersSection
       members={members}
       viewerRole="main"
       csrfToken="csrf"
-      isDesktop={true}
       onReload={async () => undefined}
     />,
   );
 
-  expect(html).toContain('household-members-directory-split');
+  expect(html).toContain('household-members-directory');
+  expect(html).not.toContain('household-members-directory-split');
+  expect(html).not.toContain('household-members-detail-rail');
+  expect(html).not.toContain('<dialog');
   expect(html).toContain('Chạm để xem &amp; sửa quyền');
-  expect(html).toContain('Chọn một người trong danh sách để đổi vai trò hoặc gỡ khỏi nhà.');
 });
 
-it('E28-S3-T2b: dưới 1024px không render panel cột phải khi chưa chọn thành viên', () => {
-  const html = renderToStaticMarkup(
-    <HouseholdMembersSection
-      members={members}
-      viewerRole="main"
-      csrfToken="csrf"
-      isDesktop={false}
-      onReload={async () => undefined}
-    />,
-  );
-
-  expect(html).not.toContain('Chọn một người trong danh sách để đổi vai trò hoặc gỡ khỏi nhà.');
-});
-
-it('SPEC-066: thành viên thường không thấy panel chỉnh sửa, không thấy gợi ý sửa quyền hay nút chọn hàng', () => {
+it('SPEC-066: thành viên thường không thấy gợi ý sửa quyền, không có nút chọn hàng hay dialog chỉnh sửa', () => {
   const html = renderToStaticMarkup(
     <HouseholdMembersSection
       members={members}
       viewerRole="member"
       csrfToken="csrf"
-      isDesktop={true}
       onReload={async () => undefined}
     />,
   );
 
   expect(html).not.toContain('household-members-directory-split');
   expect(html).not.toContain('Chạm để xem &amp; sửa quyền');
-  expect(html).not.toContain('Chọn một người trong danh sách để đổi vai trò hoặc gỡ khỏi nhà.');
+  expect(html).not.toContain('<dialog');
   expect(html).not.toContain('<button');
 });
