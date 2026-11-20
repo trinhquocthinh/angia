@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { canManageMember, memberRoleTag, memberRoleDescription, memberRoleLabel } from './memberDisplay';
+import { canManageMember, memberRoleDescription, memberRoleLabel } from './memberDisplay';
 
 it('SPEC-066: nhãn vai trò phân biệt Chủ hộ, Đồng quản lý và Thành viên', () => {
   expect(memberRoleLabel({ isOwner: true, role: 'main' })).toBe('Chủ hộ');
@@ -21,9 +21,4 @@ it('SPEC-066: mô tả đầy đủ quyền quản lý và giới hạn của t�
   expect(memberRoleDescription('member')).toBe(
     'Chỉ xem hồ sơ được liên kết với mình. Không mời, đổi vai trò hay gỡ thành viên khác.',
   );
-});
-
-it('SPEC-066: chip quyền hạn phân biệt Toàn quyền và Giới hạn', () => {
-  expect(memberRoleTag('main')).toBe('Toàn quyền');
-  expect(memberRoleTag('member')).toBe('Giới hạn');
 });

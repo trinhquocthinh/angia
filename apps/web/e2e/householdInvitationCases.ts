@@ -181,20 +181,24 @@ export const householdInvitationCases = [
     });
   },
   () => {
-    test('Stitch: menu mở màn mời qua Thành viên, 360px/chữ 200% không tràn ngang', async ({ page }) => {
+    test('Stitch: menu mở màn mời qua Nhà của tôi, 360px/chữ 200% không tràn ngang', async ({ page }) => {
       const { household } = await householdInvitationFixture(page);
       await householdMembersFixture(page, household);
-      await page.goto('/family/members');
+      await page.route(
+        /\/api\/family\/(?:ownership-offers|deletion-request)\/current(?:\?[^#]*)?$/,
+        (route) => route.fulfill({ status: 404, json: { error: { code: 'ERR_NOT_FOUND' } } }),
+      );
+      await page.goto('/family/home');
       await page.getByRole('button', { name: 'Tài khoản', exact: true }).click();
       await page
         .getByRole('dialog', { name: 'Tài khoản', exact: true })
-        .getByRole('link', { name: 'Thành viên', exact: true })
+        .getByRole('link', { name: 'Nhà của tôi', exact: true })
         .click();
       await expect(page.getByRole('dialog', { name: 'Tài khoản', exact: true })).toHaveCount(0);
       await page.getByRole('link', { name: '+ Mời người thân', exact: true }).click();
       await expect(page).toHaveURL(/\/family\/invite$/);
       // Nút quay lại của màn mời bị ẩn trên mobile nên kiểm qua DOM, không qua role.
-      await expect(page.locator('a.household-invite-back')).toHaveAttribute('href', '/family/members');
+      await expect(page.locator('a.household-invite-back')).toHaveAttribute('href', '/family/home');
       await page.setViewportSize({ width: 360, height: 780 });
       await page.evaluate(() => (document.documentElement.style.fontSize = '200%'));
       await page.getByRole('radio', { name: /Thành viên/ }).check();

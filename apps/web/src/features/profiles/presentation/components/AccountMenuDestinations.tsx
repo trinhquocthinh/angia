@@ -10,16 +10,10 @@ export function AccountMenuDestinations({
   return (
     <div className="account-menu-links">
       {session.family && (
-        <>
-          <Link to="/family/members" onClick={onClose}>
-            <AdminIcon name="group" />
-            Thành viên
-          </Link>
-          <Link to="/family/home" onClick={onClose}>
-            <AdminIcon name="home_health" />
-            Nhà của tôi
-          </Link>
-        </>
+        <Link to="/family/home" onClick={onClose}>
+          <AdminIcon name="home_health" />
+          Nhà của tôi
+        </Link>
       )}
       {session.account.healthProfileId && (
         <Link to="/my-profile" onClick={onClose}>

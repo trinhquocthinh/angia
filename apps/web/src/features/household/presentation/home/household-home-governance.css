@@ -1,0 +1,124 @@
+.household-governance-bento {
+  padding: 28px 32px;
+  border-radius: 28px;
+  border: 1px solid var(--color-design-border);
+  background: var(--color-surface);
+  box-shadow: 0 12px 40px color-mix(in srgb, var(--color-accent) 4%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.household-governance-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.household-governance-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--color-clay-key-start);
+  color: var(--color-warning);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.household-governance-head h2 {
+  margin: 0;
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 1.375rem;
+  line-height: 1.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.household-governance-head p {
+  margin: 2px 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.375rem;
+  color: var(--color-text-secondary);
+}
+.household-governance-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+.household-home-non-owner-leave {
+  max-width: 680px;
+}
+.household-home-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px;
+  border: 1px solid var(--color-design-border);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
+  box-shadow: var(--shadow-stitch-sm);
+}
+.household-home-block > button:last-of-type {
+  margin-top: auto;
+}
+.household-home-block-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.household-home-badge-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.household-home-badge-crown {
+  background: linear-gradient(180deg, var(--color-clay-key-start), var(--color-clay-key-end));
+  border: 1px solid color-mix(in srgb, var(--color-warning) 28%, var(--color-surface));
+}
+.household-home-badge-door {
+  background: linear-gradient(180deg, var(--color-clay-icon-start), var(--color-clay-icon-end));
+  border: 1px solid var(--color-clay-jade);
+}
+.household-home-badge-shield {
+  background: linear-gradient(180deg, var(--color-clay-revoke-start), var(--color-clay-revoke-end));
+  border: 1px solid color-mix(in srgb, var(--color-danger) 28%, var(--color-surface));
+}
+.household-home-block-copy {
+  flex: 1;
+  min-width: 0;
+}
+.household-home-block-copy h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.household-home-block-copy p {
+  margin: 4px 0 0;
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+  color: var(--color-text-secondary);
+}
+.household-home-block-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+:root[data-theme='dark'] .household-governance-bento {
+  box-shadow: none;
+}
+@media (max-width: 1023px) {
+  .household-governance-bento {
+    padding: 20px 16px;
+    border-radius: 22px;
+  }
+  .household-governance-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

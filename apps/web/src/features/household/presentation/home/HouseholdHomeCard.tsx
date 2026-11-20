@@ -1,17 +1,18 @@
+import { HouseholdHomeBody } from './HouseholdHomeBody';
 import { Button } from '@src/shared/ui/button/Button';
 import type {
   DeletionRequest,
   OwnershipOffer,
   OwnProfileDisposition,
 } from '../../application/householdHomePorts';
-import type { HouseholdMember } from '../../application/memberPorts';
-import { DeleteHouseholdSection } from '../deletion/DeleteHouseholdSection';
-import { LeaveHouseholdSection } from '../leave/LeaveHouseholdSection';
-import { OwnershipTransferSection } from '../ownership/OwnershipTransferSection';
+import type { HouseholdMember, HouseholdMemberRole } from '../../application/memberPorts';
 import { HouseholdHomeHeader } from './HouseholdHomeHeader';
+import { useIsDesktopLayout } from './useIsDesktopLayout';
 
 export type HouseholdHomeCardProps = {
   familyName: string;
+  viewerRole: HouseholdMemberRole;
+  csrfToken: string;
   members: HouseholdMember[] | undefined;
   pendingOffer: OwnershipOffer | null;
   pendingDeletion: DeletionRequest | null;
@@ -25,6 +26,7 @@ export type HouseholdHomeCardProps = {
   deletionPending: boolean;
   deletionError: string | null;
   onRetry: () => void;
+  onReloadMembers: () => Promise<void>;
   onSendOffer: (targetAccountId: string) => void;
   onRevokeOffer: (offerId: string) => void;
   onDecideOffer: (offerId: string, accept: boolean) => void;
@@ -35,62 +37,17 @@ export type HouseholdHomeCardProps = {
   onClearDeletionError: () => void;
 };
 
-function scrollToDelete() {
-  document.getElementById('household-delete-section')?.scrollIntoView({ behavior: 'smooth' });
-}
-
-function renderSections(props: HouseholdHomeCardProps, self: HouseholdMember, members: HouseholdMember[]) {
-  const isOwner = self.isOwner;
-  const otherMembers = members.filter((member) => !member.isSelf);
-  const coManagers = otherMembers.filter((member) => member.role === 'main');
-  return (
-    <div className="household-home-sections">
-      <OwnershipTransferSection
-        familyName={props.familyName}
-        isOwner={isOwner}
-        selfAccountId={self.accountId}
-        coManagers={coManagers}
-        pendingOffer={props.pendingOffer}
-        pending={props.ownershipPending}
-        error={props.ownershipError}
-        onSend={props.onSendOffer}
-        onRevoke={props.onRevokeOffer}
-        onDecide={props.onDecideOffer}
-      />
-      <LeaveHouseholdSection
-        familyName={props.familyName}
-        isOwner={isOwner}
-        otherCount={otherMembers.length}
-        pending={props.leavePending}
-        error={props.leaveError}
-        errorCode={props.leaveErrorCode}
-        onLeave={props.onLeave}
-        onClearError={props.onClearLeaveError}
-        onScrollToDelete={scrollToDelete}
-      />
-      {isOwner && (
-        <DeleteHouseholdSection
-          familyName={props.familyName}
-          otherCount={otherMembers.length}
-          pendingDeletion={props.pendingDeletion}
-          pending={props.deletionPending}
-          error={props.deletionError}
-          onRequest={props.onRequestDeletion}
-          onRevoke={props.onRevokeDeletion}
-          onClearError={props.onClearDeletionError}
-        />
-      )}
-    </div>
-  );
-}
-
 export function HouseholdHomeCard(props: HouseholdHomeCardProps) {
+  const isDesktop = useIsDesktopLayout();
   const self = props.members?.find((member) => member.isSelf);
+  const viewerRole = self?.role ?? props.viewerRole;
+
   return (
-    <section className="household-home-card" aria-labelledby="household-home-title">
+    <div className="household-home-shell" aria-labelledby="household-home-title">
       <HouseholdHomeHeader
         familyName={props.familyName}
-        memberCount={props.members ? props.members.length : null}
+        members={props.members}
+        viewerRole={viewerRole}
         hasPendingDeletion={Boolean(props.pendingDeletion)}
       />
       {props.isPending && (
@@ -106,7 +63,15 @@ export function HouseholdHomeCard(props: HouseholdHomeCardProps) {
           </Button>
         </div>
       )}
-      {props.members && self && renderSections(props, self, props.members)}
-    </section>
+      {props.members && self && (
+        <HouseholdHomeBody
+          props={props}
+          self={self}
+          members={props.members}
+          viewerRole={viewerRole}
+          isDesktop={isDesktop}
+        />
+      )}
+    </div>
   );
 }

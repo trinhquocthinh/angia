@@ -1622,3 +1622,22 @@ ID hồ sơ hoặc dữ liệu sức khỏe. Không đổi schema, domain hay UI
 Unit test: `application/listHouseholdMembers.test.ts`; kiểm quyền, thứ tự,
 cờ Chủ hộ/bản thân, khóa JSON và cô lập chéo nhà tại
 `apps/api/src/features/household/presentation/listHouseholdMembers.int.test.ts`.
+
+## E28-S3-T2b — Nhà của tôi và quản lý thành viên
+
+Menu tài khoản có một mục **Nhà của tôi** (`/family/home`). Trang dùng tên nhà,
+danh sách và số lượng từng vai trò từ API; không dựng số điện thoại, ngày tham gia
+hay mã nhà. Quyền mời, đổi vai trò, gỡ thành viên và quản trị nhà giữ luật hiện có.
+Chủ hộ và hàng “Bạn” không chọn được. Thiếu Đồng quản lý thì khối Trao quyền giữ
+câu hướng dẫn và vô hiệu hoá nút gửi.
+
+Chi tiết thành viên nằm ở panel bên phải từ 1024px; dưới mốc này là native modal
+bottom sheet. Sheet focus nút đóng, Escape đóng và trả focus về hàng đã chọn,
+dùng cơ chế khoá cuộn modal chung. Đổi kích thước giữ vai trò đang chọn và trạng
+thái request; khi xác nhận gỡ đang mở, giữ vỏ hiện tại đến lúc xác nhận đóng để
+không đảo thứ tự modal. Thành công tải lại danh sách và đề nghị trao quyền (có thể
+đã bị thu hồi khi đổi vai trò/gỡ người nhận), hiện toast và đóng chi tiết.
+
+E2E tại `apps/web/e2e/householdMembers.spec.ts`, gồm mốc 1023/1024px, focus sau
+click (WebKit), Escape, modal lồng nhau, resize và lỗi bảo vệ. Đã chạy
+`playwright.account.config.ts` (members, home, invitations): đạt; chưa nghiệm thu SIT.

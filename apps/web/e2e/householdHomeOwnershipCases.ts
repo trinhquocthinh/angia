@@ -6,8 +6,8 @@ export const householdHomeOwnershipCases = [
     test('SPEC-068: Chủ hộ gửi và thu hồi đề nghị trao quyền thành công', async ({ page }) => {
       const state = await householdHomeFixture(page);
       await page.goto('/family/home');
-      await expect(page.getByRole('heading', { name: 'Nhà của tôi', exact: true })).toBeVisible();
-      await expect(page.getByText('Nhà Ngọc Lan · 3 thành viên')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Nhà Ngọc Lan', exact: true })).toBeVisible();
+      await expect(page.getByText('3 thành viên · 1 Chủ hộ / 1 Đồng quản lý / 1 Thành viên')).toBeVisible();
 
       await page.getByRole('button', { name: 'Gửi đề nghị', exact: true }).click();
       await expect(page.getByText('Đã gửi đề nghị cho Anh Tuấn · đang chờ trả lời')).toBeVisible();

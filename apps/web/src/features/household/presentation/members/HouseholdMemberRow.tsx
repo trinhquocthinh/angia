@@ -1,63 +1,39 @@
-import { Link } from '@tanstack/react-router';
-import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { canManageMember } from '../../application/memberDisplay';
 import type { HouseholdMember, HouseholdMemberRole } from '../../application/memberPorts';
-import { HouseholdMemberRoleBadge } from './HouseholdMemberRoleBadge';
-import { MemberAvatar } from './MemberAvatar';
-import { MemberClayGlyph } from './MemberClayGlyph';
+import { HouseholdMemberRowContent } from './HouseholdMemberRowContent';
 
-export function HouseholdMemberRow({
-  member,
-  viewerRole,
-}: {
+type Props = {
   member: HouseholdMember;
   viewerRole: HouseholdMemberRole;
-}) {
+  selected: boolean;
+  onSelect: (accountId: string, trigger: HTMLButtonElement) => void;
+};
+
+export function HouseholdMemberRow({ member, viewerRole, selected, onSelect }: Props) {
   const manageable = canManageMember(viewerRole, member);
-  const body = (
-    <>
-      <div className="household-member-row-main">
-        <MemberAvatar member={member} />
-        <div className="household-member-row-identity">
-          <span className="household-member-name">{member.displayName}</span>
-          {member.isSelf && <span className="household-member-self-badge">Bạn</span>}
-        </div>
-      </div>
-      <div className="household-member-row-meta">
-        <HouseholdMemberRoleBadge member={member} />
-        {(manageable || member.isOwner || member.isSelf) && (
-          <span
-            className="household-member-chevron"
-            title={member.isOwner ? 'Chủ hộ được bảo vệ' : member.isSelf ? 'Tài khoản của bạn' : undefined}
-            aria-label={
-              member.isOwner ? 'Chủ hộ được bảo vệ' : member.isSelf ? 'Tài khoản của bạn' : undefined
-            }
-            role={manageable ? undefined : 'img'}
-            aria-hidden={manageable ? true : undefined}
-          >
-            {manageable ? (
-              <AdminIcon name="chevron_right" size={20} />
-            ) : (
-              <MemberClayGlyph name={member.isOwner ? 'member-protected' : 'member-lock'} size={16} />
-            )}
-          </span>
-        )}
-      </div>
-    </>
-  );
 
   return (
     <li className="household-member-item">
       {manageable ? (
-        <Link
-          to="/family/members/$accountId"
-          params={{ accountId: member.accountId }}
-          className="household-member-row household-member-row-link"
+        <button
+          type="button"
+          className={
+            selected
+              ? 'household-member-row household-member-row-btn household-member-row-selected'
+              : 'household-member-row household-member-row-btn'
+          }
+          aria-pressed={selected}
+          onClick={(event) => {
+            event.currentTarget.focus();
+            onSelect(member.accountId, event.currentTarget);
+          }}
         >
-          {body}
-        </Link>
+          <HouseholdMemberRowContent member={member} manageable={manageable} selected={selected} />
+        </button>
       ) : (
-        <div className="household-member-row">{body}</div>
+        <div className="household-member-row">
+          <HouseholdMemberRowContent member={member} manageable={manageable} selected={selected} />
+        </div>
       )}
     </li>
   );

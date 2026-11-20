@@ -1,7 +1,7 @@
 import { Button } from '@src/shared/ui/button/Button';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { MemberClayGlyph } from './MemberClayGlyph';
-import { memberRoleDescription, memberRoleTag } from '../../application/memberDisplay';
+import { memberRoleDescription } from '../../application/memberDisplay';
 import type { HouseholdMemberRole } from '../../application/memberPorts';
 
 type Props = {
@@ -18,7 +18,7 @@ export function MemberRoleEditor({ currentRole, selectedRole, pending, error, on
   return (
     <section className="household-member-role-section" aria-labelledby="member-role-heading">
       <div className="household-member-section-head">
-        <h2 id="member-role-heading">Vai trò trong nhà</h2>
+        <h3 id="member-role-heading">Vai trò trong nhà</h3>
         <p>Chọn quyền hạn cho thành viên này trong nhà.</p>
       </div>
       <fieldset className="household-member-role-choices" disabled={pending}>
@@ -36,10 +36,7 @@ export function MemberRoleEditor({ currentRole, selectedRole, pending, error, on
               <MemberClayGlyph name={`role-option-${role}`} size={32} />
             </span>
             <span className="household-member-role-option-text">
-              <span className="household-member-role-option-title">
-                <strong>{role === 'main' ? 'Đồng quản lý' : 'Thành viên'}</strong>
-                <span className="household-member-role-tag">{memberRoleTag(role)}</span>
-              </span>
+              <strong>{role === 'main' ? 'Đồng quản lý' : 'Thành viên'}</strong>
               <span>{memberRoleDescription(role)}</span>
             </span>
             <span className="household-member-role-radio" aria-hidden="true" />

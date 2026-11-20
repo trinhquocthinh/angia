@@ -13,7 +13,7 @@ export const householdHomeDeletionCases = [
         { accountId: 'account', displayName: 'Mẹ Hoa', role: 'member', isOwner: false, isSelf: true },
       ];
       await page.goto('/family/home');
-      await expect(page.getByRole('heading', { name: 'Nhà của tôi', exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Nhà Ngọc Lan', exact: true })).toBeVisible();
       await expect(page.getByRole('heading', { name: 'Xoá nhà', exact: true })).toHaveCount(0);
       await expect(page.getByRole('heading', { name: 'Trao quyền Chủ hộ', exact: true })).toHaveCount(0);
       expect(state.deletionGetCount).toBe(0);

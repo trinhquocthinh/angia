@@ -34,10 +34,7 @@ export function OwnershipCandidateList({
           ))}
         </div>
       ) : (
-        <p className="household-ownership-empty">
-          Chưa có Đồng quản lý nào khác trong nhà để trao quyền. Hãy mời hoặc đổi vai trò thành viên thành
-          Đồng quản lý trước.
-        </p>
+        <p className="household-ownership-empty">Chưa có Đồng quản lý. Đổi vai trò một thành viên trước.</p>
       )}
       <button
         type="button"

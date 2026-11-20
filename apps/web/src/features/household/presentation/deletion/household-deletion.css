@@ -12,11 +12,11 @@
   color: var(--color-danger);
 }
 .household-delete-danger-pill {
-  padding: 2px 8px;
+  padding: 2px 10px;
   border-radius: 999px;
   background: var(--color-danger);
   color: var(--color-on-accent);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 .household-delete-disabled-btn {
@@ -97,6 +97,6 @@
   border-color: var(--color-danger);
 }
 .household-delete-confirm-hint {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: var(--color-text-secondary);
 }

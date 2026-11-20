@@ -38,6 +38,27 @@ it('SPEC-068: Chủ hộ chỉ thấy Đồng quản lý để chọn, không c�
   expect(html).toContain('Thu hồi đề nghị');
 });
 
+it('E28-S3-T2b: Chủ hộ khi chưa có Đồng quản lý thấy khối bị vô hiệu hoá và câu hướng dẫn đổi vai trò trước', () => {
+  const html = renderToStaticMarkup(
+    <OwnershipTransferSection
+      familyName="Nhà Ngọc Lan"
+      isOwner={true}
+      selfAccountId="owner-1"
+      coManagers={[]}
+      pendingOffer={null}
+      pending={false}
+      error={null}
+      onSend={vi.fn()}
+      onRevoke={vi.fn()}
+      onDecide={vi.fn()}
+    />,
+  );
+
+  expect(html).toContain('Chưa có Đồng quản lý. Đổi vai trò một thành viên trước.');
+  expect(html).toContain('household-ownership-disabled');
+  expect(html).toMatch(/<button[^>]*disabled=""[^>]*>[\s\S]*?Gửi đề nghị/);
+});
+
 it('SPEC-068: người nhận thấy băng đề nghị kèm nút Chấp nhận và Từ chối', () => {
   const html = renderToStaticMarkup(
     <OwnershipTransferSection

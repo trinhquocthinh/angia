@@ -17,7 +17,3 @@ export function canManageMember(
 ): boolean {
   return viewerRole === 'main' && !member.isOwner && !member.isSelf;
 }
-
-export function memberRoleTag(role: HouseholdMemberRole): string {
-  return role === 'main' ? 'Toàn quyền' : 'Giới hạn';
-}

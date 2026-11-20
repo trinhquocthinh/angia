@@ -12,7 +12,10 @@ export function MemberDangerZone({ disabled, onOpen }: { disabled: boolean; onOp
         variant="secondary"
         className="household-member-danger-trigger"
         disabled={disabled}
-        onClick={onOpen}
+        onClick={(event) => {
+          event.currentTarget.focus();
+          onOpen();
+        }}
       >
         <AdminIcon name="person_remove" size={20} />
         <span>Gỡ khỏi nhà</span>

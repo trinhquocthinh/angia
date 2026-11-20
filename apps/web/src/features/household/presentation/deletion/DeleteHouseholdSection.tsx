@@ -11,6 +11,7 @@ type Props = {
   pendingDeletion: DeletionRequest | null;
   pending: boolean;
   error: string | null;
+  hideBanner?: boolean;
   onRequest: (confirmFamilyName: string) => Promise<boolean>;
   onRevoke: (requestId: string) => void;
   onClearError: () => void;
@@ -34,7 +35,7 @@ function renderActionButton(otherCount: number, disabled: boolean, onOpen: () =>
 }
 
 export function DeleteHouseholdSection(props: Props) {
-  const { familyName, otherCount, pendingDeletion, pending, error } = props;
+  const { familyName, otherCount, pendingDeletion, pending, error, hideBanner } = props;
   const [dialogOpen, setDialogOpen] = useState(false);
 
   async function handleConfirm(confirmFamilyName: string) {
@@ -48,7 +49,7 @@ export function DeleteHouseholdSection(props: Props) {
       aria-labelledby="household-delete-title"
     >
       <DeleteHouseholdHeading otherCount={otherCount} />
-      {pendingDeletion && (
+      {!hideBanner && pendingDeletion && (
         <DeletePendingBanner request={pendingDeletion} pending={pending} onRevoke={props.onRevoke} />
       )}
       {renderActionButton(otherCount, pending || Boolean(pendingDeletion), () => {

@@ -3,6 +3,7 @@ import { runAndToast } from './runAndToast';
 import { useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import type { OwnProfileDisposition } from '../../application/householdHomePorts';
+import type { HouseholdMemberRole } from '../../application/memberPorts';
 import { useDeletionRequest } from '../../application/useDeletionRequest';
 import { useDeletionRequestActions } from '../../application/useDeletionRequestActions';
 import { useHouseholdMembers } from '../../application/useHouseholdMembers';
@@ -14,7 +15,13 @@ import { householdMembersRepository } from '../../infrastructure/householdMember
 import { useMemberToast } from '../members/memberToastContext';
 import type { HouseholdHomeCardProps } from './HouseholdHomeCard';
 
-type Input = { familyName: string; scope: string; hasFamily: boolean; csrfToken: string };
+type Input = {
+  familyName: string;
+  viewerRole: HouseholdMemberRole;
+  scope: string;
+  hasFamily: boolean;
+  csrfToken: string;
+};
 
 type HandlerDependencies = {
   familyName: string;
@@ -37,6 +44,9 @@ function buildHandlers(deps: HandlerDependencies) {
       void members.reload();
       void offer.reload();
       void deletion.reload();
+    },
+    onReloadMembers: async () => {
+      await Promise.all([members.reload(), offer.reload()]);
     },
     onSendOffer: (id: string) =>
       runAndToast(ownership.sendOffer(id), offer.reload, showToast, 'Đã gửi đề nghị trao quyền Chủ hộ'),
@@ -82,6 +92,7 @@ function buildHandlers(deps: HandlerDependencies) {
 
 export function useHouseholdHomeController({
   familyName,
+  viewerRole,
   scope,
   hasFamily,
   csrfToken,
@@ -104,6 +115,8 @@ export function useHouseholdHomeController({
 
   return {
     familyName,
+    viewerRole,
+    csrfToken,
     members: members.query.data,
     pendingOffer: offer.query.data ?? null,
     pendingDeletion: isOwner ? (deletion.query.data ?? null) : null,

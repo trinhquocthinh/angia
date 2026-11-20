@@ -4,7 +4,7 @@
   background: var(--color-warning-soft);
   border: 1px solid color-mix(in srgb, var(--color-warning) 28%, var(--color-surface));
   color: var(--color-warning);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 .household-leave-options {

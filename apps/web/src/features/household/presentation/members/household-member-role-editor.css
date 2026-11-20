@@ -1,15 +1,15 @@
 .household-member-role-section {
-  padding: 24px 0;
+  padding: 16px 0;
   border-bottom: 1px solid var(--color-design-border);
 }
-.household-member-section-head h2 {
+.household-member-section-head h3 {
   margin: 0;
-  font-size: 1.125rem;
-  line-height: 1.625rem;
+  font-size: 1.0625rem;
+  line-height: 1.5rem;
   font-weight: 600;
 }
 .household-member-section-head p {
-  margin: 4px 0 16px;
+  margin: 4px 0 14px;
   font-size: 0.9375rem;
   line-height: 1.5rem;
   color: var(--color-text-secondary);
@@ -20,7 +20,7 @@
   gap: 12px;
   border: 0;
   padding: 0;
-  margin: 0 0 20px;
+  margin: 0 0 16px;
 }
 .household-member-role-option {
   position: relative;
@@ -29,7 +29,7 @@
   gap: 14px;
   min-height: 76px;
   padding: 16px;
-  border-radius: 18px;
+  border-radius: 20px;
   border: 2px solid var(--color-design-border);
   background: var(--color-surface);
   cursor: pointer;
@@ -70,7 +70,7 @@
 .household-member-role-option-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   min-width: 0;
   flex: 1;
 }
@@ -79,8 +79,8 @@
   line-height: 1.5rem;
   font-weight: 600;
 }
-.household-member-role-option-text > span:not(.household-member-role-option-title) {
-  font-size: 0.9375rem;
+.household-member-role-option-text > span {
+  font-size: 0.875rem;
   line-height: 1.375rem;
   color: var(--color-text-secondary);
 }
@@ -101,24 +101,8 @@
 }
 .household-member-save-btn {
   width: 100%;
+  min-height: 48px;
   box-shadow: var(--shadow-stitch-sm);
-}
-.household-member-role-option-title {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.household-member-role-tag {
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  background: var(--color-surface-container-high);
-  color: var(--color-text-primary);
-}
-.household-member-role-option[data-role='main'] .household-member-role-tag {
-  background: var(--color-secondary-container);
-  color: var(--color-on-secondary-container);
 }
 @media (prefers-reduced-motion: reduce) {
   .household-member-role-option {

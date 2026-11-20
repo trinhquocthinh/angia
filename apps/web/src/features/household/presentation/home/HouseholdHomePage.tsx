@@ -16,6 +16,7 @@ export function HouseholdHomePage() {
   const scope = session.data?.family ? `${session.data.account.id}:${session.data.family.id}` : 'none';
   const cardProps = useHouseholdHomeController({
     familyName: session.data?.family?.name ?? '',
+    viewerRole: session.data?.role ?? 'member',
     scope,
     hasFamily,
     csrfToken: session.data?.csrfToken ?? '',

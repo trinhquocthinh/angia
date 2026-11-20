@@ -24,7 +24,6 @@ import { Route as AccountLegalUpdateRouteImport } from './routes/account.legal-u
 import { Route as AccountLocalPasswordRouteImport } from './routes/account.local-password'
 import { Route as FamilyHomeRouteImport } from './routes/family.home'
 import { Route as FamilyInviteRouteImport } from './routes/family.invite'
-import { Route as FamilyMembersRouteImport } from './routes/family.members'
 import { Route as ProfilesProfileIdRouteImport } from './routes/profiles.$profileId'
 import { Route as ProfilesNewRouteImport } from './routes/profiles.new'
 import { Route as RemindersReminderIdRouteImport } from './routes/reminders.$reminderId'
@@ -32,7 +31,6 @@ import { Route as ReviewIndexRouteImport } from './routes/review.index'
 import { Route as ReviewDocumentIdRouteImport } from './routes/review.$documentId'
 import { Route as RevisitRemindersReminderIdRouteImport } from './routes/revisit-reminders.$reminderId'
 import { Route as SpikeBody3dRouteImport } from './routes/spike.body-3d'
-import { Route as FamilyMembersAccountIdRouteImport } from './routes/family.members.$accountId'
 import { Route as MyProfilePainIssueIdRouteImport } from './routes/my-profile_.pain.$issueId'
 import { Route as ProfilesProfileIdDocumentsRouteImport } from './routes/profiles.$profileId_.documents'
 import { Route as ProfilesProfileIdLabResultsRouteImport } from './routes/profiles.$profileId_.lab-results'
@@ -122,11 +120,6 @@ const FamilyInviteRoute = FamilyInviteRouteImport.update({
   path: '/family/invite',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FamilyMembersRoute = FamilyMembersRouteImport.update({
-  id: '/family/members',
-  path: '/family/members',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProfilesProfileIdRoute = ProfilesProfileIdRouteImport.update({
   id: '/profiles/$profileId',
   path: '/profiles/$profileId',
@@ -162,11 +155,6 @@ const SpikeBody3dRoute = SpikeBody3dRouteImport.update({
   id: '/spike/body-3d',
   path: '/spike/body-3d',
   getParentRoute: () => rootRouteImport,
-} as any)
-const FamilyMembersAccountIdRoute = FamilyMembersAccountIdRouteImport.update({
-  id: '/$accountId',
-  path: '/$accountId',
-  getParentRoute: () => FamilyMembersRoute,
 } as any)
 const MyProfilePainIssueIdRoute = MyProfilePainIssueIdRouteImport.update({
   id: '/my-profile_/pain/$issueId',
@@ -260,7 +248,6 @@ export interface FileRoutesByFullPath {
   '/account/local-password': typeof AccountLocalPasswordRoute
   '/family/home': typeof FamilyHomeRoute
   '/family/invite': typeof FamilyInviteRoute
-  '/family/members': typeof FamilyMembersRouteWithChildren
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
   '/reminders/$reminderId': typeof RemindersReminderIdRoute
@@ -268,7 +255,6 @@ export interface FileRoutesByFullPath {
   '/revisit-reminders/$reminderId': typeof RevisitRemindersReminderIdRoute
   '/spike/body-3d': typeof SpikeBody3dRoute
   '/review/': typeof ReviewIndexRoute
-  '/family/members/$accountId': typeof FamilyMembersAccountIdRoute
   '/my-profile/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
   '/profiles/$profileId/lab-results': typeof ProfilesProfileIdLabResultsRoute
@@ -299,7 +285,6 @@ export interface FileRoutesByTo {
   '/account/local-password': typeof AccountLocalPasswordRoute
   '/family/home': typeof FamilyHomeRoute
   '/family/invite': typeof FamilyInviteRoute
-  '/family/members': typeof FamilyMembersRouteWithChildren
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
   '/reminders/$reminderId': typeof RemindersReminderIdRoute
@@ -307,7 +292,6 @@ export interface FileRoutesByTo {
   '/revisit-reminders/$reminderId': typeof RevisitRemindersReminderIdRoute
   '/spike/body-3d': typeof SpikeBody3dRoute
   '/review': typeof ReviewIndexRoute
-  '/family/members/$accountId': typeof FamilyMembersAccountIdRoute
   '/my-profile/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
   '/profiles/$profileId/lab-results': typeof ProfilesProfileIdLabResultsRoute
@@ -339,7 +323,6 @@ export interface FileRoutesById {
   '/account/local-password': typeof AccountLocalPasswordRoute
   '/family/home': typeof FamilyHomeRoute
   '/family/invite': typeof FamilyInviteRoute
-  '/family/members': typeof FamilyMembersRouteWithChildren
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
   '/profiles/new': typeof ProfilesNewRoute
   '/reminders/$reminderId': typeof RemindersReminderIdRoute
@@ -347,7 +330,6 @@ export interface FileRoutesById {
   '/revisit-reminders/$reminderId': typeof RevisitRemindersReminderIdRoute
   '/spike/body-3d': typeof SpikeBody3dRoute
   '/review/': typeof ReviewIndexRoute
-  '/family/members/$accountId': typeof FamilyMembersAccountIdRoute
   '/my-profile_/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId_/documents': typeof ProfilesProfileIdDocumentsRoute
   '/profiles/$profileId_/lab-results': typeof ProfilesProfileIdLabResultsRoute
@@ -380,7 +362,6 @@ export interface FileRouteTypes {
     | '/account/local-password'
     | '/family/home'
     | '/family/invite'
-    | '/family/members'
     | '/profiles/$profileId'
     | '/profiles/new'
     | '/reminders/$reminderId'
@@ -388,7 +369,6 @@ export interface FileRouteTypes {
     | '/revisit-reminders/$reminderId'
     | '/spike/body-3d'
     | '/review/'
-    | '/family/members/$accountId'
     | '/my-profile/pain/$issueId'
     | '/profiles/$profileId/documents'
     | '/profiles/$profileId/lab-results'
@@ -419,7 +399,6 @@ export interface FileRouteTypes {
     | '/account/local-password'
     | '/family/home'
     | '/family/invite'
-    | '/family/members'
     | '/profiles/$profileId'
     | '/profiles/new'
     | '/reminders/$reminderId'
@@ -427,7 +406,6 @@ export interface FileRouteTypes {
     | '/revisit-reminders/$reminderId'
     | '/spike/body-3d'
     | '/review'
-    | '/family/members/$accountId'
     | '/my-profile/pain/$issueId'
     | '/profiles/$profileId/documents'
     | '/profiles/$profileId/lab-results'
@@ -458,7 +436,6 @@ export interface FileRouteTypes {
     | '/account/local-password'
     | '/family/home'
     | '/family/invite'
-    | '/family/members'
     | '/profiles/$profileId'
     | '/profiles/new'
     | '/reminders/$reminderId'
@@ -466,7 +443,6 @@ export interface FileRouteTypes {
     | '/revisit-reminders/$reminderId'
     | '/spike/body-3d'
     | '/review/'
-    | '/family/members/$accountId'
     | '/my-profile_/pain/$issueId'
     | '/profiles/$profileId_/documents'
     | '/profiles/$profileId_/lab-results'
@@ -498,7 +474,6 @@ export interface RootRouteChildren {
   AccountLocalPasswordRoute: typeof AccountLocalPasswordRoute
   FamilyHomeRoute: typeof FamilyHomeRoute
   FamilyInviteRoute: typeof FamilyInviteRoute
-  FamilyMembersRoute: typeof FamilyMembersRouteWithChildren
   ProfilesProfileIdRoute: typeof ProfilesProfileIdRoute
   ProfilesNewRoute: typeof ProfilesNewRoute
   RemindersReminderIdRoute: typeof RemindersReminderIdRoute
@@ -628,13 +603,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FamilyInviteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/family/members': {
-      id: '/family/members'
-      path: '/family/members'
-      fullPath: '/family/members'
-      preLoaderRoute: typeof FamilyMembersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/profiles/$profileId': {
       id: '/profiles/$profileId'
       path: '/profiles/$profileId'
@@ -683,13 +651,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/spike/body-3d'
       preLoaderRoute: typeof SpikeBody3dRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/family/members/$accountId': {
-      id: '/family/members/$accountId'
-      path: '/$accountId'
-      fullPath: '/family/members/$accountId'
-      preLoaderRoute: typeof FamilyMembersAccountIdRouteImport
-      parentRoute: typeof FamilyMembersRoute
     }
     '/my-profile_/pain/$issueId': {
       id: '/my-profile_/pain/$issueId'
@@ -785,18 +746,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface FamilyMembersRouteChildren {
-  FamilyMembersAccountIdRoute: typeof FamilyMembersAccountIdRoute
-}
-
-const FamilyMembersRouteChildren: FamilyMembersRouteChildren = {
-  FamilyMembersAccountIdRoute: FamilyMembersAccountIdRoute,
-}
-
-const FamilyMembersRouteWithChildren = FamilyMembersRoute._addFileChildren(
-  FamilyMembersRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -813,7 +762,6 @@ const rootRouteChildren: RootRouteChildren = {
   AccountLocalPasswordRoute: AccountLocalPasswordRoute,
   FamilyHomeRoute: FamilyHomeRoute,
   FamilyInviteRoute: FamilyInviteRoute,
-  FamilyMembersRoute: FamilyMembersRouteWithChildren,
   ProfilesProfileIdRoute: ProfilesProfileIdRoute,
   ProfilesNewRoute: ProfilesNewRoute,
   RemindersReminderIdRoute: RemindersReminderIdRoute,
