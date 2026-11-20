@@ -1,0 +1,106 @@
+.household-home-amber-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--color-warning-soft);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 30%, var(--color-surface));
+  color: var(--color-warning);
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+}
+.household-home-amber-copy {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 220px;
+  font-weight: 500;
+}
+.household-home-amber-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 30%, var(--color-surface));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.household-home-amber-strong {
+  font-weight: 700;
+}
+.household-home-amber-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.household-home-amber-btn {
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-warning) 35%, var(--color-surface));
+  background: var(--color-surface);
+  color: var(--color-warning);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.household-home-amber-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-warning) 8%, var(--color-surface));
+}
+.household-home-amber-link {
+  border: none;
+  background: transparent;
+  color: var(--color-warning);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.household-home-disabled-btn {
+  width: 100%;
+  min-height: 52px;
+  border: none;
+  border-radius: 16px;
+  background: var(--color-design-border);
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: not-allowed;
+}
+.household-home-error-alert {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+  font-weight: 500;
+}
+.household-home-status-copy,
+.household-home-load-error {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+}
+.household-home-load-error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.household-home-load-error p {
+  margin: 0;
+  color: var(--color-danger);
+}

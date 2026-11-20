@@ -1,0 +1,23 @@
+.household-home-danger-trigger {
+  width: 100%;
+  min-height: 52px;
+  border: none;
+  border-radius: 16px;
+  background: var(--color-danger);
+  color: var(--color-on-accent);
+  font-size: 1rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.household-home-danger-trigger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-danger) 85%, var(--color-shadow));
+}
+.household-home-danger-trigger:disabled {
+  background: var(--color-design-border);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}

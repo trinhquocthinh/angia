@@ -1,0 +1,25 @@
+.household-members-toast-layer {
+  position: fixed;
+  inset: auto 16px calc(7rem + env(safe-area-inset-bottom));
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.household-members-toast {
+  width: max-content;
+  max-width: min(100%, 560px);
+  padding: 12px 20px;
+  border-radius: 14px;
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+  box-shadow: var(--shadow-stitch-sm);
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+@media (min-width: 1024px) {
+  .household-members-toast-layer {
+    bottom: 32px;
+  }
+}

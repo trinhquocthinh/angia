@@ -1,0 +1,177 @@
+@import './household-home-actions.css';
+@import './household-home-banners.css';
+@import './household-home-dialog.css';
+@import '../ownership/household-ownership.css';
+@import '../leave/household-leave.css';
+@import '../deletion/household-deletion.css';
+
+.household-home-card {
+  width: 100%;
+  max-width: 680px;
+  margin: 24px auto 48px;
+  padding: 32px;
+  border: 1px solid var(--color-design-border);
+  border-radius: 24px;
+  background: var(--color-surface);
+  box-shadow: 0 20px 50px color-mix(in srgb, var(--color-accent) 7%, transparent);
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.household-home-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-design-border);
+}
+.household-home-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.household-home-family-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-surface-variant);
+  color: var(--color-accent);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+}
+.household-home-section-label {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+.household-home-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.household-home-title-row h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+.household-home-status {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-success) 12%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-success) 32%, var(--color-surface));
+  color: var(--color-success);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.household-home-status-warning {
+  background: var(--color-warning-soft);
+  border-color: color-mix(in srgb, var(--color-warning) 35%, var(--color-surface));
+  color: var(--color-warning);
+}
+.household-home-subtitle {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.375rem;
+  color: var(--color-text-secondary);
+}
+.household-home-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.household-home-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 24px;
+  border: 1px solid var(--color-design-border);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--color-bg) 40%, var(--color-surface));
+  box-shadow: var(--shadow-stitch-sm);
+}
+.household-home-block-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.household-home-badge-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.household-home-badge-crown {
+  background: linear-gradient(180deg, var(--color-clay-key-start), var(--color-clay-key-end));
+  border: 1px solid color-mix(in srgb, var(--color-warning) 28%, var(--color-surface));
+  box-shadow: 0 8px 16px color-mix(in srgb, var(--color-warning) 18%, transparent);
+}
+.household-home-badge-door {
+  background: linear-gradient(180deg, var(--color-clay-icon-start), var(--color-clay-icon-end));
+  border: 1px solid var(--color-clay-jade);
+  box-shadow: 0 8px 16px color-mix(in srgb, var(--color-accent) 14%, transparent);
+}
+.household-home-badge-shield {
+  background: linear-gradient(180deg, var(--color-clay-revoke-start), var(--color-clay-revoke-end));
+  border: 1px solid color-mix(in srgb, var(--color-danger) 28%, var(--color-surface));
+  box-shadow: 0 8px 16px color-mix(in srgb, var(--color-danger) 18%, transparent);
+}
+.household-home-block-copy {
+  flex: 1;
+  min-width: 0;
+}
+.household-home-block-copy h2 {
+  margin: 0;
+  font-size: 1.1875rem;
+  line-height: 1.625rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.household-home-block-copy p {
+  margin: 4px 0 0;
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+  color: var(--color-text-secondary);
+}
+.household-home-block-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.household-home-card :is(a, button, input):focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+:root[data-theme='dark'] .household-home-card {
+  box-shadow: none;
+}
+@media (max-width: 767px) {
+  .household-home-card {
+    margin-top: 12px;
+    padding: 20px 16px;
+    border-radius: 20px;
+    gap: 20px;
+  }
+  .household-home-block {
+    padding: 16px;
+  }
+  .household-home-title-row h1 {
+    font-size: 1.375rem;
+    line-height: 1.875rem;
+  }
+}

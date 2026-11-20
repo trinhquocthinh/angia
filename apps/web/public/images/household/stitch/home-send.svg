@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <defs>
+    <linearGradient id="planeClayGrad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E6FFF8" />
+      <stop offset="50%" stop-color="#A7F3D0" />
+      <stop offset="100%" stop-color="#5EEAD4" />
+    </linearGradient>
+    <filter id="planeGlow" x="0" y="0" width="24" height="24" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.2" flood-color="#002019" flood-opacity="0.35" />
+    </filter>
+  </defs>
+  <path filter="url(#planeGlow)" d="M22 2L11 13" stroke="white" stroke-width="2.2" stroke-linecap="round" />
+  <path
+    filter="url(#planeGlow)"
+    d="M22 2L15 22L11 13L2 9L22 2Z"
+    fill="url(#planeClayGrad)"
+    stroke="white"
+    stroke-width="1"
+  />
+  <path d="M11 13L15 22L22 2L11 13Z" fill="white" fill-opacity="0.25" />
+</svg>

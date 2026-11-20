@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import './member-toast.css';
 
 export function MemberToast({ message, sequence }: { message: string; sequence: number }) {
   const [dismissed, setDismissed] = useState(0);

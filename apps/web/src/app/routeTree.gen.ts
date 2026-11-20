@@ -22,6 +22,7 @@ import { Route as WaitingRouteImport } from './routes/waiting'
 import { Route as AccountChangePasswordRouteImport } from './routes/account.change-password'
 import { Route as AccountLegalUpdateRouteImport } from './routes/account.legal-update'
 import { Route as AccountLocalPasswordRouteImport } from './routes/account.local-password'
+import { Route as FamilyHomeRouteImport } from './routes/family.home'
 import { Route as FamilyInviteRouteImport } from './routes/family.invite'
 import { Route as FamilyMembersRouteImport } from './routes/family.members'
 import { Route as ProfilesProfileIdRouteImport } from './routes/profiles.$profileId'
@@ -109,6 +110,11 @@ const AccountLegalUpdateRoute = AccountLegalUpdateRouteImport.update({
 const AccountLocalPasswordRoute = AccountLocalPasswordRouteImport.update({
   id: '/account/local-password',
   path: '/account/local-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FamilyHomeRoute = FamilyHomeRouteImport.update({
+  id: '/family/home',
+  path: '/family/home',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FamilyInviteRoute = FamilyInviteRouteImport.update({
@@ -252,6 +258,7 @@ export interface FileRoutesByFullPath {
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/legal-update': typeof AccountLegalUpdateRoute
   '/account/local-password': typeof AccountLocalPasswordRoute
+  '/family/home': typeof FamilyHomeRoute
   '/family/invite': typeof FamilyInviteRoute
   '/family/members': typeof FamilyMembersRouteWithChildren
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
@@ -290,6 +297,7 @@ export interface FileRoutesByTo {
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/legal-update': typeof AccountLegalUpdateRoute
   '/account/local-password': typeof AccountLocalPasswordRoute
+  '/family/home': typeof FamilyHomeRoute
   '/family/invite': typeof FamilyInviteRoute
   '/family/members': typeof FamilyMembersRouteWithChildren
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
@@ -329,6 +337,7 @@ export interface FileRoutesById {
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/legal-update': typeof AccountLegalUpdateRoute
   '/account/local-password': typeof AccountLocalPasswordRoute
+  '/family/home': typeof FamilyHomeRoute
   '/family/invite': typeof FamilyInviteRoute
   '/family/members': typeof FamilyMembersRouteWithChildren
   '/profiles/$profileId': typeof ProfilesProfileIdRoute
@@ -369,6 +378,7 @@ export interface FileRouteTypes {
     | '/account/change-password'
     | '/account/legal-update'
     | '/account/local-password'
+    | '/family/home'
     | '/family/invite'
     | '/family/members'
     | '/profiles/$profileId'
@@ -407,6 +417,7 @@ export interface FileRouteTypes {
     | '/account/change-password'
     | '/account/legal-update'
     | '/account/local-password'
+    | '/family/home'
     | '/family/invite'
     | '/family/members'
     | '/profiles/$profileId'
@@ -445,6 +456,7 @@ export interface FileRouteTypes {
     | '/account/change-password'
     | '/account/legal-update'
     | '/account/local-password'
+    | '/family/home'
     | '/family/invite'
     | '/family/members'
     | '/profiles/$profileId'
@@ -484,6 +496,7 @@ export interface RootRouteChildren {
   AccountChangePasswordRoute: typeof AccountChangePasswordRoute
   AccountLegalUpdateRoute: typeof AccountLegalUpdateRoute
   AccountLocalPasswordRoute: typeof AccountLocalPasswordRoute
+  FamilyHomeRoute: typeof FamilyHomeRoute
   FamilyInviteRoute: typeof FamilyInviteRoute
   FamilyMembersRoute: typeof FamilyMembersRouteWithChildren
   ProfilesProfileIdRoute: typeof ProfilesProfileIdRoute
@@ -599,6 +612,13 @@ declare module '@tanstack/react-router' {
       path: '/account/local-password'
       fullPath: '/account/local-password'
       preLoaderRoute: typeof AccountLocalPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/family/home': {
+      id: '/family/home'
+      path: '/family/home'
+      fullPath: '/family/home'
+      preLoaderRoute: typeof FamilyHomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/family/invite': {
@@ -791,6 +811,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountChangePasswordRoute: AccountChangePasswordRoute,
   AccountLegalUpdateRoute: AccountLegalUpdateRoute,
   AccountLocalPasswordRoute: AccountLocalPasswordRoute,
+  FamilyHomeRoute: FamilyHomeRoute,
   FamilyInviteRoute: FamilyInviteRoute,
   FamilyMembersRoute: FamilyMembersRouteWithChildren,
   ProfilesProfileIdRoute: ProfilesProfileIdRoute,
