@@ -187,7 +187,7 @@ export interface MemberPasswordResetActor {
   role: 'main' | 'member' | null;
 }
 
-export type MemberPasswordResetFailure = {
+type MemberPasswordResetFailure = {
   ok: false;
   code: 'ERR_FORBIDDEN' | 'ERR_OWNER_PROTECTED' | 'ERR_NOT_FOUND' | 'ERR_UNAUTHENTICATED';
 };
