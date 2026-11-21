@@ -12,7 +12,7 @@ export type SubmitRegistration = (
   body: RegistrationRequest,
 ) => Promise<AccountResult<components['schemas']['RegisterAccountResponse']>>;
 export type FetchCurrentLegal = () => Promise<AccountResult<CurrentLegal>>;
-export type RegistrationValues = LoginRequest & {
+export type RegistrationValues = Pick<RegistrationRequest, 'username' | 'password'> & {
   displayName: string;
   email: string;
   ageConfirmed: boolean;

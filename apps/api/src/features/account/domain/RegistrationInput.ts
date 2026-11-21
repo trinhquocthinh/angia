@@ -7,7 +7,7 @@ export interface RegistrationInput {
   username: string;
   password: string;
   displayName: string;
-  email?: string | undefined;
+  email?: string | null | undefined;
   ageConfirmed: boolean;
   legalAcceptance: RegistrationLegalAcceptance;
   invitationToken?: string | undefined;

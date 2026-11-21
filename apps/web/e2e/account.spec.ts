@@ -68,7 +68,7 @@ for (const theme of ['light', 'dark']) {
     await expect(byLabel(page, 'Mật khẩu')).toBeDisabled();
     release();
     await expect(page).toHaveURL(/\/waiting$/);
-    expect(state.bodies).toEqual([{ username: 'me.lan', password: 'matkhau123' }]);
+    expect(state.bodies).toEqual([{ identifier: 'me.lan', password: 'matkhau123' }]);
     expect(state.meReads).toBeGreaterThan(1);
   });
   const errors = [

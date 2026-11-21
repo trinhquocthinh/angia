@@ -7,6 +7,8 @@ export interface RegistrationGate {
   isOpen(): Promise<boolean>;
 }
 
+export type { AccountEmailView, AccountEmails, AccountEmailDeps, AccountEmailFailure } from './emailPorts.js';
+
 export interface CurrentLegalVersions {
   termsVersionId: string;
   privacyVersionId: string;

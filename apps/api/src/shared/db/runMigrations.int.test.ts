@@ -29,6 +29,7 @@ const SKELETON_TABLES = [
   'consent_legacy_attestations',
   'dose_confirmations',
   'dose_slots',
+  'email_verification_tokens',
   'exercise_notes',
   'extraction_reservations',
   'extraction_spend',

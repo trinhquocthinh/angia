@@ -16,6 +16,7 @@ import type {
   ResetMemberPasswordDeps,
   LoginLocalAccountDeps,
   RegisterLocalAccountDeps,
+  AccountEmailDeps,
 } from '@src/features/account/application/ports.js';
 import { localCredentialGate } from '@src/features/account/presentation/localCredentialGate.js';
 import { registerHealthDataCacheHeaders } from '@src/registerHealthDataCacheHeaders.js';
@@ -87,7 +88,8 @@ export type AppDependencies = {
     LoginLocalAccountDeps &
     ChangeLocalPasswordDeps &
     ResetMemberPasswordDeps &
-    EnrollLocalCredentialDeps & {
+    EnrollLocalCredentialDeps &
+    AccountEmailDeps & {
       lookupLocalCredential: LocalCredentialLookup;
       appBaseUrl: string;
       rateLimit: RateLimitDependencies;
@@ -133,6 +135,7 @@ const PUBLIC_PATHS = [
   '/api/auth/login',
   '/api/auth/register',
   '/api/auth/password-login',
+  '/api/auth/email-verifications/confirm',
   '/api/auth/callback',
   '/api/consent-invitations/view',
   '/api/consent-invitations/respond',

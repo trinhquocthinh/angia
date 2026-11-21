@@ -6,7 +6,7 @@ export const registerAccountRequestSchema = z
     username: z.string(),
     password: z.string(),
     displayName: z.string(),
-    email: z.string().optional(),
+    email: z.string().nullish(),
     ageConfirmed: z.boolean(),
     legalAcceptance: z.object({ termsVersionId: z.uuid(), privacyVersionId: z.uuid() }),
     invitationToken: z.string().optional(),

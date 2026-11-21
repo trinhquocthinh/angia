@@ -1,3 +1,7 @@
+import { createAccountEmails } from '@src/features/account/infrastructure/createAccountEmails.js';
+import { SEND_TRANSACTIONAL_EMAIL_QUEUE } from '@angia/contracts';
+import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
+import { createSilentLogger } from './createSilentLogger.js';
 import { createPasswordResetDependencies } from '@src/features/account/infrastructure/createPasswordResetDependencies.js';
 import { createHouseholdDependencies } from '@src/features/household/infrastructure/createHouseholdDependencies.js';
 import { createLocalCredentialLookup } from '@src/features/account/infrastructure/createLocalCredentialLookup.js';
@@ -39,6 +43,9 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
   const legalAcceptance = await seedLegalVersions(owner);
   const pool = new pg.Pool({ connectionString: testDb.appUrl });
   const db = createDatabase(pool);
+  const boss = createPgBoss(testDb.appUrl, createSilentLogger());
+  await boss.start();
+  await boss.createQueue(SEND_TRANSACTIONAL_EMAIL_QUEUE);
   const hasher = createArgon2PasswordHasher();
   const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
   const account: AppDependencies['account'] = {
@@ -56,6 +63,7 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
     identity,
     localLoginSessions: createLocalLoginSessions(db),
     passwords: createLocalPasswordChanges(db),
+    emails: createAccountEmails(db, boss, 'https://angia.example/app'),
     ...createPasswordResetDependencies(db),
     lookupLocalCredential: createLocalCredentialLookup(db),
     enrollments: createLocalCredentialEnrollments(db),
@@ -73,6 +81,7 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
     pool,
     legalAcceptance,
     close: async () => {
+      await boss.stop({ graceful: false });
       await owner.end();
       await pool.end();
       await testDb.container.stop();

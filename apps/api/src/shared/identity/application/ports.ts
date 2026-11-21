@@ -11,7 +11,7 @@ interface CredentialIdentity extends VerifiedIdentity {
 }
 
 export interface IdentityProvider {
-  verifyPassword(username: string, password: string): Promise<VerifiedIdentity | null>;
+  verifyPassword(identifier: string, password: string): Promise<VerifiedIdentity | null>;
 }
 
 export interface PasswordHasher {
@@ -22,6 +22,7 @@ export interface PasswordHasher {
 
 export interface CredentialRepository {
   findByUsername(usernameNormalized: string): Promise<CredentialIdentity | null>;
+  findByVerifiedEmail(emailNormalized: string): Promise<CredentialIdentity | null>;
   insert(accountId: string, passwordHash: string): Promise<number>;
   // Chỉ ghi nếu version còn khớp; caller điều phối khoá account/thu hồi phiên trong transaction.
   replace(accountId: string, passwordHash: string, expectedVersion: number): Promise<number | null>;

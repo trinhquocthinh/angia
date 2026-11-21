@@ -337,6 +337,13 @@
       "when": 1794906130409,
       "tag": "0047_audit_password_reset_notice_read",
       "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1795273323549,
+      "tag": "0048_email_verification",
+      "breakpoints": true
     }
   ]
 }

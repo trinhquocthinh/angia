@@ -24,7 +24,7 @@ export function LoginForm({ form, onSubmit, error }: Props) {
           spellCheck={false}
           placeholder="Nhập tên đăng nhập"
           required
-          {...form.register('username')}
+          {...form.register('identifier')}
         />
         <LoginPasswordField
           autoComplete="current-password"

@@ -260,3 +260,5 @@ export {
   sendTransactionalEmailJobSchema,
 } from './jobs/sendTransactionalEmailJob.js';
 export type { SendTransactionalEmailJob } from './jobs/sendTransactionalEmailJob.js';
+
+export * from './auth/accountEmailSchemas.js';

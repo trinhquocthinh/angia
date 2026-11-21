@@ -1,3 +1,4 @@
+import { createAccountEmails } from '@src/features/account/infrastructure/createAccountEmails.js';
 import { createPasswordResetDependencies } from '@src/features/account/infrastructure/createPasswordResetDependencies.js';
 import { createHouseholdLeaveRepository } from '@src/features/household/infrastructure/createHouseholdLeaveRepository.js';
 import { createHouseholdDependencies } from '@src/features/household/infrastructure/createHouseholdDependencies.js';
@@ -139,6 +140,7 @@ const app = createApp({
     identity,
     localLoginSessions: createLocalLoginSessions(db),
     passwords: createLocalPasswordChanges(db),
+    emails: createAccountEmails(db, boss, config.APP_BASE_URL),
     ...createPasswordResetDependencies(db),
     lookupLocalCredential: createLocalCredentialLookup(db),
     enrollments: createLocalCredentialEnrollments(db),

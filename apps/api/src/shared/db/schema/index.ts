@@ -50,3 +50,4 @@ export { familyDeletionRequests } from './familyDeletionRequests.js';
 export { profileGuardians } from './profileGuardians.js';
 export { removedMemberWindows } from './removedMemberWindows.js';
 export { adminAuditEvents } from './adminAuditEvents.js';
+export { emailVerificationTokens } from './emailVerificationTokens.js';

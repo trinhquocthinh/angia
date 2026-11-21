@@ -6,7 +6,7 @@ import { loginLocalAccount } from './loginLocalAccount.js';
 type VerifiedIdentity = NonNullable<Awaited<ReturnType<IdentityProvider['verifyPassword']>>>;
 
 const now = new Date('2026-11-14T00:00:00Z');
-const input = { username: 'Me.Lan', password: 'secret', ip: 'ip' };
+const input = { identifier: 'Me.Lan', password: 'secret', ip: 'ip' };
 function fixture() {
   const identity: VerifiedIdentity = {
     accountId: 'account',
@@ -33,6 +33,17 @@ function fixture() {
 }
 
 describe('Đăng nhập local', () => {
+  it('TC-923: chuẩn hoá identifier email cho xác thực và khoá giới hạn IP', async () => {
+    const { deps } = fixture();
+    expect(await loginLocalAccount(deps, { ...input, identifier: '  LAN@Example.COM ' })).toMatchObject({
+      ok: true,
+    });
+    expect(deps.identity.verifyPassword).toHaveBeenCalledWith('lan@example.com', 'secret');
+    expect(deps.rateLimit.keyHasher).toHaveBeenCalledWith('login_failed', {
+      ip: 'ip',
+      username: 'lan@example.com',
+    });
+  });
   it('TC-744: đúng mật khẩu cấp phiên local 30 ngày và CSRF', async () => {
     const { run, deps } = fixture();
     expect(await run()).toEqual({
@@ -80,7 +91,7 @@ describe('Đăng nhập local', () => {
   });
   it('cắt khoảng trắng và chữ thường username như lúc đăng ký trước khi tra và đếm lượt', async () => {
     const { deps } = fixture();
-    await loginLocalAccount(deps, { ...input, username: '  Me.Lan ' });
+    await loginLocalAccount(deps, { ...input, identifier: '  Me.Lan ' });
     expect(deps.identity.verifyPassword).toHaveBeenCalledWith('me.lan', 'secret');
     expect(deps.rateLimit.keyHasher).toHaveBeenCalledWith('login_failed', { ip: 'ip', username: 'me.lan' });
   });

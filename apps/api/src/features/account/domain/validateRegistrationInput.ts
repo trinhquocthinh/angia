@@ -1,9 +1,9 @@
+import { normalizeEmail } from './normalizeEmail.js';
 import { validateNewPassword } from './validateNewPassword.js';
 import type { RegistrationInput, RegistrationValidationOutcome } from './RegistrationInput.js';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const USERNAME_REGEX = /^[a-z0-9._-]{3,32}$/;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/;
 
 export function validateRegistrationInput(input: RegistrationInput): RegistrationValidationOutcome {
   if (input.ageConfirmed !== true) {
@@ -22,8 +22,7 @@ export function validateRegistrationInput(input: RegistrationInput): Registratio
     return { ok: false, code: 'ERR_VALIDATION', details: { field: 'displayName' } };
   }
   if (input.email !== undefined && input.email !== null) {
-    const emailTrimmed = input.email.trim();
-    if (emailTrimmed.length > 254 || !EMAIL_REGEX.test(emailTrimmed)) {
+    if (normalizeEmail(input.email) === null) {
       return { ok: false, code: 'ERR_VALIDATION', details: { field: 'email' } };
     }
   }
@@ -39,7 +38,7 @@ export function validateRegistrationInput(input: RegistrationInput): Registratio
       usernameNormalized,
       password,
       displayName,
-      email: input.email?.trim(),
+      email: input.email == null ? undefined : normalizeEmail(input.email)!,
       ageConfirmed: true,
       legalAcceptance: {
         termsVersionId: input.legalAcceptance.termsVersionId,

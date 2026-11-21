@@ -9,7 +9,7 @@ function loginModel(submitLogin: SubmitPasswordLogin, success = vi.fn(async () =
     return null;
   }
   renderToStaticMarkup(<Probe />);
-  model.form.setValue('username', 'me.lan');
+  model.form.setValue('identifier', 'me.lan');
   model.form.setValue('password', 'matkhau123');
   return { model, success };
 }
@@ -27,7 +27,7 @@ it('TC-744: gửi đúng hai trường rồi hoàn tất phiên', async () => {
   });
   const { model, success } = loginModel(submit);
   await model.submit();
-  expect(submit).toHaveBeenCalledWith({ username: 'me.lan', password: 'matkhau123' });
+  expect(submit).toHaveBeenCalledWith({ identifier: 'me.lan', password: 'matkhau123' });
   expect(success).toHaveBeenCalledOnce();
 });
 it.each([

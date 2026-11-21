@@ -17,6 +17,24 @@ const validPayload: RegistrationInput = {
 };
 
 describe('validateRegistrationInput: thẩm định dữ liệu đăng ký tài khoản local', () => {
+  it('TC-922: chuẩn hoá email trim và chữ thường trước khi lưu', () => {
+    expect(validateRegistrationInput({ ...validPayload, email: ' LAN@Example.COM ' })).toMatchObject({
+      ok: true,
+      value: { email: 'lan@example.com' },
+    });
+  });
+  it.each([undefined, null])('TC-921: email vắng hoặc null vẫn hợp lệ: %s', (email) => {
+    expect(validateRegistrationInput({ ...validPayload, email }).ok).toBe(true);
+  });
+  it('TC-922: email vượt 254 ký tự trả lỗi email', () => {
+    expect(
+      validateRegistrationInput({ ...validPayload, email: `${'a'.repeat(243)}@example.com` }),
+    ).toMatchObject({
+      ok: false,
+      code: 'ERR_VALIDATION',
+      details: { field: 'email' },
+    });
+  });
   it('TC-736: chuẩn hoá tên đăng nhập chữ thường và trim, giữ họ tên trim', () => {
     const result = validateRegistrationInput({
       ...validPayload,

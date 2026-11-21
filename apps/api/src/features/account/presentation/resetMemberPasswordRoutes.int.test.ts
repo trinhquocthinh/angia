@@ -54,7 +54,7 @@ const loginTemporary = (password: string) =>
   t.app.request('/api/auth/password-login', {
     method: 'POST',
     headers: { origin: 'https://angia.example', 'content-type': 'application/json' },
-    body: JSON.stringify({ username: targetId.replaceAll('-', ''), password }),
+    body: JSON.stringify({ identifier: targetId.replaceAll('-', ''), password }),
   });
 
 describe('Đặt lại mật khẩu qua PostgreSQL bằng role app', () => {
