@@ -1,3 +1,5 @@
+import { createSmtpMailer } from '@src/shared/mailer/createSmtpMailer.js';
+import { registerSendTransactionalEmailJob } from '@src/jobs/registerSendTransactionalEmailJob.js';
 import { createSanitizeRepository } from '@src/features/documentSanitize/infrastructure/createSanitizeRepository.js';
 import { createSanitizeStorage } from '@src/features/documentSanitize/infrastructure/createSanitizeStorage.js';
 import { createJpegSanitizer } from '@src/features/documentSanitize/infrastructure/createJpegSanitizer.js';
@@ -188,6 +190,8 @@ try {
       logger,
     );
   else logger.warn('Chưa cấu hình WEB_PUSH_*, không gửi lời nhắc');
+  if (config.smtp) await registerSendTransactionalEmailJob(boss, createSmtpMailer(config.smtp), logger);
+  else logger.warn('Chưa cấu hình SMTP_*, không gửi email giao dịch');
   const idpSyncEnabled = await registerIdpSessionSync(config, pool);
   logger.info(
     { aiRunMode: config.AI_RUN_MODE, aiRoutingSource: 'database', idpSyncEnabled },

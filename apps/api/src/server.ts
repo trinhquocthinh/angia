@@ -51,17 +51,7 @@ import { createProfileRepository } from '@src/features/profiles/infrastructure/c
 import { createProfileObjectStorage } from '@src/features/profiles/infrastructure/createProfileObjectStorage.js';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { tmpdir } from 'node:os';
-import {
-  SANITIZE_DOCUMENT_IMAGE_QUEUE,
-  SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS,
-  REQUEUE_AWAITING_BUDGET_QUEUE,
-  REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS,
-  PURGE_PROFILE_OBJECTS_QUEUE,
-  PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS,
-  PURGE_PENDING_OBJECTS_QUEUE,
-  PURGE_PENDING_OBJECTS_QUEUE_OPTIONS,
-  ensureExtractDocumentQueues,
-} from '@angia/contracts';
+import * as jobs from '@angia/contracts';
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
 import { createApp } from '@src/createApp.js';
@@ -94,12 +84,13 @@ const s3 = createS3Client(config);
 const boss = createPgBoss(config.DATABASE_URL, logger);
 await boss.start();
 // Tạo queue idempotent để API gửi được job trước khi worker khởi động.
-await boss.createQueue(SANITIZE_DOCUMENT_IMAGE_QUEUE, SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS);
+await boss.createQueue(jobs.SANITIZE_DOCUMENT_IMAGE_QUEUE, jobs.SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS);
 
-await ensureExtractDocumentQueues(boss);
-await boss.createQueue(REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS);
-await boss.createQueue(PURGE_PROFILE_OBJECTS_QUEUE, PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS);
-await boss.createQueue(PURGE_PENDING_OBJECTS_QUEUE, PURGE_PENDING_OBJECTS_QUEUE_OPTIONS);
+await jobs.ensureExtractDocumentQueues(boss);
+await boss.createQueue(jobs.REQUEUE_AWAITING_BUDGET_QUEUE, jobs.REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS);
+await boss.createQueue(jobs.PURGE_PROFILE_OBJECTS_QUEUE, jobs.PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS);
+await boss.createQueue(jobs.SEND_TRANSACTIONAL_EMAIL_QUEUE, jobs.SEND_TRANSACTIONAL_EMAIL_QUEUE_OPTIONS);
+await boss.createQueue(jobs.PURGE_PENDING_OBJECTS_QUEUE, jobs.PURGE_PENDING_OBJECTS_QUEUE_OPTIONS);
 
 // F03b (SPEC-030): ngưỡng quota dùng chung cho upload và route mức đã dùng.
 const quotaPolicy = {
