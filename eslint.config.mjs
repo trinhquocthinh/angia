@@ -44,6 +44,7 @@ export default defineConfig(
       'design/**',
       '.playwright/**',
       '.lighthouseci/**',
+      '.ua/**',
       '**/*.gen.ts',
     ],
   },
