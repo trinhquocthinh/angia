@@ -124,12 +124,19 @@
               },
               "passwordChangeRequired": {
                 "type": "boolean"
+              },
+              "passwordResetBy": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "required": [
               "csrfToken",
               "expiresAt",
-              "passwordChangeRequired"
+              "passwordChangeRequired",
+              "passwordResetBy"
             ]
           }
         },
@@ -172,6 +179,23 @@
         },
         "required": [
           "newPassword"
+        ]
+      },
+      "ResetMemberPasswordResponse": {
+        "type": "object",
+        "properties": {
+          "temporaryPassword": {
+            "type": "string",
+            "minLength": 16
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "temporaryPassword",
+          "expiresAt"
         ]
       },
       "LocalCredentialRequest": {
@@ -10084,6 +10108,88 @@
           },
           "503": {
             "description": "ERR_AUTH_UNAVAILABLE: DB/rate limiter/hash lỗi hoặc hash bận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/family/members/{targetAccountId}/password-reset": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Chủ hộ/Đồng quản lý đặt lại mật khẩu thành viên (SPEC-062)",
+        "description": "Cần phiên và X-CSRF-Token. Cache-Control: no-store. Mật khẩu tạm chỉ trả một lần, hết hạn sau 24 giờ.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "targetAccountId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mật khẩu tạm và hạn dùng",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetMemberPasswordResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN; ERR_OWNER_PROTECTED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: targetAccountId phải là UUID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: DB/hash lỗi hoặc hash bận",
             "content": {
               "application/json": {
                 "schema": {

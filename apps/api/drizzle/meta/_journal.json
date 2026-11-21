@@ -330,6 +330,13 @@
       "when": 1794906130408,
       "tag": "0046_family_deletion_job_role",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1794906130409,
+      "tag": "0047_audit_password_reset_notice_read",
+      "breakpoints": true
     }
   ]
 }

@@ -1,3 +1,4 @@
+import { createPasswordResetDependencies } from '@src/features/account/infrastructure/createPasswordResetDependencies.js';
 import { createHouseholdLeaveRepository } from '@src/features/household/infrastructure/createHouseholdLeaveRepository.js';
 import { createHouseholdDependencies } from '@src/features/household/infrastructure/createHouseholdDependencies.js';
 import { createLocalCredentialLookup } from '@src/features/account/infrastructure/createLocalCredentialLookup.js';
@@ -147,6 +148,7 @@ const app = createApp({
     identity,
     localLoginSessions: createLocalLoginSessions(db),
     passwords: createLocalPasswordChanges(db),
+    ...createPasswordResetDependencies(db),
     lookupLocalCredential: createLocalCredentialLookup(db),
     enrollments: createLocalCredentialEnrollments(db),
     enrollmentEnabled: config.LOCAL_ENROLLMENT_ENABLED,

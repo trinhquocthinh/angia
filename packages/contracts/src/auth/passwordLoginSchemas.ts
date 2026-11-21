@@ -13,6 +13,7 @@ export const passwordLoginResponseSchema = z
       csrfToken: z.string(),
       expiresAt: z.iso.datetime(),
       passwordChangeRequired: z.boolean(),
+      passwordResetBy: z.string().nullable(),
     }),
   })
   .meta({ id: 'PasswordLoginResponse' });

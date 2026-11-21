@@ -23,6 +23,8 @@ export function createStubAccountDeps(): AppDependencies['account'] {
     lookupLocalCredential: async () => ({ hasLocalCredential: false }),
     enrollments: { findAccount: notConfigured, insertIfAbsent: notConfigured },
     passwords: { findCredential: notConfigured, replaceIfCurrent: notConfigured },
+    memberPasswordResets: { authorize: notConfigured, reset: notConfigured },
+    passwordResetNotices: { findLatestActor: async () => null },
     localLoginSessions: { createIfCurrent: notConfigured },
     sessions: login.sessions,
     generateToken: login.generateToken,

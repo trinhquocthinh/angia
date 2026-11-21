@@ -50,6 +50,7 @@ describe('POST /api/auth/password-login (SPEC-060)', () => {
         csrfToken: expect.any(String),
         expiresAt: expect.any(String),
         passwordChangeRequired: false,
+        passwordResetBy: null,
       },
     });
     expect(Date.parse(body.session.expiresAt) - before).toBeGreaterThanOrEqual(30 * 86400000);

@@ -26,6 +26,7 @@ function fixture() {
         sessionId: 'session',
       })),
     },
+    passwordResetNotices: { findLatestActor: vi.fn(async () => 'Thịnh') },
     logger: { warn: vi.fn() },
   };
   const app = new OpenAPIHono<AppEnv>({
@@ -54,6 +55,7 @@ describe('HTTP đăng nhập local', () => {
         csrfToken: expect.any(String),
         expiresAt: expect.any(String),
         passwordChangeRequired: false,
+        passwordResetBy: null,
       },
     });
     expect(response.headers.get('set-cookie')).toContain('HttpOnly; SameSite=Lax');
@@ -141,6 +143,9 @@ describe('HTTP đăng nhập local', () => {
       mustChangePassword: true,
       tempPasswordExpiresAt: null,
     });
-    expect(await (await request()).json()).toMatchObject({ session: { passwordChangeRequired: true } });
+    expect(await (await request()).json()).toMatchObject({
+      session: { passwordChangeRequired: true, passwordResetBy: 'Thịnh' },
+    });
+    expect(deps.passwordResetNotices.findLatestActor).toHaveBeenCalledWith('account');
   });
 });

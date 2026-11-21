@@ -1,3 +1,4 @@
+import { createPasswordResetDependencies } from '@src/features/account/infrastructure/createPasswordResetDependencies.js';
 import { createHouseholdDependencies } from '@src/features/household/infrastructure/createHouseholdDependencies.js';
 import { createLocalCredentialLookup } from '@src/features/account/infrastructure/createLocalCredentialLookup.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
@@ -55,6 +56,7 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
     identity,
     localLoginSessions: createLocalLoginSessions(db),
     passwords: createLocalPasswordChanges(db),
+    ...createPasswordResetDependencies(db),
     lookupLocalCredential: createLocalCredentialLookup(db),
     enrollments: createLocalCredentialEnrollments(db),
     enrollmentEnabled: enrollmentEnabled,

@@ -32,6 +32,9 @@ export async function loginLocalAccount(
       await recordRateLimitHit(deps.rateLimit, policy, key);
       return { ok: false, code: 'ERR_INVALID_CREDENTIALS' };
     }
+    const passwordResetBy = identity.mustChangePassword
+      ? await deps.passwordResetNotices.findLatestActor(identity.accountId)
+      : null;
     const csrfToken = deps.generateToken();
     const expiresAt = computeSessionExpiry(now);
     const passwordChangeRequired = identity.mustChangePassword;
@@ -50,7 +53,7 @@ export async function loginLocalAccount(
     }
     return {
       ok: true,
-      session: { sessionId: result.sessionId, csrfToken, expiresAt, passwordChangeRequired },
+      session: { sessionId: result.sessionId, csrfToken, expiresAt, passwordChangeRequired, passwordResetBy },
     };
   } catch (error) {
     // Bao gồm store/DB/hash lỗi hoặc timeout; không fallback sang IdP hay báo sai mật khẩu.

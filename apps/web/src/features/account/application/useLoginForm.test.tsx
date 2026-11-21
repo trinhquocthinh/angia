@@ -17,7 +17,12 @@ it('TC-744: gửi đúng hai trường rồi hoàn tất phiên', async () => {
   const submit = vi.fn<SubmitPasswordLogin>().mockResolvedValue({
     ok: true,
     data: {
-      session: { csrfToken: 'csrf', expiresAt: '2026-12-01T00:00:00Z', passwordChangeRequired: false },
+      session: {
+        csrfToken: 'csrf',
+        expiresAt: '2026-12-01T00:00:00Z',
+        passwordChangeRequired: false,
+        passwordResetBy: null,
+      },
     },
   });
   const { model, success } = loginModel(submit);
@@ -64,7 +69,12 @@ it('giữ trạng thái gửi trong lúc chờ phản hồi rồi mở lại for
 
 it('TC-748: chuyển thông tin phiên hạn chế cho bước hoàn tất đăng nhập', async () => {
   const data = {
-    session: { csrfToken: 'restricted', expiresAt: '2026-12-01T00:00:00Z', passwordChangeRequired: true },
+    session: {
+      csrfToken: 'restricted',
+      expiresAt: '2026-12-01T00:00:00Z',
+      passwordChangeRequired: true,
+      passwordResetBy: 'Thịnh',
+    },
   };
   const { model, success } = loginModel(async () => ({ ok: true, data }));
   await model.submit();

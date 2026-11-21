@@ -13,6 +13,7 @@ import type { ClientIpResolver } from '@src/shared/rateLimit/application/ClientI
 import type {
   EnrollLocalCredentialDeps,
   ChangeLocalPasswordDeps,
+  ResetMemberPasswordDeps,
   LoginLocalAccountDeps,
   RegisterLocalAccountDeps,
 } from '@src/features/account/application/ports.js';
@@ -85,6 +86,7 @@ export type AppDependencies = {
   account: RegisterLocalAccountDeps &
     LoginLocalAccountDeps &
     ChangeLocalPasswordDeps &
+    ResetMemberPasswordDeps &
     EnrollLocalCredentialDeps & {
       lookupLocalCredential: LocalCredentialLookup;
       appBaseUrl: string;

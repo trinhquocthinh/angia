@@ -143,6 +143,8 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   // SPEC-066: thao tác quản lý, không trả dữ liệu sức khỏe; TC-789 kiểm khác nhà riêng.
   'GET /api/family/members',
   'PATCH /api/family/members/:targetAccountId',
+  // SPEC-062: đặt lại mật khẩu; kiểm chéo gia đình tại resetMemberPasswordRoutes.int.test.ts.
+  'POST /api/family/members/:targetAccountId/password-reset',
   // SPEC-067: tự thao tác; kiểm dữ liệu/ID nhà cũ và DTO strict tại leaveHousehold.int.test.ts.
   'POST /api/family/leave',
   // SPEC-068: trao quyền; probe chéo gia đình tại ownershipOffers.int.test.ts.

@@ -1,3 +1,4 @@
+import { registerResetMemberPasswordRoute } from './registerResetMemberPasswordRoute.js';
 import { PasswordHashBusyError } from '@src/shared/identity/application/PasswordHashBusyError.js';
 import { rateLimitByIp } from '@src/shared/rateLimit/presentation/rateLimitByIp.js';
 import { rateLimitPolicies } from '@src/shared/rateLimit/domain/rateLimitPolicies.js';
@@ -16,6 +17,7 @@ import { registerLocalAccount } from '../application/registerLocalAccount.js';
 import type {
   EnrollLocalCredentialDeps,
   ChangeLocalPasswordDeps,
+  ResetMemberPasswordDeps,
   LoginLocalAccountDeps,
   RegisterLocalAccountDeps,
 } from '../application/ports.js';
@@ -24,6 +26,7 @@ import { passwordLoginRoute, registerAccountRoute } from './registerAccountRoute
 type AccountRouteDeps = RegisterLocalAccountDeps &
   LoginLocalAccountDeps &
   ChangeLocalPasswordDeps &
+  ResetMemberPasswordDeps &
   EnrollLocalCredentialDeps & {
     appBaseUrl: string;
     cookies: CookieSettings;
@@ -35,6 +38,7 @@ type AccountRouteDeps = RegisterLocalAccountDeps &
 export function registerAccountRoutes(app: OpenAPIHono<AppEnv>, deps: AccountRouteDeps): void {
   registerPasswordLogin(app, deps);
   registerChangePasswordRoute(app, deps);
+  registerResetMemberPasswordRoute(app, deps);
   registerLocalCredentialRoute(app, deps);
   requireTrustedJson(app, registerAccountRoute.path, deps.appBaseUrl);
   app.use(
@@ -105,6 +109,7 @@ function registerPasswordLogin(app: OpenAPIHono<AppEnv>, deps: AccountRouteDeps)
           csrfToken: session.csrfToken,
           expiresAt: session.expiresAt.toISOString(),
           passwordChangeRequired: session.passwordChangeRequired,
+          passwordResetBy: session.passwordResetBy,
         },
       },
       200,

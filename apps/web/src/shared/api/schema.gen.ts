@@ -2211,6 +2211,92 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/family/members/{targetAccountId}/password-reset': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Chủ hộ/Đồng quản lý đặt lại mật khẩu thành viên (SPEC-062)
+     * @description Cần phiên và X-CSRF-Token. Cache-Control: no-store. Mật khẩu tạm chỉ trả một lần, hết hạn sau 24 giờ.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          targetAccountId: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Mật khẩu tạm và hạn dùng */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ResetMemberPasswordResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN; ERR_OWNER_PROTECTED */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: targetAccountId phải là UUID */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE: DB/hash lỗi hoặc hash bận */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/me/local-credential': {
     parameters: {
       query?: never;
@@ -12388,6 +12474,7 @@ export interface components {
         /** Format: date-time */
         expiresAt: string;
         passwordChangeRequired: boolean;
+        passwordResetBy: string | null;
       };
     };
     PasswordLoginRequest: {
@@ -12397,6 +12484,11 @@ export interface components {
     ChangePasswordRequest: {
       currentPassword?: string;
       newPassword: string;
+    };
+    ResetMemberPasswordResponse: {
+      temporaryPassword: string;
+      /** Format: date-time */
+      expiresAt: string;
     };
     LocalCredentialRequest: {
       password: string;
