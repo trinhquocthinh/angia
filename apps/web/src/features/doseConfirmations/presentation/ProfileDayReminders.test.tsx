@@ -14,6 +14,7 @@ const session: ProfileSession = {
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 const profile = { id: 'p', consentStatus: 'confirmed' } as HealthProfile;

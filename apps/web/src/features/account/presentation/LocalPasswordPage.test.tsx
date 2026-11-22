@@ -37,6 +37,7 @@ function renderPage(hasLocalCredential: boolean, adminWithoutFamily: boolean) {
     csrfToken: 'csrf',
     authMethod: 'oidc',
     hasLocalCredential,
+    emailStatus: { email: null, emailVerified: false, pendingEmail: null },
     features: { localEnrollmentEnabled: true, redactionSuggestions: false },
   });
   const effects: React.EffectCallback[] = [];

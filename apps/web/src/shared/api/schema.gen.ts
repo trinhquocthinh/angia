@@ -13453,6 +13453,7 @@ export interface components {
       /** @enum {string} */
       authMethod: 'local' | 'oidc';
       hasLocalCredential: boolean;
+      emailStatus: components['schemas']['AccountEmailResponse'];
       features: {
         redactionSuggestions: boolean;
         localEnrollmentEnabled: boolean;

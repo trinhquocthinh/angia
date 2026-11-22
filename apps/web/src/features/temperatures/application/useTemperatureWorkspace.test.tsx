@@ -12,6 +12,7 @@ const session: ProfileSession = {
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 const request = { celsius: 38.5, measuredAt: '2020-01-01T06:50:00Z', confirmOutOfRange: false };

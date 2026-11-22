@@ -11,6 +11,7 @@ export const session = {
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 } satisfies ProfileSession;
 export const profile = { id: profileId, familyId: 'f', consentStatus: 'confirmed' } as HealthProfile;

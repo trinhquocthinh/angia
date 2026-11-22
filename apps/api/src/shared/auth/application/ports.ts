@@ -58,5 +58,10 @@ export interface CompleteLoginDeps {
 
 export type ResolveSessionDeps = Pick<CompleteLoginDeps, 'sessions' | 'now'>;
 
-// Chỉ trả sự tồn tại credential; hash không đi vào ngữ cảnh phiên hay DTO.
-export type LocalCredentialLookup = (accountId: string) => Promise<{ hasLocalCredential: boolean }>;
+// Đọc credential và trạng thái email cùng lượt; hash không đi vào ngữ cảnh phiên hay DTO.
+export type LocalCredentialLookup = (accountId: string) => Promise<{
+  hasLocalCredential: boolean;
+  email: string | null;
+  emailVerified: boolean;
+  pendingEmail: string | null;
+}>;

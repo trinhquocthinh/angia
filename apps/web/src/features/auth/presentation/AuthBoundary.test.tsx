@@ -13,6 +13,7 @@ const waiting: components['schemas']['MeContextResponse'] = {
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 
@@ -126,6 +127,7 @@ describe('Luồng tài khoản bắt buộc', () => {
       ...member,
       authMethod: 'oidc',
       hasLocalCredential: false,
+      emailStatus: { email: null, emailVerified: false, pendingEmail: null },
       features: { localEnrollmentEnabled: true, redactionSuggestions: false },
     });
     expect(router.navigate).toHaveBeenCalledWith({ to: '/account/local-password', replace: true });

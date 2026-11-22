@@ -42,6 +42,7 @@ async function householdRoute(route: Route, state: State) {
             csrfToken: 'csrf',
             authMethod: 'local',
             hasLocalCredential: true,
+            emailStatus: { email: null, emailVerified: false, pendingEmail: null },
             features: { redactionSuggestions: false, localEnrollmentEnabled: false },
           }
         : { error: { code: 'ERR_UNAUTHENTICATED' } },

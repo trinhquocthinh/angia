@@ -118,6 +118,7 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
       csrfToken: session.csrf,
       authMethod: 'oidc',
       hasLocalCredential: false,
+      emailStatus: { email: null, emailVerified: false, pendingEmail: null },
       features: { redactionSuggestions: false, localEnrollmentEnabled: false },
     });
   });

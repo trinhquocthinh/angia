@@ -17,6 +17,7 @@ function markup(page: React.ReactNode) {
     role: 'main',
     authMethod: 'oidc',
     hasLocalCredential: false,
+    emailStatus: { email: null, emailVerified: false, pendingEmail: null },
     features: { localEnrollmentEnabled: true },
   });
   const html = renderToStaticMarkup(<QueryClientProvider client={client}>{page}</QueryClientProvider>);

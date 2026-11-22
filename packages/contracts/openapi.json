@@ -505,6 +505,9 @@
           "hasLocalCredential": {
             "type": "boolean"
           },
+          "emailStatus": {
+            "$ref": "#/components/schemas/AccountEmailResponse"
+          },
           "features": {
             "type": "object",
             "properties": {
@@ -528,6 +531,7 @@
           "csrfToken",
           "authMethod",
           "hasLocalCredential",
+          "emailStatus",
           "features"
         ]
       },

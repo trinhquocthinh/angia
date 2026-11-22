@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { accountEmailResponseSchema } from './accountEmailSchemas.js';
 
 // Ngữ cảnh phiên cho web (Tech Spec §4 GET /api/me): family/role null = tài khoản chờ gán nhóm (/waiting).
 export const meContextResponseSchema = z
@@ -15,6 +16,7 @@ export const meContextResponseSchema = z
     csrfToken: z.string(),
     authMethod: z.enum(['local', 'oidc']),
     hasLocalCredential: z.boolean(),
+    emailStatus: accountEmailResponseSchema,
     // SPEC-083: true khi API có cấu hình OCR_MASK_URL → web hiện nút "Gợi ý vùng che".
     features: z.object({ redactionSuggestions: z.boolean(), localEnrollmentEnabled: z.boolean() }),
   })

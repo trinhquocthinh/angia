@@ -41,6 +41,7 @@ async function securityRoute(route: Route, state: State) {
         csrfToken: 'csrf',
         authMethod: state.enrollment ? 'oidc' : 'local',
         hasLocalCredential: !state.enrollment || state.hasLocalCredential,
+        emailStatus: { email: null, emailVerified: false, pendingEmail: null },
         features: { redactionSuggestions: false, localEnrollmentEnabled: state.enrollment },
       },
     });

@@ -1,5 +1,6 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { describe, expect, it } from 'vitest';
+import { requirePasswordChanged } from './requirePasswordChanged.js';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import type { SessionContext } from '../domain/SessionContext.js';
 import { registerMeRoute } from './registerMeRoute.js';
@@ -25,6 +26,7 @@ async function meWith(
   redactionSuggestions: boolean,
   hasLocalCredential = false,
   localEnrollmentEnabled = false,
+  emailStatus = { email: null as string | null, emailVerified: false, pendingEmail: null as string | null },
 ) {
   const app = new OpenAPIHono<AppEnv>();
   app.use('*', async (c, next) => {
@@ -35,7 +37,7 @@ async function meWith(
     features: { redactionSuggestions, localEnrollmentEnabled },
     lookupLocalCredential: async (accountId) => {
       expect(accountId).toBe(session.account.id);
-      return { hasLocalCredential };
+      return { hasLocalCredential, ...emailStatus };
     },
   });
   return (await app.request('/api/me')).json();
@@ -60,5 +62,38 @@ describe('GET /api/me — điều kiện enrollment local', () => {
       hasLocalCredential: true,
       features: { localEnrollmentEnabled: false },
     });
+  });
+});
+
+describe('GET /api/me — trạng thái email (SPEC-085)', () => {
+  it.each([
+    { label: 'chưa có email', email: null, emailVerified: false, pendingEmail: null },
+    { label: 'có email chưa xác minh', email: 'lan@example.test', emailVerified: false, pendingEmail: null },
+    {
+      label: 'đã xác minh và đang đổi email',
+      email: 'lan@example.test',
+      emailVerified: true,
+      pendingEmail: 'new@example.test',
+    },
+  ])('trả emailStatus khi $label', async ({ label: _label, ...emailStatus }) => {
+    expect(await meWith(false, true, false, emailStatus)).toMatchObject({ emailStatus });
+  });
+
+  it('phiên hạn chế vẫn bị từ chối 403 trước khi đọc trạng thái email', async () => {
+    const app = new OpenAPIHono<AppEnv>();
+    app.use('*', async (c, next) => {
+      c.set('session', { ...session, passwordChangeRequired: true });
+      await next();
+    });
+    app.use('*', requirePasswordChanged());
+    registerMeRoute(app, {
+      features: { redactionSuggestions: false, localEnrollmentEnabled: false },
+      lookupLocalCredential: async () => {
+        throw new Error('Không được đọc trạng thái email');
+      },
+    });
+    const response = await app.request('/api/me');
+    expect(response.status).toBe(403);
+    expect(await response.json()).toMatchObject({ error: { code: 'ERR_PASSWORD_CHANGE_REQUIRED' } });
   });
 });

@@ -35,6 +35,7 @@ const mainSession: ProfileSession = {
   csrfToken: 'csrf-123',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 
