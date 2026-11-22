@@ -1,3 +1,4 @@
+import type { EmailPasswordResetDeps } from '@src/features/account/application/passwordResetPorts.js';
 import type { HouseholdDeletionRepository } from '@src/features/household/application/deletionPorts.js';
 import type { HouseholdOwnershipRepository } from '@src/features/household/application/ownershipPorts.js';
 import type { HouseholdLeaveDependencies } from '@src/features/household/application/leavePorts.js';
@@ -89,7 +90,8 @@ export type AppDependencies = {
     ChangeLocalPasswordDeps &
     ResetMemberPasswordDeps &
     EnrollLocalCredentialDeps &
-    AccountEmailDeps & {
+    AccountEmailDeps &
+    EmailPasswordResetDeps & {
       lookupLocalCredential: LocalCredentialLookup;
       appBaseUrl: string;
       rateLimit: RateLimitDependencies;
@@ -136,6 +138,8 @@ const PUBLIC_PATHS = [
   '/api/auth/register',
   '/api/auth/password-login',
   '/api/auth/email-verifications/confirm',
+  '/api/auth/password-reset-requests',
+  '/api/auth/password-resets',
   '/api/auth/callback',
   '/api/consent-invitations/view',
   '/api/consent-invitations/respond',

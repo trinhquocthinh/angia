@@ -1,3 +1,4 @@
+import { createEmailPasswordResets } from '@src/features/account/infrastructure/createEmailPasswordResets.js';
 import { createAccountEmails } from '@src/features/account/infrastructure/createAccountEmails.js';
 import { SEND_TRANSACTIONAL_EMAIL_QUEUE } from '@angia/contracts';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
@@ -35,7 +36,10 @@ import { createStubReviewDeps } from './createStubReviewDeps.js';
 import { TEST_COOKIE_SECRET } from './seedAuthFixtures.js';
 import { startTestDatabase } from './startTestDatabase.js';
 
-export async function startRegistrationTestApp(enrollmentEnabled = false) {
+export async function startRegistrationTestApp(
+  enrollmentEnabled = false,
+  resetOptions: Pick<AppDependencies['account'], 'runInBackground' | 'now'> = { now: () => new Date() },
+) {
   const testDb = await startTestDatabase();
   await runMigrations(testDb.ownerUrl);
   const owner = new pg.Client({ connectionString: testDb.ownerUrl });
@@ -63,6 +67,7 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
     identity,
     localLoginSessions: createLocalLoginSessions(db),
     passwords: createLocalPasswordChanges(db),
+    emailPasswordResets: createEmailPasswordResets(db, boss, 'https://angia.example/app'),
     emails: createAccountEmails(db, boss, 'https://angia.example/app'),
     ...createPasswordResetDependencies(db),
     lookupLocalCredential: createLocalCredentialLookup(db),
@@ -71,7 +76,7 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
     accounts: createAccountRegistrationUnitOfWork(db),
     sessions: createSessionRepository(db),
     generateToken: () => randomBytes(32).toString('base64url'),
-    now: () => new Date(),
+    ...resetOptions,
   };
   const app = buildRegistrationApp(db, account);
   return {

@@ -1,3 +1,5 @@
+import type { EmailPasswordResetDeps } from '@src/features/account/application/passwordResetPorts.js';
+import { registerPasswordResetRoutes } from './registerPasswordResetRoutes.js';
 import { registerEmailRoutes } from './registerEmailRoutes.js';
 import { requireTrustedJson } from './requireTrustedJson.js';
 import { registerResetMemberPasswordRoute } from './registerResetMemberPasswordRoute.js';
@@ -31,7 +33,8 @@ type AccountRouteDeps = RegisterLocalAccountDeps &
   ChangeLocalPasswordDeps &
   ResetMemberPasswordDeps &
   EnrollLocalCredentialDeps &
-  AccountEmailDeps & {
+  AccountEmailDeps &
+  EmailPasswordResetDeps & {
     appBaseUrl: string;
     cookies: CookieSettings;
     rateLimit: RateLimitDependencies;
@@ -41,6 +44,7 @@ type AccountRouteDeps = RegisterLocalAccountDeps &
 
 export function registerAccountRoutes(app: OpenAPIHono<AppEnv>, deps: AccountRouteDeps): void {
   registerEmailRoutes(app, deps);
+  registerPasswordResetRoutes(app, deps);
   registerPasswordLogin(app, deps);
   registerChangePasswordRoute(app, deps);
   registerResetMemberPasswordRoute(app, deps);

@@ -51,6 +51,7 @@ const SKELETON_TABLES = [
   'pain_entries',
   'pain_issue_status_events',
   'pain_issues',
+  'password_reset_tokens',
   'prescription_items',
   'prescriptions',
   'profile_guardians',

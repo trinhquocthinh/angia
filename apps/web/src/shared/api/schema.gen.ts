@@ -2356,6 +2356,181 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/auth/password-reset-requests': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Yêu cầu đặt lại mật khẩu qua email (SPEC-063)
+     * @description Không cần phiên. Origin tin cậy, JSON; Cache-Control: no-store. Đếm mọi yêu cầu theo IP và email chuẩn hoá, 3/giờ mỗi khoá. Luôn phản hồi đồng nhất trước khi tra email.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['RequestPasswordResetRequest'];
+        };
+      };
+      responses: {
+        /** @description Đã nhận yêu cầu */
+        202: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['RequestPasswordResetResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: Origin hoặc JSON không hợp lệ */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: dữ liệu không hợp lệ */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_RATE_LIMITED: 3/giờ theo IP và email */
+        429: {
+          headers: {
+            'Retry-After'?: number;
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE: dịch vụ xác thực tạm gián đoạn */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/auth/password-resets': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Đặt mật khẩu mới bằng token một lần (SPEC-063)
+     * @description Không cần phiên. Origin tin cậy, JSON; Cache-Control: no-store. Token hết hạn sau 30 phút, thu hồi mọi phiên khi thành công.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['ResetPasswordRequest'];
+        };
+      };
+      responses: {
+        /** @description Đã đặt lại mật khẩu */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_RESET_TOKEN_INVALID: Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: Origin hoặc JSON không hợp lệ */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: dữ liệu không hợp lệ */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE: dịch vụ xác thực tạm gián đoạn */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/auth/password-login': {
     parameters: {
       query?: never;
@@ -12823,6 +12998,17 @@ export interface components {
     };
     ConfirmEmailVerificationRequest: {
       token: string;
+    };
+    RequestPasswordResetResponse: {
+      /** @enum {boolean} */
+      received: true;
+    };
+    RequestPasswordResetRequest: {
+      email: string;
+    };
+    ResetPasswordRequest: {
+      token: string;
+      newPassword: string;
     };
     PasswordLoginResponse: {
       session: {

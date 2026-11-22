@@ -163,6 +163,8 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'PATCH /api/me/email',
   'POST /api/me/email-verifications',
   'POST /api/auth/email-verifications/confirm',
+  'POST /api/auth/password-reset-requests',
+  'POST /api/auth/password-resets',
   'GET /api/health',
   'GET /api/auth/login',
   'GET /api/auth/callback',

@@ -7,3 +7,5 @@ export {
   resetMemberPasswordParamsSchema,
   resetMemberPasswordResponseSchema,
 } from './resetMemberPasswordSchemas.js';
+
+export * from './passwordResetSchemas.js';
