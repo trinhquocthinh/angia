@@ -1,3 +1,7 @@
+import { registerBuildDataExportJob } from '@src/jobs/registerBuildDataExportJob.js';
+import { createDataExportRepository } from '@src/features/dataExport/infrastructure/createDataExportRepository.js';
+import { createExportArchive } from '@src/features/dataExport/infrastructure/createExportArchive.js';
+import { createExportImageReader } from '@src/features/dataExport/infrastructure/createExportImageReader.js';
 import { createSmtpMailer } from '@src/shared/mailer/createSmtpMailer.js';
 import { registerSendTransactionalEmailJob } from '@src/jobs/registerSendTransactionalEmailJob.js';
 import { createSanitizeRepository } from '@src/features/documentSanitize/infrastructure/createSanitizeRepository.js';
@@ -166,6 +170,15 @@ try {
     {
       repository: createPurgeRepository(pool),
       storage: createOrphanStorage(createS3Client(config), config.S3_BUCKET),
+    },
+    logger,
+  );
+  await registerBuildDataExportJob(
+    boss,
+    {
+      repository: createDataExportRepository(pool),
+      archive: createExportArchive(createS3Client(config), config.S3_BUCKET),
+      images: createExportImageReader(createS3Client(config), config.S3_BUCKET),
     },
     logger,
   );

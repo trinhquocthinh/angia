@@ -254,11 +254,7 @@ export * from './painJournal/schemas.js';
 
 export * from './household/index.js';
 
-export {
-  SEND_TRANSACTIONAL_EMAIL_QUEUE,
-  SEND_TRANSACTIONAL_EMAIL_QUEUE_OPTIONS,
-  sendTransactionalEmailJobSchema,
-} from './jobs/sendTransactionalEmailJob.js';
-export type { SendTransactionalEmailJob } from './jobs/sendTransactionalEmailJob.js';
+export * from './jobs/sendTransactionalEmailJob.js';
 
 export * from './auth/accountEmailSchemas.js';
+export * from './jobs/buildDataExportJob.js';

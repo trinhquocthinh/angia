@@ -52,3 +52,4 @@ export { removedMemberWindows } from './removedMemberWindows.js';
 export { adminAuditEvents } from './adminAuditEvents.js';
 export { emailVerificationTokens } from './emailVerificationTokens.js';
 export { passwordResetTokens } from './passwordResetTokens.js';
+export { dataExports } from './dataExports.js';
