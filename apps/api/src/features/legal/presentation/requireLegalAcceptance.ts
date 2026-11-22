@@ -7,6 +7,7 @@ import type { LegalRepository } from '../application/ports.js';
 const ALLOWED = new Set([
   'GET /api/me',
   'POST /api/me/data-exports',
+  'POST /api/me/account-deletion',
   'GET /api/me/data-exports/{id}',
   'GET /api/me/data-exports/{id}/file',
   'POST /api/auth/logout',
@@ -14,7 +15,7 @@ const ALLOWED = new Set([
   'POST /api/me/local-credential',
   'POST /api/me/legal-acceptances',
 ]);
-// SPEC-072: route tải dữ liệu luôn được phép; SPEC-073 thêm khi triển khai xoá tài khoản.
+// SPEC-072/073: tải dữ liệu và xoá tài khoản luôn được phép.
 export function requireLegalAcceptance(legal: LegalRepository, logger: Pick<Logger, 'warn'>) {
   return createMiddleware<AppEnv>(async (c, next) => {
     const session = c.get('session');

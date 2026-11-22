@@ -1,5 +1,5 @@
 import { revokeAccountPushSubscriptions } from './revokeAccountPushSubscriptions.js';
-import { asc, eq, sql } from 'drizzle-orm';
+import { and, asc, eq, isNull, sql } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { accounts, families } from '@src/shared/db/schema/index.js';
 import type { FamilyAdminRepository, MembershipStore } from '../application/ports.js';
@@ -23,7 +23,7 @@ async function updateAccount(
   const [row] = await tx
     .update(accounts)
     .set(patch)
-    .where(eq(accounts.id, accountId))
+    .where(and(eq(accounts.id, accountId), isNull(accounts.deletedAt)))
     .returning(memberAccountColumns);
   if (!row) {
     throw new Error('UPDATE accounts không trả về dòng nào');
@@ -37,7 +37,7 @@ function createMembershipStore(tx: Executor): MembershipStore {
       const [row] = await tx
         .select(memberAccountColumns)
         .from(accounts)
-        .where(eq(accounts.id, accountId))
+        .where(and(eq(accounts.id, accountId), isNull(accounts.deletedAt)))
         .for('update');
       return row ?? null;
     },
@@ -88,7 +88,11 @@ export function createFamilyAdminRepository(db: Database): FamilyAdminRepository
       db.select(familyColumns).from(families).orderBy(asc(families.createdAt), asc(families.id)),
 
     listAccounts: () =>
-      db.select(memberAccountColumns).from(accounts).orderBy(asc(accounts.createdAt), asc(accounts.id)),
+      db
+        .select(memberAccountColumns)
+        .from(accounts)
+        .where(isNull(accounts.deletedAt))
+        .orderBy(asc(accounts.createdAt), asc(accounts.id)),
 
     inTransaction: (work) => db.transaction((tx) => work(createMembershipStore(tx))),
   };

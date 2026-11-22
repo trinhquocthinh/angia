@@ -1,3 +1,4 @@
+import { createAccountDeletionDependencies } from '@src/features/account/infrastructure/createAccountDeletionDependencies.js';
 import { createDataExportDependencies } from '@src/features/dataExport/infrastructure/createDataExportDependencies.js';
 import { createEmailPasswordResets } from '@src/features/account/infrastructure/createEmailPasswordResets.js';
 import { createAccountEmails } from '@src/features/account/infrastructure/createAccountEmails.js';
@@ -12,8 +13,6 @@ import { createLocalLoginSessions } from '@src/features/account/infrastructure/c
 import { createLocalIdentityProvider } from '@src/shared/identity/infrastructure/createLocalIdentityProvider.js';
 import { createCredentialRepository } from '@src/shared/identity/infrastructure/createCredentialRepository.js';
 import { getSocketClientIp } from '@src/shared/rateLimit/infrastructure/getSocketClientIp.js';
-import { createRateLimitStore } from '@src/shared/rateLimit/infrastructure/createRateLimitStore.js';
-import { createRateLimitKeyHasher } from '@src/shared/rateLimit/infrastructure/createRateLimitKeyHasher.js';
 import { createAccountRegistrationUnitOfWork } from '@src/features/account/infrastructure/createAccountRegistrationUnitOfWork.js';
 import { createRegistrationGate } from '@src/features/account/infrastructure/createRegistrationGate.js';
 import { createLegalVersions } from '@src/features/account/infrastructure/createLegalVersions.js';
@@ -120,7 +119,9 @@ const scanQuotaDefaults = {
 const sessionRepository = createSessionRepository(db);
 const hasher = createArgon2PasswordHasher();
 const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
+const accountDeletion = createAccountDeletionDependencies(db, boss, s3, config, hasher, logger);
 const app = createApp({
+  accountDeletion,
   dataExport: createDataExportDependencies(db, boss, s3, config),
   householdLeave: {
     repository: createHouseholdLeaveRepository(db, boss),
@@ -131,12 +132,8 @@ const app = createApp({
   legal: createLegalRepository(db),
   account: {
     clientIp: getSocketClientIp,
-    rateLimit: {
-      store: createRateLimitStore(db),
-      keyHasher: createRateLimitKeyHasher(config.SESSION_COOKIE_SECRET),
-      now: Date.now,
-    },
-    accounts: createAccountRegistrationUnitOfWork(db),
+    rateLimit: accountDeletion.rateLimit,
+    accounts: createAccountRegistrationUnitOfWork(db, accountDeletion.hashUsername),
     gate: createRegistrationGate(db),
     legalVersions: createLegalVersions(db, () => new Date()),
     invitationVerifier: createInvitationVerifier(db),

@@ -165,6 +165,8 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'POST /api/me/legal-acceptances',
   'POST /api/me/local-credential',
   'POST /api/me/password',
+  // SPEC-073: tự xoá tài khoản, không nhận ID tài nguyên; kiểm nhà cũ tại accountDeletionRoutes.int.test.ts.
+  'POST /api/me/account-deletion',
   'PATCH /api/me/email',
   'POST /api/me/email-verifications',
   'POST /api/auth/email-verifications/confirm',

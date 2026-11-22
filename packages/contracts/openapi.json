@@ -8308,6 +8308,126 @@
         }
       }
     },
+    "/api/me/account-deletion": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Xoá tài khoản và ẩn danh thông tin định danh (SPEC-073)",
+        "description": "Cần phiên, Origin tin cậy và X-CSRF-Token; không yêu cầu đã đồng ý pháp lý hoặc thuộc nhà.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1024
+                  },
+                  "ownProfileDisposition": {
+                    "type": "string",
+                    "enum": [
+                      "keep",
+                      "delete"
+                    ]
+                  }
+                },
+                "required": [
+                  "password"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Đã xoá tài khoản và cookie phiên/thiết bị Push"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED; ERR_INVALID_CREDENTIALS: mật khẩu sai hoặc không có credential local",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: Origin/CSRF sai; ERR_ACCOUNT_LOCKED: tài khoản bị khoá",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_OWNER_MUST_TRANSFER; ERR_OWNER_MUST_DELETE_FAMILY; ERR_LAST_GUARDIAN (details.profileIds)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: body sai hoặc thiếu lựa chọn hồ sơ liên kết",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_RATE_LIMITED: quá nhiều lần sai",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: xác thực tạm gián đoạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/family/deletion-request/current": {
       "get": {
         "tags": [

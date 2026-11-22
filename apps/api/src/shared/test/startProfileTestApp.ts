@@ -1,3 +1,4 @@
+import { createProfileTestAccountDeletionDependencies } from './createProfileTestAccountDeletionDependencies.js';
 import { createProfileTestDataExportDependencies } from './createProfileTestDataExportDependencies.js';
 import { createHouseholdLeaveRepository } from '@src/features/household/infrastructure/createHouseholdLeaveRepository.js';
 import { createHouseholdDependencies } from '@src/features/household/infrastructure/createHouseholdDependencies.js';
@@ -99,6 +100,7 @@ function buildApp(
   const quota = { ...TEST_QUOTA_POLICY, limits: { ...TEST_QUOTA_POLICY.limits, ...options.quota } };
   const stub = createStubAuthDeps();
   return createApp({
+    accountDeletion: createProfileTestAccountDeletionDependencies(database, boss, memory.profileStorage),
     householdLeave: {
       repository: createHouseholdLeaveRepository(database, boss),
       storage: memory.profileStorage,

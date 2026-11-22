@@ -41,6 +41,8 @@ export const accounts = pgTable(
     healthProfileId: uuid('health_profile_id')
       .unique()
       .references((): AnyPgColumn => healthProfiles.id, { onDelete: 'set null' }),
+    // SPEC-073: bia mộ ẩn danh; dòng giữ lại cho FK lịch sử và nhật ký.
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
     createdAt: createdAtColumn(),
   },
   (table) => [
@@ -52,5 +54,9 @@ export const accounts = pgTable(
       .on(sql`lower(${table.email})`)
       .where(sql`${table.emailVerifiedAt} IS NOT NULL`),
     check('accounts_family_role_valid', sql`${table.familyRole} IN ('main', 'member')`),
+    check(
+      'accounts_deleted_anonymized',
+      sql`${table.deletedAt} IS NULL OR (${table.usernameNormalized} IS NULL AND ${table.email} IS NULL AND ${table.pendingEmail} IS NULL AND ${table.oidcSubject} IS NULL AND ${table.familyId} IS NULL AND ${table.healthProfileId} IS NULL AND ${table.displayName} = '' AND NOT ${table.isSystemAdmin})`,
+    ),
   ],
 );

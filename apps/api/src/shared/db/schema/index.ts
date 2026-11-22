@@ -53,3 +53,4 @@ export { adminAuditEvents } from './adminAuditEvents.js';
 export { emailVerificationTokens } from './emailVerificationTokens.js';
 export { passwordResetTokens } from './passwordResetTokens.js';
 export { dataExports } from './dataExports.js';
+export { deletedUsernames } from './deletedUsernames.js';

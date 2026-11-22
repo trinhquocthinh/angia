@@ -1,3 +1,5 @@
+import { registerPurgeDeletedUsernamesJob } from '@src/jobs/registerPurgeDeletedUsernamesJob.js';
+import { createDeletedUsernameCleanupRepository } from '@src/features/deletedUsernameCleanup/infrastructure/createDeletedUsernameCleanupRepository.js';
 import { registerCleanupDataExportsJob } from '@src/jobs/registerCleanupDataExportsJob.js';
 import { createCleanupDataExportsRepository } from '@src/features/dataExportCleanup/infrastructure/createCleanupDataExportsRepository.js';
 import { createCleanupDataExportsStorage } from '@src/features/dataExportCleanup/infrastructure/createCleanupDataExportsStorage.js';
@@ -182,6 +184,11 @@ try {
       repository: createCleanupDataExportsRepository(pool),
       storage: createCleanupDataExportsStorage(createS3Client(config), config.S3_BUCKET),
     },
+    logger,
+  );
+  await registerPurgeDeletedUsernamesJob(
+    boss,
+    { repository: createDeletedUsernameCleanupRepository(pool) },
     logger,
   );
   await registerBuildDataExportJob(

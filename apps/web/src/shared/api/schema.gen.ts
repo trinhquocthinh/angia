@@ -429,6 +429,115 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/me/account-deletion': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Xoá tài khoản và ẩn danh thông tin định danh (SPEC-073)
+     * @description Cần phiên, Origin tin cậy và X-CSRF-Token; không yêu cầu đã đồng ý pháp lý hoặc thuộc nhà.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            password: string;
+            /** @enum {string} */
+            ownProfileDisposition?: 'keep' | 'delete';
+          };
+        };
+      };
+      responses: {
+        /** @description Đã xoá tài khoản và cookie phiên/thiết bị Push */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_UNAUTHENTICATED; ERR_INVALID_CREDENTIALS: mật khẩu sai hoặc không có credential local */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: Origin/CSRF sai; ERR_ACCOUNT_LOCKED: tài khoản bị khoá */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_OWNER_MUST_TRANSFER; ERR_OWNER_MUST_DELETE_FAMILY; ERR_LAST_GUARDIAN (details.profileIds) */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: body sai hoặc thiếu lựa chọn hồ sơ liên kết */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_RATE_LIMITED: quá nhiều lần sai */
+        429: {
+          headers: {
+            'Retry-After'?: number;
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE: xác thực tạm gián đoạn */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/family/deletion-request/current': {
     parameters: {
       query?: never;

@@ -22,6 +22,7 @@ const ACTIONS = [
   'family_deletion_requested',
   'family_deletion_revoked',
   'family_deletion_executed',
+  'account_deleted',
 ] as const;
 
 interface AdminAuditEventInput {

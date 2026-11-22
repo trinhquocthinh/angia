@@ -1,3 +1,4 @@
+import type { AccountDeletionDeps } from '@src/features/account/application/deletionPorts.js';
 import type { DataExportDependencies } from '@src/features/dataExport/application/ports.js';
 import type { EmailPasswordResetDeps } from '@src/features/account/application/passwordResetPorts.js';
 import type { HouseholdDeletionRepository } from '@src/features/household/application/deletionPorts.js';
@@ -72,6 +73,7 @@ import type { HouseholdMembershipRepository } from '@src/features/household/appl
 import type { ProfileGuardianRepository } from '@src/features/profiles/guardians/application/ports.js';
 
 export type AppDependencies = {
+  accountDeletion?: AccountDeletionDeps;
   dataExport?: DataExportDependencies;
   profileGuardians: ProfileGuardianRepository;
   householdDeletion: HouseholdDeletionRepository;
@@ -161,6 +163,10 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
     return errorResponse(c, 'ERR_INTERNAL');
   });
   app.use('/api/me/local-credential', localCredentialGate(deps.account.enrollmentEnabled));
+  app.use('/api/me/account-deletion', async (c, next) => {
+    c.header('Cache-Control', 'no-store');
+    await next();
+  });
   registerHealthDataCacheHeaders(app);
   registerScanQuotaHeaders(app);
   app.use(

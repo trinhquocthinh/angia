@@ -1,3 +1,4 @@
+import { createUsernameHasher } from '@src/features/account/infrastructure/createUsernameHasher.js';
 import { createEmailPasswordResets } from '@src/features/account/infrastructure/createEmailPasswordResets.js';
 import { createAccountEmails } from '@src/features/account/infrastructure/createAccountEmails.js';
 import { SEND_TRANSACTIONAL_EMAIL_QUEUE } from '@angia/contracts';
@@ -73,7 +74,7 @@ export async function startRegistrationTestApp(
     lookupLocalCredential: createLocalCredentialLookup(db),
     enrollments: createLocalCredentialEnrollments(db),
     enrollmentEnabled: enrollmentEnabled,
-    accounts: createAccountRegistrationUnitOfWork(db),
+    accounts: createAccountRegistrationUnitOfWork(db, createUsernameHasher('test-username-secret'.repeat(3))),
     sessions: createSessionRepository(db),
     generateToken: () => randomBytes(32).toString('base64url'),
     ...resetOptions,
