@@ -124,10 +124,13 @@ describe('E27-S1-T1: cô lập nhà, phiên cũ và tài khoản chưa có nhà'
     it.each(noFamilyRoutes)(`${code}: chặn $route và không ghi dữ liệu`, async (row) => {
       const before = await snapshotHealthTables(t.owner);
       const response = await probe(actor(), row, target);
-      const link = row.route.includes(' /api/me/link-invitations/');
-      expect(response.status).toBe(link ? 404 : 403);
+      // Lời mời liên kết và tải dữ liệu về (SPEC-072, owner duyệt 2026-11-22) không cần thuộc nhà:
+      // tài nguyên của nhà cũ trả cùng 404 như ID không tồn tại.
+      const notFound =
+        row.route.includes(' /api/me/link-invitations/') || row.route.includes(' /api/me/data-exports');
+      expect(response.status).toBe(notFound ? 404 : 403);
       expect(await response.json()).toMatchObject({
-        error: { code: link ? 'ERR_NOT_FOUND' : 'ERR_FORBIDDEN' },
+        error: { code: notFound ? 'ERR_NOT_FOUND' : 'ERR_FORBIDDEN' },
       });
       expect(await snapshotHealthTables(t.owner)).toEqual(before);
     });

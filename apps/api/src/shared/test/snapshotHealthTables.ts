@@ -27,6 +27,7 @@ const SNAPSHOT_TABLES = [
   'revisit_reminders',
   'dose_confirmations',
   'reminder_deliveries',
+  'data_exports',
 ];
 
 // Chụp toàn bộ dòng các bảng sức khỏe bằng role owner để chứng minh request bị từ chối không ghi gì.

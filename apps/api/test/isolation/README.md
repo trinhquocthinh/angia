@@ -137,3 +137,10 @@ Hướng dẫn tạo cấu hình tạm loại metadata ở từng project và l�
 Từ gốc source, bảng suite này có tiền tố `apps/api/src/`; giữ các lệnh chạy
 Testcontainers ở phần T2 phía trên. Kết quả và giới hạn hiện tại theo T3;
 không gọi lượt bổ sung là verify:fast PASS.
+
+## E29-S3-T2 — Probe tải dữ liệu về (2026-11-22)
+
+Ba route `/api/me/data-exports` đã rời HOUSEHOLD_ROUTE_PLAN và có probe thật trong
+`createHealthDataProbes`. Theo SPEC-072 (owner duyệt 2026-11-22) route không cần thuộc nhà,
+nên TC-871/872 chờ `404 ERR_NOT_FOUND` (yêu cầu/tệp của nhà cũ không lộ, cùng body với ID
+không tồn tại) thay vì `403`; `data_exports` nằm trong snapshot để chứng minh không ghi dòng.
