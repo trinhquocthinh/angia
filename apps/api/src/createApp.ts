@@ -1,3 +1,4 @@
+import type { DataExportDependencies } from '@src/features/dataExport/application/ports.js';
 import type { EmailPasswordResetDeps } from '@src/features/account/application/passwordResetPorts.js';
 import type { HouseholdDeletionRepository } from '@src/features/household/application/deletionPorts.js';
 import type { HouseholdOwnershipRepository } from '@src/features/household/application/ownershipPorts.js';
@@ -71,6 +72,7 @@ import type { HouseholdMembershipRepository } from '@src/features/household/appl
 import type { ProfileGuardianRepository } from '@src/features/profiles/guardians/application/ports.js';
 
 export type AppDependencies = {
+  dataExport?: DataExportDependencies;
   profileGuardians: ProfileGuardianRepository;
   householdDeletion: HouseholdDeletionRepository;
   householdOwnership: HouseholdOwnershipRepository;

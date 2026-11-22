@@ -1,3 +1,4 @@
+import { createDataExportDependencies } from '@src/features/dataExport/infrastructure/createDataExportDependencies.js';
 import { createEmailPasswordResets } from '@src/features/account/infrastructure/createEmailPasswordResets.js';
 import { createAccountEmails } from '@src/features/account/infrastructure/createAccountEmails.js';
 import { createPasswordResetDependencies } from '@src/features/account/infrastructure/createPasswordResetDependencies.js';
@@ -88,6 +89,7 @@ await boss.start();
 // Tạo queue idempotent để API gửi được job trước khi worker khởi động.
 await boss.createQueue(jobs.SANITIZE_DOCUMENT_IMAGE_QUEUE, jobs.SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS);
 
+await boss.createQueue(jobs.BUILD_DATA_EXPORT_QUEUE, jobs.BUILD_DATA_EXPORT_QUEUE_OPTIONS);
 await jobs.ensureExtractDocumentQueues(boss);
 await boss.createQueue(jobs.REQUEUE_AWAITING_BUDGET_QUEUE, jobs.REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS);
 await boss.createQueue(jobs.PURGE_PROFILE_OBJECTS_QUEUE, jobs.PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS);
@@ -119,6 +121,7 @@ const sessionRepository = createSessionRepository(db);
 const hasher = createArgon2PasswordHasher();
 const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
 const app = createApp({
+  dataExport: createDataExportDependencies(db, boss, s3, config),
   householdLeave: {
     repository: createHouseholdLeaveRepository(db, boss),
     storage: createProfileObjectStorage(s3, config.S3_BUCKET),

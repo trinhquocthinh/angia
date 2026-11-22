@@ -358,6 +358,13 @@
       "when": 1795318801761,
       "tag": "0050_data_exports",
       "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "7",
+      "when": 1795318861761,
+      "tag": "0051_data_export_window_role",
+      "breakpoints": true
     }
   ]
 }

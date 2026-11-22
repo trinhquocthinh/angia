@@ -19,7 +19,30 @@ const PROFILE_TABLES = [
   'adherence_periods',
   'profile_guardians',
 ] as const;
+const CONSENT_TABLES = [
+  {
+    name: 'consent_invitations',
+    columns: [
+      'id',
+      'profile_id',
+      'expires_at',
+      'revoked_at',
+      'decision',
+      'respondent_name',
+      'basis',
+      'inviter_attested_at',
+      'responded_at',
+      'created_at',
+    ],
+  },
+  { name: 'consent_legacy_attestations', columns: ['profile_id', 'confirmed_at', 'basis'] },
+  { name: 'profile_link_events', columns: ['id', 'profile_id', 'action', 'actor_role', 'created_at'] },
+];
 export const EXPORT_TABLE_QUERIES: readonly { name: string; sql: string }[] = [
+  ...CONSENT_TABLES.map(({ name, columns }) => ({
+    name,
+    sql: `SELECT ${columns.map((column) => `t.${column}`).join(', ')} FROM ${name} t WHERE t.profile_id = $1 AND t.family_id = $2`,
+  })),
   ...PROFILE_TABLES.map((name) => ({
     name,
     sql: `SELECT t.* FROM ${name} t WHERE t.health_profile_id = $1 AND t.family_id = $2`,

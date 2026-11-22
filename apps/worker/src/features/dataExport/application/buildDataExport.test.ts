@@ -20,6 +20,9 @@ function fixture(profileId: string | null = null) {
       yield new TextEncoder().encode('{}');
     },
     images: empty,
+    enterRemovedWindowScope: vi.fn(),
+    removedProfiles: async () => [],
+    leaveRemovedWindowScope: vi.fn(),
     markReady: vi.fn(),
     markFailed: vi.fn(),
   };
@@ -103,4 +106,68 @@ it('TC-819: ảnh được ghi đúng đường dẫn tài liệu trong ZIP', as
   expect(await buildDataExport(deps, 'export')).toBe('ready');
   expect(files).toEqual(['account.json', 'profile-p.json', 'images/p/d.jpg']);
   expect(deps.images.read).toHaveBeenCalledWith(key);
+});
+
+it('TC-823: self không nhà vẫn xuất hồ sơ cửa sổ và rời role trước ready', async () => {
+  const { session, deps, files } = fixture();
+  const calls: string[] = [];
+  session.getAccount = async () => ({
+    id: 'a',
+    familyId: null,
+    familyRole: null,
+    healthProfileId: null,
+    data: { id: 'a' },
+  });
+  Object.assign(session, {
+    enterRemovedWindowScope: async () => {
+      calls.push('enter');
+    },
+    removedProfiles: async () => [{ familyId: 'old', profileId: 'old-p' }],
+    leaveRemovedWindowScope: async () => {
+      calls.push('leave');
+    },
+    markReady: async () => {
+      calls.push('ready');
+    },
+  });
+  expect(await buildDataExport(deps, 'export')).toBe('ready');
+  expect(files).toEqual(['account.json', 'profile-old-p.json']);
+  expect(calls).toEqual(['enter', 'leave', 'ready']);
+});
+it('TC-823: self xuất nhà mới lẫn nhà cũ và bỏ hồ sơ trùng', async () => {
+  const { session, deps, files } = fixture();
+  Object.assign(session, {
+    enterRemovedWindowScope: vi.fn(),
+    leaveRemovedWindowScope: vi.fn(),
+    removedProfiles: async () => [
+      { familyId: 'f', profileId: 'p' },
+      { familyId: 'old', profileId: 'old-p' },
+      { familyId: 'old', profileId: 'old-p' },
+    ],
+  });
+  expect(await buildDataExport(deps, 'export')).toBe('ready');
+  expect(files).toEqual(['account.json', 'profile-p.json', 'profile-old-p.json']);
+});
+it('TC-823: scope profileId không vào role hoặc lấy cửa sổ', async () => {
+  const { session, deps, files } = fixture('p');
+  const enter = vi.fn();
+  Object.assign(session, { enterRemovedWindowScope: enter });
+  expect(await buildDataExport(deps, 'export')).toBe('ready');
+  expect(files).toEqual(['account.json', 'profile-p.json']);
+  expect(enter).not.toHaveBeenCalled();
+});
+it('TC-823: lỗi ảnh nhà cũ vẫn rời role và không đánh dấu ready', async () => {
+  const { session, deps } = fixture();
+  const leave = vi.fn();
+  Object.assign(session, {
+    enterRemovedWindowScope: vi.fn(),
+    leaveRemovedWindowScope: leave,
+    removedProfiles: async () => [{ familyId: 'old', profileId: 'old-p' }],
+  });
+  session.images = async function* (familyId) {
+    if (familyId === 'old') yield { id: 'd', key: 'families/f/profiles/old-p/documents/d/a.jpg' };
+  };
+  await expect(buildDataExport(deps, 'export')).rejects.toThrow('export_image_key_invalid');
+  expect(leave).toHaveBeenCalledOnce();
+  expect(session.markReady).not.toHaveBeenCalled();
 });

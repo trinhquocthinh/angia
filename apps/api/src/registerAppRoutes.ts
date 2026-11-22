@@ -1,3 +1,4 @@
+import { registerDataExportRoutes } from '@src/features/dataExport/presentation/registerDataExportRoutes.js';
 import { registerProfileGuardianRoutes } from '@src/features/profiles/guardians/presentation/registerProfileGuardianRoutes.js';
 import { registerHouseholdDeletionRoutes } from '@src/features/household/presentation/registerHouseholdDeletionRoutes.js';
 import { registerHouseholdOwnershipRoutes } from '@src/features/household/presentation/registerHouseholdOwnershipRoutes.js';
@@ -24,6 +25,7 @@ import { registerMeRoute } from '@src/shared/auth/presentation/registerMeRoute.j
 import { registerPushRoutes } from '@src/features/pushSubscriptions/presentation/registerPushRoutes.js';
 
 export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencies): void {
+  if (deps.dataExport) registerDataExportRoutes(app, deps.dataExport);
   const cookies = { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies };
   registerHouseholdDeletionRoutes(app, deps.householdDeletion);
   registerHouseholdOwnershipRoutes(app, deps.householdOwnership);

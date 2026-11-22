@@ -1,6 +1,7 @@
 import type pg from 'pg';
-import { withFamilyScope } from '@src/shared/db/withFamilyScope.js';
+import { readExportProfile } from './readExportProfile.js';
 import type { ExportSession } from '../application/ports.js';
+import { enterDataExportRole, leaveDataExportRole } from './enterDataExportRole.js';
 import { readExportAccount } from './readExportAccount.js';
 import { streamProfileJson } from './streamProfileJson.js';
 import { streamExportRows } from './streamExportRows.js';
@@ -13,23 +14,7 @@ export function createExportSession(
   return {
     request,
     getAccount: () => readExportAccount(client, request.accountId),
-    getProfile: (familyId, profileId, accountId) =>
-      withFamilyScope(client, familyId, async (db) => {
-        const { rows } = await db.query(
-          `SELECT p.id, p.family_id, EXISTS(SELECT 1 FROM accounts a
-          WHERE a.health_profile_id = p.id AND a.id <> $3) AS linked_to_other
-          FROM health_profiles p WHERE p.id = $1 AND p.family_id = $2`,
-          [profileId, familyId, accountId],
-        );
-        const row = rows[0];
-        return row
-          ? {
-              id: row.id as string,
-              familyId: row.family_id as string,
-              linkedToOther: row.linked_to_other as boolean,
-            }
-          : null;
-      }),
+    getProfile: (familyId, profileId, accountId) => readExportProfile(client, familyId, profileId, accountId),
     profileChunks: (familyId, profileId) => streamProfileJson(client, familyId, profileId),
     images: async function* (familyId, profileId) {
       const sql = `SELECT id,image_key FROM source_documents WHERE health_profile_id = $1 AND family_id = $2
@@ -38,6 +23,15 @@ export function createExportSession(
         yield { id: row.id as string, key: row.image_key as string };
       }
     },
+    enterRemovedWindowScope: () => enterDataExportRole(client, request.accountId),
+    removedProfiles: async () => {
+      const { rows } = await client.query<{ family_id: string; health_profile_id: string }>(
+        `SELECT family_id, health_profile_id FROM removed_member_windows
+         WHERE health_profile_id IS NOT NULL ORDER BY removed_at, family_id`,
+      );
+      return rows.map((row) => ({ familyId: row.family_id, profileId: row.health_profile_id }));
+    },
+    leaveRemovedWindowScope: () => leaveDataExportRole(client),
     markReady: async (key) => {
       await client.query(
         `UPDATE data_exports SET status='ready',object_key=$2,expires_at=now()+interval '24 hours'

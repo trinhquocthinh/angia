@@ -16,9 +16,9 @@ export function handleBuildDataExportJob(
     const { exportId } = parsed.data;
     try {
       const outcome = await buildDataExport(deps, exportId);
-      logger.info({ exportId, outcome }, 'Đã xử lý xuất dữ liệu');
+      logger.info({ outcome }, 'Đã xử lý xuất dữ liệu');
     } catch {
-      logger.error({ exportId, outcome: 'retry' }, 'Xuất dữ liệu cần thử lại');
+      logger.error({ outcome: 'retry' }, 'Xuất dữ liệu cần thử lại');
       // Không chuyển lỗi SQL/S3 gốc sang pg-boss: chi tiết lỗi có thể chứa dữ liệu riêng tư.
       throw new Error('build_data_export_failed');
     }

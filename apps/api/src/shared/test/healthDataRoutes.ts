@@ -7,6 +7,10 @@
 //  - self_write: POST/PATCH/DELETE /api/me/profile/pain-issues[/...], kiểm expectSelfWriteDenied.
 export type HealthDataRouteKind = 'scoped' | 'list' | 'uniform' | 'self' | 'self_write';
 export const HEALTH_DATA_ROUTES = {
+  // SPEC-072: tài nguyên thuộc tài khoản; POST profileId cũng phải kiểm chéo gia đình.
+  'POST /api/me/data-exports': 'scoped',
+  'GET /api/me/data-exports/:id': 'scoped',
+  'GET /api/me/data-exports/:id/file': 'scoped',
   'POST /api/health-profiles/:id/guardians': 'scoped',
   'GET /api/health-profiles/:id/guardians': 'scoped',
   'DELETE /api/health-profiles/:id/guardians/me': 'scoped',
@@ -117,6 +121,7 @@ type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;
 export const MEMBER_BLOCKED_SESSION_ROUTES = Object.keys(HEALTH_DATA_ROUTES).filter(
   (route) =>
     !route.includes('/me/link-invitations/') &&
+    !route.includes(' /api/me/data-exports') &&
     !route.startsWith('GET /api/me/reminders/') &&
     !route.startsWith('GET /api/me/revisit-reminders/') &&
     !route.includes(' /api/me/profile') &&

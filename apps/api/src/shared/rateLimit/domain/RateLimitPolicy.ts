@@ -1,5 +1,6 @@
 export type RateLimitPolicy = {
   kind:
+    | 'data_export_request'
     | 'register'
     | 'login_failed'
     | 'email_verification_send'

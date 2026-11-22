@@ -6,16 +6,23 @@ import type { LegalRepository } from '../application/ports.js';
 
 const ALLOWED = new Set([
   'GET /api/me',
+  'POST /api/me/data-exports',
+  'GET /api/me/data-exports/{id}',
+  'GET /api/me/data-exports/{id}/file',
   'POST /api/auth/logout',
   'POST /api/me/password',
   'POST /api/me/local-credential',
   'POST /api/me/legal-acceptances',
 ]);
-// SPEC-072 (tải dữ liệu) và SPEC-073 (xoá tài khoản) chưa có route; thêm vào đây khi triển khai.
+// SPEC-072: route tải dữ liệu luôn được phép; SPEC-073 thêm khi triển khai xoá tài khoản.
 export function requireLegalAcceptance(legal: LegalRepository, logger: Pick<Logger, 'warn'>) {
   return createMiddleware<AppEnv>(async (c, next) => {
     const session = c.get('session');
-    if (!session || ALLOWED.has(`${c.req.method} ${c.req.path}`)) return next();
+    const path = c.req.path.replace(
+      /^\/api\/me\/data-exports\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?=\/file$|$)/i,
+      '/api/me/data-exports/{id}',
+    );
+    if (!session || ALLOWED.has(`${c.req.method} ${path}`)) return next();
     const status = await legal.status(session.account.id);
     if (status.missingDocuments) logger.warn('Thiếu văn bản pháp lý hiện hành');
     if (status.missingDocuments || !status.accepted) return errorResponse(c, 'ERR_LEGAL_ACCEPTANCE_REQUIRED');

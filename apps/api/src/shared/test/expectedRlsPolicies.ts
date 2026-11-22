@@ -147,3 +147,43 @@ export const familyDeletionDueOnly = (table: string) =>
         withCheck: null,
       };
 export const FAMILY_DELETION_SCAN_QUAL = PENDING_DUE;
+
+// E29-S3-T2 (0051, TC-870): role job tải về chỉ đọc hồ sơ trong cửa sổ người bị gỡ còn hạn.
+export const DATA_EXPORT_ROLE = 'angia_test_data_export';
+export const DATA_EXPORT_WINDOW_TABLES = [
+  ['health_profiles', 'id'],
+  ...[
+    'adherence_periods',
+    'as_needed_doses',
+    'dose_confirmations',
+    'dose_slots',
+    'exercise_notes',
+    'lab_results',
+    'measurements',
+    'medication_courses',
+    'pain_entries',
+    'pain_issue_status_events',
+    'pain_issues',
+    'prescriptions',
+    'profile_guardians',
+    'reminder_recipients',
+    'reminders',
+    'revisit_reminders',
+    'source_documents',
+    'temperature_readings',
+  ].map((table) => [table, 'health_profile_id']),
+  ...['consent_invitations', 'consent_legacy_attestations', 'profile_link_events'].map((table) => [
+    table,
+    'profile_id',
+  ]),
+].map(([table, column]) => ({ table: table!, column: column! }));
+export const DATA_EXPORT_IN_WINDOW = `((account_id = (${SETTING('export_account_id')})::uuid) AND (expires_at > now()))`;
+export const dataExportWindowOnly = (table: string, column: string) =>
+  table === 'prescription_items'
+    ? `(EXISTS ( SELECT 1
+   FROM (prescriptions p
+     JOIN removed_member_windows w ON ((w.health_profile_id = p.health_profile_id)))
+  WHERE (p.id = prescription_items.prescription_id)))`
+    : `(EXISTS ( SELECT 1
+   FROM removed_member_windows w
+  WHERE (w.health_profile_id = ${table}.${column})))`;

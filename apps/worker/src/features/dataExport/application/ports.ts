@@ -14,6 +14,9 @@ export interface ExportSession {
   getProfile(familyId: string, profileId: string, accountId: string): Promise<ExportProfileScope | null>;
   profileChunks(familyId: string, profileId: string): AsyncIterable<Uint8Array>;
   images(familyId: string, profileId: string): AsyncIterable<{ id: string; key: string }>;
+  enterRemovedWindowScope(): Promise<void>;
+  removedProfiles(): Promise<Array<{ familyId: string; profileId: string }>>;
+  leaveRemovedWindowScope(): Promise<void>;
   markReady(key: string): Promise<void>;
   markFailed(): Promise<void>;
 }

@@ -23,7 +23,10 @@ it('TC-819: đăng ký queue, xác thực UUID và không log payload nhạy c�
   const exportId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
   await handle([{ data: { exportId } }]);
   expect(deps.repository.withPending).toHaveBeenCalledWith(exportId, expect.any(Function));
-  expect(logger.info).toHaveBeenCalledWith({ exportId, outcome: 'skipped' }, expect.any(String));
+  expect(logger.info).toHaveBeenCalledWith({ outcome: 'skipped' }, expect.any(String));
+  expect(JSON.stringify(logger.info.mock.calls)).not.toContain(exportId);
+  for (const forbidden of ['exportId', 'accountId', 'profileId', 'key'])
+    expect(JSON.stringify([...logger.info.mock.calls, ...logger.error.mock.calls])).not.toContain(forbidden);
   expect(JSON.stringify(logger.error.mock.calls)).not.toContain('secret');
 });
 it('TC-819: lỗi nội bộ được retry bằng thông báo cố định không lộ dữ liệu', async () => {
@@ -41,5 +44,9 @@ it('TC-819: lỗi nội bộ được retry bằng thông báo cố định khô
   await expect(handle([{ data: { exportId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' } }])).rejects.toThrow(
     'build_data_export_failed',
   );
+  expect(logger.error).toHaveBeenCalledWith({ outcome: 'retry' }, expect.any(String));
+  expect(JSON.stringify(logger.error.mock.calls)).not.toContain('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa');
+  for (const forbidden of ['exportId', 'accountId', 'profileId', 'key'])
+    expect(JSON.stringify(logger.error.mock.calls)).not.toContain(forbidden);
   expect(JSON.stringify(logger.error.mock.calls)).not.toContain('secret');
 });

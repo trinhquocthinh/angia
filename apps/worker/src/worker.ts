@@ -1,3 +1,6 @@
+import { registerCleanupDataExportsJob } from '@src/jobs/registerCleanupDataExportsJob.js';
+import { createCleanupDataExportsRepository } from '@src/features/dataExportCleanup/infrastructure/createCleanupDataExportsRepository.js';
+import { createCleanupDataExportsStorage } from '@src/features/dataExportCleanup/infrastructure/createCleanupDataExportsStorage.js';
 import { registerBuildDataExportJob } from '@src/jobs/registerBuildDataExportJob.js';
 import { createDataExportRepository } from '@src/features/dataExport/infrastructure/createDataExportRepository.js';
 import { createExportArchive } from '@src/features/dataExport/infrastructure/createExportArchive.js';
@@ -170,6 +173,14 @@ try {
     {
       repository: createPurgeRepository(pool),
       storage: createOrphanStorage(createS3Client(config), config.S3_BUCKET),
+    },
+    logger,
+  );
+  await registerCleanupDataExportsJob(
+    boss,
+    {
+      repository: createCleanupDataExportsRepository(pool),
+      storage: createCleanupDataExportsStorage(createS3Client(config), config.S3_BUCKET),
     },
     logger,
   );

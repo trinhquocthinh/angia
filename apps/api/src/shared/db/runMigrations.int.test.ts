@@ -4,6 +4,10 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startTestDatabase, type TestDatabase } from '@src/shared/test/startTestDatabase.js';
 import {
   EXPECTED_POLICIES,
+  DATA_EXPORT_IN_WINDOW,
+  DATA_EXPORT_ROLE,
+  DATA_EXPORT_WINDOW_TABLES,
+  dataExportWindowOnly,
   FAMILY_DELETION_DUE_TABLES,
   FAMILY_DELETION_ROLE,
   FAMILY_DELETION_SCAN_QUAL,
@@ -171,6 +175,34 @@ describe('runMigrations trên PostgreSQL rỗng', () => {
       qual: FAMILY_DELETION_SCAN_QUAL,
       withCheck: null,
     });
+    for (const { table, column } of [
+      ...DATA_EXPORT_WINDOW_TABLES,
+      { table: 'prescription_items', column: '' },
+    ]) {
+      expected.push({
+        tablename: table,
+        policyname: 'data_export_window_only',
+        permissive: 'RESTRICTIVE',
+        roles: [DATA_EXPORT_ROLE],
+        cmd: 'ALL',
+        qual: dataExportWindowOnly(table, column),
+        withCheck: null,
+      });
+    }
+    for (const [policyname, permissive, cmd] of [
+      ['data_export_window_only', 'RESTRICTIVE', 'ALL'],
+      ['data_export_window_scan', 'PERMISSIVE', 'SELECT'],
+    ] as const) {
+      expected.push({
+        tablename: 'removed_member_windows',
+        policyname,
+        permissive,
+        roles: [DATA_EXPORT_ROLE],
+        cmd,
+        qual: DATA_EXPORT_IN_WINDOW,
+        withCheck: null,
+      });
+    }
     expect(policies.rows).toEqual(
       expected.sort(
         (a, b) => a.tablename.localeCompare(b.tablename) || a.policyname.localeCompare(b.policyname),

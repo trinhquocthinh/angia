@@ -1,3 +1,4 @@
+import { createProfileTestDataExportDependencies } from './createProfileTestDataExportDependencies.js';
 import { createHouseholdLeaveRepository } from '@src/features/household/infrastructure/createHouseholdLeaveRepository.js';
 import { createHouseholdDependencies } from '@src/features/household/infrastructure/createHouseholdDependencies.js';
 import { createLegalRepository } from '@src/features/legal/infrastructure/createLegalRepository.js';
@@ -24,15 +25,7 @@ import { createStubAiBudgetDeps } from '@src/shared/test/createStubAiBudgetDeps.
 import { createProfileLinkRepository } from '@src/features/profileLinks/infrastructure/createProfileLinkRepository.js';
 import { createProfileLinkTokenCodec } from '@src/features/profileLinks/infrastructure/createProfileLinkTokenCodec.js';
 import { randomUUID } from 'node:crypto';
-import {
-  SANITIZE_DOCUMENT_IMAGE_QUEUE,
-  SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS,
-  PURGE_PROFILE_OBJECTS_QUEUE,
-  PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS,
-  PURGE_PENDING_OBJECTS_QUEUE,
-  PURGE_PENDING_OBJECTS_QUEUE_OPTIONS,
-  ensureExtractDocumentQueues,
-} from '@angia/contracts';
+import { createProfileTestQueues } from './createProfileTestQueues.js';
 import pg from 'pg';
 import type { PgBoss } from 'pg-boss';
 import { createApp } from '@src/createApp.js';
@@ -113,6 +106,7 @@ function buildApp(
     },
     ...createHouseholdDependencies(database, appBaseUrl, 'test-invitation-key'.repeat(3)),
     legal: createLegalRepository(database),
+    dataExport: createProfileTestDataExportDependencies(database, boss, memory.reader, options.now),
     account: createStubAccountDeps(),
     ...(options.push ? { push: options.push(database) } : {}),
     ...(options.redactionSuggestions ? { redactionSuggestions: options.redactionSuggestions } : {}),
@@ -169,10 +163,7 @@ export async function startProfileTestApp(
   // pg-boss thật trên role app (migrate:false) như server.ts; job chỉ được gửi, không có worker xử lý.
   const boss = createPgBoss(db.appUrl, createSilentLogger());
   await boss.start();
-  await boss.createQueue(SANITIZE_DOCUMENT_IMAGE_QUEUE, SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS);
-  await ensureExtractDocumentQueues(boss);
-  await boss.createQueue(PURGE_PROFILE_OBJECTS_QUEUE, PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS);
-  await boss.createQueue(PURGE_PENDING_OBJECTS_QUEUE, PURGE_PENDING_OBJECTS_QUEUE_OPTIONS);
+  await createProfileTestQueues(boss);
   const app = buildApp(database, appBaseUrl, memory, boss, options);
   const family = async () => {
     const id = randomUUID();

@@ -38,7 +38,14 @@ describe('NFR-4: mọi route dữ liệu sức khỏe chặn truy cập chéo gi
     const { familyId, main, adminMain } = await attackers();
     const { documentId, courseId, prescriptionId, reminderId, revisitReminderId, readingId } = victim;
     const pain = await seedPainJournal(t, victim.main, victim.profile.id);
+    const exportId = randomUUID();
+    await t.owner.query(
+      `INSERT INTO data_exports(id,account_id,status,object_key,expires_at)
+       VALUES($1,$2,'ready',$3,now()+interval '24 hours')`,
+      [exportId, victim.main.accountId, `exports/${exportId}.zip`],
+    );
     const target: Target = {
+      exportId,
       ...pain,
       ...{ documentId, courseId, prescriptionId, reminderId, revisitReminderId, readingId },
       profileId: victim.profile.id,
