@@ -27,7 +27,14 @@ export const accountRedirectMiddleware: Middleware = {
           : null;
     const here = globalThis.location?.pathname;
     // Các màn công khai phải truy cập được khi phiên hạn chế bị mất CSRF.
-    if (to && here !== to && here !== '/login' && here !== '/register' && here !== '/forgot-password') {
+    if (
+      to &&
+      here !== to &&
+      here !== '/login' &&
+      here !== '/register' &&
+      here !== '/forgot-password' &&
+      here !== '/reset-password'
+    ) {
       try {
         await navigate?.(to);
       } catch {

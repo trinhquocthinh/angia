@@ -78,3 +78,8 @@ it.each(['/account/legal-update', '/account/local-password'])(
 it('TC-762: khách truy cập được màn quên mật khẩu công khai', () => {
   expect(resolveSessionRedirect(null, '/forgot-password')).toBeNull();
 });
+
+it('TC-764: khách và tài khoản đang đăng nhập truy cập được màn đặt lại mật khẩu công khai', () => {
+  expect(resolveSessionRedirect(null, '/reset-password')).toBeNull();
+  expect(resolveSessionRedirect(assigned, '/reset-password')).toBeNull();
+});

@@ -67,3 +67,13 @@ it('TC-762: phiên hạn chế vẫn ở lại màn quên mật khẩu công kha
   } as never);
   expect(navigate).not.toHaveBeenCalled();
 });
+
+it('TC-764: phiên hạn chế vẫn ở lại màn đặt lại mật khẩu công khai', async () => {
+  vi.stubGlobal('location', { pathname: '/reset-password' });
+  const navigate = vi.fn();
+  registerAccountNavigator(navigate);
+  await accountRedirectMiddleware.onResponse!({
+    response: Response.json({ error: { code: 'ERR_PASSWORD_CHANGE_REQUIRED' } }, { status: 403 }),
+  } as never);
+  expect(navigate).not.toHaveBeenCalled();
+});

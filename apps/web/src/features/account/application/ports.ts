@@ -31,3 +31,6 @@ export type PasswordResetRequest = components['schemas']['RequestPasswordResetRe
 export type SubmitPasswordResetRequest = (
   body: PasswordResetRequest,
 ) => Promise<AccountResult<components['schemas']['RequestPasswordResetResponse']>>;
+
+export type PasswordResetSubmission = components['schemas']['ResetPasswordRequest'];
+export type SubmitPasswordReset = (body: PasswordResetSubmission) => Promise<AccountResult<void>>;

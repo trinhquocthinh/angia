@@ -18,6 +18,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as MyProfileRouteImport } from './routes/my-profile'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as UploadRouteImport } from './routes/upload'
 import { Route as WaitingRouteImport } from './routes/waiting'
 import { Route as AccountChangePasswordRouteImport } from './routes/account.change-password'
@@ -90,6 +91,11 @@ const NotificationsRoute = NotificationsRouteImport.update({
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UploadRoute = UploadRouteImport.update({
@@ -255,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/my-profile': typeof MyProfileRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/upload': typeof UploadRoute
   '/waiting': typeof WaitingRoute
   '/account/change-password': typeof AccountChangePasswordRoute
@@ -294,6 +301,7 @@ export interface FileRoutesByTo {
   '/my-profile': typeof MyProfileRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/upload': typeof UploadRoute
   '/waiting': typeof WaitingRoute
   '/account/change-password': typeof AccountChangePasswordRoute
@@ -334,6 +342,7 @@ export interface FileRoutesById {
   '/my-profile': typeof MyProfileRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/upload': typeof UploadRoute
   '/waiting': typeof WaitingRoute
   '/account/change-password': typeof AccountChangePasswordRoute
@@ -375,6 +384,7 @@ export interface FileRouteTypes {
     | '/my-profile'
     | '/notifications'
     | '/register'
+    | '/reset-password'
     | '/upload'
     | '/waiting'
     | '/account/change-password'
@@ -414,6 +424,7 @@ export interface FileRouteTypes {
     | '/my-profile'
     | '/notifications'
     | '/register'
+    | '/reset-password'
     | '/upload'
     | '/waiting'
     | '/account/change-password'
@@ -453,6 +464,7 @@ export interface FileRouteTypes {
     | '/my-profile'
     | '/notifications'
     | '/register'
+    | '/reset-password'
     | '/upload'
     | '/waiting'
     | '/account/change-password'
@@ -493,6 +505,7 @@ export interface RootRouteChildren {
   MyProfileRoute: typeof MyProfileRoute
   NotificationsRoute: typeof NotificationsRoute
   RegisterRoute: typeof RegisterRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   UploadRoute: typeof UploadRoute
   WaitingRoute: typeof WaitingRoute
   AccountChangePasswordRoute: typeof AccountChangePasswordRoute
@@ -586,6 +599,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/upload': {
@@ -797,6 +817,7 @@ const rootRouteChildren: RootRouteChildren = {
   MyProfileRoute: MyProfileRoute,
   NotificationsRoute: NotificationsRoute,
   RegisterRoute: RegisterRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   UploadRoute: UploadRoute,
   WaitingRoute: WaitingRoute,
   AccountChangePasswordRoute: AccountChangePasswordRoute,

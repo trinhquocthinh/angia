@@ -2,6 +2,7 @@ import { accountRegistrationDesignCase } from './accountRegistrationDesignCase.j
 import { accountRegistrationClayCase } from './accountRegistrationClayCase.js';
 import { accountEnrollmentCases } from './accountEnrollmentCases.js';
 import { accountForgotPasswordCases } from './accountForgotPassword.spec.js';
+import { accountResetPasswordCases } from './accountResetPassword.spec.js';
 import { accountPasswordCases } from './accountPasswordCases.js';
 import { accountLegalUpdateCases } from './accountLegalUpdateCases.js';
 import { accountValidationCases } from './accountValidationCases.js';
@@ -29,6 +30,7 @@ for (const theme of ['light', 'dark']) {
   accountEnrollmentCases(theme);
   accountPasswordCases(theme);
   accountForgotPasswordCases(theme);
+  accountResetPasswordCases(theme);
   accountLegalUpdateCases(theme);
   accountValidationCases(theme);
   accountRegistrationErrorCases(theme);
