@@ -1,25 +1,36 @@
 import type { components } from '@src/shared/api/schema.gen';
 import { buildAccountProfileModel } from '@src/features/account/application/accountProfileModel';
 import { buildEmailSettingsState } from '@src/features/account/application/emailSettingsState';
+import type { ExportableProfile } from '@src/features/account/application/ports';
 import { useAccountEmailForm } from '@src/features/account/application/useAccountEmailForm';
 import { submitAccountEmailChange } from '@src/features/account/infrastructure/submitAccountEmailChange';
 import { submitEmailVerificationRequest } from '@src/features/account/infrastructure/submitEmailVerificationRequest';
+import { AccountDataDeleteSection } from '@src/features/account/presentation/settings/AccountDataDeleteSection';
 import { AccountEmailCard } from '@src/features/account/presentation/settings/AccountEmailCard';
 import { AccountPasswordCard } from '@src/features/account/presentation/settings/AccountPasswordCard';
-import { AccountPlaceholderCard } from '@src/features/account/presentation/settings/AccountPlaceholderCard';
 import { AccountProfileCard } from '@src/features/account/presentation/settings/AccountProfileCard';
 import { AccountThemeCard } from '@src/features/account/presentation/settings/AccountThemeCard';
 import './account-settings.css';
 import './account-profile-theme.css';
 import './account-email.css';
+import './account-data-export.css';
+import './account-delete.css';
 
 type Props = {
   session: components['schemas']['MeContextResponse'];
+  profiles?: readonly ExportableProfile[];
   onRefreshSession: () => Promise<void>;
+  onAccountDeleted?: () => Promise<void> | void;
   initialEditing?: boolean;
 };
 
-export function AccountSettingsView({ session, onRefreshSession, initialEditing = false }: Props) {
+export function AccountSettingsView({
+  session,
+  profiles = [],
+  onRefreshSession,
+  onAccountDeleted = () => window.location.assign('/login'),
+  initialEditing = false,
+}: Props) {
   const profile = buildAccountProfileModel(session);
   const emailState = buildEmailSettingsState(session.emailStatus, session.family);
   const email = useAccountEmailForm({
@@ -52,13 +63,7 @@ export function AccountSettingsView({ session, onRefreshSession, initialEditing 
         {session.hasLocalCredential && <AccountPasswordCard />}
         <AccountThemeCard />
       </div>
-      <AccountPlaceholderCard id="account-data-heading" title="Dữ liệu của tôi" icon="download-3d" />
-      <AccountPlaceholderCard
-        id="account-delete-heading"
-        title="Xoá tài khoản"
-        icon="shield-danger-3d"
-        danger
-      />
+      <AccountDataDeleteSection session={session} profiles={profiles} onAccountDeleted={onAccountDeleted} />
     </div>
   );
 }

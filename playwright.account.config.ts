@@ -16,6 +16,7 @@ export default defineConfig({
     '**/householdMembers.spec.ts',
     '**/householdHome.spec.ts',
     '**/profileGuardians.spec.ts',
+    '**/accountDataDeletion.spec.ts',
   ],
   testIgnore: '**/._*',
   forbidOnly: Boolean(process.env.CI),

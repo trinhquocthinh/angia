@@ -142,7 +142,7 @@ function accountSettingsVerificationOutcomesCase(theme: string) {
 }
 
 function accountSettingsThemeAndPlaceholdersCase(theme: string) {
-  test(`Tài khoản: mật khẩu theo hasLocalCredential, nền giao diện thật và 2 thẻ giữ chỗ — ${theme}`, async ({
+  test(`Tài khoản: mật khẩu theo hasLocalCredential, nền giao diện thật, tải dữ liệu và xoá tài khoản — ${theme}`, async ({
     page,
   }) => {
     await accountSettingsFixture(page, {
@@ -164,10 +164,8 @@ function accountSettingsThemeAndPlaceholdersCase(theme: string) {
 
     const dataSection = page.getByRole('region', { name: 'Dữ liệu của tôi' });
     const deleteSection = page.getByRole('region', { name: 'Xoá tài khoản' });
-    await expect(dataSection).toContainText('Sẽ có ở bản sau');
-    await expect(deleteSection).toContainText('Sẽ có ở bản sau');
-    await expect(dataSection.getByRole('button')).toHaveCount(0);
-    await expect(deleteSection.getByRole('button')).toHaveCount(0);
+    await expect(dataSection.getByRole('button', { name: 'Tải dữ liệu của tôi', exact: true })).toBeVisible();
+    await expect(deleteSection.getByRole('button', { name: 'Xoá tài khoản…', exact: true })).toBeVisible();
 
     await accountSettingsFixture(page, { hasLocalCredential: false, family: null, role: null });
     await page.goto('/account');
@@ -175,6 +173,7 @@ function accountSettingsThemeAndPlaceholdersCase(theme: string) {
       page.getByRole('region', { name: 'Thông tin tài khoản' }).getByText('Chưa có nhà', { exact: true }),
     ).toBeVisible();
     await expect(page.getByRole('link', { name: 'Đổi mật khẩu', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('region', { name: 'Xoá tài khoản' })).toHaveCount(0);
     await checkNoOverflow(page);
   });
 }

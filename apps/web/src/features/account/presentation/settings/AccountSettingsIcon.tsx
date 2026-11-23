@@ -9,7 +9,10 @@ export type AccountMaskIconName =
   | 'send'
   | 'light_mode'
   | 'dark_mode'
-  | 'settings_brightness';
+  | 'settings_brightness'
+  | 'download'
+  | 'spinner'
+  | 'delete-shield';
 
 export function AccountSettingsIcon({
   name,

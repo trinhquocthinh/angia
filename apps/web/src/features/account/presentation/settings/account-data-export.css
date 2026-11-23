@@ -1,0 +1,142 @@
+.account-card-copy {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.account-export-card-ready {
+  border: 2px solid color-mix(in srgb, var(--color-secondary) 40%, transparent);
+}
+.account-export-card-rate-limited {
+  background: color-mix(in srgb, var(--color-warning-soft) 45%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-warning) 28%, var(--color-surface));
+}
+.account-export-card-failed {
+  background: color-mix(in srgb, var(--color-danger-soft) 45%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-danger) 28%, var(--color-surface));
+}
+.account-export-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.account-export-label {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+}
+.account-export-select {
+  min-height: 48px;
+  width: 100%;
+  padding: 10px 40px 10px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-accent-soft);
+  color: var(--color-text-primary);
+  font-size: 16px;
+  font-weight: 500;
+}
+.account-export-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.account-export-pending-note {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--color-accent-soft);
+  border: 1px solid color-mix(in srgb, var(--color-secondary) 22%, var(--color-surface));
+  color: var(--color-text-primary);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.account-export-ready-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--color-secondary-container) 45%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-secondary) 32%, var(--color-surface));
+}
+.account-export-ready-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+}
+.account-export-ready-title .account-mask-icon {
+  color: var(--color-secondary);
+}
+.account-export-ready-sub {
+  margin: 0;
+  padding-left: 28px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+.account-export-warning-box,
+.account-export-error-box {
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.account-export-warning-box {
+  background: var(--color-warning-soft);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 28%, var(--color-surface));
+  color: var(--color-warning);
+}
+.account-export-error-box {
+  background: var(--color-danger-soft);
+  border: 1px solid color-mix(in srgb, var(--color-danger) 28%, var(--color-surface));
+  color: var(--color-danger);
+}
+.account-export-warning-box .account-mask-icon,
+.account-export-error-box .account-mask-icon {
+  margin-top: 2px;
+}
+.account-export-btn {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 16px;
+}
+.account-export-link {
+  text-decoration: none;
+}
+.account-export-btn-pending {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-variant);
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: not-allowed;
+}
+.account-spinner {
+  animation: account-spin 900ms linear infinite;
+}
+@keyframes account-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .account-spinner {
+    animation: none;
+  }
+}

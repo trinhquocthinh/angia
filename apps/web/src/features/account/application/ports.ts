@@ -49,3 +49,31 @@ type EmailVerificationRequestOutcome = { sent: true } | { alreadyVerified: true 
 export type SubmitEmailVerificationRequest = (
   csrfToken: string,
 ) => Promise<AccountResult<EmailVerificationRequestOutcome>>;
+
+export type DataExportScope = 'self' | { profileId: string };
+type DataExportCreated = { exportId: string };
+type DataExportStatusResponse = {
+  status: 'pending' | 'ready' | 'failed';
+  expiresAt: string | null;
+};
+export type CreateDataExport = (
+  scope: DataExportScope,
+  csrfToken: string,
+) => Promise<AccountResult<DataExportCreated>>;
+export type FetchDataExportStatus = (exportId: string) => Promise<AccountResult<DataExportStatusResponse>>;
+
+export type ExportableProfile = {
+  id: string;
+  displayName: string;
+  hasLinkedAccount: boolean;
+};
+
+export type AccountProfileDisposition = 'keep' | 'delete';
+export type DeleteAccountBody = {
+  password: string;
+  ownProfileDisposition?: AccountProfileDisposition;
+};
+export type SubmitAccountDeletion = (
+  body: DeleteAccountBody,
+  csrfToken: string,
+) => Promise<AccountResult<void>>;

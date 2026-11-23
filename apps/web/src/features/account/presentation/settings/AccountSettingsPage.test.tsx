@@ -21,11 +21,16 @@ const baseSession: Session = {
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 
-function renderView(session: Session, initialEditing = false) {
+function renderView(
+  session: Session,
+  initialEditing = false,
+  profiles: { id: string; displayName: string; hasLinkedAccount: boolean }[] = [],
+) {
   return renderToStaticMarkup(
     <ThemeProvider>
       <AccountSettingsView
         session={session}
+        profiles={profiles}
         onRefreshSession={vi.fn(async () => {})}
         initialEditing={initialEditing}
       />
@@ -33,8 +38,10 @@ function renderView(session: Session, initialEditing = false) {
   );
 }
 
-it('hiển thị thẻ hồ sơ, email chưa xác minh (Đồng quản lý), mật khẩu, nền giao diện và 2 thẻ giữ chỗ', () => {
-  const html = renderView(baseSession);
+it('hiển thị thẻ hồ sơ, email chưa xác minh (Đồng quản lý), mật khẩu, nền giao diện, dữ liệu của tôi và xoá tài khoản', () => {
+  const html = renderView(baseSession, false, [
+    { id: 'prof-child', displayName: 'Bé An', hasLinkedAccount: false },
+  ]);
   expect(html).toContain('Tên hiển thị');
   expect(html).toContain('Lan');
   expect(html).toContain('Nhà Ngọc Lan');
@@ -53,8 +60,11 @@ it('hiển thị thẻ hồ sơ, email chưa xác minh (Đồng quản lý), m�
   expect(html).toContain('Tối');
   expect(html).toContain('Theo máy');
   expect(html).toContain('Dữ liệu của tôi');
+  expect(html).toContain('Tải dữ liệu của tôi');
+  expect(html).not.toContain('Hồ sơ cần tải');
   expect(html).toContain('Xoá tài khoản');
-  expect(html.match(/Sẽ có ở bản sau/g)).toHaveLength(2);
+  expect(html).toContain('Xoá tài khoản…');
+  expect(html).not.toContain('Sẽ có ở bản sau');
   for (const icon of [
     'account-mail-3d.svg',
     'account-lock-3d.svg',
@@ -71,6 +81,10 @@ it('hiển thị thẻ hồ sơ, email chưa xác minh (Đồng quản lý), m�
   ]) {
     expect(html).toContain(icon);
   }
+});
+
+it('không có chuỗi hoặc tính năng ngoài brief trong trang tài khoản', () => {
+  const html = renderView(baseSession);
   for (const forbidden of [
     'Mã thành viên',
     'Đã đổi 45 ngày',
@@ -93,12 +107,19 @@ it('hiển thị thẻ hồ sơ, email chưa xác minh (Đồng quản lý), m�
   }
 });
 
-it('chủ hộ hoặc chưa có nhà hiện dòng nhắc không lấy lại được tài khoản khi chưa xác minh', () => {
-  const ownerHtml = renderView({
-    ...baseSession,
-    family: { id: 'fam-1', name: 'Nhà An', isOwner: true },
-    emailStatus: { email: null, emailVerified: false, pendingEmail: null },
-  });
+it('chủ hộ thấy ô chọn hồ sơ cần tải và tài khoản chỉ OIDC ẩn thẻ đổi mật khẩu và xoá tài khoản', () => {
+  const ownerHtml = renderView(
+    {
+      ...baseSession,
+      family: { id: 'fam-1', name: 'Nhà An', isOwner: true },
+      emailStatus: { email: null, emailVerified: false, pendingEmail: null },
+    },
+    false,
+    [
+      { id: 'prof-me', displayName: 'An', hasLinkedAccount: true },
+      { id: 'prof-child', displayName: 'Bé An', hasLinkedAccount: false },
+    ],
+  );
   expect(ownerHtml).toContain('Chủ hộ');
   expect(ownerHtml).toContain('Chưa có email');
   expect(ownerHtml).toContain('Thêm email');
@@ -106,6 +127,8 @@ it('chủ hộ hoặc chưa có nhà hiện dòng nhắc không lấy lại đư
   expect(ownerHtml).toContain(
     'Bạn chưa xác minh email. Nếu quên mật khẩu, bạn sẽ không lấy lại được tài khoản.',
   );
+  expect(ownerHtml).toContain('Hồ sơ cần tải');
+  expect(ownerHtml).toContain('Bé An');
 
   const waitingHtml = renderView({
     ...baseSession,
@@ -117,6 +140,8 @@ it('chủ hộ hoặc chưa có nhà hiện dòng nhắc không lấy lại đư
   expect(waitingHtml).toContain('Chưa có nhà');
   expect(waitingHtml).not.toContain('Đổi mật khẩu');
   expect(waitingHtml).not.toContain('account-lock-3d.svg');
+  expect(waitingHtml).not.toContain('Xoá tài khoản');
+  expect(waitingHtml).not.toContain('account-shield-danger-3d.svg');
   expect(waitingHtml).toContain(
     'Bạn chưa xác minh email. Nếu quên mật khẩu, bạn sẽ không lấy lại được tài khoản.',
   );
