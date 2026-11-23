@@ -42,6 +42,7 @@ export function HouseholdMembersSection({ members, viewerRole, csrfToken, onRelo
           returnFocusRef={returnFocusRef}
           member={selectedMember}
           notice={panelNotice}
+          viewerRole={viewerRole}
           csrfToken={csrfToken}
           onReload={onReload}
           onClose={closeDetail}

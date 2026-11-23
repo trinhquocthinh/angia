@@ -1,0 +1,184 @@
+.account-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.account-status-verified {
+  background: var(--color-secondary-container);
+  color: var(--color-on-secondary-container);
+}
+.account-status-unverified {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+.account-email-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--color-accent-soft);
+}
+.account-email-main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.account-email-value {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+  overflow-wrap: anywhere;
+}
+.account-email-empty {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.account-email-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.account-primary-btn,
+.account-secondary-btn,
+.account-text-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease-out,
+    opacity 150ms ease-out;
+}
+.account-primary-btn {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+.account-primary-btn:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+.account-secondary-btn {
+  background: var(--color-surface-container-high);
+  color: var(--color-text-primary);
+}
+.account-secondary-btn:hover:not(:disabled) {
+  background: var(--color-surface-variant);
+}
+.account-text-btn {
+  background: transparent;
+  color: var(--color-accent);
+}
+.account-text-btn:hover:not(:disabled) {
+  background: var(--color-surface-container-high);
+}
+.account-primary-btn:disabled,
+.account-secondary-btn:disabled,
+.account-text-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.account-pending-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.account-pending-note .account-mask-icon {
+  margin-top: 2px;
+  color: var(--color-secondary);
+}
+.account-verify-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--color-secondary-container) 55%, var(--color-surface));
+  color: var(--color-on-secondary-container);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.account-verify-status .account-mask-icon {
+  margin-top: 2px;
+}
+.account-verify-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.account-verify-alert .account-mask-icon {
+  margin-top: 2px;
+}
+.account-warning-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--color-warning-soft);
+  color: var(--color-text-primary);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.account-warning-note .account-mask-icon {
+  margin-top: 2px;
+  color: var(--color-warning);
+}
+.account-email-form {
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--color-surface-container);
+}
+.account-email-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.account-email-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+@media (max-width: 767px) {
+  .account-email-actions,
+  .account-email-form-actions {
+    width: 100%;
+  }
+  .account-email-actions > button,
+  .account-email-form-actions > button {
+    flex: 1 1 auto;
+  }
+}

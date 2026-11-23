@@ -17,6 +17,10 @@ it('SPEC-066: ERR_OWNER_PROTECTED và ERR_NOT_FOUND trả thông báo đúng ng�
 
 it('SPEC-066: lỗi chung tái dùng householdErrorMessage và không rơi về câu tạo nhà', () => {
   expect(memberActionError('ERR_FORBIDDEN')).toBe('Bạn không có quyền thực hiện thao tác này.');
+  expect(memberActionError('ERR_RATE_LIMITED')).toBe('Bạn thao tác quá nhanh, vui lòng thử lại sau.');
+  expect(memberActionError('ERR_AUTH_UNAVAILABLE')).toBe(
+    'Hệ thống xác thực đang bận hoặc tạm gián đoạn. Vui lòng thử lại sau.',
+  );
   expect(memberActionError('ERR_VALIDATION')).toBe('Dữ liệu gửi lên không đúng định dạng quy định.');
   expect(memberActionError('NETWORK')).toBe('Mất kết nối. Kiểm tra mạng rồi thử lại.');
   expect(memberActionError('UNKNOWN')).not.toContain('tạo nhà');

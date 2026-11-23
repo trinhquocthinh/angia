@@ -102,6 +102,19 @@ it('TC-767: menu chỉ có một mục hồ sơ và bỏ cài đặt gia đình'
   );
   expect(html.match(/Hồ sơ của tôi/g)).toHaveLength(1);
   expect(html).toContain('href="/my-profile"');
+  expect(html).toContain('Quản lý tài khoản');
+  expect(html).toContain('href="/account"');
+  expect(html.indexOf('Quản lý tài khoản')).toBeLessThan(html.indexOf('Đăng xuất'));
   expect(html).not.toContain('Hồ sơ cá nhân');
   expect(html).not.toContain('Cài đặt gia đình');
+});
+it('TC-925: menu tài khoản luôn có mục Quản lý tài khoản trước Đăng xuất dù chưa có nhà', () => {
+  const html = renderToStaticMarkup(
+    <ThemeProvider>
+      <AccountMenuPanel session={session} pending={false} error={false} onLogout={vi.fn()} />
+    </ThemeProvider>,
+  );
+  expect(html).toContain('Quản lý tài khoản');
+  expect(html).toContain('href="/account"');
+  expect(html.indexOf('Quản lý tài khoản')).toBeLessThan(html.indexOf('Đăng xuất'));
 });

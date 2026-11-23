@@ -77,3 +77,13 @@ it('TC-764: phiên hạn chế vẫn ở lại màn đặt lại mật khẩu c�
   } as never);
   expect(navigate).not.toHaveBeenCalled();
 });
+
+it('TC-925: phiên hạn chế vẫn ở lại màn xác minh email công khai', async () => {
+  vi.stubGlobal('location', { pathname: '/verify-email' });
+  const navigate = vi.fn();
+  registerAccountNavigator(navigate);
+  await accountRedirectMiddleware.onResponse!({
+    response: Response.json({ error: { code: 'ERR_PASSWORD_CHANGE_REQUIRED' } }, { status: 403 }),
+  } as never);
+  expect(navigate).not.toHaveBeenCalled();
+});

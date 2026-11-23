@@ -71,11 +71,13 @@ it('chưa có phiên tại /register được ở lại màn tạo tài khoản'
 it('TC-748: màn đổi mật khẩu hiển thị được khi /api/me bị hạn chế', () => {
   expect(resolveSessionRedirect(null, '/account/change-password')).toBeNull();
 });
-it.each(['/account/legal-update', '/account/local-password'])(
+it.each(['/account', '/account/legal-update', '/account/local-password'])(
   'TC-755: màn %s cần có phiên nhưng không cần nhà',
   (path) => {
     expect(resolveSessionRedirect(null, path)).toBe('/login');
     expect(resolveSessionRedirect(waiting, path)).toBeNull();
+    expect(resolveSessionRedirect(assigned, path)).toBeNull();
+    expect(resolveSessionRedirect(admin, path)).toBeNull();
   },
 );
 
@@ -86,4 +88,10 @@ it('TC-762: khách truy cập được màn quên mật khẩu công khai', () =
 it('TC-764: khách và tài khoản đang đăng nhập truy cập được màn đặt lại mật khẩu công khai', () => {
   expect(resolveSessionRedirect(null, '/reset-password')).toBeNull();
   expect(resolveSessionRedirect(assigned, '/reset-password')).toBeNull();
+});
+
+it('TC-925: khách và tài khoản đang đăng nhập truy cập được màn xác minh email công khai', () => {
+  expect(resolveSessionRedirect(null, '/verify-email')).toBeNull();
+  expect(resolveSessionRedirect(waiting, '/verify-email')).toBeNull();
+  expect(resolveSessionRedirect(assigned, '/verify-email')).toBeNull();
 });

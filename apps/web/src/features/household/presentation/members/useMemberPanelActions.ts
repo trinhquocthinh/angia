@@ -5,6 +5,7 @@ import { useMemberRoleChange } from '../../application/useMemberRoleChange';
 import type { HouseholdMemberRole } from '../../application/memberPorts';
 import { householdMembersRepository } from '../../infrastructure/householdMembersRepository';
 import { useMemberToast } from './memberToastContext';
+import { useMemberResetDialog } from './useMemberResetDialog';
 import type { MemberEditorProps } from './memberEditorProps';
 
 export function useMemberPanelActions({
@@ -20,6 +21,7 @@ export function useMemberPanelActions({
   const [confirmOpen, setConfirmOpen] = useState(false);
   const roleChange = useMemberRoleChange(householdMembersRepository.changeRole, csrfToken);
   const removal = useMemberRemoval(householdMembersRepository.remove, csrfToken);
+  const resetDialog = useMemberResetDialog({ member, csrfToken, onReload, onNotFound });
 
   async function handleSuccess(message: string) {
     setRefreshing(true);
@@ -52,7 +54,7 @@ export function useMemberPanelActions({
 
   return {
     selectedRole,
-    pending: refreshing || roleChange.pending || removal.pending,
+    pending: refreshing || roleChange.pending || removal.pending || resetDialog.passwordReset.pending,
     setSelectedRole,
     confirmOpen,
     setConfirmOpen,
@@ -60,5 +62,6 @@ export function useMemberPanelActions({
     removal,
     handleSaveRole,
     handleConfirmRemove,
+    ...resetDialog,
   };
 }

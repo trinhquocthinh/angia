@@ -111,14 +111,23 @@ async function checkEmailAndKeyboard(page: Page) {
   await email.fill('me.lan');
   await submit.click();
   await expect(page.getByRole('alert')).toHaveText('Vui lòng nhập email đúng định dạng.');
+  // Form đưa focus về ô email ở khung hình kế; đợi xong để không giật focus của bước Tab sau.
+  await expect(email).toBeFocused();
   await email.fill('lan@example.com');
-  await page.keyboard.press('Tab');
   const clear = page.getByRole('button', { name: 'Xoá email' });
+  // Nút xoá chỉ render sau khi có chữ; đợi nó hiện trước khi Tab để không đua với React.
+  await expect(clear).toBeVisible();
+  await email.focus();
+  await expect(email).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(clear).toBeFocused();
   await clear.click();
   await expect(email).toHaveValue('');
   await expect(email).toBeFocused();
   await email.fill('lan@example.com');
+  await expect(clear).toBeVisible();
+  await email.focus();
+  await expect(email).toBeFocused();
   await page.keyboard.press('Tab');
   await page.keyboard.press('Tab');
   await expect(submit).toBeFocused();

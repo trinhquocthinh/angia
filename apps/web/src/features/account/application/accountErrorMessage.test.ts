@@ -11,6 +11,8 @@ it.each([
   ['ERR_REGISTRATION_CLOSED', 'Hiện chưa mở đăng ký. Bạn cần lời mời để tham gia.'],
   ['ERR_LEGAL_VERSION_OUTDATED', 'Điều khoản vừa được cập nhật, vui lòng đọc lại.'],
   ['ERR_RESET_TOKEN_INVALID', 'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.'],
+  ['ERR_VERIFICATION_TOKEN_INVALID', 'Liên kết xác minh không hợp lệ hoặc đã hết hạn.'],
+  ['ERR_EMAIL_TAKEN', 'Email này đã được một tài khoản khác xác minh.'],
   ['ERR_VALIDATION', 'Dữ liệu gửi lên không đúng định dạng quy định.'],
   ['NETWORK', 'Mất kết nối. Kiểm tra mạng rồi thử lại.'],
   ['UNKNOWN', 'Không thể kết nối. Vui lòng thử lại.'],

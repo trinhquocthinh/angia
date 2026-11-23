@@ -24,6 +24,12 @@ export function AccountMenuPanel({ session, pending, error, onLogout, onClose }:
       <AccountMenuDestinations session={session} onClose={onClose} />
       <AccountThemeSwitch />
       <div className="account-menu-divider" />
+      <div className="account-menu-links">
+        <Link to="/account" onClick={onClose}>
+          <AdminIcon name="manage_accounts" />
+          Quản lý tài khoản
+        </Link>
+      </div>
       <button type="button" className="account-menu-logout" disabled={pending} onClick={onLogout}>
         <span className="account-menu-logout-icon">
           <AdminIcon name="logout" />

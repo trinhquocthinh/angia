@@ -1,5 +1,5 @@
 import { useRef, useState, type RefObject } from 'react';
-import type { HouseholdMember } from '../../application/memberPorts';
+import type { HouseholdMember, HouseholdMemberRole } from '../../application/memberPorts';
 import { MemberDetailSheet } from './MemberDetailSheet';
 import { MemberEditorBody } from './MemberEditorBody';
 import { PanelNotice } from './PanelNotice';
@@ -7,6 +7,7 @@ import { PanelNotice } from './PanelNotice';
 type Props = {
   member: HouseholdMember | null;
   notice?: string | null;
+  viewerRole?: HouseholdMemberRole;
   csrfToken: string;
   returnFocusRef?: RefObject<HTMLButtonElement | null>;
   onReload: () => Promise<void>;
@@ -18,6 +19,7 @@ type Props = {
 export function MemberDetailPanel({
   member,
   notice = null,
+  viewerRole = 'main',
   csrfToken,
   returnFocusRef,
   onReload,
@@ -38,6 +40,7 @@ export function MemberDetailPanel({
           key={`${member.accountId}:${member.role}`}
           onPendingChange={setPending}
           member={member}
+          viewerRole={viewerRole}
           csrfToken={csrfToken}
           onReload={onReload}
           onClose={onClose}

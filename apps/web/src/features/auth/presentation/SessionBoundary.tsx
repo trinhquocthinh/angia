@@ -4,5 +4,9 @@ import { isConsentInvitationRoute } from '../application/isConsentInvitationRout
 import { AuthBoundary } from './AuthBoundary';
 export function SessionBoundary({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
-  return isConsentInvitationRoute(pathname) ? children : <AuthBoundary>{children}</AuthBoundary>;
+  return isConsentInvitationRoute(pathname) || pathname === '/verify-email' ? (
+    children
+  ) : (
+    <AuthBoundary>{children}</AuthBoundary>
+  );
 }

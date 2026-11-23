@@ -32,5 +32,20 @@ export type SubmitPasswordResetRequest = (
   body: PasswordResetRequest,
 ) => Promise<AccountResult<components['schemas']['RequestPasswordResetResponse']>>;
 
-export type PasswordResetSubmission = components['schemas']['ResetPasswordRequest'];
+type PasswordResetSubmission = components['schemas']['ResetPasswordRequest'];
 export type SubmitPasswordReset = (body: PasswordResetSubmission) => Promise<AccountResult<void>>;
+
+type EmailVerificationConfirm = components['schemas']['ConfirmEmailVerificationRequest'];
+export type SubmitEmailVerificationConfirm = (body: EmailVerificationConfirm) => Promise<AccountResult<void>>;
+
+export type AccountEmailStatus = components['schemas']['AccountEmailResponse'];
+export type ChangeAccountEmailBody = components['schemas']['ChangeAccountEmailRequest'];
+export type SubmitAccountEmailChange = (
+  body: ChangeAccountEmailBody,
+  csrfToken: string,
+) => Promise<AccountResult<AccountEmailStatus>>;
+
+type EmailVerificationRequestOutcome = { sent: true } | { alreadyVerified: true };
+export type SubmitEmailVerificationRequest = (
+  csrfToken: string,
+) => Promise<AccountResult<EmailVerificationRequestOutcome>>;

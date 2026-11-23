@@ -10,7 +10,7 @@ vi.mock('./AuthBoundary', () => ({
     return <div>AUTH{children}</div>;
   },
 }));
-describe('TC-106 — Ngoại lệ xác thực chỉ dành cho tuyến lời mời chính xác', () => {
+describe('TC-106 — Ngoại lệ xác thực dành cho tuyến công khai chính xác', () => {
   it('không mount AuthBoundary hoặc gọi phiên trên /consent-invite', () => {
     mocked.auth.mockClear();
     mocked.path = '/consent-invite';
@@ -21,4 +21,11 @@ describe('TC-106 — Ngoại lệ xác thực chỉ dành cho tuyến lời mờ
     mocked.path = path;
     expect(renderToStaticMarkup(<SessionBoundary>Nội dung</SessionBoundary>)).toContain('AUTH');
   });
+});
+
+it('TC-925: xác minh email công khai không tải phiên kể cả khi phiên hạn chế hoặc API phiên lỗi', () => {
+  mocked.auth.mockClear();
+  mocked.path = '/verify-email';
+  expect(renderToStaticMarkup(<SessionBoundary>Xác minh</SessionBoundary>)).toBe('Xác minh');
+  expect(mocked.auth).not.toHaveBeenCalled();
 });

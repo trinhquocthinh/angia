@@ -33,7 +33,8 @@ export const accountRedirectMiddleware: Middleware = {
       here !== '/login' &&
       here !== '/register' &&
       here !== '/forgot-password' &&
-      here !== '/reset-password'
+      here !== '/reset-password' &&
+      here !== '/verify-email'
     ) {
       try {
         await navigate?.(to);

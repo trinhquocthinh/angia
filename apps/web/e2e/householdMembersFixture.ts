@@ -27,13 +27,22 @@ export async function householdMembersFixture(
   const state = {
     household,
     members: defaultFixtureMembers(),
+    listCount: 0,
     listError: false,
     patchError: '' as string,
     patchStatus: 409,
     patches: [] as { path: string; body: unknown; csrf: string | undefined }[],
+    resetError: '' as string,
+    resetStatus: 429,
+    resetResponse: {
+      temporaryPassword: 'TempPass89!x',
+      expiresAt: '2026-11-24T04:30:00.000Z',
+    },
+    resetHold: null as Promise<void> | null,
+    passwordResets: [] as { path: string; csrf: string | undefined }[],
   };
 
-  await page.route(/\/api\/family\/members(?:\/[^/?]+)?(?:\?[^#]*)?$/, (route) =>
+  await page.route(/\/api\/family\/members(?:\/[^/?]+(?:\/password-reset)?)?(?:\?[^#]*)?$/, (route) =>
     handleMembersRoute(route, state),
   );
   return state;
@@ -46,8 +55,22 @@ async function handleMembersRoute(route: Route, state: State) {
   const path = new URL(request.url()).pathname;
 
   if (request.method() === 'GET' && path === '/api/family/members') {
+    state.listCount += 1;
     if (state.listError) return route.fulfill({ status: 503, json: { error: { code: 'UNKNOWN' } } });
     return route.fulfill({ status: 200, json: { members: state.members } });
+  }
+
+  if (request.method() === 'POST' && path.endsWith('/password-reset')) {
+    state.passwordResets.push({ path, csrf: request.headers()['x-csrf-token'] });
+    if (state.resetHold) await state.resetHold;
+    if (state.resetError === 'NETWORK') return route.abort();
+    if (state.resetError) {
+      return route.fulfill({
+        status: state.resetStatus,
+        json: { error: { code: state.resetError, message: 'Chi tiết nội bộ không được hiện' } },
+      });
+    }
+    return route.fulfill({ status: 200, json: state.resetResponse });
   }
 
   if (request.method() === 'PATCH') {

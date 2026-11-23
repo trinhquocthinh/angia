@@ -1,0 +1,143 @@
+.account-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+  padding-bottom: 24px;
+  color: var(--color-text-primary);
+}
+.account-settings-heading {
+  font-family: 'Newsreader', serif;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--color-text-primary);
+}
+.account-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 28px;
+  background: var(--color-surface);
+  box-shadow:
+    0 4px 24px color-mix(in srgb, var(--color-menu-shadow) 5%, transparent),
+    0 1px 3px color-mix(in srgb, var(--color-menu-shadow) 4%, transparent);
+}
+:root[data-theme='dark'] .account-card {
+  border: 1px solid var(--color-border);
+  box-shadow: none;
+}
+.account-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.account-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.account-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+}
+.account-3d-tile {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 2px;
+  border-radius: 18px;
+  box-shadow: 0 8px 16px color-mix(in srgb, var(--color-household-shadow) 16%, transparent);
+}
+.account-3d-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--color-clay-porcelain) 0%, var(--color-clay-mint) 100%);
+}
+.account-3d-mail-3d,
+.account-3d-download-3d {
+  background: linear-gradient(135deg, var(--color-clay-icon-start) 0%, var(--color-clay-icon-end) 100%);
+}
+.account-3d-lock-3d {
+  background: linear-gradient(135deg, var(--color-clay-manager-start) 0%, var(--color-clay-owner-mid) 100%);
+}
+.account-3d-palette-3d {
+  background: linear-gradient(135deg, var(--color-clay-key-start) 0%, var(--color-clay-key-end) 100%);
+}
+.account-3d-shield-danger-3d {
+  background: linear-gradient(135deg, var(--color-clay-revoke-start) 0%, var(--color-clay-revoke-end) 100%);
+}
+.account-3d-img {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+.account-mask-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  background: currentColor;
+  mask-position: center;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+}
+.account-icon-sm {
+  width: 18px;
+  height: 18px;
+}
+.account-icon-md {
+  width: 20px;
+  height: 20px;
+}
+.account-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.account-bento-single {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.account-tile-card {
+  justify-content: space-between;
+}
+.account-password-link {
+  width: 100%;
+  text-decoration: none;
+}
+.account-placeholder-danger {
+  border: 1px solid color-mix(in srgb, var(--color-danger) 28%, transparent);
+}
+.account-placeholder-copy {
+  margin-top: 2px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.account-settings :is(a, button):focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+@media (max-width: 767px) {
+  .account-card {
+    padding: 20px;
+    border-radius: 20px;
+  }
+  .account-bento-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

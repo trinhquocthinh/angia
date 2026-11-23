@@ -3,6 +3,7 @@ import type {
   HouseholdMemberRole,
   HouseholdMembersRepository,
   MemberMutationResult,
+  ResetMemberPasswordResult,
 } from '../application/memberPorts';
 
 export const householdMembersRepository: HouseholdMembersRepository = {
@@ -21,7 +22,31 @@ export const householdMembersRepository: HouseholdMembersRepository = {
   remove(targetAccountId, csrfToken) {
     return patchMember(targetAccountId, { action: 'remove' }, csrfToken);
   },
+  resetPassword(targetAccountId, csrfToken) {
+    return postResetMemberPassword(targetAccountId, csrfToken);
+  },
 };
+
+async function postResetMemberPassword(
+  targetAccountId: string,
+  csrfToken: string,
+): Promise<ResetMemberPasswordResult> {
+  try {
+    const { response, data, error } = await apiClient.POST(
+      '/api/family/members/{targetAccountId}/password-reset',
+      {
+        params: { path: { targetAccountId } },
+        headers: { 'X-CSRF-Token': csrfToken },
+      },
+    );
+    if (response.status === 200 && data) {
+      return { ok: true, value: { temporaryPassword: data.temporaryPassword, expiresAt: data.expiresAt } };
+    }
+    return { ok: false, code: error?.error.code ?? 'UNKNOWN' };
+  } catch (error) {
+    return { ok: false, code: error instanceof SyntaxError ? 'UNKNOWN' : 'NETWORK' };
+  }
+}
 
 async function patchMember(
   targetAccountId: string,

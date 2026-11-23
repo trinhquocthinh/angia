@@ -4,10 +4,12 @@ import { setFourHouseholdMembers } from './setFourHouseholdMembers.js';
 import { expect, test } from '@playwright/test';
 import { householdHomeFixture } from './householdHomeFixture.js';
 import { householdMemberDetailCases } from './householdMemberDetailCases.js';
+import { householdMemberResetPasswordCases } from './householdMemberResetPasswordCases.js';
 import { householdMembersSafetyCases } from './householdMembersSafetyCases.js';
 
 export const householdMembersCases = [
   ...householdMemberDetailCases,
+  ...householdMemberResetPasswordCases,
   ...householdMemberResizeCases,
   ...householdMemberOfferRefreshCases,
   ...householdMembersSafetyCases,
