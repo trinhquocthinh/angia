@@ -62,7 +62,7 @@ describe('TC-503/504/505 — truy vấn web dòng thời gian', () => {
     for (const [context, item] of [
       [{ ...session, role: 'member' }, profile],
       [{ ...session, family: null }, profile],
-      [{ ...session, family: { id: 'other', name: 'Khác' } }, profile],
+      [{ ...session, family: { id: 'other', name: 'Khác', isOwner: false } }, profile],
       [session, { ...profile, consentStatus: 'pending' }],
       [session, { ...profile, consentStatus: 'withdrawn' }],
     ] as [ProfileSession, HealthProfile][]) {
@@ -101,7 +101,7 @@ describe('TC-503/504/505 — truy vấn web dòng thời gian', () => {
     for (const [context, item] of [
       [{ ...session, account: { ...session.account, id: 'new' } }, profile],
       [
-        { ...session, family: { id: 'new', name: 'Nhà mới' } },
+        { ...session, family: { id: 'new', name: 'Nhà mới', isOwner: false } },
         { ...profile, familyId: 'new' },
       ],
       [session, { ...profile, id: 'other' }],

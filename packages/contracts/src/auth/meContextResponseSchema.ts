@@ -10,7 +10,7 @@ export const meContextResponseSchema = z
       isSystemAdmin: z.boolean(),
       healthProfileId: z.uuid().nullable(),
     }),
-    family: z.object({ id: z.uuid(), name: z.string() }).nullable(),
+    family: z.object({ id: z.uuid(), name: z.string(), isOwner: z.boolean() }).nullable(),
     role: z.enum(['main', 'member']).nullable(),
     // Web gửi lại qua header X-CSRF-Token ở mọi POST/PUT/PATCH/DELETE (Tech Spec §5.1).
     csrfToken: z.string(),

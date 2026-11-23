@@ -22,6 +22,7 @@ export function createStubAccountDeps(): AppDependencies['account'] {
     enrollmentEnabled: false,
     lookupLocalCredential: async () => ({
       hasLocalCredential: false,
+      isOwner: false,
       email: null,
       emailVerified: false,
       pendingEmail: null,

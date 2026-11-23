@@ -27,17 +27,19 @@ async function meWith(
   hasLocalCredential = false,
   localEnrollmentEnabled = false,
   emailStatus = { email: null as string | null, emailVerified: false, pendingEmail: null as string | null },
+  context: SessionContext = session,
+  isOwner = false,
 ) {
   const app = new OpenAPIHono<AppEnv>();
   app.use('*', async (c, next) => {
-    c.set('session', session);
+    c.set('session', context);
     await next();
   });
   registerMeRoute(app, {
     features: { redactionSuggestions, localEnrollmentEnabled },
     lookupLocalCredential: async (accountId) => {
       expect(accountId).toBe(session.account.id);
-      return { hasLocalCredential, ...emailStatus };
+      return { hasLocalCredential, ...emailStatus, isOwner };
     },
   });
   return (await app.request('/api/me')).json();
@@ -95,5 +97,23 @@ describe('GET /api/me — trạng thái email (SPEC-085)', () => {
     const response = await app.request('/api/me');
     expect(response.status).toBe(403);
     expect(await response.json()).toMatchObject({ error: { code: 'ERR_PASSWORD_CHANGE_REQUIRED' } });
+  });
+});
+
+describe('GET /api/me — phân biệt Chủ hộ (US-068)', () => {
+  it.each([
+    { label: 'Chủ hộ', role: 'main' as const, isOwner: true },
+    { label: 'Đồng quản lý', role: 'main' as const, isOwner: false },
+    { label: 'thành viên', role: 'member' as const, isOwner: false },
+  ])('trả family.isOwner đúng cho $label', async ({ role, isOwner }) => {
+    const family = { id: '00000000-0000-4000-8000-000000000002', name: 'Nhà An' };
+    expect(await meWith(false, true, false, undefined, { ...session, family, role }, isOwner)).toMatchObject({
+      family: { ...family, isOwner },
+      role,
+    });
+  });
+
+  it('giữ family và role null khi chưa có nhà', async () => {
+    expect(await meWith(false)).toMatchObject({ family: null, role: null });
   });
 });

@@ -37,7 +37,7 @@ async function householdRoute(route: Route, state: State) {
               isSystemAdmin: state.admin,
               healthProfileId: state.linked ? 'profile' : null,
             },
-            family: state.family ? { id: 'family', name: state.name } : null,
+            family: state.family ? { id: 'family', name: state.name, isOwner: false } : null,
             role: state.family ? state.role : null,
             csrfToken: 'csrf',
             authMethod: 'local',

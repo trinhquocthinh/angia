@@ -13,7 +13,7 @@ vi.mock('@src/features/profiles/presentation/components/ProfileFrame', () => ({
 const id = '3f2b8c1e-9a4d-4e6f-8b7a-1c2d3e4f5a6b';
 const session = {
   account: { id: 'account', displayName: 'Bình', isSystemAdmin: false, healthProfileId: null },
-  family: { id: 'family', name: 'Nhà An' },
+  family: { id: 'family', name: 'Nhà An', isOwner: false },
   role: 'member',
   csrfToken: 'csrf',
 };

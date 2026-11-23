@@ -17,7 +17,7 @@ vi.mock('./components/ProfileFrame', () => ({
 
 const session: ProfileSession = {
   account: { id: 'account', displayName: 'Người kiểm thử', isSystemAdmin: false, healthProfileId: 'own' },
-  family: { id: 'family', name: 'Nhà kiểm thử' },
+  family: { id: 'family', name: 'Nhà kiểm thử', isOwner: false },
   role: 'main',
   csrfToken: 'csrf',
   authMethod: 'local',

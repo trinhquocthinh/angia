@@ -58,7 +58,7 @@ describe('TC-474 — sửa ngày hẹn và đồng bộ cache', () => {
   it.each([
     { ...session, role: 'member' as const },
     { ...session, csrfToken: '' },
-    { ...session, family: { id: 'other', name: 'Khác' } },
+    { ...session, family: { id: 'other', name: 'Khác', isOwner: false } },
   ])('phiên không đủ quyền không gửi', async (context) => {
     const { client, hook, setDate } = mount(context);
     expect(await hook.save('2026-11-20')).toBe(false);

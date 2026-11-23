@@ -40,7 +40,7 @@ export function selfPainData(role: 'main' | 'member') {
         healthProfileId: profileId as string | null,
         isSystemAdmin: false,
       },
-      family: { id: '00000000-0000-4000-8000-000000000004', name: 'Gia đình thử' },
+      family: { id: '00000000-0000-4000-8000-000000000004', name: 'Gia đình thử', isOwner: false },
       role,
       csrfToken: 'csrf-test',
     },

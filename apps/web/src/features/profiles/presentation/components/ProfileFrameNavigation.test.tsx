@@ -62,7 +62,7 @@ it.each(['main', 'member'] as const)('TC-767: đã có nhà giữ điều hướ
     {
       ...session,
       role,
-      family: { id: 'family', name: 'Nhà Lan' },
+      family: { id: 'family', name: 'Nhà Lan', isOwner: false },
       account: { ...session.account, healthProfileId: role === 'member' ? 'profile' : null },
     },
     '/',
@@ -70,7 +70,10 @@ it.each(['main', 'member'] as const)('TC-767: đã có nhà giữ điều hướ
   expect(html).toContain('Điều hướng chính');
 });
 it('TC-767: member chưa liên kết không hiện điều hướng hoặc tìm hồ sơ', () => {
-  const html = render({ ...session, role: 'member', family: { id: 'family', name: 'Nhà Lan' } }, '/');
+  const html = render(
+    { ...session, role: 'member', family: { id: 'family', name: 'Nhà Lan', isOwner: false } },
+    '/',
+  );
   expect(html).not.toContain('Điều hướng chính');
   expect(html).not.toContain('Tìm hồ sơ thành viên');
 });
@@ -79,7 +82,7 @@ it('TC-767: trang admin không hiện ba tab dù admin đang có nhà', () => {
     {
       ...session,
       role: 'main',
-      family: { id: 'family', name: 'Nhà Lan' },
+      family: { id: 'family', name: 'Nhà Lan', isOwner: false },
       account: { ...session.account, isSystemAdmin: true },
     },
     '/admin',

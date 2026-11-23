@@ -13446,6 +13446,7 @@ export interface components {
         /** Format: uuid */
         id: string;
         name: string;
+        isOwner: boolean;
       } | null;
       /** @enum {string|null} */
       role: 'main' | 'member' | null;

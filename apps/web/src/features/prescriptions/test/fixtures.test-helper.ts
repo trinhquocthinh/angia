@@ -6,7 +6,7 @@ export const firstId = '00000000-0000-4000-8000-000000000002';
 export const secondId = '00000000-0000-4000-8000-000000000003';
 export const session = {
   account: { id: 'a', displayName: 'An', isSystemAdmin: false, healthProfileId: null },
-  family: { id: 'f', name: 'Nhà' },
+  family: { id: 'f', name: 'Nhà', isOwner: false },
   role: 'main',
   csrfToken: 'csrf',
   authMethod: 'local',

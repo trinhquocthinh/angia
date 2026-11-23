@@ -3,7 +3,7 @@ import type { ProfileSession } from '@src/features/profiles/application/ports';
 
 export const session: ProfileSession = {
   account: { id: 'a', displayName: 'Mẹ', isSystemAdmin: false, healthProfileId: 'p' },
-  family: { id: 'f', name: 'Nhà' },
+  family: { id: 'f', name: 'Nhà', isOwner: false },
   role: 'main',
   csrfToken: 'csrf',
   authMethod: 'local',

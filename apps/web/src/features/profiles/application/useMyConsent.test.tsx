@@ -7,7 +7,7 @@ import { profileScopeKey } from './profileScopeKey';
 import { useMyConsent } from './useMyConsent';
 const session: ProfileSession = {
   account: { id: 'a', displayName: 'An', isSystemAdmin: false, healthProfileId: 'p' },
-  family: { id: 'f', name: 'Nhà An' },
+  family: { id: 'f', name: 'Nhà An', isOwner: false },
   role: 'member',
   csrfToken: 'csrf',
   authMethod: 'local',

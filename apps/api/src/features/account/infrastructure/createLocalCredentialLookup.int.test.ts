@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startRegistrationTestApp } from '@src/shared/test/startRegistrationTestApp.js';
 import { seedAccount, seedSession } from '@src/shared/test/seedAuthFixtures.js';
@@ -18,6 +19,7 @@ describe('Ngữ cảnh enrollment qua role app và HTTP', () => {
     const session = await seedSession(t.owner, id);
     const lookup = createLocalCredentialLookup(createDatabase(t.pool));
     expect(await lookup(id)).toEqual({
+      isOwner: false,
       hasLocalCredential: false,
       email: null,
       emailVerified: false,
@@ -28,6 +30,7 @@ describe('Ngữ cảnh enrollment qua role app và HTTP', () => {
     expect(before.headers.get('cache-control')).toBe('no-store');
     expect(await before.json()).toMatchObject({
       authMethod: 'oidc',
+      family: null,
       hasLocalCredential: false,
       features: { localEnrollmentEnabled: true },
     });
@@ -36,6 +39,7 @@ describe('Ngữ cảnh enrollment qua role app và HTTP', () => {
       await t.account.hasher.hash('NewPassword123'),
     ]);
     expect(await lookup(id)).toEqual({
+      isOwner: false,
       hasLocalCredential: true,
       email: null,
       emailVerified: false,
@@ -71,6 +75,20 @@ describe('Ngữ cảnh enrollment qua role app và HTTP', () => {
     expect(await refreshed.json()).toMatchObject({
       emailStatus: { email: emailStatus.email, emailVerified: false, pendingEmail: null },
     });
+  });
+
+  it('tra Chủ hộ theo owner_account_id của đúng nhà bằng role app', async () => {
+    const familyId = randomUUID();
+    await t.owner.query("INSERT INTO families(id, name) VALUES($1, 'Nhà kiểm thử')", [familyId]);
+    const ownerId = await seedAccount(t.owner, { familyId, familyRole: 'main' });
+    const coManagerId = await seedAccount(t.owner, { familyId, familyRole: 'main' });
+    await t.owner.query('UPDATE families SET owner_account_id=$2 WHERE id=$1', [familyId, ownerId]);
+    const lookup = createLocalCredentialLookup(createDatabase(t.pool));
+    expect(await lookup(ownerId)).toMatchObject({ isOwner: true });
+    expect(await lookup(coManagerId)).toMatchObject({ isOwner: false });
+    await t.owner.query('UPDATE families SET owner_account_id=$2 WHERE id=$1', [familyId, coManagerId]);
+    expect(await lookup(ownerId)).toMatchObject({ isOwner: false });
+    expect(await lookup(coManagerId)).toMatchObject({ isOwner: true });
   });
 
   it('TC-902: cờ enrollment tắt phản ánh qua /api/me', async () => {

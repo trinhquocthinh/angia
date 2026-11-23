@@ -62,14 +62,14 @@ describe('Chặn nội dung trước khi kiểm tra phiên', () => {
     expect(renderBoundary(waiting)).not.toContain('Nội dung gia đình');
   });
   it('đã có nhóm: hiển thị nội dung tuyến được yêu cầu', () => {
-    expect(renderBoundary({ ...waiting, family: { id: 'family', name: 'Nhà An' }, role: 'main' })).toContain(
-      'Nội dung gia đình',
-    );
+    expect(
+      renderBoundary({ ...waiting, family: { id: 'family', name: 'Nhà An', isOwner: false }, role: 'main' }),
+    ).toContain('Nội dung gia đình');
   });
 });
 
 const reminderPath = '/reminders/3f2b8c1e-9a4d-4e6f-8b7a-1c2d3e4f5a6b';
-const member = { ...waiting, family: { id: 'family', name: 'Nhà An' }, role: 'member' };
+const member = { ...waiting, family: { id: 'family', name: 'Nhà An', isOwner: false }, role: 'member' };
 function stubSessionStorage(seed: Record<string, string> = {}) {
   const data = new Map(Object.entries(seed));
   vi.stubGlobal('sessionStorage', {

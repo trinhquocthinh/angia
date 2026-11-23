@@ -19,7 +19,7 @@ const profile: HealthProfile = {
 };
 const session: ProfileSession = {
   account: { id: 'a', displayName: 'An', isSystemAdmin: false, healthProfileId: null },
-  family: { id: 'f', name: 'Nhà' },
+  family: { id: 'f', name: 'Nhà', isOwner: false },
   role: 'main',
   csrfToken: 'csrf',
   authMethod: 'local',
@@ -53,7 +53,9 @@ describe('Cache danh sách chọn đợt dừng', () => {
         </QueryClientProvider>,
       );
     expect(view(session)).toContain('2026-10-11');
-    expect(view({ ...session, family: { id: 'other', name: 'Khác' } })).toContain('Không có dữ liệu');
+    expect(view({ ...session, family: { id: 'other', name: 'Khác', isOwner: false } })).toContain(
+      'Không có dữ liệu',
+    );
     expect(view({ ...session, account: { ...session.account, id: 'other' } })).toContain('Không có dữ liệu');
     client.clear();
   });

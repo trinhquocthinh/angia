@@ -474,11 +474,15 @@
               },
               "name": {
                 "type": "string"
+              },
+              "isOwner": {
+                "type": "boolean"
               }
             },
             "required": [
               "id",
-              "name"
+              "name",
+              "isOwner"
             ]
           },
           "role": {

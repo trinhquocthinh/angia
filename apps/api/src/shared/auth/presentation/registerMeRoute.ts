@@ -31,7 +31,7 @@ function toMeContextResponse(
 ): MeContextResponse {
   return {
     account: session.account,
-    family: session.family,
+    family: session.family ? { ...session.family, isOwner: accountContext.isOwner } : null,
     role: session.role,
     csrfToken: session.csrfToken,
     authMethod: session.authMethod,

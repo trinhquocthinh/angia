@@ -61,6 +61,7 @@ export type ResolveSessionDeps = Pick<CompleteLoginDeps, 'sessions' | 'now'>;
 // Đọc credential và trạng thái email cùng lượt; hash không đi vào ngữ cảnh phiên hay DTO.
 export type LocalCredentialLookup = (accountId: string) => Promise<{
   hasLocalCredential: boolean;
+  isOwner: boolean;
   email: string | null;
   emailVerified: boolean;
   pendingEmail: string | null;

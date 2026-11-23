@@ -13,7 +13,11 @@ const waiting: Session = {
   emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
-const assigned: Session = { ...waiting, family: { id: 'family', name: 'Nhà An' }, role: 'main' };
+const assigned: Session = {
+  ...waiting,
+  family: { id: 'family', name: 'Nhà An', isOwner: false },
+  role: 'main',
+};
 
 describe('Điều hướng theo phiên hiện hành', () => {
   it.each(['/', '/waiting', '/profiles/new'])('chưa có phiên tại %s: về đăng nhập', (path) => {

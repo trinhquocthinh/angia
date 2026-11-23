@@ -114,7 +114,9 @@ describe('Hook liều hôm nay (SPEC-079)', () => {
     expect(
       read(self, { ...session, account: { ...session.account, id: 'other' } }).query.data,
     ).toBeUndefined();
-    expect(read(self, { ...session, family: { id: 'other', name: 'Nhà khác' } }).query.data).toBeUndefined();
+    expect(
+      read(self, { ...session, family: { id: 'other', name: 'Nhà khác', isOwner: false } }).query.data,
+    ).toBeUndefined();
     expect(read({ ...main, profile: { ...main.profile, id: 'other' } }).query.data).toBeUndefined();
     vi.setSystemTime(new Date('2026-11-11T17:00:00.000Z'));
     expect(read(self).query.data).toBeUndefined();

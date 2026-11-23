@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { HealthProfile, ProfileSession } from '../../application/ports';
 import { ProfileEditControls } from './ProfileEditControls';
 const profile = { id: 'p', familyId: 'f', birthYear: null, consentStatus: 'pending' } as HealthProfile;
-const session = { role: 'main', family: { id: 'f', name: 'Nhà' } } as ProfileSession;
+const session = { role: 'main', family: { id: 'f', name: 'Nhà', isOwner: false } } as ProfileSession;
 describe('TC-449 — quyền mở sửa hồ sơ từ header', () => {
   it('main thấy nút sửa và dải nhắc hồ sơ cũ, năm đã có thì bỏ dải nhắc', () => {
     const html = renderToStaticMarkup(<ProfileEditControls profile={profile} session={session} />);
@@ -17,7 +17,7 @@ describe('TC-449 — quyền mở sửa hồ sơ từ header', () => {
   });
   it.each([
     { ...session, role: 'member' as const },
-    { ...session, family: { id: 'other', name: 'Khác' } },
+    { ...session, family: { id: 'other', name: 'Khác', isOwner: false } },
   ])('member hoặc khác gia đình không thấy nút sửa', (context) => {
     expect(renderToStaticMarkup(<ProfileEditControls profile={profile} session={context} />)).toBe('');
   });

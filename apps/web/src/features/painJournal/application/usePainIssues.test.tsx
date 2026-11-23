@@ -53,7 +53,7 @@ describe('E21-S2-T1 — cache và quyền đọc sổ đau nhức', () => {
     expect(probe(client, api).data).toEqual(data);
     const others: ProfileSession[] = [
       { ...session, account: { ...session.account, id: 'b' } },
-      { ...session, family: { id: 'g', name: 'Khác' } },
+      { ...session, family: { id: 'g', name: 'Khác', isOwner: false } },
     ];
     for (const current of others) expect(probe(client, api, current).data).toBeUndefined();
     expect(probe(client, api, session, { ...profile, id: 'q' }).data).toBeUndefined();

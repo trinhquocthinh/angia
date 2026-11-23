@@ -38,7 +38,7 @@ describe('TC-484 — quyền và cache chuỗi đơn', () => {
   it('member hoặc khác gia đình không đọc và không lộ cache', () => {
     for (const context of [
       { ...session, role: 'member' as const },
-      { ...session, family: { id: 'other', name: 'Khác' } },
+      { ...session, family: { id: 'other', name: 'Khác', isOwner: false } },
     ]) {
       const client = new QueryClient();
       client.setQueryData(['prescriptions', 'a', context.family.id, profile.id, 'list'], chain);

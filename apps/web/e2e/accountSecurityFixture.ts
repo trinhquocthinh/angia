@@ -36,7 +36,10 @@ async function securityRoute(route: Route, state: State) {
           isSystemAdmin: state.adminWithoutFamily,
           healthProfileId: null,
         },
-        family: state.adminWithoutFamily || state.withoutFamily ? null : { id: 'family', name: 'Nhà thử' },
+        family:
+          state.adminWithoutFamily || state.withoutFamily
+            ? null
+            : { id: 'family', name: 'Nhà thử', isOwner: false },
         role: state.adminWithoutFamily || state.withoutFamily ? null : 'main',
         csrfToken: 'csrf',
         authMethod: state.enrollment ? 'oidc' : 'local',
