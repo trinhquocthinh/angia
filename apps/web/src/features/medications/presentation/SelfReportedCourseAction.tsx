@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
 import { createMedicationRepository } from '../infrastructure/createMedicationRepository';
-import { SelfReportedCourseSheet } from './SelfReportedCourseSheet';
+
+const SelfReportedCourseSheet = lazy(() =>
+  import('./SelfReportedCourseSheet').then((module) => ({ default: module.SelfReportedCourseSheet })),
+);
 const repository = createMedicationRepository();
 export function SelfReportedCourseAction({
   profile,
@@ -28,13 +31,15 @@ export function SelfReportedCourseAction({
         Thêm thuốc bổ, vitamin
       </button>
       {open && (
-        <SelfReportedCourseSheet
-          key={`${session.account.id}:${session.family.id}:${profile.id}`}
-          profile={profile}
-          session={session}
-          repository={repository}
-          onClose={() => setOpen(false)}
-        />
+        <Suspense fallback={null}>
+          <SelfReportedCourseSheet
+            key={`${session.account.id}:${session.family.id}:${profile.id}`}
+            profile={profile}
+            session={session}
+            repository={repository}
+            onClose={() => setOpen(false)}
+          />
+        </Suspense>
       )}
     </div>
   );

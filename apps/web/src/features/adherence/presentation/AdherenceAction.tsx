@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import type { HealthProfile, ProfileSession } from '@src/features/profiles/application/ports';
 import type { AdherencePeriod } from '../application/ports';
 import { createAdherenceRepository } from '../infrastructure/createAdherenceRepository';
-import { AdherenceSheet } from './AdherenceSheet';
+
+const AdherenceSheet = lazy(() =>
+  import('./AdherenceSheet').then((module) => ({ default: module.AdherenceSheet })),
+);
 
 const repository = createAdherenceRepository();
 
@@ -22,14 +25,16 @@ export function AdherenceAction({ profile, session, onSaved }: Props) {
         Ghi thực tế dùng thuốc
       </button>
       {open && (
-        <AdherenceSheet
-          key={`${session.account.id}:${session.family.id}:${profile.id}`}
-          profile={profile}
-          session={session}
-          repository={repository}
-          onClose={() => setOpen(false)}
-          onSaved={onSaved}
-        />
+        <Suspense fallback={null}>
+          <AdherenceSheet
+            key={`${session.account.id}:${session.family.id}:${profile.id}`}
+            profile={profile}
+            session={session}
+            repository={repository}
+            onClose={() => setOpen(false)}
+            onSaved={onSaved}
+          />
+        </Suspense>
       )}
     </>
   );
