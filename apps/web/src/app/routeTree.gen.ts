@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ConsentInviteRouteImport } from './routes/consent-invite'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LinkInviteRouteImport } from './routes/link-invite'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MyProfileRouteImport } from './routes/my-profile'
@@ -59,6 +60,11 @@ const AdminRoute = AdminRouteImport.update({
 const ConsentInviteRoute = ConsentInviteRouteImport.update({
   id: '/consent-invite',
   path: '/consent-invite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LinkInviteRoute = LinkInviteRouteImport.update({
@@ -243,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/consent-invite': typeof ConsentInviteRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/link-invite': typeof LinkInviteRoute
   '/login': typeof LoginRoute
   '/my-profile': typeof MyProfileRoute
@@ -281,6 +288,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/consent-invite': typeof ConsentInviteRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/link-invite': typeof LinkInviteRoute
   '/login': typeof LoginRoute
   '/my-profile': typeof MyProfileRoute
@@ -320,6 +328,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/consent-invite': typeof ConsentInviteRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/link-invite': typeof LinkInviteRoute
   '/login': typeof LoginRoute
   '/my-profile': typeof MyProfileRoute
@@ -360,6 +369,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/consent-invite'
+    | '/forgot-password'
     | '/link-invite'
     | '/login'
     | '/my-profile'
@@ -398,6 +408,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/consent-invite'
+    | '/forgot-password'
     | '/link-invite'
     | '/login'
     | '/my-profile'
@@ -436,6 +447,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/consent-invite'
+    | '/forgot-password'
     | '/link-invite'
     | '/login'
     | '/my-profile'
@@ -475,6 +487,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   ConsentInviteRoute: typeof ConsentInviteRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LinkInviteRoute: typeof LinkInviteRoute
   LoginRoute: typeof LoginRoute
   MyProfileRoute: typeof MyProfileRoute
@@ -531,6 +544,13 @@ declare module '@tanstack/react-router' {
       path: '/consent-invite'
       fullPath: '/consent-invite'
       preLoaderRoute: typeof ConsentInviteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/link-invite': {
@@ -771,6 +791,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   ConsentInviteRoute: ConsentInviteRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LinkInviteRoute: LinkInviteRoute,
   LoginRoute: LoginRoute,
   MyProfileRoute: MyProfileRoute,

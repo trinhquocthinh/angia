@@ -1,6 +1,7 @@
 import { accountRegistrationDesignCase } from './accountRegistrationDesignCase.js';
 import { accountRegistrationClayCase } from './accountRegistrationClayCase.js';
 import { accountEnrollmentCases } from './accountEnrollmentCases.js';
+import { accountForgotPasswordCases } from './accountForgotPassword.spec.js';
 import { accountPasswordCases } from './accountPasswordCases.js';
 import { accountLegalUpdateCases } from './accountLegalUpdateCases.js';
 import { accountValidationCases } from './accountValidationCases.js';
@@ -27,6 +28,7 @@ for (const theme of ['light', 'dark']) {
   accountRegistrationClayCase(theme);
   accountEnrollmentCases(theme);
   accountPasswordCases(theme);
+  accountForgotPasswordCases(theme);
   accountLegalUpdateCases(theme);
   accountValidationCases(theme);
   accountRegistrationErrorCases(theme);

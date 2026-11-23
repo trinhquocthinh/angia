@@ -74,3 +74,7 @@ it.each(['/account/legal-update', '/account/local-password'])(
     expect(resolveSessionRedirect(waiting, path)).toBeNull();
   },
 );
+
+it('TC-762: khách truy cập được màn quên mật khẩu công khai', () => {
+  expect(resolveSessionRedirect(null, '/forgot-password')).toBeNull();
+});

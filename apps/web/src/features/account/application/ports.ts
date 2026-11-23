@@ -26,3 +26,8 @@ export type SubmitAccountAction = (
   body: AccountActionBody,
   csrfToken: string,
 ) => Promise<AccountResult<void>>;
+
+export type PasswordResetRequest = components['schemas']['RequestPasswordResetRequest'];
+export type SubmitPasswordResetRequest = (
+  body: PasswordResetRequest,
+) => Promise<AccountResult<components['schemas']['RequestPasswordResetResponse']>>;
