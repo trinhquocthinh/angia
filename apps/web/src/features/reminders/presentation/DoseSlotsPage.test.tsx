@@ -29,11 +29,12 @@ const baseProfile: ProfileListItem = {
 
 const mainSession: ProfileSession = {
   account: { id: 'acc-lan', displayName: 'Mẹ Lan', isSystemAdmin: false, healthProfileId: null },
-  family: { id: 'fam-1', name: 'Nhà An' },
+  family: { id: 'fam-1', name: 'Nhà An', isOwner: false },
   role: 'main',
   csrfToken: 'csrf-123',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 

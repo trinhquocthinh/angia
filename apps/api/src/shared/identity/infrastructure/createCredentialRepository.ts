@@ -1,7 +1,16 @@
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, isNotNull, sql } from 'drizzle-orm';
 import type { Database } from '../../db/createDatabase.js';
 import { accountCredentials, accounts } from '../../db/schema/index.js';
 import type { CredentialRepository } from '../application/ports.js';
+
+const credentialSnapshot = {
+  accountId: accounts.id,
+  passwordHash: accountCredentials.passwordHash,
+  credentialVersion: accountCredentials.credentialVersion,
+  lockedAt: accounts.lockedAt,
+  mustChangePassword: accounts.mustChangePassword,
+  tempPasswordExpiresAt: accounts.tempPasswordExpiresAt,
+};
 
 // Tra trước khi biết nhà; dùng role app, nhận cả transaction ngoài để ghi cùng account/legal.
 export function createCredentialRepository(
@@ -10,17 +19,18 @@ export function createCredentialRepository(
   return {
     async findByUsername(usernameNormalized) {
       const [row] = await db
-        .select({
-          accountId: accounts.id,
-          passwordHash: accountCredentials.passwordHash,
-          credentialVersion: accountCredentials.credentialVersion,
-          lockedAt: accounts.lockedAt,
-          mustChangePassword: accounts.mustChangePassword,
-          tempPasswordExpiresAt: accounts.tempPasswordExpiresAt,
-        })
+        .select(credentialSnapshot)
         .from(accounts)
         .innerJoin(accountCredentials, eq(accountCredentials.accountId, accounts.id))
         .where(eq(accounts.usernameNormalized, usernameNormalized));
+      return row ?? null;
+    },
+    async findByVerifiedEmail(emailNormalized) {
+      const [row] = await db
+        .select(credentialSnapshot)
+        .from(accounts)
+        .innerJoin(accountCredentials, eq(accountCredentials.accountId, accounts.id))
+        .where(and(sql`lower(${accounts.email}) = ${emailNormalized}`, isNotNull(accounts.emailVerifiedAt)));
       return row ?? null;
     },
     async insert(accountId, passwordHash) {

@@ -7,6 +7,10 @@
 //  - self_write: POST/PATCH/DELETE /api/me/profile/pain-issues[/...], kiểm expectSelfWriteDenied.
 export type HealthDataRouteKind = 'scoped' | 'list' | 'uniform' | 'self' | 'self_write';
 export const HEALTH_DATA_ROUTES = {
+  // SPEC-072: tài nguyên thuộc tài khoản; POST profileId cũng phải kiểm chéo gia đình.
+  'POST /api/me/data-exports': 'scoped',
+  'GET /api/me/data-exports/:id': 'scoped',
+  'GET /api/me/data-exports/:id/file': 'scoped',
   'POST /api/health-profiles/:id/guardians': 'scoped',
   'GET /api/health-profiles/:id/guardians': 'scoped',
   'DELETE /api/health-profiles/:id/guardians/me': 'scoped',
@@ -117,6 +121,7 @@ type HealthDataRoute = keyof typeof HEALTH_DATA_ROUTES;
 export const MEMBER_BLOCKED_SESSION_ROUTES = Object.keys(HEALTH_DATA_ROUTES).filter(
   (route) =>
     !route.includes('/me/link-invitations/') &&
+    !route.includes(' /api/me/data-exports') &&
     !route.startsWith('GET /api/me/reminders/') &&
     !route.startsWith('GET /api/me/revisit-reminders/') &&
     !route.includes(' /api/me/profile') &&
@@ -143,6 +148,8 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   // SPEC-066: thao tác quản lý, không trả dữ liệu sức khỏe; TC-789 kiểm khác nhà riêng.
   'GET /api/family/members',
   'PATCH /api/family/members/:targetAccountId',
+  // SPEC-062: đặt lại mật khẩu; kiểm chéo gia đình tại resetMemberPasswordRoutes.int.test.ts.
+  'POST /api/family/members/:targetAccountId/password-reset',
   // SPEC-067: tự thao tác; kiểm dữ liệu/ID nhà cũ và DTO strict tại leaveHousehold.int.test.ts.
   'POST /api/family/leave',
   // SPEC-068: trao quyền; probe chéo gia đình tại ownershipOffers.int.test.ts.
@@ -158,6 +165,13 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'POST /api/me/legal-acceptances',
   'POST /api/me/local-credential',
   'POST /api/me/password',
+  // SPEC-073: tự xoá tài khoản, không nhận ID tài nguyên; kiểm nhà cũ tại accountDeletionRoutes.int.test.ts.
+  'POST /api/me/account-deletion',
+  'PATCH /api/me/email',
+  'POST /api/me/email-verifications',
+  'POST /api/auth/email-verifications/confirm',
+  'POST /api/auth/password-reset-requests',
+  'POST /api/auth/password-resets',
   'GET /api/health',
   'GET /api/auth/login',
   'GET /api/auth/callback',

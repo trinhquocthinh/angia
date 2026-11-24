@@ -17,7 +17,7 @@ describe('Đồng bộ nhắc khi sửa/xóa đơn (SPEC-043, Tech Spec 6.1.3)',
     const second = await f.add('2026-11-20');
     const unsent = await f.reminder('2026-11-20');
     const sent = await f.reminder('2026-11-20', true, 'same_day');
-    expect((await f.put(first, '2026-11-25')).status).toBe(200);
+    expect((await f.put(first, vietnamDate(60))).status).toBe(200);
     expect((await f.reminders()).map((r) => r.id).sort()).toEqual([unsent, sent].sort());
     expect((await f.put(second, null)).status).toBe(200);
     expect((await f.reminders()).map((r) => r.id)).toEqual([sent]);
@@ -103,7 +103,7 @@ describe('Đồng bộ nhắc khi sửa/xóa đơn (SPEC-043, Tech Spec 6.1.3)',
     const first = await f.add('2026-11-20');
     const second = await f.add('2026-11-20');
     await f.reminder('2026-11-20');
-    const responses = await Promise.all([f.put(first, '2026-11-25'), f.put(second, null)]);
+    const responses = await Promise.all([f.put(first, vietnamDate(60)), f.put(second, null)]);
     expect(responses.map((r) => r.status)).toEqual([200, 200]);
     expect(await f.reminders()).toEqual([]);
   });

@@ -8,11 +8,12 @@ import { useTemperatures } from './useTemperatures';
 
 const session: ProfileSession = {
   account: { id: 'a', displayName: 'An', isSystemAdmin: false, healthProfileId: 'p' },
-  family: { id: 'f', name: 'Nhà' },
+  family: { id: 'f', name: 'Nhà', isOwner: false },
   role: 'main',
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 const filter = { from: '2026-11-01', to: '2026-11-04' };

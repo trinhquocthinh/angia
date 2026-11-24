@@ -40,7 +40,7 @@ export function todayState(role: 'main' | 'member') {
       csrfToken: 'csrf',
       features: { redactionSuggestions: false },
       role,
-      family: { id: familyId, name: 'Nhà thử' },
+      family: { id: familyId, name: 'Nhà thử', isOwner: false },
       account: {
         id: accountId,
         displayName: 'Mẹ',

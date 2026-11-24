@@ -87,7 +87,7 @@ describe('Đổi mật khẩu qua HTTP và PostgreSQL', () => {
       const login = await t.app.request('/api/auth/password-login', {
         method: 'POST',
         headers: { origin: 'https://angia.example', 'content-type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ identifier: username, password }),
       });
       expect(login.status).toBe(status);
     }

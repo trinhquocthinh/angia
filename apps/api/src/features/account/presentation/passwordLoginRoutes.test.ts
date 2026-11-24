@@ -26,6 +26,7 @@ function fixture() {
         sessionId: 'session',
       })),
     },
+    passwordResetNotices: { findLatestActor: vi.fn(async () => 'Thịnh') },
     logger: { warn: vi.fn() },
   };
   const app = new OpenAPIHono<AppEnv>({
@@ -33,7 +34,7 @@ function fixture() {
   });
   registerAccountRoutes(app, { ...deps, cookies: { secret: TEST_COOKIE_SECRET, secure: false } });
   const request = (
-    body: unknown = { username: 'me.lan', password: 'password' },
+    body: unknown = { identifier: 'me.lan', password: 'password' },
     origin = 'https://angia.test',
     contentType = 'application/json',
   ) =>
@@ -54,6 +55,7 @@ describe('HTTP đăng nhập local', () => {
         csrfToken: expect.any(String),
         expiresAt: expect.any(String),
         passwordChangeRequired: false,
+        passwordResetBy: null,
       },
     });
     expect(response.headers.get('set-cookie')).toContain('HttpOnly; SameSite=Lax');
@@ -74,10 +76,10 @@ describe('HTTP đăng nhập local', () => {
   });
   it.each([
     {},
-    { username: '', password: 'x' },
-    { username: 'x', password: '' },
-    { username: 'x'.repeat(33), password: 'x' },
-    { username: 'x', password: 'x'.repeat(1025) },
+    { identifier: '', password: 'x' },
+    { identifier: 'x', password: '' },
+    { identifier: 'x'.repeat(255), password: 'x' },
+    { identifier: 'x', password: 'x'.repeat(1025) },
   ])('body sai trả 422: %j', async (body) => {
     const { deps, request } = fixture();
     expect((await request(body)).status).toBe(422);
@@ -141,6 +143,9 @@ describe('HTTP đăng nhập local', () => {
       mustChangePassword: true,
       tempPasswordExpiresAt: null,
     });
-    expect(await (await request()).json()).toMatchObject({ session: { passwordChangeRequired: true } });
+    expect(await (await request()).json()).toMatchObject({
+      session: { passwordChangeRequired: true, passwordResetBy: 'Thịnh' },
+    });
+    expect(deps.passwordResetNotices.findLatestActor).toHaveBeenCalledWith('account');
   });
 });

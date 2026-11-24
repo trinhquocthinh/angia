@@ -1,3 +1,14 @@
+import { registerPurgeDeletedUsernamesJob } from '@src/jobs/registerPurgeDeletedUsernamesJob.js';
+import { createDeletedUsernameCleanupRepository } from '@src/features/deletedUsernameCleanup/infrastructure/createDeletedUsernameCleanupRepository.js';
+import { registerCleanupDataExportsJob } from '@src/jobs/registerCleanupDataExportsJob.js';
+import { createCleanupDataExportsRepository } from '@src/features/dataExportCleanup/infrastructure/createCleanupDataExportsRepository.js';
+import { createCleanupDataExportsStorage } from '@src/features/dataExportCleanup/infrastructure/createCleanupDataExportsStorage.js';
+import { registerBuildDataExportJob } from '@src/jobs/registerBuildDataExportJob.js';
+import { createDataExportRepository } from '@src/features/dataExport/infrastructure/createDataExportRepository.js';
+import { createExportArchive } from '@src/features/dataExport/infrastructure/createExportArchive.js';
+import { createExportImageReader } from '@src/features/dataExport/infrastructure/createExportImageReader.js';
+import { createSmtpMailer } from '@src/shared/mailer/createSmtpMailer.js';
+import { registerSendTransactionalEmailJob } from '@src/jobs/registerSendTransactionalEmailJob.js';
 import { createSanitizeRepository } from '@src/features/documentSanitize/infrastructure/createSanitizeRepository.js';
 import { createSanitizeStorage } from '@src/features/documentSanitize/infrastructure/createSanitizeStorage.js';
 import { createJpegSanitizer } from '@src/features/documentSanitize/infrastructure/createJpegSanitizer.js';
@@ -167,6 +178,28 @@ try {
     },
     logger,
   );
+  await registerCleanupDataExportsJob(
+    boss,
+    {
+      repository: createCleanupDataExportsRepository(pool),
+      storage: createCleanupDataExportsStorage(createS3Client(config), config.S3_BUCKET),
+    },
+    logger,
+  );
+  await registerPurgeDeletedUsernamesJob(
+    boss,
+    { repository: createDeletedUsernameCleanupRepository(pool) },
+    logger,
+  );
+  await registerBuildDataExportJob(
+    boss,
+    {
+      repository: createDataExportRepository(pool),
+      archive: createExportArchive(createS3Client(config), config.S3_BUCKET),
+      images: createExportImageReader(createS3Client(config), config.S3_BUCKET),
+    },
+    logger,
+  );
   // SPEC-069: sau job vét hồ sơ để queue purge-profile-objects đã tồn tại khi job xoá nhà enqueue.
   await registerExecuteFamilyDeletionJob(boss, {
     repository: createFamilyDeletionRepository(pool, boss),
@@ -188,6 +221,8 @@ try {
       logger,
     );
   else logger.warn('Chưa cấu hình WEB_PUSH_*, không gửi lời nhắc');
+  if (config.smtp) await registerSendTransactionalEmailJob(boss, createSmtpMailer(config.smtp), logger);
+  else logger.warn('Chưa cấu hình SMTP_*, không gửi email giao dịch');
   const idpSyncEnabled = await registerIdpSessionSync(config, pool);
   logger.info(
     { aiRunMode: config.AI_RUN_MODE, aiRoutingSource: 'database', idpSyncEnabled },

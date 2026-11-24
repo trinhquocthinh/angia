@@ -1,3 +1,8 @@
+import { createAccountDeletionDependencies } from '@src/features/account/infrastructure/createAccountDeletionDependencies.js';
+import { createDataExportDependencies } from '@src/features/dataExport/infrastructure/createDataExportDependencies.js';
+import { createEmailPasswordResets } from '@src/features/account/infrastructure/createEmailPasswordResets.js';
+import { createAccountEmails } from '@src/features/account/infrastructure/createAccountEmails.js';
+import { createPasswordResetDependencies } from '@src/features/account/infrastructure/createPasswordResetDependencies.js';
 import { createHouseholdLeaveRepository } from '@src/features/household/infrastructure/createHouseholdLeaveRepository.js';
 import { createHouseholdDependencies } from '@src/features/household/infrastructure/createHouseholdDependencies.js';
 import { createLocalCredentialLookup } from '@src/features/account/infrastructure/createLocalCredentialLookup.js';
@@ -8,8 +13,6 @@ import { createLocalLoginSessions } from '@src/features/account/infrastructure/c
 import { createLocalIdentityProvider } from '@src/shared/identity/infrastructure/createLocalIdentityProvider.js';
 import { createCredentialRepository } from '@src/shared/identity/infrastructure/createCredentialRepository.js';
 import { getSocketClientIp } from '@src/shared/rateLimit/infrastructure/getSocketClientIp.js';
-import { createRateLimitStore } from '@src/shared/rateLimit/infrastructure/createRateLimitStore.js';
-import { createRateLimitKeyHasher } from '@src/shared/rateLimit/infrastructure/createRateLimitKeyHasher.js';
 import { createAccountRegistrationUnitOfWork } from '@src/features/account/infrastructure/createAccountRegistrationUnitOfWork.js';
 import { createRegistrationGate } from '@src/features/account/infrastructure/createRegistrationGate.js';
 import { createLegalVersions } from '@src/features/account/infrastructure/createLegalVersions.js';
@@ -50,17 +53,7 @@ import { createProfileRepository } from '@src/features/profiles/infrastructure/c
 import { createProfileObjectStorage } from '@src/features/profiles/infrastructure/createProfileObjectStorage.js';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { tmpdir } from 'node:os';
-import {
-  SANITIZE_DOCUMENT_IMAGE_QUEUE,
-  SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS,
-  REQUEUE_AWAITING_BUDGET_QUEUE,
-  REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS,
-  PURGE_PROFILE_OBJECTS_QUEUE,
-  PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS,
-  PURGE_PENDING_OBJECTS_QUEUE,
-  PURGE_PENDING_OBJECTS_QUEUE_OPTIONS,
-  ensureExtractDocumentQueues,
-} from '@angia/contracts';
+import * as jobs from '@angia/contracts';
 import { serve } from '@hono/node-server';
 import { pino } from 'pino';
 import { createApp } from '@src/createApp.js';
@@ -93,12 +86,14 @@ const s3 = createS3Client(config);
 const boss = createPgBoss(config.DATABASE_URL, logger);
 await boss.start();
 // Tạo queue idempotent để API gửi được job trước khi worker khởi động.
-await boss.createQueue(SANITIZE_DOCUMENT_IMAGE_QUEUE, SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS);
+await boss.createQueue(jobs.SANITIZE_DOCUMENT_IMAGE_QUEUE, jobs.SANITIZE_DOCUMENT_IMAGE_QUEUE_OPTIONS);
 
-await ensureExtractDocumentQueues(boss);
-await boss.createQueue(REQUEUE_AWAITING_BUDGET_QUEUE, REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS);
-await boss.createQueue(PURGE_PROFILE_OBJECTS_QUEUE, PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS);
-await boss.createQueue(PURGE_PENDING_OBJECTS_QUEUE, PURGE_PENDING_OBJECTS_QUEUE_OPTIONS);
+await boss.createQueue(jobs.BUILD_DATA_EXPORT_QUEUE, jobs.BUILD_DATA_EXPORT_QUEUE_OPTIONS);
+await jobs.ensureExtractDocumentQueues(boss);
+await boss.createQueue(jobs.REQUEUE_AWAITING_BUDGET_QUEUE, jobs.REQUEUE_AWAITING_BUDGET_QUEUE_OPTIONS);
+await boss.createQueue(jobs.PURGE_PROFILE_OBJECTS_QUEUE, jobs.PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS);
+await boss.createQueue(jobs.SEND_TRANSACTIONAL_EMAIL_QUEUE, jobs.SEND_TRANSACTIONAL_EMAIL_QUEUE_OPTIONS);
+await boss.createQueue(jobs.PURGE_PENDING_OBJECTS_QUEUE, jobs.PURGE_PENDING_OBJECTS_QUEUE_OPTIONS);
 
 // F03b (SPEC-030): ngưỡng quota dùng chung cho upload và route mức đã dùng.
 const quotaPolicy = {
@@ -124,7 +119,10 @@ const scanQuotaDefaults = {
 const sessionRepository = createSessionRepository(db);
 const hasher = createArgon2PasswordHasher();
 const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
+const accountDeletion = createAccountDeletionDependencies(db, boss, s3, config, hasher, logger);
 const app = createApp({
+  accountDeletion,
+  dataExport: createDataExportDependencies(db, boss, s3, config),
   householdLeave: {
     repository: createHouseholdLeaveRepository(db, boss),
     storage: createProfileObjectStorage(s3, config.S3_BUCKET),
@@ -134,12 +132,8 @@ const app = createApp({
   legal: createLegalRepository(db),
   account: {
     clientIp: getSocketClientIp,
-    rateLimit: {
-      store: createRateLimitStore(db),
-      keyHasher: createRateLimitKeyHasher(config.SESSION_COOKIE_SECRET),
-      now: Date.now,
-    },
-    accounts: createAccountRegistrationUnitOfWork(db),
+    rateLimit: accountDeletion.rateLimit,
+    accounts: createAccountRegistrationUnitOfWork(db, accountDeletion.hashUsername),
     gate: createRegistrationGate(db),
     legalVersions: createLegalVersions(db, () => new Date()),
     invitationVerifier: createInvitationVerifier(db),
@@ -147,6 +141,9 @@ const app = createApp({
     identity,
     localLoginSessions: createLocalLoginSessions(db),
     passwords: createLocalPasswordChanges(db),
+    emailPasswordResets: createEmailPasswordResets(db, boss, config.APP_BASE_URL),
+    emails: createAccountEmails(db, boss, config.APP_BASE_URL),
+    ...createPasswordResetDependencies(db),
     lookupLocalCredential: createLocalCredentialLookup(db),
     enrollments: createLocalCredentialEnrollments(db),
     enrollmentEnabled: config.LOCAL_ENROLLMENT_ENABLED,

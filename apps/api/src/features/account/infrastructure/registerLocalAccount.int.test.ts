@@ -1,3 +1,4 @@
+import { createUsernameHasher } from './createUsernameHasher.js';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import pg from 'pg';
@@ -60,7 +61,7 @@ describe('Đăng ký tài khoản local trên PostgreSQL thật bằng role app 
     legalVersions: createLegalVersions(db, () => new Date('2026-06-01T00:00:00Z')),
     invitationVerifier: createInvitationVerifier(db),
     hasher: createArgon2PasswordHasher(),
-    accounts: createAccountRegistrationUnitOfWork(db),
+    accounts: createAccountRegistrationUnitOfWork(db, createUsernameHasher('test-username-secret'.repeat(3))),
     sessions: createSessionRepository(db),
     generateToken: () => randomBytes(32).toString('base64url'),
     now: () => new Date('2026-06-01T12:00:00Z'),
@@ -129,7 +130,10 @@ describe('Đăng ký tài khoản local trên PostgreSQL thật bằng role app 
   });
 
   it('TC-737: race unique violation (23505) trong transaction trả ERR_USERNAME_TAKEN', async () => {
-    const uow = createAccountRegistrationUnitOfWork(db);
+    const uow = createAccountRegistrationUnitOfWork(
+      db,
+      createUsernameHasher('test-username-secret'.repeat(3)),
+    );
     const hash = '$argon2id$v=19$m=65536,t=3,p=1$c2FsdA$aGFzaA';
     const record = {
       usernameNormalized: 'me.lan', // đã tồn tại từ TC-736
@@ -184,7 +188,10 @@ describe('Đăng ký tài khoản local trên PostgreSQL thật bằng role app 
   });
 
   it('TC-743/TC-896: pháp lý cũ bị kiểm lại trong transaction, không mồ côi', async () => {
-    const uow = createAccountRegistrationUnitOfWork(db);
+    const uow = createAccountRegistrationUnitOfWork(
+      db,
+      createUsernameHasher('test-username-secret'.repeat(3)),
+    );
     const hash = '$argon2id$v=19$m=65536,t=3,p=1$c2FsdA$aGFzaA';
     const nonExistentVersionId = randomUUID();
     const record = {
@@ -216,7 +223,12 @@ describe('Đăng ký tài khoản local trên PostgreSQL thật bằng role app 
       legalAcceptance: { termsVersionId: termsId, privacyVersionId: privacyId },
     };
 
-    expect(await createAccountRegistrationUnitOfWork(db).register(record)).toEqual({
+    expect(
+      await createAccountRegistrationUnitOfWork(
+        db,
+        createUsernameHasher('test-username-secret'.repeat(3)),
+      ).register(record),
+    ).toEqual({
       ok: false,
       code: 'ERR_NOT_FOUND',
     });

@@ -6,11 +6,12 @@ import { useInvitationManager } from './useInvitationManager';
 import { profileScopeKey } from './profileScopeKey';
 const session: ProfileSession = {
   account: { id: 'a', displayName: 'An', isSystemAdmin: false, healthProfileId: null },
-  family: { id: 'f', name: 'Nhà An' },
+  family: { id: 'f', name: 'Nhà An', isOwner: false },
   role: 'main',
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 function mount(client: QueryClient, repo: ProfilesRepository, context = session) {

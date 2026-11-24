@@ -1,6 +1,7 @@
 import type { SeededSession } from './seedAuthFixtures.js';
 // Tài nguyên đích của một request: của gia đình nạn nhân, hoặc toàn ID/token không tồn tại.
 export interface Target {
+  exportId: string;
   profileId: string;
   painIssueId: string;
   painEntryId: string;

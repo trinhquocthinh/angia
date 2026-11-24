@@ -3,6 +3,12 @@ import type { Context } from 'hono';
 
 // Mã lỗi đang dùng, thông điệp đúng nguyên văn SDD §4.1–4.2.
 const ERROR_CATALOG = {
+  ERR_RESET_TOKEN_INVALID: {
+    status: 400,
+    message: 'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.',
+  },
+  ERR_EMAIL_TAKEN: { status: 409, message: 'Email này đã được một tài khoản khác xác minh.' },
+  ERR_VERIFICATION_TOKEN_INVALID: { status: 400, message: 'Liên kết xác minh không hợp lệ hoặc đã hết hạn.' },
   ERR_OWNERSHIP_TRANSFER_PENDING: {
     status: 409,
     message: 'Đang có một đề nghị trao quyền Chủ hộ chờ trả lời.',

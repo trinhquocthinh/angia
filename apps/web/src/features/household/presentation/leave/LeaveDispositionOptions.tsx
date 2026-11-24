@@ -1,12 +1,19 @@
 import type { OwnProfileDisposition } from '../../application/householdHomePorts';
+import './household-leave.css';
 
 type Props = {
-  disposition: OwnProfileDisposition;
+  disposition: OwnProfileDisposition | null;
   pending: boolean;
   onChange: (value: OwnProfileDisposition) => void;
+  name?: string;
 };
 
-export function LeaveDispositionOptions({ disposition, pending, onChange }: Props) {
+export function LeaveDispositionOptions({
+  disposition,
+  pending,
+  onChange,
+  name = 'leave-profile-disposition',
+}: Props) {
   return (
     <div
       className="household-leave-options"
@@ -19,7 +26,7 @@ export function LeaveDispositionOptions({ disposition, pending, onChange }: Prop
       >
         <input
           type="radio"
-          name="leave-profile-disposition"
+          name={name}
           value="keep"
           checked={disposition === 'keep'}
           disabled={pending}
@@ -35,7 +42,7 @@ export function LeaveDispositionOptions({ disposition, pending, onChange }: Prop
       >
         <input
           type="radio"
-          name="leave-profile-disposition"
+          name={name}
           value="delete"
           checked={disposition === 'delete'}
           disabled={pending}

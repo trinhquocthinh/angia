@@ -55,6 +55,20 @@ describe('Repository credential local bằng role app', () => {
     expect(await repository.findByUsername('unknown')).toBeNull();
   });
 
+  it('TC-923: tra lower(email) chỉ trả credential đã xác minh', async () => {
+    const account = await insertAccount();
+    const repository = createCredentialRepository(db);
+    await repository.insert(account.id, PASSWORD_HASH);
+    await db.update(accounts).set({ email: 'LAN@Example.COM' }).where(eq(accounts.id, account.id));
+    expect(await repository.findByVerifiedEmail('lan@example.com')).toBeNull();
+    await db.update(accounts).set({ emailVerifiedAt: new Date() }).where(eq(accounts.id, account.id));
+    expect(await repository.findByVerifiedEmail('lan@example.com')).toMatchObject({
+      accountId: account.id,
+      passwordHash: PASSWORD_HASH,
+    });
+    expect(await repository.findByVerifiedEmail('missing@example.com')).toBeNull();
+  });
+
   it('TC-895 account chưa có credential không dùng được đăng nhập local', async () => {
     const account = await insertAccount();
     expect(await createCredentialRepository(db).findByUsername(account.username)).toBeNull();

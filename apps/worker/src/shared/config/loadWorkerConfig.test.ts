@@ -24,6 +24,11 @@ const sitIdp = {
   AUTHENTIK_API_TOKEN: 't',
   IDP_ACCESS_GROUP_NAME: 'angia-users',
   ADMIN_GROUP_NAME: 'angia-admins',
+  SMTP_HOST: 'mailpit',
+  SMTP_PORT: '1025',
+  MAIL_FROM: 'no-reply@example.test',
+  SMTP_USER: 'user',
+  SMTP_PASSWORD: 'password',
 };
 
 describe('Cấu hình worker', () => {
@@ -96,12 +101,19 @@ describe('Cấu hình worker', () => {
     };
     expect(() => loadWorkerConfig({ ...base, STACK: 'sit' })).toThrow('AUTHENTIK_API_TOKEN');
     expect(() =>
-      loadWorkerConfig({ ...base, STACK: 'prod', ...pushVars, ...idp, IDP_ACCESS_GROUP_NAME: undefined }),
+      loadWorkerConfig({
+        ...base,
+        STACK: 'prod',
+        ...sitIdp,
+        ...pushVars,
+        ...idp,
+        IDP_ACCESS_GROUP_NAME: undefined,
+      }),
     ).toThrow('IDP_ACCESS_GROUP_NAME');
     // dev có token thì phải đủ bộ biến
     expect(() => loadWorkerConfig({ ...base, AUTHENTIK_API_TOKEN: 't' })).toThrow('AUTHENTIK_URL');
     expect(
-      loadWorkerConfig({ ...base, STACK: 'sit', ...pushVars, ...idp, IDP_SYNC_DRY_RUN: 'true' }),
+      loadWorkerConfig({ ...base, STACK: 'sit', ...sitIdp, ...pushVars, ...idp, IDP_SYNC_DRY_RUN: 'true' }),
     ).toMatchObject({
       IDP_SYNC_DRY_RUN: true,
       IDP_ACCESS_GROUP_NAME: 'angia-sit-users',
@@ -122,21 +134,21 @@ describe('Cấu hình worker', () => {
       IDP_ACCESS_GROUP_NAME: ' angia-sit-users ',
       ADMIN_GROUP_NAME: ' angia-admins ',
     };
-    expect(loadWorkerConfig({ ...base, STACK: 'sit', ...pushVars, ...idp })).toMatchObject({
+    expect(loadWorkerConfig({ ...base, STACK: 'sit', ...sitIdp, ...pushVars, ...idp })).toMatchObject({
       AUTHENTIK_API_TOKEN: 't',
       IDP_ACCESS_GROUP_NAME: 'angia-sit-users',
       ADMIN_GROUP_NAME: 'angia-admins',
     });
     for (const key of ['AUTHENTIK_API_TOKEN', 'IDP_ACCESS_GROUP_NAME', 'ADMIN_GROUP_NAME'] as const) {
-      expect(() => loadWorkerConfig({ ...base, STACK: 'sit', ...pushVars, ...idp, [key]: '   ' })).toThrow(
-        key,
-      );
+      expect(() =>
+        loadWorkerConfig({ ...base, STACK: 'sit', ...sitIdp, ...pushVars, ...idp, [key]: '   ' }),
+      ).toThrow(key);
       expect(() => loadWorkerConfig({ ...base, ...idp, [key]: ' \t' })).toThrow(key);
     }
     // API không có mặc định cho ADMIN_GROUP_NAME: sit/prod thiếu thì dừng, dev giữ mặc định.
     for (const ADMIN_GROUP_NAME of [undefined, ''])
       expect(() =>
-        loadWorkerConfig({ ...base, STACK: 'prod', ...pushVars, ...idp, ADMIN_GROUP_NAME }),
+        loadWorkerConfig({ ...base, STACK: 'prod', ...sitIdp, ...pushVars, ...idp, ADMIN_GROUP_NAME }),
       ).toThrow('ADMIN_GROUP_NAME');
     expect(loadWorkerConfig({ ...base, ADMIN_GROUP_NAME: '' }).ADMIN_GROUP_NAME).toBe('angia-admins');
   });

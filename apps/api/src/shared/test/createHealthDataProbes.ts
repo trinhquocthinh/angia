@@ -125,4 +125,10 @@ const recordProbes = (t: ProfileTestApp) =>
 export const createHealthDataProbes = (t: ProfileTestApp): Record<RouteOfKind<'scoped'>, Probe> => ({
   ...profileProbes(t),
   ...recordProbes(t),
+  'POST /api/me/data-exports': (user, target) =>
+    t.call(user, 'POST', '/api/me/data-exports', { scope: { profileId: target.profileId } }),
+  'GET /api/me/data-exports/:id': (user, target) =>
+    t.call(user, 'GET', `/api/me/data-exports/${target.exportId}`),
+  'GET /api/me/data-exports/:id/file': (user, target) =>
+    t.call(user, 'GET', `/api/me/data-exports/${target.exportId}/file`),
 });

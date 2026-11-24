@@ -31,6 +31,7 @@ const session: ProfileSession = {
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 function render(current: ProfileSession, path: string) {
@@ -61,7 +62,7 @@ it.each(['main', 'member'] as const)('TC-767: đã có nhà giữ điều hướ
     {
       ...session,
       role,
-      family: { id: 'family', name: 'Nhà Lan' },
+      family: { id: 'family', name: 'Nhà Lan', isOwner: false },
       account: { ...session.account, healthProfileId: role === 'member' ? 'profile' : null },
     },
     '/',
@@ -69,7 +70,10 @@ it.each(['main', 'member'] as const)('TC-767: đã có nhà giữ điều hướ
   expect(html).toContain('Điều hướng chính');
 });
 it('TC-767: member chưa liên kết không hiện điều hướng hoặc tìm hồ sơ', () => {
-  const html = render({ ...session, role: 'member', family: { id: 'family', name: 'Nhà Lan' } }, '/');
+  const html = render(
+    { ...session, role: 'member', family: { id: 'family', name: 'Nhà Lan', isOwner: false } },
+    '/',
+  );
   expect(html).not.toContain('Điều hướng chính');
   expect(html).not.toContain('Tìm hồ sơ thành viên');
 });
@@ -78,7 +82,7 @@ it('TC-767: trang admin không hiện ba tab dù admin đang có nhà', () => {
     {
       ...session,
       role: 'main',
-      family: { id: 'family', name: 'Nhà Lan' },
+      family: { id: 'family', name: 'Nhà Lan', isOwner: false },
       account: { ...session.account, isSystemAdmin: true },
     },
     '/admin',
@@ -98,6 +102,19 @@ it('TC-767: menu chỉ có một mục hồ sơ và bỏ cài đặt gia đình'
   );
   expect(html.match(/Hồ sơ của tôi/g)).toHaveLength(1);
   expect(html).toContain('href="/my-profile"');
+  expect(html).toContain('Quản lý tài khoản');
+  expect(html).toContain('href="/account"');
+  expect(html.indexOf('Quản lý tài khoản')).toBeLessThan(html.indexOf('Đăng xuất'));
   expect(html).not.toContain('Hồ sơ cá nhân');
   expect(html).not.toContain('Cài đặt gia đình');
+});
+it('TC-925: menu tài khoản luôn có mục Quản lý tài khoản trước Đăng xuất dù chưa có nhà', () => {
+  const html = renderToStaticMarkup(
+    <ThemeProvider>
+      <AccountMenuPanel session={session} pending={false} error={false} onLogout={vi.fn()} />
+    </ThemeProvider>,
+  );
+  expect(html).toContain('Quản lý tài khoản');
+  expect(html).toContain('href="/account"');
+  expect(html.indexOf('Quản lý tài khoản')).toBeLessThan(html.indexOf('Đăng xuất'));
 });

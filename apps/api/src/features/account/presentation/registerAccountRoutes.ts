@@ -1,3 +1,8 @@
+import type { EmailPasswordResetDeps } from '@src/features/account/application/passwordResetPorts.js';
+import { registerPasswordResetRoutes } from './registerPasswordResetRoutes.js';
+import { registerEmailRoutes } from './registerEmailRoutes.js';
+import { requireTrustedJson } from './requireTrustedJson.js';
+import { registerResetMemberPasswordRoute } from './registerResetMemberPasswordRoute.js';
 import { PasswordHashBusyError } from '@src/shared/identity/application/PasswordHashBusyError.js';
 import { rateLimitByIp } from '@src/shared/rateLimit/presentation/rateLimitByIp.js';
 import { rateLimitPolicies } from '@src/shared/rateLimit/domain/rateLimitPolicies.js';
@@ -6,7 +11,7 @@ import type { ClientIpResolver } from '@src/shared/rateLimit/application/ClientI
 import type { OpenAPIHono } from '@hono/zod-openapi';
 import type { Logger } from 'pino';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
-import { errorJson, errorResponse } from '@src/shared/http/errorResponse.js';
+import { errorJson } from '@src/shared/http/errorResponse.js';
 import type { CookieSettings } from '@src/shared/auth/presentation/pendingLoginCookie.js';
 import { writeSessionCookie } from '@src/shared/auth/presentation/sessionCookie.js';
 import { registerLocalCredentialRoute } from './registerLocalCredentialRoute.js';
@@ -15,7 +20,9 @@ import { loginLocalAccount } from '../application/loginLocalAccount.js';
 import { registerLocalAccount } from '../application/registerLocalAccount.js';
 import type {
   EnrollLocalCredentialDeps,
+  AccountEmailDeps,
   ChangeLocalPasswordDeps,
+  ResetMemberPasswordDeps,
   LoginLocalAccountDeps,
   RegisterLocalAccountDeps,
 } from '../application/ports.js';
@@ -24,7 +31,10 @@ import { passwordLoginRoute, registerAccountRoute } from './registerAccountRoute
 type AccountRouteDeps = RegisterLocalAccountDeps &
   LoginLocalAccountDeps &
   ChangeLocalPasswordDeps &
-  EnrollLocalCredentialDeps & {
+  ResetMemberPasswordDeps &
+  EnrollLocalCredentialDeps &
+  AccountEmailDeps &
+  EmailPasswordResetDeps & {
     appBaseUrl: string;
     cookies: CookieSettings;
     rateLimit: RateLimitDependencies;
@@ -33,8 +43,11 @@ type AccountRouteDeps = RegisterLocalAccountDeps &
   };
 
 export function registerAccountRoutes(app: OpenAPIHono<AppEnv>, deps: AccountRouteDeps): void {
+  registerEmailRoutes(app, deps);
+  registerPasswordResetRoutes(app, deps);
   registerPasswordLogin(app, deps);
   registerChangePasswordRoute(app, deps);
+  registerResetMemberPasswordRoute(app, deps);
   registerLocalCredentialRoute(app, deps);
   requireTrustedJson(app, registerAccountRoute.path, deps.appBaseUrl);
   app.use(
@@ -70,19 +83,6 @@ export function registerAccountRoutes(app: OpenAPIHono<AppEnv>, deps: AccountRou
   });
 }
 
-function requireTrustedJson(app: OpenAPIHono<AppEnv>, path: string, appBaseUrl: string): void {
-  const origin = new URL(appBaseUrl).origin;
-  // Trước validator: body sai không bỏ qua kiểm Origin/JSON, không tiêu lượt.
-  app.use(path, async (c, next) => {
-    c.header('Cache-Control', 'no-store');
-    const mediaType = c.req.header('Content-Type')?.split(';')[0]?.trim().toLowerCase();
-    if (c.req.header('Origin') !== origin || mediaType !== 'application/json') {
-      return errorResponse(c, 'ERR_FORBIDDEN');
-    }
-    await next();
-  });
-}
-
 function registerPasswordLogin(app: OpenAPIHono<AppEnv>, deps: AccountRouteDeps): void {
   requireTrustedJson(app, passwordLoginRoute.path, deps.appBaseUrl);
   app.openapi(passwordLoginRoute, async (c) => {
@@ -105,6 +105,7 @@ function registerPasswordLogin(app: OpenAPIHono<AppEnv>, deps: AccountRouteDeps)
           csrfToken: session.csrfToken,
           expiresAt: session.expiresAt.toISOString(),
           passwordChangeRequired: session.passwordChangeRequired,
+          passwordResetBy: session.passwordResetBy,
         },
       },
       200,

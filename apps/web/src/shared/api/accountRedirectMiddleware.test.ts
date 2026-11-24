@@ -57,3 +57,33 @@ it('TC-752: điều hướng thất bại vẫn giữ phản hồi lỗi cho cal
   await expect(accountRedirectMiddleware.onResponse!({ response } as never)).resolves.toBeUndefined();
   expect(response.bodyUsed).toBe(false);
 });
+
+it('TC-762: phiên hạn chế vẫn ở lại màn quên mật khẩu công khai', async () => {
+  vi.stubGlobal('location', { pathname: '/forgot-password' });
+  const navigate = vi.fn();
+  registerAccountNavigator(navigate);
+  await accountRedirectMiddleware.onResponse!({
+    response: Response.json({ error: { code: 'ERR_PASSWORD_CHANGE_REQUIRED' } }, { status: 403 }),
+  } as never);
+  expect(navigate).not.toHaveBeenCalled();
+});
+
+it('TC-764: phiên hạn chế vẫn ở lại màn đặt lại mật khẩu công khai', async () => {
+  vi.stubGlobal('location', { pathname: '/reset-password' });
+  const navigate = vi.fn();
+  registerAccountNavigator(navigate);
+  await accountRedirectMiddleware.onResponse!({
+    response: Response.json({ error: { code: 'ERR_PASSWORD_CHANGE_REQUIRED' } }, { status: 403 }),
+  } as never);
+  expect(navigate).not.toHaveBeenCalled();
+});
+
+it('TC-925: phiên hạn chế vẫn ở lại màn xác minh email công khai', async () => {
+  vi.stubGlobal('location', { pathname: '/verify-email' });
+  const navigate = vi.fn();
+  registerAccountNavigator(navigate);
+  await accountRedirectMiddleware.onResponse!({
+    response: Response.json({ error: { code: 'ERR_PASSWORD_CHANGE_REQUIRED' } }, { status: 403 }),
+  } as never);
+  expect(navigate).not.toHaveBeenCalled();
+});

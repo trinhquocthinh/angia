@@ -12,13 +12,17 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ConsentInviteRouteImport } from './routes/consent-invite'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LinkInviteRouteImport } from './routes/link-invite'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MyProfileRouteImport } from './routes/my-profile'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as UploadRouteImport } from './routes/upload'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as WaitingRouteImport } from './routes/waiting'
+import { Route as AccountIndexRouteImport } from './routes/account.index'
 import { Route as AccountChangePasswordRouteImport } from './routes/account.change-password'
 import { Route as AccountLegalUpdateRouteImport } from './routes/account.legal-update'
 import { Route as AccountLocalPasswordRouteImport } from './routes/account.local-password'
@@ -61,6 +65,11 @@ const ConsentInviteRoute = ConsentInviteRouteImport.update({
   path: '/consent-invite',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LinkInviteRoute = LinkInviteRouteImport.update({
   id: '/link-invite',
   path: '/link-invite',
@@ -86,14 +95,29 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UploadRoute = UploadRouteImport.update({
   id: '/upload',
   path: '/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WaitingRoute = WaitingRouteImport.update({
   id: '/waiting',
   path: '/waiting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountIndexRoute = AccountIndexRouteImport.update({
+  id: '/account/',
+  path: '/account/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountChangePasswordRoute = AccountChangePasswordRouteImport.update({
@@ -243,12 +267,15 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/consent-invite': typeof ConsentInviteRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/link-invite': typeof LinkInviteRoute
   '/login': typeof LoginRoute
   '/my-profile': typeof MyProfileRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/upload': typeof UploadRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/waiting': typeof WaitingRoute
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/legal-update': typeof AccountLegalUpdateRoute
@@ -261,6 +288,7 @@ export interface FileRoutesByFullPath {
   '/review/$documentId': typeof ReviewDocumentIdRoute
   '/revisit-reminders/$reminderId': typeof RevisitRemindersReminderIdRoute
   '/spike/body-3d': typeof SpikeBody3dRoute
+  '/account/': typeof AccountIndexRoute
   '/review/': typeof ReviewIndexRoute
   '/my-profile/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
@@ -281,12 +309,15 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/consent-invite': typeof ConsentInviteRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/link-invite': typeof LinkInviteRoute
   '/login': typeof LoginRoute
   '/my-profile': typeof MyProfileRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/upload': typeof UploadRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/waiting': typeof WaitingRoute
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/legal-update': typeof AccountLegalUpdateRoute
@@ -299,6 +330,7 @@ export interface FileRoutesByTo {
   '/review/$documentId': typeof ReviewDocumentIdRoute
   '/revisit-reminders/$reminderId': typeof RevisitRemindersReminderIdRoute
   '/spike/body-3d': typeof SpikeBody3dRoute
+  '/account': typeof AccountIndexRoute
   '/review': typeof ReviewIndexRoute
   '/my-profile/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId/documents': typeof ProfilesProfileIdDocumentsRoute
@@ -320,12 +352,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/consent-invite': typeof ConsentInviteRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/link-invite': typeof LinkInviteRoute
   '/login': typeof LoginRoute
   '/my-profile': typeof MyProfileRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/upload': typeof UploadRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/waiting': typeof WaitingRoute
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/legal-update': typeof AccountLegalUpdateRoute
@@ -338,6 +373,7 @@ export interface FileRoutesById {
   '/review/$documentId': typeof ReviewDocumentIdRoute
   '/revisit-reminders/$reminderId': typeof RevisitRemindersReminderIdRoute
   '/spike/body-3d': typeof SpikeBody3dRoute
+  '/account/': typeof AccountIndexRoute
   '/review/': typeof ReviewIndexRoute
   '/my-profile_/pain/$issueId': typeof MyProfilePainIssueIdRoute
   '/profiles/$profileId_/documents': typeof ProfilesProfileIdDocumentsRoute
@@ -360,12 +396,15 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/consent-invite'
+    | '/forgot-password'
     | '/link-invite'
     | '/login'
     | '/my-profile'
     | '/notifications'
     | '/register'
+    | '/reset-password'
     | '/upload'
+    | '/verify-email'
     | '/waiting'
     | '/account/change-password'
     | '/account/legal-update'
@@ -378,6 +417,7 @@ export interface FileRouteTypes {
     | '/review/$documentId'
     | '/revisit-reminders/$reminderId'
     | '/spike/body-3d'
+    | '/account/'
     | '/review/'
     | '/my-profile/pain/$issueId'
     | '/profiles/$profileId/documents'
@@ -398,12 +438,15 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/consent-invite'
+    | '/forgot-password'
     | '/link-invite'
     | '/login'
     | '/my-profile'
     | '/notifications'
     | '/register'
+    | '/reset-password'
     | '/upload'
+    | '/verify-email'
     | '/waiting'
     | '/account/change-password'
     | '/account/legal-update'
@@ -416,6 +459,7 @@ export interface FileRouteTypes {
     | '/review/$documentId'
     | '/revisit-reminders/$reminderId'
     | '/spike/body-3d'
+    | '/account'
     | '/review'
     | '/my-profile/pain/$issueId'
     | '/profiles/$profileId/documents'
@@ -436,12 +480,15 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/consent-invite'
+    | '/forgot-password'
     | '/link-invite'
     | '/login'
     | '/my-profile'
     | '/notifications'
     | '/register'
+    | '/reset-password'
     | '/upload'
+    | '/verify-email'
     | '/waiting'
     | '/account/change-password'
     | '/account/legal-update'
@@ -454,6 +501,7 @@ export interface FileRouteTypes {
     | '/review/$documentId'
     | '/revisit-reminders/$reminderId'
     | '/spike/body-3d'
+    | '/account/'
     | '/review/'
     | '/my-profile_/pain/$issueId'
     | '/profiles/$profileId_/documents'
@@ -475,12 +523,15 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   ConsentInviteRoute: typeof ConsentInviteRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LinkInviteRoute: typeof LinkInviteRoute
   LoginRoute: typeof LoginRoute
   MyProfileRoute: typeof MyProfileRoute
   NotificationsRoute: typeof NotificationsRoute
   RegisterRoute: typeof RegisterRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   UploadRoute: typeof UploadRoute
+  VerifyEmailRoute: typeof VerifyEmailRoute
   WaitingRoute: typeof WaitingRoute
   AccountChangePasswordRoute: typeof AccountChangePasswordRoute
   AccountLegalUpdateRoute: typeof AccountLegalUpdateRoute
@@ -493,6 +544,7 @@ export interface RootRouteChildren {
   ReviewDocumentIdRoute: typeof ReviewDocumentIdRoute
   RevisitRemindersReminderIdRoute: typeof RevisitRemindersReminderIdRoute
   SpikeBody3dRoute: typeof SpikeBody3dRoute
+  AccountIndexRoute: typeof AccountIndexRoute
   ReviewIndexRoute: typeof ReviewIndexRoute
   MyProfilePainIssueIdRoute: typeof MyProfilePainIssueIdRoute
   ProfilesProfileIdDocumentsRoute: typeof ProfilesProfileIdDocumentsRoute
@@ -533,6 +585,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConsentInviteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/link-invite': {
       id: '/link-invite'
       path: '/link-invite'
@@ -568,6 +627,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/upload': {
       id: '/upload'
       path: '/upload'
@@ -575,11 +641,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/waiting': {
       id: '/waiting'
       path: '/waiting'
       fullPath: '/waiting'
       preLoaderRoute: typeof WaitingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/': {
+      id: '/account/'
+      path: '/account'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AccountIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account/change-password': {
@@ -771,12 +851,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   ConsentInviteRoute: ConsentInviteRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LinkInviteRoute: LinkInviteRoute,
   LoginRoute: LoginRoute,
   MyProfileRoute: MyProfileRoute,
   NotificationsRoute: NotificationsRoute,
   RegisterRoute: RegisterRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   UploadRoute: UploadRoute,
+  VerifyEmailRoute: VerifyEmailRoute,
   WaitingRoute: WaitingRoute,
   AccountChangePasswordRoute: AccountChangePasswordRoute,
   AccountLegalUpdateRoute: AccountLegalUpdateRoute,
@@ -789,6 +872,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReviewDocumentIdRoute: ReviewDocumentIdRoute,
   RevisitRemindersReminderIdRoute: RevisitRemindersReminderIdRoute,
   SpikeBody3dRoute: SpikeBody3dRoute,
+  AccountIndexRoute: AccountIndexRoute,
   ReviewIndexRoute: ReviewIndexRoute,
   MyProfilePainIssueIdRoute: MyProfilePainIssueIdRoute,
   ProfilesProfileIdDocumentsRoute: ProfilesProfileIdDocumentsRoute,

@@ -1,6 +1,10 @@
 import { accountRegistrationDesignCase } from './accountRegistrationDesignCase.js';
 import { accountRegistrationClayCase } from './accountRegistrationClayCase.js';
 import { accountEnrollmentCases } from './accountEnrollmentCases.js';
+import { accountForgotPasswordCases } from './accountForgotPassword.spec.js';
+import { accountResetPasswordCases } from './accountResetPassword.spec.js';
+import { accountVerifyEmailCases } from './accountVerifyEmail.spec.js';
+import { accountSettingsCases } from './accountSettings.spec.js';
 import { accountPasswordCases } from './accountPasswordCases.js';
 import { accountLegalUpdateCases } from './accountLegalUpdateCases.js';
 import { accountValidationCases } from './accountValidationCases.js';
@@ -27,6 +31,10 @@ for (const theme of ['light', 'dark']) {
   accountRegistrationClayCase(theme);
   accountEnrollmentCases(theme);
   accountPasswordCases(theme);
+  accountForgotPasswordCases(theme);
+  accountResetPasswordCases(theme);
+  accountVerifyEmailCases(theme);
+  accountSettingsCases(theme);
   accountLegalUpdateCases(theme);
   accountValidationCases(theme);
   accountRegistrationErrorCases(theme);
@@ -68,7 +76,7 @@ for (const theme of ['light', 'dark']) {
     await expect(byLabel(page, 'Mật khẩu')).toBeDisabled();
     release();
     await expect(page).toHaveURL(/\/waiting$/);
-    expect(state.bodies).toEqual([{ username: 'me.lan', password: 'matkhau123' }]);
+    expect(state.bodies).toEqual([{ identifier: 'me.lan', password: 'matkhau123' }]);
     expect(state.meReads).toBeGreaterThan(1);
   });
   const errors = [

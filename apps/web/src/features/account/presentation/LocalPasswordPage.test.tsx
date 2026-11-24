@@ -32,11 +32,12 @@ function renderPage(hasLocalCredential: boolean, adminWithoutFamily: boolean) {
   clients.push(client);
   client.setQueryData(CURRENT_SESSION_KEY, {
     account: { id: 'account', displayName: 'Lan', isSystemAdmin: adminWithoutFamily, healthProfileId: null },
-    family: adminWithoutFamily ? null : { id: 'family', name: 'Nhà thử' },
+    family: adminWithoutFamily ? null : { id: 'family', name: 'Nhà thử', isOwner: false },
     role: adminWithoutFamily ? null : 'main',
     csrfToken: 'csrf',
     authMethod: 'oidc',
     hasLocalCredential,
+    emailStatus: { email: null, emailVerified: false, pendingEmail: null },
     features: { localEnrollmentEnabled: true, redactionSuggestions: false },
   });
   const effects: React.EffectCallback[] = [];

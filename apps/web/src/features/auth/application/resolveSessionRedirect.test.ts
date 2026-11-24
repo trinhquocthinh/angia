@@ -10,9 +10,14 @@ const waiting: Session = {
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
-const assigned: Session = { ...waiting, family: { id: 'family', name: 'Nhà An' }, role: 'main' };
+const assigned: Session = {
+  ...waiting,
+  family: { id: 'family', name: 'Nhà An', isOwner: false },
+  role: 'main',
+};
 
 describe('Điều hướng theo phiên hiện hành', () => {
   it.each(['/', '/waiting', '/profiles/new'])('chưa có phiên tại %s: về đăng nhập', (path) => {
@@ -66,10 +71,27 @@ it('chưa có phiên tại /register được ở lại màn tạo tài khoản'
 it('TC-748: màn đổi mật khẩu hiển thị được khi /api/me bị hạn chế', () => {
   expect(resolveSessionRedirect(null, '/account/change-password')).toBeNull();
 });
-it.each(['/account/legal-update', '/account/local-password'])(
+it.each(['/account', '/account/legal-update', '/account/local-password'])(
   'TC-755: màn %s cần có phiên nhưng không cần nhà',
   (path) => {
     expect(resolveSessionRedirect(null, path)).toBe('/login');
     expect(resolveSessionRedirect(waiting, path)).toBeNull();
+    expect(resolveSessionRedirect(assigned, path)).toBeNull();
+    expect(resolveSessionRedirect(admin, path)).toBeNull();
   },
 );
+
+it('TC-762: khách truy cập được màn quên mật khẩu công khai', () => {
+  expect(resolveSessionRedirect(null, '/forgot-password')).toBeNull();
+});
+
+it('TC-764: khách và tài khoản đang đăng nhập truy cập được màn đặt lại mật khẩu công khai', () => {
+  expect(resolveSessionRedirect(null, '/reset-password')).toBeNull();
+  expect(resolveSessionRedirect(assigned, '/reset-password')).toBeNull();
+});
+
+it('TC-925: khách và tài khoản đang đăng nhập truy cập được màn xác minh email công khai', () => {
+  expect(resolveSessionRedirect(null, '/verify-email')).toBeNull();
+  expect(resolveSessionRedirect(waiting, '/verify-email')).toBeNull();
+  expect(resolveSessionRedirect(assigned, '/verify-email')).toBeNull();
+});

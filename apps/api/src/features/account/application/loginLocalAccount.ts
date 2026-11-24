@@ -6,10 +6,10 @@ import type { LoginLocalAccountDeps, LoginLocalAccountOutcome } from './ports.js
 
 export async function loginLocalAccount(
   deps: LoginLocalAccountDeps,
-  input: { username: string; password: string; ip: string },
+  input: { identifier: string; password: string; ip: string },
 ): Promise<LoginLocalAccountOutcome> {
-  // Cùng chuẩn hoá với đăng ký (trim + chữ thường) để khoá rate limit và tra credential khớp nhau.
-  const username = input.username.trim().toLowerCase();
+  // Chuẩn hoá identifier để khoá rate limit và tra credential khớp nhau.
+  const username = input.identifier.trim().toLowerCase();
   const key = { ip: input.ip, username };
   const policy = rateLimitPolicies.login_failed;
   try {
@@ -32,6 +32,9 @@ export async function loginLocalAccount(
       await recordRateLimitHit(deps.rateLimit, policy, key);
       return { ok: false, code: 'ERR_INVALID_CREDENTIALS' };
     }
+    const passwordResetBy = identity.mustChangePassword
+      ? await deps.passwordResetNotices.findLatestActor(identity.accountId)
+      : null;
     const csrfToken = deps.generateToken();
     const expiresAt = computeSessionExpiry(now);
     const passwordChangeRequired = identity.mustChangePassword;
@@ -50,7 +53,7 @@ export async function loginLocalAccount(
     }
     return {
       ok: true,
-      session: { sessionId: result.sessionId, csrfToken, expiresAt, passwordChangeRequired },
+      session: { sessionId: result.sessionId, csrfToken, expiresAt, passwordChangeRequired, passwordResetBy },
     };
   } catch (error) {
     // Bao gồm store/DB/hash lỗi hoặc timeout; không fallback sang IdP hay báo sai mật khẩu.

@@ -7,11 +7,12 @@ import { useTemperatureWorkspace } from './useTemperatureWorkspace';
 
 const session: ProfileSession = {
   account: { id: 'a', displayName: 'An', isSystemAdmin: false, healthProfileId: 'p' },
-  family: { id: 'f', name: 'Nhà' },
+  family: { id: 'f', name: 'Nhà', isOwner: false },
   role: 'main',
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 const request = { celsius: 38.5, measuredAt: '2020-01-01T06:50:00Z', confirmOutOfRange: false };

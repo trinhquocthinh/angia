@@ -169,6 +169,375 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/me/data-exports': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Yêu cầu tải dữ liệu (SPEC-072) */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            scope:
+              | 'self'
+              | {
+                  /** Format: uuid */
+                  profileId: string;
+                };
+          };
+        };
+      };
+      responses: {
+        /** @description Đã xếp việc tạo ZIP */
+        202: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              /** Format: uuid */
+              exportId: string;
+            };
+          };
+        };
+        /** @description Cần đăng nhập */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description CSRF hoặc mật khẩu chưa đổi */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_RATE_LIMITED: tối đa 3 yêu cầu/ngày */
+        429: {
+          headers: {
+            'Retry-After'?: number;
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/me/data-exports/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Xem trạng thái yêu cầu tải dữ liệu */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Trạng thái hiện tại */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              /** @enum {string} */
+              status: 'pending' | 'ready' | 'failed';
+              /** Format: date-time */
+              expiresAt: string | null;
+            };
+          };
+        };
+        /** @description Cần đăng nhập */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description CSRF hoặc mật khẩu chưa đổi */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/me/data-exports/{id}/file': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Tải ZIP của chính tài khoản trong 24 giờ */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Tệp dữ liệu ZIP */
+        200: {
+          headers: {
+            'Cache-Control'?: 'no-store';
+            'Content-Disposition'?: string;
+            [name: string]: unknown;
+          };
+          content: {
+            'application/zip': string;
+          };
+        };
+        /** @description Cần đăng nhập */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description CSRF hoặc mật khẩu chưa đổi */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/me/account-deletion': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Xoá tài khoản và ẩn danh thông tin định danh (SPEC-073)
+     * @description Cần phiên, Origin tin cậy và X-CSRF-Token; không yêu cầu đã đồng ý pháp lý hoặc thuộc nhà.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            password: string;
+            /** @enum {string} */
+            ownProfileDisposition?: 'keep' | 'delete';
+          };
+        };
+      };
+      responses: {
+        /** @description Đã xoá tài khoản và cookie phiên/thiết bị Push */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_UNAUTHENTICATED; ERR_INVALID_CREDENTIALS: mật khẩu sai hoặc không có credential local */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: Origin/CSRF sai; ERR_ACCOUNT_LOCKED: tài khoản bị khoá */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_OWNER_MUST_TRANSFER; ERR_OWNER_MUST_DELETE_FAMILY; ERR_LAST_GUARDIAN (details.profileIds) */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: body sai hoặc thiếu lựa chọn hồ sơ liên kết */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_RATE_LIMITED: quá nhiều lần sai */
+        429: {
+          headers: {
+            'Retry-After'?: number;
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE: xác thực tạm gián đoạn */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/family/deletion-request/current': {
     parameters: {
       query?: never;
@@ -2016,6 +2385,521 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/me/email': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Thêm/đổi email bằng mật khẩu hiện tại (SPEC-085)
+     * @description Cần phiên và X-CSRF-Token. Không gửi mail. Cache-Control: no-store.
+     */
+    patch: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['ChangeAccountEmailRequest'];
+        };
+      };
+      responses: {
+        /** @description Trạng thái email hiện tại */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AccountEmailResponse'];
+          };
+        };
+        /** @description ERR_VERIFICATION_TOKEN_INVALID: liên kết không hợp lệ hoặc hết hạn */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED; ERR_INVALID_CREDENTIALS: mật khẩu hiện tại sai */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: CSRF/Origin/JSON sai; ERR_ACCOUNT_LOCKED; ERR_PASSWORD_CHANGE_REQUIRED */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_EMAIL_TAKEN: email đã được tài khoản khác xác minh */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: dữ liệu không hợp lệ hoặc chưa có email */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_RATE_LIMITED: tối đa 3 lần gửi mỗi giờ/tài khoản */
+        429: {
+          headers: {
+            'Retry-After'?: number;
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE: xác thực hoặc lưu trữ tạm gián đoạn */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    trace?: never;
+  };
+  '/api/me/email-verifications': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Gửi link xác minh email (SPEC-085)
+     * @description Cần phiên và X-CSRF-Token, body rỗng. Chỉ lượt gửi 202 tiêu hạn mức. Cache-Control: no-store.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Đã xếp email vào hàng đợi */
+        202: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['RequestEmailVerificationResponse'];
+          };
+        };
+        /** @description Email đã xác minh và không có email chờ đổi */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_VERIFICATION_TOKEN_INVALID: liên kết không hợp lệ hoặc hết hạn */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED; ERR_INVALID_CREDENTIALS: mật khẩu hiện tại sai */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: CSRF/Origin/JSON sai; ERR_ACCOUNT_LOCKED; ERR_PASSWORD_CHANGE_REQUIRED */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_EMAIL_TAKEN: email đã được tài khoản khác xác minh */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: dữ liệu không hợp lệ hoặc chưa có email */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_RATE_LIMITED: tối đa 3 lần gửi mỗi giờ/tài khoản */
+        429: {
+          headers: {
+            'Retry-After'?: number;
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE: xác thực hoặc lưu trữ tạm gián đoạn */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/auth/email-verifications/confirm': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Xác nhận email bằng token một lần (SPEC-085)
+     * @description Không cần phiên. Cần application/json và Origin tin cậy. Cache-Control: no-store.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['ConfirmEmailVerificationRequest'];
+        };
+      };
+      responses: {
+        /** @description Đã xác minh email */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_VERIFICATION_TOKEN_INVALID: liên kết không hợp lệ hoặc hết hạn */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED; ERR_INVALID_CREDENTIALS: mật khẩu hiện tại sai */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: CSRF/Origin/JSON sai; ERR_ACCOUNT_LOCKED; ERR_PASSWORD_CHANGE_REQUIRED */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_EMAIL_TAKEN: email đã được tài khoản khác xác minh */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: dữ liệu không hợp lệ hoặc chưa có email */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_RATE_LIMITED: tối đa 3 lần gửi mỗi giờ/tài khoản */
+        429: {
+          headers: {
+            'Retry-After'?: number;
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE: xác thực hoặc lưu trữ tạm gián đoạn */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/auth/password-reset-requests': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Yêu cầu đặt lại mật khẩu qua email (SPEC-063)
+     * @description Không cần phiên. Origin tin cậy, JSON; Cache-Control: no-store. Đếm mọi yêu cầu theo IP và email chuẩn hoá, 3/giờ mỗi khoá. Luôn phản hồi đồng nhất trước khi tra email.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['RequestPasswordResetRequest'];
+        };
+      };
+      responses: {
+        /** @description Đã nhận yêu cầu */
+        202: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['RequestPasswordResetResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: Origin hoặc JSON không hợp lệ */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: dữ liệu không hợp lệ */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_RATE_LIMITED: 3/giờ theo IP và email */
+        429: {
+          headers: {
+            'Retry-After'?: number;
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE: dịch vụ xác thực tạm gián đoạn */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/auth/password-resets': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Đặt mật khẩu mới bằng token một lần (SPEC-063)
+     * @description Không cần phiên. Origin tin cậy, JSON; Cache-Control: no-store. Token hết hạn sau 30 phút, thu hồi mọi phiên khi thành công.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['ResetPasswordRequest'];
+        };
+      };
+      responses: {
+        /** @description Đã đặt lại mật khẩu */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description ERR_RESET_TOKEN_INVALID: Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN: Origin hoặc JSON không hợp lệ */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: dữ liệu không hợp lệ */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE: dịch vụ xác thực tạm gián đoạn */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/auth/password-login': {
     parameters: {
       query?: never;
@@ -2195,6 +3079,92 @@ export interface paths {
           };
         };
         /** @description ERR_AUTH_UNAVAILABLE: DB/rate limiter/hash lỗi hoặc hash bận */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/family/members/{targetAccountId}/password-reset': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Chủ hộ/Đồng quản lý đặt lại mật khẩu thành viên (SPEC-062)
+     * @description Cần phiên và X-CSRF-Token. Cache-Control: no-store. Mật khẩu tạm chỉ trả một lần, hết hạn sau 24 giờ.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          targetAccountId: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Mật khẩu tạm và hạn dùng */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ResetMemberPasswordResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN; ERR_OWNER_PROTECTED */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION: targetAccountId phải là UUID */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE: DB/hash lỗi hoặc hash bận */
         503: {
           headers: {
             [name: string]: unknown;
@@ -12382,21 +13352,54 @@ export interface components {
       /** @enum {string} */
       storage: 'ok' | 'down';
     };
+    AccountEmailResponse: {
+      email: string | null;
+      emailVerified: boolean;
+      pendingEmail: string | null;
+    };
+    ChangeAccountEmailRequest: {
+      email: string;
+      currentPassword: string;
+    };
+    RequestEmailVerificationResponse: {
+      /** @enum {boolean} */
+      sent: true;
+    };
+    ConfirmEmailVerificationRequest: {
+      token: string;
+    };
+    RequestPasswordResetResponse: {
+      /** @enum {boolean} */
+      received: true;
+    };
+    RequestPasswordResetRequest: {
+      email: string;
+    };
+    ResetPasswordRequest: {
+      token: string;
+      newPassword: string;
+    };
     PasswordLoginResponse: {
       session: {
         csrfToken: string;
         /** Format: date-time */
         expiresAt: string;
         passwordChangeRequired: boolean;
+        passwordResetBy: string | null;
       };
     };
     PasswordLoginRequest: {
-      username: string;
+      identifier: string;
       password: string;
     };
     ChangePasswordRequest: {
       currentPassword?: string;
       newPassword: string;
+    };
+    ResetMemberPasswordResponse: {
+      temporaryPassword: string;
+      /** Format: date-time */
+      expiresAt: string;
     };
     LocalCredentialRequest: {
       password: string;
@@ -12420,7 +13423,7 @@ export interface components {
       username: string;
       password: string;
       displayName: string;
-      email?: string;
+      email?: string | null;
       ageConfirmed: boolean;
       legalAcceptance: {
         /** Format: uuid */
@@ -12443,6 +13446,7 @@ export interface components {
         /** Format: uuid */
         id: string;
         name: string;
+        isOwner: boolean;
       } | null;
       /** @enum {string|null} */
       role: 'main' | 'member' | null;
@@ -12450,6 +13454,7 @@ export interface components {
       /** @enum {string} */
       authMethod: 'local' | 'oidc';
       hasLocalCredential: boolean;
+      emailStatus: components['schemas']['AccountEmailResponse'];
       features: {
         redactionSuggestions: boolean;
         localEnrollmentEnabled: boolean;

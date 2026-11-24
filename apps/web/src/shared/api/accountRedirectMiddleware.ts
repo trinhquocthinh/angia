@@ -26,8 +26,16 @@ export const accountRedirectMiddleware: Middleware = {
           ? '/account/legal-update'
           : null;
     const here = globalThis.location?.pathname;
-    // Ở /login, /register: người mất CSRF phiên hạn chế phải đăng nhập lại được, không bị đẩy vòng.
-    if (to && here !== to && here !== '/login' && here !== '/register') {
+    // Các màn công khai phải truy cập được khi phiên hạn chế bị mất CSRF.
+    if (
+      to &&
+      here !== to &&
+      here !== '/login' &&
+      here !== '/register' &&
+      here !== '/forgot-password' &&
+      here !== '/reset-password' &&
+      here !== '/verify-email'
+    ) {
       try {
         await navigate?.(to);
       } catch {

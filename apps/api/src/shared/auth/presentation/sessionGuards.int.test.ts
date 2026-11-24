@@ -118,6 +118,7 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
       csrfToken: session.csrf,
       authMethod: 'oidc',
       hasLocalCredential: false,
+      emailStatus: { email: null, emailVerified: false, pendingEmail: null },
       features: { redactionSuggestions: false, localEnrollmentEnabled: false },
     });
   });
@@ -125,7 +126,7 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
   it('tài khoản main: /api/me trả nhóm và vai trò', async () => {
     const session = await seedSession(await seedAccount({ familyRole: 'main' }));
     const body = await (await app.request('/api/me', { headers: { cookie: session.cookie } })).json();
-    expect(body).toMatchObject({ family: { id: familyId, name: 'Nhà A' }, role: 'main' });
+    expect(body).toMatchObject({ family: { id: familyId, name: 'Nhà A', isOwner: false }, role: 'main' });
   });
 
   it('phiên dùng sau ≥ 1 ngày được trượt hạn 30 ngày và đặt lại cookie; phiên mới thì không', async () => {

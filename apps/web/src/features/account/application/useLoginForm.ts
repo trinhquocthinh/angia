@@ -11,7 +11,7 @@ export function useLoginForm(
   }) => Promise<unknown>,
   hasAuthError: boolean,
 ) {
-  const form = useForm<LoginRequest>({ defaultValues: { username: '', password: '' } });
+  const form = useForm<LoginRequest>({ defaultValues: { identifier: '', password: '' } });
   const [error, setError] = useState<string | null>(
     hasAuthError ? 'Không thể xác thực tài khoản. Vui lòng thử lại.' : null,
   );

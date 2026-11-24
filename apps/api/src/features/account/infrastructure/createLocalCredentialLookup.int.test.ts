@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startRegistrationTestApp } from '@src/shared/test/startRegistrationTestApp.js';
 import { seedAccount, seedSession } from '@src/shared/test/seedAuthFixtures.js';
@@ -17,12 +18,19 @@ describe('Ngữ cảnh enrollment qua role app và HTTP', () => {
     const id = await seedAccount(t.owner);
     const session = await seedSession(t.owner, id);
     const lookup = createLocalCredentialLookup(createDatabase(t.pool));
-    expect(await lookup(id)).toEqual({ hasLocalCredential: false });
+    expect(await lookup(id)).toEqual({
+      isOwner: false,
+      hasLocalCredential: false,
+      email: null,
+      emailVerified: false,
+      pendingEmail: null,
+    });
     const before = await t.app.request('/api/me', { headers: { cookie: session.cookie } });
     expect(before.status).toBe(200);
     expect(before.headers.get('cache-control')).toBe('no-store');
     expect(await before.json()).toMatchObject({
       authMethod: 'oidc',
+      family: null,
       hasLocalCredential: false,
       features: { localEnrollmentEnabled: true },
     });
@@ -30,9 +38,57 @@ describe('Ngữ cảnh enrollment qua role app và HTTP', () => {
       id,
       await t.account.hasher.hash('NewPassword123'),
     ]);
-    expect(await lookup(id)).toEqual({ hasLocalCredential: true });
+    expect(await lookup(id)).toEqual({
+      isOwner: false,
+      hasLocalCredential: true,
+      email: null,
+      emailVerified: false,
+      pendingEmail: null,
+    });
     const after = await t.app.request('/api/me', { headers: { cookie: session.cookie } });
     expect(await after.json()).toMatchObject({ hasLocalCredential: true });
+  });
+
+  it.each([
+    { label: 'chưa có email', email: null, emailVerified: false, pendingEmail: null },
+    { label: 'chưa xác minh', email: 'unverified@example.test', emailVerified: false, pendingEmail: null },
+    {
+      label: 'đã xác minh và có email chờ',
+      email: 'verified@example.test',
+      emailVerified: true,
+      pendingEmail: 'pending@example.test',
+    },
+  ])('/api/me trả trạng thái email mới nhất khi $label', async ({ label: _label, ...emailStatus }) => {
+    const id = await seedAccount(t.owner);
+    const session = await seedSession(t.owner, id);
+    await t.owner.query('UPDATE accounts SET email=$2, email_verified_at=$3, pending_email=$4 WHERE id=$1', [
+      id,
+      emailStatus.email,
+      emailStatus.emailVerified ? new Date() : null,
+      emailStatus.pendingEmail,
+    ]);
+    const response = await t.app.request('/api/me', { headers: { cookie: session.cookie } });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ emailStatus });
+    await t.owner.query('UPDATE accounts SET email_verified_at=NULL, pending_email=NULL WHERE id=$1', [id]);
+    const refreshed = await t.app.request('/api/me', { headers: { cookie: session.cookie } });
+    expect(await refreshed.json()).toMatchObject({
+      emailStatus: { email: emailStatus.email, emailVerified: false, pendingEmail: null },
+    });
+  });
+
+  it('tra Chủ hộ theo owner_account_id của đúng nhà bằng role app', async () => {
+    const familyId = randomUUID();
+    await t.owner.query("INSERT INTO families(id, name) VALUES($1, 'Nhà kiểm thử')", [familyId]);
+    const ownerId = await seedAccount(t.owner, { familyId, familyRole: 'main' });
+    const coManagerId = await seedAccount(t.owner, { familyId, familyRole: 'main' });
+    await t.owner.query('UPDATE families SET owner_account_id=$2 WHERE id=$1', [familyId, ownerId]);
+    const lookup = createLocalCredentialLookup(createDatabase(t.pool));
+    expect(await lookup(ownerId)).toMatchObject({ isOwner: true });
+    expect(await lookup(coManagerId)).toMatchObject({ isOwner: false });
+    await t.owner.query('UPDATE families SET owner_account_id=$2 WHERE id=$1', [familyId, coManagerId]);
+    expect(await lookup(ownerId)).toMatchObject({ isOwner: false });
+    expect(await lookup(coManagerId)).toMatchObject({ isOwner: true });
   });
 
   it('TC-902: cờ enrollment tắt phản ánh qua /api/me', async () => {

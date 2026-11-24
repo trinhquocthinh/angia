@@ -12,7 +12,7 @@ export type SubmitRegistration = (
   body: RegistrationRequest,
 ) => Promise<AccountResult<components['schemas']['RegisterAccountResponse']>>;
 export type FetchCurrentLegal = () => Promise<AccountResult<CurrentLegal>>;
-export type RegistrationValues = LoginRequest & {
+export type RegistrationValues = Pick<RegistrationRequest, 'username' | 'password'> & {
   displayName: string;
   email: string;
   ageConfirmed: boolean;
@@ -24,5 +24,56 @@ type AccountActionBody = { newPassword: string } | { password: string } | { vers
 export type SubmitAccountAction = (
   path: AccountActionPath,
   body: AccountActionBody,
+  csrfToken: string,
+) => Promise<AccountResult<void>>;
+
+export type PasswordResetRequest = components['schemas']['RequestPasswordResetRequest'];
+export type SubmitPasswordResetRequest = (
+  body: PasswordResetRequest,
+) => Promise<AccountResult<components['schemas']['RequestPasswordResetResponse']>>;
+
+type PasswordResetSubmission = components['schemas']['ResetPasswordRequest'];
+export type SubmitPasswordReset = (body: PasswordResetSubmission) => Promise<AccountResult<void>>;
+
+type EmailVerificationConfirm = components['schemas']['ConfirmEmailVerificationRequest'];
+export type SubmitEmailVerificationConfirm = (body: EmailVerificationConfirm) => Promise<AccountResult<void>>;
+
+export type AccountEmailStatus = components['schemas']['AccountEmailResponse'];
+export type ChangeAccountEmailBody = components['schemas']['ChangeAccountEmailRequest'];
+export type SubmitAccountEmailChange = (
+  body: ChangeAccountEmailBody,
+  csrfToken: string,
+) => Promise<AccountResult<AccountEmailStatus>>;
+
+type EmailVerificationRequestOutcome = { sent: true } | { alreadyVerified: true };
+export type SubmitEmailVerificationRequest = (
+  csrfToken: string,
+) => Promise<AccountResult<EmailVerificationRequestOutcome>>;
+
+export type DataExportScope = 'self' | { profileId: string };
+type DataExportCreated = { exportId: string };
+type DataExportStatusResponse = {
+  status: 'pending' | 'ready' | 'failed';
+  expiresAt: string | null;
+};
+export type CreateDataExport = (
+  scope: DataExportScope,
+  csrfToken: string,
+) => Promise<AccountResult<DataExportCreated>>;
+export type FetchDataExportStatus = (exportId: string) => Promise<AccountResult<DataExportStatusResponse>>;
+
+export type ExportableProfile = {
+  id: string;
+  displayName: string;
+  hasLinkedAccount: boolean;
+};
+
+export type AccountProfileDisposition = 'keep' | 'delete';
+export type DeleteAccountBody = {
+  password: string;
+  ownProfileDisposition?: AccountProfileDisposition;
+};
+export type SubmitAccountDeletion = (
+  body: DeleteAccountBody,
   csrfToken: string,
 ) => Promise<AccountResult<void>>;

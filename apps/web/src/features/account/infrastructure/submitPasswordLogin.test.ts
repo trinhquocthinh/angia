@@ -3,7 +3,7 @@ import { apiClient } from '@src/shared/api/apiClient';
 import { submitPasswordLogin } from './submitPasswordLogin';
 vi.mock('@src/shared/api/apiClient', () => ({ apiClient: { POST: vi.fn() } }));
 const request = vi.mocked(apiClient.POST);
-const body = { username: 'me.lan', password: 'matkhau123' };
+const body = { identifier: 'me.lan', password: 'matkhau123' };
 const data = {
   session: { csrfToken: 'csrf', expiresAt: '2026-12-01T00:00:00Z', passwordChangeRequired: false },
 };

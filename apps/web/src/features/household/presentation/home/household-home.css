@@ -8,6 +8,7 @@
 @import '../members/household-member-role-editor.css';
 @import '../members/household-member-danger.css';
 @import '../members/household-member-dialog.css';
+@import '../members/household-member-reset.css';
 @import '../ownership/household-ownership.css';
 @import '../leave/household-leave.css';
 @import '../deletion/household-deletion.css';

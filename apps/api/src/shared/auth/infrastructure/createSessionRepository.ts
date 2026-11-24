@@ -13,7 +13,7 @@ export function createSessionRepository(db: Database): SessionRepository {
         const [account] = await tx
           .select({ lockedAt: accounts.lockedAt })
           .from(accounts)
-          .where(eq(accounts.id, session.accountId))
+          .where(and(eq(accounts.id, session.accountId), isNull(accounts.deletedAt)))
           .for('update');
         if (!account || account.lockedAt) throw new Error('Tài khoản không tồn tại hoặc đã bị khoá');
         const [row] = await tx.insert(sessions).values(session).returning({ id: sessions.id });
@@ -44,7 +44,14 @@ export function createSessionRepository(db: Database): SessionRepository {
         .from(sessions)
         .innerJoin(accounts, eq(accounts.id, sessions.accountId))
         .leftJoin(families, eq(families.id, accounts.familyId))
-        .where(and(eq(sessions.id, sessionId), gt(sessions.expiresAt, now), isNull(accounts.lockedAt)))
+        .where(
+          and(
+            eq(sessions.id, sessionId),
+            gt(sessions.expiresAt, now),
+            isNull(accounts.lockedAt),
+            isNull(accounts.deletedAt),
+          ),
+        )
         .limit(1);
       if (!row) {
         return null;

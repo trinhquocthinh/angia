@@ -27,15 +27,20 @@ type MeFeatures = MeContextResponse['features'];
 function toMeContextResponse(
   session: SessionContext,
   features: MeFeatures,
-  hasLocalCredential: boolean,
+  accountContext: Awaited<ReturnType<LocalCredentialLookup>>,
 ): MeContextResponse {
   return {
     account: session.account,
-    family: session.family,
+    family: session.family ? { ...session.family, isOwner: accountContext.isOwner } : null,
     role: session.role,
     csrfToken: session.csrfToken,
     authMethod: session.authMethod,
-    hasLocalCredential,
+    hasLocalCredential: accountContext.hasLocalCredential,
+    emailStatus: {
+      email: accountContext.email,
+      emailVerified: accountContext.emailVerified,
+      pendingEmail: accountContext.pendingEmail,
+    },
     features,
   };
 }
@@ -48,7 +53,7 @@ export function registerMeRoute(
   app.openapi(meRoute, async (c) => {
     c.header('Cache-Control', 'no-store');
     const session = currentSession(c);
-    const { hasLocalCredential } = await deps.lookupLocalCredential(session.account.id);
-    return c.json(toMeContextResponse(session, deps.features, hasLocalCredential), 200);
+    const accountContext = await deps.lookupLocalCredential(session.account.id);
+    return c.json(toMeContextResponse(session, deps.features, accountContext), 200);
   });
 }

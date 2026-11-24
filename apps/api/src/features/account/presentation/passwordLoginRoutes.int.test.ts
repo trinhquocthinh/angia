@@ -37,7 +37,7 @@ describe('POST /api/auth/password-login (SPEC-060)', () => {
         'content-type': 'application/json',
         'x-test-ip': ip,
       },
-      body: JSON.stringify({ username, password: secret }),
+      body: JSON.stringify({ identifier: username, password: secret }),
     });
   const count = async () => (await t.pool.query('SELECT id FROM sessions')).rowCount;
   it('TC-744: mật khẩu đúng trả cookie/CSRF/30 ngày và ghi phiên local', async () => {
@@ -50,6 +50,7 @@ describe('POST /api/auth/password-login (SPEC-060)', () => {
         csrfToken: expect.any(String),
         expiresAt: expect.any(String),
         passwordChangeRequired: false,
+        passwordResetBy: null,
       },
     });
     expect(Date.parse(body.session.expiresAt) - before).toBeGreaterThanOrEqual(30 * 86400000);

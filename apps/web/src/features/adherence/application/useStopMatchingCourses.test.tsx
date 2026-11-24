@@ -7,11 +7,12 @@ import { useStopMatchingCourses } from './useStopMatchingCourses';
 
 const session: ProfileSession = {
   account: { id: 'a', displayName: 'An', isSystemAdmin: false, healthProfileId: null },
-  family: { id: 'f', name: 'Nhà' },
+  family: { id: 'f', name: 'Nhà', isOwner: false },
   role: 'main',
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 

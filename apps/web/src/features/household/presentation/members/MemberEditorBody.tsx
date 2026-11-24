@@ -15,7 +15,9 @@ export function MemberEditorBody(props: MemberEditorProps & { onPendingChange: (
   }, [pending, onPendingChange]);
   const ownerProtected = memberActionError('ERR_OWNER_PROTECTED');
   const protectedError =
-    actions.roleChange.error === ownerProtected || actions.removal.error === ownerProtected;
+    actions.roleChange.error === ownerProtected ||
+    actions.removal.error === ownerProtected ||
+    actions.passwordReset.error === ownerProtected;
 
   if (protectedError) {
     return <PanelNotice message={ownerProtected} onClose={props.onClose} />;

@@ -6,10 +6,11 @@ import { NewProfileDialog } from './NewProfileDialog';
 const session: ProfileSession = {
   role: 'main',
   account: { id: 'a', displayName: 'An', isSystemAdmin: false, healthProfileId: null },
-  family: { id: 'f', name: 'Nhà Thịnh' },
+  family: { id: 'f', name: 'Nhà Thịnh', isOwner: false },
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 const props = {

@@ -40,6 +40,14 @@ describe('E27-S2-T1: quyền app, RLS và trạng thái bảng nhà', () => {
        VALUES($1,$2::text,$3,$2::uuid,$4,'family_created')`,
       [id, a.accounts[0], a.family, a.profile],
     );
+    // 0047: chỉ đọc được các cột phục vụ thông báo đặt lại mật khẩu (SPEC-062), không có metadata.
+    expect(
+      (await t.app.query('SELECT action FROM admin_audit_events WHERE target_account_id=$1', [a.accounts[0]]))
+        .rows,
+    ).toEqual([{ action: 'family_created' }]);
+    await expect(t.app.query('SELECT metadata FROM admin_audit_events')).rejects.toMatchObject({
+      code: '42501',
+    });
     for (const statement of ['SELECT * FROM', 'UPDATE', 'DELETE FROM', 'TRUNCATE']) {
       const suffix = statement === 'UPDATE' ? " SET action='changed'" : '';
       await expect(t.app.query(`${statement} admin_audit_events${suffix}`)).rejects.toMatchObject({

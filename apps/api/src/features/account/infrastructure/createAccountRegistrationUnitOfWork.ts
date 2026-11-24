@@ -1,6 +1,6 @@
-import { eq } from 'drizzle-orm';
+import { and, eq, gt, sql } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
-import { accounts, legalAcceptances } from '@src/shared/db/schema/index.js';
+import { accounts, deletedUsernames, legalAcceptances } from '@src/shared/db/schema/index.js';
 import { createCredentialRepository } from '@src/shared/identity/infrastructure/createCredentialRepository.js';
 import { checkRegistrationInvitation } from './checkRegistrationInvitation.js';
 import { acceptRegistrationInvitation } from './acceptRegistrationInvitation.js';
@@ -65,7 +65,10 @@ function isUsernameUniqueViolation(error: unknown): boolean {
   return pgError?.code === '23505' && pgError.constraint === 'accounts_username_normalized_unique';
 }
 
-export function createAccountRegistrationUnitOfWork(db: Database): AccountRegistrationUnitOfWork {
+export function createAccountRegistrationUnitOfWork(
+  db: Database,
+  hashUsername: (usernameNormalized: string) => string,
+): AccountRegistrationUnitOfWork {
   return {
     async isUsernameTaken(usernameNormalized: string): Promise<boolean> {
       const [existing] = await db
@@ -78,7 +81,26 @@ export function createAccountRegistrationUnitOfWork(db: Database): AccountRegist
 
     async register(record: NewLocalAccountRecord): Promise<RegisterLocalAccountRecordOutcome> {
       try {
-        const account = await db.transaction(async (tx) => insertRegistrationEntities(tx, record));
+        const account = await db.transaction(async (tx) => {
+          const rejectReservedUsername = async () => {
+            const [reserved] = await tx
+              .select({ usernameHash: deletedUsernames.usernameHash })
+              .from(deletedUsernames)
+              .where(
+                and(
+                  eq(deletedUsernames.usernameHash, hashUsername(record.usernameNormalized)),
+                  gt(deletedUsernames.deletedAt, sql`now() - interval '90 days'`),
+                ),
+              )
+              .limit(1);
+            if (reserved) throw new RegistrationRejected({ ok: false, code: 'ERR_USERNAME_TAKEN' });
+          };
+          await rejectReservedUsername();
+          const registered = await insertRegistrationEntities(tx, record);
+          // INSERT có thể chờ giao dịch xoá giải phóng unique username; đọc lại sau khi giao dịch đó commit.
+          await rejectReservedUsername();
+          return registered;
+        });
         return { ok: true, account };
       } catch (error) {
         if (error instanceof RegistrationRejected) return error.outcome;

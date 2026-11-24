@@ -6,11 +6,12 @@ import { profileScopeKey } from './profileScopeKey';
 import { useProfilesWorkspace } from './useProfilesWorkspace';
 const session: ProfileSession = {
   account: { id: 'a', displayName: 'An', isSystemAdmin: false, healthProfileId: null },
-  family: { id: 'f', name: 'Nhà An' },
+  family: { id: 'f', name: 'Nhà An', isOwner: false },
   role: 'main',
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 const profile = {
@@ -70,7 +71,8 @@ describe('Cô lập cache hồ sơ và quyền thao tác', () => {
       mount(client, repository(), { ...session, account: { ...session.account, id: 'b' } }).profiles.data,
     ).toBeUndefined();
     expect(
-      mount(client, repository(), { ...session, family: { id: 'g', name: 'Nhà Bình' } }).profiles.data,
+      mount(client, repository(), { ...session, family: { id: 'g', name: 'Nhà Bình', isOwner: false } })
+        .profiles.data,
     ).toBeUndefined();
     client.clear();
   });

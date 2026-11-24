@@ -14,13 +14,45 @@ const identity = {
 };
 
 describe('Xác thực local', () => {
+  it('TC-923: chỉ tra email đã xác minh với identifier có @', async () => {
+    const credentials = {
+      findByUsername: vi.fn(async () => null),
+      findByVerifiedEmail: vi.fn(async () => ({ ...identity, passwordHash: 'stored' })),
+    };
+    const hasher: PasswordHasher = {
+      hash: async () => 'dummy',
+      verify: async () => true,
+      needsRehash: () => false,
+    };
+    const provider = await createLocalIdentityProvider(credentials, hasher);
+    expect(await provider.verifyPassword(' LAN@Example.COM ', 'password')).toEqual(identity);
+    expect(credentials.findByVerifiedEmail).toHaveBeenCalledWith('lan@example.com');
+    expect(credentials.findByUsername).not.toHaveBeenCalled();
+  });
+  it.each(['unverified@example.com', 'missing@example.com'])(
+    'TC-924: email chưa xác minh hoặc thiếu vẫn verify dummy: %s',
+    async (email) => {
+      const hasher: PasswordHasher = {
+        hash: async () => 'dummy-hash',
+        verify: vi.fn(async () => true),
+        needsRehash: () => false,
+      };
+      const credentials = { findByUsername: async () => null, findByVerifiedEmail: async () => null };
+      const provider = await createLocalIdentityProvider(credentials, hasher);
+      expect(await provider.verifyPassword(email, 'password')).toBeNull();
+      expect(hasher.verify).toHaveBeenCalledWith('dummy-hash', 'password');
+    },
+  );
   it('TC-894 trả snapshot xác thực không chứa hash hay trường account khác', async () => {
     const hasher = createArgon2PasswordHasher();
     const passwordHash = await hasher.hash('Mật khẩu thử 123');
     const findByUsername = vi.fn(async (username: string) =>
       username === 'me.lan' ? { ...identity, passwordHash, email: 'private@example.invalid' } : null,
     );
-    const provider = await createLocalIdentityProvider({ findByUsername }, hasher);
+    const provider = await createLocalIdentityProvider(
+      { findByUsername, findByVerifiedEmail: async () => null },
+      hasher,
+    );
     const result = await provider.verifyPassword('ME.LAN', 'Mật khẩu thử 123');
     expect(result).toEqual(identity);
     expect(findByUsername).toHaveBeenCalledWith('me.lan');
@@ -33,7 +65,10 @@ describe('Xác thực local', () => {
     const hasher = createArgon2PasswordHasher();
     const hash = vi.spyOn(hasher, 'hash');
     const verify = vi.spyOn(hasher, 'verify');
-    const provider = await createLocalIdentityProvider({ findByUsername: async () => null }, hasher);
+    const provider = await createLocalIdentityProvider(
+      { findByUsername: async () => null, findByVerifiedEmail: async () => null },
+      hasher,
+    );
     await expect(provider.verifyPassword('unknown', 'Sai mật khẩu')).resolves.toBeNull();
     await expect(provider.verifyPassword('unknown', 'Sai mật khẩu')).resolves.toBeNull();
     expect(hash).toHaveBeenCalledTimes(1);
@@ -49,7 +84,10 @@ describe('Xác thực local', () => {
       verify: async () => true,
       needsRehash: () => false,
     };
-    const provider = await createLocalIdentityProvider({ findByUsername: async () => null }, hasher);
+    const provider = await createLocalIdentityProvider(
+      { findByUsername: async () => null, findByVerifiedEmail: async () => null },
+      hasher,
+    );
     await expect(provider.verifyPassword('unknown', 'password')).resolves.toBeNull();
   });
 
@@ -66,7 +104,10 @@ describe('Xác thực local', () => {
       verify: async () => true,
       needsRehash: () => false,
     };
-    const provider = await createLocalIdentityProvider({ findByUsername: async () => record }, hasher);
+    const provider = await createLocalIdentityProvider(
+      { findByUsername: async () => record, findByVerifiedEmail: async () => null },
+      hasher,
+    );
     const expected = {
       ...identity,
       lockedAt: record.lockedAt,
@@ -90,6 +131,7 @@ describe('Xác thực local', () => {
     };
     const create = createLocalIdentityProvider(
       {
+        findByVerifiedEmail: async () => null,
         findByUsername: async () => {
           if (stage === 'db') throw failure;
           return null;

@@ -1,3 +1,10 @@
+import { createUsernameHasher } from '@src/features/account/infrastructure/createUsernameHasher.js';
+import { createEmailPasswordResets } from '@src/features/account/infrastructure/createEmailPasswordResets.js';
+import { createAccountEmails } from '@src/features/account/infrastructure/createAccountEmails.js';
+import { SEND_TRANSACTIONAL_EMAIL_QUEUE } from '@angia/contracts';
+import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
+import { createSilentLogger } from './createSilentLogger.js';
+import { createPasswordResetDependencies } from '@src/features/account/infrastructure/createPasswordResetDependencies.js';
 import { createHouseholdDependencies } from '@src/features/household/infrastructure/createHouseholdDependencies.js';
 import { createLocalCredentialLookup } from '@src/features/account/infrastructure/createLocalCredentialLookup.js';
 import { createMedicationRepository } from '@src/features/medications/infrastructure/createMedicationRepository.js';
@@ -30,7 +37,10 @@ import { createStubReviewDeps } from './createStubReviewDeps.js';
 import { TEST_COOKIE_SECRET } from './seedAuthFixtures.js';
 import { startTestDatabase } from './startTestDatabase.js';
 
-export async function startRegistrationTestApp(enrollmentEnabled = false) {
+export async function startRegistrationTestApp(
+  enrollmentEnabled = false,
+  resetOptions: Pick<AppDependencies['account'], 'runInBackground' | 'now'> = { now: () => new Date() },
+) {
   const testDb = await startTestDatabase();
   await runMigrations(testDb.ownerUrl);
   const owner = new pg.Client({ connectionString: testDb.ownerUrl });
@@ -38,6 +48,9 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
   const legalAcceptance = await seedLegalVersions(owner);
   const pool = new pg.Pool({ connectionString: testDb.appUrl });
   const db = createDatabase(pool);
+  const boss = createPgBoss(testDb.appUrl, createSilentLogger());
+  await boss.start();
+  await boss.createQueue(SEND_TRANSACTIONAL_EMAIL_QUEUE);
   const hasher = createArgon2PasswordHasher();
   const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
   const account: AppDependencies['account'] = {
@@ -55,13 +68,16 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
     identity,
     localLoginSessions: createLocalLoginSessions(db),
     passwords: createLocalPasswordChanges(db),
+    emailPasswordResets: createEmailPasswordResets(db, boss, 'https://angia.example/app'),
+    emails: createAccountEmails(db, boss, 'https://angia.example/app'),
+    ...createPasswordResetDependencies(db),
     lookupLocalCredential: createLocalCredentialLookup(db),
     enrollments: createLocalCredentialEnrollments(db),
     enrollmentEnabled: enrollmentEnabled,
-    accounts: createAccountRegistrationUnitOfWork(db),
+    accounts: createAccountRegistrationUnitOfWork(db, createUsernameHasher('test-username-secret'.repeat(3))),
     sessions: createSessionRepository(db),
     generateToken: () => randomBytes(32).toString('base64url'),
-    now: () => new Date(),
+    ...resetOptions,
   };
   const app = buildRegistrationApp(db, account);
   return {
@@ -71,6 +87,7 @@ export async function startRegistrationTestApp(enrollmentEnabled = false) {
     pool,
     legalAcceptance,
     close: async () => {
+      await boss.stop({ graceful: false });
       await owner.end();
       await pool.end();
       await testDb.container.stop();

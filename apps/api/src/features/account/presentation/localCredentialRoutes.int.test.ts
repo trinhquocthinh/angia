@@ -51,7 +51,7 @@ describe('Enrollment OIDC qua HTTP và PostgreSQL', () => {
     t.app.request('/api/auth/password-login', {
       method: 'POST',
       headers: { origin: 'https://angia.example', 'content-type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ identifier: username, password }),
     });
   it('TC-900: reauth OIDC đúng subject rồi thiết lập local giữ account ID và đăng nhập local được', async () => {
     const before = await state();

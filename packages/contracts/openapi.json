@@ -109,6 +109,123 @@
           "storage"
         ]
       },
+      "AccountEmailResponse": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "pendingEmail": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "email",
+          "emailVerified",
+          "pendingEmail"
+        ]
+      },
+      "ChangeAccountEmailRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "currentPassword": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "email",
+          "currentPassword"
+        ],
+        "additionalProperties": false
+      },
+      "RequestEmailVerificationResponse": {
+        "type": "object",
+        "properties": {
+          "sent": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "sent"
+        ]
+      },
+      "ConfirmEmailVerificationRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "additionalProperties": false
+      },
+      "RequestPasswordResetResponse": {
+        "type": "object",
+        "properties": {
+          "received": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "received"
+        ]
+      },
+      "RequestPasswordResetRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 254
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "additionalProperties": false
+      },
+      "ResetPasswordRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "token",
+          "newPassword"
+        ],
+        "additionalProperties": false
+      },
       "PasswordLoginResponse": {
         "type": "object",
         "properties": {
@@ -124,12 +241,19 @@
               },
               "passwordChangeRequired": {
                 "type": "boolean"
+              },
+              "passwordResetBy": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "required": [
               "csrfToken",
               "expiresAt",
-              "passwordChangeRequired"
+              "passwordChangeRequired",
+              "passwordResetBy"
             ]
           }
         },
@@ -140,10 +264,10 @@
       "PasswordLoginRequest": {
         "type": "object",
         "properties": {
-          "username": {
+          "identifier": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 32
+            "maxLength": 254
           },
           "password": {
             "type": "string",
@@ -152,7 +276,7 @@
           }
         },
         "required": [
-          "username",
+          "identifier",
           "password"
         ]
       },
@@ -172,6 +296,23 @@
         },
         "required": [
           "newPassword"
+        ]
+      },
+      "ResetMemberPasswordResponse": {
+        "type": "object",
+        "properties": {
+          "temporaryPassword": {
+            "type": "string",
+            "minLength": 16
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "temporaryPassword",
+          "expiresAt"
         ]
       },
       "LocalCredentialRequest": {
@@ -253,7 +394,10 @@
             "type": "string"
           },
           "email": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "ageConfirmed": {
             "type": "boolean"
@@ -330,11 +474,15 @@
               },
               "name": {
                 "type": "string"
+              },
+              "isOwner": {
+                "type": "boolean"
               }
             },
             "required": [
               "id",
-              "name"
+              "name",
+              "isOwner"
             ]
           },
           "role": {
@@ -361,6 +509,9 @@
           "hasLocalCredential": {
             "type": "boolean"
           },
+          "emailStatus": {
+            "$ref": "#/components/schemas/AccountEmailResponse"
+          },
           "features": {
             "type": "object",
             "properties": {
@@ -384,6 +535,7 @@
           "csrfToken",
           "authMethod",
           "hasLocalCredential",
+          "emailStatus",
           "features"
         ]
       },
@@ -7851,6 +8003,439 @@
         }
       }
     },
+    "/api/me/data-exports": {
+      "post": {
+        "tags": [
+          "data-export"
+        ],
+        "summary": "Yêu cầu tải dữ liệu (SPEC-072)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "scope": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "self"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "profileId": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        },
+                        "required": [
+                          "profileId"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "scope"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Đã xếp việc tạo ZIP",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "exportId": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  },
+                  "required": [
+                    "exportId"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "CSRF hoặc mật khẩu chưa đổi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_RATE_LIMITED: tối đa 3 yêu cầu/ngày",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/data-exports/{id}": {
+      "get": {
+        "tags": [
+          "data-export"
+        ],
+        "summary": "Xem trạng thái yêu cầu tải dữ liệu",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trạng thái hiện tại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "ready",
+                        "failed"
+                      ]
+                    },
+                    "expiresAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "expiresAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "CSRF hoặc mật khẩu chưa đổi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/data-exports/{id}/file": {
+      "get": {
+        "tags": [
+          "data-export"
+        ],
+        "summary": "Tải ZIP của chính tài khoản trong 24 giờ",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tệp dữ liệu ZIP",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần đăng nhập",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "CSRF hoặc mật khẩu chưa đổi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/account-deletion": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Xoá tài khoản và ẩn danh thông tin định danh (SPEC-073)",
+        "description": "Cần phiên, Origin tin cậy và X-CSRF-Token; không yêu cầu đã đồng ý pháp lý hoặc thuộc nhà.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1024
+                  },
+                  "ownProfileDisposition": {
+                    "type": "string",
+                    "enum": [
+                      "keep",
+                      "delete"
+                    ]
+                  }
+                },
+                "required": [
+                  "password"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Đã xoá tài khoản và cookie phiên/thiết bị Push"
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED; ERR_INVALID_CREDENTIALS: mật khẩu sai hoặc không có credential local",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: Origin/CSRF sai; ERR_ACCOUNT_LOCKED: tài khoản bị khoá",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_OWNER_MUST_TRANSFER; ERR_OWNER_MUST_DELETE_FAMILY; ERR_LAST_GUARDIAN (details.profileIds)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: body sai hoặc thiếu lựa chọn hồ sơ liên kết",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_RATE_LIMITED: quá nhiều lần sai",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: xác thực tạm gián đoạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/family/deletion-request/current": {
       "get": {
         "tags": [
@@ -9903,6 +10488,502 @@
         }
       }
     },
+    "/api/me/email": {
+      "patch": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Thêm/đổi email bằng mật khẩu hiện tại (SPEC-085)",
+        "description": "Cần phiên và X-CSRF-Token. Không gửi mail. Cache-Control: no-store.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeAccountEmailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Trạng thái email hiện tại",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountEmailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ERR_VERIFICATION_TOKEN_INVALID: liên kết không hợp lệ hoặc hết hạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED; ERR_INVALID_CREDENTIALS: mật khẩu hiện tại sai",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: CSRF/Origin/JSON sai; ERR_ACCOUNT_LOCKED; ERR_PASSWORD_CHANGE_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_EMAIL_TAKEN: email đã được tài khoản khác xác minh",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: dữ liệu không hợp lệ hoặc chưa có email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_RATE_LIMITED: tối đa 3 lần gửi mỗi giờ/tài khoản",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: xác thực hoặc lưu trữ tạm gián đoạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/me/email-verifications": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Gửi link xác minh email (SPEC-085)",
+        "description": "Cần phiên và X-CSRF-Token, body rỗng. Chỉ lượt gửi 202 tiêu hạn mức. Cache-Control: no-store.",
+        "responses": {
+          "202": {
+            "description": "Đã xếp email vào hàng đợi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestEmailVerificationResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Email đã xác minh và không có email chờ đổi"
+          },
+          "400": {
+            "description": "ERR_VERIFICATION_TOKEN_INVALID: liên kết không hợp lệ hoặc hết hạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED; ERR_INVALID_CREDENTIALS: mật khẩu hiện tại sai",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: CSRF/Origin/JSON sai; ERR_ACCOUNT_LOCKED; ERR_PASSWORD_CHANGE_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_EMAIL_TAKEN: email đã được tài khoản khác xác minh",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: dữ liệu không hợp lệ hoặc chưa có email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_RATE_LIMITED: tối đa 3 lần gửi mỗi giờ/tài khoản",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: xác thực hoặc lưu trữ tạm gián đoạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/email-verifications/confirm": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Xác nhận email bằng token một lần (SPEC-085)",
+        "description": "Không cần phiên. Cần application/json và Origin tin cậy. Cache-Control: no-store.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmEmailVerificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Đã xác minh email"
+          },
+          "400": {
+            "description": "ERR_VERIFICATION_TOKEN_INVALID: liên kết không hợp lệ hoặc hết hạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED; ERR_INVALID_CREDENTIALS: mật khẩu hiện tại sai",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: CSRF/Origin/JSON sai; ERR_ACCOUNT_LOCKED; ERR_PASSWORD_CHANGE_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ERR_EMAIL_TAKEN: email đã được tài khoản khác xác minh",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: dữ liệu không hợp lệ hoặc chưa có email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_RATE_LIMITED: tối đa 3 lần gửi mỗi giờ/tài khoản",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: xác thực hoặc lưu trữ tạm gián đoạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/password-reset-requests": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Yêu cầu đặt lại mật khẩu qua email (SPEC-063)",
+        "description": "Không cần phiên. Origin tin cậy, JSON; Cache-Control: no-store. Đếm mọi yêu cầu theo IP và email chuẩn hoá, 3/giờ mỗi khoá. Luôn phản hồi đồng nhất trước khi tra email.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestPasswordResetRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Đã nhận yêu cầu",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestPasswordResetResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: Origin hoặc JSON không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: dữ liệu không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "ERR_RATE_LIMITED: 3/giờ theo IP và email",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: dịch vụ xác thực tạm gián đoạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/password-resets": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Đặt mật khẩu mới bằng token một lần (SPEC-063)",
+        "description": "Không cần phiên. Origin tin cậy, JSON; Cache-Control: no-store. Token hết hạn sau 30 phút, thu hồi mọi phiên khi thành công.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Đã đặt lại mật khẩu"
+          },
+          "400": {
+            "description": "ERR_RESET_TOKEN_INVALID: Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN: Origin hoặc JSON không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: dữ liệu không hợp lệ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: dịch vụ xác thực tạm gián đoạn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/password-login": {
       "post": {
         "tags": [
@@ -10084,6 +11165,88 @@
           },
           "503": {
             "description": "ERR_AUTH_UNAVAILABLE: DB/rate limiter/hash lỗi hoặc hash bận",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/family/members/{targetAccountId}/password-reset": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Chủ hộ/Đồng quản lý đặt lại mật khẩu thành viên (SPEC-062)",
+        "description": "Cần phiên và X-CSRF-Token. Cache-Control: no-store. Mật khẩu tạm chỉ trả một lần, hết hạn sau 24 giờ.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "targetAccountId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mật khẩu tạm và hạn dùng",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetMemberPasswordResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN; ERR_OWNER_PROTECTED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR_NOT_FOUND",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION: targetAccountId phải là UUID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "ERR_AUTH_UNAVAILABLE: DB/hash lỗi hoặc hash bận",
             "content": {
               "application/json": {
                 "schema": {

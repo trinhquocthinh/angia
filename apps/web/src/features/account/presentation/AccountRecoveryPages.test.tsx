@@ -13,10 +13,11 @@ function markup(page: React.ReactNode) {
   const client = new QueryClient();
   client.setQueryData(['current-session'], {
     account: { id: 'account', displayName: 'Lan', isSystemAdmin: false, healthProfileId: null },
-    family: { id: 'family', name: 'Nhà thử' },
+    family: { id: 'family', name: 'Nhà thử', isOwner: false },
     role: 'main',
     authMethod: 'oidc',
     hasLocalCredential: false,
+    emailStatus: { email: null, emailVerified: false, pendingEmail: null },
     features: { localEnrollmentEnabled: true },
   });
   const html = renderToStaticMarkup(<QueryClientProvider client={client}>{page}</QueryClientProvider>);

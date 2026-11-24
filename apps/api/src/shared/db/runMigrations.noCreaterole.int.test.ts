@@ -20,6 +20,9 @@ describe('runMigrations với owner không có CREATEROLE', () => {
         CREATE ROLE angia_nocr_family_deletion NOLOGIN NOBYPASSRLS;
         GRANT angia_nocr_family_deletion TO angia_nocr
           WITH ADMIN TRUE, INHERIT FALSE, SET FALSE;
+        CREATE ROLE angia_nocr_data_export NOLOGIN NOBYPASSRLS;
+        GRANT angia_nocr_data_export TO angia_nocr
+          WITH ADMIN TRUE, INHERIT FALSE, SET FALSE;
       `);
       await admin.query('CREATE DATABASE angia_nocr OWNER angia_nocr');
       await admin.query('GRANT CONNECT ON DATABASE angia_nocr TO angia_nocr_app');
@@ -57,17 +60,24 @@ describe('runMigrations với owner không có CREATEROLE', () => {
       SELECT m.admin_option, m.inherit_option, m.set_option FROM pg_auth_members m
       JOIN pg_roles job ON job.oid = m.roleid
       JOIN pg_roles owner ON owner.oid = m.member
-      WHERE job.rolname = 'angia_nocr_family_deletion' AND owner.rolname = current_user
+      WHERE job.rolname IN ('angia_nocr_family_deletion', 'angia_nocr_data_export')
+        AND owner.rolname = current_user
     `);
-    expect(membership.rows).toEqual([{ admin_option: true, inherit_option: false, set_option: false }]);
+    expect(membership.rows).toEqual([
+      { admin_option: true, inherit_option: false, set_option: false },
+      { admin_option: true, inherit_option: false, set_option: false },
+    ]);
 
     expect(await runMigrations(ownerUrl)).toBeGreaterThan(0);
     expect(await runMigrations(ownerUrl)).toBe(0);
 
     const jobRole = await owner.query(`
       SELECT rolcanlogin, rolsuper, rolbypassrls FROM pg_roles
-      WHERE rolname = 'angia_nocr_family_deletion'
+      WHERE rolname IN ('angia_nocr_family_deletion', 'angia_nocr_data_export')
     `);
-    expect(jobRole.rows).toEqual([{ rolcanlogin: false, rolsuper: false, rolbypassrls: false }]);
+    expect(jobRole.rows).toEqual([
+      { rolcanlogin: false, rolsuper: false, rolbypassrls: false },
+      { rolcanlogin: false, rolsuper: false, rolbypassrls: false },
+    ]);
   });
 });

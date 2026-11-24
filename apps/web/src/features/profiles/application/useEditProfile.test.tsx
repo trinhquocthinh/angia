@@ -7,11 +7,12 @@ import { ProfileRequestError } from './ProfileRequestError';
 import { useEditProfile } from './useEditProfile';
 const session: ProfileSession = {
   account: { id: 'a', displayName: 'An', isSystemAdmin: false, healthProfileId: null },
-  family: { id: 'f', name: 'Nhà' },
+  family: { id: 'f', name: 'Nhà', isOwner: false },
   role: 'main',
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 const healthProfile: HealthProfile = {
@@ -69,7 +70,7 @@ describe('TC-449 — lưu sửa hồ sơ, quyền và cache', () => {
   it.each([
     { ...session, role: 'member' as const },
     { ...session, csrfToken: '' },
-    { ...session, family: { id: 'other', name: 'Khác' } },
+    { ...session, family: { id: 'other', name: 'Khác', isOwner: false } },
   ])('không gửi khi phiên không đủ điều kiện', async (context) => {
     const update = vi.fn(async () => profile);
     const { client, hook } = mount(update, context);

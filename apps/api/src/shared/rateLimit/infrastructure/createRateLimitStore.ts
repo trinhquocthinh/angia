@@ -1,9 +1,10 @@
 import { and, eq, sql } from 'drizzle-orm';
+import type { FamilyScopedTx } from '@src/shared/db/withFamilyScope.js';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { rateLimitBuckets } from '@src/shared/db/schema/rateLimitBuckets.js';
 import type { RateLimitStore } from '../application/ports.js';
 
-export function createRateLimitStore(db: Database): RateLimitStore {
+export function createRateLimitStore(db: Database | FamilyScopedTx): RateLimitStore {
   return {
     async increment(keyHash, windowStart) {
       const [row] = await db

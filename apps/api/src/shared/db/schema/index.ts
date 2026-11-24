@@ -50,3 +50,7 @@ export { familyDeletionRequests } from './familyDeletionRequests.js';
 export { profileGuardians } from './profileGuardians.js';
 export { removedMemberWindows } from './removedMemberWindows.js';
 export { adminAuditEvents } from './adminAuditEvents.js';
+export { emailVerificationTokens } from './emailVerificationTokens.js';
+export { passwordResetTokens } from './passwordResetTokens.js';
+export { dataExports } from './dataExports.js';
+export { deletedUsernames } from './deletedUsernames.js';

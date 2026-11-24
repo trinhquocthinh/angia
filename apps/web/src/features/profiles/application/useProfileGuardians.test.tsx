@@ -7,11 +7,12 @@ import { useProfileGuardians } from './useProfileGuardians';
 
 const session: ProfileSession = {
   account: { id: 'acc-lan', displayName: 'Mẹ Lan', isSystemAdmin: false, healthProfileId: null },
-  family: { id: 'fam-1', name: 'Nhà An' },
+  family: { id: 'fam-1', name: 'Nhà An', isOwner: false },
   role: 'main',
   csrfToken: 'csrf-token-1',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 };
 
@@ -130,7 +131,10 @@ it('query key cô lập theo hồ sơ, tài khoản và nhà', () => {
     profileGuardiansQueryKey({ ...session, account: { ...session.account, id: 'other' } }, 'profile-1'),
   ).not.toEqual(key);
   expect(
-    profileGuardiansQueryKey({ ...session, family: { id: 'other', name: 'Nhà khác' } }, 'profile-1'),
+    profileGuardiansQueryKey(
+      { ...session, family: { id: 'other', name: 'Nhà khác', isOwner: false } },
+      'profile-1',
+    ),
   ).not.toEqual(key);
 });
 

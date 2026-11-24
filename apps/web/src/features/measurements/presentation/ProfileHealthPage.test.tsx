@@ -28,7 +28,7 @@ vi.mock('../infrastructure/createMeasurementsRepository', () => ({
 
 const session = {
   account: { id: 'account', displayName: 'Bình', isSystemAdmin: false, healthProfileId: null },
-  family: { id: 'family', name: 'Nhà An' },
+  family: { id: 'family', name: 'Nhà An', isOwner: false },
   role: 'main',
   csrfToken: 'csrf',
 };

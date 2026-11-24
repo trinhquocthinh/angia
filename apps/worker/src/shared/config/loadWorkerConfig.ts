@@ -52,6 +52,13 @@ const workerEnvSchema = z
     // dev thiếu thì dùng `angia-admins`.
     ADMIN_GROUP_NAME: unsetWhenEmpty(trimmedText),
     IDP_SYNC_MAX_REVOKES: z.coerce.number().int().min(1).default(10),
+    // Tech Spec §10.5: dev không đặt cả bộ thì tắt job; sit/prod bắt buộc SMTP.
+    SMTP_HOST: unsetWhenEmpty(trimmedText),
+    SMTP_PORT: unsetWhenEmpty(z.coerce.number().int().min(1).max(65535)),
+    SMTP_USER: unsetWhenEmpty(trimmedText),
+    SMTP_PASSWORD: unsetWhenEmpty(z.string().min(1)),
+    SMTP_SECURE: unsetWhenEmpty(z.enum(['true', 'false']).transform((value) => value === 'true')),
+    MAIL_FROM: unsetWhenEmpty(trimmedText),
     // SPEC-027: gửi lời nhắc qua Web Push; trùng tên biến và giá trị với API. Bắt buộc đủ bộ ở sit/prod; dev không đặt = tắt job.
     WEB_PUSH_PUBLIC_KEY: unsetWhenEmpty(trimmedText),
     WEB_PUSH_PRIVATE_KEY: unsetWhenEmpty(trimmedText),
@@ -98,8 +105,32 @@ const workerEnvSchema = z
       if (!env[key])
         ctx.addIssue({ code: 'custom', message: `Gửi lời nhắc Web Push bắt buộc có ${key}`, path: [key] });
   })
+  .superRefine((env, ctx) => {
+    const keys = [
+      'SMTP_HOST',
+      'SMTP_PORT',
+      'MAIL_FROM',
+      'SMTP_USER',
+      'SMTP_PASSWORD',
+      'SMTP_SECURE',
+    ] as const;
+    if (env.STACK === 'dev' && keys.every((key) => env[key] === undefined)) return;
+    const required = ['SMTP_HOST', 'SMTP_PORT', 'MAIL_FROM'] as const;
+    for (const key of required)
+      if (!env[key]) ctx.addIssue({ code: 'custom', message: `Gửi email bắt buộc có ${key}`, path: [key] });
+    if (env.STACK === 'prod' || env.SMTP_USER || env.SMTP_PASSWORD)
+      for (const key of ['SMTP_USER', 'SMTP_PASSWORD'] as const)
+        if (!env[key])
+          ctx.addIssue({ code: 'custom', message: `Xác thực SMTP bắt buộc có ${key}`, path: [key] });
+  })
   .transform(
     ({
+      SMTP_HOST: host,
+      SMTP_PORT: port,
+      SMTP_SECURE: secure,
+      SMTP_USER: user,
+      SMTP_PASSWORD: password,
+      MAIL_FROM: from,
       WEB_PUSH_PUBLIC_KEY: publicKey,
       WEB_PUSH_PRIVATE_KEY: privateKey,
       WEB_PUSH_SUBJECT: subject,
@@ -108,6 +139,17 @@ const workerEnvSchema = z
       ...env,
       AI_RUN_MODE: env.AI_RUN_MODE ?? (env.AI_PROVIDER === 'fake' ? 'fake' : 'live'),
       ADMIN_GROUP_NAME: env.ADMIN_GROUP_NAME ?? 'angia-admins',
+      smtp:
+        host && port && from
+          ? {
+              host,
+              port,
+              secure: secure ?? false,
+              from,
+              ...(user ? { user } : {}),
+              ...(password ? { password } : {}),
+            }
+          : null,
       webPush: publicKey && privateKey && subject ? { publicKey, privateKey, subject } : null,
     }),
   );

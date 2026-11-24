@@ -30,6 +30,7 @@ it('SPEC-066: tải danh sách thành viên theo scope và ném thông báo khi 
       .mockResolvedValueOnce({ ok: false, code: 'NETWORK' }),
     changeRole: vi.fn(),
     remove: vi.fn(),
+    resetPassword: vi.fn(),
   };
 
   let hook!: ReturnType<typeof useHouseholdMembers>;

@@ -13,11 +13,12 @@ vi.mock('@tanstack/react-router', () => ({
 
 const linked = {
   account: { id: 'account', displayName: 'Mẹ', isSystemAdmin: false, healthProfileId: 'p1' },
-  family: { id: 'family', name: 'Nhà An' },
+  family: { id: 'family', name: 'Nhà An', isOwner: false },
   role: 'member',
   csrfToken: 'csrf',
   authMethod: 'local',
   hasLocalCredential: true,
+  emailStatus: { email: null, emailVerified: false, pendingEmail: null },
   features: { redactionSuggestions: false, localEnrollmentEnabled: false },
 } as const;
 const summary: SelfProfile = {

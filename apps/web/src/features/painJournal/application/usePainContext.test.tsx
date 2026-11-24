@@ -49,7 +49,7 @@ it('đọc main/self với signal và cô lập cache theo khoảng, vấn đề
     probe(
       client,
       { context },
-      { ...session, family: { id: 'g', name: 'Khác' } },
+      { ...session, family: { id: 'g', name: 'Khác', isOwner: false } },
       { ...profile, familyId: 'g' },
     ).data,
   ).toBeUndefined();

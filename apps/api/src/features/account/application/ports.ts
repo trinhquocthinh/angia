@@ -7,6 +7,8 @@ export interface RegistrationGate {
   isOpen(): Promise<boolean>;
 }
 
+export type { AccountEmailView, AccountEmails, AccountEmailDeps, AccountEmailFailure } from './emailPorts.js';
+
 export interface CurrentLegalVersions {
   termsVersionId: string;
   privacyVersionId: string;
@@ -91,13 +93,17 @@ export interface LocalLoginSessions {
 export interface LoginLocalAccountDeps {
   identity: IdentityProvider;
   localLoginSessions: LocalLoginSessions;
+  passwordResetNotices: PasswordResetNotices;
   rateLimit: RateLimitDependencies;
   generateToken(): string;
   now(): Date;
 }
 
 export type LoginLocalAccountOutcome =
-  | { ok: true; session: LocalAccountSession & { passwordChangeRequired: boolean } }
+  | {
+      ok: true;
+      session: LocalAccountSession & { passwordChangeRequired: boolean; passwordResetBy: string | null };
+    }
   | { ok: false; code: 'ERR_INVALID_CREDENTIALS' | 'ERR_ACCOUNT_LOCKED' }
   | { ok: false; code: 'ERR_AUTH_UNAVAILABLE'; reason: string }
   | { ok: false; code: 'ERR_RATE_LIMITED'; retryAfterSeconds: number };
@@ -171,4 +177,42 @@ export type EnrollLocalCredentialOutcome =
         | 'ERR_CREDENTIAL_ALREADY_SET';
     }
   | { ok: false; code: 'ERR_VALIDATION'; details: { field: 'password' } }
+  | { ok: false; code: 'ERR_AUTH_UNAVAILABLE'; reason: string };
+
+export interface PasswordResetNotices {
+  findLatestActor(accountId: string): Promise<string | null>;
+}
+
+export interface MemberPasswordResetActor {
+  accountId: string;
+  familyId: string | null;
+  role: 'main' | 'member' | null;
+}
+
+type MemberPasswordResetFailure = {
+  ok: false;
+  code: 'ERR_FORBIDDEN' | 'ERR_OWNER_PROTECTED' | 'ERR_NOT_FOUND' | 'ERR_UNAUTHENTICATED';
+};
+
+export interface MemberPasswordResets {
+  authorize(
+    actor: MemberPasswordResetActor & { familyId: string },
+    targetAccountId: string,
+  ): Promise<{ ok: true; usernameNormalized: string | null } | MemberPasswordResetFailure>;
+  reset(
+    actor: MemberPasswordResetActor & { familyId: string },
+    targetAccountId: string,
+    input: { passwordHash: string; now: Date; expiresAt: Date },
+  ): Promise<{ ok: true } | MemberPasswordResetFailure>;
+}
+
+export interface ResetMemberPasswordDeps {
+  memberPasswordResets: MemberPasswordResets;
+  hasher: PasswordHasher;
+  now(): Date;
+}
+
+export type ResetMemberPasswordOutcome =
+  | { ok: true; value: { temporaryPassword: string; expiresAt: Date } }
+  | MemberPasswordResetFailure
   | { ok: false; code: 'ERR_AUTH_UNAVAILABLE'; reason: string };

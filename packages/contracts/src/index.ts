@@ -21,14 +21,7 @@ export {
   requeueAwaitingBudgetJobSchema,
 } from './jobs/requeueAwaitingBudgetJob.js';
 export type { RequeueAwaitingBudgetJob } from './jobs/requeueAwaitingBudgetJob.js';
-export {
-  PURGE_PROFILE_OBJECTS_QUEUE,
-  PURGE_PROFILE_OBJECTS_QUEUE_OPTIONS,
-  PURGE_PROFILE_OBJECTS_DELAY_SECONDS,
-  purgeProfileObjectsJobSchema,
-  profileObjectPrefix,
-} from './jobs/purgeProfileObjectsJob.js';
-export type { PurgeProfileObjectsJob } from './jobs/purgeProfileObjectsJob.js';
+export * from './jobs/purgeProfileObjectsJob.js';
 export { healthResponseSchema } from './health/healthResponseSchema.js';
 export type { HealthResponse } from './health/healthResponseSchema.js';
 export { consentConfirmationSchema } from './profiles/consentConfirmationSchema.js';
@@ -260,3 +253,9 @@ export * from './painJournal/forbiddenWords.js';
 export * from './painJournal/schemas.js';
 
 export * from './household/index.js';
+
+export * from './jobs/sendTransactionalEmailJob.js';
+
+export * from './auth/accountEmailSchemas.js';
+export * from './jobs/buildDataExportJob.js';
+export * from './jobs/cleanupDataExportsJob.js';

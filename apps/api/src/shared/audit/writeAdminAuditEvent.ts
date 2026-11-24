@@ -3,6 +3,9 @@ import { adminAuditEvents } from '@src/shared/db/schema/index.js';
 
 // Chỉ mở rộng khi thao tác nghiệp vụ tương ứng được triển khai và có test.
 const ACTIONS = [
+  'email_changed',
+  'password_reset_by_email',
+  'password_reset_by_family',
   'guardian_added',
   'guardian_removed',
   'family_created',
@@ -19,6 +22,7 @@ const ACTIONS = [
   'family_deletion_requested',
   'family_deletion_revoked',
   'family_deletion_executed',
+  'account_deleted',
 ] as const;
 
 interface AdminAuditEventInput {
