@@ -29,7 +29,7 @@ export function DeleteProfileForm(props: DeleteProfileFormProps) {
       <label className="flex flex-col gap-2 text-caption font-medium">
         Nhập lại chính xác tên hồ sơ
         <input
-          className="min-h-[52px] rounded-xl border border-border px-4 text-body"
+          className="min-h-[46px] rounded-xl border border-border px-4 text-body"
           value={value}
           autoComplete="off"
           aria-invalid={mismatch}
@@ -45,14 +45,14 @@ export function DeleteProfileForm(props: DeleteProfileFormProps) {
       <button
         type="submit"
         disabled={!value || pending}
-        className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-danger px-5 py-3 text-button-secondary font-semibold text-on-accent cursor-pointer hover:bg-danger disabled:bg-border disabled:text-text-secondary disabled:cursor-default"
+        className="inline-flex min-h-[46px] items-center justify-center rounded-xl bg-danger px-5 py-3 text-button-secondary font-semibold text-on-accent cursor-pointer hover:bg-danger disabled:bg-border disabled:text-text-secondary disabled:cursor-default"
       >
         {pending ? 'Đang xóa triệt để...' : 'Xóa hồ sơ'}
       </button>
       <button
         type="button"
         disabled={pending}
-        className="min-h-[52px] rounded-xl px-5 text-button-secondary font-semibold text-accent cursor-pointer disabled:opacity-55"
+        className="min-h-[46px] rounded-xl px-5 text-button-secondary font-semibold text-accent cursor-pointer disabled:opacity-55"
         onClick={props.onCancel}
       >
         Hủy

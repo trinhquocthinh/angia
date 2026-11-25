@@ -18,7 +18,7 @@ export function SessionStatus(props: Props) {
           <button
             type="button"
             onClick={props.onRetry}
-            className="min-h-[52px] rounded-xl bg-accent px-4 py-3 font-semibold text-on-accent hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+            className="min-h-[46px] rounded-xl bg-accent px-4 py-3 font-semibold text-on-accent hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
           >
             Thử lại
           </button>

@@ -1,16 +1,23 @@
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { ProfileSectionIcon } from '@src/features/profiles/presentation/components/ProfileSectionIcon';
+
 type Props = { editable: boolean; pending: boolean; onRecord: () => void };
 
 export function TemperatureHeader({ editable, pending, onRecord }: Props) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <h2 className="text-heading-2 font-semibold text-accent">Nhiệt độ</h2>
+      <div className="flex items-center gap-3">
+        <ProfileSectionIcon name="thermostat" size={34} />
+        <h2 className="auth-heading text-heading-2 font-semibold text-accent">Nhiệt độ</h2>
+      </div>
       {editable && (
         <button
           type="button"
           disabled={pending}
           onClick={onRecord}
-          className="min-h-14 rounded-xl bg-accent px-4 text-button-primary font-semibold text-on-accent disabled:opacity-50"
+          className="inline-flex min-h-btn cursor-pointer items-center gap-1.5 rounded-2xl bg-accent px-4 text-button-primary font-semibold text-on-accent transition-colors hover:bg-accent-hover disabled:opacity-50"
         >
+          <AdminIcon name="add" size={18} />
           Ghi nhiệt độ
         </button>
       )}

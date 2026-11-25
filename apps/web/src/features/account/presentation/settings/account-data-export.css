@@ -109,7 +109,7 @@
 }
 .account-export-btn {
   width: 100%;
-  min-height: 56px;
+  min-height: var(--size-button-height);
   border-radius: 16px;
 }
 .account-export-link {

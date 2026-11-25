@@ -34,7 +34,7 @@ export function MyConsentCard({
       {consentStatus === 'confirmed' && (
         <button
           type="button"
-          className="mt-4 inline-flex min-h-[52px] items-center justify-center rounded-xl border border-border px-5 py-3 text-button-secondary font-semibold text-accent cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus"
+          className="mt-4 inline-flex min-h-[46px] items-center justify-center rounded-xl border border-border px-5 py-3 text-button-secondary font-semibold text-accent cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus"
           onClick={onWithdraw}
         >
           Rút đồng thuận
@@ -42,7 +42,7 @@ export function MyConsentCard({
       )}
       <button
         type="button"
-        className="mt-4 ml-3 inline-flex min-h-[52px] items-center justify-center rounded-xl px-3 py-3 text-button-secondary font-semibold text-text-secondary cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus"
+        className="mt-4 ml-3 inline-flex min-h-[46px] items-center justify-center rounded-xl px-3 py-3 text-button-secondary font-semibold text-text-secondary cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus"
         onClick={onUnlink}
       >
         Gỡ liên kết

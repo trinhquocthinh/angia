@@ -120,21 +120,24 @@ Icon menu là PNG 3D alpha 40px; chuông thông báo 30px, không có tile/viề
 riêng phía sau icon. Chuông rung một lần khi hiện và hai nhịp khi hover/focus;
 giảm chuyển động tắt hiệu ứng. Không có số thông báo giả. Nguồn và dẫn xuất
 ghi tại `apps/web/public/images/account-menu/SOURCES.md`.
-Menu dùng tên mục đậm và mô tả phụ một dòng: Nhà của tôi / Sổ sức khỏe gia đình;
-Hồ sơ của tôi / Thông tin & thẻ y tế; Quản lý tài khoản / Bảo mật & cài đặt;
-Đăng xuất / Rời phiên làm việc. Mục đang chọn có nền mint; hai dòng Đăng xuất
-dùng màu danger. Icon Hồ sơ là thẻ y tế vàng–mint, giữ nền alpha trong suốt.
+Menu dùng tên mục đậm và mô tả phụ một dòng: Nhà của tôi / Thành viên & thông tin nhà;
+Hồ sơ của tôi / Thuốc & sức khoẻ của bạn; Quản lý tài khoản / Bảo mật & cài đặt;
+Đăng xuất / Thoát khỏi thiết bị này. Mục đang chọn có nền mint; hai dòng Đăng xuất
+màu danger. Hồ sơ dùng thẻ y tế vàng–mint. Quản lý tài khoản dùng bánh răng gốm
+xanh/lõi vàng từ Stitch `3410b9d76cf74777a7cfc178f17a5163`, asset riêng
+`account-settings-3d.png`; Quản trị hệ thống giữ `settings-3d.png`.
 
 Kiểm tra trình duyệt bằng
 `yarn playwright test --config playwright.account.config.ts apps/web/e2e/mobileBottomNav.spec.ts`
 (build web trước): quyền, route đang chọn, lối tải ảnh, hai nền, Chromium/WebKit,
 360/768/1024/1440px và phóng chữ 200%. Chưa nghiệm thu SIT hoặc toàn bộ Epic 30.
 
-## Cỡ chữ Chuẩn / Chữ lớn — 2026-11-25
+## Cỡ chữ Chuẩn / Chữ lớn — cập nhật UI 2026-11-26
 
 Trong **Tài khoản → Cỡ chữ**, công tắc **Chữ lớn** mặc định tắt. Chuẩn dùng nội
-dung/ô nhập 16px, nhãn/tab 14px, nút chính 18px và h1 24px; bật Chữ lớn tương ứng
-18/16/20/26px. Lựa chọn lưu trên thiết bị bằng `angia-large-text`, dùng chung
+dung/ô nhập 16px, nhãn/tab 14px, chữ nút 14px và h1 24px; bật Chữ lớn tương ứng
+18/16/16/26px. Token chiều cao nút `min-h-btn` là 46px ở Chuẩn và 56px ở Chữ lớn
+(theo UI owner duyệt 2026-11-26). Lựa chọn lưu trên thiết bị bằng `angia-large-text`, dùng chung
 trong trình duyệt này, không gửi server. Storage bị chặn vẫn đổi được trong
 phiên. Hai nền sáng/tối dùng cùng thang chữ.
 
@@ -142,12 +145,41 @@ Token tại `shared/styles/typography.css`; provider và tiện ích tại
 `shared/accessibility/`. Dùng utility ngữ nghĩa `text-body`, `text-caption`,
 `text-button-primary`, `text-button-secondary`, `text-heading-1`,
 `text-heading-2`, `text-display` thay cho cỡ chữ cứng. Biểu đồ đọc cỡ thực từ
-token; icon, ảnh, bản in A4 và vùng chạm giữ nguyên. Phóng chữ trình duyệt
+token; icon, ảnh và bản in A4 giữ nguyên. Nút dùng token chiều cao theo chế độ chữ. Phóng chữ trình duyệt
 hoạt động độc lập; không đổi root font-size để thu nhỏ toàn giao diện.
 
 Kiểm tra: `yarn verify:fast`; sau build web chạy
 `yarn playwright test --config playwright.account.config.ts apps/web/e2e/textSize.spec.ts`.
 Kiểm component/modal và bản in bằng các bộ `uiFoundation.spec.ts`, `theme.spec.ts`.
+
+## Hồ sơ — E30-S1-T2, UI owner duyệt 2026-11-26
+
+Danh sách `/?view=profiles` và mục lục `/profiles/:id` dùng thẻ Bento, avatar
+chữ cái và bộ icon 3D cục bộ. Các mục dùng thẻ điều hướng có nhãn, trạng thái
+đang chọn và cuộn ngang trên màn hẹp. Màn số đo mở bằng
+`/profiles/:id?section=health`; các route con hiện có giữ nguyên. Hero định danh
+được dùng chung cho hồ sơ gia đình và Hồ sơ của tôi. Nguồn icon ghi tại
+`apps/web/public/images/profile-sections/SOURCES.md`.
+
+Dữ liệu số thuốc/liều tiếp theo trên thẻ chưa được thêm vì API danh sách chưa
+cung cấp. Mục lục dùng mô tả tĩnh, không giả lập số liệu. Hiển thị số đo theo
+BR-049; mục Người giám hộ theo SPEC-070 (hồ sơ dưới 18 tuổi chưa liên kết,
+người thao tác là main). Những thẻ thuốc, số đo, xét nghiệm, lịch hẹn, nhiệt độ,
+dòng thời gian và sổ đau nhức được đồng bộ cách trình bày; giữ nguyên nghiệp vụ.
+
+**Quyền Thành viên giữ nguyên BR-005/SPEC-042:** chỉ tự xem các mục hiện có
+của hồ sơ liên kết; chưa có bản tóm tắt in, lịch sử chứng từ/ảnh đơn thuốc hay
+chức năng tải ảnh đơn thuốc, phiếu xét nghiệm, máy đo. Owner xác nhận tạm thời
+không mở rộng các quyền này. Không đổi API, domain, DB schema hoặc dependency.
+
+Kiểm tra trước commit (2026-11-26): `yarn verify:fast` PASS (300 test),
+web unit PASS (1.890 test), lint/build/typecheck/format PASS. Budget mọi route
+≤200 KB gzip, TC-729 PASS. E2E mục lục/cỡ chữ 39/39 và Hồ sơ của tôi 18/18 PASS.
+Chưa chạy full `yarn verify` cho checkpoint này.
+
+Owner đã duyệt UI local; chưa tương đương nghiệm thu toàn bộ Epic 30,
+kiểm tra SIT/Production hoặc deploy. Tài liệu thiết kế và master plan chi tiết
+nằm tại `../../Docs/angia/` (ngoài Git repo này).
 
 ## Quản trị hệ thống
 

@@ -8,14 +8,14 @@ for (const colorScheme of ['light', 'dark'] as const) {
       await page.goto('/e2e/uiFoundation.html');
       await page.getByRole('button', { name, exact: true }).click();
       const primary = page.getByRole('button', { name: 'Lưu thông tin', exact: true });
-      await expect(primary).toHaveCSS('font-size', '18px');
-      await expect(primary).toHaveCSS('line-height', '24px');
-      await expect(page.getByRole('button', { name: 'Hủy', exact: true })).toHaveCSS('font-size', '16px');
-      expect((await primary.boundingBox())!.height).toBeGreaterThanOrEqual(56);
+      await expect(primary).toHaveCSS('font-size', '14px');
+      await expect(primary).toHaveCSS('line-height', '20px');
+      await expect(page.getByRole('button', { name: 'Hủy', exact: true })).toHaveCSS('font-size', '14px');
+      expect((await primary.boundingBox())!.height).toBeGreaterThanOrEqual(46);
       for (const button of await page.getByRole('dialog').getByRole('button').all()) {
         const box = (await button.boundingBox())!;
-        expect(box.height).toBeGreaterThanOrEqual(48);
-        expect(box.width).toBeGreaterThanOrEqual(48);
+        expect(box.height).toBeGreaterThanOrEqual(46);
+        expect(box.width).toBeGreaterThanOrEqual(46);
       }
       await expect(page.getByText('Nội dung giải thích')).toHaveCSS('font-size', '14px');
       await expect(page.getByRole('heading', { name: 'Thông tin thử' })).toHaveCSS('font-size', '20px');
@@ -91,7 +91,7 @@ for (const name of ['Mở hộp thoại', 'Mở bảng bên']) {
       document.documentElement.style.fontSize = '200%';
     });
     const longButton = page.getByRole('button', { name: 'Nhãn nút phụ đủ dài', exact: false });
-    await expect(longButton).toHaveCSS('font-size', '32px');
+    await expect(longButton).toHaveCSS('font-size', '28px');
     expect(
       await longButton.evaluate(
         (element) =>

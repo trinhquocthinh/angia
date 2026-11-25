@@ -1,14 +1,15 @@
 import { MedicationRequestError } from '@src/features/medications/application/MedicationRequestError';
 import type { ProfileSession } from '@src/features/profiles/application/ports';
+import { ProfileIdentityHero } from '@src/features/profiles/presentation/components/ProfileIdentityHero';
 import { resolveSelfSection, type SelfSectionKey } from '../application/selfSections';
 import { useSelfProfile } from '../application/useSelfProfile';
-import { selfProfileRepository } from './selfProfileRepository';
+import { selfProfileRepository as repository } from './selfProfileRepository';
 import { SelfLoadError, SelfSkeleton } from './SelfLoadState';
 import { SelfSection } from './SelfSection';
 import { SelfTabs } from './SelfTabs';
 
 const Notice = ({ text }: { text: string }) => (
-  <p role="alert" className="rounded-[20px] bg-surface p-6 text-body">
+  <p role="alert" className="profile-bento-card p-6 text-body">
     {text}
   </p>
 );
@@ -16,9 +17,9 @@ const NOT_LINKED = 'Tài khoản chưa liên kết hồ sơ sức khỏe.';
 
 type Props = { session: ProfileSession; section: SelfSectionKey | undefined; issueId?: string | undefined };
 
-// Design §9.5: chỉ dựng nội dung sức khỏe khi hồ sơ đã đồng thuận; Đau nhức tự quản theo §10.2.
+// Design §9.5: chỉ dựng nội dung sức khỏe khi hồ sơ đã đồng thuận; dùng chung Hero + Bento 3D với /profiles/:id.
 export function SelfProfileContent({ session, section, issueId }: Props) {
-  const summary = useSelfProfile(selfProfileRepository, session);
+  const summary = useSelfProfile(repository, session);
   if (!session.account.healthProfileId) return <Notice text={NOT_LINKED} />;
   if (summary.isError) {
     if (summary.error instanceof MedicationRequestError && summary.error.status === 404)
@@ -30,13 +31,14 @@ export function SelfProfileContent({ session, section, issueId }: Props) {
   if (profile.id !== session.account.healthProfileId) return <Notice text={NOT_LINKED} />;
   const active = resolveSelfSection(section, profile.showsVitals);
   return (
-    <div className="flex min-w-0 flex-col gap-6">
-      <header className="rounded-xl bg-surface p-5 shadow-sm lg:p-6">
-        <h1 className="auth-heading text-heading-1 font-semibold tracking-tight text-text-primary lg:text-heading-1">
-          Hồ sơ của tôi
-        </h1>
-        <p className="mt-1 text-caption break-words text-text-secondary">{profile.displayName}</p>
-      </header>
+    <div className="mx-auto flex w-full min-w-0 flex-col gap-5">
+      <ProfileIdentityHero
+        title="Hồ sơ của tôi"
+        displayName={profile.displayName}
+        subtitle={profile.displayName}
+        birthYear={profile.birthYear}
+        consentStatus={profile.consentStatus}
+      />
       {profile.consentStatus === 'confirmed' ? (
         <>
           <SelfTabs active={active} showsVitals={profile.showsVitals} />

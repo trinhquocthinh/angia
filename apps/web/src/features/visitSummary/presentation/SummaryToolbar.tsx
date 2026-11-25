@@ -49,7 +49,7 @@ export function SummaryToolbar({ profileId, displayName, range, months, onMonths
           type="button"
           disabled={!canPrint}
           onClick={() => window.print()}
-          className="flex min-h-[52px] items-center gap-2 rounded-xl bg-accent px-5 text-body font-semibold text-on-accent hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-60"
+          className="flex min-h-[46px] items-center gap-2 rounded-xl bg-accent px-5 text-body font-semibold text-on-accent hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-60"
         >
           <PrinterIcon />
           In / Lưu PDF

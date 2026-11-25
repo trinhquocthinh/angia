@@ -38,7 +38,7 @@ export function UnlinkProfileDialog({
         <button
           type="button"
           disabled={pending}
-          className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-danger px-5 py-3 text-button-secondary font-semibold text-on-accent cursor-pointer hover:bg-danger disabled:bg-border disabled:text-text-secondary disabled:cursor-default"
+          className="inline-flex min-h-[46px] items-center justify-center rounded-xl bg-danger px-5 py-3 text-button-secondary font-semibold text-on-accent cursor-pointer hover:bg-danger disabled:bg-border disabled:text-text-secondary disabled:cursor-default"
           onClick={onConfirm}
         >
           Gỡ liên kết
@@ -46,7 +46,7 @@ export function UnlinkProfileDialog({
         <button
           type="button"
           disabled={pending}
-          className="min-h-[52px] rounded-xl px-5 text-button-secondary font-semibold text-accent cursor-pointer disabled:opacity-55"
+          className="min-h-[46px] rounded-xl px-5 text-button-secondary font-semibold text-accent cursor-pointer disabled:opacity-55"
           onClick={onCancel}
         >
           Giữ nguyên

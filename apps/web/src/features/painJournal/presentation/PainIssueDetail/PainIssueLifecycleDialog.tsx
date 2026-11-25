@@ -41,14 +41,14 @@ export function PainIssueLifecycleDialog(props: Props) {
             type="button"
             disabled={props.pending}
             onClick={props.onClose}
-            className="min-h-[52px] px-3"
+            className="min-h-[46px] px-3"
           >
             {props.cancelLabel}
           </button>
           <button
             type="submit"
             disabled={props.disabled || props.pending}
-            className={`min-h-[52px] rounded-xl px-4 text-on-accent disabled:opacity-50 ${props.danger ? 'bg-danger' : 'bg-accent'}`}
+            className={`min-h-[46px] rounded-xl px-4 text-on-accent disabled:opacity-50 ${props.danger ? 'bg-danger' : 'bg-accent'}`}
           >
             {props.pending ? 'Đang xử lý…' : props.confirmLabel}
           </button>

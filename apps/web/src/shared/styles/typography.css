@@ -1,13 +1,14 @@
-/* Owner duyệt 2026-11-25: cỡ chuẩn mặc định, Chữ lớn là lựa chọn trên thiết bị. */
+/* Cỡ chuẩn mặc định (nút 14px / 46px), Chữ lớn là lựa chọn trên thiết bị (nút 16px / 56px). */
 :root {
   --font-caption: 0.875rem;
   --line-caption: 1.25rem;
   --font-body: 1rem;
   --line-body: 1.5rem;
-  --font-button-primary: 1.125rem;
-  --line-button-primary: 1.5rem;
-  --font-button-secondary: 1rem;
-  --line-button-secondary: 1.5rem;
+  --font-button-primary: 0.875rem;
+  --line-button-primary: 1.25rem;
+  --font-button-secondary: 0.875rem;
+  --line-button-secondary: 1.25rem;
+  --size-button-height: 2.875rem;
   --font-heading-1: 1.5rem;
   --line-heading-1: 2rem;
   --font-heading-2: 1.25rem;
@@ -20,10 +21,11 @@
   --line-caption: 1.5rem;
   --font-body: 1.125rem;
   --line-body: 1.75rem;
-  --font-button-primary: 1.25rem;
-  --line-button-primary: 1.75rem;
-  --font-button-secondary: 1.125rem;
+  --font-button-primary: 1rem;
+  --line-button-primary: 1.5rem;
+  --font-button-secondary: 1rem;
   --line-button-secondary: 1.5rem;
+  --size-button-height: 3.5rem;
   --font-heading-1: 1.625rem;
   --line-heading-1: 2.125rem;
   --font-heading-2: 1.375rem;
@@ -32,6 +34,7 @@
   --line-display: 2.75rem;
 }
 @theme inline {
+  --spacing-btn: var(--size-button-height);
   --text-caption: var(--font-caption);
   --text-caption--line-height: var(--line-caption);
   --text-body: var(--font-body);

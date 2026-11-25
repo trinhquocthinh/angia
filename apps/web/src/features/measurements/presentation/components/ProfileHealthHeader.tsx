@@ -1,4 +1,7 @@
 import type { ReactNode } from 'react';
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { ProfileSectionIcon } from '@src/features/profiles/presentation/components/ProfileSectionIcon';
+import '@src/features/profiles/presentation/profiles.css';
 import { canManageProfileGuardians } from '@src/features/profiles/application/canManageProfileGuardians';
 import { profileShowsVitals } from '@src/features/profiles/application/profileShowsVitals';
 import { currentVietnamYear } from '@src/features/profiles/application/currentVietnamYear';
@@ -13,41 +16,37 @@ import { ProfileTabs, type ProfileTabKey } from './ProfileTabs';
 type Props = {
   profile: ProfileListItem;
   session: ProfileSession;
-  /** undefined: không hiện dòng chỉ số (tab không tải số đo). */
   latest?: Measurement | null;
   active?: ProfileTabKey;
-  /** Nút phụ bên phải thẻ, đứng trước nút chính "Nhập tay". */
   actions?: ReactNode;
 };
 
-// Đầu trang hồ sơ (Stitch 718c9615): thẻ hồ sơ có avatar, tên + tuổi, chỉ số mới nhất và nút hành động bên phải;
-// hàng tab nằm ngoài thẻ. Nhập tay không kèm ảnh theo SPEC-011. Thẻ hẹp hơn 64rem (container query) thì xếp
-// hàng nút xuống dưới tên để 4 nút không bị gãy dòng lẻ (E6-S1-T2 thêm "Tóm tắt đi khám").
+// Đầu trang các mục con hồ sơ theo chuẩn 3D Bento v2.0 (Stitch c5e09b60).
 export function ProfileHealthHeader({ profile, session, latest, active = 'health', actions }: Props) {
   const showsVitals = profileShowsVitals(profile);
   const showsGuardians = canManageProfileGuardians(profile, session);
   const age = profile.birthYear ? currentVietnamYear() - profile.birthYear : null;
+  const confirmed = profile.consentStatus === 'confirmed';
   return (
     <div className="flex flex-col gap-4">
-      <ProfileEditControls profile={profile} session={session} />
-      <section className="@container rounded-xl bg-surface p-5 shadow-sm lg:p-6">
+      <section className="@container profile-bento-card p-5 lg:p-6">
         <div className="flex flex-col justify-between gap-4 @5xl:flex-row @5xl:items-center">
           <div className="flex min-w-0 items-center gap-4">
-            <span className="relative shrink-0" aria-hidden="true">
-              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-soft text-heading-1 font-semibold text-accent shadow-sm">
-                {profile.displayName.slice(0, 1)}
-              </span>
-              {profile.consentStatus === 'confirmed' && (
-                <span className="absolute right-0 bottom-0 h-4 w-4 rounded-full bg-accent ring-2 ring-on-accent" />
+            <span className="profile-ceramic-avatar profile-ceramic-avatar-lg" aria-hidden="true">
+              {profile.displayName.slice(0, 1)}
+              {confirmed && (
+                <span className="profile-ceramic-badge">
+                  <AdminIcon name="verified_user" size={15} />
+                </span>
               )}
             </span>
-            <div className="flex min-w-0 flex-col gap-0.5">
+            <div className="flex min-w-0 flex-col gap-1">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="auth-heading break-words text-heading-1 font-semibold tracking-tight text-text-primary lg:text-heading-1">
+                <h1 className="auth-heading break-words text-heading-1 font-semibold tracking-tight text-text-primary">
                   {profile.displayName}
                 </h1>
                 {age !== null && (
-                  <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-caption text-text-secondary">
+                  <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-caption font-semibold text-accent">
                     {age} tuổi
                   </span>
                 )}
@@ -56,6 +55,7 @@ export function ProfileHealthHeader({ profile, session, latest, active = 'health
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2 self-start @5xl:shrink-0 @5xl:flex-nowrap @5xl:self-center">
+            <ProfileEditControls profile={profile} session={session} />
             {actions}
             <VisitSummaryLink profileId={profile.id} />
             <ManualEntryLink profileId={profile.id} />
@@ -74,26 +74,13 @@ export function ProfileHealthHeader({ profile, session, latest, active = 'health
 
 function LatestReading({ latest }: { latest: Measurement | null }) {
   return (
-    <p className="flex flex-wrap items-center gap-1 text-caption text-text-secondary">
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-        className="text-accent"
-      >
-        <path d="M3 5h18v12H3Z M8 21h8 M6 11h3l2-3 2 6 2-3h3" />
-      </svg>
+    <p className="flex flex-wrap items-center gap-1.5 text-caption text-text-secondary">
+      <ProfileSectionIcon name="monitor_heart" size={18} />
       {latest ? (
         <>
-          Chỉ số mới nhất: <strong className="tabular-nums text-text-primary">{readingText(latest)}</strong> (
+          <strong className="tabular-nums text-text-primary">{readingText(latest)}</strong> ·{' '}
           {formatDay(latest.measuredOn)}
-          {latest.measuredTime ? ` · ${latest.measuredTime}` : ''})
+          {latest.measuredTime ? ` ${latest.measuredTime}` : ''}
         </>
       ) : (
         'Chưa có số đo đã duyệt'

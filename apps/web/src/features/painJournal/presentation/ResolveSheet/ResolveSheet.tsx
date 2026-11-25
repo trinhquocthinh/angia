@@ -43,7 +43,7 @@ export function ResolveSheet(props: PainIssueLifecycleProps) {
         max={dates.max}
         value={date}
         disabled={state.pending || !state.enabled}
-        className="min-h-[52px] w-full rounded-lg border border-border px-3"
+        className="min-h-[46px] w-full rounded-lg border border-border px-3"
         onChange={(event) => {
           setDate(event.target.value);
           setValidation(null);

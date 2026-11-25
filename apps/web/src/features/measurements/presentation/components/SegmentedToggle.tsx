@@ -8,7 +8,7 @@ type SegmentedToggleProps<T extends string | number> = {
   onChange: (value: T) => void;
 };
 
-// Nhóm nút chọn một (chỉ số, khoảng tuần): nền trắng trượt tới nút đang chọn (§11.4.1), aria-pressed cho trình đọc màn hình.
+// Nhóm nút chọn một theo chuẩn 3D Bento v2.0 (Stitch c5e09b60 / d782695b): full-width cân đối trên mobile, pill gọn trên desktop.
 export function SegmentedToggle<T extends string | number>({
   label,
   value,
@@ -28,7 +28,6 @@ export function SegmentedToggle<T extends string | number>({
       measured.current = pressed !== null;
     };
     measure();
-    // Phông tải xong hoặc phóng chữ làm nút đổi bề rộng: đo lại.
     const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(measure) : null;
     observer?.observe(group);
     return () => observer?.disconnect();
@@ -39,11 +38,11 @@ export function SegmentedToggle<T extends string | number>({
       ref={groupRef}
       role="group"
       aria-label={label}
-      className="relative inline-flex rounded-xl bg-accent-soft p-1"
+      className="relative grid w-full auto-cols-fr grid-flow-col rounded-[18px] bg-surface-container-high p-1.5 md:inline-flex md:w-auto"
     >
       <span
         aria-hidden="true"
-        className="angia-slide-indicator absolute inset-y-1 left-0 rounded-lg bg-surface shadow-sm"
+        className="angia-slide-indicator absolute inset-y-1.5 left-0 rounded-[14px] bg-surface shadow-sm"
         style={style}
       />
       {options.map((option) => (
@@ -52,7 +51,7 @@ export function SegmentedToggle<T extends string | number>({
           type="button"
           aria-pressed={value === option.value}
           onClick={() => onChange(option.value)}
-          className="relative min-h-11 rounded-lg px-4 text-caption font-medium text-text-secondary transition-colors hover:text-text-primary aria-pressed:font-semibold aria-pressed:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          className="relative flex min-h-btn items-center justify-center rounded-[14px] px-3.5 text-center text-button-secondary font-semibold whitespace-nowrap text-text-secondary transition-colors hover:text-text-primary aria-pressed:font-bold aria-pressed:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus md:px-5"
         >
           {option.label}
         </button>

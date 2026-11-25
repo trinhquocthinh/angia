@@ -35,7 +35,7 @@ export function InvitationResponseActions({
           type="button"
           disabled={pending}
           onClick={() => onDecision('accepted')}
-          className="flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-caption font-semibold text-on-accent disabled:opacity-55"
+          className="flex min-h-[46px] items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-caption font-semibold text-on-accent disabled:opacity-55"
         >
           <InvitationIcon name="check" />
           {pending ? 'Đang gửi…' : 'Liên kết và đồng ý'}

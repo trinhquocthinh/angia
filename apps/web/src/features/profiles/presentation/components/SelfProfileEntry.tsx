@@ -11,7 +11,7 @@ export function SelfProfileEntry() {
       </p>
       <Link
         to="/my-profile"
-        className="min-h-[52px] content-center rounded-full bg-accent px-6 font-semibold text-on-accent"
+        className="min-h-[46px] content-center rounded-full bg-accent px-6 font-semibold text-on-accent"
       >
         Mở hồ sơ của tôi
       </Link>

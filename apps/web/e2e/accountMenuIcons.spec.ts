@@ -90,7 +90,7 @@ async function expectMenuCopy(menu: Locator) {
   for (const description of [
     'Thành viên & thông tin nhà',
     'Thuốc & sức khoẻ của bạn',
-    'Email, mật khẩu & dữ liệu',
+    'Bảo mật & cài đặt',
     'Thoát khỏi thiết bị này',
   ]) {
     await expect(menu.getByText(description, { exact: true })).toBeVisible();

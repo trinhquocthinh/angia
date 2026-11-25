@@ -6,6 +6,7 @@ import { useProfileSessionRecovery } from '../../application/useProfileSessionRe
 import { useProfilesWorkspace } from '../../application/useProfilesWorkspace';
 import { createProfilesRepository } from '../../infrastructure/createProfilesRepository';
 import { ProfileFrame } from './ProfileFrame';
+import { ProfilesSkeleton } from './ProfilesSkeleton';
 import { RecipientNotice } from './RecipientNotice';
 import '../profiles.css';
 
@@ -29,6 +30,19 @@ export function ProfileSectionPage({ profileId, children }: Props) {
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
       {!main ? (
         <RecipientNotice />
+      ) : workspace.profiles.isPending ? (
+        <ProfilesSkeleton />
+      ) : workspace.profiles.isError ? (
+        <div role="alert" className="profile-directory-surface p-6">
+          <p>Không thể tải hồ sơ gia đình.</p>
+          <button
+            type="button"
+            className="mt-4 min-h-12 cursor-pointer rounded-xl bg-accent px-5 text-button-secondary font-semibold text-on-accent"
+            onClick={() => void workspace.profiles.refetch()}
+          >
+            Thử lại
+          </button>
+        </div>
       ) : workspace.profiles.isSuccess && !profile ? (
         <p role="alert" className="rounded-[20px] bg-surface p-6 text-body">
           Không tìm thấy hồ sơ này trong gia đình.

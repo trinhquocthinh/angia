@@ -18,6 +18,7 @@ export default defineConfig({
     '**/householdMembers.spec.ts',
     '**/householdHome.spec.ts',
     '**/profileGuardians.spec.ts',
+    '**/profileDirectory.spec.ts',
     '**/accountDataDeletion.spec.ts',
   ],
   testIgnore: '**/._*',

@@ -22,7 +22,7 @@ describe('Trình bày liều hôm nay (SPEC-079)', () => {
     expect(html).toContain('Sáng');
     expect(html).toContain('Thuốc trong lời nhắc');
     expect(html).toContain('Đã dùng');
-    expect(html).toContain('min-h-14');
+    expect(html).toContain('min-h-btn');
     expect(html).toContain('text-button-primary');
     client.clear();
   });
@@ -61,7 +61,7 @@ describe('Trình bày liều hôm nay (SPEC-079)', () => {
       />,
     );
     expect(html).toContain('aria-pressed="true"');
-    expect(html).toContain('min-h-12');
+    expect(html).toContain('min-h-btn');
     expect(html).toContain('Chọn hồ sơ');
   });
   it('TC-855: rút đồng thuận chỉ hiện hướng dẫn và lối xử lý', () => {

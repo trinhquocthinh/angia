@@ -11,15 +11,16 @@ for (const theme of ['light', 'dark']) {
     await expect(toggle).toHaveAttribute('aria-checked', 'false');
     await expect(page.locator('body')).toHaveCSS('font-size', '16px');
     const primary = page.getByRole('button', { name: 'Tải dữ liệu của tôi', exact: true });
-    await expect(primary).toHaveCSS('font-size', '18px');
-    expect((await primary.boundingBox())!.height).toBeGreaterThanOrEqual(56);
+    await expect(primary).toHaveCSS('font-size', '14px');
+    expect((await primary.boundingBox())!.height).toBeGreaterThanOrEqual(46);
     await expect(page.getByRole('heading', { name: 'Tài khoản', exact: true })).toHaveCSS(
       'font-size',
       '24px',
     );
     await toggle.click();
     await expect(toggle).toHaveAttribute('aria-checked', 'true');
-    await expect(primary).toHaveCSS('font-size', '20px');
+    await expect(primary).toHaveCSS('font-size', '16px');
+    expect((await primary.boundingBox())!.height).toBeGreaterThanOrEqual(56);
     await expect(page.locator('body')).toHaveCSS('font-size', '18px');
     await expect(page.getByRole('heading', { name: 'Tài khoản', exact: true })).toHaveCSS(
       'font-size',

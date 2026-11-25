@@ -53,7 +53,7 @@ export function ProfileFrame({
         personal={personal}
       />
       <MobileTopbar title={mobileTitle} hasFamily={Boolean(session.family)} account={account} />
-      <main className="mx-auto w-full max-w-7xl min-w-0 flex-1 px-4 pt-3 lg:px-8 lg:py-12">{children}</main>
+      <main className="mx-auto w-full min-w-0 flex-1 px-4 pt-3 lg:px-8 lg:py-12">{children}</main>
       <ProfileFooter />
       {showNavigation && <MobileBottomNav pendingCount={pendingCount} personal={personal} />}
     </div>

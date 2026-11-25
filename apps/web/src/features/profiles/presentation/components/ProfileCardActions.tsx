@@ -2,10 +2,9 @@ import { Link } from '@tanstack/react-router';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 
 const textAction =
-  'inline-flex h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-xl px-3.5 text-caption font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus lg:h-auto lg:bg-transparent lg:px-1 lg:font-medium';
+  'inline-flex min-h-btn shrink-0 cursor-pointer items-center gap-1.5 rounded-xl px-3 text-button-secondary font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus';
 
-// Chân thẻ hồ sơ: di động một hàng [Xóa][Xem], desktop xếp dọc [Xem chi tiết] rồi [Xóa] (nút xóa luôn ở cuối, SPEC-007).
-// Hồ sơ của chính tài khoản có thêm [Rút đồng thuận] cùng hàng, đối diện bên trái để nút xóa vẫn ở cuối (SPEC-036).
+// Chân thẻ hồ sơ: nút xem chi tiết dạng pill Bento v2.0; nút xóa luôn ở cuối DOM (SPEC-007, TC-382).
 export function ProfileCardActions({
   profileId,
   onDelete,
@@ -16,44 +15,32 @@ export function ProfileCardActions({
   onWithdraw?: (() => void) | undefined;
 }) {
   return (
-    <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-border pt-3 lg:mt-auto lg:flex-col lg:flex-nowrap lg:items-stretch lg:border-border lg:pt-4">
+    <div className="mt-4 flex flex-col gap-2.5 border-t border-border/35 pt-3.5 lg:mt-auto lg:pt-4">
       <Link
         to="/profiles/$profileId"
         params={{ profileId }}
-        className="order-2 flex h-11 flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent px-4 text-button-primary font-semibold text-on-accent shadow-sm transition-all duration-200 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus lg:order-1 lg:flex-none lg:gap-2 lg:bg-accent-soft lg:text-accent lg:hover:bg-accent-hover lg:hover:text-on-accent"
+        className="flex min-h-btn items-center justify-center gap-2 rounded-2xl bg-accent-soft px-4 text-button-primary font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus"
       >
         Xem hồ sơ chi tiết
-        <span className="lg:hidden">
-          <AdminIcon name="arrow_forward" size={18} />
-        </span>
-        <span className="hidden lg:inline-flex">
-          <AdminIcon name="arrow_outward" size={18} />
-        </span>
+        <AdminIcon name="arrow_outward" size={18} />
       </Link>
-      <div
-        className={`flex items-center justify-between gap-3 lg:order-2 ${onWithdraw ? 'order-3 basis-full' : 'order-1'}`}
-      >
+      <div className={`flex flex-wrap items-center gap-2 ${onWithdraw ? 'justify-between' : 'justify-end'}`}>
         {onWithdraw && (
           <button
             type="button"
-            className={`${textAction} bg-accent-soft text-text-secondary active:bg-accent-soft hover:text-accent`}
+            className={`${textAction} bg-surface-container text-text-secondary hover:bg-accent-soft hover:text-accent`}
             onClick={onWithdraw}
           >
-            <AdminIcon name="shield" size={18} />
+            <AdminIcon name="shield" size={17} />
             Rút đồng thuận
           </button>
         )}
         <button
           type="button"
-          className={`${textAction} bg-danger-soft/40 text-danger active:bg-danger-soft hover:text-danger`}
+          className={`${textAction} bg-danger-soft/60 text-danger hover:bg-danger-soft`}
           onClick={onDelete}
         >
-          <span className="lg:hidden">
-            <AdminIcon name="delete" size={18} />
-          </span>
-          <span className="hidden lg:inline-flex">
-            <AdminIcon name="delete_outline" size={18} />
-          </span>
+          <AdminIcon name="delete_outline" size={17} />
           Xóa hồ sơ
         </button>
       </div>

@@ -26,24 +26,26 @@ type Props = {
   onMedicationSaved: (key: string) => void;
 };
 
-// Thanh công cụ tab Diễn biến; nút "Ghi thực tế dùng thuốc" (E5-S3-T2) đặt cuối như Stitch 718c9615.
+// Thanh bộ lọc Diễn biến chuẩn 3D Bento v2.0 (Stitch c5e09b60 / d782695b): đặt trực tiếp trên nền, không lồng khung trắng thừa.
 export function HealthTrendToolbar({ kind, weeks, onKindChange, onWeeksChange, ...adherence }: Props) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface p-3 shadow-sm sm:p-4">
+    <div className="flex flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-3">
       <SegmentedToggle label="Chọn chỉ số" value={kind} options={KIND_OPTIONS} onChange={onKindChange} />
-      <SegmentedToggle
-        label="Khoảng thời gian"
-        value={weeks}
-        options={WEEK_OPTIONS}
-        onChange={onWeeksChange}
-      />
-      {adherence.profile && (
-        <AdherenceAction
-          profile={adherence.profile}
-          session={adherence.session}
-          onSaved={(period) => adherence.onMedicationSaved(normalizeMedicationName(period.medicationName))}
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center md:justify-end">
+        <SegmentedToggle
+          label="Khoảng thời gian"
+          value={weeks}
+          options={WEEK_OPTIONS}
+          onChange={onWeeksChange}
         />
-      )}
+        {adherence.profile && (
+          <AdherenceAction
+            profile={adherence.profile}
+            session={adherence.session}
+            onSaved={(period) => adherence.onMedicationSaved(normalizeMedicationName(period.medicationName))}
+          />
+        )}
+      </div>
     </div>
   );
 }
