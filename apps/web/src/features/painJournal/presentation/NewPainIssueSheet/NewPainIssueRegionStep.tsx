@@ -42,7 +42,7 @@ export function NewPainIssueRegionStep({ selected, onSelect, issues }: RegionSte
         ))}
       </div>
       {failed3d && (
-        <p role="status" className="rounded-xl bg-accent-soft p-3 text-sm">
+        <p role="status" className="rounded-xl bg-accent-soft p-3 text-body">
           Không mở được chế độ 3D trên thiết bị này.
         </p>
       )}

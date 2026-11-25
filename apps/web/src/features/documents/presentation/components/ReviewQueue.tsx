@@ -28,7 +28,7 @@ export function ReviewQueue(props: ReviewQueueProps) {
         <div className="flex items-center justify-between gap-2">
           <h1
             id="review-queue-title"
-            className="flex items-center gap-2 whitespace-nowrap text-lg font-semibold text-accent"
+            className="flex items-center gap-2 whitespace-nowrap text-heading-2 font-semibold text-accent"
           >
             <span className="text-accent">
               <DocumentIcon name="file" size={20} />
@@ -36,13 +36,13 @@ export function ReviewQueue(props: ReviewQueueProps) {
             Chờ xác nhận
           </h1>
           {!loading && !error && (
-            <span className="whitespace-nowrap rounded-full bg-accent-soft px-2 py-0.5 text-xs font-bold text-accent">
+            <span className="whitespace-nowrap rounded-full bg-accent-soft px-2 py-0.5 text-caption font-bold text-accent">
               {documents.length}
               {more ? '+' : ''} giấy tờ
             </span>
           )}
         </div>
-        <p className="text-sm text-text-secondary">
+        <p className="text-caption text-text-secondary">
           Kiểm tra thông tin đọc từ ảnh chụp trước khi lưu vào sổ.
         </p>
       </div>
@@ -65,7 +65,10 @@ function QueueBody({ documents, profileNames, activeId, loading, error, retry }:
     );
   if (error)
     return (
-      <div role="alert" className="flex flex-col items-start gap-3 rounded-xl bg-danger-soft p-4 text-sm">
+      <div
+        role="alert"
+        className="flex flex-col items-start gap-3 rounded-xl bg-danger-soft p-4 text-caption"
+      >
         <p>Không tải được danh sách chờ kiểm tra.</p>
         <button
           type="button"
@@ -78,7 +81,7 @@ function QueueBody({ documents, profileNames, activeId, loading, error, retry }:
     );
   if (documents.length === 0)
     return (
-      <p className="flex flex-col items-center gap-2 rounded-xl bg-accent-soft p-6 text-center text-sm text-text-secondary">
+      <p className="flex flex-col items-center gap-2 rounded-xl bg-accent-soft p-6 text-center text-caption text-text-secondary">
         <span className="text-accent">
           <DocumentIcon name="checkCircle" size={28} />
         </span>
@@ -89,7 +92,7 @@ function QueueBody({ documents, profileNames, activeId, loading, error, retry }:
     <div className="flex flex-col gap-4 py-1">
       {groupQueueByDay(documents, new Date()).map((group) => (
         <div key={group.label} className="flex flex-col gap-1">
-          <div className="flex items-center justify-between gap-2 px-2 text-xs text-text-secondary">
+          <div className="flex items-center justify-between gap-2 px-2 text-caption text-text-secondary">
             <h2 className="font-semibold uppercase tracking-wider">{group.label}</h2>
             <span className="whitespace-nowrap font-medium">{group.documents.length} tài liệu</span>
           </div>

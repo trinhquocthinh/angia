@@ -28,7 +28,7 @@ export function RegionList({ selected, onSelect }: RegionListProps) {
       <legend className="mb-3 font-medium">Chọn vùng cơ thể</legend>
       {regionGroups.map((group) => (
         <div key={group.label} role="group" aria-label={group.label} className="space-y-2">
-          <h3 className="text-sm font-medium text-text-secondary">{group.label}</h3>
+          <h3 className="text-caption font-medium text-text-secondary">{group.label}</h3>
           {group.regions.flatMap((region) =>
             bodyRegions[region].sides.map((side) => (
               <RegionListOption

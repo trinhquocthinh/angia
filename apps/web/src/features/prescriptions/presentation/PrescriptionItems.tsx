@@ -4,7 +4,7 @@ import { doseLabel } from '@src/features/medications/application/doseLabel';
 
 export function PrescriptionItems({ items }: { items: Prescription['items'] }) {
   return (
-    <ol className="flex min-w-0 flex-col gap-3 text-sm">
+    <ol className="flex min-w-0 flex-col gap-3 text-caption">
       {items.map((item, index) => (
         <li key={`${item.id}:${index}`} className="min-w-0 rounded-xl border border-border p-4 break-words">
           <p className="font-semibold text-accent">

@@ -11,13 +11,13 @@ export function MeasurementStatCards({ points, weeks }: { points: SeriesPoint[];
           return (
             <li key={point.id} className="flex flex-col gap-1 rounded-xl bg-accent-soft p-4">
               <p className="tabular-nums text-text-primary">
-                <span className="text-3xl font-semibold tracking-tight">{value}</span>{' '}
-                <span className="text-sm text-text-secondary">{unit}</span>
+                <span className="text-heading-1 font-semibold tracking-tight">{value}</span>{' '}
+                <span className="text-caption text-text-secondary">{unit}</span>
               </p>
               {point.kind === 'blood_pressure' && point.pulse !== null && (
-                <p className="text-sm text-text-secondary">Mạch: {point.pulse} lần/phút</p>
+                <p className="text-caption text-text-secondary">Mạch: {point.pulse} lần/phút</p>
               )}
-              <p className="text-sm text-text-secondary">
+              <p className="text-caption text-text-secondary">
                 {formatDay(point.measuredOn)}
                 {point.measuredTime ? ` · ${point.measuredTime}` : ''}
               </p>
@@ -25,7 +25,9 @@ export function MeasurementStatCards({ points, weeks }: { points: SeriesPoint[];
           );
         })}
       </ul>
-      <p className="text-sm text-text-secondary">Cần ít nhất 4 lần đo trong {weeks} tuần để vẽ biểu đồ.</p>
+      <p className="text-caption text-text-secondary">
+        Cần ít nhất 4 lần đo trong {weeks} tuần để vẽ biểu đồ.
+      </p>
     </div>
   );
 }

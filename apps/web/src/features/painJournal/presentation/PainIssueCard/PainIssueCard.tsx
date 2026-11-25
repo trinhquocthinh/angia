@@ -10,7 +10,7 @@ const recordedFormatter = new Intl.DateTimeFormat('vi-VN', {
   minute: '2-digit',
   hourCycle: 'h23',
 });
-const buttonClass = 'min-h-11 rounded-xl bg-accent-soft px-4 text-sm font-medium text-accent';
+const buttonClass = 'min-h-11 rounded-xl bg-accent-soft px-4 text-caption font-medium text-accent';
 type Props = Pick<PainJournalActions, 'onOpen' | 'onRecord'> & { issue: PainIssueSummary };
 
 export function PainIssueCard({ issue, onOpen, onRecord }: Props) {
@@ -23,17 +23,17 @@ export function PainIssueCard({ issue, onOpen, onRecord }: Props) {
       aria-label={location}
       className="flex min-w-0 flex-col gap-3 rounded-xl border border-border p-4"
     >
-      <h3 className="break-words text-lg font-semibold text-text-primary">{location}</h3>
-      {issue.title && <p className="break-words text-sm text-text-secondary">{issue.title}</p>}
+      <h3 className="break-words text-heading-2 font-semibold text-text-primary">{location}</h3>
+      {issue.title && <p className="break-words text-caption text-text-secondary">{issue.title}</p>}
       <p className="text-text-primary">
-        <span className="text-4xl font-semibold tabular-nums">{issue.lastEntry.level}</span>
-        <span className="text-sm text-text-secondary">/10</span>
+        <span className="text-display font-semibold tabular-nums">{issue.lastEntry.level}</span>
+        <span className="text-caption text-text-secondary">/10</span>
       </p>
-      <p className="text-sm text-text-secondary">
+      <p className="text-caption text-text-secondary">
         <time dateTime={issue.lastEntry.recordedAt}>{recorded}</time> · {issue.entryCount} lần ghi
       </p>
       {issue.status === 'resolved' && issue.resolvedOn && (
-        <p className="text-sm text-text-secondary">
+        <p className="text-caption text-text-secondary">
           Khỏi từ {issue.resolvedOn.split('-').reverse().join('/')}
         </p>
       )}

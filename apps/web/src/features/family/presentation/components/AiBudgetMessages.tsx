@@ -17,10 +17,7 @@ export function AiBudgetMessages({
         </p>
       )}
       {error && (
-        <p
-          role="alert"
-          className="rounded-[12px] py-3 px-4 m-0 text-[13px] leading-[20px] text-danger bg-danger-soft"
-        >
+        <p role="alert" className="rounded-[12px] py-3 px-4 m-0 text-body text-danger bg-danger-soft">
           {error instanceof AdminRequestError ? error.message : 'Không thể kết nối. Vui lòng thử lại.'}
         </p>
       )}

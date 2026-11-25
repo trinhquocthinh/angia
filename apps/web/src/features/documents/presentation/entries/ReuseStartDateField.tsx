@@ -9,7 +9,7 @@ type Props = {
 // Ngày bắt đầu đợt mới: mặc định hôm nay, chọn trong khoảng (ngày kê, hôm nay + 30] (SPEC-029).
 export function ReuseStartDateField({ value, min, max, disabled, onChange }: Props) {
   return (
-    <label htmlFor="reuse-start-date" className="flex flex-col gap-1 text-sm font-medium">
+    <label htmlFor="reuse-start-date" className="flex flex-col gap-1 text-caption font-medium">
       Ngày bắt đầu
       <input
         id="reuse-start-date"

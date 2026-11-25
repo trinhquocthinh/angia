@@ -17,20 +17,20 @@ export function BodyMap2D({ selected, onSelect, trackingLocations = [] }: BodyMa
             key={value}
             type="button"
             onClick={() => setView(value)}
-            className={`min-h-11 rounded-full border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${view === value ? 'border-accent bg-accent-soft' : 'border-border bg-surface'}`}
+            className={`min-h-11 rounded-full border px-4 text-caption focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${view === value ? 'border-accent bg-accent-soft' : 'border-border bg-surface'}`}
             aria-pressed={view === value}
           >
             {views[value]}
           </button>
         ))}
       </div>
-      <div className="mx-auto flex max-w-80 justify-between px-8 text-sm text-text-secondary">
+      <div className="mx-auto flex max-w-80 justify-between px-8 text-caption text-text-secondary">
         <span>{view === 'front' ? 'Phải' : 'Trái'}</span>
         <span>{view === 'front' ? 'Trái' : 'Phải'}</span>
       </div>
       <Figure selected={selected} onSelect={onSelect} trackingLocations={trackingLocations} />
-      <p className="text-center text-xs text-text-secondary">Trái, phải theo người trong hình</p>
-      <p aria-live="polite" aria-atomic="true" className="min-h-6 text-center text-sm">
+      <p className="text-center text-caption text-text-secondary">Trái, phải theo người trong hình</p>
+      <p aria-live="polite" aria-atomic="true" className="min-h-6 text-center text-body">
         {selected ? `Đã chọn: ${describeBodyLocation(selected)}` : 'Chọn một vùng trên hình'}
       </p>
     </div>

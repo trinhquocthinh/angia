@@ -36,22 +36,22 @@ export function ReviewQueueItem({ document, profileName, active }: ReviewQueueIt
         <span className="flex min-w-0 items-center gap-2">
           <span
             aria-hidden="true"
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-soft text-sm font-bold text-text-primary"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-soft text-caption font-bold text-text-primary"
           >
             {profileName.slice(0, 1)}
           </span>
           <span className="flex min-w-0 flex-col">
             <span
-              className={`truncate text-sm ${active ? 'font-bold text-accent' : 'font-semibold text-text-primary'}`}
+              className={`truncate text-caption ${active ? 'font-bold text-accent' : 'font-semibold text-text-primary'}`}
             >
               {type.title}
             </span>
-            <span className="truncate text-sm text-text-secondary">{profileName}</span>
+            <span className="truncate text-caption text-text-secondary">{profileName}</span>
           </span>
         </span>
         <ReviewItemChip state={reviewItemState(document)} />
       </span>
-      <span className="flex items-center justify-between text-xs text-text-secondary">
+      <span className="flex items-center justify-between text-caption text-text-secondary">
         <span className="flex items-center gap-1">
           <DocumentIcon name={type.icon} size={14} /> Tải lên
         </span>

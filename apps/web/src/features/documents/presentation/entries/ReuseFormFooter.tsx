@@ -5,7 +5,7 @@ export function ReuseFormFooter({ message, showSubmit, pending, canSubmit }: Pro
   return (
     <>
       {message && (
-        <p role="alert" className="rounded-xl bg-danger-soft p-3 text-sm">
+        <p role="alert" className="rounded-xl bg-danger-soft p-3 text-body">
           {message}
         </p>
       )}
@@ -13,7 +13,7 @@ export function ReuseFormFooter({ message, showSubmit, pending, canSubmit }: Pro
         <button
           type="submit"
           disabled={pending || !canSubmit}
-          className="min-h-11 rounded-xl bg-accent px-4 text-sm font-semibold text-on-accent disabled:opacity-55"
+          className="min-h-14 rounded-xl bg-accent px-4 text-button-primary font-semibold text-on-accent disabled:opacity-55"
         >
           {pending ? 'Đang lưu…' : 'Tạo đợt thuốc'}
         </button>

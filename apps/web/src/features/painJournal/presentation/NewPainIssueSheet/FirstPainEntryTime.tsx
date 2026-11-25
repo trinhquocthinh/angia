@@ -11,7 +11,7 @@ export function FirstPainEntryTime({ values, onChange }: FirstEntryFieldsProps) 
   return (
     <>
       {customTime ? (
-        <label className="flex min-w-0 flex-col gap-2 text-sm">
+        <label className="flex min-w-0 flex-col gap-2 text-caption">
           Thời điểm (giờ Việt Nam)
           <input
             type="datetime-local"
@@ -33,7 +33,7 @@ export function FirstPainEntryTime({ values, onChange }: FirstEntryFieldsProps) 
           </button>
         </label>
       ) : (
-        <div className="flex flex-wrap items-center gap-3 text-sm">
+        <div className="flex flex-wrap items-center gap-3 text-caption">
           <span>Thời điểm: Bây giờ · {localNow.slice(11)}</span>
           <button
             type="button"

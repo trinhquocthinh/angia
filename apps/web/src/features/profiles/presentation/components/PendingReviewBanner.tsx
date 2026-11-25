@@ -11,11 +11,11 @@ export function PendingReviewBanner({ count }: { count: number | undefined }) {
           <AdminIcon name="pending_actions" size={22} />
         </span>
         <div className="min-w-0 lg:flex lg:flex-1 lg:flex-col lg:gap-1">
-          <p className="truncate text-xs font-semibold text-text-primary lg:text-lg">
+          <p className="truncate text-body font-semibold text-text-primary lg:text-body">
             <span className="lg:hidden">Chờ phê duyệt hồ sơ</span>
             <span className="hidden lg:inline">Chờ duyệt: {count} giấy tờ y tế mới</span>
           </p>
-          <p className="truncate text-[13px] leading-5 text-text-secondary">
+          <p className="truncate text-caption text-text-secondary">
             <span className="lg:hidden">{count} tài liệu sức khỏe mới tải lên</span>
             <span className="hidden lg:inline">
               Giấy tờ vừa tải lên đang chờ bạn kiểm tra trước khi lưu vào hồ sơ thành viên.
@@ -23,7 +23,7 @@ export function PendingReviewBanner({ count }: { count: number | undefined }) {
           </p>
           <Link
             to="/review"
-            className="hidden w-fit items-center gap-1.5 pt-2 text-xs font-semibold text-accent hover:underline focus-visible:outline-2 focus-visible:outline-focus lg:inline-flex"
+            className="hidden w-fit items-center gap-1.5 pt-2 text-button-secondary font-semibold text-accent hover:underline focus-visible:outline-2 focus-visible:outline-focus lg:inline-flex"
           >
             Kiểm tra và xác nhận ngay
             <AdminIcon name="arrow_forward" size={16} />
@@ -32,7 +32,7 @@ export function PendingReviewBanner({ count }: { count: number | undefined }) {
       </div>
       <Link
         to="/review"
-        className="inline-flex min-h-9 shrink-0 items-center rounded-lg bg-surface px-3 py-1.5 text-xs font-semibold text-accent shadow-xs active:scale-95 focus-visible:outline-2 focus-visible:outline-focus lg:hidden"
+        className="inline-flex min-h-9 shrink-0 items-center rounded-lg bg-surface px-3 py-1.5 text-button-secondary font-semibold text-accent shadow-xs active:scale-95 focus-visible:outline-2 focus-visible:outline-focus lg:hidden"
       >
         Duyệt ngay
       </Link>

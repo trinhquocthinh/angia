@@ -24,13 +24,13 @@ export function TodayPage() {
   const profiles = main && workspace.profiles.isSuccess ? workspace.profiles.data : [];
   return (
     <ProfileFrame session={session} profiles={profiles} logout={workspace.logout} mobileTitle="Hôm nay">
-      <div className="mx-auto flex max-w-[720px] flex-col gap-6 pb-24 font-sans text-lg leading-7">
+      <div className="mx-auto flex max-w-[720px] flex-col gap-6 pb-24 font-sans text-body ">
         <header className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-[26px] leading-[34px] font-semibold">Liều hôm nay</h1>
+          <h1 className="text-heading-1 font-semibold">Liều hôm nay</h1>
           <Link
             to="/"
             search={{ view: 'profiles' }}
-            className="inline-flex min-h-12 items-center rounded-xl border border-border px-4 py-2 text-lg leading-6 font-semibold focus-visible:outline-3 focus-visible:outline-focus"
+            className="inline-flex min-h-12 items-center rounded-xl border border-border px-4 py-2 text-button-secondary font-semibold focus-visible:outline-3 focus-visible:outline-focus"
           >
             {main ? 'Hồ sơ gia đình' : 'Quản lý liên kết hồ sơ'}
           </Link>

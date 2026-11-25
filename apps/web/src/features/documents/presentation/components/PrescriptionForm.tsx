@@ -65,7 +65,7 @@ export function PrescriptionForm({
           count={`${items.fields.length} loại`}
         />
         {payload === null && !manual && (
-          <p className="text-sm text-text-secondary">
+          <p className="text-caption text-text-secondary">
             Chưa có dữ liệu tự động nhận diện, vui lòng nhập theo ảnh.
           </p>
         )}
@@ -83,7 +83,7 @@ export function PrescriptionForm({
       </section>
       <RowErrorSummary rows={rows} noun="dòng thuốc" anchorPrefix="rx-item" />
       {otherError && (
-        <p role="alert" className="rounded-2xl bg-danger-soft p-4 text-sm text-danger">
+        <p role="alert" className="rounded-2xl bg-danger-soft p-4 text-body text-danger">
           {otherError}
         </p>
       )}

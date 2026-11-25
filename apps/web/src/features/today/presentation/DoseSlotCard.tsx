@@ -11,8 +11,8 @@ export function DoseSlotCard({ reminder, session }: { reminder: SelfReminder; se
     <Card style={reminder.confirmation ? { backgroundColor: 'var(--color-accent-soft)' } : undefined}>
       <article className="flex flex-col gap-4 break-words" aria-label={`Buổi ${schedule.slot}`}>
         <header>
-          <h2 className="text-[22px] leading-[30px] font-semibold">{schedule.slot}</h2>
-          <p className="text-base leading-6 text-text-secondary tabular-nums">{schedule.time}</p>
+          <h2 className="text-heading-2 font-semibold">{schedule.slot}</h2>
+          <p className="text-body text-text-secondary tabular-nums">{schedule.time}</p>
         </header>
         <ul className="flex flex-col gap-2">
           {reminder.medications.map((medication, index) => (

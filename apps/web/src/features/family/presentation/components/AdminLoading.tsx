@@ -1,7 +1,7 @@
 export function AdminLoading() {
   return (
     <div
-      className="admin-panel min-w-0 bg-surface rounded-[16px] shadow-[0_1px_2px_color-mix(in_srgb,var(--color-shadow)_5%,transparent)] [&_h2]:text-[18px] [&_h2]:leading-[24px] [&_h2]:font-semibold [&_h2]:m-0 grid gap-4"
+      className="admin-panel min-w-0 bg-surface rounded-[16px] shadow-[0_1px_2px_color-mix(in_srgb,var(--color-shadow)_5%,transparent)] [&_h2]:text-body [&_h2]: [&_h2]:font-semibold [&_h2]:m-0 grid gap-4"
       role="status"
       aria-label="Đang tải bảng quản trị"
     >

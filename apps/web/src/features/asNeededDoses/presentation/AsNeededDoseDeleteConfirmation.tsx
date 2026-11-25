@@ -7,7 +7,7 @@ export function AsNeededDoseDeleteConfirmation({ dose, pending, onConfirm, onCan
     <div
       role="group"
       aria-label="Xác nhận xóa bản ghi"
-      className="flex flex-col gap-3 rounded-xl bg-danger-soft p-4 text-sm"
+      className="flex flex-col gap-3 rounded-xl bg-danger-soft p-4 text-caption"
     >
       <p>Xóa bản ghi liều lúc {formatDoseTime(dose.givenAt)}? Thao tác này không thể hoàn tác.</p>
       <div className="flex flex-wrap gap-2">

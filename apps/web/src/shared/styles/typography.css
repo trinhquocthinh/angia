@@ -1,0 +1,49 @@
+/* Owner duyệt 2026-11-25: cỡ chuẩn mặc định, Chữ lớn là lựa chọn trên thiết bị. */
+:root {
+  --font-caption: 0.875rem;
+  --line-caption: 1.25rem;
+  --font-body: 1rem;
+  --line-body: 1.5rem;
+  --font-button-primary: 1.125rem;
+  --line-button-primary: 1.5rem;
+  --font-button-secondary: 1rem;
+  --line-button-secondary: 1.5rem;
+  --font-heading-1: 1.5rem;
+  --line-heading-1: 2rem;
+  --font-heading-2: 1.25rem;
+  --line-heading-2: 1.75rem;
+  --font-display: 2rem;
+  --line-display: 2.5rem;
+}
+:root[data-text-size='large'] {
+  --font-caption: 1rem;
+  --line-caption: 1.5rem;
+  --font-body: 1.125rem;
+  --line-body: 1.75rem;
+  --font-button-primary: 1.25rem;
+  --line-button-primary: 1.75rem;
+  --font-button-secondary: 1.125rem;
+  --line-button-secondary: 1.5rem;
+  --font-heading-1: 1.625rem;
+  --line-heading-1: 2.125rem;
+  --font-heading-2: 1.375rem;
+  --line-heading-2: 1.875rem;
+  --font-display: 2.25rem;
+  --line-display: 2.75rem;
+}
+@theme inline {
+  --text-caption: var(--font-caption);
+  --text-caption--line-height: var(--line-caption);
+  --text-body: var(--font-body);
+  --text-body--line-height: var(--line-body);
+  --text-button-primary: var(--font-button-primary);
+  --text-button-primary--line-height: var(--line-button-primary);
+  --text-button-secondary: var(--font-button-secondary);
+  --text-button-secondary--line-height: var(--line-button-secondary);
+  --text-heading-1: var(--font-heading-1);
+  --text-heading-1--line-height: var(--line-heading-1);
+  --text-heading-2: var(--font-heading-2);
+  --text-heading-2--line-height: var(--line-heading-2);
+  --text-display: var(--font-display);
+  --text-display--line-height: var(--line-display);
+}

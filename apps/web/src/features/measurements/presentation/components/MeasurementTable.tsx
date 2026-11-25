@@ -15,6 +15,8 @@ const HEADERS: Record<MeasurementKind, string[]> = {
   glucose: ['Ngày đo', 'Đường huyết', 'Đơn vị', 'Nguồn'],
 };
 
+const ERROR_LAYOUT = 'flex flex-col items-start gap-3 rounded-2xl bg-danger-soft p-4 text-body';
+
 // Bảng số đo chi tiết (Stitch 718c9615): chỉ con số trung tính, không tô màu "cao/thấp" (BR-033).
 export function MeasurementTable({ kind, measurements, loading, error, retry }: MeasurementTableProps) {
   if (loading)
@@ -27,7 +29,7 @@ export function MeasurementTable({ kind, measurements, loading, error, retry }: 
     );
   if (error)
     return (
-      <div role="alert" className="flex flex-col items-start gap-3 rounded-2xl bg-danger-soft p-4 text-sm">
+      <div role="alert" className={ERROR_LAYOUT}>
         <p>Không tải được số đo.</p>
         <button
           type="button"
@@ -41,10 +43,10 @@ export function MeasurementTable({ kind, measurements, loading, error, retry }: 
   if (measurements.length === 0)
     return (
       <div className="flex flex-col items-center gap-4 rounded-2xl bg-accent-soft px-6 py-12 text-center">
-        <p className="text-sm text-text-secondary">Chưa có số đo. Chụp màn hình máy đo để bắt đầu.</p>
+        <p className="text-caption text-text-secondary">Chưa có số đo. Chụp màn hình máy đo để bắt đầu.</p>
         <Link
           to="/upload"
-          className="inline-flex min-h-11 items-center rounded-xl bg-accent px-5 text-sm font-semibold text-on-accent"
+          className="inline-flex min-h-14 items-center rounded-xl bg-accent px-5 text-button-primary font-semibold text-on-accent"
         >
           Tải ảnh máy đo
         </Link>
@@ -52,9 +54,9 @@ export function MeasurementTable({ kind, measurements, loading, error, retry }: 
     );
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[480px] text-sm">
+      <table className="w-full min-w-[480px] text-body">
         <caption className="sr-only">Bảng số đo đã duyệt, mới nhất trước</caption>
-        <thead className="bg-accent-soft text-xs uppercase tracking-wider text-text-secondary">
+        <thead className="bg-accent-soft text-caption uppercase tracking-wider text-text-secondary">
           <tr>
             {HEADERS[kind].map((header, index) => (
               <th

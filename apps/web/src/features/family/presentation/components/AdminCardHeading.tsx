@@ -18,7 +18,7 @@ export function AdminCardHeading({
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
           {icon}
         </span>
-        <h2 id={id} className="m-0 text-[18px] leading-6 font-semibold text-text-primary">
+        <h2 id={id} className="m-0 text-heading-2 font-semibold text-text-primary">
           {title}
         </h2>
       </div>

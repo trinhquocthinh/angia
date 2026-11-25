@@ -19,7 +19,7 @@ type ManualRecordContentProps = {
   onBack: () => void;
 };
 
-const buttonClass = 'min-h-11 rounded-full px-5 text-sm font-semibold';
+const buttonClass = 'min-h-11 rounded-full px-5 text-caption font-semibold';
 
 // SPEC-011 không kèm ảnh: chỉ hồ sơ đã đồng thuận (BR-009); bản ghi gắn cờ nhập tay (BR-014).
 export function ManualRecordContent({
@@ -43,8 +43,8 @@ export function ManualRecordContent({
   if (saved)
     return (
       <section className="flex flex-col gap-4 rounded-[20px] bg-surface p-6" role="status">
-        <h2 className="text-lg font-semibold text-accent">Đã lưu vào sổ</h2>
-        <p className="text-sm leading-6 text-text-secondary">
+        <h2 className="text-heading-2 font-semibold text-accent">Đã lưu vào sổ</h2>
+        <p className="text-caption text-text-secondary">
           Dữ liệu của {profile.displayName} được ghi là nhập tay, không kèm ảnh giấy tờ gốc.
         </p>
         <div className="flex flex-wrap gap-3">
@@ -59,7 +59,9 @@ export function ManualRecordContent({
     );
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="auth-heading text-2xl font-semibold text-accent">Nhập tay cho {profile.displayName}</h1>
+      <h1 className="auth-heading text-heading-1 font-semibold text-accent">
+        Nhập tay cho {profile.displayName}
+      </h1>
       <fieldset disabled={formDisabled} className="min-w-0 border-0 p-0">
         <ManualEntryForm
           key={profile.id}

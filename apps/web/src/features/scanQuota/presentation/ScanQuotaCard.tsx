@@ -28,7 +28,7 @@ export function ScanQuotaCard({ state }: { state: ReturnType<typeof useAdminScan
     >
       <ScanQuotaHeading month={config.data?.month ?? null} />
       {config.isError && (
-        <p role="alert" className="m-0 text-[12px] text-danger">
+        <p role="alert" className="m-0 text-body text-danger">
           {config.error instanceof AdminRequestError
             ? config.error.message
             : 'Không thể tải hạn mức lượt. Bản đang sửa vẫn được giữ lại.'}
@@ -51,7 +51,7 @@ export function ScanQuotaCard({ state }: { state: ReturnType<typeof useAdminScan
       <button
         type="button"
         disabled={pending}
-        className="min-h-11 w-full cursor-pointer rounded-xl border-0 bg-accent-soft px-4 py-2 text-[13px] font-semibold text-accent transition-colors enabled:hover:bg-border disabled:cursor-wait disabled:opacity-60"
+        className="min-h-12 w-full cursor-pointer rounded-xl border-0 bg-accent-soft px-4 py-2 text-button-secondary font-semibold text-accent transition-colors enabled:hover:bg-border disabled:cursor-wait disabled:opacity-60"
         onClick={() => void reload()}
       >
         Bỏ bản sửa và tải số liệu mới

@@ -15,7 +15,7 @@ export function StopCourseSelector({
     <div className="flex flex-col gap-2">
       <label
         htmlFor="stop-course-select"
-        className="text-xs font-bold tracking-wider text-text-secondary uppercase"
+        className="text-body font-bold tracking-wider text-text-secondary uppercase"
       >
         Chọn đợt thuốc cần dừng <span className="text-danger">*</span>
       </label>
@@ -24,7 +24,7 @@ export function StopCourseSelector({
         value={selectedId}
         disabled={pending}
         onChange={(event) => onSelect(event.target.value)}
-        className="h-12 w-full cursor-pointer rounded-xl border border-border bg-surface pl-3.5 text-sm font-medium text-text-primary hover:border-text-secondary focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/20 disabled:opacity-55"
+        className="h-12 w-full cursor-pointer rounded-xl border border-border bg-surface pl-3.5 text-body font-medium text-text-primary hover:border-text-secondary focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/20 disabled:opacity-55"
       >
         <option value="">Chọn một đợt thuốc</option>
         {courses.map((course, index) => (

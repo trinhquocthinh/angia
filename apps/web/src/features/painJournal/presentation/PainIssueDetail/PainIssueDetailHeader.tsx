@@ -12,7 +12,7 @@ export function PainIssueDetailHeader({ issue, onBack, actions }: Props) {
       <button type="button" onClick={onBack} className="min-h-11 underline">
         ‹ Đau nhức
       </button>
-      <h1 className="text-2xl font-semibold">{describeBodyLocation(issue)}</h1>
+      <h1 className="text-heading-1 font-semibold">{describeBodyLocation(issue)}</h1>
       {issue.title && <p className="break-words text-text-secondary">{issue.title}</p>}
       <p>
         {issue.status === 'tracking'

@@ -24,17 +24,17 @@ export function ProfileCard({ profile, onConsent, onLink, onDelete, onWithdraw }
           className="flex min-h-11 min-w-0 items-center gap-3 rounded-2xl hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus lg:gap-3.5"
         >
           <span
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-lg font-semibold text-text-primary shadow-sm select-none lg:h-14 lg:w-14 lg:rounded-2xl lg:text-xl lg:font-bold"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-body font-semibold text-text-primary shadow-sm select-none lg:h-14 lg:w-14 lg:rounded-2xl lg:text-button-primary lg:font-bold"
             aria-hidden="true"
           >
             {profile.displayName.slice(0, 1)}
           </span>
           <div className="min-w-0">
-            <h2 className="break-words text-xl leading-7 font-semibold text-text-primary lg:text-lg lg:leading-6">
+            <h2 className="break-words text-heading-2 font-semibold text-text-primary lg:text-heading-2 lg:">
               {profile.displayName}
             </h2>
             {profile.birthYear !== null && (
-              <p className="text-xs font-semibold text-text-secondary lg:text-[13px] lg:leading-5 lg:font-normal">
+              <p className="text-caption font-semibold text-text-secondary lg:text-caption lg: lg:font-normal">
                 Năm sinh {profile.birthYear}
               </p>
             )}
@@ -45,7 +45,7 @@ export function ProfileCard({ profile, onConsent, onLink, onDelete, onWithdraw }
       <ProfileConsentStatus profile={profile} />
       {(action === 'attestation' || action === 'self') && (
         <button
-          className="mt-4 inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl px-5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus bg-accent text-on-accent"
+          className="mt-4 inline-flex min-h-14 cursor-pointer items-center justify-center rounded-xl px-5 py-2.5 text-center text-button-primary font-semibold focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus bg-accent text-on-accent"
           onClick={() => onConsent(profile)}
         >
           Xác nhận đồng ý
@@ -53,7 +53,7 @@ export function ProfileCard({ profile, onConsent, onLink, onDelete, onWithdraw }
       )}
       {!profile.hasLinkedAccount && (
         <button
-          className="mt-4 inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl px-5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus bg-accent-soft text-accent"
+          className="mt-4 inline-flex min-h-12 cursor-pointer items-center justify-center rounded-xl px-5 py-2.5 text-center text-button-secondary font-semibold focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus bg-accent-soft text-accent"
           onClick={() => onLink(profile)}
         >
           Tạo link liên kết tài khoản

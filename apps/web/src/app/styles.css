@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import './fonts.css';
 @import '../shared/styles/tokens.css';
+@import '../shared/styles/typography.css';
 @import '../shared/ui/motion.css';
 
 button,
@@ -12,6 +13,8 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 
 /* Mở như ứng dụng (PWA): nền khớp thanh trạng thái, không kéo nảy cả trang, không viền xám khi chạm. */

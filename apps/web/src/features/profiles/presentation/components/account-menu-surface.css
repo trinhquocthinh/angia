@@ -1,7 +1,7 @@
 .account-menu-surface {
   position: fixed;
   inset: var(--account-menu-top) var(--account-menu-right) auto auto;
-  width: 280px;
+  width: 340px;
   max-width: calc(100vw - 32px);
   max-height: calc(100dvh - var(--account-menu-top) - 16px);
   margin: 0;

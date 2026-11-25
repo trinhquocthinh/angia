@@ -1,7 +1,7 @@
 export function PrescriptionLoadState({ error, retry }: { error?: unknown; retry: () => void }) {
   if (!error)
     return (
-      <p role="status" className="rounded-[20px] bg-surface p-6 text-sm">
+      <p role="status" className="rounded-[20px] bg-surface p-6 text-body">
         Đang tải đơn thuốc…
       </p>
     );
@@ -15,7 +15,7 @@ export function PrescriptionLoadState({ error, retry }: { error?: unknown; retry
           ? 'Bạn không có quyền xem đơn thuốc này.'
           : 'Không thể tải đơn thuốc. Vui lòng thử lại.';
   return (
-    <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-surface p-6 text-sm">
+    <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-surface p-6 text-caption">
       <p>{message}</p>
       <button
         type="button"

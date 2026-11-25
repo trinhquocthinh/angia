@@ -3,7 +3,7 @@ import { formatPainEntryTime } from '../PainIssueDetail/formatPainEntryTime';
 export function PainMedicationText({ context }: { context: PainContext }) {
   const date = (day: string) => day.split('-').reverse().join('/');
   return (
-    <div className="space-y-2 text-sm">
+    <div className="space-y-2 text-caption">
       <h3 className="font-semibold">Bối cảnh thuốc</h3>
       {context.asNeededDoses.length === 0 && context.courses.length === 0 && (
         <p>Chưa có bối cảnh thuốc trong khoảng này.</p>

@@ -18,7 +18,7 @@ export function PickerCard({
     <fieldset className="flex min-w-0 flex-col gap-3 rounded-2xl bg-surface p-4 shadow-sm sm:p-5">
       <div className="flex items-center justify-between gap-2">
         <legend className="contents">
-          <span className="flex items-center gap-1.5 text-lg leading-6 font-semibold text-text-primary">
+          <span className="flex items-center gap-1.5 text-body font-semibold text-text-primary">
             <span className="text-accent">
               <DocumentIcon name={icon} />
             </span>
@@ -26,7 +26,7 @@ export function PickerCard({
           </span>
         </legend>
         <span
-          className={`text-[11px] font-medium ${
+          className={`text-caption font-medium ${
             required ? 'rounded-full bg-danger-soft/60 px-2 py-0.5 text-danger' : 'text-text-secondary'
           }`}
         >

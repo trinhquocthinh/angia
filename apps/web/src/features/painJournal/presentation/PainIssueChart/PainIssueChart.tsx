@@ -36,7 +36,7 @@ export function PainIssueChart({
       aria-labelledby={id}
       className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4 md:p-6"
     >
-      <h2 id={id} className="text-lg font-semibold">
+      <h2 id={id} className="text-heading-2 font-semibold">
         Mức đau trong {weeks} tuần
       </h2>
       <SegmentedToggle

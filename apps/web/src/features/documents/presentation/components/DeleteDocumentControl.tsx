@@ -31,7 +31,7 @@ export function DeleteDocumentControl({
       <button
         type="button"
         disabled={disabled || deletion.pending}
-        className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-danger-soft/40 px-4 text-sm font-semibold text-danger transition-colors duration-200 enabled:cursor-pointer enabled:hover:bg-danger-soft disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger motion-reduce:transition-none"
+        className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-xl bg-danger-soft/40 px-4 text-button-secondary font-semibold text-danger transition-colors duration-200 enabled:cursor-pointer enabled:hover:bg-danger-soft disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger motion-reduce:transition-none"
         onClick={() => {
           setValue('');
           deletion.reset();

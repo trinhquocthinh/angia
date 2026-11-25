@@ -9,14 +9,14 @@ export function AiBudgetSummary({ budget }: { budget: AiBudget }) {
   return (
     <div className="flex flex-col gap-1.5 pt-1">
       <p className="m-0 flex items-baseline gap-2 flex-wrap">
-        <span className="font-['Newsreader',Georgia,serif] text-[34px] leading-tight font-semibold text-text-primary tabular-nums tracking-tight">
+        <span className="font-['Newsreader',Georgia,serif] text-display font-semibold text-text-primary tabular-nums tracking-tight">
           {view.spent}
         </span>
-        <span className="font-['Newsreader',Georgia,serif] text-[20px] leading-7 font-semibold text-text-secondary tabular-nums">
+        <span className="font-['Newsreader',Georgia,serif] text-button-primary font-semibold text-text-secondary tabular-nums">
           / {view.cap} USD
         </span>
       </p>
-      <div className="flex items-center justify-between gap-2 text-[11px] leading-[14px] font-medium tracking-[0.03em] text-text-secondary">
+      <div className="flex items-center justify-between gap-2 text-caption font-medium tracking-[0.03em] text-text-secondary">
         <span>Đã dùng {view.percentLabel} định mức</span>
         <span className="text-accent font-semibold">Còn lại {view.remaining} USD</span>
       </div>
@@ -34,10 +34,7 @@ export function AiBudgetSummary({ budget }: { budget: AiBudget }) {
         />
       </div>
       {view.level === 'exhausted' && (
-        <p
-          role="status"
-          className="rounded-[12px] py-2 px-3 mt-1 mb-0 text-[12px] leading-[18px] text-danger bg-danger-soft"
-        >
+        <p role="status" className="rounded-[12px] py-2 px-3 mt-1 mb-0 text-body text-danger bg-danger-soft">
           Đã chạm trần: chứng từ mới sẽ chờ ngân sách (gia đình vẫn nhập tay được).
         </p>
       )}

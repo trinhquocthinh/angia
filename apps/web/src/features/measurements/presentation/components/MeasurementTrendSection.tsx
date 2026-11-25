@@ -30,13 +30,16 @@ export function MeasurementTrendSection({
       aria-labelledby="measurement-trend-title"
       className="flex flex-col gap-4 rounded-xl bg-surface p-5 shadow-sm lg:p-6"
     >
-      <h2 id="measurement-trend-title" className="text-lg font-semibold text-accent">
+      <h2 id="measurement-trend-title" className="text-heading-2 font-semibold text-accent">
         {TITLE[kind]} {weeks} tuần
       </h2>
       {query.isPending ? (
         <ChartSkeleton />
       ) : query.isError ? (
-        <div role="alert" className="flex flex-col items-start gap-3 rounded-2xl bg-danger-soft p-4 text-sm">
+        <div
+          role="alert"
+          className="flex flex-col items-start gap-3 rounded-2xl bg-danger-soft p-4 text-caption"
+        >
           <p>Không tải được biểu đồ.</p>
           <button
             type="button"

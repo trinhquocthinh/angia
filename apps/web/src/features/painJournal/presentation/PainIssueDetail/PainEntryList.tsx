@@ -12,7 +12,7 @@ export function PainEntryList({
   const sorted = [...entries].sort((a, b) => Date.parse(b.recordedAt) - Date.parse(a.recordedAt));
   return (
     <section aria-label="Các lần ghi" className="space-y-3">
-      <h2 className="text-xl font-semibold">Các lần ghi</h2>
+      <h2 className="text-heading-2 font-semibold">Các lần ghi</h2>
       <ul className="space-y-3">
         {sorted.map((entry) => (
           <li key={entry.id} className="min-w-0 rounded-xl border border-border p-4">

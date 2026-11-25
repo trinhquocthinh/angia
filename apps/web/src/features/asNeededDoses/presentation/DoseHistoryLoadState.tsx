@@ -3,7 +3,7 @@ export function DoseHistoryLoadState({ loading, error, retry }: Props) {
   if (loading) return <p role="status">Đang tải nhật ký liều…</p>;
   if (!error) return null;
   return (
-    <div role="alert" className="text-sm">
+    <div role="alert" className="text-caption">
       <p>Không tải được nhật ký liều.</p>
       <button type="button" onClick={retry} className="min-h-11 font-semibold text-accent">
         Thử lại

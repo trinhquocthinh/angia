@@ -25,7 +25,8 @@ export async function checkAccountLayout(page: Page) {
           Array.from(element.childNodes).some(
             (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
           ) &&
-          parseFloat(getComputedStyle(element).fontSize) < 16,
+          parseFloat(getComputedStyle(element).fontSize) <
+            (document.documentElement.dataset.textSize === 'large' ? 16 : 14),
       )
       .map((element) => element.textContent),
   );
@@ -38,7 +39,7 @@ export async function checkAccountLayout(page: Page) {
       weight: getComputedStyle(element).fontWeight,
       font: getComputedStyle(element).fontFamily,
     })),
-  ).toMatchObject({ size: '28px', weight: '600', font: expect.stringContaining('Be Vietnam Pro') });
+  ).toMatchObject({ size: '24px', weight: '600', font: expect.stringContaining('Be Vietnam Pro') });
 }
 export async function accountScreenshot(page: Page, info: TestInfo, name: string, theme: string) {
   const directory = process.env['ACCOUNT_SCREENSHOT_DIR'];

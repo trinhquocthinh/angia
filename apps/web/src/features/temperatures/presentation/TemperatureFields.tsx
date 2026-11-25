@@ -6,7 +6,7 @@ export function TemperatureFields({ form }: { form: UseFormReturn<TemperatureFor
   const id = useId();
   return (
     <>
-      <label htmlFor={`${id}-celsius`} className="flex min-w-0 flex-col gap-2 text-sm font-medium">
+      <label htmlFor={`${id}-celsius`} className="flex min-w-0 flex-col gap-2 text-caption font-medium">
         Nhiệt độ (°C)
         <input
           id={`${id}-celsius`}
@@ -20,11 +20,11 @@ export function TemperatureFields({ form }: { form: UseFormReturn<TemperatureFor
         />
       </label>
       {form.formState.errors.celsius && (
-        <p id={`${id}-celsius-error`} role="alert" className="text-sm text-danger">
+        <p id={`${id}-celsius-error`} role="alert" className="text-body text-danger">
           {form.formState.errors.celsius.message}
         </p>
       )}
-      <label htmlFor={`${id}-measuredAt`} className="flex min-w-0 flex-col gap-2 text-sm font-medium">
+      <label htmlFor={`${id}-measuredAt`} className="flex min-w-0 flex-col gap-2 text-caption font-medium">
         Ngày giờ đo (giờ Việt Nam)
         <input
           id={`${id}-measuredAt`}
@@ -36,7 +36,7 @@ export function TemperatureFields({ form }: { form: UseFormReturn<TemperatureFor
         />
       </label>
       {form.formState.errors.measuredAt && (
-        <p id={`${id}-time-error`} role="alert" className="text-sm text-danger">
+        <p id={`${id}-time-error`} role="alert" className="text-body text-danger">
           {form.formState.errors.measuredAt.message}
         </p>
       )}

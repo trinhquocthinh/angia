@@ -9,10 +9,10 @@ type Props = {
 export function TemperatureList({ readings, pending, onRemove }: Props) {
   const latest = readings.at(-1);
   const formatter = new Intl.NumberFormat('vi-VN', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-  if (!latest) return <p className="text-sm text-text-secondary">Chưa ghi nhiệt độ.</p>;
+  if (!latest) return <p className="text-caption text-text-secondary">Chưa ghi nhiệt độ.</p>;
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sm text-text-secondary">
+      <p className="text-caption text-text-secondary">
         Gần nhất trong khoảng đã chọn:{' '}
         <strong className="tabular-nums text-text-primary">{formatter.format(latest.celsius)} °C</strong>
         {' · '}
@@ -28,7 +28,7 @@ export function TemperatureList({ readings, pending, onRemove }: Props) {
               <span className="font-semibold tabular-nums text-text-primary">
                 {formatter.format(reading.celsius)} °C
               </span>
-              <time dateTime={reading.measuredAt} className="text-sm text-text-secondary">
+              <time dateTime={reading.measuredAt} className="text-caption text-text-secondary">
                 {formatDoseTime(reading.measuredAt)}
               </time>
             </div>
@@ -38,7 +38,7 @@ export function TemperatureList({ readings, pending, onRemove }: Props) {
                 disabled={pending}
                 onClick={() => onRemove(reading)}
                 aria-label={`Xóa bản ghi ${formatter.format(reading.celsius)} °C lúc ${formatDoseTime(reading.measuredAt)}`}
-                className="min-h-11 rounded-xl px-3 text-sm text-danger disabled:opacity-50"
+                className="min-h-11 rounded-xl px-3 text-body text-danger disabled:opacity-50"
               >
                 Xóa bản ghi
               </button>

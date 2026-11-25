@@ -52,8 +52,8 @@
 }
 .household-home-dialog-head h3 {
   margin: 0;
-  font-size: 1.3125rem;
-  line-height: 1.75rem;
+  font-size: var(--font-heading-2);
+  line-height: var(--line-heading-2);
   font-weight: 700;
   color: var(--color-text-primary);
 }
@@ -86,7 +86,8 @@
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text-primary);
-  font-size: 0.9375rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   font-weight: 600;
   cursor: pointer;
 }
@@ -100,7 +101,8 @@
   border-radius: 12px;
   background: var(--color-danger);
   color: var(--color-on-accent);
-  font-size: 0.9375rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   font-weight: 600;
   cursor: pointer;
 }

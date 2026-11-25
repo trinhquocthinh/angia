@@ -3,7 +3,7 @@ import type { AdminTask } from '../AdminTask';
 import { AdminIcon } from './AdminIcon';
 
 const BASE =
-  'inline-flex min-h-9 cursor-pointer items-center justify-center gap-1 rounded-lg border-0 px-2 py-1 text-xs leading-4 font-semibold whitespace-nowrap transition-colors';
+  'inline-flex min-h-9 cursor-pointer items-center justify-center gap-1 rounded-lg border-0 px-2 py-1 text-caption font-semibold whitespace-nowrap transition-colors';
 
 export function AccountActions({
   account,

@@ -32,8 +32,8 @@ export function ManualEntryForm({
   return (
     <div className="flex flex-col gap-4">
       <section className="flex flex-col gap-3 rounded-[20px] bg-surface p-5 lg:p-6">
-        <h2 className="text-lg font-semibold text-accent">Nhập tay</h2>
-        <p className="text-sm leading-6 text-text-secondary">{intro}</p>
+        <h2 className="text-heading-2 font-semibold text-accent">Nhập tay</h2>
+        <p className="text-caption text-text-secondary">{intro}</p>
         <RecordTypePicker value={type} onChange={setType} allowReading={allowReading} />
       </section>
       {type === 'prescription' && <PrescriptionForm key={type} {...formProps} />}

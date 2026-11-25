@@ -30,14 +30,14 @@ export function AiRoutingCard({
         title="Nhận diện chứng từ"
         aside={
           config.data && (
-            <span className="shrink-0 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-medium text-text-secondary">
+            <span className="shrink-0 rounded-full bg-accent-soft px-2.5 py-1 text-caption font-medium text-text-secondary">
               Bản {config.data.version}
             </span>
           )
         }
       />
       {config.isError && (
-        <p role="alert" className="m-0 text-[12px] leading-5 text-danger">
+        <p role="alert" className="m-0 text-body text-danger">
           {config.error instanceof AdminRequestError
             ? config.error.message
             : panel.editing
@@ -46,7 +46,7 @@ export function AiRoutingCard({
         </p>
       )}
       {!config.data && !config.isError && (
-        <p role="status" className="m-0 text-[13px] text-text-secondary">
+        <p role="status" className="m-0 text-caption text-text-secondary">
           Đang tải cấu hình…
         </p>
       )}

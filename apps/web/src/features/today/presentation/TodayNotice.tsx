@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { Card } from '@src/shared/ui/card/Card';
 
 const linkClass =
-  'inline-flex min-h-12 min-w-12 items-center justify-center rounded-xl border border-border px-4 py-2 text-lg leading-6 font-semibold text-accent focus-visible:outline-3 focus-visible:outline-focus';
+  'inline-flex min-h-12 min-w-12 items-center justify-center rounded-xl border border-border px-4 py-2 text-body font-semibold text-accent focus-visible:outline-3 focus-visible:outline-focus';
 
 type Props = { kind: 'withdrawn' | 'consent' | 'empty'; main: boolean; profileId?: string };
 
@@ -33,7 +33,7 @@ export function TodayNotice({ kind, main, profileId }: Props) {
           </Link>
         ) : (
           <>
-            <p className="text-base leading-6 text-text-secondary">
+            <p className="text-body text-text-secondary">
               Nhờ người chăm sóc chính gửi lời mời đồng thuận mới.
             </p>
             <Link className={linkClass} to="/" search={{ view: 'profiles' }}>

@@ -19,7 +19,7 @@ export function NewPainIssueDialog(props: NewPainIssueSheetProps) {
         data-new-pain-issue
         className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-5 py-3"
       >
-        <h2 ref={heading} tabIndex={-1} id={id} className="text-xl font-semibold">
+        <h2 ref={heading} tabIndex={-1} id={id} className="text-heading-1 font-semibold">
           Thêm vấn đề đau — {state.step === 1 ? 'Chọn vùng' : 'Lần ghi đầu'}
         </h2>
         <button type="button" disabled={state.pending} onClick={props.onClose} className="min-h-11 px-3">
@@ -53,7 +53,7 @@ export function NewPainIssueDialog(props: NewPainIssueSheetProps) {
               )
             )}
             {state.error && (
-              <p role="alert" className="mt-3 text-sm">
+              <p role="alert" className="mt-3 text-body">
                 {state.error}
               </p>
             )}

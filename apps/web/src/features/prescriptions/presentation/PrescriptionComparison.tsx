@@ -9,12 +9,12 @@ export function PrescriptionComparison({ diff, previousDate, currentDate }: Prop
   const empty = !diff.added.length && !diff.removed.length && !diff.changed.length;
   return (
     <section aria-label="Thay đổi so với đơn trước" className="min-w-0 rounded-[20px] bg-surface p-5">
-      <h2 className="text-lg font-semibold text-accent">Thay đổi so với đơn trước</h2>
-      <p className="mt-2 text-sm text-text-secondary">
+      <h2 className="text-heading-2 font-semibold text-accent">Thay đổi so với đơn trước</h2>
+      <p className="mt-2 text-caption text-text-secondary">
         Trước: {previousDate ? formatDay(previousDate) : 'Không rõ ngày'} · Sau: {formatDay(currentDate)}
       </p>
       {empty ? (
-        <p className="mt-4 text-sm">Không có thay đổi ở các trường được so sánh.</p>
+        <p className="mt-4 text-body">Không có thay đổi ở các trường được so sánh.</p>
       ) : (
         <div className="mt-5 flex flex-col gap-6">
           {(['added', 'removed'] as const).map((kind) => (
@@ -29,7 +29,7 @@ export function PrescriptionComparison({ diff, previousDate, currentDate }: Prop
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-text-secondary">Không có.</p>
+                <p className="text-caption text-text-secondary">Không có.</p>
               )}
             </section>
           ))}
@@ -48,7 +48,7 @@ export function PrescriptionComparison({ diff, previousDate, currentDate }: Prop
                 </article>
               ))
             ) : (
-              <p className="text-sm text-text-secondary">Không có.</p>
+              <p className="text-caption text-text-secondary">Không có.</p>
             )}
           </section>
         </div>

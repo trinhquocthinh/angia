@@ -16,10 +16,10 @@ export function MedicationSlotSection({
   return (
     <section aria-labelledby={headingId} className="flex flex-col gap-3 rounded-xl bg-surface p-5 shadow-sm">
       <div className="flex items-center justify-between gap-2">
-        <h3 id={headingId} className="text-lg font-semibold text-accent">
+        <h3 id={headingId} className="text-heading-2 font-semibold text-accent">
           {group.label}
         </h3>
-        <span className="text-xs font-medium text-text-secondary">{group.courses.length} thuốc</span>
+        <span className="text-caption font-medium text-text-secondary">{group.courses.length} thuốc</span>
       </div>
       <ul className="flex flex-col gap-2">
         {group.courses.map((course) => (

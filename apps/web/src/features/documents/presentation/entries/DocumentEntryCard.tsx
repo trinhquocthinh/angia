@@ -15,7 +15,7 @@ const ICONS: Record<NonNullable<DocumentEntry['type']>, DocumentIconName> = {
   device_reading: 'monitor',
 };
 const actionClass =
-  'min-h-11 content-center rounded-xl bg-accent-soft px-4 text-sm font-semibold text-accent hover:bg-border';
+  'min-h-11 content-center rounded-xl bg-accent-soft px-4 text-caption font-semibold text-accent hover:bg-border';
 
 // Thẻ chứng từ (Stitch 10424d70): tiêu đề, nhãn trạng thái trung tính, nơi khám · ngày, tóm tắt bản ghi.
 export function DocumentEntryCard({
@@ -35,12 +35,12 @@ export function DocumentEntryCard({
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-base font-semibold text-text-primary">{entryTitle(entry)}</h3>
-            <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-medium text-text-secondary">
+            <h3 className="text-body font-semibold text-text-primary">{entryTitle(entry)}</h3>
+            <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-caption font-medium text-text-secondary">
               {entryStatusLabel(entry)}
             </span>
           </div>
-          <p className="mt-1 text-sm text-text-secondary">
+          <p className="mt-1 text-caption text-text-secondary">
             {facility ? `${facility} · ` : ''}
             {entryDateLabel(entry)}
           </p>

@@ -17,13 +17,13 @@
   border-radius: 999px;
   background: var(--color-surface);
   color: var(--color-accent);
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   box-shadow: var(--shadow-stitch-sm);
 }
 .household-invite-code-label {
-  font-size: 0.75rem;
-  line-height: 1rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-weight: 600;
@@ -48,8 +48,8 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 6px;
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   color: var(--color-text-secondary);
 }
 .household-invite-expiry svg {
@@ -68,15 +68,15 @@
   padding: 16px;
   border-radius: 12px;
   background: var(--color-surface);
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   color: var(--color-text-secondary);
 }
 .household-invite-share-hint {
   margin: 8px 0 16px;
   text-align: center;
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   color: var(--color-text-secondary);
 }
 .household-invite-copy-actions {
@@ -93,8 +93,8 @@
   min-width: 0;
   border: 0;
   padding: 12px 8px;
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-button-secondary);
+  line-height: var(--line-button-secondary);
   color: var(--color-accent);
   background: var(--color-surface-container-high);
 }
@@ -112,8 +112,8 @@
   padding: 8px 16px;
   margin: 40px auto 0;
   color: var(--color-text-secondary);
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .household-invite-revoke-trigger svg {
   width: 18px;
@@ -123,8 +123,8 @@
   display: grid;
   gap: 8px;
   margin-top: 16px;
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .household-invite-manual textarea {
   width: 100%;
@@ -141,8 +141,8 @@
     order: -1;
   }
   .household-invite-code {
-    font-size: 1.75rem;
-    line-height: 2.5rem;
+    font-size: var(--font-heading-1);
+    line-height: var(--line-heading-1);
     letter-spacing: 0.025em;
   }
 }
@@ -160,8 +160,8 @@
   width: 100%;
 }
 .household-invite-code-role {
-  font-size: 0.75rem;
-  line-height: 1rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
 }
 @media (max-width: 1023px) {
   .household-invite-code-top {

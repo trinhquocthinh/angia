@@ -54,13 +54,13 @@ export function PrivacyExampleIllustration() {
     <div className="grid grid-cols-2 gap-3">
       <figure className="m-0 flex flex-col gap-2 rounded-xl border-2 border-warning bg-warning-soft p-3">
         <PrescriptionSketch masked={false} />
-        <figcaption className="text-center text-sm font-semibold text-warning">
+        <figcaption className="text-center text-caption font-semibold text-warning">
           ✗ Không nên — còn họ tên, mã bệnh nhân
         </figcaption>
       </figure>
       <figure className="m-0 flex flex-col gap-2 rounded-xl border-2 border-accent bg-accent-soft p-3">
         <PrescriptionSketch masked />
-        <figcaption className="text-center text-sm font-semibold text-accent">
+        <figcaption className="text-center text-caption font-semibold text-accent">
           ✓ Nên — đã che, chỉ còn thuốc, liều, ngày
         </figcaption>
       </figure>

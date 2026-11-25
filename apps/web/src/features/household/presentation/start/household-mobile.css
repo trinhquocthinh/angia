@@ -21,13 +21,13 @@
   }
   .household-start-meta .household-start-kicker {
     background: color-mix(in srgb, var(--color-secondary-container) 50%, transparent);
-    font-size: 0.6875rem;
-    line-height: 0.875rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
   }
   .household-start-mobile-step {
     display: inline;
-    font-size: 0.6875rem;
-    line-height: 0.875rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     color: var(--color-text-secondary);
   }
   .household-start-trust {
@@ -35,8 +35,8 @@
   }
   .household-start-welcome h1 {
     font-family: var(--font-sans);
-    font-size: 1.75rem;
-    line-height: 2.1875rem;
+    font-size: var(--font-heading-1);
+    line-height: var(--line-heading-1);
     font-weight: 600;
     color: var(--color-text-primary);
     margin-bottom: 6px;
@@ -75,8 +75,8 @@
     margin-left: 4px;
   }
   .household-choice-title strong {
-    font-size: 1.0625rem;
-    line-height: 1.5rem;
+    font-size: var(--font-heading-2);
+    line-height: var(--line-heading-2);
     color: var(--color-text-primary);
   }
   .household-choice-title {
@@ -88,8 +88,8 @@
     border-radius: 999px;
     background: var(--color-accent-fixed);
     color: var(--color-accent);
-    font-size: 0.625rem;
-    line-height: 0.875rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     text-transform: uppercase;
   }
   .household-start-privacy {
@@ -101,8 +101,8 @@
   }
   .household-start-privacy strong {
     display: block;
-    font-size: 0.75rem;
-    line-height: 1rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     font-weight: 600;
     color: var(--color-accent);
     margin-bottom: 4px;
@@ -125,8 +125,8 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.75rem;
-    line-height: 1rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     font-weight: 600;
     color: var(--color-secondary);
   }
@@ -134,8 +134,8 @@
     max-width: 210px;
     margin-top: 4px;
     color: var(--color-text-secondary);
-    font-size: 0.75rem;
-    line-height: 1rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
   }
   .household-start-family img {
     width: 64px;

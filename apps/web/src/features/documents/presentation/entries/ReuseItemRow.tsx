@@ -24,7 +24,7 @@ export function ReuseItemRow({ index, item, value, disabled, onChange }: Props) 
           onChange={(event) => onChange({ ...value, selected: event.target.checked })}
           className="mt-1 h-5 w-5 accent-accent"
         />
-        <span className="flex flex-col text-sm">
+        <span className="flex flex-col text-caption">
           <span className="font-semibold">
             {item.name}
             {item.strength ? ` ${item.strength}` : ''}
@@ -37,7 +37,7 @@ export function ReuseItemRow({ index, item, value, disabled, onChange }: Props) 
       {value.selected && (
         <div className="flex flex-wrap items-end gap-3">
           {!value.longTerm && (
-            <label htmlFor={`${id}-days`} className="flex flex-col gap-1 text-sm font-medium">
+            <label htmlFor={`${id}-days`} className="flex flex-col gap-1 text-caption font-medium">
               Số ngày
               <input
                 id={`${id}-days`}

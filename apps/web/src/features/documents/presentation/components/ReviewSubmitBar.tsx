@@ -7,7 +7,7 @@ export function ReviewSubmitBar({ pending, disabled }: { pending: boolean; disab
       <button
         type="submit"
         disabled={pending || disabled}
-        className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-on-accent shadow-[0_4px_16px_color-mix(in_srgb,var(--color-shadow)_25%,transparent)] transition-[background-color,box-shadow,opacity,scale] duration-200 enabled:cursor-pointer enabled:hover:bg-accent-hover enabled:active:scale-[0.98] disabled:cursor-default disabled:opacity-55 disabled:shadow-none focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus motion-reduce:transition-none motion-reduce:enabled:active:scale-100"
+        className="inline-flex min-h-14 items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-button-primary font-semibold text-on-accent shadow-[0_4px_16px_color-mix(in_srgb,var(--color-shadow)_25%,transparent)] transition-[background-color,box-shadow,opacity,scale] duration-200 enabled:cursor-pointer enabled:hover:bg-accent-hover enabled:active:scale-[0.98] disabled:cursor-default disabled:opacity-55 disabled:shadow-none focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus motion-reduce:transition-none motion-reduce:enabled:active:scale-100"
       >
         {pending ? (
           <span
@@ -19,8 +19,8 @@ export function ReviewSubmitBar({ pending, disabled }: { pending: boolean; disab
         )}
         {pending ? 'Đang lưu…' : 'Lưu vào sổ'}
       </button>
-      <p className="hidden items-center justify-center gap-1 text-xs text-text-secondary lg:flex">
-        Nhấn <kbd className="rounded bg-border px-1.5 py-0.5 font-mono text-[11px]">Enter</kbd> để lưu
+      <p className="hidden items-center justify-center gap-1 text-caption text-text-secondary lg:flex">
+        Nhấn <kbd className="rounded bg-border px-1.5 py-0.5 font-mono text-caption">Enter</kbd> để lưu
       </p>
     </div>
   );

@@ -25,7 +25,10 @@ export function LabSeriesList({ data, loading, error, retry, readOnly = false }:
     );
   if (error || !data)
     return (
-      <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-danger-soft p-5 text-sm">
+      <div
+        role="alert"
+        className="flex flex-col items-start gap-3 rounded-[20px] bg-danger-soft p-5 text-caption"
+      >
         <p>Không tải được kết quả xét nghiệm.</p>
         <button
           type="button"
@@ -39,11 +42,11 @@ export function LabSeriesList({ data, loading, error, retry, readOnly = false }:
   if (data.length === 0)
     return (
       <div className="flex flex-col items-center gap-3 rounded-[20px] border-2 border-dashed border-border bg-surface px-6 py-12 text-center">
-        <p className="text-sm font-semibold text-text-primary">Chưa có kết quả xét nghiệm nào.</p>
+        <p className="text-body font-semibold text-text-primary">Chưa có kết quả xét nghiệm nào.</p>
         {!readOnly && (
           <Link
             to="/upload"
-            className="min-h-11 content-center rounded-full bg-accent px-5 text-sm font-semibold text-on-accent"
+            className="min-h-14 content-center rounded-full bg-accent px-5 text-button-primary font-semibold text-on-accent"
           >
             Tải ảnh phiếu xét nghiệm
           </Link>
@@ -57,7 +60,7 @@ export function LabSeriesList({ data, loading, error, retry, readOnly = false }:
       {groups.map((group) => (
         <LabGroupSection key={group.id} group={group} />
       ))}
-      <p className="text-xs text-text-secondary">
+      <p className="text-caption text-text-secondary">
         Nhóm và ghi chú chỉ để tra cứu nhanh, không thay lời bác sĩ.
       </p>
     </div>

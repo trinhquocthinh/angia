@@ -27,7 +27,7 @@ export function ReviewItemChip({ state }: { state: ReviewItemState }) {
   const chip = CHIPS[state];
   return (
     <span
-      className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold ${chip.className}`}
+      className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-caption font-semibold ${chip.className}`}
     >
       <span
         aria-hidden="true"

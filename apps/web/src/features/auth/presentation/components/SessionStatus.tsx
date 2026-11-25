@@ -7,12 +7,12 @@ export function SessionStatus(props: Props) {
   return (
     <AuthLayout>
       {props.state === 'loading' ? (
-        <p role="status" className="flex items-center justify-center gap-3 text-base text-text-secondary">
+        <p role="status" className="flex items-center justify-center gap-3 text-body text-text-secondary">
           <AuthSpinner /> Đang kiểm tra trạng thái đăng nhập…
         </p>
       ) : (
         <div className="flex flex-col gap-6 text-center">
-          <p role="alert" className="text-base leading-7 text-danger">
+          <p role="alert" className="text-body text-danger">
             Không thể kết nối. Vui lòng thử lại.
           </p>
           <button

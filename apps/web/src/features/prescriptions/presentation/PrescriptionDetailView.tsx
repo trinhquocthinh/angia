@@ -21,23 +21,27 @@ export function PrescriptionDetailView({
         nextId={nextId}
       />
       <section className="min-w-0 rounded-[20px] bg-surface p-5 break-words">
-        <h2 className="text-xl font-semibold text-accent">Đơn ngày {formatDay(prescription.issuedDate)}</h2>
-        <p className="mt-2 text-sm text-text-secondary">
+        <h2 className="text-heading-2 font-semibold text-accent">
+          Đơn ngày {formatDay(prescription.issuedDate)}
+        </h2>
+        <p className="mt-2 text-caption text-text-secondary">
           {prescription.sourceDocumentId ? 'Từ giấy tờ' : 'Nhập tay'}
         </p>
-        {prescription.facility && <p className="mt-2 text-sm">Nơi khám: {prescription.facility}</p>}
+        {prescription.facility && <p className="mt-2 text-body">Nơi khám: {prescription.facility}</p>}
         {prescription.diagnosis && (
-          <p className="mt-2 whitespace-pre-wrap text-sm">Chẩn đoán ghi trên đơn: {prescription.diagnosis}</p>
+          <p className="mt-2 whitespace-pre-wrap text-body">
+            Chẩn đoán ghi trên đơn: {prescription.diagnosis}
+          </p>
         )}
         {prescription.revisitDate && (
-          <p className="mt-2 text-sm">Ngày hẹn: {formatDay(prescription.revisitDate)}</p>
+          <p className="mt-2 text-body">Ngày hẹn: {formatDay(prescription.revisitDate)}</p>
         )}
         {prescription.sourceDocumentId && (
           <a
             href={documentImageUrl(prescription.sourceDocumentId)}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-accent underline underline-offset-4"
+            className="mt-3 inline-flex min-h-11 items-center text-caption font-semibold text-accent underline underline-offset-4"
           >
             Xem ảnh giấy tờ (mở tab mới)
           </a>

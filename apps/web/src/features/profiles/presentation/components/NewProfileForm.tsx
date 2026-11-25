@@ -50,7 +50,7 @@ export function NewProfileForm({
           profileName={consent.state.displayName}
           onChange={consent.setDraft}
         />
-        <p className="flex items-start gap-2 px-1 text-xs leading-5 text-text-secondary">
+        <p className="flex items-start gap-2 px-1 text-caption text-text-secondary">
           <span className="mt-0.5 shrink-0 text-text-secondary">
             <AdminIcon name="info" size={16} />
           </span>
@@ -59,7 +59,7 @@ export function NewProfileForm({
             : 'Bạn có thể bỏ tick và tạo hồ sơ trước; chỉ ghi được dữ liệu sức khỏe sau khi xác nhận đồng ý.'}
         </p>
         {error && (
-          <p role="alert" className="text-sm text-danger">
+          <p role="alert" className="text-body text-danger">
             {error}
           </p>
         )}

@@ -2,7 +2,7 @@ type Props = { error: Error | null; retry: () => void };
 export function PainJournalStatus({ error, retry }: Props) {
   if (error)
     return (
-      <div role="alert" className="flex flex-col gap-3 rounded-xl border border-border p-4 text-sm">
+      <div role="alert" className="flex flex-col gap-3 rounded-xl border border-border p-4 text-caption">
         <p>Không thể tải sổ đau nhức. Vui lòng thử lại.</p>
         <button type="button" onClick={retry} className="min-h-11 rounded-xl bg-accent-soft px-4 text-accent">
           Thử lại

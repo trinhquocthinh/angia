@@ -52,7 +52,7 @@ export function TemperatureWorkspace({
         />
       )}
       {!state.recording && mutation.error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-body text-danger">
           {mutation.error}
         </p>
       )}

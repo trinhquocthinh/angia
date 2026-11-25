@@ -33,7 +33,10 @@ export function MedicationCatalog({
     );
   if (error || !data)
     return (
-      <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-danger-soft p-5 text-sm">
+      <div
+        role="alert"
+        className="flex flex-col items-start gap-3 rounded-[20px] bg-danger-soft p-5 text-caption"
+      >
         <p>Không tải được danh mục thuốc.</p>
         <button
           type="button"
@@ -48,7 +51,7 @@ export function MedicationCatalog({
   if (groups.length === 0)
     return (
       <div className="flex flex-col items-center gap-3 rounded-[20px] border-2 border-dashed border-border bg-surface px-6 py-12 text-center">
-        <p className="text-sm font-semibold text-text-primary">
+        <p className="text-body font-semibold text-text-primary">
           {readOnly
             ? 'Chưa có thuốc đang dùng hôm nay.'
             : 'Chưa có thuốc. Hãy tải đơn thuốc hoặc thêm thuốc bổ, vitamin.'}
@@ -56,7 +59,7 @@ export function MedicationCatalog({
         {!readOnly && (
           <Link
             to="/upload"
-            className="min-h-11 content-center rounded-full bg-accent px-5 text-sm font-semibold text-on-accent"
+            className="min-h-14 content-center rounded-full bg-accent px-5 text-button-primary font-semibold text-on-accent"
           >
             Tải ảnh đơn thuốc
           </Link>

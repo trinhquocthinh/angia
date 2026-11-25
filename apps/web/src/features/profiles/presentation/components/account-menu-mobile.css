@@ -45,15 +45,15 @@
     padding: 8px 16px 24px;
   }
   .account-menu-identity {
-    position: relative;
+    align-items: center;
     gap: 12px;
-    padding-bottom: 4px;
-    padding-right: 40px;
+    padding: 14px 10px 14px 16px;
   }
   .account-menu-initial {
     width: 48px;
     height: 48px;
-    font-size: 18px;
+    font-size: var(--font-body);
+    line-height: var(--line-body);
     background: var(--color-accent-container);
     box-shadow: var(--shadow-stitch-sm);
   }
@@ -69,32 +69,31 @@
     background: var(--color-secondary-container);
   }
   .account-menu-person {
+    gap: 2px;
     padding-right: 0;
   }
   .account-menu-person > strong {
-    font-size: 18px;
-    line-height: 24px;
+    font-size: var(--font-body);
+    line-height: var(--line-body);
   }
   .account-menu-person > span {
-    font-size: 13px;
-    line-height: 20px;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
   }
   .account-menu-role {
-    align-self: flex-start;
-    padding: 2px 10px;
-    background: var(--color-accent-soft);
-    font-size: 11px;
-    line-height: 16px;
+    align-self: center;
+    padding: 4px 10px;
+    background: color-mix(in srgb, var(--color-secondary-container) 70%, transparent);
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
   }
   .account-menu-close {
-    position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-    top: 2px;
-    right: -8px;
-    width: 44px;
-    height: 44px;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     color: var(--color-text-secondary);
     cursor: pointer;
@@ -115,44 +114,22 @@
     flex-direction: column;
   }
   .account-menu-context strong {
-    font-size: 12px;
-    line-height: 16px;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     color: var(--color-accent);
     font-weight: 600;
   }
   .account-menu-context span span {
-    font-size: 11px;
-    line-height: 14px;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     color: var(--color-text-secondary);
   }
   .account-menu-context b {
     display: inline-flex;
     align-items: center;
-    font-size: 11px;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     font-weight: 600;
-  }
-  .account-menu-theme {
-    border-top: 1px solid var(--color-surface-container);
-    padding-top: 16px;
-  }
-  .account-menu-theme-heading {
-    margin-bottom: 10px;
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: 600;
-    color: var(--color-text-primary);
-  }
-  .account-menu-theme-heading strong {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--color-secondary);
-  }
-  .account-menu-theme-options {
-    border: 0;
-    background: var(--color-surface-container);
-  }
-  .account-menu-theme-options label > span {
-    min-height: 48px;
   }
   .account-menu-divider {
     background: var(--color-surface-container);
@@ -161,43 +138,29 @@
     gap: 12px;
     justify-content: space-between;
     padding: 12px 14px;
-    color: var(--color-text-primary);
-  }
-  .account-menu-logout-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background: var(--color-surface-container);
-    color: var(--color-text-secondary);
+    color: var(--color-danger);
   }
   .account-menu-logout > span:nth-child(2) {
     flex: 1;
   }
   .account-menu-logout strong {
-    font-size: 14px;
-    line-height: 20px;
+    font-size: var(--font-body);
+    line-height: var(--line-body);
     font-weight: 600;
   }
   .account-menu-logout small {
     display: block;
-    color: var(--color-text-secondary);
-    font-size: 11px;
-    line-height: 14px;
-  }
-  .account-menu-logout-chevron {
-    display: block;
-    color: var(--color-text-secondary);
+    color: var(--color-danger);
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
   }
   .account-menu-footnote {
     display: block;
     padding-top: 8px;
     color: var(--color-text-secondary);
     text-align: center;
-    font-size: 11px;
-    line-height: 14px;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
   }
   @starting-style {
     .account-menu-surface[open] {
@@ -213,7 +176,6 @@
   .account-menu-surface,
   .account-menu-surface::backdrop,
   .account-menu-trigger-chevron,
-  .account-menu-theme-options label > span,
   .account-menu-logout {
     transition: none !important;
   }

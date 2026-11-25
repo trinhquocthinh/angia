@@ -43,7 +43,7 @@ export function Sheet({
         event.preventDefault();
         if (!pending) onCancel();
       }}
-      className={`angia-modal flex-col overflow-x-hidden overflow-y-auto border border-border bg-surface p-0 font-sans text-lg leading-7 text-text-primary backdrop:bg-overlay/40 open:flex ${PLACEMENTS[placement]} ${placement === 'modal' ? WIDTHS[width] : ''}`}
+      className={`angia-modal flex-col overflow-x-hidden overflow-y-auto border border-border bg-surface p-0 font-sans text-caption text-text-primary backdrop:bg-overlay/40 open:flex ${PLACEMENTS[placement]} ${placement === 'modal' ? WIDTHS[width] : ''}`}
     >
       {placement === 'modal' && (
         <span

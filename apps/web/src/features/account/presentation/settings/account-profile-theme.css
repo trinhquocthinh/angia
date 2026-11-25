@@ -25,7 +25,8 @@
   background: var(--color-clay-porcelain);
   color: var(--color-clay-owner-mid);
   font-family: 'Newsreader', serif;
-  font-size: 28px;
+  font-size: var(--font-heading-1);
+  line-height: var(--line-heading-1);
   font-weight: 600;
 }
 .account-profile-meta {
@@ -41,14 +42,14 @@
   gap: 2px;
 }
 .account-profile-label {
-  font-size: 16px;
-  line-height: 1.4;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   color: var(--color-text-secondary);
 }
 .account-profile-value {
-  font-size: 20px;
+  font-size: var(--font-button-primary);
   font-weight: 600;
-  line-height: 1.35;
+  line-height: var(--line-button-primary);
   color: var(--color-text-primary);
   overflow-wrap: anywhere;
 }
@@ -65,8 +66,8 @@
   border-radius: 999px;
   background: var(--color-surface-container);
   color: var(--color-text-primary);
-  font-size: 16px;
-  line-height: 1.35;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .account-profile-role {
   background: var(--color-secondary-container);
@@ -118,7 +119,8 @@
   padding: 8px 6px;
   border-radius: 12px;
   color: var(--color-text-secondary);
-  font-size: 16px;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   font-weight: 600;
   white-space: nowrap;
   transition:
@@ -144,6 +146,7 @@
     flex-direction: column;
     gap: 2px;
     min-height: 56px;
-    font-size: 14px;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
   }
 }

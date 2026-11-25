@@ -34,8 +34,8 @@
 
 .profile-guardian-dialog-head h3 {
   margin: 0;
-  font-size: 1.1875rem;
-  line-height: 1.625rem;
+  font-size: var(--font-button-primary);
+  line-height: var(--line-button-primary);
   font-weight: 600;
   color: var(--color-text-primary);
 }
@@ -59,8 +59,8 @@
 
 .profile-guardian-dialog-desc {
   margin: 0;
-  font-size: 0.9375rem;
-  line-height: 1.5rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   color: var(--color-text-secondary);
 }
 
@@ -96,8 +96,8 @@
 }
 
 .profile-guardian-candidate-label {
-  font-size: 0.9375rem;
-  line-height: 1.375rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   font-weight: 500;
   color: var(--color-text-primary);
 }
@@ -114,8 +114,8 @@
   padding: 16px;
   border-radius: 14px;
   background: var(--color-accent-soft);
-  font-size: 0.875rem;
-  line-height: 1.375rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   color: var(--color-text-secondary);
 }
 
@@ -128,8 +128,8 @@
   border-radius: 14px;
   background: var(--color-warning-soft);
   color: var(--color-warning);
-  font-size: 0.875rem;
-  line-height: 1.375rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   font-weight: 500;
 }
 
@@ -144,10 +144,11 @@
 .profile-guardian-btn-cancel,
 .profile-guardian-btn-primary,
 .profile-guardian-btn-danger {
-  min-height: 44px;
+  min-height: 56px;
   padding: 10px 18px;
   border-radius: 12px;
-  font-size: 0.9375rem;
+  font-size: var(--font-button-primary);
+  line-height: var(--line-button-primary);
   font-weight: 600;
   cursor: pointer;
 }

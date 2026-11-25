@@ -5,7 +5,7 @@ import { AsNeededDoseSheet, type DoseSheetMode } from './AsNeededDoseSheet';
 
 type Props = { course: CurrentMedicationCourse; session: ProfileSession; readOnly?: boolean };
 const buttonClass =
-  'min-h-11 rounded-xl bg-accent-soft px-3 text-sm font-semibold text-accent hover:bg-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus';
+  'min-h-11 rounded-xl bg-accent-soft px-3 text-caption font-semibold text-accent hover:bg-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus';
 export function AsNeededDoseActions({ course, session, readOnly = false }: Props) {
   const [mode, setMode] = useState<DoseSheetMode | null>(null);
   if (

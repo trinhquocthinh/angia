@@ -16,7 +16,8 @@
   aspect-ratio: 1;
   border-width: 1px;
   border-radius: 8px;
-  font-size: 1.5rem;
+  font-size: var(--font-heading-1);
+  line-height: var(--line-heading-1);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   cursor: pointer;

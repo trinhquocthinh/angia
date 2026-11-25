@@ -19,8 +19,8 @@ export function UploadAddTile({ onFiles }: { onFiles: (files: File[]) => void })
       <span className="mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-surface text-accent shadow-sm transition-[rotate] duration-200 ease-out group-hover:rotate-90 motion-reduce:transition-none motion-reduce:group-hover:rotate-0">
         <DocumentIcon name="plus" />
       </span>
-      <span className="text-xs font-semibold text-text-secondary">Thêm ảnh khác</span>
-      <span className="text-[11px] text-text-secondary">Tối đa {MAX_FILES_PER_PICK} ảnh mỗi lần chọn</span>
+      <span className="text-caption font-semibold text-text-secondary">Thêm ảnh khác</span>
+      <span className="text-caption text-text-secondary">Tối đa {MAX_FILES_PER_PICK} ảnh mỗi lần chọn</span>
     </label>
   );
 }

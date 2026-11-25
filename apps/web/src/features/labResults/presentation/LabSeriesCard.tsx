@@ -17,13 +17,13 @@ export function LabSeriesCard({ series, headingId, note }: Props) {
     >
       <div className="flex flex-col gap-0.5">
         <div className="flex items-center justify-between gap-2">
-          <h3 id={headingId} className="min-w-0 text-lg font-semibold break-words text-accent">
+          <h3 id={headingId} className="min-w-0 text-heading-2 font-semibold break-words text-accent">
             {series.testName}
           </h3>
-          <span className="shrink-0 text-xs font-medium text-text-secondary">{rows.length} lần</span>
+          <span className="shrink-0 text-caption font-medium text-text-secondary">{rows.length} lần</span>
         </div>
         {note && (
-          <p id={noteId} className="text-[13px] text-text-secondary">
+          <p id={noteId} className="text-caption text-text-secondary">
             {note}
           </p>
         )}
@@ -32,19 +32,19 @@ export function LabSeriesCard({ series, headingId, note }: Props) {
         {rows.map((row) => (
           <li key={row.id} className="flex flex-col gap-1 rounded-xl bg-bg p-4">
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-              <span className="text-sm font-medium text-text-secondary tabular-nums">{row.date}</span>
+              <span className="text-caption font-medium text-text-secondary tabular-nums">{row.date}</span>
               <span className="min-w-0 text-right break-words">
                 <span
-                  className={`text-xl font-semibold tabular-nums ${row.rangeFlag ? 'text-warning' : 'text-text-primary'}`}
+                  className={`text-button-primary font-semibold tabular-nums ${row.rangeFlag ? 'text-warning' : 'text-text-primary'}`}
                 >
                   {row.value}
                 </span>
-                {row.unit && <span className="ml-1 text-sm text-text-secondary">{row.unit}</span>}
+                {row.unit && <span className="ml-1 text-caption text-text-secondary">{row.unit}</span>}
               </span>
             </div>
             {row.rangeFlag && <LabRangeFlag flag={row.rangeFlag} />}
-            <p className="text-sm break-words text-text-secondary">{row.referenceRange}</p>
-            <p className="text-xs break-words text-text-secondary">{row.source}</p>
+            <p className="text-caption break-words text-text-secondary">{row.referenceRange}</p>
+            <p className="text-caption break-words text-text-secondary">{row.source}</p>
           </li>
         ))}
       </ol>

@@ -53,12 +53,14 @@
 .household-member-avatar-md {
   width: 48px;
   height: 48px;
-  font-size: 1rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .household-member-avatar-lg {
   width: 64px;
   height: 64px;
-  font-size: 1.5rem;
+  font-size: var(--font-heading-1);
+  line-height: var(--line-heading-1);
 }
 .household-member-avatar img {
   display: block;
@@ -71,8 +73,8 @@
   min-width: 0;
 }
 .household-member-name {
-  font-size: 1.0625rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   font-weight: 600;
   overflow-wrap: anywhere;
 }
@@ -83,8 +85,8 @@
   border-radius: 999px;
   background: var(--color-surface-container-high);
   color: var(--color-text-secondary);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   font-weight: 600;
 }
 .household-member-selected-badge {
@@ -95,8 +97,8 @@
   border-radius: 999px;
   background: var(--color-secondary-container);
   color: var(--color-on-secondary-container);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   font-weight: 600;
 }
 .household-member-row-meta {
@@ -111,8 +113,8 @@
   gap: 6px;
   padding: 6px 12px;
   border-radius: 999px;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   font-weight: 600;
   white-space: nowrap;
   border: 1px solid var(--color-border);

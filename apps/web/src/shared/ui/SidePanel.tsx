@@ -19,10 +19,10 @@ export function SidePanel({ titleId, title, subtitle, closeLabel, pending, onClo
     <Sheet labelledBy={titleId} pending={pending} onCancel={onClose} placement="side">
       <div className="flex shrink-0 items-start justify-between gap-3 border-b border-border px-6 py-5">
         <div className="min-w-0 break-words">
-          <h2 id={titleId} className="text-[1.375rem] leading-[1.875rem] font-semibold text-text-primary">
+          <h2 id={titleId} className="text-heading-2 font-semibold text-text-primary">
             {title}
           </h2>
-          <p className="mt-0.5 text-base leading-6 text-text-secondary">{subtitle}</p>
+          <p className="mt-0.5 text-caption text-text-secondary">{subtitle}</p>
         </div>
         <Button variant="icon" type="button" disabled={pending} onClick={onClose} aria-label={closeLabel}>
           <svg

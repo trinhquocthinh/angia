@@ -1,3 +1,4 @@
+import { useDocumentTextSize } from '@src/shared/accessibility/useDocumentTextSize';
 import { useDocumentTheme } from '@src/shared/theme/useDocumentTheme';
 import ReactEChartsCore from 'echarts-for-react/esm/core';
 import { LineChart } from 'echarts/charts';
@@ -19,6 +20,7 @@ export function PainChartCanvas({
   context?: PainContext | undefined;
 }) {
   useDocumentTheme();
+  useDocumentTextSize();
   const animate = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   return (
     <ReactEChartsCore

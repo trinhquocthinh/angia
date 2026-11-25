@@ -7,7 +7,7 @@ export function InvitationLinkInput({ url, onCopy }: { url: string; onCopy: () =
         readOnly
         value={url}
         onFocus={(event) => event.currentTarget.select()}
-        className="block min-h-12 w-full rounded-xl bg-accent-soft py-3 pl-3.5 pr-12 font-mono text-xs outline-offset-2 focus:outline-focus"
+        className="block min-h-12 w-full rounded-xl bg-accent-soft py-3 pl-3.5 pr-12 font-mono text-body outline-offset-2 focus:outline-focus"
       />
       <button
         type="button"

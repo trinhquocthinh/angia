@@ -9,14 +9,14 @@ const BILLING = {
   unconfigured: 'Chưa cấu hình nguồn phí',
 };
 const TILE = 'min-w-0 rounded-xl bg-accent-soft/70 p-3';
-const LABEL = 'text-xs leading-4 text-text-secondary';
-const VALUE = 'auth-heading m-0 mt-0.5 text-2xl leading-8 font-semibold text-accent tabular-nums';
+const LABEL = 'text-caption text-text-secondary';
+const VALUE = 'auth-heading m-0 mt-0.5 text-heading-1 font-semibold text-accent tabular-nums';
 
 // Trần và phí thực đã có ở thẻ "Chi phí AI" nên không lặp lại ở đây.
 export function ScanQuotaOverview({ view }: { view: AdminScanQuotaView }) {
   const available = view.availableAdditionalScans;
   return (
-    <div className="grid gap-2 text-[12px] leading-5 text-text-secondary">
+    <div className="grid gap-2 text-caption text-text-secondary">
       <dl className="m-0 grid grid-cols-2 gap-2">
         <div className={TILE}>
           <dt className={LABEL}>Lượt cam kết còn lại</dt>
@@ -24,7 +24,7 @@ export function ScanQuotaOverview({ view }: { view: AdminScanQuotaView }) {
         </div>
         <div className={TILE}>
           <dt className={LABEL}>Có thể cấp thêm</dt>
-          <dd className={available === null ? 'm-0 mt-0.5 text-[13px] leading-8 font-semibold' : VALUE}>
+          <dd className={available === null ? 'm-0 mt-0.5 text-caption font-semibold' : VALUE}>
             {available ?? 'Chưa xác định'}
           </dd>
         </div>

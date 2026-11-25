@@ -25,12 +25,12 @@ export function StopCoursesPrompt({
 }: Props) {
   if (stopped)
     return (
-      <p role="status" className="mx-6 mt-4 rounded-xl bg-accent-soft p-4 text-sm">
+      <p role="status" className="mx-6 mt-4 rounded-xl bg-accent-soft p-4 text-body">
         Đã dừng đợt thuốc trong danh mục từ {formatDay(stopDate)}.
       </p>
     );
   return (
-    <section className="mx-6 mt-4 flex flex-col gap-3 rounded-xl border border-warning-soft bg-warning-soft p-4 text-sm text-warning">
+    <section className="mx-6 mt-4 flex flex-col gap-3 rounded-xl border border-warning-soft bg-warning-soft p-4 text-caption text-warning">
       <p className="font-semibold">Danh mục thuốc điều trị vẫn còn:</p>
       <MatchingCourseList courses={courses} />
       <p>

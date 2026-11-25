@@ -10,7 +10,7 @@ type Props = {
 export function DeleteDocumentConfirmation(props: Props) {
   return (
     <>
-      <label htmlFor={props.inputId} className="text-sm">
+      <label htmlFor={props.inputId} className="text-body">
         Nhập XÓA để xác nhận
       </label>
       <input

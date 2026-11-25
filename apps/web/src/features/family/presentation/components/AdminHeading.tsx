@@ -16,20 +16,20 @@ export function AdminHeading({
   return (
     <div className="flex items-end justify-between gap-4 max-[600px]:items-stretch max-[600px]:flex-col max-[600px]:gap-3 admin-reveal">
       <div className="flex min-w-0 flex-col gap-1.5">
-        <p className="m-0 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-accent">
+        <p className="m-0 flex items-center gap-1.5 text-body font-semibold uppercase tracking-wider text-accent">
           <AdminIcon name="admin_panel_settings" size={16} /> Hệ thống quản trị
         </p>
-        <h1 className="auth-heading m-0 text-[28px] leading-tight font-semibold tracking-tight text-accent sm:text-4xl">
+        <h1 className="auth-heading m-0 text-heading-1 font-semibold tracking-tight text-accent sm:text-heading-1">
           Quản trị hệ thống
         </h1>
-        <p className="m-0 text-[15px] leading-6 text-text-secondary">
+        <p className="m-0 text-caption text-text-secondary">
           {families} nhóm gia đình · {accounts} tài khoản
           {waiting > 0 && ` · ${waiting} tài khoản chờ vào nhóm`}
         </p>
       </div>
       <button
         type="button"
-        className="admin-button inline-flex min-h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-accent px-5 text-sm font-semibold text-on-accent shadow-sm transition-colors enabled:hover:bg-accent-hover"
+        className="admin-button inline-flex min-h-14 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-accent px-5 text-button-primary font-semibold text-on-accent shadow-sm transition-colors enabled:hover:bg-accent-hover"
         disabled={disabled}
         onClick={onCreate}
       >

@@ -10,7 +10,7 @@ import { ReminderDetailCard } from './ReminderDetailCard';
 
 const profilesRepository = createProfilesRepository();
 const reminders = createMyReminderRepository();
-const notice = 'rounded-[20px] bg-surface p-6 text-sm text-text-secondary';
+const notice = 'rounded-[20px] bg-surface p-6 text-caption text-text-secondary';
 
 // Trang /reminders/:id (SPEC-035) cho người nhận nhắc — cả main và member đã có gia đình.
 // 404/403 → thông điệp chung, không phân biệt "không tồn tại" và "không có quyền".
@@ -29,7 +29,7 @@ export function ReminderDetailPage({ reminderId }: { reminderId: string }) {
       mobileTitle="Lời nhắc dùng thuốc"
     >
       <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
-        <h1 className="auth-heading text-2xl font-semibold tracking-tight text-text-primary">
+        <h1 className="auth-heading text-heading-1 font-semibold tracking-tight text-text-primary">
           Lời nhắc dùng thuốc
         </h1>
         {reminder.data ? (
@@ -44,7 +44,7 @@ export function ReminderDetailPage({ reminderId }: { reminderId: string }) {
             <button
               type="button"
               onClick={() => void reminder.refetch()}
-              className="min-h-11 rounded-full bg-accent px-5 text-sm font-semibold text-on-accent"
+              className="min-h-11 rounded-full bg-accent px-5 text-caption font-semibold text-on-accent"
             >
               Thử lại
             </button>

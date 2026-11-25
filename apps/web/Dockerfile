@@ -37,5 +37,7 @@ COPY legal/terms.md /usr/share/nginx/html/legal/
 COPY legal/privacy.md /usr/share/nginx/html/legal/
 COPY legal/terms-v0-1-draft.md /usr/share/nginx/html/legal/
 COPY legal/privacy-v0-1-draft.md /usr/share/nginx/html/legal/
+COPY legal/terms-v0-2-draft.md /usr/share/nginx/html/legal/
+COPY legal/privacy-v0-2-draft.md /usr/share/nginx/html/legal/
 USER 10001:0
 EXPOSE 8080

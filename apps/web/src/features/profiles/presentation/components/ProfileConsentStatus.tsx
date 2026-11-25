@@ -20,23 +20,26 @@ export function ProfileConsentStatus({ profile }: Props) {
   return (
     <div className="mt-3.5 mb-4 flex flex-1 flex-col gap-2 rounded-xl border border-border/20 bg-accent-soft p-3 lg:mt-5 lg:p-4">
       <div className="flex items-center justify-between gap-2">
-        <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent">
+        <p className="inline-flex items-center gap-1.5 text-body font-semibold text-accent">
           <AdminIcon name={confirmed ? 'verified_user' : 'info'} size={18} />
           {labels[profile.consentStatus]}
         </p>
         {confirmed && profile.consentBasis === 'guardian' && (
-          <span className="hidden text-[11px] font-medium tracking-[0.03em] text-text-secondary lg:inline">
+          <span className="hidden text-caption font-medium tracking-[0.03em] text-text-secondary lg:inline">
             Ủy quyền giám hộ
           </span>
         )}
       </div>
       {confirmed ? (
-        <div className="flex flex-col gap-0.5 break-words text-[13px] leading-5 text-text-secondary">
+        <div className="flex flex-col gap-0.5 break-words text-caption text-text-secondary">
           <p>
             <span className={term}>Người đồng ý:</span>{' '}
             {profile.consentRespondentName ?? 'Không còn thông tin'}
             {profile.consentSource !== 'self' && (
-              <span className="text-xs text-text-secondary"> (thông tin tự nhập, chưa được xác minh)</span>
+              <span className="text-caption text-text-secondary">
+                {' '}
+                (thông tin tự nhập, chưa được xác minh)
+              </span>
             )}
           </p>
           {profile.consentSource === 'main_attested' && (
@@ -52,7 +55,7 @@ export function ProfileConsentStatus({ profile }: Props) {
           )}
         </div>
       ) : (
-        <p className="text-[13px] leading-5 text-text-secondary">
+        <p className="text-caption text-text-secondary">
           {profile.consentAction === 'attestation'
             ? 'Xác nhận khi đã hỏi ý kiến và được người thân hoặc người giám hộ hợp pháp đồng ý.'
             : profile.consentAction === 'self'

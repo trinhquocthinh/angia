@@ -16,7 +16,7 @@ for (const theme of ['light', 'dark']) {
     }));
     expect(size.width).toBeGreaterThanOrEqual(48);
     expect(size.height).toBeGreaterThanOrEqual(56);
-    expect(size.font).toBeGreaterThanOrEqual(20);
+    expect(size.font).toBeGreaterThanOrEqual(18);
     const background = await page
       .locator('.angia-card')
       .first()

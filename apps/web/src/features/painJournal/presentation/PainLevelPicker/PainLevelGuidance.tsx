@@ -1,7 +1,7 @@
 // Hướng dẫn tĩnh owner duyệt theo MEDLATEC; ngoại lệ nhập liệu của BR-063.
 export function PainLevelGuidance({ id }: { id: string }) {
   return (
-    <div id={id} data-pain-level-guidance className="space-y-2 text-sm text-text-secondary">
+    <div id={id} data-pain-level-guidance className="space-y-2 text-caption text-text-secondary">
       <h3 className="font-medium text-text-primary">Hướng dẫn chọn mức đau</h3>
       <p>Chọn theo cảm nhận của chính bạn lúc này.</p>
       <dl className="space-y-2">

@@ -34,7 +34,7 @@ export function ProfileHealthHeader({ profile, session, latest, active = 'health
         <div className="flex flex-col justify-between gap-4 @5xl:flex-row @5xl:items-center">
           <div className="flex min-w-0 items-center gap-4">
             <span className="relative shrink-0" aria-hidden="true">
-              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-soft text-2xl font-semibold text-accent shadow-sm">
+              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-soft text-heading-1 font-semibold text-accent shadow-sm">
                 {profile.displayName.slice(0, 1)}
               </span>
               {profile.consentStatus === 'confirmed' && (
@@ -43,11 +43,11 @@ export function ProfileHealthHeader({ profile, session, latest, active = 'health
             </span>
             <div className="flex min-w-0 flex-col gap-0.5">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="auth-heading break-words text-2xl font-semibold tracking-tight text-text-primary lg:text-[28px]">
+                <h1 className="auth-heading break-words text-heading-1 font-semibold tracking-tight text-text-primary lg:text-heading-1">
                   {profile.displayName}
                 </h1>
                 {age !== null && (
-                  <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs text-text-secondary">
+                  <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-caption text-text-secondary">
                     {age} tuổi
                   </span>
                 )}
@@ -74,7 +74,7 @@ export function ProfileHealthHeader({ profile, session, latest, active = 'health
 
 function LatestReading({ latest }: { latest: Measurement | null }) {
   return (
-    <p className="flex flex-wrap items-center gap-1 text-sm text-text-secondary">
+    <p className="flex flex-wrap items-center gap-1 text-caption text-text-secondary">
       <svg
         width="16"
         height="16"

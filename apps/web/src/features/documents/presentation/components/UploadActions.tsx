@@ -30,10 +30,10 @@ export function UploadActions({ summary, profileChosen, onSubmit }: UploadAction
           <DocumentIcon name="shield" />
         </span>
         <div>
-          <p className="text-[13px] leading-5 font-semibold text-text-primary">
+          <p className="text-body font-semibold text-text-primary">
             {sending ? 'Đang gửi ảnh' : 'Ảnh được che và nén trên máy rồi gửi cùng một lô'}
           </p>
-          <p className="text-[13px] leading-5 text-text-secondary" aria-live="polite">
+          <p className="text-caption text-text-secondary" aria-live="polite">
             {hint}
           </p>
         </div>
@@ -41,7 +41,7 @@ export function UploadActions({ summary, profileChosen, onSubmit }: UploadAction
       <div className="flex w-full flex-col-reverse items-stretch gap-2 sm:w-auto sm:shrink-0 sm:flex-row sm:items-center">
         <Link
           to="/"
-          className="flex min-h-12 shrink-0 items-center justify-center whitespace-nowrap rounded-xl px-6 text-sm font-semibold text-text-secondary transition-colors hover:bg-accent-soft hover:text-text-primary motion-reduce:transition-none"
+          className="flex min-h-12 shrink-0 items-center justify-center whitespace-nowrap rounded-xl px-6 text-button-secondary font-semibold text-text-secondary transition-colors hover:bg-accent-soft hover:text-text-primary motion-reduce:transition-none"
         >
           Hủy bỏ
         </Link>
@@ -49,7 +49,7 @@ export function UploadActions({ summary, profileChosen, onSubmit }: UploadAction
           type="button"
           disabled={sending || unredacted > 0 || summary.ready === 0 || !profileChosen}
           onClick={onSubmit}
-          className="group flex min-h-12 w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-accent px-6 text-sm font-semibold text-on-accent shadow-sm transition-[background-color,box-shadow,opacity,scale] duration-200 enabled:hover:bg-accent-hover enabled:hover:shadow-md enabled:active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-55 motion-reduce:transition-none motion-reduce:enabled:active:scale-100 sm:w-auto"
+          className="group flex min-h-12 w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-accent px-6 text-caption font-semibold text-on-accent shadow-sm transition-[background-color,box-shadow,opacity,scale] duration-200 enabled:hover:bg-accent-hover enabled:hover:shadow-md enabled:active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-55 motion-reduce:transition-none motion-reduce:enabled:active:scale-100 sm:w-auto"
         >
           {label}{' '}
           {sending ? (

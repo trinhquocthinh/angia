@@ -13,7 +13,7 @@ export function ExerciseNotes(props: Props) {
   return (
     <section aria-labelledby={id} className="min-w-0 space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 id={id} className="text-lg font-semibold">
+        <h2 id={id} className="text-heading-2 font-semibold">
           Bài tập
         </h2>
         {props.allowed && (

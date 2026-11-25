@@ -9,15 +9,15 @@ export function PainIssueGroups({ issues, onCreate, onOpen, onRecord }: Props) {
   return (
     <>
       {issues.length === 0 ? (
-        <div className="flex flex-col gap-2 text-sm text-text-secondary">
+        <div className="flex flex-col gap-2 text-caption text-text-secondary">
           <p>Chưa ghi nhận đau nhức nào.</p>
           <p>Khi có chỗ đau muốn theo dõi, chọn vị trí trên hình rồi chấm mức.</p>
         </div>
       ) : (
         <section aria-label="Đang theo dõi" className="flex flex-col gap-3">
-          <h3 className="text-lg font-semibold text-text-primary">Đang theo dõi</h3>
+          <h3 className="text-heading-2 font-semibold text-text-primary">Đang theo dõi</h3>
           {tracking.length === 0 && (
-            <p className="text-sm text-text-secondary">Không có vấn đề nào đang theo dõi.</p>
+            <p className="text-caption text-text-secondary">Không có vấn đề nào đang theo dõi.</p>
           )}
           {tracking.map((issue) => (
             <PainIssueCard key={issue.id} issue={issue} onOpen={onOpen} onRecord={onRecord} />
@@ -39,7 +39,7 @@ export function PainIssueGroups({ issues, onCreate, onOpen, onRecord }: Props) {
           open={tracking.length === 0}
           className="rounded-xl border border-border p-4"
         >
-          <summary className="min-h-11 cursor-pointer text-lg font-semibold text-text-primary">
+          <summary className="min-h-11 cursor-pointer text-body font-semibold text-text-primary">
             Đã khỏi
           </summary>
           <div className="mt-3 flex flex-col gap-3">

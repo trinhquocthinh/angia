@@ -19,7 +19,7 @@ export function AdherenceSheetNotice({ consented, list, saved }: Props) {
     );
   if (saved)
     return (
-      <p role="status" className="mx-6 mt-5 rounded-xl bg-accent-soft p-4 text-sm">
+      <p role="status" className="mx-6 mt-5 rounded-xl bg-accent-soft p-4 text-body">
         Đã ghi nhận {saved.medicationName} · {STATUS_LABEL[saved.status]} từ {formatDay(saved.fromDate)}.
       </p>
     );
@@ -27,7 +27,7 @@ export function AdherenceSheetNotice({ consented, list, saved }: Props) {
     return (
       <div
         role="alert"
-        className="mx-6 mt-5 flex flex-col items-start gap-3 rounded-xl bg-danger-soft p-4 text-sm"
+        className="mx-6 mt-5 flex flex-col items-start gap-3 rounded-xl bg-danger-soft p-4 text-caption"
       >
         <p>Không tải được giai đoạn dùng thuốc.</p>
         <button
@@ -40,7 +40,7 @@ export function AdherenceSheetNotice({ consented, list, saved }: Props) {
       </div>
     );
   return (
-    <p role="status" className="px-6 pt-5 text-sm text-text-secondary">
+    <p role="status" className="px-6 pt-5 text-caption text-text-secondary">
       Đang tải giai đoạn dùng thuốc…
     </p>
   );

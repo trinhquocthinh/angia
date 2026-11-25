@@ -6,7 +6,7 @@ export function ManualEntryLink({ profileId }: { profileId: string }) {
     <Link
       to="/profiles/$profileId/manual"
       params={{ profileId }}
-      className="min-h-11 shrink-0 content-center rounded-xl bg-accent px-4 text-sm font-semibold text-on-accent shadow-sm hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+      className="min-h-14 shrink-0 content-center rounded-xl bg-accent px-4 text-button-primary font-semibold text-on-accent shadow-sm hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
     >
       Nhập tay
     </Link>

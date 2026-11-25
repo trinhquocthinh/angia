@@ -5,7 +5,8 @@
   border-radius: 16px;
   background: var(--color-danger);
   color: var(--color-on-accent);
-  font-size: 1rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   font-weight: 600;
   display: inline-flex;
   align-items: center;

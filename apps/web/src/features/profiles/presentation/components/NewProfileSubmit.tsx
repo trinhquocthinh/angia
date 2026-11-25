@@ -7,7 +7,7 @@ export function NewProfileSubmit({ disabled, pending }: { disabled: boolean; pen
       <button
         type="submit"
         disabled={disabled}
-        className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-center text-sm font-semibold text-on-accent shadow-md cursor-pointer disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus w-full"
+        className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-center text-button-primary font-semibold text-on-accent shadow-md cursor-pointer disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus w-full"
       >
         <AdminIcon name="person_add" />
         {pending ? 'Đang lưu…' : 'Tạo hồ sơ'}

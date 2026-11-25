@@ -9,7 +9,7 @@ const sizeLabel = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1).replace
 function ImageNotice({ text }: { text: string }) {
   return (
     <div className="flex min-h-48 flex-1 items-center justify-center rounded-xl bg-accent-soft">
-      <div className="flex max-w-xs flex-col items-center gap-3 p-6 text-center text-sm text-text-secondary">
+      <div className="flex max-w-xs flex-col items-center gap-3 p-6 text-center text-caption text-text-secondary">
         <DocumentIcon name="image" size={40} />
         <p>{text}</p>
       </div>
@@ -36,11 +36,11 @@ export function DocumentImagePanel({ document }: { document: SourceDocument }) {
       className="flex flex-col gap-2 overflow-hidden rounded-[20px] bg-surface p-3 shadow-card xl:sticky xl:top-[88px] xl:h-[calc(100dvh-104px)] xl:self-start"
     >
       <div className="flex items-center justify-between gap-2 px-1 text-text-secondary">
-        <span className="flex items-center gap-1.5 text-[13px] font-semibold text-accent">
+        <span className="flex items-center gap-1.5 text-caption font-semibold text-accent">
           <DocumentIcon name="image" size={16} /> Hình chụp giấy tờ
         </span>
         {document.hasImage && (
-          <span className="text-xs font-medium tabular-nums">JPG · {sizeLabel(document.sizeBytes)}</span>
+          <span className="text-caption font-medium tabular-nums">JPG · {sizeLabel(document.sizeBytes)}</span>
         )}
       </div>
       {!document.hasImage ? (
@@ -51,7 +51,7 @@ export function DocumentImagePanel({ document }: { document: SourceDocument }) {
         <DocumentImageViewer {...viewerProps} onExpand={() => setExpanded(true)} />
       )}
       {document.hasImage && (
-        <p className="flex items-center gap-1.5 px-1 text-xs text-text-secondary">
+        <p className="flex items-center gap-1.5 px-1 text-caption text-text-secondary">
           <span className="text-accent">
             <DocumentIcon name="shield" size={16} />
           </span>

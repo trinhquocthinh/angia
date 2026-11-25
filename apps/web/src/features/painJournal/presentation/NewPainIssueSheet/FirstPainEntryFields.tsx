@@ -7,7 +7,7 @@ export function FirstPainEntryFields({ values, onChange }: FirstEntryFieldsProps
   return (
     <div className="space-y-4">
       <FirstPainEntryLevel values={values} onChange={onChange} />
-      <label className="flex flex-col gap-2 text-sm" htmlFor={`${id}-note`}>
+      <label className="flex flex-col gap-2 text-caption" htmlFor={`${id}-note`}>
         Ghi chú (tùy chọn)
         <textarea
           id={`${id}-note`}
@@ -19,7 +19,7 @@ export function FirstPainEntryFields({ values, onChange }: FirstEntryFieldsProps
           className="rounded-xl border border-border p-3"
         />
       </label>
-      <p id={`${id}-count`} className="text-sm text-text-secondary">
+      <p id={`${id}-count`} className="text-caption text-text-secondary">
         {values.note.length}/500
       </p>
       <FirstPainEntryTime values={values} onChange={onChange} />

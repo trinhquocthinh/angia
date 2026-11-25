@@ -23,10 +23,10 @@ const inputClass =
 
 const textClass = (compact: boolean, emphasis: boolean) =>
   emphasis
-    ? "font-['Newsreader',Georgia,serif] text-xl font-semibold text-accent"
+    ? "font-['Newsreader',Georgia,serif] text-button-primary font-semibold text-accent"
     : compact
-      ? 'text-base'
-      : 'text-lg font-semibold tabular-nums';
+      ? 'text-body'
+      : 'text-body font-semibold tabular-nums';
 
 // Ô số đo: con số lớn (Design §3), đơn vị nhỏ màu phụ; lỗi hiển thị ngay dưới ô (SPEC-010).
 export function ReadingField({
@@ -44,7 +44,7 @@ export function ReadingField({
   const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined;
   return (
     <div className="flex min-w-0 flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium text-text-secondary">
+      <label htmlFor={id} className="text-caption font-medium text-text-secondary">
         {label}
       </label>
       <div className={`${boxClass} ${flagged && !error ? 'bg-warning-soft' : ''}`}>
@@ -60,15 +60,15 @@ export function ReadingField({
           className={`${inputClass} ${textClass(compact, emphasis)}`}
           {...input}
         />
-        {unit && <span className="shrink-0 text-xs whitespace-nowrap text-text-secondary">{unit}</span>}
+        {unit && <span className="shrink-0 text-caption whitespace-nowrap text-text-secondary">{unit}</span>}
       </div>
       {error ? (
-        <p id={`${id}-error`} className="text-sm text-danger">
+        <p id={`${id}-error`} className="text-body text-danger">
           {error}
         </p>
       ) : (
         hint && (
-          <p id={`${id}-hint`} className="text-xs text-text-secondary">
+          <p id={`${id}-hint`} className="text-caption text-text-secondary">
             {hint}
           </p>
         )

@@ -33,7 +33,7 @@ export function ProfileLinksCard({
         icon={<AdminIcon name="group" />}
         title="Liên kết tài khoản với hồ sơ"
       />
-      <label className="grid gap-2 text-[13px] font-medium">
+      <label className="grid gap-2 text-caption font-medium">
         Nhóm gia đình
         <AdminSelect
           value={familyId}

@@ -47,7 +47,7 @@ export function PushDeviceDetails({
   ];
   return (
     <section className="rounded-[20px] bg-surface p-6 shadow-[0_1px_2px_color-mix(in_srgb,var(--color-shadow)_6%,transparent)]">
-      <h2 className="mb-2 text-base font-semibold text-text-primary">Thông số thiết bị</h2>
+      <h2 className="mb-2 text-body font-semibold text-text-primary">Thông số thiết bị</h2>
       <dl className="divide-y divide-[var(--color-accent-soft)]">
         {rows.map((row) => (
           <div key={row.label} className="flex items-center gap-3 py-3">
@@ -55,8 +55,10 @@ export function PushDeviceDetails({
               <PushIcon name={row.icon} size={18} />
             </span>
             <div className="min-w-0 flex-1">
-              <dt className="text-sm text-text-primary">{row.label}</dt>
-              <dd className={`text-xs ${row.ok ? 'text-accent' : 'text-text-secondary'}`}>{row.value}</dd>
+              <dt className="text-caption text-text-primary">{row.label}</dt>
+              <dd className={`text-caption ${row.ok ? 'text-accent' : 'text-text-secondary'}`}>
+                {row.value}
+              </dd>
             </div>
             <span
               aria-hidden="true"

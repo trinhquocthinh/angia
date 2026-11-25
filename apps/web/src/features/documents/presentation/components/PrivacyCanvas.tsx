@@ -22,7 +22,7 @@ export function PrivacyCanvas({ src, edits, mode, disabled, onBegin, onRectangle
   return (
     <div className="rounded-xl bg-overlay p-2 text-on-overlay shadow-inner sm:p-4">
       {failed && (
-        <p role="alert" className="p-4 text-sm text-on-overlay">
+        <p role="alert" className="p-4 text-body text-on-overlay">
           Không mở được ảnh này trên trình duyệt. Hãy chụp lại hoặc chọn ảnh JPG.
         </p>
       )}
@@ -54,7 +54,7 @@ export function PrivacyCanvas({ src, edits, mode, disabled, onBegin, onRectangle
         </div>
       </div>
       {loaded && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1 text-[11px] leading-4">
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1 text-caption ">
           <span className="flex items-center gap-1.5">
             <PrivacyToolIcon name="pointer" />
             Kéo trên ảnh để tạo vùng cắt hoặc che
@@ -65,7 +65,7 @@ export function PrivacyCanvas({ src, edits, mode, disabled, onBegin, onRectangle
         </div>
       )}
       {!loaded && !failed && (
-        <p role="status" className="p-2 text-sm text-on-overlay">
+        <p role="status" className="p-2 text-body text-on-overlay">
           Đang tải ảnh xem trước…
         </p>
       )}

@@ -11,7 +11,7 @@ interface Props {
   onDisable(): void;
 }
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold transition-colors disabled:cursor-default disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus';
+  'inline-flex items-center justify-center gap-2 rounded-xl px-5 text-caption font-semibold transition-colors disabled:cursor-default disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus';
 // Di động: xếp dọc toàn chiều ngang; desktop: một hàng (chính · phụ · nhẹ).
 export function PushActionButtons(props: Props) {
   return (

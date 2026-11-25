@@ -23,7 +23,7 @@ export function NoMaskWarning({ busy, onBack, onSendAnyway }: NoMaskWarningProps
       />
       <div className="flex flex-col gap-5 overflow-y-auto px-6 pb-6 max-md:px-5 max-md:pb-[max(20px,env(safe-area-inset-bottom))]">
         <p
-          className="angia-modal-reveal flex gap-3 rounded-2xl bg-warning-soft p-4 text-[15px] leading-6 text-warning"
+          className="angia-modal-reveal flex gap-3 rounded-2xl bg-warning-soft p-4 text-body text-warning"
           style={revealStyle(0)}
         >
           <span className="mt-0.5 text-warning">
@@ -43,7 +43,7 @@ export function NoMaskWarning({ busy, onBack, onSendAnyway }: NoMaskWarningProps
             autoFocus
             disabled={busy}
             onClick={onBack}
-            className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-accent px-4 text-sm font-semibold text-on-accent shadow-[0_8px_20px_color-mix(in_srgb,var(--color-shadow)_20%,transparent)] transition-[background-color,transform] duration-200 hover:bg-accent-hover active:scale-[0.98] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none motion-reduce:active:scale-100"
+            className="flex min-h-14 items-center justify-center gap-2 rounded-xl bg-accent px-4 text-button-primary font-semibold text-on-accent shadow-[0_8px_20px_color-mix(in_srgb,var(--color-shadow)_20%,transparent)] transition-[background-color,transform] duration-200 hover:bg-accent-hover active:scale-[0.98] disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none motion-reduce:active:scale-100"
           >
             <span className="-scale-x-100">
               <DocumentIcon name="arrow" size={18} />
@@ -54,7 +54,7 @@ export function NoMaskWarning({ busy, onBack, onSendAnyway }: NoMaskWarningProps
             type="button"
             disabled={busy}
             onClick={onSendAnyway}
-            className="min-h-12 rounded-xl border border-warning-soft bg-warning-soft px-4 text-sm font-semibold text-warning transition-colors duration-200 hover:bg-warning-soft disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning motion-reduce:transition-none"
+            className="min-h-12 rounded-xl border border-warning-soft bg-warning-soft px-4 text-button-secondary font-semibold text-warning transition-colors duration-200 hover:bg-warning-soft disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning motion-reduce:transition-none"
           >
             Ảnh không có thông tin cá nhân — vẫn tải lên
           </button>

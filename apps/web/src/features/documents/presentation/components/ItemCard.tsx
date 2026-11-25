@@ -37,11 +37,11 @@ export function ItemCard({ anchorPrefix, index, title, invalid, onRemove, childr
       <div className="flex items-center gap-3">
         <span
           aria-hidden="true"
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent text-xs font-bold text-on-accent"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent text-caption font-bold text-on-accent"
         >
           {order}
         </span>
-        <h3 id={`${id}-title`} className="flex-1 text-[15px] font-semibold text-accent">
+        <h3 id={`${id}-title`} className="flex-1 text-caption font-semibold text-accent">
           {title}
         </h3>
         {onRemove && (

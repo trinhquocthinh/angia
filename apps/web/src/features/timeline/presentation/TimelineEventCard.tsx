@@ -25,13 +25,13 @@ export function TimelineEventCard({ event, profileId }: Props) {
         <h3 className="font-semibold text-accent">{labels[event.kind]}</h3>
         <time
           dateTime={event.time ? `${event.date}T${event.time}` : event.date}
-          className="text-sm text-text-secondary tabular-nums"
+          className="text-caption text-text-secondary tabular-nums"
         >
           {formatDay(event.date)}
           {event.time ? ` · ${event.time}` : ''}
         </time>
       </div>
-      <div className="mt-3 space-y-2 text-sm break-words text-text-primary">
+      <div className="mt-3 space-y-2 text-caption break-words text-text-primary">
         <TimelineEventDetails event={event} profileId={profileId} />
       </div>
     </article>

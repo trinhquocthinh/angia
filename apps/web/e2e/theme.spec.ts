@@ -139,3 +139,30 @@ test('TC-860 — chữ trên nền ảnh tối và nhãn che đen luôn sáng �
     );
   }
 });
+
+for (const media of ['screen', 'print'] as const) {
+  test(`Cỡ chữ: bản tóm tắt A4 giữ nguyên trên ${media}`, async ({ page }) => {
+    await page.goto('/e2e/theme.html');
+    await page.emulateMedia({ media });
+    const sheet = page.locator(
+      media === 'print' ? '.summary-print-root .summary-sheet' : '#root .summary-sheet',
+    );
+    await expect(sheet).toBeVisible();
+    const before = await sheet.evaluate((element) =>
+      [element, ...Array.from(element.querySelectorAll('*'))].map((node) => {
+        const style = getComputedStyle(node);
+        return { font: style.fontSize, line: style.lineHeight };
+      }),
+    );
+    await page.evaluate(() => {
+      document.documentElement.dataset.textSize = 'large';
+    });
+    const after = await sheet.evaluate((element) =>
+      [element, ...Array.from(element.querySelectorAll('*'))].map((node) => {
+        const style = getComputedStyle(node);
+        return { font: style.fontSize, line: style.lineHeight };
+      }),
+    );
+    expect(after).toEqual(before);
+  });
+}

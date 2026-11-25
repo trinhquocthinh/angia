@@ -49,7 +49,7 @@ export function ResolveSheet(props: PainIssueLifecycleProps) {
           setValidation(null);
         }}
       />
-      <p className="text-sm text-text-secondary">Ngày theo giờ Việt Nam.</p>
+      <p className="text-caption text-text-secondary">Ngày theo giờ Việt Nam.</p>
       <p>Bạn vẫn xem, sửa được các lần ghi và bài tập sau khi đánh dấu.</p>
     </PainIssueLifecycleDialog>
   );

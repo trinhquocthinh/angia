@@ -19,7 +19,7 @@ export function ScanQuotaGrantRow({
         draft.selected ? 'border-accent bg-accent-soft/40' : 'border-border'
       }`}
     >
-      <label title={family.familyId} className="flex min-h-6 items-center gap-2 text-sm font-semibold">
+      <label title={family.familyId} className="flex min-h-6 items-center gap-2 text-caption font-semibold">
         <input
           type="checkbox"
           className="h-5 w-5 shrink-0 accent-accent"
@@ -36,7 +36,7 @@ export function ScanQuotaGrantRow({
         onChange={onChange}
       />
       {error && (
-        <p role="alert" className="m-0 text-[12px] text-danger">
+        <p role="alert" className="m-0 text-body text-danger">
           {error}
         </p>
       )}

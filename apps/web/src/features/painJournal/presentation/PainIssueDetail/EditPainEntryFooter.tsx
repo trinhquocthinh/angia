@@ -10,7 +10,7 @@ export function EditPainEntryFooter({ state }: { state: ReturnType<typeof useEdi
         {state.pending ? 'Đang lưu…' : 'Lưu thay đổi'}
       </button>
       {!state.canDelete ? (
-        <p className="text-sm">Đây là lần ghi duy nhất. Muốn bỏ hẳn, hãy xóa vấn đề.</p>
+        <p className="text-body">Đây là lần ghi duy nhất. Muốn bỏ hẳn, hãy xóa vấn đề.</p>
       ) : state.confirmDelete ? (
         <div className="space-y-2">
           <p>Xóa lần ghi này?</p>

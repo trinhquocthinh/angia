@@ -9,7 +9,7 @@ export function EditPainEntrySheet(props: EditPainEntryProps) {
   return (
     <ModalDialog labelledBy={id} onCancel={props.onClose} pending={state.pending} width="lg">
       <header className="flex shrink-0 items-center justify-between border-b border-border px-5 py-3">
-        <h2 id={id} className="text-xl font-semibold">
+        <h2 id={id} className="text-heading-2 font-semibold">
           Sửa lần ghi
         </h2>
         <button type="button" disabled={state.pending} onClick={props.onClose} className="min-h-11 px-3">

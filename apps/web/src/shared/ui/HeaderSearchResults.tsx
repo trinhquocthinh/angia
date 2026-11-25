@@ -17,7 +17,7 @@ export function HeaderSearchResults({ listId, items, activeIndex, emptyText, onS
       className="absolute top-[calc(100%+6px)] right-0 left-0 z-50 m-0 max-h-80 min-w-64 list-none overflow-y-auto rounded-2xl bg-surface p-1.5 shadow-[0_8px_28px_color-mix(in_srgb,var(--color-shadow)_14%,transparent)]"
     >
       {items.length === 0 ? (
-        <li className="px-3 py-2.5 text-sm text-text-secondary">{emptyText}</li>
+        <li className="px-3 py-2.5 text-caption text-text-secondary">{emptyText}</li>
       ) : (
         items.map((item, index) => (
           <li
@@ -25,7 +25,7 @@ export function HeaderSearchResults({ listId, items, activeIndex, emptyText, onS
             id={`${listId}-${index}`}
             role="option"
             aria-selected={index === activeIndex}
-            className={`flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm ${index === activeIndex ? 'bg-accent-soft' : 'hover:bg-bg'}`}
+            className={`flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-body ${index === activeIndex ? 'bg-accent-soft' : 'hover:bg-bg'}`}
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => onSelect(item)}
           >
@@ -37,7 +37,9 @@ export function HeaderSearchResults({ listId, items, activeIndex, emptyText, onS
             </span>
             <span className="min-w-0">
               <span className="block truncate font-medium text-text-primary">{item.label}</span>
-              {item.hint && <span className="block truncate text-xs text-text-secondary">{item.hint}</span>}
+              {item.hint && (
+                <span className="block truncate text-caption text-text-secondary">{item.hint}</span>
+              )}
             </span>
           </li>
         ))

@@ -22,7 +22,7 @@ export function PainIssueLifecycleDialog(props: Props) {
       pending={props.pending}
       width="md"
     >
-      <h2 id={id} className="border-b border-border px-5 py-4 text-xl font-semibold">
+      <h2 id={id} className="border-b border-border px-5 py-4 text-heading-2 font-semibold">
         {props.title}
       </h2>
       <form

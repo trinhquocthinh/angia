@@ -18,12 +18,12 @@ export function UploadStepper({ current }: { current: 1 | 2 | 3 }) {
           <li
             key={label}
             aria-current={active ? 'step' : undefined}
-            className={`flex min-h-11 flex-col items-center justify-center gap-1 rounded-xl px-2 py-1.5 text-center text-xs font-semibold leading-4 sm:flex-row sm:gap-2 sm:text-sm ${
+            className={`flex min-h-11 flex-col items-center justify-center gap-1 rounded-xl px-2 py-1.5 text-center text-caption font-semibold sm:flex-row sm:gap-2 sm:text-caption ${
               active ? 'bg-surface text-accent shadow-sm' : 'text-text-secondary'
             }`}
           >
             <span
-              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] tabular-nums ${
+              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-caption tabular-nums ${
                 active
                   ? 'angia-modal-pop bg-accent text-on-accent'
                   : step < current

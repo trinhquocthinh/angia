@@ -16,7 +16,9 @@ export function AccountMenuIdentity({
       </span>
       <div className="account-menu-person">
         <strong>{session.account.displayName}</strong>
-        <span>Tài khoản AN GIA</span>
+        <span title={session.emailStatus?.email ?? undefined}>
+          {session.emailStatus?.email ?? 'Tài khoản AN GIA'}
+        </span>
       </div>
       <span className="account-menu-role">
         <i />

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Button } from '../src/shared/ui/button/Button';
 import { Card } from '../src/shared/ui/card/Card';
 import { Field } from '../src/shared/ui/field/Field';
+import { TextSizeProvider } from '../src/shared/accessibility/TextSizeProvider';
 import { ThemeProvider } from '../src/shared/theme/ThemeProvider';
 import { FoundationDialog } from './uiFoundationDialog';
 import '../src/app/styles.css';
@@ -45,8 +46,10 @@ function Harness() {
 }
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider>
-      <Harness />
-    </ThemeProvider>
+    <TextSizeProvider>
+      <ThemeProvider>
+        <Harness />
+      </ThemeProvider>
+    </TextSizeProvider>
   </StrictMode>,
 );

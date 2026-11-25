@@ -34,17 +34,17 @@ export function DeleteDocumentDialog(props: Props) {
           if (canConfirm) props.onConfirm();
         }}
       >
-        <h2 id={`${id}-title`} className="text-lg font-semibold">
+        <h2 id={`${id}-title`} className="text-heading-2 font-semibold">
           Xóa chứng từ vĩnh viễn?
         </h2>
-        <p className="text-sm">Ảnh và bản trích xuất của chứng từ sẽ bị xóa. Không thể khôi phục.</p>
+        <p className="text-body">Ảnh và bản trích xuất của chứng từ sẽ bị xóa. Không thể khôi phục.</p>
         {impact ? (
           <DeleteDocumentImpact impact={impact} />
         ) : (
           !error && <p role="status">Đang tải tác động xóa…</p>
         )}
         {error && (
-          <p role="alert" className="text-sm text-danger">
+          <p role="alert" className="text-body text-danger">
             {error}
           </p>
         )}

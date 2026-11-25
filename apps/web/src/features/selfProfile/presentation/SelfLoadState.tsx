@@ -10,7 +10,10 @@ export function SelfSkeleton({ label }: { label: string }) {
 
 export function SelfLoadError({ label, retry }: { label: string; retry: () => void }) {
   return (
-    <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-danger-soft p-5 text-sm">
+    <div
+      role="alert"
+      className="flex flex-col items-start gap-3 rounded-[20px] bg-danger-soft p-5 text-caption"
+    >
       <p>Không tải được {label}.</p>
       <button
         type="button"

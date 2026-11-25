@@ -14,10 +14,10 @@ export function TileStatus({ item, onRemove }: { item: UploadItem; onRemove: () 
       {busy && (
         <span className="absolute inset-0 flex flex-col items-center justify-center bg-overlay/70 p-3 text-on-overlay backdrop-blur-[2px]">
           {item.notice ? (
-            <span className="text-center text-[11px] font-semibold leading-4">{item.notice}</span>
+            <span className="text-center text-caption font-semibold ">{item.notice}</span>
           ) : (
             <>
-              <span className="text-lg font-bold tabular-nums">
+              <span className="text-body font-bold tabular-nums">
                 {item.status === 'queued' ? 'Chờ' : `${item.progress}%`}
               </span>
               <span className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-on-overlay/30">
@@ -31,7 +31,7 @@ export function TileStatus({ item, onRemove }: { item: UploadItem; onRemove: () 
         </span>
       )}
       {item.status === 'failed' && (
-        <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-danger-soft/95 p-2 text-center text-[11px] leading-4 text-danger">
+        <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-danger-soft/95 p-2 text-center text-caption text-danger">
           <DocumentIcon name="warning" size={18} />
           {item.error}
           <button type="button" onClick={onRemove} className="min-h-8 font-semibold underline">

@@ -56,7 +56,7 @@ export function PrivacyRectangleFields({
   };
   return (
     <fieldset disabled={disabled} className="grid grid-cols-2 gap-2 rounded-xl bg-accent-soft p-3">
-      <legend className="text-xs font-semibold text-accent">Vị trí vùng (% ảnh)</legend>
+      <legend className="text-caption font-semibold text-accent">Vị trí vùng (% ảnh)</legend>
       {fields.map(([field, title]) => (
         <PrivacyCoordinateInput
           key={field}

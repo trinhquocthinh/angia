@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { AccountMenuIcon } from './AccountMenuIcon';
+import { AccountMenuItem } from './AccountMenuItem';
 import { AccountMenuIdentity } from './AccountMenuIdentity';
-import { AccountThemeSwitch } from './AccountThemeSwitch';
 import { AccountMenuDestinations } from './AccountMenuDestinations';
 import type { AccountMenuProps } from './accountMenuTypes';
 type Props = AccountMenuProps & { onClose?: (() => void) | undefined };
@@ -11,7 +12,7 @@ export function AccountMenuPanel({ session, pending, error, onLogout, onClose }:
       <AccountMenuIdentity session={session} onClose={onClose} />
       {!session.family && !session.account.isSystemAdmin && (
         <Link to="/waiting" search={{ step: 'create' }} className="account-menu-context" onClick={onClose}>
-          <AdminIcon name="home_health" size={24} />
+          <AccountMenuIcon name="home" />
           <span>
             <strong>Gia đình số AN GIA</strong>
             <span>Tạo nhà đầu tiên để thêm người thân</span>
@@ -22,21 +23,28 @@ export function AccountMenuPanel({ session, pending, error, onLogout, onClose }:
         </Link>
       )}
       <AccountMenuDestinations session={session} onClose={onClose} />
-      <AccountThemeSwitch />
-      <div className="account-menu-divider" />
       <div className="account-menu-links">
-        <Link to="/account" onClick={onClose}>
-          <AdminIcon name="manage_accounts" />
-          Quản lý tài khoản
-        </Link>
+        <AccountMenuItem
+          to="/account"
+          icon="account-settings"
+          label="Quản lý tài khoản"
+          description="Bảo mật & cài đặt"
+          onClose={onClose}
+        />
       </div>
-      <button type="button" className="account-menu-logout" disabled={pending} onClick={onLogout}>
-        <span className="account-menu-logout-icon">
-          <AdminIcon name="logout" />
-        </span>
+      <div className="account-menu-divider" />
+      <button
+        type="button"
+        aria-label={pending ? 'Đang đăng xuất…' : 'Đăng xuất'}
+        aria-description="Thoát khỏi thiết bị này"
+        className="account-menu-logout"
+        disabled={pending}
+        onClick={onLogout}
+      >
+        <AccountMenuIcon name="logout" />
         <span>
           <strong>{pending ? 'Đang đăng xuất…' : 'Đăng xuất'}</strong>
-          <small>Rời khỏi tài khoản hiện tại</small>
+          <small>Thoát khỏi thiết bị này</small>
         </span>
         <span className="account-menu-logout-chevron">
           <AdminIcon name="chevron_right" />

@@ -27,7 +27,7 @@ export function DocumentTypeFilter({
           type="button"
           aria-pressed={filter.value === value}
           onClick={() => onChange(filter.value)}
-          className="min-h-11 rounded-full bg-accent-soft px-4 text-sm font-medium text-text-secondary hover:bg-border aria-pressed:bg-accent-soft aria-pressed:font-semibold aria-pressed:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          className="min-h-11 rounded-full bg-accent-soft px-4 text-caption font-medium text-text-secondary hover:bg-border aria-pressed:bg-accent-soft aria-pressed:font-semibold aria-pressed:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         >
           {filter.label}
         </button>

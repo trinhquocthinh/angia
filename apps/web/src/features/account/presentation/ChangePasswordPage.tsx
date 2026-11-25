@@ -37,10 +37,12 @@ export function ChangePasswordPage() {
   const busy = form.formState.isSubmitting;
   return (
     <AccountLayout footer={token ? <AccountLogout token={token} /> : null}>
-      <h2 className="mb-4 text-[22px] leading-[30px] font-semibold">Đặt mật khẩu mới</h2>
+      <h2 className="mb-4 text-heading-2 font-semibold">Đặt mật khẩu mới</h2>
       {token ? (
         <>
-          <p className="mb-6 text-lg">Mật khẩu của bạn đã được đặt lại. Hãy đặt mật khẩu mới để tiếp tục.</p>
+          <p className="mb-6 text-body">
+            Mật khẩu của bạn đã được đặt lại. Hãy đặt mật khẩu mới để tiếp tục.
+          </p>
           <form onSubmit={submit} aria-busy={busy}>
             <fieldset disabled={busy} className="flex flex-col gap-6">
               <NewPasswordFields form={form} />

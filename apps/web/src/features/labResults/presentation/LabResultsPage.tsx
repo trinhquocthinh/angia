@@ -22,10 +22,12 @@ function LabResultsContent({ profile, session }: { profile: ProfileListItem; ses
     <div className="flex flex-col gap-6">
       <ProfileHealthHeader session={session} profile={profile} active="lab-results" />
       <div className="rounded-xl bg-surface px-5 py-4 shadow-sm">
-        <h2 className="text-lg font-semibold text-accent">Lịch sử kết quả xét nghiệm qua các lần khám</h2>
+        <h2 className="text-heading-2 font-semibold text-accent">
+          Lịch sử kết quả xét nghiệm qua các lần khám
+        </h2>
       </div>
       {profile.consentStatus !== 'confirmed' ? (
-        <p role="alert" className="rounded-[20px] bg-surface p-6 text-sm">
+        <p role="alert" className="rounded-[20px] bg-surface p-6 text-body">
           Hồ sơ chưa được đồng ý lưu dữ liệu.
         </p>
       ) : (

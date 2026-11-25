@@ -7,8 +7,8 @@ export function MinorReminderRecipientsNotice({ profileId }: { profileId: string
       aria-label="Người nhận nhắc"
       className="flex flex-col gap-3 rounded-[20px] bg-surface p-5 shadow-sm"
     >
-      <h2 className="text-lg font-semibold text-accent">Người nhận nhắc</h2>
-      <p className="text-sm text-text-secondary">
+      <h2 className="text-heading-2 font-semibold text-accent">Người nhận nhắc</h2>
+      <p className="text-caption text-text-secondary">
         Người nhận nhắc của hồ sơ trẻ là các người giám hộ.{' '}
         <Link
           to="/profiles/$profileId/guardians"

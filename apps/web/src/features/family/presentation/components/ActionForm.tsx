@@ -46,10 +46,7 @@ export function ActionForm({
       )}
       <ActionFields task={task} families={families} accounts={accounts} pending={pending} />
       {error && (
-        <p
-          className="rounded-[12px] py-3 px-4 m-0 text-[13px] leading-[20px] text-danger bg-danger-soft"
-          role="alert"
-        >
+        <p className="rounded-[12px] py-3 px-4 m-0 text-body text-danger bg-danger-soft" role="alert">
           {error instanceof AdminRequestError ? error.message : 'Không thể kết nối. Vui lòng thử lại.'}
         </p>
       )}

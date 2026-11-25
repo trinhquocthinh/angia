@@ -20,7 +20,7 @@ export function ProfilePicker({
   return (
     <PickerCard icon="family" title="Của ai?" hint="Bắt buộc" required>
       {profiles.length === 0 && (
-        <p className="text-sm text-text-secondary">
+        <p className="text-caption text-text-secondary">
           Chưa có hồ sơ.{' '}
           <Link to="/profiles/new" className="font-semibold text-accent underline">
             Tạo hồ sơ
@@ -51,7 +51,7 @@ export function ProfilePicker({
         );
       })}
       {waiting.length > 0 && (
-        <p className="w-full text-xs leading-5 text-text-secondary">
+        <p className="w-full text-caption text-text-secondary">
           Hồ sơ chưa có xác nhận cần gửi link mời ở{' '}
           <Link to="/" className="font-semibold text-accent underline">
             Trang chủ

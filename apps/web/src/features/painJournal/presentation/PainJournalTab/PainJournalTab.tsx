@@ -19,7 +19,7 @@ export function PainJournalTab({ issues, error, retry, consentConfirmed = true, 
       className="flex min-w-0 flex-col gap-4 rounded-xl bg-surface p-5 shadow-sm"
     >
       <header className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold text-accent">Đau nhức</h2>
+        <h2 className="text-heading-2 font-semibold text-accent">Đau nhức</h2>
         {actions.onCreate && (
           <button
             type="button"

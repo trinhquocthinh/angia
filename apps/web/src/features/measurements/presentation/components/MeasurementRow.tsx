@@ -9,7 +9,9 @@ export function MeasurementRow({ kind, measurement }: { kind: MeasurementKind; m
       <th scope="row" className="px-4 py-3 text-left font-medium">
         {formatDay(measurement.measuredOn)}
         {measurement.measuredTime && (
-          <span className="block text-xs font-normal text-text-secondary">{measurement.measuredTime}</span>
+          <span className="block text-caption font-normal text-text-secondary">
+            {measurement.measuredTime}
+          </span>
         )}
       </th>
       {kind === 'blood_pressure' ? (
@@ -27,7 +29,7 @@ export function MeasurementRow({ kind, measurement }: { kind: MeasurementKind; m
         </>
       )}
       <td className={cell}>
-        <span className="rounded-full bg-accent-soft px-2 py-0.5 text-xs text-text-secondary">
+        <span className="rounded-full bg-accent-soft px-2 py-0.5 text-caption text-text-secondary">
           {measurement.sourceDocumentId ? 'Ảnh' : 'Tay'}
         </span>
       </td>

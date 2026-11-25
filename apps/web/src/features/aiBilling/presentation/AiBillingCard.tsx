@@ -20,7 +20,7 @@ export function AiBillingCard({ state }: { state: ReturnType<typeof useAiBilling
         title="Phí thực từ nhà cung cấp"
       />
       {state.isError && (
-        <p role="alert" className="m-0 text-[12px] leading-5 text-danger">
+        <p role="alert" className="m-0 text-body text-danger">
           Không thể làm mới phí thực. Số đã ghi nhận không xác nhận tổng phí hiện tại.
         </p>
       )}
@@ -28,7 +28,7 @@ export function AiBillingCard({ state }: { state: ReturnType<typeof useAiBilling
         <AiBillingContent view={view} now={new Date()} />
       ) : (
         !state.isError && (
-          <p role="status" className="m-0 text-[13px] text-text-secondary">
+          <p role="status" className="m-0 text-caption text-text-secondary">
             Đang tải phí thực…
           </p>
         )
@@ -37,7 +37,7 @@ export function AiBillingCard({ state }: { state: ReturnType<typeof useAiBilling
         type="button"
         onClick={() => void state.refetch()}
         disabled={state.isFetching}
-        className="min-h-11 w-full cursor-pointer rounded-xl border-0 bg-accent-soft px-4 text-[13px] font-semibold text-accent transition-colors enabled:hover:bg-border disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        className="min-h-11 w-full cursor-pointer rounded-xl border-0 bg-accent-soft px-4 text-caption font-semibold text-accent transition-colors enabled:hover:bg-border disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       >
         {state.isFetching ? 'Đang tải…' : 'Làm mới số liệu'}
       </button>

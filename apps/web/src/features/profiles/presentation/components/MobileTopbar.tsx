@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
+import { NotificationLink } from '@src/shared/ui/NotificationLink';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 
 // Header di động (< lg): có `title` thì hiện nút quay lại + tên trang, không thì hiện thương hiệu.
@@ -32,30 +33,20 @@ export function MobileTopbar({ title, hasFamily, account }: Props) {
             </a>
           )}
           {title ? (
-            <p className="truncate font-['Newsreader',Georgia,serif] text-xl font-semibold tracking-tight text-accent">
+            <p className="truncate font-['Newsreader',Georgia,serif] text-button-primary font-semibold tracking-tight text-accent">
               {title}
             </p>
           ) : (
             <div className="flex min-w-0 flex-col">
-              <span className="truncate text-lg leading-6 font-semibold tracking-tight text-accent">
-                AN GIA
-              </span>
-              <span className="truncate text-[11px] leading-[14px] font-medium tracking-[0.03em] text-text-secondary">
+              <span className="truncate text-body font-semibold tracking-tight text-accent">AN GIA</span>
+              <span className="truncate text-caption font-medium tracking-[0.03em] text-text-secondary">
                 Sổ tay chăm sóc gia đình • Trang Chủ
               </span>
             </div>
           )}
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
-          {hasFamily && !title && (
-            <Link
-              to="/notifications"
-              aria-label="Cài đặt thông báo"
-              className="flex h-12 w-12 items-center justify-center text-text-secondary transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-focus"
-            >
-              <AdminIcon name="notifications" size={24} />
-            </Link>
-          )}
+          {hasFamily && !title && <NotificationLink />}
           {account}
         </div>
       </div>

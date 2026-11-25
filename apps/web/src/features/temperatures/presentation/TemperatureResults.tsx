@@ -11,7 +11,7 @@ type Props = {
 export function TemperatureResults({ readings, error, retry, pending, onRemove }: Props) {
   if (error)
     return (
-      <div role="alert" className="flex flex-col gap-2 text-sm">
+      <div role="alert" className="flex flex-col gap-2 text-caption">
         <p>Không thể tải nhiệt độ. Vui lòng thử lại.</p>
         <button type="button" onClick={retry} className="min-h-11 rounded-xl bg-accent-soft px-4 text-accent">
           Thử lại
@@ -20,7 +20,7 @@ export function TemperatureResults({ readings, error, retry, pending, onRemove }
     );
   if (!readings)
     return (
-      <div role="status" className="animate-pulse rounded-xl bg-accent-soft p-5 text-sm">
+      <div role="status" className="animate-pulse rounded-xl bg-accent-soft p-5 text-caption">
         Đang tải nhiệt độ…
       </div>
     );

@@ -34,11 +34,11 @@ export function ProfileChoices({
         role="alert"
         className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface p-4"
       >
-        <p className="text-sm text-danger">Không tải được danh sách hồ sơ.</p>
+        <p className="text-body text-danger">Không tải được danh sách hồ sơ.</p>
         <button
           type="button"
           onClick={retry}
-          className="min-h-11 rounded-xl px-4 text-sm font-semibold text-accent"
+          className="min-h-12 rounded-xl px-4 text-button-secondary font-semibold text-accent"
         >
           Thử lại
         </button>

@@ -20,22 +20,22 @@ export function MedicationCard({
   return (
     <article className="flex flex-col gap-2 rounded-xl bg-bg p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
-        <h4 className="min-w-0 text-base leading-snug font-semibold text-text-primary">
+        <h4 className="min-w-0 text-body font-semibold text-text-primary">
           {course.name}
           {course.strength && (
-            <span className="ml-2 rounded bg-border px-1.5 py-0.5 align-middle text-xs font-medium text-text-secondary">
+            <span className="ml-2 rounded bg-border px-1.5 py-0.5 align-middle text-caption font-medium text-text-secondary">
               {course.strength}
             </span>
           )}
         </h4>
         <span
-          className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold tabular-nums ${longTerm ? 'bg-accent-soft text-text-secondary' : 'bg-accent-soft text-accent'}`}
+          className={`shrink-0 rounded-full px-2.5 py-0.5 text-caption font-semibold tabular-nums ${longTerm ? 'bg-accent-soft text-text-secondary' : 'bg-accent-soft text-accent'}`}
         >
           {remainingDaysLabel(course.endDate, today)}
         </span>
       </div>
-      <p className="text-sm text-text-secondary">{doseLabel(course.quantityPerDose, course.doseUnit)}</p>
-      <p className="text-xs text-text-secondary">{medicationSourceLabel(course)}</p>
+      <p className="text-caption text-text-secondary">{doseLabel(course.quantityPerDose, course.doseUnit)}</p>
+      <p className="text-caption text-text-secondary">{medicationSourceLabel(course)}</p>
       <AsNeededDoseDetails course={course} />
       {actions}
     </article>

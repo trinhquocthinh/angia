@@ -3,7 +3,7 @@ export function RegistrationClosedNotice() {
   return (
     <p
       role="status"
-      className="registration-closed-notice mb-6 flex items-start gap-3 rounded-xl border border-border bg-bg p-4 text-lg leading-7 text-text-primary"
+      className="registration-closed-notice mb-6 flex items-start gap-3 rounded-xl border border-border bg-bg p-4 text-body text-text-primary"
     >
       <svg
         aria-hidden="true"

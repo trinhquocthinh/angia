@@ -1,6 +1,6 @@
 import { AdminIcon } from './AdminIcon';
 
-const BASE = 'inline-flex items-center gap-1 rounded-lg py-1 px-2 text-xs font-medium whitespace-nowrap';
+const BASE = 'inline-flex items-center gap-1 rounded-lg py-1 px-2 text-caption font-medium whitespace-nowrap';
 
 // Nhãn nhóm của tài khoản; `name` null nghĩa là tài khoản chưa vào nhóm.
 export function AccountFamilyBadge({ name }: { name: string | null }) {

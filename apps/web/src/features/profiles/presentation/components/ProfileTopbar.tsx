@@ -1,11 +1,22 @@
-import { Link } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import type { HealthProfile } from '../../application/ports';
+import { NotificationLink } from '@src/shared/ui/NotificationLink';
 import { ProfileSearch } from './ProfileSearch';
 import { TopbarNav } from './TopbarNav';
+import './profile-topbar.css';
 
-// Header desktop (≥ lg): thương hiệu, tìm hồ sơ + điều hướng chính, thông báo và menu tài khoản.
+type Props = {
+  profiles: HealthProfile[];
+  hasFamily: boolean;
+  pendingCount?: number | undefined;
+  account: ReactNode;
+  personal: boolean;
+  showNavigation: boolean;
+  showSearch: boolean;
+};
+
+// Header desktop (≥ lg): khung bo tròn, điều hướng giữa và tìm hồ sơ thu gọn.
 export function ProfileTopbar({
   profiles,
   hasFamily,
@@ -14,44 +25,37 @@ export function ProfileTopbar({
   personal,
   showNavigation,
   showSearch,
-}: {
-  profiles: HealthProfile[];
-  hasFamily: boolean;
-  pendingCount?: number | undefined;
-  account: ReactNode;
-  personal: boolean;
-  showNavigation: boolean;
-  showSearch: boolean;
-}) {
+}: Props) {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 hidden bg-bg/90 shadow-[0_1px_8px_color-mix(in_srgb,var(--color-shadow)_4%,transparent)] backdrop-blur-xl lg:block">
-      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-8">
-        <a href="/" className="flex shrink-0 items-center gap-3">
-          <img src="/logo.webp" alt="" className="h-9 w-9 object-contain" />
+    <header className="profile-topbar sticky top-0 z-50 hidden shrink-0 lg:block">
+      <div className="profile-topbar-shell">
+        <a href="/" className="profile-topbar-brand flex shrink-0 items-center gap-3">
+          <img src="/logo.webp" alt="" className="h-10 w-10 object-contain" />
           <span className="flex flex-col">
-            <span className="font-['Newsreader',Georgia,serif] text-lg leading-tight font-bold tracking-tight text-accent">
+            <span className="font-['Newsreader',Georgia,serif] text-body font-bold tracking-tight text-accent leading-5">
               AN GIA
             </span>
-            <span className="text-[11px] leading-none text-text-secondary">Sổ tay chăm sóc gia đình</span>
+            <span className="text-body text-text-secondary">Sổ tay chăm sóc gia đình</span>
           </span>
         </a>
-        <div className="flex max-w-2xl flex-1 items-center justify-center gap-3 px-2">
-          {hasFamily && !personal && showSearch && (
-            <ProfileSearch profiles={profiles} className="w-80 shrink-0" />
-          )}
+        <div className="flex min-w-0 flex-1 items-center justify-center">
           {showNavigation && <TopbarNav pendingCount={pendingCount} personal={personal} />}
         </div>
-        <div className="flex shrink-0 items-center gap-3">
-          {hasFamily && (
-            <Link
-              to="/notifications"
-              aria-label="Cài đặt thông báo"
-              title="Cài đặt thông báo"
-              className="flex h-11 w-11 items-center justify-center rounded-xl text-text-secondary transition-colors hover:bg-accent-soft hover:text-text-primary focus-visible:outline-2 focus-visible:outline-focus"
-            >
-              <AdminIcon name="notifications" />
-            </Link>
+        <div className="profile-topbar-actions flex shrink-0 items-center gap-1">
+          {hasFamily && !personal && showSearch && (
+            <details className="profile-topbar-search">
+              <summary
+                aria-label="Mở tìm hồ sơ thành viên"
+                className="flex h-12 w-12 cursor-pointer list-none items-center justify-center rounded-full text-text-secondary hover:bg-accent-soft focus-visible:outline-3 focus-visible:outline-focus"
+              >
+                <AdminIcon name="search" size={24} />
+              </summary>
+              <div className="profile-topbar-search-panel">
+                <ProfileSearch profiles={profiles} className="w-full" />
+              </div>
+            </details>
           )}
+          {hasFamily && <NotificationLink />}
           {account}
         </div>
       </div>

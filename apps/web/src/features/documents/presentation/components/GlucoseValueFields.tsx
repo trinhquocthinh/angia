@@ -22,14 +22,14 @@ export function GlucoseValueFields({ register, errors, flagged }: Props) {
         {...register('glucoseValue')}
       />
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="glucoseUnit" className="text-sm font-medium text-text-secondary">
+        <label htmlFor="glucoseUnit" className="text-caption font-medium text-text-secondary">
           Đơn vị trên máy
         </label>
         <select
           id="glucoseUnit"
           aria-invalid={Boolean(errors.glucoseUnit) || undefined}
           aria-describedby={errors.glucoseUnit ? 'glucoseUnit-error' : undefined}
-          className="min-h-12 rounded-xl bg-accent-soft px-4 text-base text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:outline-2 aria-invalid:outline-danger"
+          className="min-h-12 rounded-xl bg-accent-soft px-4 text-body text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:outline-2 aria-invalid:outline-danger"
           {...register('glucoseUnit')}
         >
           <option value="">Chọn đơn vị</option>
@@ -37,7 +37,7 @@ export function GlucoseValueFields({ register, errors, flagged }: Props) {
           <option value="mg/dL">mg/dL</option>
         </select>
         {errors.glucoseUnit && (
-          <p id="glucoseUnit-error" className="text-sm text-danger">
+          <p id="glucoseUnit-error" className="text-body text-danger">
             {errors.glucoseUnit.message}
           </p>
         )}

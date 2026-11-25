@@ -41,7 +41,7 @@ export function CourseResolutionOption({ name, value, checked, onChange }: Props
       </span>
       <span className="min-w-0">
         <span className="block font-semibold text-text-primary">{COPY[value].label}</span>
-        <span className="block text-[13px] leading-5 text-text-secondary">{COPY[value].detail}</span>
+        <span className="block text-caption text-text-secondary">{COPY[value].detail}</span>
       </span>
     </label>
   );

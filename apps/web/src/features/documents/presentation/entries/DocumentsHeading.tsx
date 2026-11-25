@@ -4,7 +4,7 @@ import { PrescriptionChainLink } from '@src/features/prescriptions/presentation/
 export function DocumentsHeading({ profile }: { profile: HealthProfile }) {
   return (
     <div className="flex flex-col items-start gap-3 rounded-xl bg-surface px-5 py-4 shadow-sm">
-      <h2 className="text-lg font-semibold text-accent">Hồ sơ & Giấy tờ khám</h2>
+      <h2 className="text-heading-2 font-semibold text-accent">Hồ sơ & Giấy tờ khám</h2>
       {profile.consentStatus === 'confirmed' && <PrescriptionChainLink profileId={profile.id} />}
     </div>
   );

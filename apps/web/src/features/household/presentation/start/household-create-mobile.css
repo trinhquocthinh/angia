@@ -14,8 +14,8 @@
     border-radius: 999px;
     background: color-mix(in srgb, var(--color-secondary-container) 50%, transparent);
     color: var(--color-on-secondary-container);
-    font-size: 0.6875rem;
-    line-height: 0.875rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     font-weight: 600;
   }
   .household-start-back {
@@ -23,7 +23,8 @@
     top: -8px;
     margin-bottom: 0;
     min-height: 44px;
-    font-size: 0.875rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
   }
   .household-create-heading {
     margin-bottom: 24px;
@@ -31,15 +32,15 @@
   .household-create-heading > span {
     display: block;
     margin-bottom: 6px;
-    font-size: 0.75rem;
-    line-height: 1rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     font-weight: 500;
     color: var(--color-secondary);
     text-transform: uppercase;
   }
   .household-create-heading h1 {
-    font-size: 1.5rem;
-    line-height: 2rem;
+    font-size: var(--font-heading-1);
+    line-height: var(--line-heading-1);
     margin-bottom: 6px;
   }
   .household-start-form {
@@ -54,8 +55,8 @@
     gap: 20px;
   }
   .household-name-label label {
-    font-size: 0.9375rem;
-    line-height: 1.5rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
   }
   .household-name-input input {
     min-height: 48px;
@@ -94,8 +95,8 @@
     gap: 6px;
   }
   .household-name-suggestions > span {
-    font-size: 0.6875rem;
-    line-height: 0.875rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--color-text-secondary);
@@ -109,8 +110,8 @@
     min-height: 30px;
     padding: 6px 12px;
     border-radius: 999px;
-    font-size: 0.75rem;
-    line-height: 1rem;
+    font-size: var(--font-button-secondary);
+    line-height: var(--line-button-secondary);
     color: var(--color-text-secondary);
     background: var(--color-accent-soft);
   }
@@ -124,8 +125,8 @@
     color: var(--color-on-accent);
   }
   .household-role-heading > strong {
-    font-size: 0.9375rem;
-    line-height: 1.5rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
   }
   .household-role-heading b {
     border-radius: 999px;
@@ -146,8 +147,8 @@
     gap: 8px;
     margin-top: 24px;
     padding: 0 16px;
-    font-size: 0.8125rem;
-    line-height: 1.25rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     text-align: center;
   }
   .household-create-ready {
@@ -163,13 +164,13 @@
     background: var(--color-surface-variant);
   }
   .household-create-ready strong {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     font-weight: 600;
   }
   .household-create-ready p {
-    font-size: 0.8125rem;
-    line-height: 1.25rem;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     color: var(--color-text-secondary);
   }
   :root[data-theme='dark'] .household-start-welcome {

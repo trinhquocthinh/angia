@@ -11,7 +11,7 @@ export function ProfileBasisBadge({ basis }: { basis: ProfileListItem['consentBa
   const badge = basisBadge[basis];
   return (
     <span
-      className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${badge.className}`}
+      className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-caption font-semibold ${badge.className}`}
     >
       {badge.label}
     </span>

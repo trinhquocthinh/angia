@@ -7,9 +7,9 @@ import { createDoseConfirmationRepository } from '../infrastructure/createDoseCo
 
 const repository = createDoseConfirmationRepository();
 const primary =
-  'min-h-11 rounded-full bg-accent px-5 text-sm font-semibold text-on-accent disabled:opacity-60';
+  'min-h-11 rounded-full bg-accent px-5 text-caption font-semibold text-on-accent disabled:opacity-60';
 const secondary =
-  'min-h-11 rounded-full border border-accent px-5 text-sm font-semibold text-accent disabled:opacity-60';
+  'min-h-11 rounded-full border border-accent px-5 text-caption font-semibold text-accent disabled:opacity-60';
 
 type Props = {
   reminder: Pick<SelfReminder, 'id' | 'confirmation' | 'canConfirm' | 'canUndo'>;
@@ -26,7 +26,7 @@ export function DoseConfirmationControl({ reminder, session }: Props) {
   return (
     <div className="flex flex-col items-start gap-2">
       {confirmation && (
-        <p className="text-sm font-semibold break-words text-accent tabular-nums">
+        <p className="text-body font-semibold break-words text-accent tabular-nums">
           {doseConfirmationLabel(confirmation)}
         </p>
       )}
@@ -41,7 +41,7 @@ export function DoseConfirmationControl({ reminder, session }: Props) {
         </button>
       )}
       {failure && (
-        <div role="alert" className="flex flex-wrap items-center gap-3 text-sm text-danger">
+        <div role="alert" className="flex flex-wrap items-center gap-3 text-caption text-danger">
           <p>{failure.message}</p>
           {failure.canRetry && dose.failure && (
             <button

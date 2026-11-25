@@ -26,12 +26,12 @@ export function PushDeviceCard({
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <h1 className="font-['Newsreader',Georgia,serif] text-2xl leading-tight font-semibold text-text-primary">
+            <h1 className="font-['Newsreader',Georgia,serif] text-heading-1 font-semibold text-text-primary">
               Thông báo trên thiết bị này
             </h1>
             <PushToggle checked={registered} disabled={!canToggle} onToggle={onToggle} />
           </div>
-          <p className="mt-1 text-sm leading-relaxed text-text-secondary">
+          <p className="mt-1 text-caption text-text-secondary">
             Bật nhận thông báo từ AN GIA. Màn hình khóa chỉ hiện{' '}
             <strong className="font-semibold text-text-primary">“Đến giờ dùng thuốc”</strong>. Chi tiết được
             xem sau khi đăng nhập và kiểm tra quyền.
@@ -39,7 +39,7 @@ export function PushDeviceCard({
         </div>
       </div>
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-border pt-3.5">
-        <span className="flex min-w-0 items-center gap-2 text-sm text-text-primary">
+        <span className="flex min-w-0 items-center gap-2 text-caption text-text-primary">
           <span className="text-accent">
             <PushIcon name="shield" />
           </span>

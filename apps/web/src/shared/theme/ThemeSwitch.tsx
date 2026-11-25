@@ -21,7 +21,7 @@ export function ThemeSwitch({ appearance = 'default', renderIcon }: Props) {
   const account = appearance === 'account';
   return (
     <fieldset className={account ? 'account-theme-fieldset' : 'min-w-0 border-0 p-0 text-text-primary'}>
-      <legend className={account ? 'sr-only' : 'mb-2 text-base font-medium'}>Nền giao diện</legend>
+      <legend className={account ? 'sr-only' : 'mb-2 text-body font-medium'}>Nền giao diện</legend>
       <div
         className={
           account
@@ -48,7 +48,7 @@ export function ThemeSwitch({ appearance = 'default', renderIcon }: Props) {
               className={
                 account
                   ? 'account-theme-pill'
-                  : 'flex min-h-12 w-full items-center justify-center rounded-lg px-1 text-base peer-checked:bg-accent peer-checked:text-on-accent peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus'
+                  : 'flex min-h-12 w-full items-center justify-center rounded-lg px-1 text-body peer-checked:bg-accent peer-checked:text-on-accent peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus'
               }
             >
               {renderIcon?.(value)}

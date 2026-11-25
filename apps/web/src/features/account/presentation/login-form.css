@@ -14,14 +14,14 @@
   background: var(--color-login-wash);
 }
 .login-form-heading h2 {
-  font-size: 28px;
+  font-size: var(--font-heading-1);
   font-weight: 700;
-  line-height: 36px;
+  line-height: var(--line-heading-1);
 }
 .login-form-heading p {
   margin-top: 4px;
-  font-size: 16px;
-  line-height: 26px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   color: var(--color-login-muted);
 }
 .login-fields {
@@ -36,9 +36,9 @@
 .login-field label {
   display: block;
   margin-bottom: 8px;
-  font-size: 18px;
+  font-size: var(--font-caption);
   font-weight: 500;
-  line-height: 26px;
+  line-height: var(--line-caption);
 }
 .login-input-wrap {
   display: flex;
@@ -66,7 +66,8 @@
   background: transparent;
   color: var(--color-login-ink);
   font: inherit;
-  font-size: 18px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .login-input-wrap input::placeholder {
   color: var(--color-login-muted);
@@ -96,7 +97,8 @@
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  font-size: 16px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   font-weight: 500;
 }
 .login-screen a:hover {
@@ -134,8 +136,8 @@
   background: var(--color-login-border);
 }
 .login-divider span {
-  font-size: 16px;
-  line-height: 24px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .login-authentik {
   display: flex;
@@ -146,9 +148,9 @@
   padding: 12px;
   border-radius: 16px;
   background: var(--color-login-input);
-  font-size: 16px;
+  font-size: var(--font-body);
   font-weight: 600;
-  line-height: 24px;
+  line-height: var(--line-body);
   text-align: center;
 }
 .login-authentik picture {
@@ -159,8 +161,8 @@
 }
 .login-registration {
   margin-top: 24px;
-  font-size: 16px;
-  line-height: 28px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   color: var(--color-login-muted);
   text-align: center;
 }
@@ -176,7 +178,7 @@
     margin-bottom: 30px;
   }
   .login-form-heading h2 {
-    font-size: 30px;
-    line-height: 38px;
+    font-size: var(--font-heading-1);
+    line-height: var(--line-heading-1);
   }
 }

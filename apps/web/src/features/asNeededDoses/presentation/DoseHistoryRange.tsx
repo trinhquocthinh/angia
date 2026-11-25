@@ -19,7 +19,7 @@ export function DoseHistoryRange({ initial, pending, onChange }: Props) {
     >
       <fieldset disabled={pending} className="grid min-w-0 grid-cols-2 gap-3 border-0 p-0">
         {(['from', 'to'] as const).map((field) => (
-          <label key={field} htmlFor={`${id}-${field}`} className="flex min-w-0 flex-col gap-1 text-sm">
+          <label key={field} htmlFor={`${id}-${field}`} className="flex min-w-0 flex-col gap-1 text-caption">
             {field === 'from' ? 'Từ ngày' : 'Đến ngày'}
             <input
               id={`${id}-${field}`}
@@ -33,14 +33,14 @@ export function DoseHistoryRange({ initial, pending, onChange }: Props) {
         ))}
       </fieldset>
       {error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-body text-danger">
           Chọn khoảng ngày hợp lệ, tối đa 366 ngày.
         </p>
       )}
       <button
         type="submit"
         disabled={pending}
-        className="min-h-11 rounded-xl bg-accent-soft px-4 text-sm font-semibold text-accent disabled:opacity-50"
+        className="min-h-12 rounded-xl bg-accent-soft px-4 text-button-secondary font-semibold text-accent disabled:opacity-50"
       >
         Xem nhật ký theo ngày
       </button>

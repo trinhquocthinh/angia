@@ -26,15 +26,15 @@ export function SummaryToolbar({ profileId, displayName, range, months, onMonths
       <Link
         to="/profiles/$profileId"
         params={{ profileId }}
-        className="min-h-11 self-start content-center rounded-lg px-1 text-[15px] font-medium text-accent hover:bg-accent-soft lg:self-center"
+        className="min-h-12 self-start content-center rounded-lg px-1 text-button-secondary font-medium text-accent hover:bg-accent-soft lg:self-center"
       >
         ‹ {displayName}
       </Link>
       <div className="flex min-w-0 flex-1 flex-col">
-        <h1 className="text-2xl font-semibold break-words text-text-primary">
+        <h1 className="text-heading-1 font-semibold break-words text-text-primary">
           Tóm tắt đi khám · {displayName}
         </h1>
-        <p className="text-[15px] font-medium text-text-secondary tabular-nums">
+        <p className="text-caption font-medium text-text-secondary tabular-nums">
           Xem trước khổ A4 · {formatDay(range.from)} – {formatDay(range.to)}
         </p>
       </div>
@@ -49,7 +49,7 @@ export function SummaryToolbar({ profileId, displayName, range, months, onMonths
           type="button"
           disabled={!canPrint}
           onClick={() => window.print()}
-          className="flex min-h-[52px] items-center gap-2 rounded-xl bg-accent px-5 text-[17px] font-semibold text-on-accent hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-60"
+          className="flex min-h-[52px] items-center gap-2 rounded-xl bg-accent px-5 text-body font-semibold text-on-accent hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-60"
         >
           <PrinterIcon />
           In / Lưu PDF

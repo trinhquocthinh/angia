@@ -61,7 +61,7 @@ export function RedactionConfirmStep({ previewUrl, maskCount, onBack, onConfirm,
         <button
           type="button"
           onClick={onBack}
-          className="min-h-11 rounded-xl px-5 text-sm font-semibold text-text-secondary transition-colors hover:bg-accent-soft hover:text-text-primary"
+          className="min-h-12 rounded-xl px-5 text-button-secondary font-semibold text-text-secondary transition-colors hover:bg-accent-soft hover:text-text-primary"
         >
           Quay lại che
         </button>
@@ -69,7 +69,7 @@ export function RedactionConfirmStep({ previewUrl, maskCount, onBack, onConfirm,
           type="button"
           disabled={decision === 'disabled'}
           onClick={submit}
-          className="min-h-11 rounded-xl bg-accent px-8 text-sm font-semibold text-on-accent shadow-sm transition-colors enabled:hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
+          className="min-h-14 rounded-xl bg-accent px-8 text-button-primary font-semibold text-on-accent shadow-sm transition-colors enabled:hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
         >
           Xác nhận
         </button>

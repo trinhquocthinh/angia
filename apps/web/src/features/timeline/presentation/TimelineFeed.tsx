@@ -27,7 +27,7 @@ export function TimelineFeed({
   if (error || loading || !items) return <TimelineLoadState error={error} retry={retry} />;
   if (items.length === 0 && !hasNextPage)
     return (
-      <p role="status" className="rounded-xl bg-surface p-6 text-sm">
+      <p role="status" className="rounded-xl bg-surface p-6 text-body">
         Chưa có sự kiện sức khỏe đã ghi nhận.
       </p>
     );
@@ -45,13 +45,13 @@ export function TimelineFeed({
           type="button"
           onClick={loadMore}
           disabled={fetchingMore}
-          className="min-h-11 self-center rounded-full bg-accent px-6 text-sm font-semibold text-on-accent disabled:opacity-60"
+          className="min-h-14 self-center rounded-full bg-accent px-6 text-button-primary font-semibold text-on-accent disabled:opacity-60"
         >
           {fetchingMore ? 'Đang tải thêm…' : 'Xem thêm'}
         </button>
       )}
       {fetchingMore && (
-        <p role="status" className="text-center text-sm">
+        <p role="status" className="text-center text-body">
           Đang tải thêm sự kiện…
         </p>
       )}

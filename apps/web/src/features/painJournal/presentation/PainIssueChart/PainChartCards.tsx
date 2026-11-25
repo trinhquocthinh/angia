@@ -8,17 +8,19 @@ export function PainChartCards({ entries, weeks }: { entries: PainEntry[]; weeks
         {entries.toReversed().map((entry) => (
           <li key={entry.id} className="min-w-0 rounded-xl border border-border p-4">
             <p className="text-text-primary">
-              <span className="text-3xl font-semibold tabular-nums">{entry.level}</span>
-              <span className="text-sm">/10</span>
+              <span className="text-heading-1 font-semibold tabular-nums">{entry.level}</span>
+              <span className="text-caption">/10</span>
             </p>
-            <time className="text-sm text-text-secondary" dateTime={entry.recordedAt}>
+            <time className="text-caption text-text-secondary" dateTime={entry.recordedAt}>
               {formatPainEntryTime(entry.recordedAt)}
             </time>
-            {entry.note && <p className="break-words text-sm">{entry.note}</p>}
+            {entry.note && <p className="break-words text-body">{entry.note}</p>}
           </li>
         ))}
       </ul>
-      <p className="text-sm text-text-secondary">Cần ít nhất 4 lần ghi trong {weeks} tuần để vẽ biểu đồ.</p>
+      <p className="text-caption text-text-secondary">
+        Cần ít nhất 4 lần ghi trong {weeks} tuần để vẽ biểu đồ.
+      </p>
     </div>
   );
 }

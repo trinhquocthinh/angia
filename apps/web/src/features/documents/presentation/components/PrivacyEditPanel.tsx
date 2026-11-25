@@ -56,7 +56,7 @@ export function PrivacyEditPanel(props: Props) {
             {toolbar}
             {preview && props.tools}
             {preview && suggestion}
-            <p className="text-[13px] leading-5 text-text-secondary">
+            <p className="text-caption text-text-secondary">
               Kéo trên ảnh để cắt hoặc che thông tin. Xoay ảnh sẽ đặt lại toàn bộ vùng cắt và vùng che. Bạn có
               thể tinh chỉnh qua các ô số bên phải. Ảnh vẫn chỉ nằm trên máy của bạn cho tới khi tải lên.
             </p>

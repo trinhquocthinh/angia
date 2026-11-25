@@ -40,7 +40,7 @@ export function DocumentTypePicker({
           {type.label}
         </ChoiceChip>
       ))}
-      <p className="basis-full text-xs leading-5 text-text-secondary">
+      <p className="basis-full text-caption text-text-secondary">
         Chọn nhiều loại giấy tờ trong một lần tải: để hệ thống tự động nhận diện từng ảnh. Chỉ chọn một loại
         khi mọi ảnh cùng loại — ảnh khác loại sẽ chuyển sang nhập tay.
       </p>

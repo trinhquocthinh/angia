@@ -19,14 +19,17 @@ export function RevisitSchedule({ profile, session }: { profile: HealthProfile; 
   };
   if (profile.consentStatus !== 'confirmed')
     return (
-      <p role="alert" className="rounded-[20px] bg-surface p-6 text-sm">
+      <p role="alert" className="rounded-[20px] bg-surface p-6 text-body">
         Hồ sơ chưa được đồng ý lưu dữ liệu.
       </p>
     );
   return (
     <>
       {revisits.isError ? (
-        <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-surface p-6 text-sm">
+        <div
+          role="alert"
+          className="flex flex-col items-start gap-3 rounded-[20px] bg-surface p-6 text-caption"
+        >
           <p>Không thể tải lịch tái khám. Vui lòng thử lại.</p>
           <button
             type="button"
@@ -42,7 +45,7 @@ export function RevisitSchedule({ profile, session }: { profile: HealthProfile; 
           onEdit={(prescription, revisitDate) => setSelected({ prescription, revisitDate })}
         />
       ) : (
-        <p role="status" className="rounded-[20px] bg-surface p-6 text-sm">
+        <p role="status" className="rounded-[20px] bg-surface p-6 text-body">
           Đang tải lịch tái khám…
         </p>
       )}

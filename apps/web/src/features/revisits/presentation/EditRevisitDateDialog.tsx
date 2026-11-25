@@ -31,10 +31,10 @@ export function EditRevisitDateDialog({ profile, session, prescription, revisitD
         }}
         className="overflow-y-auto p-6"
       >
-        <h2 id="edit-revisit-title" className="auth-heading text-2xl font-semibold">
+        <h2 id="edit-revisit-title" className="auth-heading text-heading-2 font-semibold">
           Sửa ngày hẹn tái khám
         </h2>
-        <p className="mt-2 mb-5 text-sm text-text-secondary">
+        <p className="mt-2 mb-5 text-caption text-text-secondary">
           Đơn ngày {formatDay(prescription.issuedDate)}. Để trống ngày hẹn rồi lưu để xóa lịch hẹn của đơn
           này.
         </p>
@@ -47,7 +47,7 @@ export function EditRevisitDateDialog({ profile, session, prescription, revisitD
             onChange={(event) => setValue(event.target.value)}
           />
           {edit.error && (
-            <p role="alert" className="text-sm text-danger">
+            <p role="alert" className="text-body text-danger">
               {edit.error}
             </p>
           )}
@@ -55,13 +55,13 @@ export function EditRevisitDateDialog({ profile, session, prescription, revisitD
             <button
               type="button"
               onClick={onClose}
-              className="min-h-11 rounded-full bg-accent-soft px-5 text-sm font-semibold"
+              className="min-h-12 rounded-full bg-accent-soft px-5 text-button-secondary font-semibold"
             >
               Hủy
             </button>
             <button
               type="submit"
-              className="min-h-11 rounded-full bg-accent px-5 text-sm font-semibold text-on-accent disabled:opacity-50"
+              className="min-h-14 rounded-full bg-accent px-5 text-button-primary font-semibold text-on-accent disabled:opacity-50"
             >
               {edit.saving ? 'Đang lưu…' : 'Lưu ngày hẹn'}
             </button>

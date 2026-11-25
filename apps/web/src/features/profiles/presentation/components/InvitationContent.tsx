@@ -16,7 +16,7 @@ export function InvitationContent({
   const { loaded, receipt, error, pending, respond, retry } = workspace;
   if (loaded.state === 'loading')
     return (
-      <p role="status" className="text-sm">
+      <p role="status" className="text-body">
         Đang mở link…
       </p>
     );
@@ -50,7 +50,7 @@ export function InvitationContent({
         <InvitationBlocked reason={view.reason} />
       )}
       {error && (
-        <p role="alert" className="mt-4 text-sm leading-6 text-danger">
+        <p role="alert" className="mt-4 text-body text-danger">
           {error}
         </p>
       )}

@@ -11,10 +11,10 @@ const SWATCH = {
 export function PeriodList({ group }: { group: MedicationPeriods }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <p className="text-xs font-semibold text-text-secondary">
+      <p className="text-caption font-semibold text-text-secondary">
         Giai đoạn {group.name} ({group.periods.length})
       </p>
-      <ul className="flex flex-col gap-1 text-sm text-text-secondary">
+      <ul className="flex flex-col gap-1 text-caption text-text-secondary">
         {group.periods.map((period) => (
           <li key={period.id} className="flex items-center gap-2">
             <span

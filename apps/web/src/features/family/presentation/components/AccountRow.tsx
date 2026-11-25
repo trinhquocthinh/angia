@@ -20,7 +20,7 @@ export function AccountRow({
       <td>
         <div className="flex items-center gap-[10px] min-w-[110px]">
           <span
-            className={`w-8 h-8 rounded-full bg-accent-soft text-accent inline-flex items-center justify-center text-[12px] font-semibold shrink-0 ${account.isSystemAdmin ? 'bg-accent! text-on-accent!' : ''}`}
+            className={`w-8 h-8 rounded-full bg-accent-soft text-accent inline-flex items-center justify-center text-caption font-semibold shrink-0 ${account.isSystemAdmin ? 'bg-accent! text-on-accent!' : ''}`}
           >
             {account.displayName.slice(0, 1).toLocaleUpperCase('vi')}
           </span>
@@ -42,7 +42,7 @@ export function AccountRow({
       <td>
         {account.role ? (
           <span
-            className={`inline-flex items-center gap-1 py-1 px-2.5 rounded-full bg-surface text-text-secondary text-xs leading-4 font-semibold whitespace-nowrap ${account.role === 'main' ? 'bg-accent-soft! text-accent!' : ''}`}
+            className={`inline-flex items-center gap-1 py-1 px-2.5 rounded-full bg-surface text-text-secondary text-caption font-semibold whitespace-nowrap ${account.role === 'main' ? 'bg-accent-soft! text-accent!' : ''}`}
           >
             <AdminIcon name={account.role === 'main' ? 'verified_user' : 'person'} size={13} />
             {account.role === 'main' ? 'Quản trị chính' : 'Thành viên'}

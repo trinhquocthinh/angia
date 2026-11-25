@@ -18,21 +18,21 @@ export function AiRoutingSummary({
   const models = view.settings.openrouter;
   return (
     <div className="grid gap-2">
-      <div className="flex items-center justify-between gap-2 text-xs">
+      <div className="flex items-center justify-between gap-2 text-caption">
         <span className="text-text-secondary">Nhà cung cấp đã lưu</span>
         <span className="font-semibold text-accent">OpenRouter</span>
       </div>
-      <dl className="m-0 grid gap-2 text-[13px] leading-5">
+      <dl className="m-0 grid gap-2 text-caption ">
         <div className={ROW}>
-          <dt className="text-xs text-text-secondary">Model chính</dt>
+          <dt className="text-caption text-text-secondary">Model chính</dt>
           <dd className="m-0 font-medium text-text-primary">{AI_MODEL_LABELS[models.primaryModel]}</dd>
         </div>
         <div className={ROW}>
-          <dt className="text-xs text-text-secondary">Dự phòng</dt>
+          <dt className="text-caption text-text-secondary">Dự phòng</dt>
           <dd className="m-0 font-medium text-text-primary">{AI_MODEL_LABELS[models.fallbackModel]}</dd>
         </div>
       </dl>
-      <p className="m-0 text-xs leading-[18px] text-text-secondary">
+      <p className="m-0 text-caption text-text-secondary">
         {view.updatedAt
           ? `${formatTime.format(new Date(view.updatedAt))} · ${updatedByName ?? 'Tài khoản quản trị'}`
           : 'Chưa có lần lưu nào.'}

@@ -19,18 +19,18 @@ export function PushStatusCard({
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="font-['Newsreader',Georgia,serif] text-xl font-semibold text-accent">
+          <p className="font-['Newsreader',Georgia,serif] text-button-primary font-semibold text-accent">
             Trạng thái thiết bị
           </p>
           <PushStatePill state={state} />
         </div>
-        <p className="mt-1 text-sm text-text-secondary">{state.detail}</p>
+        <p className="mt-1 text-caption text-text-secondary">{state.detail}</p>
       </div>
       <button
         type="button"
         onClick={onRefresh}
         disabled={refreshing}
-        className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl px-3 text-sm font-semibold text-accent hover:bg-accent-soft disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-focus"
+        className="inline-flex min-h-12 shrink-0 items-center gap-1.5 rounded-xl px-3 text-button-secondary font-semibold text-accent hover:bg-accent-soft disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-focus"
       >
         <PushIcon name="refresh" size={18} /> Làm mới
       </button>

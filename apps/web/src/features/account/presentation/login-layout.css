@@ -71,9 +71,9 @@
   font: 20px/1 'AN GIA Login Symbols';
 }
 .login-brand-header h1 {
-  font-size: 28px;
+  font-size: var(--font-heading-1);
   font-weight: 600;
-  line-height: 36px;
+  line-height: var(--line-heading-1);
   letter-spacing: -0.5px;
 }
 .login-brand-caption,
@@ -84,8 +84,8 @@
 }
 .login-mobile-tagline {
   color: var(--color-login-muted);
-  font-size: 18px;
-  line-height: 28px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .login-form-panel {
   min-width: 0;
@@ -101,8 +101,8 @@
   justify-content: center;
   gap: 8px;
   margin-top: 24px;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   color: var(--color-login-muted);
   text-align: center;
 }
@@ -173,8 +173,8 @@
   }
   .login-brand-caption {
     display: block;
-    font-size: 16px;
-    line-height: 24px;
+    font-size: var(--font-caption);
+    line-height: var(--line-caption);
     color: var(--color-login-muted);
   }
   .login-logo-heart,
@@ -187,15 +187,15 @@
     display: block;
   }
   .login-intro h2 {
-    font-size: 28px;
-    line-height: 1.4;
+    font-size: var(--font-heading-1);
+    line-height: var(--line-heading-1);
     font-weight: 700;
     letter-spacing: -0.5px;
   }
   .login-intro p {
     margin-top: 14px;
-    font-size: 18px;
-    line-height: 1.65;
+    font-size: var(--font-body);
+    line-height: var(--line-body);
     color: var(--color-login-muted);
   }
   .login-desktop-features {
@@ -209,8 +209,8 @@
     margin-top: auto;
     padding-top: 20px;
     border-top: 1px solid var(--color-login-border);
-    font-size: 16px;
-    line-height: 24px;
+    font-size: var(--font-body);
+    line-height: var(--line-body);
     color: var(--color-login-muted);
   }
   .login-form-panel {

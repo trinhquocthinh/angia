@@ -34,7 +34,7 @@ export function DocumentEntryPanel({ entry, canReuse, onReuse, onClose, deletion
     >
       <div className="flex flex-col gap-4 px-6 py-5">
         {prescription?.diagnosis && (
-          <p className="text-sm">
+          <p className="text-body">
             <span className="font-semibold">Chẩn đoán ghi trên đơn: </span>
             {prescription.diagnosis}
           </p>
@@ -44,7 +44,7 @@ export function DocumentEntryPanel({ entry, canReuse, onReuse, onClose, deletion
           <button
             type="button"
             onClick={onReuse}
-            className="min-h-11 rounded-xl bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover"
+            className="min-h-14 rounded-xl bg-accent px-4 text-button-primary font-semibold text-on-accent hover:bg-accent-hover"
           >
             Dùng lại đơn này
           </button>

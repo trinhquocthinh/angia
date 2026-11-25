@@ -1,7 +1,7 @@
 export function TimelineLoadState({ error, retry }: { error: unknown; retry: () => void }) {
   if (!error)
     return (
-      <p role="status" className="rounded-xl bg-surface p-6 text-sm">
+      <p role="status" className="rounded-xl bg-surface p-6 text-body">
         Đang tải dòng thời gian…
       </p>
     );
@@ -15,7 +15,7 @@ export function TimelineLoadState({ error, retry }: { error: unknown; retry: () 
           ? 'Bạn không có quyền xem dòng thời gian này.'
           : 'Không thể tải dòng thời gian. Vui lòng thử lại.';
   return (
-    <div role="alert" className="flex flex-col items-start gap-3 rounded-xl bg-surface p-6 text-sm">
+    <div role="alert" className="flex flex-col items-start gap-3 rounded-xl bg-surface p-6 text-caption">
       <p>{message}</p>
       <button
         type="button"

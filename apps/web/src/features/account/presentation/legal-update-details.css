@@ -30,8 +30,8 @@
   padding-block: 16px;
   border-bottom: 1px solid var(--color-border);
   color: var(--color-legal-accent);
-  font-size: 16px;
-  line-height: 24px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .legal-update-document-title {
   min-width: 0;
@@ -51,8 +51,8 @@
   border-radius: 14px;
   background: var(--color-legal-accent);
   color: var(--color-on-accent);
-  font-size: 18px;
-  line-height: 26px;
+  font-size: var(--font-button-primary);
+  line-height: var(--line-button-primary);
   box-shadow: 0 6px 16px color-mix(in srgb, var(--color-overlay) 18%, transparent);
 }
 .legal-update-submit > .legal-update-icon {
@@ -65,8 +65,8 @@
   gap: 6px;
   margin-top: 16px;
   color: var(--color-text-secondary);
-  font-size: 16px;
-  line-height: 24px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   text-align: center;
 }
 .legal-update-note .legal-update-icon {
@@ -127,9 +127,10 @@
     display: none;
   }
   .legal-update-screen .legal-update-submit {
-    min-height: 52px;
+    min-height: 56px;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: var(--font-button-primary);
+    line-height: var(--line-button-primary);
   }
   .legal-update-submit > .legal-update-icon {
     display: inline-flex;

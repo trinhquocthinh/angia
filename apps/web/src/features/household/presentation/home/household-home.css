@@ -69,8 +69,8 @@
 .household-home-title-row h1 {
   margin: 0;
   font-family: 'Newsreader', Georgia, serif;
-  font-size: 1.75rem;
-  line-height: 2.25rem;
+  font-size: var(--font-heading-1);
+  line-height: var(--line-heading-1);
   font-weight: 600;
   color: var(--color-accent);
 }
@@ -82,8 +82,8 @@
   border-radius: 999px;
   background: var(--color-secondary-container);
   color: var(--color-on-secondary-container);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   font-weight: 600;
 }
 .household-home-status-dot {
@@ -106,8 +106,8 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  font-size: 0.9375rem;
-  line-height: 1.5rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   color: var(--color-text-secondary);
 }
 .household-home-invite-btn {
@@ -120,8 +120,8 @@
   border-radius: 18px;
   background: var(--color-accent);
   color: var(--color-on-accent);
-  font-size: 0.9375rem;
-  line-height: 1.375rem;
+  font-size: var(--font-button-secondary);
+  line-height: var(--line-button-secondary);
   font-weight: 600;
   text-decoration: none;
   box-shadow: 0 6px 20px color-mix(in srgb, var(--color-accent) 22%, transparent);

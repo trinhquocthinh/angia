@@ -2,6 +2,15 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Khôi phục cỡ chữ trước khi dựng giao diện để tránh nháy chữ.
+      try {
+        document.documentElement.dataset.textSize =
+          localStorage.getItem('angia-large-text') === 'true' ? 'large' : 'standard';
+      } catch {
+        document.documentElement.dataset.textSize = 'standard';
+      }
+    </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <!-- viewport-fit=cover: khi mở như ứng dụng (PWA) giao diện phủ kín màn hình, env(safe-area-inset-*) có giá trị. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />

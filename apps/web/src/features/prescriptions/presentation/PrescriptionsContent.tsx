@@ -21,17 +21,17 @@ export function PrescriptionsContent({ profile, session, prescriptionId }: Props
         <Link
           to={prescriptionId ? '/profiles/$profileId/prescriptions' : '/profiles/$profileId/documents'}
           params={{ profileId: profile.id }}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-accent underline underline-offset-4"
+          className="inline-flex min-h-12 items-center text-button-secondary font-semibold text-accent underline underline-offset-4"
         >
           {prescriptionId ? 'Về chuỗi đơn thuốc' : 'Về Hồ sơ & Giấy tờ khám'}
         </Link>
-        <h2 className="mt-2 text-xl font-semibold text-accent">Chuỗi đơn thuốc</h2>
-        <p className="mt-2 text-sm text-text-secondary">
+        <h2 className="mt-2 text-heading-2 font-semibold text-accent">Chuỗi đơn thuốc</h2>
+        <p className="mt-2 text-caption text-text-secondary">
           Các đơn đã lưu theo thứ tự ngày kê, từ trước đến sau.
         </p>
       </div>
       {profile.consentStatus !== 'confirmed' ? (
-        <p role="alert" className="rounded-[20px] bg-surface p-6 text-sm">
+        <p role="alert" className="rounded-[20px] bg-surface p-6 text-body">
           Hồ sơ chưa được đồng ý lưu dữ liệu.
         </p>
       ) : chain.data ? (

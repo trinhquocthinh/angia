@@ -15,15 +15,15 @@
 }
 .household-member-danger-copy h2 {
   margin: 0;
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   font-weight: 600;
   color: var(--color-text-primary);
 }
 .household-member-danger-copy p {
   margin: 4px 0 0;
-  font-size: 0.9375rem;
-  line-height: 1.5rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   color: var(--color-text-secondary);
 }
 .household-member-danger-trigger {

@@ -9,15 +9,15 @@
   gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 16px;
-  font-size: 0.6875rem;
-  line-height: 0.875rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   color: var(--color-text-secondary);
 }
 .household-start-step .household-start-kicker {
   background: color-mix(in srgb, var(--color-secondary-container) 60%, transparent);
   color: var(--color-on-secondary-container);
-  font-size: 0.6875rem;
-  line-height: 0.875rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
 }
 .household-start-back {
   display: inline-flex;
@@ -30,8 +30,8 @@
   background: var(--color-surface);
   color: var(--color-secondary);
   box-shadow: var(--shadow-stitch-sm);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   font-weight: 600;
 }
 .household-start-back svg {
@@ -45,8 +45,8 @@
   display: none;
 }
 .household-create-heading h1 {
-  font-size: 1.5rem;
-  line-height: 2rem;
+  font-size: var(--font-heading-1);
+  line-height: var(--line-heading-1);
   color: var(--color-text-primary);
   margin-bottom: 4px;
 }
@@ -83,11 +83,11 @@
 }
 .household-start-form .household-create-submit {
   width: 100%;
-  min-height: 52px;
+  min-height: 56px;
   margin-top: 8px;
   border-radius: 12px;
-  font-size: 1.125rem;
-  line-height: 1.5rem;
+  font-size: var(--font-button-primary);
+  line-height: var(--line-button-primary);
   box-shadow: var(--shadow-stitch-md);
 }
 .household-create-submit svg {
@@ -116,14 +116,14 @@
   flex-direction: column;
 }
 .household-create-highlights strong {
-  font-size: 0.75rem;
-  line-height: 1rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   font-weight: 600;
   color: var(--color-text-primary);
 }
 .household-create-highlights small {
-  font-size: 0.6875rem;
-  line-height: 0.875rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   color: var(--color-text-secondary);
 }
 .household-create-footnote {
@@ -132,8 +132,8 @@
   justify-content: center;
   gap: 4px;
   margin-top: 24px;
-  font-size: 0.6875rem;
-  line-height: 0.875rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   color: var(--color-text-secondary);
 }
 .household-create-footnote .admin-icon {

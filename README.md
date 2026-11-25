@@ -93,25 +93,61 @@ nguyên. Các style `legal-update-*` và token màu riêng không đổi layout 
 khác. Tham chiếu Stitch: desktop `54449e0d704649b1be3c951e7bea9024`, mobile
 `86f7ce7d28c941db9f555b6e20d17a2a`.
 
-## Thanh điều hướng mobile — 2026-11-18
+## Điều hướng theo vai trò — E30-S1-T1 (2026-11-25)
 
-Owner duyệt mẫu Stitch `1b24d17804194ed298e3613ac5f4e5cc`:
-thanh đáy dưới 1024px giữ ba nhãn Trang chủ / Thêm mới / Chờ duyệt và các route
-hiện hành; Thêm mới dẫn thẳng `/upload`, không mở menu thao tác mẫu. Thành viên
-đã liên kết chỉ có Trang chủ / Hồ sơ của tôi; chưa có nhà, thành viên chưa liên
-kết và trang admin tiếp tục ẩn điều hướng theo quy tắc hiện hành.
+Chủ hộ và Đồng quản lý (`main`) có bốn mục: Hôm nay (`/`), Hồ sơ
+(`/?view=profiles`), Giấy tờ (`/review`), Nhà (`/family/home`). Thành viên
+(`member`) có Hôm nay, Hồ sơ của tôi (`/my-profile`), Nhà; áp dụng cả khi chưa
+liên kết hồ sơ. Chưa có nhà và trang `/admin` không có điều hướng gia đình.
+Điều hướng không thay thế kiểm tra quyền tại route/API.
 
-SVG 3D lưu tại `apps/web/public/icons/mobile-nav-*-3d.svg`, dùng cố định theo yêu cầu
-owner; đã bỏ SVG 2D, bộ chuyển kiểu và font riêng của bộ chọn. Giữ nền tab chuyển
-300ms, nhấn 200ms, icon tab nảy và halo 2 giây; reduced motion tắt chuyển động.
-Chữ tối thiểu 16px, vùng chạm tối thiểu 48px; footer chừa khoảng cho thanh đáy.
+Giấy tờ mở hàng chờ duyệt và có nút **Chụp / chọn ảnh** dẫn tới `/upload`.
+Huy hiệu sử dụng số giấy tờ từ các trang hàng chờ đã tải, không có số giả.
+Các màn con giữ mục cha được chọn; `/` phân biệt với `/?view=profiles`.
+
+Mobile dưới 768px dùng thanh đáy tối thiểu 64px + safe area, icon 28px kèm
+nhãn chữ; tablet 768–1023px dùng rail trái 88px. Desktop từ 1024px giữ nhóm
+điều hướng pill trong header bo tròn theo ảnh owner duyệt ngày 2026-11-25,
+**thay cho sidebar 240px trong Design §11.5 ban đầu**. Màu lấy từ token sáng/tối,
+vùng chạm tối thiểu 48px, footer chừa khoảng cho thanh đáy. Bộ điều hướng dùng
+chung nằm tại `apps/web/src/shared/layout/`.
+
+Menu tài khoản chỉ giữ lối điều hướng và thao tác tài khoản; lựa chọn nền
+sáng/tối/theo máy đặt tại `/account`, không lặp trong menu. Nút tài khoản desktop
+có padding 10px dọc, 16px ngang và khoảng cách tên/avatar 12px.
+
+Icon menu là PNG 3D alpha 40px; chuông thông báo 30px, không có tile/viền/nền
+riêng phía sau icon. Chuông rung một lần khi hiện và hai nhịp khi hover/focus;
+giảm chuyển động tắt hiệu ứng. Không có số thông báo giả. Nguồn và dẫn xuất
+ghi tại `apps/web/public/images/account-menu/SOURCES.md`.
+Menu dùng tên mục đậm và mô tả phụ một dòng: Nhà của tôi / Sổ sức khỏe gia đình;
+Hồ sơ của tôi / Thông tin & thẻ y tế; Quản lý tài khoản / Bảo mật & cài đặt;
+Đăng xuất / Rời phiên làm việc. Mục đang chọn có nền mint; hai dòng Đăng xuất
+dùng màu danger. Icon Hồ sơ là thẻ y tế vàng–mint, giữ nền alpha trong suốt.
 
 Kiểm tra trình duyệt bằng
 `yarn playwright test --config playwright.account.config.ts apps/web/e2e/mobileBottomNav.spec.ts`
-(build web trước), gồm hai nền, Chromium/WebKit, chữ 200%, liên kết và reduced
-motion. Phạm vi này chưa triển khai bộ bốn tab/rail/sidebar của E30-S1-T1 và chưa
-nghiệm thu SIT. `verify:fast` tại checkpoint bị metadata macOS `._*` chặn ở Vitest
-sau typecheck; không coi các kiểm tra riêng là cổng verify chính thức đã đạt.
+(build web trước): quyền, route đang chọn, lối tải ảnh, hai nền, Chromium/WebKit,
+360/768/1024/1440px và phóng chữ 200%. Chưa nghiệm thu SIT hoặc toàn bộ Epic 30.
+
+## Cỡ chữ Chuẩn / Chữ lớn — 2026-11-25
+
+Trong **Tài khoản → Cỡ chữ**, công tắc **Chữ lớn** mặc định tắt. Chuẩn dùng nội
+dung/ô nhập 16px, nhãn/tab 14px, nút chính 18px và h1 24px; bật Chữ lớn tương ứng
+18/16/20/26px. Lựa chọn lưu trên thiết bị bằng `angia-large-text`, dùng chung
+trong trình duyệt này, không gửi server. Storage bị chặn vẫn đổi được trong
+phiên. Hai nền sáng/tối dùng cùng thang chữ.
+
+Token tại `shared/styles/typography.css`; provider và tiện ích tại
+`shared/accessibility/`. Dùng utility ngữ nghĩa `text-body`, `text-caption`,
+`text-button-primary`, `text-button-secondary`, `text-heading-1`,
+`text-heading-2`, `text-display` thay cho cỡ chữ cứng. Biểu đồ đọc cỡ thực từ
+token; icon, ảnh, bản in A4 và vùng chạm giữ nguyên. Phóng chữ trình duyệt
+hoạt động độc lập; không đổi root font-size để thu nhỏ toàn giao diện.
+
+Kiểm tra: `yarn verify:fast`; sau build web chạy
+`yarn playwright test --config playwright.account.config.ts apps/web/e2e/textSize.spec.ts`.
+Kiểm component/modal và bản in bằng các bộ `uiFoundation.spec.ts`, `theme.spec.ts`.
 
 ## Quản trị hệ thống
 

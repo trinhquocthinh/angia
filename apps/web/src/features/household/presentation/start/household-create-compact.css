@@ -41,8 +41,8 @@
 .household-create-step {
   padding: 4px 12px;
   border-radius: 999px;
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   color: var(--color-on-secondary-container);
   background: color-mix(in srgb, var(--color-secondary-container) 50%, var(--color-surface));
 }
@@ -59,8 +59,8 @@
   box-shadow: var(--shadow-stitch-sm);
 }
 .household-create-compact .household-create-heading h1 {
-  font-size: 1.65rem;
-  line-height: 2.125rem;
+  font-size: var(--font-heading-1);
+  line-height: var(--line-heading-1);
 }
 .household-create-compact .household-start-form {
   position: static;

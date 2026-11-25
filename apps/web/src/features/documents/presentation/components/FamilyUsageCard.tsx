@@ -17,16 +17,16 @@ function UsageMeter({ label, value, used, limit }: Meter) {
   const [amount, cap] = value.split(' / ');
   return (
     <div className="flex min-w-0 flex-col justify-end gap-1.5">
-      <span className="text-xs leading-4 font-medium text-text-secondary">{label}</span>
+      <span className="text-caption font-medium text-text-secondary">{label}</span>
       {cap ? (
         <span className="flex flex-wrap items-baseline gap-x-1.5 tabular-nums">
-          <span className="auth-heading text-2xl leading-8 font-semibold text-text-primary sm:text-[28px]">
+          <span className="auth-heading text-heading-1 font-semibold text-text-primary sm:text-heading-1">
             {amount}
           </span>
-          <span className="text-xs leading-4 text-text-secondary">/ {cap}</span>
+          <span className="text-caption text-text-secondary">/ {cap}</span>
         </span>
       ) : (
-        <span className="text-sm leading-8 font-semibold text-text-primary">{value}</span>
+        <span className="text-caption font-semibold text-text-primary">{value}</span>
       )}
       <div
         role="progressbar"
@@ -104,7 +104,7 @@ export function FamilyUsageCard({
     >
       <h2
         id="family-usage-title"
-        className="flex items-center gap-1.5 text-lg leading-6 font-semibold text-text-primary"
+        className="flex items-center gap-1.5 text-heading-2 font-semibold text-text-primary"
       >
         <span className="text-accent">
           <DocumentIcon name="cloud" />
@@ -119,12 +119,10 @@ export function FamilyUsageCard({
         </div>
       )}
       {children && (
-        <div className="border-t border-border pt-3 text-[13px] leading-5 text-text-secondary">
-          {children}
-        </div>
+        <div className="border-t border-border pt-3 text-caption text-text-secondary">{children}</div>
       )}
       {reason && (
-        <p role="status" className="rounded-xl bg-danger-soft/60 p-3 text-sm text-danger">
+        <p role="status" className="rounded-xl bg-danger-soft/60 p-3 text-body text-danger">
           {reason}
         </p>
       )}

@@ -9,7 +9,7 @@ export function LabGroupChips({ groups }: { groups: LabGroup[] }) {
           <li key={group.id}>
             <a
               href={`#lab-group-${group.id}`}
-              className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm font-medium whitespace-nowrap text-accent shadow-sm hover:bg-accent-soft focus-visible:outline-2 focus-visible:outline-focus"
+              className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-caption font-medium whitespace-nowrap text-accent shadow-sm hover:bg-accent-soft focus-visible:outline-2 focus-visible:outline-focus"
             >
               {group.label}
             </a>

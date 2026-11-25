@@ -4,8 +4,8 @@ import { Link } from '@tanstack/react-router';
 export function SelfProfileEntry() {
   return (
     <section className="flex flex-col items-start gap-4 rounded-2xl bg-surface p-8">
-      <h2 className="auth-heading text-2xl text-accent">Hồ sơ của tôi</h2>
-      <p className="text-sm leading-7 text-text-secondary">
+      <h2 className="auth-heading text-heading-2 text-accent">Hồ sơ của tôi</h2>
+      <p className="text-caption text-text-secondary">
         Xem thuốc hôm nay, lịch hẹn và diễn biến của chính bạn. Người chăm sóc chính vẫn là người nhập và sửa
         dữ liệu.
       </p>

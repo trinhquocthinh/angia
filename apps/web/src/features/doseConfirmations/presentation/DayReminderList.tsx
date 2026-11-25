@@ -13,7 +13,7 @@ export function DayReminderList({
   session: ProfileSession;
 }) {
   if (reminders.length === 0)
-    return <p className="rounded-[20px] bg-surface p-6 text-sm">Hôm nay không có lời nhắc.</p>;
+    return <p className="rounded-[20px] bg-surface p-6 text-body">Hôm nay không có lời nhắc.</p>;
   return (
     <ul className="grid items-start gap-4 md:grid-cols-2">
       {reminders.map((reminder) => {
@@ -23,7 +23,7 @@ export function DayReminderList({
             <p className="font-semibold text-accent">
               {slot} · {time}
             </p>
-            <ul className="flex flex-col gap-1 text-sm break-words text-text-secondary">
+            <ul className="flex flex-col gap-1 text-caption break-words text-text-secondary">
               {reminder.medications.map((medication, index) => (
                 <li key={index}>{reminderMedicationLine(medication)}</li>
               ))}

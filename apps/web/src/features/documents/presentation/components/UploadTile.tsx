@@ -54,7 +54,7 @@ export function UploadTile({
         <TileStatus item={item} onRemove={onRemove} />
       </div>
       <div className="flex min-w-0 items-center justify-between gap-2 px-1 pb-1">
-        <span title={item.file.name} className="truncate font-mono text-[11px] text-text-primary">
+        <span title={item.file.name} className="truncate font-mono text-caption text-text-primary">
           {item.file.name}
         </span>
         <TileBadge status={item.status} />

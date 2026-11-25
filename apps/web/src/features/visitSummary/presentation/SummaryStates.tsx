@@ -10,7 +10,10 @@ export function SummaryStates({ loading, error, retry }: Props) {
     );
   if (error)
     return (
-      <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-danger-soft p-5 text-sm">
+      <div
+        role="alert"
+        className="flex flex-col items-start gap-3 rounded-[20px] bg-danger-soft p-5 text-caption"
+      >
         <p>Không tải được bản tóm tắt.</p>
         <button
           type="button"
@@ -23,8 +26,8 @@ export function SummaryStates({ loading, error, retry }: Props) {
     );
   return (
     <div className="rounded-[20px] border-2 border-dashed border-border bg-surface px-6 py-12 text-center">
-      <p className="text-sm font-semibold text-text-primary">Chưa đủ dữ liệu để kết xuất tóm tắt.</p>
-      <p className="mt-1 text-sm text-text-secondary">
+      <p className="text-body font-semibold text-text-primary">Chưa đủ dữ liệu để kết xuất tóm tắt.</p>
+      <p className="mt-1 text-caption text-text-secondary">
         Khoảng này chưa có thuốc, số đo, xét nghiệm, giai đoạn dùng thuốc hay ghi nhận đau nhức.
       </p>
     </div>

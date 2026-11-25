@@ -18,17 +18,17 @@ export function AddProfileTile() {
         </span>
       </span>
       <div className="flex max-w-xs flex-col gap-0.5 lg:gap-2">
-        <h2 className="text-lg leading-6 font-semibold text-text-primary lg:text-accent">
+        <h2 className="text-heading-2 font-semibold text-text-primary lg:text-accent">
           Tạo hồ sơ thành viên mới
         </h2>
-        <p className="text-[13px] leading-5 text-text-secondary lg:hidden">
+        <p className="text-caption text-text-secondary lg:hidden">
           Thêm người thân vào sổ tay chăm sóc gia đình
         </p>
-        <p className="hidden text-[15px] leading-6 text-text-secondary lg:block">
+        <p className="hidden text-caption text-text-secondary lg:block">
           Thêm ông bà, cha mẹ hoặc con nhỏ vào sổ gia đình để cùng chia sẻ và quản lý sức khỏe trọn vẹn.
         </p>
       </div>
-      <span className="mt-1 inline-flex h-10 items-center gap-1 rounded-full bg-surface px-5 text-xs font-semibold text-accent shadow-sm transition-all duration-200 lg:mt-8 lg:h-auto lg:rounded-xl lg:border lg:border-border/30 lg:px-8 lg:py-3 lg:text-sm lg:group-hover:bg-accent-hover lg:group-hover:text-on-accent">
+      <span className="mt-1 inline-flex h-10 items-center gap-1 rounded-full bg-surface px-5 text-caption font-semibold text-accent shadow-sm transition-all duration-200 lg:mt-8 lg:h-auto lg:rounded-xl lg:border lg:border-border/30 lg:px-8 lg:py-3 lg:text-caption lg:group-hover:bg-accent-hover lg:group-hover:text-on-accent">
         Thêm ngay
         <span className="lg:hidden">
           <AdminIcon name="chevron_right" size={16} />

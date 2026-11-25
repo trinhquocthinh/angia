@@ -25,7 +25,7 @@ export function DoseSlotPicker({ control, index, error, onChanged }: DoseSlotPic
           aria-describedby={error ? errorId : undefined}
           className="flex flex-col gap-2"
         >
-          <legend className="mb-2 text-sm font-medium text-text-secondary">Buổi dùng *</legend>
+          <legend className="mb-2 text-caption font-medium text-text-secondary">Buổi dùng *</legend>
           <div
             ref={field.ref}
             tabIndex={-1}
@@ -57,7 +57,7 @@ export function DoseSlotPicker({ control, index, error, onChanged }: DoseSlotPic
             ))}
           </div>
           {error && (
-            <p id={errorId} className="text-sm text-danger">
+            <p id={errorId} className="text-body text-danger">
               {error}
             </p>
           )}

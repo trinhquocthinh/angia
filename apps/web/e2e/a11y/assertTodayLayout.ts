@@ -18,7 +18,8 @@ export async function assertTodayLayout(page: Page) {
               (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
             ) &&
             element.getClientRects().length > 0 &&
-            parseFloat(getComputedStyle(element).fontSize) < 16,
+            parseFloat(getComputedStyle(element).fontSize) <
+              (document.documentElement.dataset.textSize === 'large' ? 16 : 14),
         )
         .map((element) => element.textContent),
     );

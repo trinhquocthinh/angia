@@ -26,14 +26,16 @@ export function ReminderSettings({
         <Link
           to="/profiles/$profileId/medications"
           params={{ profileId: profile.id }}
-          className="min-h-11 self-start content-center text-sm font-semibold text-accent"
+          className="min-h-12 self-start content-center text-button-secondary font-semibold text-accent"
         >
           ← Thuốc điều trị của {profile.displayName}
         </Link>
-        <h1 className="auth-heading text-2xl font-semibold tracking-tight text-text-primary">Nhắc thuốc</h1>
+        <h1 className="auth-heading text-heading-1 font-semibold tracking-tight text-text-primary">
+          Nhắc thuốc
+        </h1>
       </div>
       {profile.consentStatus !== 'confirmed' ? (
-        <p role="alert" className="rounded-[20px] bg-surface p-6 text-sm">
+        <p role="alert" className="rounded-[20px] bg-surface p-6 text-body">
           Hồ sơ chưa được đồng ý lưu dữ liệu.
         </p>
       ) : (

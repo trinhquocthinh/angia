@@ -13,11 +13,11 @@ export function ReminderDetailCard({ reminder, session }: { reminder: MyReminder
       className="flex flex-col gap-4 rounded-[20px] bg-surface p-5 shadow-[0_1px_2px_color-mix(in_srgb,var(--color-shadow)_4%,transparent)] lg:p-6"
     >
       <div className="flex flex-col gap-1">
-        <p className="text-xs font-semibold tracking-wide text-accent uppercase">Hồ sơ</p>
-        <h2 id="reminder-profile" className="text-lg font-semibold break-words text-text-primary">
+        <p className="text-body font-semibold tracking-wide text-accent uppercase">Hồ sơ</p>
+        <h2 id="reminder-profile" className="text-heading-2 font-semibold break-words text-text-primary">
           {reminder.profileName}
         </h2>
-        <p className="text-sm text-text-secondary tabular-nums">
+        <p className="text-caption text-text-secondary tabular-nums">
           {`${schedule.slot} · ${schedule.date} · ${schedule.time}`}
         </p>
       </div>
@@ -25,7 +25,7 @@ export function ReminderDetailCard({ reminder, session }: { reminder: MyReminder
         {reminder.medications.map((medication, index) => (
           <li
             key={`${index}-${medication.name}`}
-            className="rounded-xl bg-bg px-4 py-3 text-base leading-snug break-words text-text-primary"
+            className="rounded-xl bg-bg px-4 py-3 text-body break-words text-text-primary"
           >
             {reminderMedicationLine(medication)}
           </li>

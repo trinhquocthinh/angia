@@ -18,7 +18,7 @@ export function BodyMapRegionButton({ item, active, tracking, onSelect }: Props)
       aria-pressed={active}
       title={label}
       style={{ left: `${((mirrored ? 320 - x : x) / 320) * 100}%`, top: y }}
-      className={`absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-lg border p-0.5 text-[10px] leading-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${active ? 'border-accent bg-accent-soft' : 'border-border bg-surface'}`}
+      className={`absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-lg border p-0.5 text-button-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${active ? 'border-accent bg-accent-soft' : 'border-border bg-surface'}`}
       onClick={() => onSelect({ region, side })}
     >
       <span aria-hidden="true">{bodyRegions[region].label.split(',')[0]}</span>

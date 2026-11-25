@@ -23,7 +23,7 @@ describe('Trình bày liều hôm nay (SPEC-079)', () => {
     expect(html).toContain('Thuốc trong lời nhắc');
     expect(html).toContain('Đã dùng');
     expect(html).toContain('min-h-14');
-    expect(html).toContain('text-xl');
+    expect(html).toContain('text-button-primary');
     client.clear();
   });
   it('TC-853: đã xác nhận hiện tên và giờ máy chủ, có hủy theo quyền', () => {

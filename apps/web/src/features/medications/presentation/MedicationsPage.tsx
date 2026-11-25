@@ -38,10 +38,10 @@ function MedicationsContent({ profile, session }: { profile: ProfileListItem; se
         }
       />
       <div className="rounded-xl bg-surface px-5 py-4 shadow-sm">
-        <h2 className="text-lg font-semibold text-accent">Thuốc đang dùng hôm nay</h2>
+        <h2 className="text-heading-2 font-semibold text-accent">Thuốc đang dùng hôm nay</h2>
       </div>
       {profile.consentStatus !== 'confirmed' ? (
-        <p role="alert" className="rounded-[20px] bg-surface p-6 text-sm">
+        <p role="alert" className="rounded-[20px] bg-surface p-6 text-body">
           Hồ sơ chưa được đồng ý lưu dữ liệu.
         </p>
       ) : (

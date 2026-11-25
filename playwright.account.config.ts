@@ -8,6 +8,8 @@ export default defineConfig({
   testMatch: [
     '**/loginClayIcons.spec.ts',
     '**/mobileBottomNav.spec.ts',
+    '**/textSize.spec.ts',
+    '**/accountMenuIcons.spec.ts',
     '**/account.spec.ts',
     '**/householdStart.spec.ts',
     '**/householdInvitations.spec.ts',

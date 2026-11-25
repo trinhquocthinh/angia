@@ -52,7 +52,7 @@ export function SegmentedToggle<T extends string | number>({
           type="button"
           aria-pressed={value === option.value}
           onClick={() => onChange(option.value)}
-          className="relative min-h-11 rounded-lg px-4 text-sm font-medium text-text-secondary transition-colors hover:text-text-primary aria-pressed:font-semibold aria-pressed:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          className="relative min-h-11 rounded-lg px-4 text-caption font-medium text-text-secondary transition-colors hover:text-text-primary aria-pressed:font-semibold aria-pressed:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         >
           {option.label}
         </button>

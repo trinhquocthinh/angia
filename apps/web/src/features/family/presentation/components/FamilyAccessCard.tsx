@@ -2,7 +2,7 @@ import { AdminCardHeading } from './AdminCardHeading';
 import { AdminIcon } from './AdminIcon';
 
 const TILE = 'flex flex-col gap-1.5 rounded-xl bg-accent-soft/70 p-4';
-const TITLE = 'flex items-center gap-1.5 text-xs leading-4 font-semibold text-accent';
+const TITLE = 'flex items-center gap-1.5 text-caption font-semibold text-accent';
 
 // BR-003, BR-007: chỉ nêu quy tắc đang được hệ thống cưỡng chế.
 export function FamilyAccessCard() {
@@ -14,7 +14,7 @@ export function FamilyAccessCard() {
           <p className={`m-0 ${TITLE}`}>
             <AdminIcon name="verified_user" size={16} /> Quản trị chính
           </p>
-          <p className="m-0 text-[13px] leading-5 text-text-secondary">
+          <p className="m-0 text-caption text-text-secondary">
             Tài khoản đầu tiên của nhóm phải là Quản trị chính. Nhóm luôn cần ít nhất một Quản trị chính để
             quản lý các thành viên.
           </p>
@@ -23,7 +23,7 @@ export function FamilyAccessCard() {
           <p className={`m-0 ${TITLE}`}>
             <AdminIcon name="admin_panel_settings" size={16} /> Quản trị hệ thống
           </p>
-          <p className="m-0 text-[13px] leading-5 text-text-secondary">
+          <p className="m-0 text-caption text-text-secondary">
             Chỉ tạo nhóm, gán tài khoản và đặt vai trò. Không đọc được dữ liệu sức khỏe của gia đình khác.
           </p>
         </div>

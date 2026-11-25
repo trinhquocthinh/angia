@@ -12,11 +12,11 @@ type Props<T> = {
 export function ReminderSettingSection<T>({ title, query, loadingText, children }: Props<T>) {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
+      <h2 className="text-heading-2 font-semibold text-text-primary">{title}</h2>
       {query.isPending ? (
-        <p className="rounded-xl bg-surface p-6 text-sm text-text-secondary">{loadingText}</p>
+        <p className="rounded-xl bg-surface p-6 text-caption text-text-secondary">{loadingText}</p>
       ) : query.isError ? (
-        <p role="alert" className="rounded-xl bg-surface p-6 text-sm">
+        <p role="alert" className="rounded-xl bg-surface p-6 text-body">
           {query.error.message}{' '}
           <button
             type="button"

@@ -20,7 +20,7 @@ export function TodayProfiles({ session, profiles }: Props) {
         <TodaySelf key={ownId} session={session} />
       ) : profile ? (
         <section className="flex flex-col gap-4">
-          <h2 className="text-[22px] leading-[30px] font-semibold break-words">{profile.displayName}</h2>
+          <h2 className="text-heading-2 font-semibold break-words">{profile.displayName}</h2>
           <TodayDoses key={profile.id} session={session} target={{ kind: 'profile', profile }} />
         </section>
       ) : (

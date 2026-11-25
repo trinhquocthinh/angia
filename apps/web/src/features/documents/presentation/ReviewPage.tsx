@@ -14,6 +14,7 @@ import { ReviewDetail } from './components/ReviewDetail';
 import { ReviewNotice } from './components/ReviewNotice';
 import { ReviewQueue } from './components/ReviewQueue';
 import { UploadedNotice } from './components/UploadedNotice';
+import { DocumentUploadLink } from './components/DocumentUploadLink';
 
 const profilesRepository = createProfilesRepository();
 const reviewRepository = createReviewRepository();
@@ -32,6 +33,7 @@ export function ReviewPage({ documentId = null }: { documentId?: string | null }
   const documents = queue.data?.pages.flatMap((page) => page.items) ?? [];
   return (
     <ProfileFrame session={session.data} profiles={main ? profiles : []} logout={workspace.logout}>
+      {main && <DocumentUploadLink />}
       <UploadedNotice />
       {deleted && <DeletedDocumentNotice />}
       {main ? (

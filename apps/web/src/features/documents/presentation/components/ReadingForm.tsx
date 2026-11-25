@@ -60,7 +60,7 @@ export function ReadingForm({ payload, manual = false, pending, error, onSubmit 
         <ReadingKindPicker register={form.register('kind')} />
         <ReadingValueFields kind={kind} register={form.register} errors={errors} flagged={outOfRange} />
         {payload === null && !manual && (
-          <p className="text-sm text-text-secondary">
+          <p className="text-caption text-text-secondary">
             Chưa có dữ liệu tự động nhận diện, vui lòng nhập theo ảnh.
           </p>
         )}
@@ -69,7 +69,7 @@ export function ReadingForm({ payload, manual = false, pending, error, onSubmit 
         <OutOfRangeConfirm fields={outOfRange} confirmed={confirmed} onConfirm={setConfirmed} />
       )}
       {otherError && (
-        <p role="alert" className="rounded-2xl bg-danger-soft p-4 text-sm text-danger">
+        <p role="alert" className="rounded-2xl bg-danger-soft p-4 text-body text-danger">
           {otherError}
         </p>
       )}
