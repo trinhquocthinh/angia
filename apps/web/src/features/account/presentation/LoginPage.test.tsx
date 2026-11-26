@@ -14,6 +14,8 @@ it('có form local, liên kết công khai và lỗi OIDC ngay dưới nút', ()
       <LoginPage hasAuthError />
     </QueryClientProvider>,
   );
+  expect(html).toContain('Tên đăng nhập hoặc email');
+  expect(html).toContain('placeholder="Nhập tên đăng nhập hoặc email đã xác minh"');
   expect(html).toContain('autoComplete="username"');
   expect(html).toContain('autoComplete="current-password"');
   expect(html).toContain('aria-busy="false"');

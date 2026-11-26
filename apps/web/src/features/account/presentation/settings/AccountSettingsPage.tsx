@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
   ENROLL_LATER_KEY,
   ENROLL_REAUTH_KEY,
+  PASSWORD_RESET_BY_KEY,
   RESTRICTED_CSRF_KEY,
   writeAccountStorage,
 } from '@src/features/account/application/accountSessionStorage';
@@ -36,6 +37,7 @@ export function AccountSettingsPage() {
         }}
         onAccountDeleted={async () => {
           writeAccountStorage(RESTRICTED_CSRF_KEY, null);
+          writeAccountStorage(PASSWORD_RESET_BY_KEY, null);
           writeAccountStorage(ENROLL_LATER_KEY, null);
           writeAccountStorage(ENROLL_REAUTH_KEY, null);
           await client.cancelQueries();
