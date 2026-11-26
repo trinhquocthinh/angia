@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { ProfileSectionIcon } from '@src/features/profiles/presentation/components/ProfileSectionIcon';
 import type { SourceDocument } from '../../application/reviewPorts';
 import { documentImageUrl } from '../../infrastructure/createReviewRepository';
 import { DocumentIcon } from './DocumentIcon';
@@ -6,10 +8,11 @@ import { DocumentImageFullscreen } from './DocumentImageFullscreen';
 import { DocumentImageViewer } from './DocumentImageViewer';
 
 const sizeLabel = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1).replace('.', ',')} MB`;
+
 function ImageNotice({ text }: { text: string }) {
   return (
-    <div className="flex min-h-48 flex-1 items-center justify-center rounded-xl bg-accent-soft">
-      <div className="flex max-w-xs flex-col items-center gap-3 p-6 text-center text-sm text-text-secondary">
+    <div className="flex min-h-48 flex-1 items-center justify-center rounded-2xl bg-accent-soft/80">
+      <div className="flex max-w-xs flex-col items-center gap-3 p-6 text-center text-caption text-text-secondary">
         <DocumentIcon name="image" size={40} />
         <p>{text}</p>
       </div>
@@ -33,14 +36,19 @@ export function DocumentImagePanel({ document }: { document: SourceDocument }) {
   return (
     <section
       aria-label="Hình chụp giấy tờ"
-      className="flex flex-col gap-2 overflow-hidden rounded-[20px] bg-surface p-3 shadow-card xl:sticky xl:top-[88px] xl:h-[calc(100dvh-104px)] xl:self-start"
+      className="review-image-panel flex flex-col gap-3 overflow-hidden rounded-3xl bg-surface p-3.5 shadow-card"
     >
       <div className="flex items-center justify-between gap-2 px-1 text-text-secondary">
-        <span className="flex items-center gap-1.5 text-[13px] font-semibold text-accent">
-          <DocumentIcon name="image" size={16} /> Hình chụp giấy tờ
+        <span className="flex items-center gap-2 text-body font-semibold text-accent">
+          <span className="doc-clay-tile-sm" aria-hidden="true">
+            <ProfileSectionIcon name="folder_open" size={24} />
+          </span>
+          Hình chụp giấy tờ
         </span>
         {document.hasImage && (
-          <span className="text-xs font-medium tabular-nums">JPG · {sizeLabel(document.sizeBytes)}</span>
+          <span className="rounded-lg bg-surface-container px-2.5 py-1 text-caption font-semibold tabular-nums text-text-secondary">
+            JPG · {sizeLabel(document.sizeBytes)}
+          </span>
         )}
       </div>
       {!document.hasImage ? (
@@ -51,9 +59,9 @@ export function DocumentImagePanel({ document }: { document: SourceDocument }) {
         <DocumentImageViewer {...viewerProps} onExpand={() => setExpanded(true)} />
       )}
       {document.hasImage && (
-        <p className="flex items-center gap-1.5 px-1 text-xs text-text-secondary">
+        <p className="flex items-center gap-2 rounded-xl bg-accent-soft/75 px-3 py-2 text-caption text-text-secondary">
           <span className="text-accent">
-            <DocumentIcon name="shield" size={16} />
+            <AdminIcon name="shield" size={16} />
           </span>
           Đây là bản đã che. AN GIA không lưu ảnh chưa che.
         </p>

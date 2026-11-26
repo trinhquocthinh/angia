@@ -29,11 +29,11 @@ export function RejectedFiles({
             <DocumentIcon name="warning" size={18} />
           </span>
           <div>
-            <p className="text-sm font-bold text-danger">
+            <p className="text-body font-bold text-danger">
               {rejected.length} tệp không nhận được
               {validCount > 0 && ` · ${validCount} ảnh còn lại vẫn được tải bình thường`}
             </p>
-            <p className="mt-0.5 text-[13px] leading-5 text-text-secondary">
+            <p className="mt-0.5 text-caption text-text-secondary">
               Các tệp này không được gửi đi. Chụp lại hoặc chọn ảnh khác nếu cần.
             </p>
           </div>
@@ -51,13 +51,13 @@ export function RejectedFiles({
         {rejected.map((item) => (
           <li
             key={item.id}
-            className="flex flex-wrap items-center gap-2 rounded-lg bg-surface/80 px-3 py-2 text-[13px]"
+            className="flex flex-wrap items-center gap-2 rounded-lg bg-surface/80 px-3 py-2 text-body"
           >
             <span className="text-danger">
               <DocumentIcon name="file" size={18} />
             </span>
             <span className="min-w-0 break-all font-medium text-text-primary">{item.file.name}</span>
-            <span className="rounded-full bg-danger-soft px-2 py-0.5 text-[11px] font-medium text-danger">
+            <span className="rounded-full bg-danger-soft px-2 py-0.5 text-caption font-medium text-danger">
               {reason(item)}
             </span>
           </li>

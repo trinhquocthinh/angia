@@ -5,8 +5,8 @@
   align-items: center;
   justify-content: center;
   color: var(--color-login-ink);
-  font-size: 16px;
-  line-height: 1.6;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .verify-state {
   display: flex;
@@ -114,15 +114,15 @@
 .verify-title {
   margin-bottom: 12px;
   font-family: 'Newsreader', serif;
-  font-size: 32px;
+  font-size: var(--font-heading-1);
   font-weight: 600;
-  line-height: 1.2;
+  line-height: var(--line-heading-1);
   color: var(--color-login-ink);
 }
 .verify-pending-title {
-  font-size: 18px;
+  font-size: var(--font-heading-2);
   font-weight: 600;
-  line-height: 1.5;
+  line-height: var(--line-heading-2);
   color: var(--color-login-ink);
 }
 .verify-status {
@@ -229,7 +229,8 @@
 }
 @media (max-width: 767px) {
   .verify-title {
-    font-size: 30px;
+    font-size: var(--font-heading-1);
+    line-height: var(--line-heading-1);
   }
 }
 @media (prefers-reduced-motion: reduce) {

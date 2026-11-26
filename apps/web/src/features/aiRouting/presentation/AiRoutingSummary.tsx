@@ -6,8 +6,7 @@ const formatTime = new Intl.DateTimeFormat('vi-VN', {
   timeStyle: 'short',
   timeZone: 'Asia/Ho_Chi_Minh',
 });
-const ROW =
-  'flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-xl bg-accent-soft/70 px-3 py-2.5';
+const ROW = 'rounded-2xl border border-border/35 bg-bg px-3.5 py-3';
 export function AiRoutingSummary({
   view,
   updatedByName,
@@ -17,22 +16,38 @@ export function AiRoutingSummary({
 }) {
   const models = view.settings.openrouter;
   return (
-    <div className="grid gap-2">
-      <div className="flex items-center justify-between gap-2 text-xs">
+    <div className="grid gap-3">
+      <div className="flex items-center justify-between gap-2 text-caption">
         <span className="text-text-secondary">Nhà cung cấp đã lưu</span>
-        <span className="font-semibold text-accent">OpenRouter</span>
+        <span className="rounded-full bg-accent-soft px-2.5 py-0.5 font-semibold text-accent">
+          OpenRouter
+        </span>
       </div>
-      <dl className="m-0 grid gap-2 text-[13px] leading-5">
+      <dl className="m-0 grid gap-2.5 text-caption">
         <div className={ROW}>
-          <dt className="text-xs text-text-secondary">Model chính</dt>
-          <dd className="m-0 font-medium text-text-primary">{AI_MODEL_LABELS[models.primaryModel]}</dd>
+          <dt className="flex items-center gap-3 text-caption text-text-secondary">
+            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-surface text-caption font-semibold text-accent shadow-2xs">
+              1
+            </span>
+            Model chính
+          </dt>
+          <dd className="m-0 pl-11 font-semibold text-text-primary [overflow-wrap:anywhere]">
+            {AI_MODEL_LABELS[models.primaryModel]}
+          </dd>
         </div>
         <div className={ROW}>
-          <dt className="text-xs text-text-secondary">Dự phòng</dt>
-          <dd className="m-0 font-medium text-text-primary">{AI_MODEL_LABELS[models.fallbackModel]}</dd>
+          <dt className="flex items-center gap-3 text-caption text-text-secondary">
+            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-surface text-caption font-semibold text-text-secondary shadow-2xs">
+              2
+            </span>
+            Dự phòng
+          </dt>
+          <dd className="m-0 pl-11 font-semibold text-text-primary [overflow-wrap:anywhere]">
+            {AI_MODEL_LABELS[models.fallbackModel]}
+          </dd>
         </div>
       </dl>
-      <p className="m-0 text-xs leading-[18px] text-text-secondary">
+      <p className="m-0 text-caption text-text-secondary tabular-nums">
         {view.updatedAt
           ? `${formatTime.format(new Date(view.updatedAt))} · ${updatedByName ?? 'Tài khoản quản trị'}`
           : 'Chưa có lần lưu nào.'}

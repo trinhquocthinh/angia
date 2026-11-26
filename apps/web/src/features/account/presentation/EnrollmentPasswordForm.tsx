@@ -35,7 +35,7 @@ export function EnrollmentPasswordForm({
   return (
     <form onSubmit={submit} aria-busy={busy}>
       <fieldset disabled={busy} className="flex flex-col gap-6">
-        <p className="flex items-center gap-2 text-base text-success">
+        <p className="flex items-center gap-2 text-body text-success">
           <svg
             aria-hidden="true"
             width="24"

@@ -62,8 +62,8 @@
   gap: 8px;
 }
 .household-choice-title strong {
-  font-size: 1.125rem;
-  line-height: 1.5rem;
+  font-size: var(--font-heading-2);
+  line-height: var(--line-heading-2);
   font-weight: 600;
 }
 .household-start-choice-primary strong {
@@ -76,8 +76,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.8125rem;
-  line-height: 1.25rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   color: var(--color-text-secondary);
 }
 @media (hover: hover) and (pointer: fine) {

@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { DocumentIcon } from './DocumentIcon';
 
 type UploadActionsProps = {
@@ -24,24 +25,24 @@ export function UploadActions({ summary, profileChosen, onSubmit }: UploadAction
         ? 'Chọn hồ sơ ở mục “Của ai?” trước khi gửi.'
         : 'Ảnh chỉ được gửi khi bấm “Xong”; trước đó bạn có thể bỏ bớt ảnh.';
   return (
-    <div className="flex flex-col items-center justify-between gap-4 rounded-2xl bg-surface p-4 shadow-sm sm:flex-row">
+    <div className="doc-bento-card flex flex-col items-center justify-between gap-4 p-4 sm:flex-row sm:p-5">
       <div className="flex w-full min-w-0 items-center gap-3 sm:flex-1">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
-          <DocumentIcon name="shield" />
+        <span className="doc-clay-tile-sm text-accent" aria-hidden="true">
+          <AdminIcon name="shield" size={20} />
         </span>
         <div>
-          <p className="text-[13px] leading-5 font-semibold text-text-primary">
+          <p className="text-body font-semibold text-text-primary">
             {sending ? 'Đang gửi ảnh' : 'Ảnh được che và nén trên máy rồi gửi cùng một lô'}
           </p>
-          <p className="text-[13px] leading-5 text-text-secondary" aria-live="polite">
+          <p className="text-caption text-text-secondary" aria-live="polite">
             {hint}
           </p>
         </div>
       </div>
-      <div className="flex w-full flex-col-reverse items-stretch gap-2 sm:w-auto sm:shrink-0 sm:flex-row sm:items-center">
+      <div className="flex w-full flex-col-reverse items-stretch gap-2.5 sm:w-auto sm:shrink-0 sm:flex-row sm:items-center">
         <Link
           to="/"
-          className="flex min-h-12 shrink-0 items-center justify-center whitespace-nowrap rounded-xl px-6 text-sm font-semibold text-text-secondary transition-colors hover:bg-accent-soft hover:text-text-primary motion-reduce:transition-none"
+          className="flex min-h-btn shrink-0 items-center justify-center whitespace-nowrap rounded-2xl bg-surface-container px-6 text-button-secondary font-semibold text-text-secondary transition-colors hover:bg-accent-soft hover:text-accent motion-reduce:transition-none"
         >
           Hủy bỏ
         </Link>
@@ -49,7 +50,7 @@ export function UploadActions({ summary, profileChosen, onSubmit }: UploadAction
           type="button"
           disabled={sending || unredacted > 0 || summary.ready === 0 || !profileChosen}
           onClick={onSubmit}
-          className="group flex min-h-12 w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-accent px-6 text-sm font-semibold text-on-accent shadow-sm transition-[background-color,box-shadow,opacity,scale] duration-200 enabled:hover:bg-accent-hover enabled:hover:shadow-md enabled:active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-55 motion-reduce:transition-none motion-reduce:enabled:active:scale-100 sm:w-auto"
+          className="group flex min-h-btn w-full items-center justify-center gap-2 whitespace-nowrap rounded-2xl bg-accent px-6 text-button-primary font-semibold text-on-accent shadow-stitch-sm transition-[background-color,box-shadow,opacity,scale] duration-200 enabled:hover:bg-accent-hover enabled:hover:shadow-stitch-md enabled:active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-55 motion-reduce:transition-none motion-reduce:enabled:active:scale-100 sm:w-auto"
         >
           {label}{' '}
           {sending ? (

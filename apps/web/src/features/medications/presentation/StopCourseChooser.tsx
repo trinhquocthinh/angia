@@ -10,7 +10,7 @@ type Props = {
   error: string | null;
   onSelect: (id: string) => void;
 };
-const notice = 'rounded-xl p-4 text-sm leading-6';
+const notice = 'rounded-xl p-4 text-body ';
 
 // SPEC-017: không chọn sẵn đợt; chưa chọn thì hiện trạng thái rỗng viền đứt (Stitch f29c92d0).
 export function StopCourseChooser({ courses, list, selected, selectedId, pending, error, onSelect }: Props) {
@@ -51,8 +51,8 @@ export function StopCourseChooser({ courses, list, selected, selectedId, pending
 function EmptyBox({ title, body }: { title: string; body?: string }) {
   return (
     <div className="rounded-2xl border-2 border-dashed border-border bg-bg px-4 py-8 text-center">
-      <p className="text-sm font-semibold text-text-primary">{title}</p>
-      {body && <p className="mx-auto mt-1 max-w-xs text-xs text-text-secondary">{body}</p>}
+      <p className="text-body font-semibold text-text-primary">{title}</p>
+      {body && <p className="mx-auto mt-1 max-w-xs text-caption text-text-secondary">{body}</p>}
     </div>
   );
 }

@@ -23,7 +23,7 @@ export function ProfileGuardiansPageContent({ profile, session, repository }: Pr
           {...(repository ? { repository } : {})}
         />
       ) : (
-        <p role="alert" className="rounded-[20px] bg-surface p-6 text-sm">
+        <p role="alert" className="rounded-[20px] bg-surface p-6 text-body">
           Hồ sơ này không cần người giám hộ.
         </p>
       )}

@@ -9,7 +9,7 @@ type Props = {
 export function FormAlert({ message, className, icon }: Props) {
   if (!message) return null;
   return (
-    <p role="alert" className={className ?? 'flex items-start gap-2 text-base leading-6 text-danger'}>
+    <p role="alert" className={className ?? 'flex items-start gap-2 text-body text-danger'}>
       {icon ?? (
         <svg
           aria-hidden="true"

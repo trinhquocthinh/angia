@@ -7,18 +7,18 @@ export function SessionStatus(props: Props) {
   return (
     <AuthLayout>
       {props.state === 'loading' ? (
-        <p role="status" className="flex items-center justify-center gap-3 text-base text-text-secondary">
+        <p role="status" className="flex items-center justify-center gap-3 text-body text-text-secondary">
           <AuthSpinner /> Đang kiểm tra trạng thái đăng nhập…
         </p>
       ) : (
         <div className="flex flex-col gap-6 text-center">
-          <p role="alert" className="text-base leading-7 text-danger">
+          <p role="alert" className="text-body text-danger">
             Không thể kết nối. Vui lòng thử lại.
           </p>
           <button
             type="button"
             onClick={props.onRetry}
-            className="min-h-[52px] rounded-xl bg-accent px-4 py-3 font-semibold text-on-accent hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+            className="min-h-[46px] rounded-xl bg-accent px-4 py-3 font-semibold text-on-accent hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
           >
             Thử lại
           </button>

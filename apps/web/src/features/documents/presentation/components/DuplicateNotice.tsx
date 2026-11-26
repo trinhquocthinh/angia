@@ -21,7 +21,7 @@ export function DuplicateNotice({ duplicate, type, pending, onConfirm }: Duplica
       >
         <DocumentIcon name="warning" size={16} />
       </span>
-      <div className="flex min-w-0 flex-1 flex-col gap-2 text-sm leading-6">
+      <div className="flex min-w-0 flex-1 flex-col gap-2 text-caption ">
         <p>
           <strong className="font-semibold">Giấy tờ này có vẻ đã được lưu trước đó</strong> —{' '}
           {describeDuplicate(duplicate, type)}.
@@ -30,7 +30,7 @@ export function DuplicateNotice({ duplicate, type, pending, onConfirm }: Duplica
           type="button"
           disabled={pending}
           onClick={onConfirm}
-          className="min-h-11 self-start rounded-lg bg-warning px-4 text-sm font-semibold text-on-accent disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning"
+          className="min-h-12 self-start rounded-lg bg-warning px-4 text-button-secondary font-semibold text-on-accent disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning"
         >
           {pending ? 'Đang lưu…' : 'Vẫn lưu bản này'}
         </button>

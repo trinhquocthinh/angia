@@ -64,8 +64,8 @@
   color: var(--color-danger);
 }
 .login-feature h3 {
-  font-size: 16px;
-  line-height: 24px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   font-weight: 600;
 }
 .login-feature p {
@@ -95,8 +95,8 @@
   .login-feature p {
     display: block;
     margin-top: 3px;
-    font-size: 16px;
-    line-height: 24px;
+    font-size: var(--font-body);
+    line-height: var(--line-body);
     color: var(--color-login-muted);
   }
 }

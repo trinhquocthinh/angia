@@ -1,8 +1,25 @@
 import { Link } from '@tanstack/react-router';
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import type { HealthProfile } from '@src/features/profiles/application/ports';
 import { ChoiceChip } from './ChoiceChip';
-import { DocumentIcon } from './DocumentIcon';
 import { PickerCard } from './PickerCard';
+
+function ProfileChipMark({ selected, name }: { selected: boolean; name: string }) {
+  if (selected)
+    return (
+      <span className="angia-modal-pop text-on-accent">
+        <AdminIcon name="check_circle" size={18} />
+      </span>
+    );
+  return (
+    <span
+      className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface text-caption font-bold text-accent"
+      aria-hidden="true"
+    >
+      {name.slice(0, 1)}
+    </span>
+  );
+}
 
 // BR-009: chỉ hồ sơ đã đồng thuận mới chọn được; hồ sơ khác hiển thị mờ kèm lý do.
 export function ProfilePicker({
@@ -18,9 +35,9 @@ export function ProfilePicker({
 }) {
   const waiting = profiles.filter((profile) => profile.consentStatus !== 'confirmed');
   return (
-    <PickerCard icon="family" title="Của ai?" hint="Bắt buộc" required>
+    <PickerCard icon="supervisor_account" title="Của ai?" hint="Bắt buộc" required>
       {profiles.length === 0 && (
-        <p className="text-sm text-text-secondary">
+        <p className="text-caption text-text-secondary">
           Chưa có hồ sơ.{' '}
           <Link to="/profiles/new" className="font-semibold text-accent underline">
             Tạo hồ sơ
@@ -38,20 +55,14 @@ export function ProfilePicker({
             disabled={!ready || locked}
             onClick={() => onSelect(profile.id)}
           >
-            {selected ? (
-              <span className="angia-modal-pop text-accent-soft">
-                <DocumentIcon name="checkCircle" size={16} />
-              </span>
-            ) : (
-              <span className="h-2 w-2 rounded-full bg-border" aria-hidden="true" />
-            )}
+            <ProfileChipMark selected={selected} name={profile.displayName} />
             <span className="break-words">{profile.displayName}</span>
             {!ready && <span className="font-normal">· chưa xác nhận</span>}
           </ChoiceChip>
         );
       })}
       {waiting.length > 0 && (
-        <p className="w-full text-xs leading-5 text-text-secondary">
+        <p className="w-full text-caption text-text-secondary">
           Hồ sơ chưa có xác nhận cần gửi link mời ở{' '}
           <Link to="/" className="font-semibold text-accent underline">
             Trang chủ

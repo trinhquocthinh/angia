@@ -2,7 +2,7 @@ export function BirthYearReminder({ onEdit }: { onEdit: () => void }) {
   return (
     <div
       role="status"
-      className="flex flex-1 flex-wrap items-center justify-between gap-3 rounded-xl bg-accent-soft px-4 py-3 text-sm text-accent"
+      className="flex flex-1 flex-wrap items-center justify-between gap-3 rounded-xl bg-accent-soft px-4 py-3 text-caption text-accent"
     >
       <p>Bổ sung năm sinh để AN GIA hiển thị đúng mục theo độ tuổi.</p>
       <button

@@ -26,8 +26,8 @@
 }
 .household-members-rail-title h2 {
   margin: 0;
-  font-size: 1.125rem;
-  line-height: 1.5rem;
+  font-size: var(--font-heading-2);
+  line-height: var(--line-heading-2);
   font-weight: 600;
   color: var(--color-text-primary);
 }
@@ -36,8 +36,8 @@
   border-radius: 999px;
   background: var(--color-surface-container);
   color: var(--color-text-secondary);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   font-weight: 500;
 }
 .household-members-list {
@@ -60,8 +60,8 @@
 }
 .household-members-empty-title {
   margin: 0;
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   font-weight: 600;
   color: var(--color-text-primary);
 }
@@ -70,13 +70,13 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 44px;
+  min-height: 48px;
   padding: 10px 18px;
   border-radius: 14px;
   background: var(--color-accent);
   color: var(--color-on-accent);
-  font-size: 0.9375rem;
-  line-height: 1.375rem;
+  font-size: var(--font-button-secondary);
+  line-height: var(--line-button-secondary);
   font-weight: 600;
   text-decoration: none;
 }

@@ -21,10 +21,10 @@ interface Props {
 export function GuideCard({ id, title, intro, steps = [], children }: Props) {
   return (
     <section aria-labelledby={id} className="rounded-[20px] bg-accent-soft p-4 lg:p-6">
-      <h2 id={id} className="text-base font-semibold text-accent">
+      <h2 id={id} className="text-body font-semibold text-accent">
         {title}
       </h2>
-      <p className="mt-1 text-sm leading-relaxed text-text-secondary">{intro}</p>
+      <p className="mt-1 text-caption text-text-secondary">{intro}</p>
       {steps.length > 0 && (
         <ol className="mt-4 flex flex-col gap-3">
           {steps.map((step, index) => (
@@ -35,13 +35,13 @@ export function GuideCard({ id, title, intro, steps = [], children }: Props) {
             >
               <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
                 <PushIcon name={step.icon} />
-                <span className="absolute -top-1.5 -left-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[11px] font-bold text-on-accent">
+                <span className="absolute -top-1.5 -left-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-caption font-bold text-on-accent">
                   {index + 1}
                 </span>
               </span>
-              <span className="min-w-0 text-sm leading-relaxed">
+              <span className="min-w-0 text-caption ">
                 <span className="block text-text-primary">{step.title}</span>
-                <span className="block text-[13px] text-text-secondary">{step.detail}</span>
+                <span className="block text-caption text-text-secondary">{step.detail}</span>
               </span>
             </li>
           ))}

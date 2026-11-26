@@ -38,7 +38,7 @@ export function NewProfileDialog({ session, pending, onClose, ...form }: Props) 
           {...form}
         />
       ) : (
-        <p role="alert" className="px-6 pb-6 text-sm leading-6 max-md:px-5">
+        <p role="alert" className="px-6 pb-6 text-body max-md:px-5">
           Chỉ người chăm sóc chính có thể tạo hồ sơ sức khỏe.
         </p>
       )}

@@ -18,8 +18,8 @@ export function PushNote({
         <PushIcon name={icon} />
       </span>
       <div className="min-w-0 flex-1">
-        <h2 className="mb-1 text-base font-semibold text-text-primary">{title}</h2>
-        <div className="text-sm leading-relaxed text-text-secondary">{children}</div>
+        <h2 className="mb-1 text-body font-semibold text-text-primary">{title}</h2>
+        <div className="text-caption text-text-secondary">{children}</div>
       </div>
     </section>
   );

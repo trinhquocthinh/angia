@@ -12,6 +12,8 @@ type Props = {
   onBegin?: () => void;
   onPendingChange?: (pending: boolean) => void;
 };
+const FIELDSET = 'grid grid-cols-2 gap-2.5 rounded-2xl border border-border/35 bg-accent-soft/75 p-3.5';
+
 const fields: [keyof PrivacyRectangle, string][] = [
   ['left', 'Trái'],
   ['top', 'Trên'],
@@ -55,8 +57,8 @@ export function PrivacyRectangleFields({
     onChange(next);
   };
   return (
-    <fieldset disabled={disabled} className="grid grid-cols-2 gap-2 rounded-xl bg-accent-soft p-3">
-      <legend className="text-xs font-semibold text-accent">Vị trí vùng (% ảnh)</legend>
+    <fieldset disabled={disabled} className={FIELDSET}>
+      <legend className="px-1 text-caption font-semibold text-accent">Vị trí vùng (% ảnh)</legend>
       {fields.map(([field, title]) => (
         <PrivacyCoordinateInput
           key={field}

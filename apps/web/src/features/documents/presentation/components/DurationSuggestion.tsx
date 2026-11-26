@@ -15,7 +15,7 @@ export function DurationSuggestion({ form, index }: DurationSuggestionProps) {
   const apply = () =>
     form.setValue(`items.${index}.durationDays`, String(days), { shouldDirty: true, shouldValidate: true });
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-accent-soft px-4 py-3 text-sm text-accent">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-accent-soft px-4 py-3 text-caption text-accent">
       <p>
         Gợi ý theo tổng số lượng trên đơn: {vi(total)} ÷ ({vi(perDose)} × {slotCount} buổi) ={' '}
         <strong>{days} ngày</strong>

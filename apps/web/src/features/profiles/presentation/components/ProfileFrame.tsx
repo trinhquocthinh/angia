@@ -11,7 +11,7 @@ import { createReviewRepository } from '@src/features/documents/infrastructure/c
 import '@src/features/family/presentation/admin-icons.css';
 
 const reviewRepository = createReviewRepository();
-// Desktop (≥ lg): header cố định chứa điều hướng; di động: header gọn + thanh điều hướng đáy.
+// Desktop (≥ lg): header bám đầu trang; di động: header gọn + thanh điều hướng đáy.
 export function ProfileFrame({
   session,
   profiles,
@@ -27,10 +27,10 @@ export function ProfileFrame({
 }) {
   const { pathname } = useLocation();
   const unlinkedMember = session.role === 'member' && !session.account.healthProfileId;
-  const showNavigation = Boolean(session.family) && !unlinkedMember && pathname !== '/admin';
+  const showNavigation = Boolean(session.family && session.role) && !/^\/admin(?:\/|$)/.test(pathname);
   const queue = useReviewQueue(reviewRepository, session);
   const pendingCount = queue.data?.pages.reduce((sum, page) => sum + page.items.length, 0);
-  const personal = session.role !== 'main' && Boolean(session.account.healthProfileId);
+  const personal = session.role === 'member';
   const account = (
     <AccountMenu
       session={session}
@@ -40,7 +40,9 @@ export function ProfileFrame({
     />
   );
   return (
-    <div className="flex min-h-dvh flex-col bg-bg text-text-primary lg:pt-[72px]">
+    <div
+      className={`flex min-h-dvh flex-col bg-bg text-text-primary${showNavigation ? ' profile-frame-navigation' : ''}`}
+    >
       <ProfileTopbar
         profiles={profiles}
         hasFamily={Boolean(session.family)}
@@ -51,7 +53,7 @@ export function ProfileFrame({
         personal={personal}
       />
       <MobileTopbar title={mobileTitle} hasFamily={Boolean(session.family)} account={account} />
-      <main className="mx-auto w-full max-w-7xl min-w-0 flex-1 px-4 pt-3 lg:px-8 lg:py-12">{children}</main>
+      <main className="mx-auto w-full min-w-0 flex-1 px-4 pt-3 lg:px-8 lg:py-12">{children}</main>
       <ProfileFooter />
       {showNavigation && <MobileBottomNav pendingCount={pendingCount} personal={personal} />}
     </div>

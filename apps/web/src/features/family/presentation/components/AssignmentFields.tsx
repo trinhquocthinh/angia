@@ -28,7 +28,7 @@ export function AssignmentFields({
       <MembershipFields key={account.id} families={families} accounts={accounts} account={account} assign />
       <button
         type="submit"
-        className="admin-button inline-flex items-center justify-center gap-2 min-h-11 py-[10px] px-4 border-0 rounded-[12px] bg-accent text-on-accent text-[14px] leading-[20px] font-semibold cursor-pointer shadow-[0_1px_2px_color-mix(in_srgb,var(--color-shadow)_5%,transparent)] transition-[transform,background-color,box-shadow] duration-[160ms] ease-[ease] [&:hover]:bg-accent [&:hover]:shadow-[0_4px_12px_color-mix(in_srgb,var(--color-shadow)_6%,transparent)] [&:active]:scale-[0.99] motion-reduce:[&:active]:transform-none"
+        className="inline-flex min-h-btn w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-0 bg-accent px-5 text-button-primary font-semibold text-on-accent shadow-stitch-sm transition-colors enabled:hover:bg-accent-hover"
       >
         <AdminIcon name="check" size={18} />
         {pending ? 'Đang lưu...' : 'Thêm vào nhóm'}

@@ -1,5 +1,4 @@
-import { Link } from '@tanstack/react-router';
-import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { AccountMenuItem } from './AccountMenuItem';
 import type { AccountMenuProps } from './accountMenuTypes';
 
 export function AccountMenuDestinations({
@@ -10,22 +9,31 @@ export function AccountMenuDestinations({
   return (
     <div className="account-menu-links">
       {session.family && (
-        <Link to="/family/home" onClick={onClose}>
-          <AdminIcon name="home_health" />
-          Nhà của tôi
-        </Link>
+        <AccountMenuItem
+          to="/family/home"
+          icon="home"
+          label="Nhà của tôi"
+          description="Thành viên & thông tin nhà"
+          onClose={onClose}
+        />
       )}
       {session.account.healthProfileId && (
-        <Link to="/my-profile" onClick={onClose}>
-          <AdminIcon name="person" />
-          Hồ sơ của tôi
-        </Link>
+        <AccountMenuItem
+          to="/my-profile"
+          icon="profile"
+          label="Hồ sơ của tôi"
+          description="Thuốc & sức khoẻ của bạn"
+          onClose={onClose}
+        />
       )}
       {session.account.isSystemAdmin && (
-        <Link to="/admin" onClick={onClose}>
-          <AdminIcon name="admin_panel_settings" />
-          Quản trị hệ thống
-        </Link>
+        <AccountMenuItem
+          to="/admin"
+          icon="settings"
+          label="Quản trị hệ thống"
+          description="Tài khoản & gia đình"
+          onClose={onClose}
+        />
       )}
     </div>
   );

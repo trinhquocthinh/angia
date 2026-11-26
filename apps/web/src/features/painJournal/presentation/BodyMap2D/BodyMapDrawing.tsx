@@ -38,7 +38,9 @@ export function BodyMapDrawing({
               x2={buttonX}
               y2={buttonY}
               transform={transform}
-              stroke="var(--color-text-secondary)"
+              stroke={active ? 'var(--color-accent)' : 'var(--color-border)'}
+              strokeWidth={active ? 1.6 : 1}
+              strokeDasharray={active ? undefined : '2 3'}
               vectorEffect="non-scaling-stroke"
             />
           </g>

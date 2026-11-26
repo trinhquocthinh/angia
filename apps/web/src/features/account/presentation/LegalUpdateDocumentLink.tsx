@@ -17,13 +17,7 @@ export function LegalUpdateDocumentLink({
     year: 'numeric',
   }).format(new Date(document.publishedAt));
   return (
-    <a
-      className="legal-update-document"
-      href={document.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`Đọc ${label} (bản ${date})`}
-    >
+    <a className="legal-update-document" href={document.url} target="_blank" rel="noopener noreferrer">
       <LegalUpdateIcon name={icon} />
       <span className="legal-update-document-title">
         Đọc {label}

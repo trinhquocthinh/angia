@@ -2,6 +2,7 @@ import type { ComponentProps } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, it, vi } from 'vitest';
 import type { components } from '@src/shared/api/schema.gen';
+import { TextSizeProvider } from '@src/shared/accessibility/TextSizeProvider';
 import { ThemeProvider } from '@src/shared/theme/ThemeProvider';
 import { AccountSettingsView } from './AccountSettingsView';
 
@@ -27,14 +28,16 @@ function renderView(
   profiles: { id: string; displayName: string; hasLinkedAccount: boolean }[] = [],
 ) {
   return renderToStaticMarkup(
-    <ThemeProvider>
-      <AccountSettingsView
-        session={session}
-        profiles={profiles}
-        onRefreshSession={vi.fn(async () => {})}
-        initialEditing={initialEditing}
-      />
-    </ThemeProvider>,
+    <TextSizeProvider>
+      <ThemeProvider>
+        <AccountSettingsView
+          session={session}
+          profiles={profiles}
+          onRefreshSession={vi.fn(async () => {})}
+          initialEditing={initialEditing}
+        />
+      </ThemeProvider>
+    </TextSizeProvider>,
   );
 }
 

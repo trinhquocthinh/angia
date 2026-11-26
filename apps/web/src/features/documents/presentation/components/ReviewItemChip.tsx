@@ -1,20 +1,24 @@
 import type { ReviewItemState } from '../../application/reviewQueuePolling';
 
-// Chip trạng thái theo Stitch 626ca318: chữ + chấm màu (không chỉ dựa vào màu); đang xử lý thì chấm nhấp nháy.
+// Chip trạng thái theo Stitch bb3e9ab1: chữ + chấm màu (không chỉ dựa vào màu); đang xử lý thì chấm nhấp nháy.
 const CHIPS: Record<ReviewItemState, { label: string; className: string; dot: string; busy?: boolean }> = {
   preparing: {
     label: 'Đang chuẩn bị ảnh…',
-    className: 'bg-border text-text-secondary',
+    className: 'bg-surface-container text-text-secondary',
     dot: 'bg-text-secondary',
     busy: true,
   },
   reading: {
     label: 'Đang tự động nhận diện…',
-    className: 'bg-border text-text-secondary',
-    dot: 'bg-text-secondary',
+    className: 'bg-surface-container text-text-secondary',
+    dot: 'bg-secondary',
     busy: true,
   },
-  ready: { label: 'Đã đọc xong', className: 'bg-accent-soft text-accent', dot: 'bg-accent' },
+  ready: {
+    label: 'Đã đọc xong',
+    className: 'bg-secondary-container text-on-secondary-container',
+    dot: 'bg-accent',
+  },
   manual: { label: 'Cần nhập tay', className: 'bg-warning-soft text-warning', dot: 'bg-warning' },
   budget: {
     label: 'Chờ lượt tự động nhận diện',
@@ -27,7 +31,7 @@ export function ReviewItemChip({ state }: { state: ReviewItemState }) {
   const chip = CHIPS[state];
   return (
     <span
-      className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold ${chip.className}`}
+      className={`review-queue-chip inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-0.5 text-caption font-semibold ${chip.className}`}
     >
       <span
         aria-hidden="true"

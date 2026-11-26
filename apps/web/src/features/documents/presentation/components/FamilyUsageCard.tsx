@@ -1,4 +1,7 @@
 import type { FamilyScanQuota, FamilyUsage } from '@angia/contracts';
+import { Link } from '@tanstack/react-router';
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { ProfileSectionIcon } from '@src/features/profiles/presentation/components/ProfileSectionIcon';
 import { revealStyle } from '@src/shared/ui/revealStyle';
 import type { ReactNode } from 'react';
 import {
@@ -7,7 +10,6 @@ import {
   formatStorageUsage,
   usageBlockReason,
 } from '../../application/familyUsageState';
-import { DocumentIcon } from './DocumentIcon';
 
 type Meter = { label: string; value: string; used: number; limit: number };
 
@@ -16,17 +18,15 @@ function UsageMeter({ label, value, used, limit }: Meter) {
   const full = used >= limit;
   const [amount, cap] = value.split(' / ');
   return (
-    <div className="flex min-w-0 flex-col justify-end gap-1.5">
-      <span className="text-xs leading-4 font-medium text-text-secondary">{label}</span>
+    <div className="doc-metric-tile">
+      <span className="text-caption font-medium text-text-secondary">{label}</span>
       {cap ? (
         <span className="flex flex-wrap items-baseline gap-x-1.5 tabular-nums">
-          <span className="auth-heading text-2xl leading-8 font-semibold text-text-primary sm:text-[28px]">
-            {amount}
-          </span>
-          <span className="text-xs leading-4 text-text-secondary">/ {cap}</span>
+          <span className="auth-heading text-heading-1 font-semibold text-accent">{amount}</span>
+          <span className="text-caption text-text-secondary">/ {cap}</span>
         </span>
       ) : (
-        <span className="text-sm leading-8 font-semibold text-text-primary">{value}</span>
+        <span className="text-caption font-semibold text-text-primary">{value}</span>
       )}
       <div
         role="progressbar"
@@ -34,7 +34,7 @@ function UsageMeter({ label, value, used, limit }: Meter) {
         aria-valuemin={0}
         aria-valuemax={limit}
         aria-valuenow={used}
-        className="h-1.5 overflow-hidden rounded-full bg-accent-soft"
+        className="h-2 overflow-hidden rounded-full bg-surface-container-high"
       >
         <div
           className={`upload-meter-fill h-full rounded-full ${full ? 'bg-danger' : 'bg-accent'}`}
@@ -85,46 +85,71 @@ function usageMeters(usage: FamilyUsage, quota: FamilyScanQuota | null | undefin
   ];
 }
 
-// SPEC-030: mức đã dùng / trần tài nguyên của gia đình, hiện trên trang tải ảnh; children là dòng thông tin lượt.
+function isAiExhausted(usage: FamilyUsage | null, scanQuota: FamilyScanQuota | null | undefined) {
+  return Boolean(
+    usage?.aiOcr?.exhausted ||
+    scanQuota?.status === 'unconfigured' ||
+    (scanQuota && scanQuota.remainingScans <= 0),
+  );
+}
+
+function ManualEntryShortcut({ profileId }: { profileId: string }) {
+  return (
+    <Link
+      to="/profiles/$profileId/manual"
+      params={{ profileId }}
+      className="inline-flex min-h-btn items-center gap-2 rounded-2xl bg-accent-soft px-4 text-button-secondary font-semibold text-accent transition-colors hover:bg-choice-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+    >
+      <AdminIcon name="edit" size={18} />
+      Nhập tay
+    </Link>
+  );
+}
+
+// SPEC-030 + E30-S2-T2: mức đã dùng / trần tài nguyên theo 3D Bento v2.0; hết lượt có lối mở "Nhập tay".
 export function FamilyUsageCard({
   usage,
   scanQuota,
+  manualProfileId = null,
   children,
 }: {
   usage: FamilyUsage | null;
   scanQuota?: FamilyScanQuota | null;
+  manualProfileId?: string | null;
   children?: ReactNode;
 }) {
   const reason = usage && (usageBlockReason(usage) ?? aiQueueBlockReason(usage, 0));
   return (
     <section
       aria-labelledby="family-usage-title"
-      className="angia-modal-reveal flex flex-col gap-4 rounded-2xl bg-surface p-6 shadow-sm max-md:p-4"
+      className="doc-bento-card angia-modal-reveal flex flex-col gap-4 p-5 sm:p-6"
       style={revealStyle(2)}
     >
-      <h2
-        id="family-usage-title"
-        className="flex items-center gap-1.5 text-lg leading-6 font-semibold text-text-primary"
-      >
-        <span className="text-accent">
-          <DocumentIcon name="cloud" />
-        </span>
-        Mức sử dụng của gia đình
-      </h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="doc-clay-tile" aria-hidden="true">
+            <ProfileSectionIcon name="folder_open" size={30} />
+          </span>
+          <h2 id="family-usage-title" className="auth-heading text-heading-2 font-semibold text-accent">
+            Mức sử dụng của gia đình
+          </h2>
+        </div>
+        {isAiExhausted(usage, scanQuota) && manualProfileId && (
+          <ManualEntryShortcut profileId={manualProfileId} />
+        )}
+      </div>
       {usage && (
-        <div className="grid grid-cols-2 gap-x-6 gap-y-4 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {usageMeters(usage, scanQuota).map((meter) => (
             <UsageMeter key={meter.label} {...meter} />
           ))}
         </div>
       )}
       {children && (
-        <div className="border-t border-border pt-3 text-[13px] leading-5 text-text-secondary">
-          {children}
-        </div>
+        <div className="border-t border-border/50 pt-3 text-caption text-text-secondary">{children}</div>
       )}
       {reason && (
-        <p role="status" className="rounded-xl bg-danger-soft/60 p-3 text-sm text-danger">
+        <p role="status" className="rounded-2xl bg-danger-soft/75 p-3.5 text-body font-medium text-danger">
           {reason}
         </p>
       )}

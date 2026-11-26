@@ -4,9 +4,9 @@
   gap: 6px;
   padding: 6px 12px;
   border-radius: 999px;
-  font-size: 16px;
+  font-size: var(--font-body);
   font-weight: 600;
-  line-height: 1.3;
+  line-height: var(--line-body);
 }
 .account-status-verified {
   background: var(--color-secondary-container);
@@ -32,15 +32,15 @@
   gap: 12px;
 }
 .account-email-value {
-  font-size: 18px;
+  font-size: var(--font-body);
   font-weight: 600;
-  line-height: 1.4;
+  line-height: var(--line-body);
   color: var(--color-text-primary);
   overflow-wrap: anywhere;
 }
 .account-email-empty {
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   color: var(--color-text-secondary);
 }
 .account-email-actions {
@@ -56,18 +56,21 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 44px;
+  min-height: 48px;
   padding: 10px 16px;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: var(--font-button-secondary);
   font-weight: 600;
-  line-height: 1.3;
+  line-height: var(--line-button-secondary);
   cursor: pointer;
   transition:
     background-color 150ms ease-out,
     opacity 150ms ease-out;
 }
 .account-primary-btn {
+  min-height: 56px;
+  font-size: var(--font-button-primary);
+  line-height: var(--line-button-primary);
   background: var(--color-accent);
   color: var(--color-on-accent);
 }
@@ -102,8 +105,8 @@
   border-radius: 14px;
   background: var(--color-surface);
   color: var(--color-text-primary);
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .account-pending-note .account-mask-icon {
   margin-top: 2px;
@@ -117,9 +120,9 @@
   border-radius: 16px;
   background: color-mix(in srgb, var(--color-secondary-container) 55%, var(--color-surface));
   color: var(--color-on-secondary-container);
-  font-size: 16px;
+  font-size: var(--font-body);
   font-weight: 500;
-  line-height: 1.5;
+  line-height: var(--line-body);
 }
 .account-verify-status .account-mask-icon {
   margin-top: 2px;
@@ -132,9 +135,9 @@
   border-radius: 16px;
   background: var(--color-danger-soft);
   color: var(--color-danger);
-  font-size: 16px;
+  font-size: var(--font-body);
   font-weight: 500;
-  line-height: 1.5;
+  line-height: var(--line-body);
 }
 .account-verify-alert .account-mask-icon {
   margin-top: 2px;
@@ -147,8 +150,8 @@
   border-radius: 16px;
   background: var(--color-warning-soft);
   color: var(--color-text-primary);
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .account-warning-note .account-mask-icon {
   margin-top: 2px;

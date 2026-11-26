@@ -18,12 +18,10 @@ export function PushFeedback({ config, action }: Settings) {
       {guide !== 'none' ? (
         <DeviceGuide guide={guide} installPrompt={browserInstallPrompt} />
       ) : (
-        support && (
-          <p className="rounded-xl bg-accent-soft p-4 text-sm leading-relaxed text-accent">{support}</p>
-        )
+        support && <p className="rounded-xl bg-accent-soft p-4 text-body text-accent">{support}</p>
       )}
       {config.isError && (
-        <p role="alert" className="rounded-xl bg-danger-soft p-4 text-sm text-danger">
+        <p role="alert" className="rounded-xl bg-danger-soft p-4 text-body text-danger">
           Chưa đọc được cấu hình.{' '}
           <button className="font-semibold underline" onClick={() => void config.refetch()}>
             Thử lại
@@ -35,7 +33,7 @@ export function PushFeedback({ config, action }: Settings) {
         aria-live="polite"
         className={
           message
-            ? `rounded-xl p-3 text-sm ${action.isError ? 'bg-danger-soft text-danger' : 'bg-accent-soft text-accent'}`
+            ? `rounded-xl p-3 text-body ${action.isError ? 'bg-danger-soft text-danger' : 'bg-accent-soft text-accent'}`
             : 'sr-only'
         }
       >

@@ -25,18 +25,19 @@
   border-radius: 12px;
   background: var(--color-accent-soft);
   color: var(--color-text-primary);
-  font-size: 1.125rem;
-  line-height: 1.75rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   letter-spacing: 0.04em;
 }
 .household-join label {
-  font-size: 1.125rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   font-weight: 600;
 }
 .household-join fieldset p,
 .household-join-note {
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .household-join-note {
   margin-top: 24px;

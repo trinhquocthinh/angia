@@ -1,7 +1,7 @@
 .account-card-copy {
   margin: 0;
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   color: var(--color-text-secondary);
 }
 .account-export-card-ready {
@@ -21,9 +21,9 @@
   gap: 8px;
 }
 .account-export-label {
-  font-size: 16px;
+  font-size: var(--font-caption);
   font-weight: 600;
-  line-height: 1.4;
+  line-height: var(--line-caption);
   color: var(--color-text-primary);
 }
 .account-export-select {
@@ -34,7 +34,8 @@
   border: 1px solid var(--color-border);
   background-color: var(--color-accent-soft);
   color: var(--color-text-primary);
-  font-size: 16px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   font-weight: 500;
 }
 .account-export-select:disabled {
@@ -48,8 +49,8 @@
   background: var(--color-accent-soft);
   border: 1px solid color-mix(in srgb, var(--color-secondary) 22%, var(--color-surface));
   color: var(--color-text-primary);
-  font-size: 15px;
-  line-height: 1.5;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
 }
 .account-export-ready-box {
   display: flex;
@@ -65,9 +66,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 16px;
+  font-size: var(--font-body);
   font-weight: 600;
-  line-height: 1.4;
+  line-height: var(--line-body);
   color: var(--color-text-primary);
 }
 .account-export-ready-title .account-mask-icon {
@@ -76,8 +77,8 @@
 .account-export-ready-sub {
   margin: 0;
   padding-left: 28px;
-  font-size: 14px;
-  line-height: 1.4;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   color: var(--color-text-secondary);
 }
 .account-export-warning-box,
@@ -88,9 +89,9 @@
   gap: 10px;
   padding: 14px 16px;
   border-radius: 14px;
-  font-size: 15px;
+  font-size: var(--font-caption);
   font-weight: 500;
-  line-height: 1.5;
+  line-height: var(--line-caption);
 }
 .account-export-warning-box {
   background: var(--color-warning-soft);
@@ -108,7 +109,7 @@
 }
 .account-export-btn {
   width: 100%;
-  min-height: 52px;
+  min-height: var(--size-button-height);
   border-radius: 16px;
 }
 .account-export-link {
@@ -123,7 +124,8 @@
   border: 1px solid var(--color-border);
   background: var(--color-surface-variant);
   color: var(--color-text-secondary);
-  font-size: 16px;
+  font-size: var(--font-button-secondary);
+  line-height: var(--line-button-secondary);
   font-weight: 600;
   cursor: not-allowed;
 }

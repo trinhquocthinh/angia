@@ -56,8 +56,8 @@
   color: var(--color-on-accent);
   background: var(--color-accent);
   box-shadow: var(--shadow-stitch-sm);
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   overflow-wrap: anywhere;
 }
 @media (min-width: 1024px) {

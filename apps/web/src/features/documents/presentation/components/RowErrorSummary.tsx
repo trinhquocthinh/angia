@@ -12,7 +12,7 @@ type RowErrorSummaryProps = {
 export function RowErrorSummary({ rows, noun, anchorPrefix }: RowErrorSummaryProps) {
   if (rows.length === 0) return null;
   return (
-    <div role="alert" className="flex gap-3 rounded-2xl bg-danger-soft p-4 text-sm text-danger">
+    <div role="alert" className="flex gap-3 rounded-2xl bg-danger-soft p-4 text-caption text-danger">
       <span aria-hidden="true" className="mt-0.5 shrink-0 text-danger">
         <DocumentIcon name="warning" />
       </span>

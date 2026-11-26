@@ -46,8 +46,8 @@ export function LocalPasswordPage() {
         </button>
       }
     >
-      <h2 className="mb-4 text-[22px] leading-[30px] font-semibold">Đặt mật khẩu cho AN GIA</h2>
-      <p className="mb-6 text-lg">
+      <h2 className="mb-4 text-heading-2 font-semibold">Đặt mật khẩu cho AN GIA</h2>
+      <p className="mb-6 text-body">
         Từ nay bạn đăng nhập bằng mật khẩu riêng của AN GIA. Dữ liệu và gia đình giữ nguyên.
       </p>
       {verification.verified ? (
@@ -59,7 +59,7 @@ export function LocalPasswordPage() {
         />
       ) : (
         <div className="flex flex-col gap-6">
-          <p className="text-lg">Để bảo vệ tài khoản, bạn cần xác minh lại trước khi đặt mật khẩu.</p>
+          <p className="text-body">Để bảo vệ tài khoản, bạn cần xác minh lại trước khi đặt mật khẩu.</p>
           <Button type="button" onClick={verification.reauthenticate} className="w-full">
             Xác minh lại
           </Button>

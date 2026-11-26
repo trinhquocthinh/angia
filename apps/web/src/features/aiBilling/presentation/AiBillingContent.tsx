@@ -11,7 +11,7 @@ export function AiBillingContent({ view, now }: { view: AiBillingView; now: Date
   const summary = describeAiBilling(view, now);
   return (
     <div className="grid min-w-0 gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-text-secondary">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-caption text-text-secondary">
         <span>Tháng {view.month}</span>
         <span
           role="status"
@@ -25,13 +25,13 @@ export function AiBillingContent({ view, now }: { view: AiBillingView; now: Date
       <p
         className={
           summary.actualAmount
-            ? 'auth-heading m-0 break-all text-[28px] leading-9 font-semibold text-accent tabular-nums'
-            : 'm-0 text-[15px] leading-6 font-semibold text-accent'
+            ? 'auth-heading m-0 break-all text-heading-1 font-semibold text-accent tabular-nums'
+            : 'm-0 text-body font-semibold text-accent'
         }
       >
         {summary.actualAmount ?? 'Chưa xác nhận tổng tháng'}
       </p>
-      <p className="m-0 break-all text-xs leading-5 text-text-secondary">
+      <p className="m-0 break-all text-caption text-text-secondary">
         Đã ghi nhận từ nguồn phí: {summary.confirmedAmount}
         <br />
         {view.lastSyncedAt
@@ -39,7 +39,7 @@ export function AiBillingContent({ view, now }: { view: AiBillingView; now: Date
           : 'Chưa có lần đối chiếu đầy đủ.'}
       </p>
       <AiBillingSourceList sources={view.sources} />
-      <p className="m-0 rounded-xl bg-accent-soft px-3 py-2 text-xs leading-5 text-text-secondary">
+      <p className="m-0 rounded-xl bg-accent-soft px-3 py-2 text-caption text-text-secondary">
         Khi thiếu hoặc cũ dữ liệu phí, hay phí thực đã đạt trần tháng, nhận diện ảnh tạm dừng. Gia đình vẫn
         nhập tay được.
       </p>

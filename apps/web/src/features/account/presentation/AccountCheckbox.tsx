@@ -20,12 +20,12 @@ export function AccountCheckbox({ label, error, id, ...props }: Props) {
           aria-describedby={describedBy}
           className="mt-1 h-6 w-6 shrink-0 accent-accent focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:outline aria-invalid:outline-danger"
         />
-        <label htmlFor={inputId} className="min-h-12 text-lg leading-7">
+        <label htmlFor={inputId} className="min-h-12 text-body ">
           {label}
         </label>
       </div>
       {error && (
-        <p id={`${inputId}-error`} role="alert" className="mt-2 text-base leading-6 text-danger">
+        <p id={`${inputId}-error`} role="alert" className="mt-2 text-body text-danger">
           {error}
         </p>
       )}

@@ -4,8 +4,10 @@ import type { ProfileSession } from '@src/features/profiles/application/ports';
 import { AsNeededDoseSheet, type DoseSheetMode } from './AsNeededDoseSheet';
 
 type Props = { course: CurrentMedicationCourse; session: ProfileSession; readOnly?: boolean };
+const primaryButton =
+  'inline-flex min-h-btn items-center rounded-2xl bg-accent px-4 text-button-secondary font-semibold text-on-accent shadow-stitch-sm transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus';
 const buttonClass =
-  'min-h-11 rounded-xl bg-accent-soft px-3 text-sm font-semibold text-accent hover:bg-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus';
+  'inline-flex min-h-btn items-center rounded-2xl border border-border/45 bg-surface px-4 text-button-secondary font-semibold text-accent shadow-stitch-sm transition-colors hover:bg-accent-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus';
 export function AsNeededDoseActions({ course, session, readOnly = false }: Props) {
   const [mode, setMode] = useState<DoseSheetMode | null>(null);
   if (
@@ -21,7 +23,7 @@ export function AsNeededDoseActions({ course, session, readOnly = false }: Props
   return (
     <div className="flex flex-wrap gap-2">
       {editable && (
-        <button type="button" className={buttonClass} onClick={() => setMode('record')}>
+        <button type="button" className={primaryButton} onClick={() => setMode('record')}>
           Ghi liều
         </button>
       )}

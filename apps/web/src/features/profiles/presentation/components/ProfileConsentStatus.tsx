@@ -1,6 +1,7 @@
 import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import type { HealthProfile } from '../../application/ports';
 import { formatWithdrawnAt } from '../../application/formatWithdrawnAt';
+
 const labels = {
   pending: 'Chưa có xác nhận của người thân',
   invited: 'Đang chờ người thân xác nhận',
@@ -8,59 +9,52 @@ const labels = {
   confirmed: 'Đã đồng ý chia sẻ',
   withdrawn: 'Người thân đã rút đồng thuận',
 };
+
 type Props = {
   profile: HealthProfile & {
     consentAction?: 'attestation' | 'self' | 'invitation' | null;
     consentConfirmedByName?: string | null;
   };
 };
-const term = 'font-medium text-text-primary';
+
+// Trạng thái đồng thuận gọn gàng (Bento v2.0): giữ đầy đủ ngữ nghĩa pháp lý nhưng nén gọn chữ.
 export function ProfileConsentStatus({ profile }: Props) {
   const confirmed = profile.consentStatus === 'confirmed';
+  const withdrawn = profile.consentStatus === 'withdrawn' || profile.consentStatus === 'declined';
+  const tone = confirmed ? 'confirmed' : withdrawn ? 'danger' : 'warning';
+  const metaParts = confirmed
+    ? [
+        profile.consentRespondentName
+          ? `${profile.consentRespondentName}${profile.consentSource !== 'self' ? ' (chưa được xác minh)' : ''}`
+          : null,
+        profile.consentSource === 'main_attested'
+          ? `Cam kết: ${profile.consentConfirmedByName ?? 'Không còn thông tin'}`
+          : null,
+        profile.consentConfirmedAt ? formatWithdrawnAt(profile.consentConfirmedAt) : null,
+      ].filter(Boolean)
+    : [];
+
   return (
-    <div className="mt-3.5 mb-4 flex flex-1 flex-col gap-2 rounded-xl border border-border/20 bg-accent-soft p-3 lg:mt-5 lg:p-4">
-      <div className="flex items-center justify-between gap-2">
-        <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent">
-          <AdminIcon name={confirmed ? 'verified_user' : 'info'} size={18} />
+    <div className="mt-3.5 flex flex-col gap-1.5 rounded-2xl bg-accent-soft/80 px-3.5 py-2.5">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className={`profile-consent-pill profile-consent-pill-${tone} px-0 py-0 bg-transparent`}>
+          <AdminIcon name={confirmed ? 'verified_user' : withdrawn ? 'info' : 'pending_actions'} size={17} />
           {labels[profile.consentStatus]}
-        </p>
+        </span>
         {confirmed && profile.consentBasis === 'guardian' && (
-          <span className="hidden text-[11px] font-medium tracking-[0.03em] text-text-secondary lg:inline">
-            Ủy quyền giám hộ
-          </span>
+          <span className="text-caption font-medium text-text-secondary">Giám hộ</span>
         )}
       </div>
-      {confirmed ? (
-        <div className="flex flex-col gap-0.5 break-words text-[13px] leading-5 text-text-secondary">
-          <p>
-            <span className={term}>Người đồng ý:</span>{' '}
-            {profile.consentRespondentName ?? 'Không còn thông tin'}
-            {profile.consentSource !== 'self' && (
-              <span className="text-xs text-text-secondary"> (thông tin tự nhập, chưa được xác minh)</span>
-            )}
-          </p>
-          {profile.consentSource === 'main_attested' && (
-            <p>
-              <span className={term}>Người cam kết:</span>{' '}
-              {profile.consentConfirmedByName ?? 'Không còn thông tin tài khoản trong gia đình'}
-            </p>
-          )}
-          {profile.consentConfirmedAt && (
-            <p>
-              <span className={term}>Ngày xác nhận:</span> {formatWithdrawnAt(profile.consentConfirmedAt)}
-            </p>
-          )}
-        </div>
-      ) : (
-        <p className="text-[13px] leading-5 text-text-secondary">
-          {profile.consentAction === 'attestation'
-            ? 'Xác nhận khi đã hỏi ý kiến và được người thân hoặc người giám hộ hợp pháp đồng ý.'
-            : profile.consentAction === 'self'
-              ? 'Bạn có thể xác nhận đồng ý cho hồ sơ của chính mình.'
-              : profile.consentAction === 'invitation'
-                ? 'Người có tài khoản liên kết cần tự gỡ liên kết trước khi nhận link mới.'
-                : 'Hồ sơ chưa thể ghi dữ liệu sức khỏe khi chưa có đồng thuận.'}
-          {profile.consentSource === 'legacy_attestation' && ' Xác nhận cũ cần được xác nhận lại.'}
+      {confirmed && metaParts.length > 0 && (
+        <p className="break-words text-caption text-text-secondary">{metaParts.join(' · ')}</p>
+      )}
+      {!confirmed && (
+        <p className="text-caption text-text-secondary">
+          {profile.consentAction === 'invitation'
+            ? 'Cần chủ hồ sơ tự gỡ liên kết trước.'
+            : profile.consentSource === 'legacy_attestation'
+              ? 'Xác nhận cũ cần được xác nhận lại.'
+              : 'Chưa thể ghi dữ liệu khi chưa có đồng thuận.'}
         </p>
       )}
     </div>

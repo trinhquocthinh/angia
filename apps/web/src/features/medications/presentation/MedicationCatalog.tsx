@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import type { CurrentMedications, CurrentMedicationCourse } from '@angia/contracts';
 import type { ReactNode } from 'react';
+import { ProfileSectionIcon } from '@src/features/profiles/presentation/components/ProfileSectionIcon';
 import { groupMedicationsBySlot } from '../application/groupMedicationsBySlot';
 import { MedicationSlotSection } from './MedicationSlotSection';
 
@@ -14,7 +15,12 @@ type Props = {
   renderCourseActions?: (course: CurrentMedicationCourse) => ReactNode;
 };
 
-// Design §6 "Danh mục thuốc": nhóm theo buổi, 2 cột ở desktop; khung xương thẻ thuốc, thẻ lỗi, trạng thái rỗng.
+const emptyText = (readOnly: boolean) =>
+  readOnly
+    ? 'Chưa có thuốc đang dùng hôm nay.'
+    : 'Chưa có thuốc. Hãy tải đơn thuốc hoặc thêm thuốc bổ, vitamin.';
+
+// Design §6 "Danh mục thuốc" theo 3D Bento v2.0: nhóm theo buổi, thẻ bo lớn, nút dùng token min-h-btn.
 export function MedicationCatalog({
   data,
   loading,
@@ -27,18 +33,24 @@ export function MedicationCatalog({
     return (
       <div role="status" aria-label="Đang tải danh mục thuốc" className="grid gap-4 md:grid-cols-2">
         {[0, 1].map((key) => (
-          <div key={key} className="h-48 animate-pulse rounded-xl bg-surface motion-reduce:animate-none" />
+          <div
+            key={key}
+            className="h-48 animate-pulse rounded-[24px] bg-surface motion-reduce:animate-none"
+          />
         ))}
       </div>
     );
   if (error || !data)
     return (
-      <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-danger-soft p-5 text-sm">
+      <div
+        role="alert"
+        className="flex flex-col items-start gap-3 rounded-[22px] bg-danger-soft p-5 text-caption"
+      >
         <p>Không tải được danh mục thuốc.</p>
         <button
           type="button"
           onClick={retry}
-          className="min-h-11 rounded-xl bg-surface px-4 font-semibold text-accent"
+          className="min-h-btn rounded-2xl bg-surface px-4 text-button-secondary font-semibold text-accent"
         >
           Thử lại
         </button>
@@ -47,16 +59,13 @@ export function MedicationCatalog({
   const groups = groupMedicationsBySlot(data.courses);
   if (groups.length === 0)
     return (
-      <div className="flex flex-col items-center gap-3 rounded-[20px] border-2 border-dashed border-border bg-surface px-6 py-12 text-center">
-        <p className="text-sm font-semibold text-text-primary">
-          {readOnly
-            ? 'Chưa có thuốc đang dùng hôm nay.'
-            : 'Chưa có thuốc. Hãy tải đơn thuốc hoặc thêm thuốc bổ, vitamin.'}
-        </p>
+      <div className="profile-bento-card flex flex-col items-center gap-3 border-dashed px-6 py-10 text-center">
+        <ProfileSectionIcon name="medication" size={56} />
+        <p className="text-body font-semibold text-text-primary">{emptyText(readOnly)}</p>
         {!readOnly && (
           <Link
             to="/upload"
-            className="min-h-11 content-center rounded-full bg-accent px-5 text-sm font-semibold text-on-accent"
+            className="inline-flex min-h-btn items-center rounded-2xl bg-accent px-5 text-button-primary font-semibold text-on-accent"
           >
             Tải ảnh đơn thuốc
           </Link>

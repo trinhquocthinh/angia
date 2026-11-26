@@ -6,7 +6,7 @@ export function InvitationExpiry({ expiresAt }: { expiresAt: string }) {
     timeZone: 'Asia/Ho_Chi_Minh',
   }).format(new Date(expiresAt));
   return (
-    <p className="mt-6 inline-flex flex-wrap items-center gap-2 rounded-full bg-accent-soft px-3 py-1.5 text-xs leading-5 text-text-secondary">
+    <p className="mt-6 inline-flex flex-wrap items-center gap-2 rounded-full bg-accent-soft px-3 py-1.5 text-caption text-text-secondary">
       <span className="text-warning">
         <InvitationIcon name="clock" />
       </span>

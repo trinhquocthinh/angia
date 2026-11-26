@@ -68,7 +68,7 @@ export function AsNeededDoseHistory(props: Props) {
         />
       )}
       {error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-body text-danger">
           {error}
         </p>
       )}

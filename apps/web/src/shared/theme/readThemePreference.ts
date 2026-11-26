@@ -5,7 +5,7 @@ export function readThemePreference(): ThemePreference {
     const value = localStorage.getItem('angia-theme');
     if (value === 'light' || value === 'dark' || value === 'system') return value;
   } catch {
-    // Trình duyệt chặn storage: mặc định dùng nền sáng.
+    // Trình duyệt chặn storage: vẫn cho phép dùng nền theo máy (TC-856).
   }
-  return 'light';
+  return 'system';
 }

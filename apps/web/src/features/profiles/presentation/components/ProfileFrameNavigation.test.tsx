@@ -69,12 +69,15 @@ it.each(['main', 'member'] as const)('TC-767: đã có nhà giữ điều hướ
   );
   expect(html).toContain('Điều hướng chính');
 });
-it('TC-767: member chưa liên kết không hiện điều hướng hoặc tìm hồ sơ', () => {
+it('TC-767: member chưa liên kết có ba mục điều hướng và không tìm hồ sơ', () => {
   const html = render(
     { ...session, role: 'member', family: { id: 'family', name: 'Nhà Lan', isOwner: false } },
     '/',
   );
-  expect(html).not.toContain('Điều hướng chính');
+  expect(html).toContain('Điều hướng chính');
+  expect(html).toContain('href="/family/home"');
+  expect(html).toContain('href="/my-profile"');
+  expect(html).not.toContain('href="/review"');
   expect(html).not.toContain('Tìm hồ sơ thành viên');
 });
 it('TC-767: trang admin không hiện ba tab dù admin đang có nhà', () => {
@@ -100,13 +103,15 @@ it('TC-767: menu chỉ có một mục hồ sơ và bỏ cài đặt gia đình'
       />
     </ThemeProvider>,
   );
-  expect(html.match(/Hồ sơ của tôi/g)).toHaveLength(1);
+  expect(html.match(/href="\/my-profile"/g)).toHaveLength(1);
   expect(html).toContain('href="/my-profile"');
   expect(html).toContain('Quản lý tài khoản');
   expect(html).toContain('href="/account"');
   expect(html.indexOf('Quản lý tài khoản')).toBeLessThan(html.indexOf('Đăng xuất'));
   expect(html).not.toContain('Hồ sơ cá nhân');
   expect(html).not.toContain('Cài đặt gia đình');
+  expect(html).not.toContain('Nền giao diện');
+  expect(html).not.toContain('type="radio"');
 });
 it('TC-925: menu tài khoản luôn có mục Quản lý tài khoản trước Đăng xuất dù chưa có nhà', () => {
   const html = renderToStaticMarkup(

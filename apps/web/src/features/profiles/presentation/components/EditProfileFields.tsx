@@ -21,7 +21,7 @@ export function EditProfileFields({
   return (
     <div className="space-y-5">
       <div>
-        <label htmlFor="edit-profile-year" className="text-sm font-semibold">
+        <label htmlFor="edit-profile-year" className="text-caption font-semibold">
           Năm sinh <span aria-hidden="true">*</span>
         </label>
         <input
@@ -35,17 +35,17 @@ export function EditProfileFields({
           onChange={(event) => onBirthYearChange(event.currentTarget.value)}
           aria-invalid={Boolean(yearError)}
           aria-describedby={yearError ? 'edit-year-error' : undefined}
-          className="mt-2 block min-h-12 w-full rounded-xl bg-accent-soft p-3 text-sm"
+          className="mt-2 block min-h-12 w-full rounded-xl bg-accent-soft p-3 text-body"
         />
         {yearError && (
-          <p id="edit-year-error" role="alert" className="mt-2 text-sm text-danger">
+          <p id="edit-year-error" role="alert" className="mt-2 text-body text-danger">
             {yearError}
           </p>
         )}
       </div>
       {child && (
         <div>
-          <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm font-semibold">
+          <label className="flex min-h-11 cursor-pointer items-center gap-3 text-caption font-semibold">
             <input
               type="checkbox"
               role="switch"
@@ -56,7 +56,7 @@ export function EditProfileFields({
             />
             Theo dõi huyết áp, đường huyết
           </label>
-          <p id="edit-vitals-help" className="mt-1 text-sm text-text-secondary">
+          <p id="edit-vitals-help" className="mt-1 text-caption text-text-secondary">
             Bật khi bác sĩ yêu cầu theo dõi cho bé.
           </p>
         </div>

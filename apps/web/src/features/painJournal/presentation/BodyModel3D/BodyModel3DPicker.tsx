@@ -15,10 +15,10 @@ export function BodyModel3DPicker({ selected, onSelect, onUnavailable }: Props) 
       <div className="h-96 overflow-hidden rounded-xl border border-border">
         <BodyModel3D selected={selected} onSelect={onSelect} onUnavailable={onUnavailable} />
       </div>
-      <p className="text-center text-xs text-text-secondary">
+      <p className="text-center text-caption text-text-secondary">
         Kéo để xoay, chụm để phóng. Trái, phải theo người trong hình
       </p>
-      <p aria-live="polite" aria-atomic="true" className="min-h-6 text-center text-sm">
+      <p aria-live="polite" aria-atomic="true" className="min-h-6 text-center text-body">
         {selected ? `Đã chọn: ${describeBodyLocation(selected)}` : 'Chạm vào một vùng trên mô hình'}
       </p>
     </div>

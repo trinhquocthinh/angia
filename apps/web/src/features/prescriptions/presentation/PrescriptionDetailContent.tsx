@@ -29,5 +29,5 @@ export function PrescriptionDetailContent({ profile, session, prescriptionId, ch
         }}
       />
     );
-  return <PrescriptionDetailView data={data} previousDate={previous?.issuedDate ?? null} />;
+  return <PrescriptionDetailView data={data} previousDate={previous?.issuedDate ?? null} chain={chain} />;
 }

@@ -1,23 +1,26 @@
 import { Link } from '@tanstack/react-router';
 import type { DocumentEntry } from '@angia/contracts';
 import {
+  ProfileSectionIcon,
+  type ProfileSectionIconName,
+} from '@src/features/profiles/presentation/components/ProfileSectionIcon';
+import {
   entryAction,
   entryDateLabel,
   entryStatusLabel,
   entryTitle,
 } from '../../application/entryPresentation';
-import { DocumentIcon, type DocumentIconName } from '../components/DocumentIcon';
 import { EntryRecordSummary } from './EntryRecordSummary';
 
-const ICONS: Record<NonNullable<DocumentEntry['type']>, DocumentIconName> = {
-  prescription: 'prescription',
-  lab_result: 'lab',
-  device_reading: 'monitor',
+const CLAY_ICONS: Record<NonNullable<DocumentEntry['type']>, ProfileSectionIconName> = {
+  prescription: 'receipt_long',
+  lab_result: 'science',
+  device_reading: 'monitor_heart',
 };
 const actionClass =
-  'min-h-11 content-center rounded-xl bg-accent-soft px-4 text-sm font-semibold text-accent hover:bg-border';
+  'inline-flex min-h-btn items-center justify-center rounded-2xl bg-accent-soft px-4 text-button-secondary font-semibold text-accent transition-colors hover:bg-choice-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus';
 
-// Thẻ chứng từ (Stitch 10424d70): tiêu đề, nhãn trạng thái trung tính, nơi khám · ngày, tóm tắt bản ghi.
+// Thẻ chứng từ theo Stitch 3D Bento v2.0: icon 3D đất sét, tiêu đề serif, nhãn trạng thái trung tính, tóm tắt bản ghi.
 export function DocumentEntryCard({
   entry,
   onOpen,
@@ -28,19 +31,19 @@ export function DocumentEntryCard({
   const action = entryAction(entry);
   const facility = entry.records.prescription?.facility ?? entry.records.labResults[0]?.facility ?? null;
   return (
-    <article className="flex flex-col gap-4 rounded-xl bg-surface p-5 shadow-sm">
-      <div className="flex items-start gap-3">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent text-on-accent">
-          <DocumentIcon name={entry.type ? ICONS[entry.type] : 'file'} />
+    <article className="doc-bento-card flex flex-col gap-4 p-5">
+      <div className="flex items-start gap-3.5">
+        <span className="doc-clay-tile" aria-hidden="true">
+          <ProfileSectionIcon name={entry.type ? CLAY_ICONS[entry.type] : 'folder_open'} size={30} />
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-base font-semibold text-text-primary">{entryTitle(entry)}</h3>
-            <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-medium text-text-secondary">
+            <h3 className="auth-heading text-body font-bold text-text-primary">{entryTitle(entry)}</h3>
+            <span className="rounded-full bg-secondary-container px-2.5 py-0.5 text-caption font-semibold text-on-secondary-container">
               {entryStatusLabel(entry)}
             </span>
           </div>
-          <p className="mt-1 text-sm text-text-secondary">
+          <p className="mt-1 text-caption text-text-secondary">
             {facility ? `${facility} · ` : ''}
             {entryDateLabel(entry)}
           </p>

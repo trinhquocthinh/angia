@@ -15,9 +15,18 @@ export function ReminderRecipientsSection({
   session: ProfileSession;
 }) {
   const people = useReminderSetting('reminder-recipients', recipientIo, session, profile);
+  const badge =
+    people.query.data?.mode === 'linked'
+      ? 'Tài khoản liên kết'
+      : people.query.data
+        ? `${people.query.data.recipients.length} người nhận`
+        : undefined;
   return (
     <ReminderSettingSection
       title="Người nhận nhắc"
+      subtitle="Quy định ai nhận thông báo đến giờ thuốc"
+      icon="supervisor_account"
+      badge={badge}
       query={people.query}
       loadingText="Đang tải người nhận nhắc…"
     >

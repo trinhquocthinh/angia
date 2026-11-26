@@ -18,7 +18,10 @@ export function EntryListPlaceholder({
     );
   if (state === 'error')
     return (
-      <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-danger-soft p-5 text-sm">
+      <div
+        role="alert"
+        className="flex flex-col items-start gap-3 rounded-[20px] bg-danger-soft p-5 text-caption"
+      >
         <p>Không tải được giấy tờ khám.</p>
         <button
           type="button"
@@ -31,10 +34,10 @@ export function EntryListPlaceholder({
     );
   return (
     <div className="flex flex-col items-center gap-3 rounded-[20px] border-2 border-dashed border-border bg-surface px-6 py-12 text-center">
-      <p className="text-sm font-semibold text-text-primary">Chưa có giấy tờ khám.</p>
+      <p className="text-body font-semibold text-text-primary">Chưa có giấy tờ khám.</p>
       <Link
         to="/upload"
-        className="min-h-11 content-center rounded-full bg-accent px-5 text-sm font-semibold text-on-accent"
+        className="min-h-14 content-center rounded-full bg-accent px-5 text-button-primary font-semibold text-on-accent"
       >
         Tải ảnh giấy tờ
       </Link>

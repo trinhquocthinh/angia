@@ -20,7 +20,7 @@ export function householdDesignCases(theme: string) {
       else expect(shadow).toBe('none');
     }
   });
-  test('Stitch: menu icon mở/đóng, lưu nền thật và trả focus', async ({ page }, info) => {
+  test('Stitch: menu icon mở/đóng và trả focus', async ({ page }, info) => {
     await householdStartFixture(page);
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.goto('/waiting?step=create');
@@ -31,14 +31,8 @@ export function householdDesignCases(theme: string) {
     await dialog.evaluate((element) =>
       Promise.all(element.getAnimations().map((animation) => animation.finished)),
     );
-    await expect(dialog.getByRole('radio', { name: 'Chế độ Sáng' })).toBeVisible();
-    await dialog.getByRole('radio', { name: 'Chế độ Tối' }).check();
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    expect(await page.evaluate(() => localStorage.getItem('angia-theme'))).toBe('dark');
-    await dialog.getByRole('radio', { name: theme === 'dark' ? 'Chế độ Tối' : 'Chế độ Sáng' }).check();
-    await dialog.evaluate((element) =>
-      Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished)),
-    );
+    // Chọn nền đã chuyển sang trang Quản lý tài khoản (E30-S1-T1); menu không còn radio.
+    await expect(dialog.getByRole('radio')).toHaveCount(0);
     await expect(dialog).toHaveCSS(
       'border-top-left-radius',
       info.project.name.includes('desktop') ? '16px' : '28px',

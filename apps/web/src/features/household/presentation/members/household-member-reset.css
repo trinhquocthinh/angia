@@ -16,8 +16,8 @@
   border: 2px solid var(--color-accent);
   background: var(--color-accent-soft);
   color: var(--color-accent);
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .member-reset-trigger:hover:not(:disabled) {
   background: var(--color-accent);
@@ -65,8 +65,8 @@
 }
 .member-reset-header h2 {
   margin: 0;
-  font-size: 1.25rem;
-  line-height: 1.75rem;
+  font-size: var(--font-button-primary);
+  line-height: var(--line-button-primary);
   font-weight: 700;
 }
 .member-reset-header h2:focus-visible {
@@ -98,8 +98,8 @@
   border: 1px solid color-mix(in srgb, var(--color-danger) 30%, var(--color-surface));
   background: var(--color-danger-soft);
   color: var(--color-danger);
-  font-size: 0.9375rem;
-  line-height: 1.45rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   font-weight: 500;
 }
 .member-reset-alert .member-reset-icon {
@@ -114,8 +114,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  font-size: 0.9375rem;
-  line-height: 1.45rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
 }
 .member-reset-actions {
   display: grid;
@@ -125,8 +125,8 @@
 .member-reset-actions button,
 .member-reset-done-btn {
   min-height: 48px;
-  font-size: 0.9375rem;
-  line-height: 1.4rem;
+  font-size: var(--font-button-secondary);
+  line-height: var(--line-button-secondary);
   padding: 12px 14px;
 }
 @media (max-width: 767px) {

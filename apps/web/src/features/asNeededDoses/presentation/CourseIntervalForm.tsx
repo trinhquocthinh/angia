@@ -24,7 +24,7 @@ export function CourseIntervalForm({ initialText, pending, error, onSubmit, onCa
       }}
     >
       <fieldset disabled={pending} className="flex flex-col gap-3 border-0 px-6 py-5">
-        <label htmlFor={id} className="text-sm font-semibold">
+        <label htmlFor={id} className="text-caption font-semibold">
           Khoảng cách theo nhãn thuốc · Do người dùng nhập
         </label>
         <input
@@ -34,13 +34,13 @@ export function CourseIntervalForm({ initialText, pending, error, onSubmit, onCa
           maxLength={100}
           aria-invalid={invalid}
           aria-describedby={`${id}-hint`}
-          className="min-h-12 w-full rounded-xl border border-border px-3 text-sm focus-visible:outline-2 focus-visible:outline-focus"
+          className="min-h-12 w-full rounded-2xl border border-border/55 bg-bg px-3.5 text-body text-text-primary focus:border-accent focus:bg-surface focus-visible:outline-2 focus-visible:outline-focus"
         />
-        <p id={`${id}-hint`} className="text-xs text-text-secondary">
+        <p id={`${id}-hint`} className="text-caption text-text-secondary">
           Tối đa 100 ký tự. Để trống để xóa khoảng cách tự nhập.
         </p>
         {(invalid || error) && (
-          <p role="alert" className="text-sm text-danger">
+          <p role="alert" className="text-body text-danger">
             {invalid ? 'Khoảng cách tối đa 100 ký tự.' : error}
           </p>
         )}

@@ -1,1 +1,328 @@
 @import '@src/features/auth/presentation/auth.css';
+
+.profile-bento-card,
+.profile-directory-surface,
+.profile-member-card {
+  min-width: 0;
+  border: 1px solid color-mix(in srgb, var(--color-border) 38%, transparent);
+  border-radius: 24px;
+  background: var(--color-surface);
+  box-shadow: 0 8px 28px color-mix(in srgb, var(--color-household-shadow) 7%, transparent);
+}
+
+.profile-member-card {
+  transition:
+    transform 180ms ease-out,
+    box-shadow 180ms ease-out,
+    border-color 180ms ease-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .profile-member-card:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--color-accent) 28%, transparent);
+    box-shadow: 0 14px 32px color-mix(in srgb, var(--color-household-shadow) 11%, transparent);
+  }
+}
+
+.profile-ceramic-avatar {
+  position: relative;
+  display: inline-flex;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-container),
+    var(--color-secondary),
+    var(--color-accent)
+  );
+  color: var(--color-on-accent);
+  font-size: var(--font-heading-2);
+  font-weight: 700;
+  line-height: 1;
+  box-shadow:
+    inset 0 2px 4px color-mix(in srgb, var(--color-on-accent) 25%, transparent),
+    0 6px 16px color-mix(in srgb, var(--color-household-shadow) 24%, transparent);
+  user-select: none;
+}
+
+.profile-ceramic-avatar-lg {
+  width: 68px;
+  height: 68px;
+  font-size: var(--font-heading-1);
+}
+
+.profile-ceramic-badge {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-secondary);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--color-shadow) 14%, transparent);
+}
+
+.profile-consent-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
+  font-weight: 600;
+}
+
+.profile-consent-pill-confirmed {
+  background: color-mix(in srgb, var(--color-secondary-container) 62%, transparent);
+  color: var(--color-on-secondary-container);
+}
+
+.profile-consent-pill-warning {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.profile-consent-pill-danger {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.profile-clay-icon {
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px color-mix(in srgb, var(--color-household-shadow) 14%, transparent));
+}
+
+.profile-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.profile-self-rail {
+  display: flex;
+  gap: 10px;
+  padding: 2px 2px 6px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.profile-self-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.profile-self-rail .profile-bento-tile {
+  flex: 0 0 auto;
+  width: 112px;
+  min-height: 92px;
+  gap: 6px;
+  padding: 10px 8px;
+  border-radius: 18px;
+  scroll-snap-align: start;
+}
+
+.profile-self-rail .profile-clay-icon {
+  width: 36px;
+  height: 36px;
+}
+
+.profile-bento-tile {
+  position: relative;
+  display: flex;
+  min-height: 118px;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 12px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 38%, transparent);
+  border-radius: 22px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  text-align: center;
+  overflow-wrap: anywhere;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-household-shadow) 6%, transparent);
+  transition:
+    transform 180ms ease-out,
+    background-color 180ms ease-out,
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out;
+}
+
+.profile-bento-tile:active {
+  transform: scale(0.98);
+}
+
+.profile-bento-tile:focus-visible,
+.profile-overview button:focus-visible,
+.profile-tab-pill:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .profile-bento-tile:hover {
+    transform: translateY(-2px);
+    background: var(--color-accent-soft);
+    border-color: color-mix(in srgb, var(--color-accent) 32%, transparent);
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--color-household-shadow) 11%, transparent);
+  }
+}
+
+.profile-bento-tile[aria-current='page'] {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 40%, transparent),
+    0 6px 18px color-mix(in srgb, var(--color-household-shadow) 10%, transparent);
+}
+
+.profile-bento-tile-label {
+  display: block;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
+  font-weight: 600;
+}
+
+.profile-bento-tile-dot {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-accent);
+}
+
+.profile-tabs-pillbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 18px;
+  background: var(--color-surface-container-high);
+  overflow-x: auto;
+}
+
+.profile-tab-pill {
+  position: relative;
+  display: inline-flex;
+  min-height: 48px;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color 160ms ease-out,
+    color 160ms ease-out,
+    box-shadow 160ms ease-out;
+}
+
+.profile-tab-pill:hover {
+  color: var(--color-text-primary);
+}
+
+.profile-tab-pill[aria-current='page'] {
+  background: var(--color-surface);
+  color: var(--color-accent);
+  font-weight: 700;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-household-shadow) 10%, transparent);
+}
+
+@media (min-width: 640px) {
+  .profile-bento-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .profile-bento-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .profile-self-rail {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 12px;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .profile-self-rail .profile-bento-tile {
+    width: auto;
+    min-height: 116px;
+    gap: 8px;
+    padding: 14px 10px;
+    border-radius: 22px;
+  }
+
+  .profile-self-rail .profile-clay-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .profile-bento-tile {
+    min-height: 124px;
+    padding: 16px 12px;
+  }
+}
+
+:root[data-theme='dark'] .profile-bento-card,
+:root[data-theme='dark'] .profile-directory-surface,
+:root[data-theme='dark'] .profile-member-card,
+:root[data-theme='dark'] .profile-bento-tile,
+:root[data-theme='dark'] .profile-tab-pill[aria-current='page'],
+:root[data-theme='dark'] .profile-ceramic-avatar,
+:root[data-theme='dark'] .profile-ceramic-badge {
+  box-shadow: none;
+}
+
+:root[data-theme='dark'] .profile-bento-card,
+:root[data-theme='dark'] .profile-directory-surface,
+:root[data-theme='dark'] .profile-member-card,
+:root[data-theme='dark'] .profile-bento-tile {
+  border-color: var(--color-border);
+}
+
+:root[data-theme='dark'] .profile-bento-tile[aria-current='page'] {
+  border-color: var(--color-accent);
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-member-card,
+  .profile-bento-tile,
+  .profile-tab-pill {
+    transition: none;
+  }
+
+  .profile-member-card:hover,
+  .profile-bento-tile:hover,
+  .profile-bento-tile:active {
+    transform: none;
+  }
+}

@@ -9,6 +9,7 @@ import { TemperatureHeader } from './TemperatureHeader';
 
 const repository = createTemperatureRepository();
 type Props = { session: ProfileSession; profileId: string; readOnly?: boolean; consentConfirmed?: boolean };
+
 export function TemperatureWorkspace({
   session,
   profileId,
@@ -17,12 +18,14 @@ export function TemperatureWorkspace({
 }: Props) {
   const state = useTemperatureWorkspace(repository, session, profileId, readOnly, consentConfirmed);
   const { query, mutation, editable } = state;
-  if (!consentConfirmed) return <p role="alert">Hồ sơ chưa được đồng ý lưu dữ liệu.</p>;
+  if (!consentConfirmed)
+    return (
+      <p role="alert" className="profile-bento-card p-6 text-body">
+        Hồ sơ chưa được đồng ý lưu dữ liệu.
+      </p>
+    );
   return (
-    <section
-      aria-label="Nhiệt độ"
-      className="flex min-w-0 flex-col gap-4 rounded-xl bg-surface p-5 shadow-sm"
-    >
+    <section aria-label="Nhiệt độ" className="profile-bento-card flex min-w-0 flex-col gap-5 p-5 lg:p-6">
       <TemperatureHeader
         editable={editable}
         pending={mutation.pending}
@@ -52,7 +55,7 @@ export function TemperatureWorkspace({
         />
       )}
       {!state.recording && mutation.error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-body text-danger">
           {mutation.error}
         </p>
       )}

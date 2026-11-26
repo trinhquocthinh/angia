@@ -31,14 +31,14 @@ export function ConsentAttestationForm({
         if (!pending && result.body) onSubmit(result.body);
       }}
     >
-      <h2 id="consent-attestation-title" className="text-xl font-semibold text-accent">
+      <h2 id="consent-attestation-title" className="text-heading-2 font-semibold text-accent">
         Xác nhận đồng ý
       </h2>
-      <p id="consent-attestation-description" className="break-words text-sm">
+      <p id="consent-attestation-description" className="break-words text-body">
         Hồ sơ: {profile.displayName}
       </p>
       {profile.consentStatus === 'declined' && (
-        <p role="alert" className="rounded-xl bg-warning-soft p-4 text-sm leading-6">
+        <p role="alert" className="rounded-xl bg-warning-soft p-4 text-body ">
           Trước đây có phản hồi không đồng ý qua link. Chỉ xác nhận sau khi đã hỏi lại và được đồng ý.
         </p>
       )}
@@ -46,7 +46,7 @@ export function ConsentAttestationForm({
         <ConsentFields mode={mode} draft={draft} profileName={profile.displayName} onChange={onChange} />
       </fieldset>
       {error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-body text-danger">
           {error}
         </p>
       )}

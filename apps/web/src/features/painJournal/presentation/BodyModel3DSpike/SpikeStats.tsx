@@ -16,7 +16,7 @@ export function SpikeStats({ load, fps, trial, onResetTrial }: Props) {
   const target = SMALL_REGION_TARGETS[trial.index];
   const total = SMALL_REGION_TARGETS.length;
   return (
-    <dl className="grid grid-cols-[auto_1fr] gap-x-3 text-xs" data-testid="spike-stats">
+    <dl className="grid grid-cols-[auto_1fr] gap-x-3 text-caption" data-testid="spike-stats">
       <dt>Màn hình</dt>
       <dd>{`${window.innerWidth} px · dpr ${window.devicePixelRatio}`}</dd>
       <dt>Sẵn sàng</dt>
@@ -30,7 +30,7 @@ export function SpikeStats({ load, fps, trial, onResetTrial }: Props) {
         {target
           ? `${trial.index + 1}/${total}: chạm ${describeLocation(target)} · trúng ${trial.hits}`
           : `Trúng ${trial.hits}/${total}`}{' '}
-        <button type="button" className="underline" onClick={onResetTrial}>
+        <button type="button" className="inline-flex min-h-11 items-center underline" onClick={onResetTrial}>
           Làm lại
         </button>
       </dd>

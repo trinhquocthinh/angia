@@ -19,7 +19,7 @@ export function DocumentImageFullscreen({ src, turns, onError, onRotate, onClose
       className="angia-modal fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none flex-col gap-3 border-0 bg-surface p-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] text-text-primary open:flex"
     >
       <div className="flex items-center justify-between gap-2">
-        <h2 id="document-image-fullscreen-title" className="px-1 text-[15px] font-semibold text-accent">
+        <h2 id="document-image-fullscreen-title" className="px-1 text-caption font-semibold text-accent">
           Hình chụp giấy tờ
         </h2>
         <button

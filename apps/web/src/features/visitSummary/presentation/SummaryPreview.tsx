@@ -11,13 +11,15 @@ export function SummaryPreview({ summary }: { summary: VisitSummary }) {
   const { frame, page, scale, height } = useFitScale(A4_WIDTH);
   return (
     <>
-      <div ref={frame} className="flex items-start justify-center overflow-hidden" style={{ height }}>
-        <div
-          ref={page}
-          className="shrink-0"
-          style={{ width: A4_WIDTH, transform: `scale(${scale})`, transformOrigin: 'top center' }}
-        >
-          <SummarySheet summary={summary} />
+      <div className="rounded-3xl border border-border/35 bg-surface-container/60 p-3 sm:p-6">
+        <div ref={frame} className="flex items-start justify-center overflow-hidden" style={{ height }}>
+          <div
+            ref={page}
+            className="shrink-0"
+            style={{ width: A4_WIDTH, transform: `scale(${scale})`, transformOrigin: 'top center' }}
+          >
+            <SummarySheet summary={summary} />
+          </div>
         </div>
       </div>
       {createPortal(

@@ -31,10 +31,15 @@ export function DocumentImageViewer({ src, turns, onError, onRotate, onExpand }:
         onZoom={(factor) => zoomTo(scale * factor)}
         onRotate={onRotate}
       />
-      <div className={`relative ${onExpand ? 'h-64 xl:h-auto xl:min-h-0 xl:flex-1' : 'min-h-0 flex-1'}`}>
+      <div
+        className={`${onExpand ? 'review-image-viewport h-64 xl:h-auto xl:min-h-0 xl:flex-1' : 'min-h-0 flex-1'} relative`}
+      >
         <div
           ref={containerRef}
-          className={`h-full touch-pan-x touch-pan-y overflow-auto rounded-xl bg-accent-soft [scrollbar-gutter:stable] ${
+          tabIndex={pannable ? 0 : undefined}
+          role={pannable ? 'region' : undefined}
+          aria-label={pannable ? 'Ảnh giấy tờ có thể cuộn' : undefined}
+          className={`h-full touch-pan-x touch-pan-y overflow-auto rounded-xl bg-accent-soft [scrollbar-gutter:stable] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${
             pannable ? 'cursor-grab active:cursor-grabbing' : ''
           }`}
         >
@@ -51,17 +56,15 @@ export function DocumentImageViewer({ src, turns, onError, onRotate, onExpand }:
               style={
                 box
                   ? {
-                      position: 'absolute',
                       left: box.offsetX,
                       top: box.offsetY,
                       width: box.imageWidth,
                       height: box.imageHeight,
-                      maxWidth: 'none',
                       transform: `rotate(${turns * 90}deg)`,
                     }
                   : { width: '100%' }
               }
-              className="select-none"
+              className={box ? 'absolute max-w-none select-none' : 'select-none'}
             />
           </div>
         </div>

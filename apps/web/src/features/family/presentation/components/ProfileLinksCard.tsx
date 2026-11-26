@@ -25,7 +25,7 @@ export function ProfileLinksCard({
   const candidates = linkCandidates(accounts, familyId, rows);
   return (
     <section
-      className="admin-panel flex min-w-0 flex-col gap-4 rounded-2xl bg-surface p-5 shadow-sm max-[600px]:p-4 admin-reveal"
+      className="profile-bento-card flex min-w-0 flex-col gap-4 p-5 sm:p-6"
       aria-labelledby="profile-links-title"
     >
       <AdminCardHeading
@@ -33,7 +33,7 @@ export function ProfileLinksCard({
         icon={<AdminIcon name="group" />}
         title="Liên kết tài khoản với hồ sơ"
       />
-      <label className="grid gap-2 text-[13px] font-medium">
+      <label className="grid gap-2 text-caption font-medium">
         Nhóm gia đình
         <AdminSelect
           value={familyId}

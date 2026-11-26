@@ -6,7 +6,7 @@ export function AdminSelect({ children, ...props }: SelectHTMLAttributes<HTMLSel
     <div className="relative min-w-0">
       <select
         {...props}
-        className="min-h-10 w-full min-w-0 rounded-xl border-0 bg-accent-soft py-2 pl-3 text-[13px] leading-5 font-normal text-text-primary transition-colors focus:bg-accent-soft disabled:opacity-65"
+        className="min-h-11 w-full min-w-0 rounded-2xl border border-border/45 bg-bg py-2 pl-3.5 text-body font-normal text-text-primary transition-colors focus:bg-surface disabled:opacity-65"
       >
         {children}
       </select>

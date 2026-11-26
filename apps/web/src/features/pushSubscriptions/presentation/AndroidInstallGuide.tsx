@@ -46,7 +46,7 @@ export function AndroidInstallGuide({ canPrompt, onInstall }: Props) {
     >
       {canPrompt && (
         <button
-          className="mt-4 inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-on-accent hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus"
+          className="mt-4 inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-xl bg-accent px-5 text-button-primary font-semibold text-on-accent hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-focus"
           onClick={onInstall}
         >
           <PushIcon name="addSquare" /> Cài AN GIA lên điện thoại

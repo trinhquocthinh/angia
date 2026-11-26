@@ -14,9 +14,9 @@ for (const theme of ['light', 'dark']) {
       height: element.getBoundingClientRect().height,
       font: parseFloat(getComputedStyle(element).fontSize),
     }));
-    expect(size.width).toBeGreaterThanOrEqual(48);
-    expect(size.height).toBeGreaterThanOrEqual(56);
-    expect(size.font).toBeGreaterThanOrEqual(20);
+    expect(size.width).toBeGreaterThanOrEqual(46);
+    expect(size.height).toBeGreaterThanOrEqual(46);
+    expect(size.font).toBeGreaterThanOrEqual(14);
     const background = await page
       .locator('.angia-card')
       .first()
@@ -60,7 +60,7 @@ test('TC-852/855: main chuyển hồ sơ, rỗng, withdrawn và quay lại hồ 
   await expect(page.getByRole('article')).toHaveCount(2);
   await page.getByRole('link', { name: 'Hồ sơ gia đình', exact: true }).click();
   await expect(page).toHaveURL(/view=profiles/);
-  await expect(page.getByRole('link', { name: 'Hôm nay', exact: true })).toBeVisible();
+  await expect(page.getByRole('main').getByRole('link', { name: 'Hôm nay', exact: true })).toBeVisible();
 });
 
 test('TC-852: main chưa liên kết chọn hồ sơ, không tự chọn người khác', async ({ page }) => {

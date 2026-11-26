@@ -13,7 +13,7 @@ type ImageZoomControlsProps = {
 
 const STEP = 1.25;
 const base =
-  'inline-flex min-h-11 items-center justify-center rounded-xl px-2.5 text-[13px] font-medium transition-[background-color,color,scale] duration-200 enabled:cursor-pointer enabled:active:scale-95 motion-reduce:transition-none sm:px-3 sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-50';
+  'inline-flex min-h-11 items-center justify-center rounded-xl px-2.5 text-caption font-medium transition-[background-color,color,scale] duration-200 enabled:cursor-pointer enabled:active:scale-95 motion-reduce:transition-none sm:px-3 sm:text-caption focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-50';
 const tone = (active: boolean) =>
   active ? 'bg-accent text-on-accent' : 'text-accent enabled:hover:bg-border';
 
@@ -61,13 +61,13 @@ export function ImageZoomControls({
           aria-label="Thu nhỏ ảnh"
           disabled={disabled}
           onClick={() => onZoom(1 / STEP)}
-          className={`${base} w-11 text-lg text-accent enabled:hover:bg-border`}
+          className={`${base} w-11 text-caption text-accent enabled:hover:bg-border`}
         >
           −
         </button>
         <output
           aria-live="polite"
-          className="w-11 text-center text-xs font-semibold tabular-nums text-text-secondary max-sm:sr-only"
+          className="w-11 text-center text-caption font-semibold tabular-nums text-text-secondary max-sm:sr-only"
         >
           {Math.round(scale * 100)}%
         </output>
@@ -76,7 +76,7 @@ export function ImageZoomControls({
           aria-label="Phóng to ảnh"
           disabled={disabled}
           onClick={() => onZoom(STEP)}
-          className={`${base} w-11 text-lg text-accent enabled:hover:bg-border`}
+          className={`${base} w-11 text-caption text-accent enabled:hover:bg-border`}
         >
           +
         </button>

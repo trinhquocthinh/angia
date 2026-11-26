@@ -16,16 +16,24 @@ export function InlinePainEntry(
   };
   const state = useQuickPainEntrySheet({ ...props, onContinueIssue: continueIssue });
   return (
-    <section aria-label="Ghi nhanh" className="rounded-xl border border-border p-4">
+    <section aria-label="Ghi nhanh" className="profile-bento-card p-5 sm:p-6">
+      <h2 className="auth-heading mb-4 text-heading-2 font-semibold text-accent">
+        Ghi nhanh mức đau lúc này
+      </h2>
       <form
+        className="space-y-4"
         onSubmit={(event) => {
           event.preventDefault();
           void state.submit(state.needsReopen);
         }}
       >
-        <fieldset disabled={state.pending} aria-busy={state.pending} className="space-y-3">
+        <fieldset disabled={state.pending} aria-busy={state.pending} className="space-y-4 border-0 p-0">
           <FirstPainEntryFields values={state.values} onChange={state.change} />
-          {state.error && <p role="alert">{state.error}</p>}
+          {state.error && (
+            <p role="alert" className="rounded-2xl bg-danger-soft p-3 text-body text-danger">
+              {state.error}
+            </p>
+          )}
         </fieldset>
         <QuickPainEntryFooter state={state} />
       </form>

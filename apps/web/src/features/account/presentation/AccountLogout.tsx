@@ -40,12 +40,12 @@ export function AccountLogout({
   }
   return (
     <div className="w-full">
-      {heading && <p className="text-base font-medium text-text-secondary">{heading}</p>}
+      {heading && <p className="text-body font-medium text-text-secondary">{heading}</p>}
       <button
         type="button"
         disabled={busy || !token}
         onClick={() => void logout()}
-        className="account-link inline-flex min-h-14 items-center gap-3 text-lg"
+        className="account-link inline-flex min-h-14 items-center gap-3 text-body"
       >
         {icon ?? (
           <svg

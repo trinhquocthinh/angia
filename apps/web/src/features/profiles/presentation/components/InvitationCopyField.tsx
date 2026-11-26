@@ -21,10 +21,10 @@ export function InvitationCopyField({ created }: { created: InvitationCreated })
   return (
     <div className="mt-6">
       <div className="flex items-center justify-between gap-3">
-        <label htmlFor="invitation-link" className="text-xs font-medium">
+        <label htmlFor="invitation-link" className="text-caption font-medium">
           Link liên kết mới
         </label>
-        <span className="flex items-center gap-1.5 text-[11px] text-accent">
+        <span className="flex items-center gap-1.5 text-caption text-accent">
           <span
             aria-hidden="true"
             className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent motion-reduce:animate-none"
@@ -33,7 +33,7 @@ export function InvitationCopyField({ created }: { created: InvitationCreated })
         </span>
       </div>
       <InvitationLinkInput url={url} onCopy={() => void copy()} />
-      <p className="mt-2 flex items-center gap-1.5 text-xs leading-5 text-text-secondary">
+      <p className="mt-2 flex items-center gap-1.5 text-caption text-text-secondary">
         <InvitationIcon name="calendar" />
         <span>
           Hết hạn: <strong className="font-semibold">{time}</strong> (giờ Việt Nam).
@@ -42,12 +42,12 @@ export function InvitationCopyField({ created }: { created: InvitationCreated })
       <button
         type="button"
         onClick={() => void copy()}
-        className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-on-accent hover:bg-accent-hover"
+        className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-caption font-semibold text-on-accent hover:bg-accent-hover"
       >
         <InvitationIcon name="copy" />
         Sao chép link
       </button>
-      <p role="status" aria-live="polite" className="mt-2 text-xs leading-5 text-accent">
+      <p role="status" aria-live="polite" className="mt-2 text-body text-accent">
         {message}
       </p>
     </div>

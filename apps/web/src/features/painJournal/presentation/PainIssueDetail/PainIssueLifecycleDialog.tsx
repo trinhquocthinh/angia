@@ -22,7 +22,10 @@ export function PainIssueLifecycleDialog(props: Props) {
       pending={props.pending}
       width="md"
     >
-      <h2 id={id} className="border-b border-border px-5 py-4 text-xl font-semibold">
+      <h2
+        id={id}
+        className="auth-heading border-b border-border/35 px-5 py-4 text-heading-2 font-semibold text-accent"
+      >
         {props.title}
       </h2>
       <form
@@ -34,21 +37,25 @@ export function PainIssueLifecycleDialog(props: Props) {
       >
         <div className="space-y-3 overflow-y-auto p-5" aria-busy={props.pending}>
           {props.children}
-          {props.error && <p role="alert">{props.error}</p>}
+          {props.error && (
+            <p role="alert" className="rounded-2xl bg-danger-soft p-3 text-body text-danger">
+              {props.error}
+            </p>
+          )}
         </div>
-        <footer className="flex shrink-0 flex-wrap justify-end gap-3 border-t border-border bg-surface p-4">
+        <footer className="flex shrink-0 flex-wrap justify-end gap-3 border-t border-border/35 bg-surface p-4">
           <button
             type="button"
             disabled={props.pending}
             onClick={props.onClose}
-            className="min-h-[52px] px-3"
+            className="min-h-btn cursor-pointer rounded-2xl border border-border/45 bg-bg px-5 text-button-secondary font-semibold text-text-primary transition-colors hover:bg-accent-soft disabled:opacity-50"
           >
             {props.cancelLabel}
           </button>
           <button
             type="submit"
             disabled={props.disabled || props.pending}
-            className={`min-h-[52px] rounded-xl px-4 text-on-accent disabled:opacity-50 ${props.danger ? 'bg-danger' : 'bg-accent'}`}
+            className={`min-h-btn cursor-pointer rounded-2xl px-5 text-button-primary font-semibold text-on-accent shadow-stitch-sm disabled:opacity-45 ${props.danger ? 'bg-danger' : 'bg-accent hover:bg-accent-hover'}`}
           >
             {props.pending ? 'Đang xử lý…' : props.confirmLabel}
           </button>

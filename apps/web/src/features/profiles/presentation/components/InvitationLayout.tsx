@@ -13,13 +13,13 @@ export function InvitationLayout({ children }: { children: ReactNode }) {
           <div className="mb-3 rounded-xl bg-accent-soft p-2">
             <img src="/logo.webp" alt="" width={48} height={48} className="h-12 w-12 object-contain" />
           </div>
-          <p className="auth-heading text-xl font-semibold tracking-wider text-accent">AN GIA</p>
-          <p className="auth-heading mt-1 text-xs italic leading-5 text-accent">
+          <p className="auth-heading text-button-primary font-semibold tracking-wider text-accent">AN GIA</p>
+          <p className="auth-heading mt-1 text-body italic text-accent">
             “Chăm chút từng thói quen, chở che từng thế hệ.”
           </p>
         </header>
         <div className="relative mt-6">{children}</div>
-        <footer className="relative mt-6 flex items-center justify-center gap-2 text-[11px] leading-4 text-text-secondary">
+        <footer className="relative mt-6 flex items-center justify-center gap-2 text-caption text-text-secondary">
           <InvitationIcon name="shield" />
           <span>Bạn chủ động quyết định việc chia sẻ dữ liệu.</span>
         </footer>

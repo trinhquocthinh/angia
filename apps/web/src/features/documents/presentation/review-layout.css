@@ -1,0 +1,164 @@
+@import './documents-bento.css';
+
+/* Chỉ áp dụng trong ReviewWorkspace theo Stitch 3D Bento v2.0 (bb3e9ab1 / 6f8ab883). */
+.review-page {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.review-page-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.review-page-heading > a {
+  min-height: var(--size-button-height);
+  margin: 0;
+  flex-shrink: 0;
+  border-radius: 1rem;
+  box-shadow: var(--shadow-stitch-md);
+}
+/* Chi tiết trên điện thoại ưu tiên giấy tờ; liên kết quay lại danh sách vẫn hiện phía trên ảnh. */
+@media (max-width: 639px) {
+  .review-page-detail .review-page-heading p,
+  .review-page-detail .review-page-heading > a,
+  .review-page-detail .review-page-heading .doc-switcher {
+    display: none;
+  }
+}
+.review-detail-grid {
+  display: grid;
+  min-width: 0;
+  align-items: stretch;
+  gap: 1.5rem;
+}
+.review-document-column {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.review-detail-queue {
+  display: none;
+}
+.review-form-column {
+  min-width: 0;
+}
+.review-page .review-queue,
+.review-page .review-image-panel,
+.review-form-column form > section,
+.review-form-column > div > section {
+  border: 1px solid color-mix(in srgb, var(--color-border) 38%, transparent);
+  border-radius: 1.5rem;
+  background: var(--color-surface);
+  box-shadow:
+    0 12px 32px color-mix(in srgb, var(--color-household-shadow) 6%, transparent),
+    0 2px 6px color-mix(in srgb, var(--color-shadow) 3%, transparent);
+}
+:root[data-theme='dark'] .review-page .review-queue,
+:root[data-theme='dark'] .review-page .review-image-panel,
+:root[data-theme='dark'] .review-form-column form > section,
+:root[data-theme='dark'] .review-form-column > div > section {
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+.review-page .review-queue > div:first-child {
+  background: transparent;
+  padding: 1.25rem 1.25rem 0.5rem;
+}
+.review-page .review-queue > div:last-child {
+  padding: 0.75rem;
+}
+.review-page .review-queue-item {
+  min-width: 0;
+  padding: 0.9rem 1rem;
+  border: 2px solid transparent;
+  border-radius: 1.25rem;
+}
+.review-page .review-queue-item[aria-current='page'] {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-household-shadow) 9%, transparent);
+}
+:root[data-theme='dark'] .review-page .review-queue-item[aria-current='page'] {
+  box-shadow: none;
+}
+.review-page .review-queue-chip {
+  max-width: 100%;
+  white-space: normal;
+}
+.review-page .review-queue-chip > span {
+  flex-shrink: 0;
+}
+.review-page .review-image-panel {
+  position: static;
+  height: auto;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+.review-page .review-image-viewport {
+  height: 14rem;
+  min-height: 0;
+  flex: none;
+}
+.review-form-column form > section {
+  min-width: 0;
+  padding: 1.25rem;
+}
+.review-form-column form > section > div > h2 {
+  font-family: 'Newsreader', Georgia, serif;
+  color: var(--color-accent);
+}
+.review-form-column li[id^='rx-item-'],
+.review-form-column li[id^='lab-item-'] {
+  border: 1px solid color-mix(in srgb, var(--color-border) 32%, transparent);
+  background: color-mix(in srgb, var(--color-accent-soft) 72%, var(--color-surface));
+  box-shadow: none;
+}
+.review-form-column li input:not([type='checkbox']) {
+  border-radius: 0.625rem;
+  background: var(--color-surface);
+  padding-inline: 0.5rem;
+}
+.review-page button {
+  min-height: var(--size-button-height);
+}
+.review-page button[type='submit'] {
+  width: 100%;
+  border-radius: 1rem;
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--color-accent) 22%, transparent);
+}
+:root[data-theme='dark'] .review-page button[type='submit'] {
+  box-shadow: none;
+}
+.review-page button[aria-pressed] {
+  min-width: 0;
+  flex-wrap: wrap;
+  overflow-wrap: anywhere;
+}
+@media (min-width: 1024px) {
+  .review-detail-grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+  .review-detail-queue {
+    display: block;
+  }
+  /* Bám sát dưới header desktop (96px + khoảng thở) để cuộn dò đơn thuốc 1-1 cùng cột form bên phải. */
+  .review-page .review-image-panel {
+    position: sticky;
+    top: 7rem;
+    height: calc(100dvh - 8rem);
+    max-height: calc(100dvh - 8rem);
+  }
+  .review-page .review-image-viewport {
+    height: auto;
+    min-height: 0;
+    flex: 1 1 0%;
+  }
+  .review-form-column form > section {
+    padding: 1.5rem;
+  }
+}

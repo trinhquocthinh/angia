@@ -36,13 +36,13 @@ export function UploadGrid({ items, summary, locked, onRetry, onRemove, onRedact
           <button
             type="button"
             onClick={onRetry}
-            className="flex min-h-11 items-center gap-1 text-xs font-semibold text-accent hover:underline"
+            className="flex min-h-12 items-center gap-1 text-button-secondary font-semibold text-accent hover:underline"
           >
             <DocumentIcon name="refresh" size={16} /> Gửi lại {summary.failed} ảnh lỗi
           </button>
         ) : (
           summary.needsRedaction > 0 && (
-            <p className="text-xs text-text-secondary">
+            <p className="text-caption text-text-secondary">
               Bấm “Che thông tin” trên từng ảnh để che trước khi gửi
             </p>
           )

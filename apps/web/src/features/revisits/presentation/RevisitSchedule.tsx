@@ -19,19 +19,22 @@ export function RevisitSchedule({ profile, session }: { profile: HealthProfile; 
   };
   if (profile.consentStatus !== 'confirmed')
     return (
-      <p role="alert" className="rounded-[20px] bg-surface p-6 text-sm">
+      <p role="alert" className="profile-bento-card p-6 text-body text-text-primary">
         Hồ sơ chưa được đồng ý lưu dữ liệu.
       </p>
     );
   return (
     <>
       {revisits.isError ? (
-        <div role="alert" className="flex flex-col items-start gap-3 rounded-[20px] bg-surface p-6 text-sm">
-          <p>Không thể tải lịch tái khám. Vui lòng thử lại.</p>
+        <div
+          role="alert"
+          className="profile-bento-card flex flex-col items-start gap-3 border border-danger/20 bg-danger-soft p-6 text-caption text-text-primary"
+        >
+          <p className="text-body font-medium">Không thể tải lịch tái khám. Vui lòng thử lại.</p>
           <button
             type="button"
             onClick={() => void revisits.refetch()}
-            className="min-h-11 rounded-full bg-accent px-5 font-semibold text-on-accent"
+            className="min-h-btn cursor-pointer rounded-2xl bg-accent px-5 text-button-primary font-semibold text-on-accent shadow-stitch-sm transition-colors hover:bg-accent-hover"
           >
             Thử lại
           </button>
@@ -42,9 +45,10 @@ export function RevisitSchedule({ profile, session }: { profile: HealthProfile; 
           onEdit={(prescription, revisitDate) => setSelected({ prescription, revisitDate })}
         />
       ) : (
-        <p role="status" className="rounded-[20px] bg-surface p-6 text-sm">
-          Đang tải lịch tái khám…
-        </p>
+        <div role="status" className="profile-bento-card space-y-3 p-6 text-body text-text-secondary">
+          <p>Đang tải lịch tái khám…</p>
+          <div className="h-16 animate-pulse rounded-2xl bg-surface-container motion-reduce:animate-none" />
+        </div>
       )}
       {selected && !revisits.isError && (
         <EditRevisitDateDialog profile={profile} session={session} {...selected} onClose={close} />

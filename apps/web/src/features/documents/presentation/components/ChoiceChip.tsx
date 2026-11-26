@@ -22,7 +22,7 @@ export function ChoiceChip({
       aria-pressed={selected}
       disabled={disabled}
       onClick={onClick}
-      className={`flex min-h-11 items-center gap-1.5 py-2 text-sm font-medium transition-[background-color,color,box-shadow,scale] duration-200 ease-out enabled:cursor-pointer enabled:active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none motion-reduce:enabled:active:scale-100 ${segment ? 'justify-center rounded-xl px-1' : 'rounded-full px-4'} ${
+      className={`flex min-h-11 items-center gap-1.5 py-2 text-body font-medium transition-[background-color,color,box-shadow,scale] duration-200 ease-out enabled:cursor-pointer enabled:active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none motion-reduce:enabled:active:scale-100 ${segment ? 'justify-center rounded-xl px-1' : 'rounded-full px-4'} ${
         selected
           ? `${active} shadow-sm`
           : 'bg-accent-soft text-text-secondary enabled:hover:bg-border enabled:hover:text-text-primary'

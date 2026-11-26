@@ -105,7 +105,7 @@ test('TC-721: chấm và nhãn theo dõi chỉ hiện đúng vùng, cập nhật
     page.getByRole('button', { name: 'Đầu gối · phải', exact: true }).locator('[data-tracking-dot]'),
   ).toHaveCount(0);
   await tracked.tap();
-  await expect(tracked.locator('[data-tracking-dot]')).toHaveCSS('background-color', 'rgb(85, 97, 95)');
+  await expect(tracked.locator('[data-tracking-dot]')).toHaveCSS('background-color', 'rgb(64, 73, 69)');
   await expect(page.getByTestId('selection')).toHaveText('{"region":"knee","side":"left"}');
   await page.getByRole('button', { name: 'Đổi vùng theo dõi' }).tap();
   await expect(page.getByRole('button', { name: 'Đầu gối · trái', exact: true })).toHaveAttribute(

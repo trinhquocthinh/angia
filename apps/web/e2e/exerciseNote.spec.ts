@@ -90,7 +90,7 @@ test('TC-692/693: thêm không chọn sẵn nguồn, đổi self xóa người c
     await dialog
       .getByRole('button', { name: 'Thêm bài tập', exact: true })
       .evaluate((el) => getComputedStyle(el).backgroundColor),
-  ).toBe('rgb(47, 111, 94)');
+  ).toBe('rgb(0, 65, 53)');
   await dialog.getByLabel('Tên bài tập *').fill('Đi bộ');
   await dialog.getByLabel('Bác sĩ, chuyên viên chỉ định', { exact: true }).check();
   await dialog.getByLabel('Người chỉ định (tùy chọn)').fill('Không giữ');

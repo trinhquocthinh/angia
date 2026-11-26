@@ -4,20 +4,21 @@ for (const colorScheme of ['light', 'dark'] as const) {
   for (const name of ['Mở hộp thoại', 'Mở bảng bên']) {
     test(`E25-S2-T1 — chữ và vùng chạm trong ${name}, nền ${colorScheme}`, async ({ page }) => {
       await page.emulateMedia({ colorScheme });
+      await page.addInitScript((value) => localStorage.setItem('angia-theme', value), colorScheme);
       await page.goto('/e2e/uiFoundation.html');
       await page.getByRole('button', { name, exact: true }).click();
       const primary = page.getByRole('button', { name: 'Lưu thông tin', exact: true });
-      await expect(primary).toHaveCSS('font-size', '20px');
-      await expect(primary).toHaveCSS('line-height', '28px');
-      await expect(page.getByRole('button', { name: 'Hủy', exact: true })).toHaveCSS('font-size', '18px');
-      expect((await primary.boundingBox())!.height).toBeGreaterThanOrEqual(56);
+      await expect(primary).toHaveCSS('font-size', '14px');
+      await expect(primary).toHaveCSS('line-height', '20px');
+      await expect(page.getByRole('button', { name: 'Hủy', exact: true })).toHaveCSS('font-size', '14px');
+      expect((await primary.boundingBox())!.height).toBeGreaterThanOrEqual(46);
       for (const button of await page.getByRole('dialog').getByRole('button').all()) {
         const box = (await button.boundingBox())!;
-        expect(box.height).toBeGreaterThanOrEqual(48);
-        expect(box.width).toBeGreaterThanOrEqual(48);
+        expect(box.height).toBeGreaterThanOrEqual(46);
+        expect(box.width).toBeGreaterThanOrEqual(46);
       }
-      await expect(page.getByText('Nội dung giải thích')).toHaveCSS('font-size', '16px');
-      await expect(page.getByRole('heading', { name: 'Thông tin thử' })).toHaveCSS('font-size', '22px');
+      await expect(page.getByText('Nội dung giải thích')).toHaveCSS('font-size', '14px');
+      await expect(page.getByRole('heading', { name: 'Thông tin thử' })).toHaveCSS('font-size', '20px');
     });
   }
 }
@@ -59,10 +60,11 @@ for (const colorScheme of ['light', 'dark'] as const) {
     page,
   }) => {
     await page.emulateMedia({ colorScheme });
+    await page.addInitScript((value) => localStorage.setItem('angia-theme', value), colorScheme);
     await page.goto('/e2e/uiFoundation.html');
     const input = page.getByRole('textbox', { name: 'Tên thuốc' });
     await expect(input).toHaveAccessibleDescription('Theo tên trên đơn');
-    await expect(input).toHaveCSS('font-size', '18px');
+    await expect(input).toHaveCSS('font-size', '16px');
     await page.getByText('Tên thuốc', { exact: false }).first().click();
     await expect(input).toBeFocused();
     await input.fill('Tên thử');
@@ -77,7 +79,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
     await input.focus();
     await page.keyboard.press('Tab');
     await expect(page.getByRole('button', { name: 'Kiểm tra tên' })).toHaveCSS('outline-width', '3px');
-    await expect(page.getByTestId('card')).toHaveCSS('font-size', '18px');
+    await expect(page.getByTestId('card')).toHaveCSS('font-size', '16px');
     if (colorScheme === 'dark') await expect(page.getByTestId('card')).toHaveCSS('box-shadow', 'none');
   });
 }
@@ -89,7 +91,7 @@ for (const name of ['Mở hộp thoại', 'Mở bảng bên']) {
       document.documentElement.style.fontSize = '200%';
     });
     const longButton = page.getByRole('button', { name: 'Nhãn nút phụ đủ dài', exact: false });
-    await expect(longButton).toHaveCSS('font-size', '36px');
+    await expect(longButton).toHaveCSS('font-size', '28px');
     expect(
       await longButton.evaluate(
         (element) =>
@@ -97,7 +99,7 @@ for (const name of ['Mở hộp thoại', 'Mở bảng bên']) {
       ),
     ).toBe(true);
     await page.getByRole('button', { name, exact: true }).click();
-    await expect(page.getByRole('heading', { name: 'Thông tin thử' })).toHaveCSS('font-size', '44px');
+    await expect(page.getByRole('heading', { name: 'Thông tin thử' })).toHaveCSS('font-size', '40px');
     const close = page.getByRole('button', { name: 'Đóng hộp thoại' });
     await expect(close).toBeInViewport();
     expect(

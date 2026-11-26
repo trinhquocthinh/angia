@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { TextSizeProvider } from '@src/shared/accessibility/TextSizeProvider';
 import { ThemeProvider } from '@src/shared/theme/ThemeProvider';
 import { isConsentInvitationRoute } from '@src/features/auth/application/isConsentInvitationRoute';
 import { prefetchCurrentSession } from '@src/features/auth/application/prefetchCurrentSession';
@@ -38,11 +39,13 @@ if (!rootElement) throw new Error('Không tìm thấy phần tử #root');
 
 createRoot(rootElement).render(
   <StrictMode>
-    <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </ThemeProvider>
+    <TextSizeProvider>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </ThemeProvider>
+    </TextSizeProvider>
   </StrictMode>,
 );
 hideSplash();

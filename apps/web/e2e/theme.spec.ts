@@ -1,3 +1,4 @@
+import { AxeBuilder } from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test('TC-856 — lần đầu theo nền máy và theo dõi khi máy đổi nền', async ({ page }) => {
@@ -6,7 +7,7 @@ test('TC-856 — lần đầu theo nền máy và theo dõi khi máy đổi nề
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(18, 23, 22)');
   await expect(page.getByRole('radio', { name: 'Theo máy' })).toBeChecked();
   await page.emulateMedia({ colorScheme: 'light' });
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(250, 248, 245)');
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(240, 252, 251)');
 });
 
 test('TC-857 — chọn sáng vẫn giữ sau tải lại và quay về theo máy', async ({ page }) => {
@@ -15,7 +16,7 @@ test('TC-857 — chọn sáng vẫn giữ sau tải lại và quay về theo má
   await page.getByRole('radio', { name: 'Sáng', exact: true }).check();
   await page.reload();
   await expect(page.getByRole('radio', { name: 'Sáng', exact: true })).toBeChecked();
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(250, 248, 245)');
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(240, 252, 251)');
   await page.getByRole('radio', { name: 'Theo máy' }).check();
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(18, 23, 22)');
   await page.reload();
@@ -33,7 +34,16 @@ test('TC-857 — storage bị chặn vẫn đổi nền trong phiên hiện tạ
   await page.emulateMedia({ colorScheme: 'dark' });
   await page.goto('/e2e/theme.html');
   await page.getByRole('radio', { name: 'Sáng', exact: true }).check();
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(250, 248, 245)');
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(240, 252, 251)');
+});
+
+test('TC-858 — tương phản màu đạt WCAG AA ở cả hai chế độ Sáng và Tối', async ({ page }) => {
+  await page.goto('/e2e/theme.html');
+  for (const name of ['Sáng', 'Tối'] as const) {
+    await page.getByRole('radio', { name, exact: true }).check();
+    const result = await new AxeBuilder({ page }).withRules(['color-contrast']).analyze();
+    expect(result.violations, `Tương phản lỗi ở chế độ ${name}`).toEqual([]);
+  }
 });
 
 test('TC-857 — chọn bằng bàn phím, vùng chạm ít nhất 48 px ở 360 px', async ({ page }) => {
@@ -71,10 +81,10 @@ test('TC-860 — đổi nền cập nhật màn, SVG, biểu đồ và vật li�
   const expected = {
     Sáng: {
       surface: 'rgb(255, 255, 255)',
-      text: 'rgb(31, 42, 42)',
-      accent: 'rgb(47, 111, 94)',
-      model: 'ece8e2,2f6f5e',
-      series: ['#2f6f5e', '#6b4fa8', '#b54708'],
+      text: 'rgb(19, 29, 29)',
+      accent: 'rgb(0, 65, 53)',
+      model: 'ece8e2,004135',
+      series: ['#004135', '#6b4fa8', '#b54708'],
       pain: '#1f2a2a',
       body: 'rgb(236, 232, 226)',
     },
@@ -139,3 +149,30 @@ test('TC-860 — chữ trên nền ảnh tối và nhãn che đen luôn sáng �
     );
   }
 });
+
+for (const media of ['screen', 'print'] as const) {
+  test(`Cỡ chữ: bản tóm tắt A4 giữ nguyên trên ${media}`, async ({ page }) => {
+    await page.goto('/e2e/theme.html');
+    await page.emulateMedia({ media });
+    const sheet = page.locator(
+      media === 'print' ? '.summary-print-root .summary-sheet' : '#root .summary-sheet',
+    );
+    await expect(sheet).toBeVisible();
+    const before = await sheet.evaluate((element) =>
+      [element, ...Array.from(element.querySelectorAll('*'))].map((node) => {
+        const style = getComputedStyle(node);
+        return { font: style.fontSize, line: style.lineHeight };
+      }),
+    );
+    await page.evaluate(() => {
+      document.documentElement.dataset.textSize = 'large';
+    });
+    const after = await sheet.evaluate((element) =>
+      [element, ...Array.from(element.querySelectorAll('*'))].map((node) => {
+        const style = getComputedStyle(node);
+        return { font: style.fontSize, line: style.lineHeight };
+      }),
+    );
+    expect(after).toEqual(before);
+  });
+}

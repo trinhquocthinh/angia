@@ -18,17 +18,17 @@ export function ConsentFields({ mode, draft, profileName, onChange }: Props) {
       <h2 id={`${id}-title`} className="sr-only">
         Đồng ý lưu dữ liệu sức khỏe
       </h2>
-      <label className="flex cursor-pointer items-start gap-3 text-sm leading-6 font-semibold text-accent">
+      <label className="flex min-h-11 cursor-pointer items-center gap-3 text-caption font-semibold text-accent">
         <input
           type="checkbox"
           checked={draft.checked}
           onChange={(event) => onChange({ ...draft, checked: event.target.checked })}
           aria-describedby={`${id}-notice`}
-          className="mt-0.5 h-5 w-5 shrink-0 accent-accent"
+          className="h-5 w-5 shrink-0 accent-accent"
         />
         {mode === 'self' ? 'Tôi đồng ý' : 'Tôi đã hỏi và được đồng ý'}
       </label>
-      <p id={`${id}-notice`} className="mt-2 pl-8 text-[13px] leading-relaxed text-text-secondary">
+      <p id={`${id}-notice`} className="mt-2 pl-8 text-caption text-text-secondary">
         {mode === 'self'
           ? 'Tôi đồng ý cho AN GIA lưu thông tin sức khỏe của tôi.'
           : 'Tôi đã hỏi ý kiến và được chính người này (hoặc người giám hộ hợp pháp) đồng ý cho AN GIA lưu thông tin sức khỏe của họ. Tôi chịu trách nhiệm về xác nhận này.'}

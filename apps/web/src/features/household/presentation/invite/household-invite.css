@@ -34,8 +34,8 @@
 .household-invite-heading h1 {
   margin: 0;
   font-family: 'Newsreader', Georgia, serif;
-  font-size: 1.65rem;
-  line-height: 2.125rem;
+  font-size: var(--font-heading-2);
+  line-height: var(--line-heading-2);
   font-weight: 600;
   color: var(--color-accent);
 }
@@ -48,8 +48,8 @@
   border-radius: 999px;
   background: var(--color-accent-soft);
   color: var(--color-text-secondary);
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 .household-invite-status svg {
   width: 16px;
@@ -107,13 +107,13 @@
   color: var(--color-accent);
 }
 .household-invite-role strong {
-  font-size: 1.125rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   font-weight: 600;
 }
 .household-invite-role > span:last-child {
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   color: var(--color-text-secondary);
 }
 .household-invite-role-check {
@@ -144,8 +144,8 @@
 }
 .household-invite-feedback {
   margin-top: 16px;
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   overflow-wrap: anywhere;
 }
 .household-invite :is(a, button, textarea):focus-visible {
@@ -170,8 +170,8 @@
   }
   .household-invite-heading h1 {
     font-family: var(--font-sans);
-    font-size: 1.375rem;
-    line-height: 1.875rem;
+    font-size: var(--font-heading-2);
+    line-height: var(--line-heading-2);
   }
   .household-invite-back {
     display: none;
@@ -182,7 +182,8 @@
     text-align: center;
   }
   .household-invite-role strong {
-    font-size: 1rem;
+    font-size: var(--font-body);
+    line-height: var(--line-body);
   }
   :root[data-theme='dark'] .household-invite {
     outline: none;

@@ -1,7 +1,7 @@
 import '@src/shared/ui/modal-motion.css';
 import { revealStyle } from '@src/shared/ui/revealStyle';
 import { useId, type ReactNode } from 'react';
-import { DocumentIcon } from './DocumentIcon';
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { withRowTransition } from './withRowTransition';
 import './review-motion.css';
 
@@ -18,8 +18,7 @@ type ItemCardProps = {
   children: ReactNode;
 };
 
-// Khối một dòng của form nhiều dòng (thuốc, chỉ số xét nghiệm): số thứ tự, tiêu đề, nút xóa dòng;
-// viền đỏ khi dòng còn thiếu thông tin để dễ thấy vị trí lỗi.
+// Khối một dòng của form nhiều dòng theo Stitch bb3e9ab1: số thứ tự tròn pastel, tiêu đề serif, nút xóa gọn.
 export function ItemCard({ anchorPrefix, index, title, invalid, onRemove, children }: ItemCardProps) {
   const id = `${anchorPrefix}-${index}`;
   const order = index + 1;
@@ -37,11 +36,11 @@ export function ItemCard({ anchorPrefix, index, title, invalid, onRemove, childr
       <div className="flex items-center gap-3">
         <span
           aria-hidden="true"
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent text-xs font-bold text-on-accent"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary-container text-caption font-bold text-on-secondary-container tabular-nums"
         >
           {order}
         </span>
-        <h3 id={`${id}-title`} className="flex-1 text-[15px] font-semibold text-accent">
+        <h3 id={`${id}-title`} className="auth-heading flex-1 text-body font-bold text-accent">
           {title}
         </h3>
         {onRemove && (
@@ -49,9 +48,9 @@ export function ItemCard({ anchorPrefix, index, title, invalid, onRemove, childr
             type="button"
             onClick={() => withRowTransition(onRemove)}
             aria-label={`Xóa dòng ${order}`}
-            className="flex h-11 w-11 items-center justify-center rounded-full text-text-secondary transition-colors duration-200 hover:bg-accent-soft hover:text-danger motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-text-secondary transition-colors duration-200 hover:bg-danger-soft hover:text-danger motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
-            <DocumentIcon name="close" size={18} />
+            <AdminIcon name="delete_outline" size={20} />
           </button>
         )}
       </div>

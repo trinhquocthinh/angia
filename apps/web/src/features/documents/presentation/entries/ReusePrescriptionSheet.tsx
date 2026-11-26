@@ -28,7 +28,10 @@ export function ReusePrescriptionSheet({ prescription, session, repository, onCl
       onClose={onClose}
     >
       {state.saved ? (
-        <div role="status" className="mx-6 mt-5 flex flex-col gap-3 rounded-xl bg-accent-soft p-4 text-sm">
+        <div
+          role="status"
+          className="mx-6 mt-5 flex flex-col gap-3 rounded-xl bg-accent-soft p-4 text-caption"
+        >
           <p>Đã tạo {state.saved.length} đợt thuốc.</p>
           <Link
             to="/profiles/$profileId/medications"

@@ -19,8 +19,12 @@ export function BodyModel3DSpikePage() {
   };
   return (
     <section className="mx-auto flex h-dvh max-w-xl flex-col gap-3 p-4">
-      <h1 className="text-lg font-semibold">Thử mô hình 3D</h1>
-      <p aria-live="polite" className="text-sm" data-region={picked ? `${picked.region}:${picked.side}` : ''}>
+      <h1 className="text-body font-semibold">Thử mô hình 3D</h1>
+      <p
+        aria-live="polite"
+        className="text-body"
+        data-region={picked ? `${picked.region}:${picked.side}` : ''}
+      >
         {picked ? `Đã chọn: ${describeLocation(picked)}` : 'Chạm vào một vùng trên mô hình.'}
       </p>
       <div className="min-h-0 flex-1" {...handlers}>

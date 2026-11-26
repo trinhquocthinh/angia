@@ -93,25 +93,130 @@ nguyên. Các style `legal-update-*` và token màu riêng không đổi layout 
 khác. Tham chiếu Stitch: desktop `54449e0d704649b1be3c951e7bea9024`, mobile
 `86f7ce7d28c941db9f555b6e20d17a2a`.
 
-## Thanh điều hướng mobile — 2026-11-18
+## Điều hướng theo vai trò — E30-S1-T1 (2026-11-25)
 
-Owner duyệt mẫu Stitch `1b24d17804194ed298e3613ac5f4e5cc`:
-thanh đáy dưới 1024px giữ ba nhãn Trang chủ / Thêm mới / Chờ duyệt và các route
-hiện hành; Thêm mới dẫn thẳng `/upload`, không mở menu thao tác mẫu. Thành viên
-đã liên kết chỉ có Trang chủ / Hồ sơ của tôi; chưa có nhà, thành viên chưa liên
-kết và trang admin tiếp tục ẩn điều hướng theo quy tắc hiện hành.
+Chủ hộ và Đồng quản lý (`main`) có bốn mục: Hôm nay (`/`), Hồ sơ
+(`/?view=profiles`), Giấy tờ (`/review`), Nhà (`/family/home`). Thành viên
+(`member`) có Hôm nay, Hồ sơ của tôi (`/my-profile`), Nhà; áp dụng cả khi chưa
+liên kết hồ sơ. Chưa có nhà và trang `/admin` không có điều hướng gia đình.
+Điều hướng không thay thế kiểm tra quyền tại route/API.
 
-SVG 3D lưu tại `apps/web/public/icons/mobile-nav-*-3d.svg`, dùng cố định theo yêu cầu
-owner; đã bỏ SVG 2D, bộ chuyển kiểu và font riêng của bộ chọn. Giữ nền tab chuyển
-300ms, nhấn 200ms, icon tab nảy và halo 2 giây; reduced motion tắt chuyển động.
-Chữ tối thiểu 16px, vùng chạm tối thiểu 48px; footer chừa khoảng cho thanh đáy.
+Giấy tờ mở hàng chờ duyệt và có nút **Chụp / chọn ảnh** dẫn tới `/upload`.
+Huy hiệu sử dụng số giấy tờ từ các trang hàng chờ đã tải, không có số giả.
+Các màn con giữ mục cha được chọn; `/` phân biệt với `/?view=profiles`.
+
+Mobile dưới 768px dùng thanh đáy tối thiểu 64px + safe area, icon 28px kèm
+nhãn chữ; tablet 768–1023px dùng rail trái 88px. Desktop từ 1024px giữ nhóm
+điều hướng pill trong header bo tròn theo ảnh owner duyệt ngày 2026-11-25,
+**thay cho sidebar 240px trong Design §11.5 ban đầu**. Màu lấy từ token sáng/tối,
+vùng chạm tối thiểu 48px, footer chừa khoảng cho thanh đáy. Bộ điều hướng dùng
+chung nằm tại `apps/web/src/shared/layout/`.
+
+Menu tài khoản chỉ giữ lối điều hướng và thao tác tài khoản; lựa chọn nền
+sáng/tối/theo máy đặt tại `/account`, không lặp trong menu. Nút tài khoản desktop
+có padding 10px dọc, 16px ngang và khoảng cách tên/avatar 12px.
+
+Icon menu là PNG 3D alpha 40px; chuông thông báo 30px, không có tile/viền/nền
+riêng phía sau icon. Chuông rung một lần khi hiện và hai nhịp khi hover/focus;
+giảm chuyển động tắt hiệu ứng. Không có số thông báo giả. Nguồn và dẫn xuất
+ghi tại `apps/web/public/images/account-menu/SOURCES.md`.
+Menu dùng tên mục đậm và mô tả phụ một dòng: Nhà của tôi / Thành viên & thông tin nhà;
+Hồ sơ của tôi / Thuốc & sức khoẻ của bạn; Quản lý tài khoản / Bảo mật & cài đặt;
+Đăng xuất / Thoát khỏi thiết bị này. Mục đang chọn có nền mint; hai dòng Đăng xuất
+màu danger. Hồ sơ dùng thẻ y tế vàng–mint. Quản lý tài khoản dùng bánh răng gốm
+xanh/lõi vàng từ Stitch `3410b9d76cf74777a7cfc178f17a5163`, asset riêng
+`account-settings-3d.png`; Quản trị hệ thống giữ `settings-3d.png`.
 
 Kiểm tra trình duyệt bằng
 `yarn playwright test --config playwright.account.config.ts apps/web/e2e/mobileBottomNav.spec.ts`
-(build web trước), gồm hai nền, Chromium/WebKit, chữ 200%, liên kết và reduced
-motion. Phạm vi này chưa triển khai bộ bốn tab/rail/sidebar của E30-S1-T1 và chưa
-nghiệm thu SIT. `verify:fast` tại checkpoint bị metadata macOS `._*` chặn ở Vitest
-sau typecheck; không coi các kiểm tra riêng là cổng verify chính thức đã đạt.
+(build web trước): quyền, route đang chọn, lối tải ảnh, hai nền, Chromium/WebKit,
+360/768/1024/1440px và phóng chữ 200%. Chưa nghiệm thu SIT hoặc toàn bộ Epic 30.
+
+## Cỡ chữ Chuẩn / Chữ lớn — cập nhật UI 2026-11-26
+
+Trong **Tài khoản → Cỡ chữ**, công tắc **Chữ lớn** mặc định tắt. Chuẩn dùng nội
+dung/ô nhập 16px, nhãn/tab 14px, chữ nút 14px và h1 24px; bật Chữ lớn tương ứng
+18/16/16/26px. Token chiều cao nút `min-h-btn` là 46px ở Chuẩn và 56px ở Chữ lớn
+(theo UI owner duyệt 2026-11-26). Lựa chọn lưu trên thiết bị bằng `angia-large-text`, dùng chung
+trong trình duyệt này, không gửi server. Storage bị chặn vẫn đổi được trong
+phiên. Hai nền sáng/tối dùng cùng thang chữ.
+
+Token tại `shared/styles/typography.css`; provider và tiện ích tại
+`shared/accessibility/`. Dùng utility ngữ nghĩa `text-body`, `text-caption`,
+`text-button-primary`, `text-button-secondary`, `text-heading-1`,
+`text-heading-2`, `text-display` thay cho cỡ chữ cứng. Biểu đồ đọc cỡ thực từ
+token; icon, ảnh và bản in A4 giữ nguyên. Nút dùng token chiều cao theo chế độ chữ. Phóng chữ trình duyệt
+hoạt động độc lập; không đổi root font-size để thu nhỏ toàn giao diện.
+
+Kiểm tra: `yarn verify:fast`; sau build web chạy
+`yarn playwright test --config playwright.account.config.ts apps/web/e2e/textSize.spec.ts`.
+Kiểm component/modal và bản in bằng các bộ `uiFoundation.spec.ts`, `theme.spec.ts`.
+
+## Hồ sơ — E30-S1-T2, UI owner duyệt 2026-11-26
+
+Danh sách `/?view=profiles` và mục lục `/profiles/:id` dùng thẻ Bento, avatar
+chữ cái và bộ icon 3D cục bộ. Các mục dùng thẻ điều hướng có nhãn, trạng thái
+đang chọn và cuộn ngang trên màn hẹp. Màn số đo mở bằng
+`/profiles/:id?section=health`; các route con hiện có giữ nguyên. Hero định danh
+được dùng chung cho hồ sơ gia đình và Hồ sơ của tôi. Nguồn icon ghi tại
+`apps/web/public/images/profile-sections/SOURCES.md`.
+
+Dữ liệu số thuốc/liều tiếp theo trên thẻ chưa được thêm vì API danh sách chưa
+cung cấp. Mục lục dùng mô tả tĩnh, không giả lập số liệu. Hiển thị số đo theo
+BR-049; mục Người giám hộ theo SPEC-070 (hồ sơ dưới 18 tuổi chưa liên kết,
+người thao tác là main). Những thẻ thuốc, số đo, xét nghiệm, lịch hẹn, nhiệt độ,
+dòng thời gian và sổ đau nhức được đồng bộ cách trình bày; giữ nguyên nghiệp vụ.
+
+**Quyền Thành viên giữ nguyên BR-005/SPEC-042:** chỉ tự xem các mục hiện có
+của hồ sơ liên kết; chưa có bản tóm tắt in, lịch sử chứng từ/ảnh đơn thuốc hay
+chức năng tải ảnh đơn thuốc, phiếu xét nghiệm, máy đo. Owner xác nhận tạm thời
+không mở rộng các quyền này. Không đổi API, domain, DB schema hoặc dependency.
+
+Kiểm tra trước commit (2026-11-26): `yarn verify:fast` PASS (300 test),
+web unit PASS (1.890 test), lint/build/typecheck/format PASS. Budget mọi route
+≤200 KB gzip, TC-729 PASS. E2E mục lục/cỡ chữ 39/39 và Hồ sơ của tôi 18/18 PASS.
+Chưa chạy full `yarn verify` cho checkpoint này.
+
+Owner đã duyệt UI local; chưa tương đương nghiệm thu toàn bộ Epic 30,
+kiểm tra SIT/Production hoặc deploy. Tài liệu thiết kế và master plan chi tiết
+nằm tại `../../Docs/angia/` (ngoài Git repo này).
+
+## Nhắc thuốc — E30-S2-T1, UI owner duyệt 2026-11-26
+
+Ba route `/profiles/:id/reminders`, `/reminders/:id` và
+`/revisit-reminders/:id` dùng thẻ Clay Bento, icon cục bộ, tiêu đề Newsreader,
+token sáng/tối và nút Chuẩn/Chữ lớn 46/56px. Cài đặt có liên kết quay về đúng hồ
+sơ và tới `/notifications`; không giả trạng thái Push hoặc số ngày thuốc còn lại.
+Giữ nguyên giờ tăng dần, buổi trống, người nhận cố định của hồ sơ liên kết,
+người giám hộ của trẻ, quyền xác nhận cả buổi/hủy và quyền mở tóm tắt đi khám.
+Không đổi API, domain, schema hoặc dependency.
+
+Owner đã xác nhận UI PASS ngày 2026-11-26 và yêu cầu cập nhật tài liệu, commit.
+Bản cuối có hero hồ sơ và số buổi từ dữ liệu đã lưu, ô giờ dùng icon buổi chung,
+thẻ người nhận có avatar, minh họa màn hình khóa không chứa định danh và các
+trạng thái tải/lỗi/đã xác nhận đồng bộ theo token. Danh sách thuốc và đơn tái khám
+tách component; số thuốc/số đơn lấy từ response, không dựng số ngày còn thuốc.
+
+Seed phục vụ duyệt UI: `yarn dev:seed:reminders tester tester1`.
+Chỉ dùng DB `angia_dev` với role `angia_dev_app` NOBYPASSRLS; tạo hồ sơ mẫu rỗng,
+có dữ liệu, hồ sơ trẻ và bổ sung dữ liệu mẫu còn thiếu cho hồ sơ liên kết của
+Thành viên được chỉ định. Không đổi quyền hoặc liên kết tài khoản. Script in
+đường dẫn từng màn sau khi transaction commit. Xem [hướng dẫn seed](scripts/dev/README.md).
+
+Kiểm local: 74 unit web liên quan và 6 unit kiểm cấu hình seed PASS;
+build/typecheck/lint PASS; budget mọi route ≤200 KB gzip, TC-729 PASS.
+`yarn verify:fast` PASS: typecheck toàn workspace và 4.116 test/823 tệp.
+E2E `reminders.spec.ts` 30/30 PASS trên Chromium touch/desktop và WebKit touch:
+lưu từ rỗng, validation, người nhận liên kết/giám hộ, xác nhận/hủy, quyền xem,
+hai nền/hai cỡ chữ ở 360/768/1024/1440px và phóng chữ 200%.
+Axe kiểm nội dung ba màn ở 360px/Chữ lớn/hai nền: 0 serious/critical.
+Checkpoint seed ban đầu đã đối chiếu chạy lại trên DB dev: không thay đổi dòng
+hiện có; use case/repository thật kiểm quyền main/member và RLS PASS. Bản seed
+cuối bổ sung đường dẫn đã xác nhận/tái khám cho hồ sơ liên kết; không nạp lại DB
+trong lần cập nhật tài liệu/commit này để giữ trạng thái UI owner vừa duyệt.
+UI local đã được owner duyệt; chưa full `yarn verify`, PR hoặc deploy.
+Không suy từ duyệt UI thành nghiệm thu toàn bộ SPEC-081/Epic 30 hoặc TC-876 mọi route.
+Bằng chứng chi tiết: `../../Docs/angia/acceptance/v1.0/evidence/e30-s2-t1-2026-11-26.md`.
 
 ## Quản trị hệ thống
 
@@ -1641,3 +1746,114 @@ không đảo thứ tự modal. Thành công tải lại danh sách và đề ng
 E2E tại `apps/web/e2e/householdMembers.spec.ts`, gồm mốc 1023/1024px, focus sau
 click (WebKit), Escape, modal lồng nhau, resize và lỗi bảo vệ. Đã chạy
 `playwright.account.config.ts` (members, home, invitations): đạt; chưa nghiệm thu SIT.
+
+## Duyệt giấy tờ — UI owner duyệt 2026-11-26
+
+Owner xác nhận UI PASS và yêu cầu cập nhật tài liệu, commit. Checkpoint chỉ bàn giao
+`/review` và `/review/:documentId`, thuộc hàng chờ của E30-S2-T2 và phần duyệt của
+E30-S2-T3; chưa nghiệm thu trọn hai task hoặc Epic 30.
+
+- Nguồn Stitch: project `12209147960511107004`, Desktop
+  `bb3e9ab11d584919800215e149f0299b`, Mobile `6f8ab883ba0d48dd89dc27db4a3de755`.
+- Desktop: hàng chờ trên ảnh ở cột trái, form đối soát bên phải; ảnh dính khi cuộn.
+  Mobile: danh sách/chi tiết theo route, ảnh mở toàn màn hình, form một cột và nút lưu
+  dính đáy. Màu theo token hai nền, Newsreader, icon cục bộ và cỡ chữ hiện hành.
+- Chuyển giấy trước/sau và vị trí chỉ tính trong các chứng từ đã tải; “Xem thêm”
+  vẫn tải theo cursor. Không coi số đã tải là tổng hàng chờ khi còn trang tiếp theo.
+- Giữ luồng lưu/CSRF, xử lý trùng/xung đột, phân quyền và nhập tay khi hết lượt.
+  Ảnh chỉ là bản đã che; không thêm số chính xác AI, chứng nhận HIPAA hoặc tư vấn y khoa.
+- “Nắn giấy” và “Gợi ý vùng che” vẫn ở **Chụp/chọn ảnh → Che thông tin/Chỉnh lại**,
+  trước khi gửi; gợi ý phụ thuộc `features.redactionSuggestions`/`OCR_MASK_URL`.
+  Không chuyển hai công cụ sang trang review. Commit không bao gồm nhóm thay đổi
+  riêng của trang upload/danh sách giấy tờ; có component form và CSS dùng chung.
+
+Kiểm local trên bản sao chỉ chứa nội dung commit: `yarn verify:fast` PASS (typecheck
+và 43 test/9 tệp), 344 unit liên quan, ESLint, build
+và 18/18 E2E Chromium/WebKit PASS; 360/768/1024/1440px, hai nền/hai cỡ chữ,
+chữ 200%, tên dài, axe nội dung review ở 360px không có serious/critical.
+Bundle review 198,3 KB gzip, mọi trang đầu đạt 200 KB và TC-729 PASS.
+Chạy lại: `yarn playwright test --config playwright.review.config.ts`.
+Chưa chạy full `yarn verify`, PR/push/deploy hoặc kiểm SIT/Production từ checkpoint này.
+Bằng chứng chi tiết: `../../Docs/angia/acceptance/v1.0/evidence/e30-review-2026-11-26.md`.
+
+## E30-S2-T3 — Che ảnh và nhập tay, UI duyệt 2026-11-26
+
+Owner xác nhận **“UI đã pass giúp tôi cập nhật tài liệu liên quan và commit”**.
+Checkpoint này bàn giao phần trình che/nắn ảnh, xem bản sẽ tải lên và nhập tay
+của **E30-S2-T3**; phần review đã được duyệt tại commit `af176aeb`.
+Không suy từ duyệt UI local thành nghiệm thu SIT/Production hoặc đóng toàn Epic 30.
+
+- Trình che tại `/upload` dùng Clay Bento, Newsreader, token sáng/tối và cỡ chữ
+  hiện hành; nhóm công cụ có focus bàn phím, wrap trên mobile và vùng chạm theo token.
+- Giữ cắt/che/xoay/hoàn tác, chỉnh tọa độ, giới hạn 32 vùng; nắn giấy trên thiết bị.
+  Gợi ý vùng che vẫn do người dùng yêu cầu, phụ thuộc feature hiện có; ảnh chỉ gửi
+  máy chủ AN GIA theo ngoại lệ BR-085, không tự bật hoặc tự che thay người dùng.
+- Xem đúng bản xuất trước khi tải; giữ lựa chọn tự nhập/gửi AI, checkbox xác nhận,
+  cảnh báo không có vùng che, chặn AI khi hàng chờ đầy và xử lý quota hiện có.
+- `/profiles/:profileId/manual` đồng bộ thẻ/form/trạng thái lưu, nút về hồ sơ;
+  giữ đồng thuận, quyền main/member, loại dữ liệu theo hồ sơ, trùng và xung đột.
+  Form xét nghiệm/số đo và notice dùng chung có ảnh hưởng giao diện review.
+- Không đổi API, application/domain, schema, dependency, env hoặc quyền truy cập.
+
+Kiểm local: `yarn verify:fast` (56 test/10 tệp), 345 unit liên quan, ESLint,
+Prettier, build, 24/24 E2E Chromium/WebKit và `perf:budget` PASS.
+Review 198,5 KB; nhập tay 189,6 KB; upload 189,5 KB gzip.
+Chưa chạy full `yarn verify` hoặc kiểm SIT/Production. Chi tiết phạm vi axe và
+những luồng chưa tự động kiểm tại
+`../../Docs/angia/acceptance/v1.0/evidence/e30-s2-t3-2026-11-26.md`.
+
+## E30-S3-T1 — Thuốc và chuỗi đơn, UI duyệt 2026-11-26
+
+Owner xác nhận **“UI đã pass , cập nhật tài liệu liên quan và commit”**.
+Phạm vi E30-S3-T1: `/profiles/:profileId/medications`,
+`/profiles/:profileId/prescriptions` và `/:prescriptionId` của chuỗi đơn.
+
+- Thuốc theo buổi, thẻ đơn/chi tiết/so sánh dùng Clay Bento, Newsreader,
+  icon cục bộ, token sáng/tối; đồng bộ form khai thuốc bổ và dừng thuốc.
+- Số đợt thuốc lấy từ `courses.length`, không cộng các nhóm buổi; số dòng,
+  nguồn, ngày kê/ngày hẹn và dữ liệu so sánh lấy từ API. Chuỗi giữ thứ tự API,
+  có đơn trước/sau và chọn nhanh; Trước/Sau xếp dọc trên mobile.
+- Giữ đồng thuận, quyền ghi main/member, liều Khi cần, xác nhận buổi,
+  xử lý xung đột và ngày dừng. Nhãn Thêm/Bỏ/Thay đổi trung tính theo BR-033.
+- Không đổi API, application/domain, schema, dependency hoặc env.
+  Thành phần MedicationCard dùng chung có thay đổi hình thức trên màn tự xem;
+  không đổi quyền đọc/ghi. Nút nhắc thuốc dùng chung được đồng bộ giao diện.
+
+Kiểm local: `yarn verify:fast` PASS (typecheck toàn workspace, 56 test/10 tệp
+được chọn theo working tree, gồm thay đổi pháp lý ngoài commit); 72 unit liên quan,
+lint/format, build, 8/8 E2E Chromium/WebKit và `perf:budget` PASS.
+Thuốc 197,4 KB; chuỗi/chi tiết đơn 167,8 KB gzip; mọi trang đầu ≤200 KB,
+TC-729 PASS. Chưa full `yarn verify`, kiểm SIT/Production hoặc nghiệm thu toàn
+SPEC-081/Epic 30. Không tăng tổng task/giờ nghiệm thu từ checkpoint UI local.
+
+Bằng chứng: `../../Docs/angia/acceptance/v1.0/evidence/e30-s3-t1-2026-11-26.md`.
+
+## E30-S3-T2 — Số đo, xét nghiệm, nhiệt độ và liều Khi cần, UI duyệt 2026-11-26
+
+Owner xác nhận **“UI đã pass , giúp tôi cập nhật tài liệu liên quan và commit”**.
+Phạm vi E30-S3-T2: số đo tại `/profiles/:profileId?section=health`, xét nghiệm
+`/profiles/:profileId/lab-results`, nhiệt độ tại `/profiles/:profileId/timeline`,
+liều Khi cần và sheet nhật ký từ `/profiles/:profileId/medications`.
+
+- Đồng bộ Clay Bento, Newsreader, token sáng/tối, form, trạng thái tải/lỗi và nút.
+  Giữ các điểm truy cập riêng hiện hành; không ghép nhiệt độ/thuốc thành route mới.
+- Số đo và nhiệt độ dùng màu chữ trung tính, không đánh giá y khoa. Xét nghiệm
+  giữ nhãn “↑ Trên khoảng in trên phiếu” / “↓ Dưới khoảng in trên phiếu” và
+  thuật toán so khoảng cũ; bản UI owner duyệt bỏ màu warning ở số và chip,
+  dùng màu chữ trung tính. Không thêm đếm/tổng hợp ngoài khoảng hay khuyến nghị.
+- Giữ BR-049, đồng thuận, quyền main/member, tự xem chỉ đọc, xác nhận nhiệt độ
+  ngoài khoảng nhập liệu 34,0–43,0 °C và nghiệp vụ liều Khi cần/khoảng cách.
+  Không tính giờ liều tiếp theo. Component dùng chung ảnh hưởng hình thức tự xem.
+- Không đổi API, application/domain, schema, dependency hoặc env trong commit UI.
+  Bộ seed dev mới và lệnh `dev:seed:health` để ngoài commit: seed tự tính tuổi
+  với mốc 18 thay vì 16 của BR-049, cần review riêng; phiên này không chạy seed.
+
+Kiểm local: 190 unit/34 tệp liên quan, lint/format, build, 8/8 E2E Chromium/WebKit
+và `perf:budget` PASS. Mọi trang đầu ≤200 KB gzip; thuốc 197,5 KB,
+xét nghiệm 166,8 KB, dòng thời gian 191,2 KB, tự xem 196,5 KB; TC-729 PASS.
+`yarn verify:fast` chạy lại PASS: typecheck toàn workspace, 4.117 test/823 tệp
+(theo lựa chọn changed của working tree hiện hành, có phần ngoài commit).
+Chưa full `yarn verify`, SIT/Production hoặc nghiệm thu toàn SPEC-081/Epic 30;
+không tăng tổng task/giờ nghiệm thu từ checkpoint UI local.
+
+Bằng chứng ngoài repo: `../../Docs/angia/acceptance/v1.0/evidence/e30-s3-t2-2026-11-26.md`.

@@ -12,10 +12,9 @@ type Props = {
   onCancel: () => void;
 };
 
-const button =
-  'flex min-h-11 items-center rounded-xl bg-accent-soft px-3 text-xs font-semibold text-text-primary transition-colors enabled:hover:bg-border disabled:opacity-40';
+const button = 'privacy-tool-btn';
 const primary =
-  'flex min-h-11 items-center rounded-xl bg-accent px-3 text-xs font-semibold text-on-accent disabled:opacity-40';
+  'flex min-h-btn items-center justify-center rounded-2xl bg-accent px-5 text-button-secondary font-semibold text-on-accent shadow-stitch-sm transition-colors enabled:hover:bg-accent-hover disabled:opacity-40';
 
 function CornerActions({
   status,
@@ -28,12 +27,13 @@ function CornerActions({
   const working = status === 'working';
   return (
     <>
-      <label className="flex min-h-11 items-center gap-2 text-xs font-semibold text-text-primary">
+      <label className="flex min-h-btn cursor-pointer items-center gap-2.5 rounded-2xl border border-border/35 bg-bg px-3.5 text-caption font-semibold text-text-primary">
         <input
           type="checkbox"
           checked={clean}
           disabled={working}
           onChange={(e) => onClean(e.target.checked)}
+          className="h-5 w-5 accent-accent"
         />
         Làm sạch nền
       </label>
@@ -54,7 +54,7 @@ export function ScanPanelActions(props: Props) {
   if (step === 'confirm')
     return (
       <>
-        <p role="alert" className="w-full text-[13px] font-medium text-warning">
+        <p role="alert" className="w-full text-body font-medium text-warning">
           Nắn ảnh sẽ xoá vùng cắt và vùng che hiện có. Bạn sẽ cần che lại trên ảnh nắn.
         </p>
         <button type="button" className={primary} onClick={() => onStep({ type: 'confirmed' })}>

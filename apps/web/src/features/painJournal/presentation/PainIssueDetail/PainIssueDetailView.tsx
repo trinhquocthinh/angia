@@ -21,6 +21,7 @@ type Props = PainIssueDetailProps & {
 };
 export function PainIssueDetailView(props: Props) {
   const { issue, api, session, profile, scope, allowed, version, saved, edit } = props;
+  const ctx = { api, session, profile, scope, issue };
   return (
     <div className="min-w-0 space-y-6">
       <PainIssueDetailHeader
@@ -32,33 +33,33 @@ export function PainIssueDetailView(props: Props) {
           ) : undefined
         }
       />
-      {props.notice && <p role="status">{props.notice}</p>}
-      {allowed && issue.status === 'tracking' && (
-        <InlinePainEntry
-          key={version}
-          api={api}
-          session={session}
-          profile={profile}
-          scope={scope}
-          issue={issue}
-          onClose={() => undefined}
-          onSaved={saved}
-          onContinueIssue={(handoff) => props.onOpenIssue(handoff.issueId)}
-        />
+      {props.notice && (
+        <p
+          role="status"
+          className="rounded-2xl border border-accent/25 bg-accent-soft px-4 py-3 text-body font-medium text-accent"
+        >
+          {props.notice}
+        </p>
       )}
-      <PainIssueChart api={api} session={session} profile={profile} scope={scope} issue={issue} />
-      <PainEntryList entries={issue.entries} onEdit={allowed ? edit : undefined} />
-      <ExerciseNotes
-        api={api}
-        session={session}
-        profile={profile}
-        scope={scope}
-        issueId={issue.id}
-        issue={issue}
-        allowed={allowed}
-        onSaved={props.exerciseSaved}
-      />
-      <PainStatusHistory events={issue.statusEvents} />
+      <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.95fr)] lg:items-start">
+        <div className="min-w-0 space-y-6">
+          {allowed && issue.status === 'tracking' && (
+            <InlinePainEntry
+              key={version}
+              {...ctx}
+              onClose={() => undefined}
+              onSaved={saved}
+              onContinueIssue={(handoff) => props.onOpenIssue(handoff.issueId)}
+            />
+          )}
+          <PainIssueChart {...ctx} />
+        </div>
+        <div className="min-w-0 space-y-6">
+          <PainEntryList entries={issue.entries} onEdit={allowed ? edit : undefined} />
+          <ExerciseNotes {...ctx} issueId={issue.id} allowed={allowed} onSaved={props.exerciseSaved} />
+          <PainStatusHistory events={issue.statusEvents} />
+        </div>
+      </div>
       {props.editing && allowed && (
         <EditPainEntrySheet
           {...props}

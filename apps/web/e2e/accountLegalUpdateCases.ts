@@ -15,8 +15,8 @@ export function accountLegalUpdateCases(theme: string) {
     await expect(page).toHaveURL(/\/account\/legal-update$/);
     await expect(page.getByRole('heading', { name: 'Điều khoản đã thay đổi' })).toBeVisible();
     await checkAccountLayout(page);
-    const terms = page.getByRole('link', { name: 'Đọc Điều khoản sử dụng (bản 01/11/2026)' });
-    const privacy = page.getByRole('link', { name: 'Đọc Chính sách quyền riêng tư (bản 01/11/2026)' });
+    const terms = page.getByRole('link', { name: /Đọc Điều khoản sử dụng/ });
+    const privacy = page.getByRole('link', { name: /Đọc Chính sách quyền riêng tư/ });
     await expect(terms).toHaveAttribute('href', currentLegal.terms.url);
     await expect(privacy).toHaveAttribute('href', currentLegal.privacy.url);
     await expect(terms).toHaveAttribute('target', '_blank');

@@ -4,8 +4,7 @@ import { LabRangeFlag } from './LabRangeFlag';
 
 type Props = { series: LabSeries; headingId: string; note: string | null };
 
-// Thẻ một chỉ số: các lần xét nghiệm (mới nhất trên), giá trị nguyên văn, khoảng tham chiếu in trên phiếu,
-// ghi chú tra cứu trung tính (BR-022) và chip khi giá trị ngoài khoảng in trên phiếu (BR-033 làm rõ 2026-10-25).
+// Thẻ chỉ số xét nghiệm chuẩn 3D Bento v2.0 (BR-022, BR-033).
 export function LabSeriesCard({ series, headingId, note }: Props) {
   const noteId = `${headingId}-note`;
   const rows = labResultRows(series.results);
@@ -13,38 +12,43 @@ export function LabSeriesCard({ series, headingId, note }: Props) {
     <section
       aria-labelledby={headingId}
       aria-describedby={note ? noteId : undefined}
-      className="flex flex-col gap-3 rounded-xl bg-surface p-5 shadow-sm"
+      className="profile-bento-card flex flex-col gap-3 p-5"
     >
-      <div className="flex flex-col gap-0.5">
+      <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between gap-2">
-          <h3 id={headingId} className="min-w-0 text-lg font-semibold break-words text-accent">
+          <h3
+            id={headingId}
+            className="auth-heading min-w-0 text-heading-2 font-semibold break-words text-accent"
+          >
             {series.testName}
           </h3>
-          <span className="shrink-0 text-xs font-medium text-text-secondary">{rows.length} lần</span>
+          <span className="shrink-0 rounded-full bg-secondary-container px-2.5 py-0.5 text-caption font-semibold text-on-secondary-container tabular-nums">
+            {rows.length} lần
+          </span>
         </div>
         {note && (
-          <p id={noteId} className="text-[13px] text-text-secondary">
+          <p id={noteId} className="text-caption text-text-secondary">
             {note}
           </p>
         )}
       </div>
-      <ol className="flex flex-col gap-2">
+      <ol className="flex flex-col gap-2.5">
         {rows.map((row) => (
-          <li key={row.id} className="flex flex-col gap-1 rounded-xl bg-bg p-4">
+          <li key={row.id} className="flex flex-col gap-1.5 rounded-2xl border border-border/35 bg-bg p-4">
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-              <span className="text-sm font-medium text-text-secondary tabular-nums">{row.date}</span>
+              <span className="rounded-lg border border-border/30 bg-surface px-2.5 py-0.5 text-caption font-semibold text-text-secondary tabular-nums">
+                {row.date}
+              </span>
               <span className="min-w-0 text-right break-words">
-                <span
-                  className={`text-xl font-semibold tabular-nums ${row.rangeFlag ? 'text-warning' : 'text-text-primary'}`}
-                >
-                  {row.value}
-                </span>
-                {row.unit && <span className="ml-1 text-sm text-text-secondary">{row.unit}</span>}
+                <span className="text-heading-2 font-bold text-text-primary tabular-nums">{row.value}</span>
+                {row.unit && <span className="ml-1 text-caption text-text-secondary">{row.unit}</span>}
               </span>
             </div>
             {row.rangeFlag && <LabRangeFlag flag={row.rangeFlag} />}
-            <p className="text-sm break-words text-text-secondary">{row.referenceRange}</p>
-            <p className="text-xs break-words text-text-secondary">{row.source}</p>
+            <div className="mt-0.5 border-t border-border/25 pt-1.5 text-caption text-text-secondary">
+              <p className="break-words">{row.referenceRange}</p>
+              <p className="break-words">{row.source}</p>
+            </div>
           </li>
         ))}
       </ol>

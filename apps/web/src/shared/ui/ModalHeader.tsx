@@ -18,7 +18,7 @@ const TONES = {
   accent: { tile: 'bg-accent-soft text-accent', chip: 'bg-accent-soft text-accent' },
 };
 
-// Đầu hộp thoại theo Design §11.3: chữ sans, nhãn 16px, tiêu đề 22/30px.
+// Đầu hộp thoại dùng thang chữ chuẩn/lớn đã duyệt; vùng chạm giữ nguyên.
 export function ModalHeader({
   titleId,
   icon,
@@ -41,15 +41,15 @@ export function ModalHeader({
       <div className="col-span-2 row-start-2 min-w-0 break-words">
         {eyebrow && (
           <span
-            className={`inline-flex rounded-full px-2.5 py-0.5 text-base leading-6 font-medium ${TONES[tone].chip}`}
+            className={`inline-flex rounded-full px-2.5 py-0.5 text-caption font-medium ${TONES[tone].chip}`}
           >
             {eyebrow}
           </span>
         )}
-        <h2 id={titleId} className="font-sans text-[1.375rem] leading-[1.875rem] font-semibold text-accent">
+        <h2 id={titleId} className="font-sans text-heading-2 font-semibold text-accent">
           {title}
         </h2>
-        {subtitle && <p className="text-base leading-6 text-text-secondary">{subtitle}</p>}
+        {subtitle && <p className="text-caption text-text-secondary">{subtitle}</p>}
       </div>
       <Button
         className="col-start-2 row-start-1"

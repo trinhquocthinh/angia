@@ -1,5 +1,71 @@
+@import '../documents-bento.css';
+
 .privacy-studio-title {
   font-family: 'Newsreader', Georgia, serif;
   font-weight: 600;
   font-optical-sizing: auto;
+}
+
+.privacy-tool-dock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--color-border) 38%, transparent);
+  border-radius: 1.25rem;
+  padding: 0.5rem;
+  background: var(--color-surface-container);
+}
+
+.privacy-tool-btn {
+  display: inline-flex;
+  min-height: var(--size-button-height);
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--color-border) 42%, transparent);
+  border-radius: 0.875rem;
+  padding: 0.5rem 0.85rem;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
+  font-weight: 600;
+  box-shadow: var(--shadow-stitch-sm);
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    color 160ms ease-out;
+}
+
+.privacy-tool-btn:enabled:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 36%, transparent);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.privacy-tool-btn[aria-pressed='true'] {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.privacy-tool-btn:disabled {
+  opacity: 0.42;
+}
+
+.privacy-tool-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+:root[data-theme='dark'] .privacy-tool-btn {
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .privacy-tool-btn {
+    transition: none;
+  }
 }

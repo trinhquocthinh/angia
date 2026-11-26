@@ -11,26 +11,28 @@ export function ExerciseNotes(props: Props) {
   const id = useId();
   const [editing, setEditing] = useState<ExerciseNote | 'new' | null>(null);
   return (
-    <section aria-labelledby={id} className="min-w-0 space-y-3">
+    <section aria-labelledby={id} className="profile-bento-card min-w-0 space-y-4 p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 id={id} className="text-lg font-semibold">
+        <h2 id={id} className="auth-heading text-heading-2 font-semibold text-accent">
           Bài tập
         </h2>
         {props.allowed && (
           <button
             type="button"
-            className="min-h-11 px-3 underline"
+            className="inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-2xl border border-border/45 bg-bg px-4 text-caption font-semibold text-accent transition-colors hover:bg-accent-soft"
             onClick={(event) => {
               event.currentTarget.focus();
               setEditing('new');
             }}
           >
-            Thêm bài tập
+            <span aria-hidden="true">+</span> Thêm bài tập
           </button>
         )}
       </div>
       {props.issue.exercises.length === 0 ? (
-        <p>Chưa ghi bài tập nào.</p>
+        <p className="rounded-2xl border border-dashed border-border/55 bg-bg p-4 text-caption text-text-secondary">
+          Chưa ghi bài tập nào.
+        </p>
       ) : (
         <ul className="space-y-3">
           {props.issue.exercises.map((exercise) => (

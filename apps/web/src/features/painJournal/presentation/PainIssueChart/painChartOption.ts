@@ -1,3 +1,4 @@
+import { readTextSize } from '@src/shared/accessibility/readTextSize';
 import { chartTooltipStyle } from '@src/shared/theme/chartTooltipStyle';
 import { readThemeColor } from '@src/shared/theme/readThemeColor';
 import type { EChartsCoreOption } from 'echarts/core';
@@ -32,17 +33,18 @@ export function painChartOption(
 ): EChartsCoreOption {
   const { series, rows } = painMedicationSeries(context, range);
   const laneHeight = rows ? rows * 28 + 24 : 0;
+  const labelStyle = { fontSize: readTextSize('caption'), color: readThemeColor('text-secondary') };
   const timeAxis = {
     type: 'time',
     min: Date.parse(`${range.from}T00:00:00+07:00`),
     max: Date.parse(`${range.to}T23:59:59.999+07:00`),
-    axisLabel: { formatter: axisDay, color: readThemeColor('text-secondary'), hideOverlap: true },
+    axisLabel: { ...labelStyle, formatter: axisDay, hideOverlap: true },
     splitLine: { show: false },
     axisLine: { lineStyle: { color: readThemeColor('border') } },
   };
   return {
     animation,
-    textStyle: { fontFamily: 'Be Vietnam Pro, system-ui, sans-serif' },
+    textStyle: { fontSize: readTextSize('body'), fontFamily: 'Be Vietnam Pro, system-ui, sans-serif' },
     tooltip: {
       trigger: 'item',
       ...chartTooltipStyle(),
@@ -62,7 +64,7 @@ export function painChartOption(
         min: 1,
         max: 10,
         interval: 1,
-        axisLabel: { color: readThemeColor('text-secondary') },
+        axisLabel: labelStyle,
         splitLine: { lineStyle: { color: readThemeColor('border') } },
       },
       { type: 'value', gridIndex: 1, min: -0.5, max: Math.max(0.5, rows - 0.5), inverse: true, show: false },

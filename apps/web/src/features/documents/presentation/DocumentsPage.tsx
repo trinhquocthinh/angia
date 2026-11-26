@@ -13,6 +13,7 @@ import { DocumentEntryPanel } from './entries/DocumentEntryPanel';
 import { DocumentTypeFilter } from './entries/DocumentTypeFilter';
 import { ReusePrescriptionSheet } from './entries/ReusePrescriptionSheet';
 import { DocumentsHeading } from './entries/DocumentsHeading';
+import './documents-bento.css';
 
 const reviewRepository = createReviewRepository();
 const entriesRepository = createDocumentEntriesRepository();
@@ -42,7 +43,7 @@ function DocumentsContent({ profile, session }: { profile: ProfileListItem; sess
       <ProfileHealthHeader session={session} profile={profile} active="documents" />
       <DocumentsHeading profile={profile} />
       {profile.consentStatus !== 'confirmed' ? (
-        <p role="alert" className="rounded-[20px] bg-surface p-6 text-sm">
+        <p role="alert" className="rounded-[20px] bg-surface p-6 text-body">
           Hồ sơ chưa được đồng ý lưu dữ liệu.
         </p>
       ) : (

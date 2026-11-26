@@ -1,3 +1,4 @@
+import { readTextSize } from '@src/shared/accessibility/readTextSize';
 import { readThemeColor } from '@src/shared/theme/readThemeColor';
 import type { PainContext } from '@angia/contracts';
 import { formatPainEntryTime } from '../PainIssueDetail/formatPainEntryTime';
@@ -65,7 +66,7 @@ export function painMedicationSeries(context: PainContext | undefined, range: { 
           label: {
             show: true,
             position: 'top',
-            fontSize: 10,
+            fontSize: readTextSize('caption'),
             formatter: () => (course.name.length > 28 ? `${course.name.slice(0, 28)}…` : course.name),
           },
         },

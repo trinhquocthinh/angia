@@ -38,11 +38,11 @@ export function InvitationManagerBody({
           create={create}
           revoke={revoke}
         />
-        <p role="status" aria-live="polite" className="mt-4 text-sm leading-6 text-accent">
+        <p role="status" aria-live="polite" className="mt-4 text-body text-accent">
           {message}
         </p>
         {error && (
-          <p role="alert" className="mt-4 text-sm leading-6 text-danger">
+          <p role="alert" className="mt-4 text-body text-danger">
             {error.message}
           </p>
         )}
@@ -52,10 +52,8 @@ export function InvitationManagerBody({
           <InvitationIcon name="shield" />
         </span>
         <div>
-          <p className="text-xs font-semibold">Quyền riêng tư trong An Gia</p>
-          <p className="mt-1 text-[11px] leading-5">
-            Người xác nhận phải đăng nhập bằng chính tài khoản của họ.
-          </p>
+          <p className="text-body font-semibold">Quyền riêng tư trong An Gia</p>
+          <p className="mt-1 text-body ">Người xác nhận phải đăng nhập bằng chính tài khoản của họ.</p>
         </div>
       </footer>
     </div>

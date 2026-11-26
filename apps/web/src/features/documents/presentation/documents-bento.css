@@ -1,0 +1,199 @@
+/* Phong cách 3D Clay Bento v2.0 dùng chung cho Giấy tờ (/upload, /review, /profiles/:id/documents). */
+.doc-bento-card {
+  min-width: 0;
+  border: 1px solid color-mix(in srgb, var(--color-border) 38%, transparent);
+  border-radius: 24px;
+  background: var(--color-surface);
+  box-shadow:
+    0 12px 32px color-mix(in srgb, var(--color-household-shadow) 6%, transparent),
+    0 2px 6px color-mix(in srgb, var(--color-shadow) 3%, transparent);
+}
+
+.doc-clay-emblem,
+.doc-clay-tile,
+.doc-clay-tile-sm {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-clay-icon-start), var(--color-clay-icon-end));
+  box-shadow:
+    0 6px 16px color-mix(in srgb, var(--color-household-shadow) 14%, transparent),
+    inset 0 2px 3px color-mix(in srgb, var(--color-nav-icon-porcelain) 82%, transparent);
+}
+
+.doc-clay-emblem {
+  width: 60px;
+  height: 60px;
+  border-radius: 20px;
+}
+
+.doc-clay-tile {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+}
+
+.doc-clay-tile-sm {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+
+.doc-clay-tile-active {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  box-shadow: inset 0 1px 2px color-mix(in srgb, var(--color-on-accent) 24%, transparent);
+}
+
+.doc-ceramic-avatar {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-container),
+    var(--color-secondary),
+    var(--color-accent)
+  );
+  color: var(--color-on-accent);
+  font-size: var(--font-body);
+  font-weight: 700;
+  line-height: 1;
+  box-shadow:
+    inset 0 2px 4px color-mix(in srgb, var(--color-on-accent) 22%, transparent),
+    0 4px 12px color-mix(in srgb, var(--color-household-shadow) 18%, transparent);
+  user-select: none;
+}
+
+.doc-metric-tile {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 38%, transparent);
+  border-radius: 18px;
+  padding: 14px 16px;
+  background: var(--color-bg);
+}
+
+.doc-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 42%, transparent);
+  border-radius: 20px;
+  padding: 6px;
+  background: var(--color-accent-soft);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-household-shadow) 5%, transparent);
+}
+
+.doc-switcher-btn {
+  display: inline-flex;
+  min-height: var(--size-button-height);
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 14px;
+  padding: 0 14px;
+  font-size: var(--font-button-secondary);
+  line-height: var(--line-button-secondary);
+  font-weight: 600;
+  transition:
+    background-color 160ms ease-out,
+    color 160ms ease-out,
+    transform 120ms ease-out;
+}
+
+.doc-switcher-btn:active {
+  transform: scale(0.97);
+}
+
+.doc-switcher-btn:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.doc-switcher-prev {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-stitch-sm);
+}
+
+.doc-switcher-prev:hover {
+  background: var(--color-surface-container);
+  color: var(--color-accent);
+}
+
+.doc-switcher-next {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+
+.doc-switcher-next:hover {
+  background: var(--color-accent-hover);
+}
+
+.doc-switcher-disabled {
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.doc-submit-dock {
+  border: 1px solid color-mix(in srgb, var(--color-border) 38%, transparent);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 16px 36px color-mix(in srgb, var(--color-household-shadow) 12%, transparent),
+    0 2px 8px color-mix(in srgb, var(--color-shadow) 4%, transparent);
+}
+
+:root[data-theme='dark'] .doc-bento-card,
+:root[data-theme='dark'] .doc-switcher,
+:root[data-theme='dark'] .doc-switcher-prev,
+:root[data-theme='dark'] .doc-switcher-next,
+:root[data-theme='dark'] .doc-submit-dock {
+  box-shadow: none;
+}
+
+:root[data-theme='dark'] .doc-bento-card,
+:root[data-theme='dark'] .doc-submit-dock {
+  border-color: var(--color-border);
+}
+
+:root[data-theme='dark'] .doc-clay-emblem,
+:root[data-theme='dark'] .doc-clay-tile,
+:root[data-theme='dark'] .doc-clay-tile-sm {
+  border: 1px solid var(--color-border);
+  background: linear-gradient(135deg, var(--color-accent-soft), var(--color-secondary-container));
+  box-shadow: none;
+}
+
+@media (max-width: 767px) {
+  .doc-bento-card {
+    border-radius: 20px;
+  }
+
+  .doc-clay-emblem {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doc-switcher-btn {
+    transition: none;
+  }
+
+  .doc-switcher-btn:active {
+    transform: none;
+  }
+}

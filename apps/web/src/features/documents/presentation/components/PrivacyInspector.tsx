@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { PrivacyToolIcon } from './PrivacyToolIcon';
+
 type Props = {
   preview: boolean;
   inputPending: boolean;
@@ -7,20 +9,23 @@ type Props = {
   onNext: () => void;
   onCancel: () => void;
 };
+
 export function PrivacyInspector({ preview, inputPending, fields, onNext, onCancel }: Props) {
   return (
     <aside
       aria-label="Công cụ chỉnh sửa ảnh"
-      className="flex min-w-0 flex-col gap-4 self-start lg:sticky lg:top-20"
+      className="flex min-w-0 flex-col gap-4 self-start lg:sticky lg:top-28"
     >
-      <div className="flex flex-col gap-4 rounded-2xl bg-surface p-4 shadow-sm lg:p-5">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/30 pb-3">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-accent">Công cụ điều chỉnh</h3>
-          <span className="text-[11px] text-text-secondary">Phím tắt: Esc / Enter</span>
+      <div className="doc-bento-card flex flex-col gap-4 p-4 lg:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/35 pb-3">
+          <h3 className="auth-heading text-body font-bold text-accent">Công cụ điều chỉnh</h3>
+          <span className="rounded-full bg-surface-container px-2.5 py-0.5 text-caption text-text-secondary">
+            Esc / Enter
+          </span>
         </div>
         {fields}
         {inputPending && (
-          <p role="status" className="text-xs leading-5 text-warning">
+          <p role="status" className="rounded-xl bg-warning-soft p-3 text-caption font-medium text-warning">
             Hoàn tất vị trí vùng chọn hoặc nhấn Esc trước khi xem bản sẽ tải lên.
           </p>
         )}
@@ -30,7 +35,7 @@ export function PrivacyInspector({ preview, inputPending, fields, onNext, onCanc
             if (!inputPending) onNext();
           }}
           disabled={inputPending || !preview}
-          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-accent px-4 text-sm font-semibold text-on-accent shadow-sm transition-colors enabled:hover:bg-accent-hover disabled:opacity-40"
+          className="inline-flex min-h-btn w-full items-center justify-center gap-2 rounded-2xl bg-accent px-4 text-button-primary font-semibold text-on-accent shadow-stitch-sm transition-colors enabled:cursor-pointer enabled:hover:bg-accent-hover disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         >
           <PrivacyToolIcon name="eye" />
           Xem bản sẽ tải lên
@@ -38,13 +43,13 @@ export function PrivacyInspector({ preview, inputPending, fields, onNext, onCanc
         <button
           type="button"
           onClick={onCancel}
-          className="flex min-h-11 items-center justify-center rounded-xl bg-accent-soft px-3 text-xs font-semibold text-text-primary transition-colors hover:bg-border"
+          className="inline-flex min-h-btn w-full items-center justify-center rounded-2xl bg-surface-container px-4 text-button-secondary font-semibold text-text-primary transition-colors hover:bg-accent-soft hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         >
           Để sau
         </button>
-        <p className="flex items-start gap-2 rounded-xl bg-accent-soft p-2.5 text-[11px] leading-4 text-text-secondary">
-          <span className="text-accent">
-            <PrivacyToolIcon name="shield" />
+        <p className="flex items-start gap-2 rounded-2xl bg-accent-soft p-3 text-caption text-text-secondary">
+          <span className="mt-0.5 text-accent">
+            <AdminIcon name="shield" size={16} />
           </span>
           Vùng che đen được phủ lên ảnh ngay trên máy. AN GIA chỉ nhận bản đã che.
         </p>

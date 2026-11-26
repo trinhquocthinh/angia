@@ -13,12 +13,12 @@ export function AdminCardHeading({
   aside?: ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3">
-      <div className="flex min-w-0 items-center gap-2.5">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex min-w-0 items-center gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent">
           {icon}
         </span>
-        <h2 id={id} className="m-0 text-[18px] leading-6 font-semibold text-text-primary">
+        <h2 id={id} className="auth-heading m-0 text-heading-2 font-semibold text-accent">
           {title}
         </h2>
       </div>

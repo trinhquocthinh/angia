@@ -9,6 +9,7 @@ import { AccountDataDeleteSection } from '@src/features/account/presentation/set
 import { AccountEmailCard } from '@src/features/account/presentation/settings/AccountEmailCard';
 import { AccountPasswordCard } from '@src/features/account/presentation/settings/AccountPasswordCard';
 import { AccountProfileCard } from '@src/features/account/presentation/settings/AccountProfileCard';
+import { AccountTextSizeCard } from './AccountTextSizeCard';
 import { AccountThemeCard } from '@src/features/account/presentation/settings/AccountThemeCard';
 import './account-settings.css';
 import './account-profile-theme.css';
@@ -63,6 +64,7 @@ export function AccountSettingsView({
         {session.hasLocalCredential && <AccountPasswordCard />}
         <AccountThemeCard />
       </div>
+      <AccountTextSizeCard />
       <AccountDataDeleteSection session={session} profiles={profiles} onAccountDeleted={onAccountDeleted} />
     </div>
   );

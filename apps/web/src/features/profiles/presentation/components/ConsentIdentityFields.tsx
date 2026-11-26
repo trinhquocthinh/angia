@@ -9,7 +9,7 @@ export function ConsentIdentityFields({ id, draft, profileName, onChange }: Prop
   return (
     <fieldset disabled={!draft.checked} className="mt-4 space-y-4 pl-8 disabled:opacity-60">
       <div>
-        <label htmlFor={`${id}-basis`} className="text-sm font-semibold">
+        <label htmlFor={`${id}-basis`} className="text-caption font-semibold">
           Ai đã đồng ý?
         </label>
         <select
@@ -19,7 +19,7 @@ export function ConsentIdentityFields({ id, draft, profileName, onChange }: Prop
             const basis = event.target.value as ConsentDraft['basis'];
             onChange({ ...draft, basis, respondentName: basis === 'self' ? profileName : '' });
           }}
-          className="mt-1.5 block h-11 w-full rounded-xl border border-border/40 bg-surface px-3.5 text-sm"
+          className="mt-1.5 block h-11 w-full rounded-xl border border-border/40 bg-surface px-3.5 text-body"
         >
           <option value="">Chọn người đồng ý</option>
           <option value="self">Chính người này</option>
@@ -27,7 +27,7 @@ export function ConsentIdentityFields({ id, draft, profileName, onChange }: Prop
         </select>
       </div>
       <div>
-        <label htmlFor={`${id}-name`} className="text-sm font-semibold">
+        <label htmlFor={`${id}-name`} className="text-caption font-semibold">
           Tên người đồng ý
         </label>
         <input
@@ -36,7 +36,7 @@ export function ConsentIdentityFields({ id, draft, profileName, onChange }: Prop
           onChange={(event) => onChange({ ...draft, respondentName: event.target.value })}
           maxLength={60}
           autoComplete="off"
-          className="mt-1.5 block h-11 w-full rounded-xl border border-border/40 bg-surface px-3.5 text-sm"
+          className="mt-1.5 block h-11 w-full rounded-xl border border-border/40 bg-surface px-3.5 text-body"
         />
       </div>
     </fieldset>

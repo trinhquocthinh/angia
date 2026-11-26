@@ -12,7 +12,7 @@ export function RegionListOption({ location, name, checked, onSelect }: RegionLi
   const label = describeBodyLocation(location);
   return (
     <label
-      className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 ${checked ? 'border-accent bg-accent-soft' : 'border-border bg-surface'}`}
+      className={`flex min-h-btn cursor-pointer items-center gap-3 rounded-2xl border px-3.5 py-2 text-body transition-colors ${checked ? 'border-accent bg-accent-soft font-semibold text-accent shadow-2xs' : 'border-border/45 bg-surface text-text-primary hover:border-accent/45 hover:bg-accent-soft/45'}`}
     >
       <input
         type="radio"

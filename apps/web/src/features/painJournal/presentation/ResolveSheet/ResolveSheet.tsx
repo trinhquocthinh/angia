@@ -43,13 +43,13 @@ export function ResolveSheet(props: PainIssueLifecycleProps) {
         max={dates.max}
         value={date}
         disabled={state.pending || !state.enabled}
-        className="min-h-[52px] w-full rounded-lg border border-border px-3"
+        className="min-h-12 w-full rounded-2xl border border-border/55 bg-bg px-3.5 text-body text-text-primary focus:border-accent focus:bg-surface focus:outline-none"
         onChange={(event) => {
           setDate(event.target.value);
           setValidation(null);
         }}
       />
-      <p className="text-sm text-text-secondary">Ngày theo giờ Việt Nam.</p>
+      <p className="text-caption text-text-secondary">Ngày theo giờ Việt Nam.</p>
       <p>Bạn vẫn xem, sửa được các lần ghi và bài tập sau khi đánh dấu.</p>
     </PainIssueLifecycleDialog>
   );

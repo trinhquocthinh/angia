@@ -6,7 +6,7 @@ type SwitchFieldProps = InputHTMLAttributes<HTMLInputElement> & { children: Reac
 export function SwitchField({ children, className = '', ...input }: SwitchFieldProps) {
   return (
     <label
-      className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl bg-accent-soft px-4 text-sm font-medium text-text-secondary has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus ${className}`}
+      className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl bg-accent-soft px-4 text-caption font-medium text-text-secondary has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus ${className}`}
     >
       <input type="checkbox" role="switch" className="peer sr-only" {...input} />
       <span

@@ -8,10 +8,10 @@ export function ActionSubmitBar({
   onClose: () => void;
 }) {
   return (
-    <div className="flex flex-wrap justify-end gap-3">
+    <div className="flex flex-wrap justify-end gap-3 border-t border-border/35 pt-4">
       <button
         type="button"
-        className="admin-button inline-flex items-center justify-center gap-2 min-h-11 py-[10px] px-4 border-0 rounded-[12px] bg-accent text-on-accent text-[14px] leading-[20px] font-semibold cursor-pointer shadow-[0_1px_2px_color-mix(in_srgb,var(--color-shadow)_5%,transparent)] transition-[transform,background-color,box-shadow] duration-[160ms] ease-[ease] [&:hover]:bg-accent [&:hover]:shadow-[0_4px_12px_color-mix(in_srgb,var(--color-shadow)_6%,transparent)] [&:active]:scale-[0.99] motion-reduce:[&:active]:transform-none admin-button-secondary bg-accent-soft! text-text-secondary! [&:hover]:bg-border!"
+        className="inline-flex min-h-btn cursor-pointer items-center justify-center rounded-2xl border border-border/45 bg-bg px-5 text-button-secondary font-semibold text-text-primary transition-colors hover:bg-accent-soft"
         disabled={pending}
         onClick={onClose}
       >
@@ -19,7 +19,7 @@ export function ActionSubmitBar({
       </button>
       <button
         type="submit"
-        className={`admin-button inline-flex items-center justify-center gap-2 min-h-11 py-[10px] px-4 border-0 rounded-[12px] bg-accent text-on-accent text-[14px] leading-[20px] font-semibold cursor-pointer shadow-[0_1px_2px_color-mix(in_srgb,var(--color-shadow)_5%,transparent)] transition-[transform,background-color,box-shadow] duration-[160ms] ease-[ease] [&:hover]:bg-accent [&:hover]:shadow-[0_4px_12px_color-mix(in_srgb,var(--color-shadow)_6%,transparent)] [&:active]:scale-[0.99] motion-reduce:[&:active]:transform-none ${remove ? 'admin-button-danger bg-danger! [&:hover]:bg-danger!' : ''}`}
+        className={`inline-flex min-h-btn cursor-pointer items-center justify-center gap-2 rounded-2xl border-0 px-5 text-button-primary font-semibold text-on-accent shadow-stitch-sm transition-colors ${remove ? 'bg-danger enabled:hover:bg-danger/90' : 'bg-accent enabled:hover:bg-accent-hover'}`}
         disabled={pending}
       >
         {pending ? (

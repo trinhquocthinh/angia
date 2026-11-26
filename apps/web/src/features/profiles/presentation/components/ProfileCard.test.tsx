@@ -43,7 +43,7 @@ describe('TC-558 — thẻ hồ sơ chọn đúng thao tác đồng thuận', ()
     expect(html).not.toContain('Đã đồng ý chia sẻ');
     expect(html).toContain('Xác nhận cũ');
     expect(html).toContain('Năm sinh 1954');
-    expect(html).not.toContain('tuổi');
+    expect(html).toContain('tuổi');
   });
   it.each(['invited', 'declined'] as const)('thể hiện trạng thái %s', (status) => {
     const html = renderToStaticMarkup(

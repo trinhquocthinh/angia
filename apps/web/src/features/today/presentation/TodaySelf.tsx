@@ -20,7 +20,7 @@ export function TodaySelf({ session }: { session: ProfileSession }) {
     return <p role="alert">Tài khoản chưa liên kết hồ sơ sức khỏe.</p>;
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-[22px] leading-[30px] font-semibold break-words">{query.data.displayName}</h2>
+      <h2 className="text-heading-2 font-semibold break-words">{query.data.displayName}</h2>
       <TodayDoses key={query.data.id} session={session} target={{ kind: 'self', profile: query.data }} />
     </section>
   );

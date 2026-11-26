@@ -15,10 +15,7 @@ export function AiBillingSourceList({ sources }: { sources: AiBillingView['sourc
   return sources.length ? (
     <ul className="m-0 grid gap-2 p-0 list-none" aria-label="Nguồn phí đã cấu hình">
       {sources.map((source) => (
-        <li
-          key={source.id}
-          className="grid min-w-0 gap-0.5 rounded-xl bg-accent-soft/70 p-3 text-xs leading-5"
-        >
+        <li key={source.id} className="grid min-w-0 gap-0.5 rounded-xl bg-accent-soft/70 p-3 text-body ">
           <div className="flex flex-wrap items-center justify-between gap-x-3">
             <span className="font-semibold text-text-primary">OpenRouter</span>
             <span className="break-all font-semibold text-accent tabular-nums">
@@ -27,7 +24,7 @@ export function AiBillingSourceList({ sources }: { sources: AiBillingView['sourc
           </div>
           <span className="text-text-secondary">{labels[source.status]}</span>
           {/* TC-548: mã nguồn để đối chiếu khi có nhiều khóa; không cần đọc thường xuyên nên thu gọn. */}
-          <details className="text-[11px] text-text-secondary">
+          <details className="text-caption text-text-secondary">
             <summary className="cursor-pointer">Mã nguồn</summary>
             <span className="break-all font-mono">{source.id}</span>
           </details>
@@ -35,6 +32,6 @@ export function AiBillingSourceList({ sources }: { sources: AiBillingView['sourc
       ))}
     </ul>
   ) : (
-    <p className="m-0 text-xs leading-5 text-text-secondary">Chưa có nguồn phí được đăng ký.</p>
+    <p className="m-0 text-caption text-text-secondary">Chưa có nguồn phí được đăng ký.</p>
   );
 }

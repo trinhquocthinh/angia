@@ -72,7 +72,7 @@ export function UploadWorkspace(props: UploadWorkspaceProps) {
   return (
     <>
       <UploadIntro />
-      <UploadUsageCards usage={usage} scanQuota={scanQuota} />
+      <UploadUsageCards usage={usage} scanQuota={scanQuota} manualProfileId={ready?.id ?? null} />
       <ProfileChoices
         profiles={profiles}
         {...status}

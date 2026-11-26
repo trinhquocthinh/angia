@@ -40,8 +40,8 @@
 }
 .household-member-remove-dialog h2 {
   margin: 0 0 16px;
-  font-size: 1.375rem;
-  line-height: 1.875rem;
+  font-size: var(--font-heading-2);
+  line-height: var(--line-heading-2);
   font-weight: 600;
 }
 .household-member-remove-points {
@@ -50,8 +50,8 @@
   border-radius: 16px;
   background: var(--color-accent-soft);
   text-align: left;
-  font-size: 0.9375rem;
-  line-height: 1.5rem;
+  font-size: var(--font-caption);
+  line-height: var(--line-caption);
   color: var(--color-text-primary);
   display: flex;
   flex-direction: column;
@@ -64,8 +64,8 @@
   margin-top: 20px;
 }
 .household-member-remove-actions button {
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: var(--font-button-secondary);
+  line-height: var(--line-button-secondary);
   padding: 12px 14px;
 }
 .household-member-remove-confirm {

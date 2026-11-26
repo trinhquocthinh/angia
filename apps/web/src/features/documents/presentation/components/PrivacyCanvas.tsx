@@ -4,6 +4,7 @@ import type { PrivacyEdits, PrivacyRectangle } from '@angia/contracts';
 import { usePrivacyDrag } from '../../application/usePrivacyDrag';
 import { PrivacyPreviewImage } from './PrivacyPreviewImage';
 import { PrivacyOverlay } from './PrivacyOverlay';
+
 type Props = {
   src: string;
   edits: PrivacyEdits;
@@ -13,6 +14,7 @@ type Props = {
   onRectangle: (rect: PrivacyRectangle) => void;
   onPreview: (loaded: boolean) => void;
 };
+
 export function PrivacyCanvas({ src, edits, mode, disabled, onBegin, onRectangle, onPreview }: Props) {
   const [size, setSize] = useState({ width: 1, height: 1 });
   const [loaded, setLoaded] = useState(false);
@@ -20,18 +22,18 @@ export function PrivacyCanvas({ src, edits, mode, disabled, onBegin, onRectangle
   const gesture = usePrivacyDrag(disabled || !loaded, onBegin, onRectangle);
   const rotated = edits.rotation === 90 || edits.rotation === 270;
   return (
-    <div className="rounded-xl bg-overlay p-2 text-on-overlay shadow-inner sm:p-4">
+    <div className="rounded-2xl bg-overlay p-2.5 text-on-overlay shadow-inner sm:p-4">
       {failed && (
-        <p role="alert" className="p-4 text-sm text-on-overlay">
+        <p role="alert" className="p-4 text-body text-on-overlay">
           Không mở được ảnh này trên trình duyệt. Hãy chụp lại hoặc chọn ảnh JPG.
         </p>
       )}
-      <div className="flex h-[clamp(320px,52dvh,520px)] items-center justify-center">
+      <div className="flex h-[clamp(260px,48dvh,520px)] items-center justify-center">
         <div
-          className="relative w-full overflow-hidden rounded shadow-2xl"
+          className="relative w-full overflow-hidden rounded-lg shadow-2xl"
           style={{
             aspectRatio: rotated ? size.height / size.width : size.width / size.height,
-            maxWidth: `min(100%, calc(${rotated ? size.height / size.width : size.width / size.height} * clamp(320px, 52dvh, 520px)))`,
+            maxWidth: `min(100%, calc(${rotated ? size.height / size.width : size.width / size.height} * clamp(260px, 48dvh, 520px)))`,
           }}
         >
           <PrivacyPreviewImage
@@ -54,18 +56,18 @@ export function PrivacyCanvas({ src, edits, mode, disabled, onBegin, onRectangle
         </div>
       </div>
       {loaded && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1 text-[11px] leading-4">
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1 text-caption">
           <span className="flex items-center gap-1.5">
             <PrivacyToolIcon name="pointer" />
             Kéo trên ảnh để tạo vùng cắt hoặc che
           </span>
-          <span className="font-mono text-on-overlay">
+          <span className="font-mono text-on-overlay tabular-nums">
             Xem trước: {rotated ? size.height : size.width} × {rotated ? size.width : size.height}
           </span>
         </div>
       )}
       {!loaded && !failed && (
-        <p role="status" className="p-2 text-sm text-on-overlay">
+        <p role="status" className="p-2 text-body text-on-overlay">
           Đang tải ảnh xem trước…
         </p>
       )}

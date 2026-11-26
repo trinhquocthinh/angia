@@ -21,7 +21,7 @@ export function OutOfRangeConfirm({ fields, confirmed, onConfirm }: OutOfRangeCo
       <span aria-hidden="true" className="mt-0.5 shrink-0">
         <DocumentIcon name="warning" />
       </span>
-      <div className="flex flex-col gap-3 text-sm leading-6">
+      <div className="flex flex-col gap-3 text-caption ">
         <p>
           Số <strong>{names}</strong> nằm ngoài khoảng giá trị máy đo thường ghi nhận. Vui lòng đối chiếu lại
           với ảnh — có thể do gõ nhầm hoặc hệ thống tự động nhận diện nhầm chữ số.

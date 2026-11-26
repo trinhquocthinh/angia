@@ -3,7 +3,7 @@ import type { AdminTask } from '../AdminTask';
 import { AdminIcon } from './AdminIcon';
 
 const BASE =
-  'inline-flex min-h-9 cursor-pointer items-center justify-center gap-1 rounded-lg border-0 px-2 py-1 text-xs leading-4 font-semibold whitespace-nowrap transition-colors';
+  'inline-flex min-h-11 cursor-pointer items-center justify-center gap-1.5 rounded-xl px-3 py-1.5 text-caption font-semibold whitespace-nowrap transition-colors';
 
 export function AccountActions({
   account,
@@ -17,12 +17,12 @@ export function AccountActions({
   onTask: (task: AdminTask) => void;
 }) {
   return (
-    <div className="admin-row-actions flex justify-end gap-1">
+    <div className="flex justify-end gap-1.5">
       {account.familyId ? (
         <>
           <button
             type="button"
-            className={`${BASE} bg-surface text-accent enabled:hover:bg-border`}
+            className={`${BASE} border border-border/45 bg-surface text-accent enabled:hover:bg-accent-soft`}
             disabled={pending}
             onClick={() => onTask({ kind: 'role', account })}
           >
@@ -31,7 +31,7 @@ export function AccountActions({
           </button>
           <button
             type="button"
-            className={`${BASE} bg-transparent text-danger enabled:hover:bg-danger-soft/60`}
+            className={`${BASE} border-0 bg-danger-soft text-danger enabled:hover:bg-danger-soft/80`}
             disabled={pending}
             onClick={() => onTask({ kind: 'remove', account })}
           >
@@ -42,7 +42,7 @@ export function AccountActions({
       ) : (
         <button
           type="button"
-          className={`${BASE} bg-accent text-on-accent enabled:hover:bg-accent-hover`}
+          className={`${BASE} border-0 bg-accent text-on-accent enabled:hover:bg-accent-hover`}
           disabled={pending || !hasFamilies}
           onClick={() => onTask({ kind: 'assign', account })}
         >

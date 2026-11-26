@@ -12,7 +12,7 @@ export function DeleteDocumentImpact({ impact }: { impact: DocumentDeletionImpac
     ],
   ] as const;
   return (
-    <ul className="list-inside list-disc text-sm">
+    <ul className="list-inside list-disc text-caption">
       {counts
         .filter(([count]) => count > 0)
         .map(([, label]) => (

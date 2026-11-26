@@ -19,7 +19,7 @@ export function DoseHistoryRange({ initial, pending, onChange }: Props) {
     >
       <fieldset disabled={pending} className="grid min-w-0 grid-cols-2 gap-3 border-0 p-0">
         {(['from', 'to'] as const).map((field) => (
-          <label key={field} htmlFor={`${id}-${field}`} className="flex min-w-0 flex-col gap-1 text-sm">
+          <label key={field} htmlFor={`${id}-${field}`} className="flex min-w-0 flex-col gap-1 text-caption">
             {field === 'from' ? 'Từ ngày' : 'Đến ngày'}
             <input
               id={`${id}-${field}`}
@@ -27,20 +27,20 @@ export function DoseHistoryRange({ initial, pending, onChange }: Props) {
               required
               value={range[field]}
               onChange={(event) => setRange({ ...range, [field]: event.target.value })}
-              className="min-h-11 min-w-0 rounded-xl border border-border px-2"
+              className="min-h-btn min-w-0 rounded-2xl border border-border/55 bg-bg px-3 text-caption text-text-primary focus:border-accent focus:bg-surface focus-visible:outline-2 focus-visible:outline-focus"
             />
           </label>
         ))}
       </fieldset>
       {error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-body text-danger">
           Chọn khoảng ngày hợp lệ, tối đa 366 ngày.
         </p>
       )}
       <button
         type="submit"
         disabled={pending}
-        className="min-h-11 rounded-xl bg-accent-soft px-4 text-sm font-semibold text-accent disabled:opacity-50"
+        className="min-h-btn rounded-2xl bg-accent-soft px-4 text-button-secondary font-semibold text-accent transition-colors hover:bg-choice-soft disabled:opacity-50"
       >
         Xem nhật ký theo ngày
       </button>

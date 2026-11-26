@@ -50,6 +50,15 @@ function renderReminders(profile: ProfileListItem) {
 }
 
 describe('TC-816 — trang Nhắc thuốc với hồ sơ trẻ và hồ sơ khác', () => {
+  it('SPEC-081 — quay về đúng hồ sơ và mở cài đặt thông báo thiết bị mà không giả trạng thái đã bật', () => {
+    const html = renderReminders(baseProfile);
+    expect(html).toContain('href="/profiles/$profileId"');
+    expect(html).toContain('Quay lại hồ sơ');
+    expect(html).toContain('Bé An');
+    expect(html).toContain('href="/notifications"');
+    expect(html).not.toContain('Đã bật thông báo');
+  });
+
   it('TC-816 — hồ sơ trẻ chưa liên kết hiển thị giải thích kèm liên kết sang tab Người giám hộ, không hiện thẻ giám hộ', () => {
     const html = renderReminders(baseProfile);
     expect(html).toContain('Người nhận nhắc của hồ sơ trẻ là các người giám hộ.');

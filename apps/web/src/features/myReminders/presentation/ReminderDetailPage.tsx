@@ -4,13 +4,15 @@ import { MedicationRequestError } from '@src/features/medications/application/Me
 import { useProfilesWorkspace } from '@src/features/profiles/application/useProfilesWorkspace';
 import { createProfilesRepository } from '@src/features/profiles/infrastructure/createProfilesRepository';
 import { ProfileFrame } from '@src/features/profiles/presentation/components/ProfileFrame';
+import { ReminderDetailHeading } from '@src/features/reminders/presentation/ReminderDetailHeading';
+import { ReminderDetailState } from '@src/features/reminders/presentation/ReminderDetailState';
 import { useMyReminder } from '../application/useMyReminder';
 import { createMyReminderRepository } from '../infrastructure/createMyReminderRepository';
 import { ReminderDetailCard } from './ReminderDetailCard';
+import '@src/shared/styles/reminders.css';
 
 const profilesRepository = createProfilesRepository();
 const reminders = createMyReminderRepository();
-const notice = 'rounded-[20px] bg-surface p-6 text-sm text-text-secondary';
 
 // Trang /reminders/:id (SPEC-035) cho người nhận nhắc — cả main và member đã có gia đình.
 // 404/403 → thông điệp chung, không phân biệt "không tồn tại" và "không có quyền".
@@ -28,29 +30,19 @@ export function ReminderDetailPage({ reminderId }: { reminderId: string }) {
       logout={workspace.logout}
       mobileTitle="Lời nhắc dùng thuốc"
     >
-      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
-        <h1 className="auth-heading text-2xl font-semibold tracking-tight text-text-primary">
-          Lời nhắc dùng thuốc
-        </h1>
+      <div className="mx-auto flex w-full max-w-[680px] flex-col gap-5 pb-6">
+        <ReminderDetailHeading
+          title="Lời nhắc dùng thuốc"
+          subtitle="Danh sách thuốc theo khung giờ đã thiết lập"
+        />
         {reminder.data ? (
           <ReminderDetailCard reminder={reminder.data} session={session.data} />
         ) : hidden ? (
-          <p role="alert" className={notice}>
-            Không tìm thấy lời nhắc hoặc bạn không có quyền xem.
-          </p>
+          <ReminderDetailState kind="hidden" />
         ) : error ? (
-          <div role="alert" className={`${notice} flex flex-col items-start gap-3`}>
-            <p>Không thể tải lời nhắc. Vui lòng thử lại.</p>
-            <button
-              type="button"
-              onClick={() => void reminder.refetch()}
-              className="min-h-11 rounded-full bg-accent px-5 text-sm font-semibold text-on-accent"
-            >
-              Thử lại
-            </button>
-          </div>
+          <ReminderDetailState kind="error" onRetry={() => void reminder.refetch()} />
         ) : (
-          <p className={notice}>Đang tải lời nhắc…</p>
+          <ReminderDetailState kind="loading" />
         )}
       </div>
     </ProfileFrame>

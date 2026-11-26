@@ -1,0 +1,61 @@
+.notification-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: none;
+}
+.notification-link:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.notification-clay-icon {
+  display: block;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  object-fit: contain;
+  transform-origin: 50% 18%;
+  animation: notification-arrive 900ms ease-in-out 1;
+}
+.notification-link:is(:hover, :focus-visible) .notification-clay-icon {
+  animation: notification-ring 700ms ease-in-out 2;
+}
+@keyframes notification-arrive {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20%,
+  60% {
+    transform: rotate(9deg);
+  }
+  40%,
+  80% {
+    transform: rotate(-7deg);
+  }
+}
+@keyframes notification-ring {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20%,
+  60% {
+    transform: rotate(12deg);
+  }
+  40%,
+  80% {
+    transform: rotate(-9deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .notification-clay-icon,
+  .notification-link:is(:hover, :focus-visible) .notification-clay-icon {
+    animation: none;
+    transform: none;
+  }
+}

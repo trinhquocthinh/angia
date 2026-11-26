@@ -15,7 +15,7 @@ export function ProfileLinkSelect({
   onChange: (value: string) => void;
 }) {
   return (
-    <label className="grid gap-1 text-xs text-text-secondary">
+    <label className="grid gap-1 text-caption text-text-secondary">
       Tài khoản liên kết
       <AdminSelect value={value} disabled={pending} onChange={(event) => onChange(event.target.value)}>
         <option value="">Không liên kết</option>

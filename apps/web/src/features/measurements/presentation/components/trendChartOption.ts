@@ -1,3 +1,4 @@
+import { readTextSize } from '@src/shared/accessibility/readTextSize';
 import { chartTooltipStyle } from '@src/shared/theme/chartTooltipStyle';
 import { readThemeColor } from '@src/shared/theme/readThemeColor';
 import type { EChartsCoreOption } from 'echarts/core';
@@ -39,7 +40,7 @@ function bandSeries(bands: PeriodBand[]) {
           show: true,
           position: 'insideTopLeft',
           color: readThemeColor('text-secondary'),
-          fontSize: 11,
+          fontSize: readTextSize('caption'),
           fontWeight: 600,
         },
         data,
@@ -70,7 +71,13 @@ function lineSeries(line: TrendLine) {
       itemStyle: { color },
       lineStyle: { color, width: line.dashed ? 2 : 3, type: line.dashed ? 'dashed' : 'solid' },
       // Nhãn trực tiếp tại điểm cuối thay cho chú giải màu (Design §2.2).
-      endLabel: { show: true, formatter: line.label, color, fontWeight: 600, fontSize: 12 },
+      endLabel: {
+        show: true,
+        formatter: line.label,
+        color,
+        fontWeight: 600,
+        fontSize: readTextSize('caption'),
+      },
       tooltip: {
         formatter: ({ value }: { value: TrendPoint }) =>
           `${pointTime(value)}<br/>${line.label}: <b>${formatValue(value[1])}</b> ${line.unit}`,
@@ -96,14 +103,19 @@ export function trendChartOption(
 ): EChartsCoreOption {
   return {
     animation: animate,
-    textStyle: { fontFamily: 'Be Vietnam Pro, system-ui, sans-serif' },
+    textStyle: { fontSize: readTextSize('body'), fontFamily: 'Be Vietnam Pro, system-ui, sans-serif' },
     grid: { left: 8, right: 84, top: 28, bottom: 8, containLabel: true },
     tooltip: { trigger: 'item', confine: true, ...chartTooltipStyle() },
     xAxis: {
       type: 'time',
       min: `${range.from}T00:00`,
       max: `${range.to}T23:59`,
-      axisLabel: { formatter: '{dd}/{MM}', color: readThemeColor('text-secondary'), hideOverlap: true },
+      axisLabel: {
+        fontSize: readTextSize('caption'),
+        formatter: '{dd}/{MM}',
+        color: readThemeColor('text-secondary'),
+        hideOverlap: true,
+      },
       axisLine: { lineStyle: { color: readThemeColor('border') } },
       splitLine: { show: false },
     },
@@ -111,8 +123,12 @@ export function trendChartOption(
       type: 'value',
       scale: true,
       name: lines[0]?.unit ?? '',
-      nameTextStyle: { color: readThemeColor('text-secondary'), align: 'left' },
-      axisLabel: { color: readThemeColor('text-secondary') },
+      nameTextStyle: {
+        fontSize: readTextSize('caption'),
+        color: readThemeColor('text-secondary'),
+        align: 'left',
+      },
+      axisLabel: { fontSize: readTextSize('caption'), color: readThemeColor('text-secondary') },
       splitLine: { lineStyle: { color: readThemeColor('border') } },
     },
     series: [...bandSeries(bands), ...lines.flatMap(lineSeries)],
