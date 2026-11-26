@@ -12,12 +12,14 @@ const recordedFormatter = new Intl.DateTimeFormat('vi-VN', {
   minute: '2-digit',
   hourCycle: 'h23',
 });
-const cardClass = 'flex min-w-0 flex-col gap-3 rounded-[22px] border border-border/35 bg-bg p-4';
-const levelClass = 'shrink-0 rounded-2xl bg-surface px-3 py-1 text-text-primary shadow-2xs';
+const cardClass =
+  'flex min-w-0 flex-col gap-3 rounded-3xl border border-border/35 bg-bg p-5 transition-colors hover:border-accent/35';
+const levelClass =
+  'shrink-0 rounded-2xl border border-border/30 bg-surface px-3.5 py-1.5 text-text-primary shadow-2xs';
 const secondaryBtn =
-  'inline-flex min-h-btn flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-2xl bg-surface px-3.5 text-button-secondary font-semibold text-accent shadow-2xs transition-colors hover:bg-accent-soft';
+  'inline-flex min-h-btn flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-2xl border border-border/45 bg-surface px-3.5 text-button-secondary font-semibold text-accent shadow-stitch-sm transition-colors hover:bg-accent-soft';
 const primaryBtn =
-  'inline-flex min-h-btn flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-2xl bg-accent px-3.5 text-button-primary font-semibold text-on-accent transition-colors hover:bg-accent-hover';
+  'inline-flex min-h-btn flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-2xl bg-accent px-3.5 text-button-primary font-semibold text-on-accent shadow-stitch-sm transition-colors hover:bg-accent-hover';
 
 function formatRecorded(iso: string) {
   const parts = recordedFormatter.formatToParts(new Date(iso));

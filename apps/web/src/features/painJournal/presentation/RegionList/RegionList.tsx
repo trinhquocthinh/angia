@@ -25,21 +25,28 @@ export function RegionList({ selected, onSelect }: RegionListProps) {
         next?.click();
       }}
     >
-      <legend className="mb-3 font-medium">Chọn vùng cơ thể</legend>
+      <legend className="mb-3 text-body font-semibold text-accent">Chọn vùng cơ thể</legend>
       {regionGroups.map((group) => (
-        <div key={group.label} role="group" aria-label={group.label} className="space-y-2">
-          <h3 className="text-caption font-medium text-text-secondary">{group.label}</h3>
-          {group.regions.flatMap((region) =>
-            bodyRegions[region].sides.map((side) => (
-              <RegionListOption
-                key={`${region}/${side}`}
-                location={{ region, side }}
-                name={name}
-                checked={selected?.region === region && selected.side === side}
-                onSelect={onSelect}
-              />
-            )),
-          )}
+        <div
+          key={group.label}
+          role="group"
+          aria-label={group.label}
+          className="space-y-2.5 rounded-2xl border border-border/35 bg-bg p-3.5"
+        >
+          <h3 className="text-caption font-semibold text-text-secondary">{group.label}</h3>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {group.regions.flatMap((region) =>
+              bodyRegions[region].sides.map((side) => (
+                <RegionListOption
+                  key={`${region}/${side}`}
+                  location={{ region, side }}
+                  name={name}
+                  checked={selected?.region === region && selected.side === side}
+                  onSelect={onSelect}
+                />
+              )),
+            )}
+          </div>
         </div>
       ))}
     </fieldset>

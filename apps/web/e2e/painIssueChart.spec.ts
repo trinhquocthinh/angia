@@ -45,7 +45,7 @@ test('TC-724 — SVG có đủ điểm và hai đoạn nét, tooltip khi chạm,
   await chart.screenshot({ path: testInfo.outputPath('pain-chart.png') });
   await points.first().tap();
   await expect(svg).toContainText('01/11 · 10:00 — 1/10');
-  await svg.locator('path[fill="#55615f"]').tap();
+  await svg.locator('path[fill="#404945"]').tap();
   await expect(svg).toContainText('Thuốc A');
   await expect(svg).toContainText('04/11/2026 · 10:00');
   await expect(chart).toContainText('Khi cần · Thuốc A');
@@ -140,7 +140,7 @@ test.describe('desktop', () => {
     await expect(svg).toHaveAttribute('height', '368');
     await svg.locator('path[fill="#1f2a2a"]').first().tap({ timeout: 5000 });
     await expect(svg).toContainText('01/11 · 10:00 — 1/10');
-    await svg.locator('path[fill="#55615f"]').tap({ timeout: 5000 });
+    await svg.locator('path[fill="#404945"]').tap({ timeout: 5000 });
     await expect(svg).toContainText('04/11/2026 · 10:00');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });

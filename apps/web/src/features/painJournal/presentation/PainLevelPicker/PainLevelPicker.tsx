@@ -18,8 +18,8 @@ export function PainLevelPicker({ value, onChange, disabled = false }: Props) {
     event.currentTarget.querySelector<HTMLInputElement>(`input[value="${next}"]`)?.focus();
   };
   return (
-    <fieldset disabled={disabled} className="pain-level-picker space-y-2">
-      <legend className="font-medium">Mức đau lúc này</legend>
+    <fieldset disabled={disabled} className="pain-level-picker space-y-3">
+      <legend className="text-body font-semibold text-accent">Mức đau lúc này</legend>
       <PainLevelGuidance id={`${id}-hint`} />
       <div
         className="pain-level-grid"
@@ -31,7 +31,7 @@ export function PainLevelPicker({ value, onChange, disabled = false }: Props) {
         {Array.from({ length: 10 }, (_, index) => index + 1).map((level) => (
           <label
             key={level}
-            className={`pain-level-option ${value === level ? 'bg-accent text-on-accent border-accent' : 'bg-surface border-border'}`}
+            className={`pain-level-option ${value === level ? 'border-accent bg-accent text-on-accent shadow-stitch-sm' : 'border-border/55 bg-surface text-text-primary hover:border-accent/55 hover:bg-accent-soft'}`}
           >
             <input
               type="radio"

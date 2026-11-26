@@ -17,7 +17,10 @@ export function ExerciseNoteSource({
           ['self', 'Tự ghi'],
         ] as const
       ).map(([source, label]) => (
-        <label key={source} className="flex min-h-11 items-center gap-3 rounded-lg border border-border p-3">
+        <label
+          key={source}
+          className="flex min-h-btn cursor-pointer items-center gap-3 rounded-2xl border border-border/45 bg-bg px-4 py-2.5 transition-colors has-[:checked]:border-accent has-[:checked]:bg-accent-soft"
+        >
           <input
             type="radio"
             name={`${id}-source`}
@@ -25,15 +28,16 @@ export function ExerciseNoteSource({
             checked={values.source === source}
             required
             onChange={() => onChange({ source })}
+            className="h-5 w-5 accent-accent"
           />
-          {label}
+          <span>{label}</span>
         </label>
       ))}
       {values.source === 'prescribed' && (
-        <label className="block">
+        <label className="block text-caption font-semibold text-text-secondary">
           Người chỉ định (tùy chọn)
           <input
-            className="mt-1 min-h-11 w-full rounded-lg border border-border px-3"
+            className="mt-1.5 min-h-12 w-full rounded-2xl border border-border/55 bg-bg px-3.5 text-body font-normal text-text-primary focus:border-accent focus:bg-surface focus:outline-none"
             value={values.prescriber}
             maxLength={100}
             onChange={(event) => onChange({ prescriber: event.target.value })}

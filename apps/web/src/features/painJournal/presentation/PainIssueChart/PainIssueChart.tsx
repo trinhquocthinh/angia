@@ -32,19 +32,18 @@ export function PainIssueChart({
   const range = seriesRange(weeks);
   const query = usePainContext(api, session, profile, scope, issue.id, range);
   return (
-    <section
-      aria-labelledby={id}
-      className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4 md:p-6"
-    >
-      <h2 id={id} className="text-heading-2 font-semibold">
-        Mức đau trong {weeks} tuần
-      </h2>
-      <SegmentedToggle
-        label="Khoảng thời gian biểu đồ đau"
-        value={weeks}
-        options={OPTIONS}
-        onChange={setWeeks}
-      />
+    <section aria-labelledby={id} className="profile-bento-card min-w-0 space-y-4 p-5 sm:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id={id} className="auth-heading text-heading-2 font-semibold text-accent">
+          Mức đau trong {weeks} tuần
+        </h2>
+        <SegmentedToggle
+          label="Khoảng thời gian biểu đồ đau"
+          value={weeks}
+          options={OPTIONS}
+          onChange={setWeeks}
+        />
+      </div>
       <PainChartContent
         entries={issue.entries}
         range={range}
@@ -52,11 +51,22 @@ export function PainIssueChart({
         location={describeBodyLocation(issue)}
         context={query.data}
       />
-      {query.isPending && <p role="status">Đang tải bối cảnh thuốc…</p>}
+      {query.isPending && (
+        <p role="status" className="text-caption text-text-secondary">
+          Đang tải bối cảnh thuốc…
+        </p>
+      )}
       {query.isError && (
-        <div role="alert">
+        <div
+          role="alert"
+          className="flex flex-wrap items-center gap-3 rounded-2xl bg-danger-soft p-3.5 text-caption"
+        >
           <p>Không thể tải bối cảnh thuốc.</p>
-          <button type="button" className="min-h-11 underline" onClick={() => void query.refetch()}>
+          <button
+            type="button"
+            className="min-h-11 rounded-2xl bg-surface px-4 font-semibold text-accent"
+            onClick={() => void query.refetch()}
+          >
             Thử lại bối cảnh thuốc
           </button>
         </div>

@@ -10,15 +10,15 @@ export function PainIssueGroups({ issues, onCreate, onOpen, onRecord }: Props) {
   return (
     <>
       {issues.length === 0 ? (
-        <div className="flex flex-col gap-2 rounded-2xl bg-bg p-5 text-caption text-text-secondary">
-          <p className="font-semibold text-text-primary">Chưa ghi nhận đau nhức nào.</p>
-          <p>Khi có chỗ đau muốn theo dõi, chọn vị trí trên hình rồi chấm mức.</p>
+        <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border/60 bg-bg px-6 py-10 text-center text-caption text-text-secondary">
+          <p className="text-body font-semibold text-text-primary">Chưa ghi nhận đau nhức nào.</p>
+          <p className="max-w-md">Khi có chỗ đau muốn theo dõi, chọn vị trí trên hình rồi chấm mức.</p>
         </div>
       ) : (
         <section aria-label="Đang theo dõi" className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-body font-semibold text-text-primary">Đang theo dõi</h3>
-            <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-caption font-semibold text-accent tabular-nums">
+            <span className="rounded-full bg-secondary-container px-3 py-0.5 text-caption font-semibold text-on-secondary-container tabular-nums">
               {tracking.length}
             </span>
           </div>
@@ -36,7 +36,7 @@ export function PainIssueGroups({ issues, onCreate, onOpen, onRecord }: Props) {
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex min-h-btn w-full cursor-pointer items-center justify-center rounded-2xl bg-accent px-5 text-button-primary font-semibold text-on-accent transition-colors hover:bg-accent-hover lg:hidden"
+          className="inline-flex min-h-btn w-full cursor-pointer items-center justify-center rounded-2xl bg-accent px-5 text-button-primary font-semibold text-on-accent shadow-stitch-sm transition-colors hover:bg-accent-hover lg:hidden"
         >
           Thêm vấn đề đau
         </button>
@@ -45,7 +45,7 @@ export function PainIssueGroups({ issues, onCreate, onOpen, onRecord }: Props) {
         <details
           key={tracking.length === 0 ? 'expanded' : 'collapsed'}
           open={tracking.length === 0}
-          className="rounded-2xl bg-bg p-4"
+          className="rounded-2xl border border-border/35 bg-bg p-4"
         >
           <summary className="min-h-btn flex cursor-pointer items-center justify-between text-body font-semibold text-text-primary">
             <span>Đã khỏi</span>

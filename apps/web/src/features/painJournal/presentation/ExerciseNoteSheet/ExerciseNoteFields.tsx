@@ -9,7 +9,8 @@ export function ExerciseNoteFields({
   onChange: (patch: Partial<ExerciseNoteValues>) => void;
 }) {
   const id = useId();
-  const inputClass = 'mt-1 min-h-11 w-full min-w-0 rounded-lg border border-border px-3';
+  const inputClass =
+    'mt-1.5 min-h-12 w-full min-w-0 rounded-2xl border border-border/55 bg-bg px-3.5 text-body text-text-primary focus:border-accent focus:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/20';
   return (
     <div className="min-w-0 space-y-4">
       <label className="block">

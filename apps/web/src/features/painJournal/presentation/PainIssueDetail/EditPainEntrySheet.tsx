@@ -8,11 +8,16 @@ export function EditPainEntrySheet(props: EditPainEntryProps) {
   const state = useEditPainEntrySheet(props);
   return (
     <ModalDialog labelledBy={id} onCancel={props.onClose} pending={state.pending} width="lg">
-      <header className="flex shrink-0 items-center justify-between border-b border-border px-5 py-3">
-        <h2 id={id} className="text-heading-2 font-semibold">
+      <header className="flex shrink-0 items-center justify-between border-b border-border/35 px-5 py-4">
+        <h2 id={id} className="auth-heading text-heading-2 font-semibold text-accent">
           Sửa lần ghi
         </h2>
-        <button type="button" disabled={state.pending} onClick={props.onClose} className="min-h-11 px-3">
+        <button
+          type="button"
+          disabled={state.pending}
+          onClick={props.onClose}
+          className="inline-flex min-h-11 cursor-pointer items-center rounded-2xl border border-border/45 bg-bg px-4 text-caption font-semibold text-text-secondary transition-colors hover:bg-accent-soft hover:text-accent disabled:opacity-50"
+        >
           Đóng
         </button>
       </header>

@@ -27,22 +27,26 @@ export function NewPainIssueRegionStep({ selected, onSelect, issues }: RegionSte
   };
   const modes: RegionPickerMode[] = webgl && !failed3d ? ['image', 'list', '3d'] : ['image', 'list'];
   return (
-    <div className="space-y-4 lg:mx-auto lg:max-w-md">
-      <div role="group" aria-label="Cách chọn vùng" className="flex gap-2">
+    <div className="space-y-4 lg:mx-auto lg:max-w-lg">
+      <div
+        role="group"
+        aria-label="Cách chọn vùng"
+        className="grid auto-cols-fr grid-flow-col gap-1.5 rounded-2xl bg-surface-container-high p-1.5"
+      >
         {modes.map((value) => (
           <button
             key={value}
             type="button"
             aria-pressed={mode === value}
             onClick={() => choose(value)}
-            className="min-h-11 rounded-xl border border-border px-4 aria-pressed:bg-accent-soft"
+            className="min-h-btn cursor-pointer rounded-xl px-4 text-button-secondary font-semibold text-text-secondary transition-colors hover:text-text-primary aria-pressed:bg-surface aria-pressed:font-bold aria-pressed:text-accent aria-pressed:shadow-2xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             {labels[value]}
           </button>
         ))}
       </div>
       {failed3d && (
-        <p role="status" className="rounded-xl bg-accent-soft p-3 text-body">
+        <p role="status" className="rounded-2xl border border-border/35 bg-accent-soft p-3.5 text-body">
           Không mở được chế độ 3D trên thiết bị này.
         </p>
       )}
