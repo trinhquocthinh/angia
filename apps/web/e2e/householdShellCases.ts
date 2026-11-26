@@ -35,12 +35,13 @@ export function householdShellCases(theme: string) {
     await expect(page.getByText('Hồ sơ cá nhân', { exact: true })).toHaveCount(0);
     await expect(page.getByText('Cài đặt gia đình', { exact: true })).toHaveCount(0);
   });
-  test('TC-767: Thành viên chưa liên kết ẩn search và điều hướng', async ({ page }) => {
+  test('TC-767: Thành viên chưa liên kết ẩn search, vẫn có điều hướng cá nhân', async ({ page }) => {
     const state = await householdStartFixture(page);
     Object.assign(state, { family: true, role: 'member' });
     await page.goto('/');
     await expect(page.getByRole('button', { name: 'Tài khoản', exact: true })).toBeVisible();
-    await expect(page.getByRole('navigation', { name: 'Điều hướng chính' })).toHaveCount(0);
+    // Owner duyệt 2026-11-25 (E30-S1-T1): thành viên đã có nhà luôn có 3 tab, kể cả chưa liên kết.
+    await expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link')).toHaveCount(3);
     await expect(
       page.getByRole('combobox', { name: 'Tìm hồ sơ thành viên', includeHidden: true }),
     ).toHaveCount(0);
