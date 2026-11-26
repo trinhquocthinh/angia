@@ -7,11 +7,12 @@ export function byLabel(page: Page, text: string) {
   return page.getByLabel(new RegExp(`^${text.replace(/[()]/g, '\\$&')}( \\*)?$`));
 }
 export async function fillLogin(page: Page) {
-  await byLabel(page, 'Tên đăng nhập').fill('me.lan');
+  await byLabel(page, 'Tên đăng nhập hoặc email').fill('me.lan');
   await byLabel(page, 'Mật khẩu').fill('matkhau123');
 }
 export async function fillRegistration(page: Page, age = true) {
-  await fillLogin(page);
+  await byLabel(page, 'Tên đăng nhập').fill('me.lan');
+  await byLabel(page, 'Mật khẩu').fill('matkhau123');
   await page.getByLabel('Tên của bạn').fill('Lan');
   await page.getByLabel('Tôi trên 18 tuổi').setChecked(age);
   await page.getByRole('checkbox', { name: /Tôi đồng ý/ }).check();

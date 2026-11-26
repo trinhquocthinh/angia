@@ -5,7 +5,12 @@ vi.mock('@src/shared/api/apiClient', () => ({ apiClient: { POST: vi.fn() } }));
 const request = vi.mocked(apiClient.POST);
 const body = { identifier: 'me.lan', password: 'matkhau123' };
 const data = {
-  session: { csrfToken: 'csrf', expiresAt: '2026-12-01T00:00:00Z', passwordChangeRequired: false },
+  session: {
+    csrfToken: 'csrf',
+    expiresAt: '2026-12-01T00:00:00Z',
+    passwordChangeRequired: true,
+    passwordResetBy: 'Thịnh',
+  },
 };
 afterEach(() => vi.resetAllMocks());
 it('trả dữ liệu thành công và gửi đúng DTO', async () => {

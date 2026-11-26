@@ -17,12 +17,12 @@ export function LoginForm({ form, onSubmit, error }: Props) {
     <form onSubmit={onSubmit} aria-busy={busy}>
       <fieldset disabled={busy} className="login-fields">
         <LoginField
-          label="Tên đăng nhập"
+          label="Tên đăng nhập hoặc email"
           icon="user"
           autoComplete="username"
           autoCapitalize="none"
           spellCheck={false}
-          placeholder="Nhập tên đăng nhập"
+          placeholder="Nhập tên đăng nhập hoặc email đã xác minh"
           required
           {...form.register('identifier')}
         />

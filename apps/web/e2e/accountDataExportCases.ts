@@ -74,7 +74,9 @@ export function registerExportErrorCase() {
     await page.goto('/account');
     const card = page.getByRole('region', { name: 'Dữ liệu của tôi' });
     await card.getByRole('button', { name: 'Tải dữ liệu của tôi', exact: true }).click();
-    await expect(card.getByRole('alert')).toHaveText('Bạn thao tác quá nhanh, vui lòng thử lại sau.');
+    await expect(card.getByRole('alert')).toHaveText(
+      'Bạn đã tải dữ liệu 3 lần trong 24 giờ qua. Vui lòng thử lại vào ngày mai.',
+    );
 
     state.exportCreateStatus = 202;
     state.exportCreateCode = '';

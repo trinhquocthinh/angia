@@ -4,6 +4,7 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { CURRENT_SESSION_KEY } from '@src/features/auth/application/useCurrentSession';
 import {
   readAccountStorage,
+  PASSWORD_RESET_BY_KEY,
   RESTRICTED_CSRF_KEY,
   writeAccountStorage,
 } from '../application/accountSessionStorage';
@@ -18,18 +19,21 @@ export function ChangePasswordPage() {
   const client = useQueryClient();
   const navigate = useNavigate();
   const [token, setToken] = useState(() => readAccountStorage(RESTRICTED_CSRF_KEY));
+  const [passwordResetBy] = useState(() => readAccountStorage(PASSWORD_RESET_BY_KEY));
   const { form, submit, error } = useNewPasswordForm(
     submitAccountAction,
     '/api/me/password',
     token ?? '',
     async () => {
       writeAccountStorage(RESTRICTED_CSRF_KEY, null);
+      writeAccountStorage(PASSWORD_RESET_BY_KEY, null);
       await client.invalidateQueries({ queryKey: CURRENT_SESSION_KEY });
       await navigate({ to: '/' });
     },
     (failure) => {
       if (failure.status !== 401 && failure.code !== 'ERR_UNAUTHENTICATED') return false;
       writeAccountStorage(RESTRICTED_CSRF_KEY, null);
+      writeAccountStorage(PASSWORD_RESET_BY_KEY, null);
       setToken(null);
       return true;
     },
@@ -40,7 +44,11 @@ export function ChangePasswordPage() {
       <h2 className="mb-4 text-[22px] leading-[30px] font-semibold">Đặt mật khẩu mới</h2>
       {token ? (
         <>
-          <p className="mb-6 text-lg">Mật khẩu của bạn đã được đặt lại. Hãy đặt mật khẩu mới để tiếp tục.</p>
+          <p className="mb-6 text-lg">
+            {passwordResetBy
+              ? `Mật khẩu của bạn đã được ${passwordResetBy} đặt lại. Hãy đặt mật khẩu mới để tiếp tục.`
+              : 'Mật khẩu của bạn đã được đặt lại. Hãy đặt mật khẩu mới để tiếp tục.'}
+          </p>
           <form onSubmit={submit} aria-busy={busy}>
             <fieldset disabled={busy} className="flex flex-col gap-6">
               <NewPasswordFields form={form} />

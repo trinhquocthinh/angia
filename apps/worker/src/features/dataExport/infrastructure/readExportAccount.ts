@@ -15,11 +15,12 @@ export async function readExportAccount(client: pg.PoolClient, accountId: string
       JOIN accounts a ON a.legal_ref = l.account_ref WHERE a.id = $1 ORDER BY l.accepted_at,l.id`,
     [accountId],
   );
+  const { family_id: familyId, ...data } = account;
   return {
     id: account.id as string,
-    familyId: account.family_id as string | null,
+    familyId: familyId as string | null,
     familyRole: account.family_role as string | null,
     healthProfileId: account.health_profile_id as string | null,
-    data: { ...account, legal_acceptances: acceptances.rows },
+    data: { ...data, legal_acceptances: acceptances.rows },
   };
 }
