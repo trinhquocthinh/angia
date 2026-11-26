@@ -7,7 +7,7 @@ export function ImageExpandOverlay({ onExpand }: { onExpand: () => void }) {
       <button
         type="button"
         onClick={onExpand}
-        className="pointer-events-auto flex min-h-12 cursor-pointer items-center gap-1.5 rounded-xl bg-surface/95 px-3.5 text-button-secondary font-semibold text-accent shadow-stitch-md backdrop-blur-md transition-[scale] duration-150 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none"
+        className="pointer-events-auto flex min-h-12 cursor-pointer items-center gap-1.5 rounded-xl bg-overlay/85 px-3.5 text-button-secondary font-semibold text-on-overlay shadow-stitch-md backdrop-blur-md transition-[scale] duration-150 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none"
       >
         <DocumentIcon name="expand" size={16} /> Xem toàn màn hình
       </button>

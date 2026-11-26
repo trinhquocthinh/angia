@@ -2,6 +2,7 @@ import { useLayoutEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { ThemeContext } from './ThemeContext';
 import type { ThemePreference } from './ThemeContext';
+import { readThemeColor } from './readThemeColor';
 import { readThemePreference } from './readThemePreference';
 import { useSystemDark } from './useSystemDark';
 
@@ -12,6 +13,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useLayoutEffect(() => {
     document.documentElement.dataset.theme = theme;
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    const bg = readThemeColor('bg');
+    if (meta && bg) meta.content = bg;
   }, [theme]);
 
   function setPreference(value: ThemePreference) {

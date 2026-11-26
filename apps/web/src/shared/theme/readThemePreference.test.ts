@@ -9,17 +9,17 @@ describe('Lựa chọn nền trên thiết bị', () => {
     expect(readThemePreference()).toBe(value);
   });
 
-  it.each([null, '', 'invalid'])('TC-856 — chưa có lựa chọn hợp lệ (%s) thì dùng nền sáng', (value) => {
+  it.each([null, '', 'invalid'])('TC-856 — chưa có lựa chọn hợp lệ (%s) thì theo nền máy', (value) => {
     vi.stubGlobal('localStorage', { getItem: () => value });
-    expect(readThemePreference()).toBe('light');
+    expect(readThemePreference()).toBe('system');
   });
 
-  it('TC-856 — storage bị chặn vẫn mở được bằng nền sáng', () => {
+  it('TC-856 — storage bị chặn vẫn mở được theo nền máy', () => {
     vi.stubGlobal('localStorage', {
       getItem: () => {
         throw new Error('Bị chặn');
       },
     });
-    expect(readThemePreference()).toBe('light');
+    expect(readThemePreference()).toBe('system');
   });
 });

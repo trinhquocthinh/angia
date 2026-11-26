@@ -291,6 +291,28 @@
   }
 }
 
+:root[data-theme='dark'] .profile-bento-card,
+:root[data-theme='dark'] .profile-directory-surface,
+:root[data-theme='dark'] .profile-member-card,
+:root[data-theme='dark'] .profile-bento-tile,
+:root[data-theme='dark'] .profile-tab-pill[aria-current='page'],
+:root[data-theme='dark'] .profile-ceramic-avatar,
+:root[data-theme='dark'] .profile-ceramic-badge {
+  box-shadow: none;
+}
+
+:root[data-theme='dark'] .profile-bento-card,
+:root[data-theme='dark'] .profile-directory-surface,
+:root[data-theme='dark'] .profile-member-card,
+:root[data-theme='dark'] .profile-bento-tile {
+  border-color: var(--color-border);
+}
+
+:root[data-theme='dark'] .profile-bento-tile[aria-current='page'] {
+  border-color: var(--color-accent);
+  box-shadow: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .profile-member-card,
   .profile-bento-tile,

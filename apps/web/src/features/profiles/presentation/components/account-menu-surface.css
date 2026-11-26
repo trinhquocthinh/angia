@@ -27,6 +27,10 @@
   opacity: 0;
   transform: translateY(-6px) scale(0.97);
 }
+:root[data-theme='dark'] .account-menu-surface {
+  border-color: var(--color-border);
+  box-shadow: none;
+}
 .account-menu-handle {
   display: none;
 }
