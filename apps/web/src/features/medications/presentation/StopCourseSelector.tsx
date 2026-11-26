@@ -24,7 +24,7 @@ export function StopCourseSelector({
         value={selectedId}
         disabled={pending}
         onChange={(event) => onSelect(event.target.value)}
-        className="h-12 w-full cursor-pointer rounded-xl border border-border bg-surface pl-3.5 text-body font-medium text-text-primary hover:border-text-secondary focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/20 disabled:opacity-55"
+        className="h-12 w-full cursor-pointer rounded-2xl border border-border/55 bg-bg px-3.5 text-body font-medium text-text-primary hover:border-text-secondary focus:border-accent focus:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/20 disabled:opacity-55"
       >
         <option value="">Chọn một đợt thuốc</option>
         {courses.map((course, index) => (

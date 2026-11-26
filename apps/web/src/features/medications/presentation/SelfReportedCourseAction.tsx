@@ -26,8 +26,11 @@ export function SelfReportedCourseAction({
             ? 'Cần người thân xác nhận trước khi thêm thuốc bổ, vitamin'
             : undefined
         }
-        className="min-h-11 rounded-xl bg-accent-soft px-4 text-caption font-semibold text-text-secondary transition-colors hover:bg-border hover:text-text-primary disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        className="inline-flex min-h-btn items-center gap-2 rounded-2xl bg-accent px-4 text-button-secondary font-semibold text-on-accent shadow-stitch-sm transition-colors hover:bg-accent-hover disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       >
+        <span aria-hidden="true" className="text-heading-3 leading-none">
+          +
+        </span>
         Thêm thuốc bổ, vitamin
       </button>
       {open && (

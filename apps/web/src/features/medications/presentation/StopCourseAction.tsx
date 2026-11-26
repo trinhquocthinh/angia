@@ -17,7 +17,7 @@ export function StopCourseAction({ profile, session }: { profile: HealthProfile;
             ? 'Cần người thân xác nhận trước khi đánh dấu dừng thuốc'
             : undefined
         }
-        className="min-h-11 rounded-xl bg-accent-soft px-4 text-caption font-semibold text-text-secondary transition-colors hover:bg-border hover:text-text-primary disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        className="inline-flex min-h-btn items-center rounded-2xl border border-border/45 bg-surface px-4 text-button-secondary font-semibold text-text-primary shadow-stitch-sm transition-colors hover:bg-accent-soft hover:text-accent disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       >
         Đánh dấu dừng thuốc
       </button>

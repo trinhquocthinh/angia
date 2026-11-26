@@ -19,11 +19,11 @@ export function MedicationSlotSection({
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2.5">
           <SlotBadgeIcon slot={group.slot} />
-          <h3 id={headingId} className="text-heading-2 font-semibold text-accent">
+          <h3 id={headingId} className="auth-heading text-heading-2 font-semibold text-accent">
             {group.label}
           </h3>
         </div>
-        <span className="rounded-full bg-accent-soft px-3 py-0.5 text-caption font-semibold text-accent tabular-nums">
+        <span className="rounded-full bg-secondary-container px-3 py-1 text-caption font-semibold text-on-secondary-container tabular-nums">
           {group.courses.length} thuốc
         </span>
       </div>

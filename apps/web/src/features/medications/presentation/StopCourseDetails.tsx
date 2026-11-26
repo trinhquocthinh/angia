@@ -8,7 +8,7 @@ import { doseLabel } from '../application/doseLabel';
 export function StopCourseDetails({ course }: { course: MedicationCourse }) {
   const slots = sortDoseSlots(course.slots).map(doseSlotLabel);
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-border bg-bg p-4">
+    <div className="flex flex-col gap-3 rounded-2xl border border-border/45 bg-bg p-4">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <h3 className="text-body font-bold text-text-primary">

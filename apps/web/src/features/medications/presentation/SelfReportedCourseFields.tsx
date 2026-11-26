@@ -28,7 +28,7 @@ export function SelfReportedCourseFields({ form }: { form: UseFormReturn<SelfRep
               inputMode={name === 'quantityPerDose' ? 'decimal' : undefined}
               aria-invalid={Boolean(message) || undefined}
               aria-describedby={message ? `supplement-${name}-error` : undefined}
-              className="h-12 w-full rounded-xl border border-border bg-surface px-3.5 text-body text-text-primary placeholder:text-text-secondary focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/20 aria-invalid:border-danger"
+              className="h-12 w-full rounded-2xl border border-border/55 bg-bg px-3.5 text-body text-text-primary placeholder:text-text-secondary focus:border-accent focus:bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/20 aria-invalid:border-danger"
             />
             {message && (
               <p id={`supplement-${name}-error`} className="mt-1 text-body text-danger">

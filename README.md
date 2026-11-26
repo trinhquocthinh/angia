@@ -1801,3 +1801,29 @@ Review 198,5 KB; nhập tay 189,6 KB; upload 189,5 KB gzip.
 Chưa chạy full `yarn verify` hoặc kiểm SIT/Production. Chi tiết phạm vi axe và
 những luồng chưa tự động kiểm tại
 `../../Docs/angia/acceptance/v1.0/evidence/e30-s2-t3-2026-11-26.md`.
+
+## E30-S3-T1 — Thuốc và chuỗi đơn, UI duyệt 2026-11-26
+
+Owner xác nhận **“UI đã pass , cập nhật tài liệu liên quan và commit”**.
+Phạm vi E30-S3-T1: `/profiles/:profileId/medications`,
+`/profiles/:profileId/prescriptions` và `/:prescriptionId` của chuỗi đơn.
+
+- Thuốc theo buổi, thẻ đơn/chi tiết/so sánh dùng Clay Bento, Newsreader,
+  icon cục bộ, token sáng/tối; đồng bộ form khai thuốc bổ và dừng thuốc.
+- Số đợt thuốc lấy từ `courses.length`, không cộng các nhóm buổi; số dòng,
+  nguồn, ngày kê/ngày hẹn và dữ liệu so sánh lấy từ API. Chuỗi giữ thứ tự API,
+  có đơn trước/sau và chọn nhanh; Trước/Sau xếp dọc trên mobile.
+- Giữ đồng thuận, quyền ghi main/member, liều Khi cần, xác nhận buổi,
+  xử lý xung đột và ngày dừng. Nhãn Thêm/Bỏ/Thay đổi trung tính theo BR-033.
+- Không đổi API, application/domain, schema, dependency hoặc env.
+  Thành phần MedicationCard dùng chung có thay đổi hình thức trên màn tự xem;
+  không đổi quyền đọc/ghi. Nút nhắc thuốc dùng chung được đồng bộ giao diện.
+
+Kiểm local: `yarn verify:fast` PASS (typecheck toàn workspace, 56 test/10 tệp
+được chọn theo working tree, gồm thay đổi pháp lý ngoài commit); 72 unit liên quan,
+lint/format, build, 8/8 E2E Chromium/WebKit và `perf:budget` PASS.
+Thuốc 197,4 KB; chuỗi/chi tiết đơn 167,8 KB gzip; mọi trang đầu ≤200 KB,
+TC-729 PASS. Chưa full `yarn verify`, kiểm SIT/Production hoặc nghiệm thu toàn
+SPEC-081/Epic 30. Không tăng tổng task/giờ nghiệm thu từ checkpoint UI local.
+
+Bằng chứng: `../../Docs/angia/acceptance/v1.0/evidence/e30-s3-t1-2026-11-26.md`.
