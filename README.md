@@ -1746,3 +1746,32 @@ không đảo thứ tự modal. Thành công tải lại danh sách và đề ng
 E2E tại `apps/web/e2e/householdMembers.spec.ts`, gồm mốc 1023/1024px, focus sau
 click (WebKit), Escape, modal lồng nhau, resize và lỗi bảo vệ. Đã chạy
 `playwright.account.config.ts` (members, home, invitations): đạt; chưa nghiệm thu SIT.
+
+## Duyệt giấy tờ — UI owner duyệt 2026-11-26
+
+Owner xác nhận UI PASS và yêu cầu cập nhật tài liệu, commit. Checkpoint chỉ bàn giao
+`/review` và `/review/:documentId`, thuộc hàng chờ của E30-S2-T2 và phần duyệt của
+E30-S2-T3; chưa nghiệm thu trọn hai task hoặc Epic 30.
+
+- Nguồn Stitch: project `12209147960511107004`, Desktop
+  `bb3e9ab11d584919800215e149f0299b`, Mobile `6f8ab883ba0d48dd89dc27db4a3de755`.
+- Desktop: hàng chờ trên ảnh ở cột trái, form đối soát bên phải; ảnh dính khi cuộn.
+  Mobile: danh sách/chi tiết theo route, ảnh mở toàn màn hình, form một cột và nút lưu
+  dính đáy. Màu theo token hai nền, Newsreader, icon cục bộ và cỡ chữ hiện hành.
+- Chuyển giấy trước/sau và vị trí chỉ tính trong các chứng từ đã tải; “Xem thêm”
+  vẫn tải theo cursor. Không coi số đã tải là tổng hàng chờ khi còn trang tiếp theo.
+- Giữ luồng lưu/CSRF, xử lý trùng/xung đột, phân quyền và nhập tay khi hết lượt.
+  Ảnh chỉ là bản đã che; không thêm số chính xác AI, chứng nhận HIPAA hoặc tư vấn y khoa.
+- “Nắn giấy” và “Gợi ý vùng che” vẫn ở **Chụp/chọn ảnh → Che thông tin/Chỉnh lại**,
+  trước khi gửi; gợi ý phụ thuộc `features.redactionSuggestions`/`OCR_MASK_URL`.
+  Không chuyển hai công cụ sang trang review. Commit không bao gồm nhóm thay đổi
+  riêng của trang upload/danh sách giấy tờ; có component form và CSS dùng chung.
+
+Kiểm local trên bản sao chỉ chứa nội dung commit: `yarn verify:fast` PASS (typecheck
+và 43 test/9 tệp), 344 unit liên quan, ESLint, build
+và 18/18 E2E Chromium/WebKit PASS; 360/768/1024/1440px, hai nền/hai cỡ chữ,
+chữ 200%, tên dài, axe nội dung review ở 360px không có serious/critical.
+Bundle review 198,3 KB gzip, mọi trang đầu đạt 200 KB và TC-729 PASS.
+Chạy lại: `yarn playwright test --config playwright.review.config.ts`.
+Chưa chạy full `yarn verify`, PR/push/deploy hoặc kiểm SIT/Production từ checkpoint này.
+Bằng chứng chi tiết: `../../Docs/angia/acceptance/v1.0/evidence/e30-review-2026-11-26.md`.

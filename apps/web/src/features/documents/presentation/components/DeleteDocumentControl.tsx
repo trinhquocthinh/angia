@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import type { ProfileSession } from '@src/features/profiles/application/ports';
 import type { ReviewRepository } from '../../application/reviewPorts';
 import { useDeleteDocument } from '../../application/useDeleteDocument';
 import { DeleteDocumentDialog } from './DeleteDocumentDialog';
-import { DocumentIcon } from './DocumentIcon';
 
 type Props = {
   repository: ReviewRepository;
@@ -31,14 +31,14 @@ export function DeleteDocumentControl({
       <button
         type="button"
         disabled={disabled || deletion.pending}
-        className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-xl bg-danger-soft/40 px-4 text-button-secondary font-semibold text-danger transition-colors duration-200 enabled:cursor-pointer enabled:hover:bg-danger-soft disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger motion-reduce:transition-none"
+        className="inline-flex min-h-btn items-center justify-center gap-2 rounded-2xl border border-danger/25 bg-danger-soft/45 px-5 text-button-secondary font-semibold text-danger transition-colors duration-200 enabled:cursor-pointer enabled:hover:bg-danger-soft disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger motion-reduce:transition-none"
         onClick={() => {
           setValue('');
           deletion.reset();
           setOpen(true);
         }}
       >
-        <DocumentIcon name="trash" size={18} /> Xóa chứng từ
+        <AdminIcon name="delete_outline" size={20} /> Xóa chứng từ
       </button>
       {open && (
         <DeleteDocumentDialog
