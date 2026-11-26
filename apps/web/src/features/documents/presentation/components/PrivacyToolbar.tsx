@@ -1,6 +1,7 @@
 import type { PrivacyEditorAction, PrivacyEditorState } from '../../application/privacyEditorState';
 import { PrivacyModeControls } from './PrivacyModeControls';
 import { PrivacyHistoryControls } from './PrivacyHistoryControls';
+
 type Props = {
   disabled: boolean;
   /** Khoá xoay/hoàn tác/đặt lại khi đang chờ gợi ý: toạ độ gợi ý gắn với chiều xoay lúc gửi (SPEC-083). */
@@ -11,6 +12,7 @@ type Props = {
   setSelected: (index: number) => void;
   dispatch: (action: PrivacyEditorAction) => void;
 };
+
 export function PrivacyToolbar({
   disabled,
   historyLocked,
@@ -21,7 +23,7 @@ export function PrivacyToolbar({
   dispatch,
 }: Props) {
   return (
-    <div aria-label="Công cụ cắt và che" className="flex flex-wrap items-center justify-between gap-2">
+    <div aria-label="Công cụ cắt và che" className="privacy-tool-dock">
       <PrivacyModeControls
         disabled={disabled}
         mode={mode}

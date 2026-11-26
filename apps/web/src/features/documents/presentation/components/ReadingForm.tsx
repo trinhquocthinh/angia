@@ -40,7 +40,7 @@ export function ReadingForm({ payload, manual = false, pending, error, onSubmit 
   const submit = form.handleSubmit((values) => onSubmit(toApproveRequest(values, confirmed)));
   return (
     <form noValidate onSubmit={(event) => void submit(event)} className="flex flex-col gap-6">
-      <section className="flex flex-col gap-5 rounded-[20px] bg-surface p-5 shadow-card lg:p-6">
+      <section className="doc-bento-card flex flex-col gap-5 rounded-3xl p-5 lg:p-6">
         <ReviewSectionTitle title="Thông tin trên máy đo" />
         <div className="grid gap-4 sm:grid-cols-2">
           <ReadingField

@@ -13,8 +13,8 @@ type Props = {
 };
 
 const CARD =
-  'flex flex-col rounded-xl border border-transparent bg-accent-soft px-4 py-1 transition-colors has-[:checked]:border-accent';
-const RADIO = 'flex min-h-11 items-center gap-3 text-caption font-semibold text-text-primary';
+  'flex flex-col rounded-2xl border-2 border-border/35 bg-bg px-4 py-1.5 transition-colors has-[:checked]:border-accent has-[:checked]:bg-accent-soft';
+const RADIO = 'flex min-h-btn cursor-pointer items-center gap-3 text-caption font-semibold text-text-primary';
 
 // Gửi tự động nhận diện (BR-041 cần tick xác nhận) hoặc tự nhập; hàng chờ đủ thì khóa gửi AI (BR-043).
 export function RedactionChoices(props: Props) {
@@ -57,15 +57,17 @@ export function RedactionChoices(props: Props) {
           </label>
         </div>
       </fieldset>
-      <label className={`flex gap-3 text-caption text-text-primary ${choice === 'ai' ? '' : 'opacity-55'}`}>
+      <label
+        className={`flex items-start gap-3 rounded-2xl border border-border/35 bg-bg px-4 py-3 text-caption text-text-primary ${choice === 'ai' ? 'cursor-pointer' : 'opacity-55'}`}
+      >
         <input
           type="checkbox"
           checked={checked}
           disabled={choice !== 'ai'}
           onChange={(event) => onChecked(event.target.checked)}
-          className="mt-1 h-5 w-5 shrink-0 accent-accent"
+          className="mt-0.5 h-5 w-5 shrink-0 accent-accent"
         />
-        Tôi đã kiểm tra, ảnh này không còn thông tin định danh
+        <span>Tôi đã kiểm tra, ảnh này không còn thông tin định danh</span>
       </label>
     </>
   );

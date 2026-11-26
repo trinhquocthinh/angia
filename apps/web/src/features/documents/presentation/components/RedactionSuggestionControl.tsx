@@ -1,4 +1,5 @@
 import type { SuggestionStatus } from '../../application/requestRedactionSuggestions';
+import { DocumentIcon } from './DocumentIcon';
 
 export type ProfileOption = { id: string; displayName: string };
 type Props = {
@@ -9,8 +10,7 @@ type Props = {
   onChooseProfile: (id: string) => void;
 };
 
-const button =
-  'flex min-h-11 items-center gap-1.5 rounded-xl bg-accent-soft px-3 text-caption font-semibold text-text-primary transition-colors enabled:hover:bg-border disabled:opacity-40';
+const button = 'privacy-tool-btn';
 
 function message(status: SuggestionStatus): string | null {
   if (status.kind === 'error')
@@ -60,11 +60,12 @@ export function RedactionSuggestionControl({ suggestions, choices, onChooseProfi
   const loading = status.kind === 'loading';
   const text = message(status);
   return (
-    <div className="flex flex-col gap-2 rounded-xl bg-surface p-3">
+    <div className="flex flex-col gap-2.5 rounded-2xl border border-border/35 bg-bg p-3.5">
       <div className="flex flex-wrap items-center gap-2">
         {choices && <ProfilePicker choices={choices} onChoose={onChooseProfile} />}
         <button type="button" className={button} disabled={loading || Boolean(choices)} onClick={onRun}>
-          {loading ? 'Đang tìm thông tin cá nhân… (khoảng 15 giây)' : 'Gợi ý vùng che'}
+          <DocumentIcon name="sparkle" size={16} />
+          <span>{loading ? 'Đang tìm thông tin cá nhân… (khoảng 15 giây)' : 'Gợi ý vùng che'}</span>
         </button>
         {loading && (
           <button type="button" className={button} onClick={onCancel}>
@@ -72,11 +73,15 @@ export function RedactionSuggestionControl({ suggestions, choices, onChooseProfi
           </button>
         )}
       </div>
-      <p className="text-caption text-text-secondary">
+      <p className="text-caption leading-relaxed text-text-secondary">
         Ảnh sẽ được gửi tới máy chủ AN GIA để tìm thông tin cá nhân. Ảnh không được lưu và không gửi ra ngoài.
         Xoay ảnh cho đúng chiều trước khi gợi ý.
       </p>
-      <p role="status" aria-live="polite" className="text-body font-medium text-text-primary empty:hidden">
+      <p
+        role="status"
+        aria-live="polite"
+        className="rounded-xl bg-accent-soft px-3 py-2 text-body font-medium text-text-primary empty:hidden"
+      >
         {text}
       </p>
     </div>

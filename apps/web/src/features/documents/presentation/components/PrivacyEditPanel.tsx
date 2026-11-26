@@ -5,6 +5,7 @@ import { PrivacyInspector } from './PrivacyInspector';
 import { PrivacyEditorControls } from './PrivacyEditorControls';
 import { PrivacyStudioHeading } from './PrivacyStudioHeading';
 import './privacy-editor.css';
+
 type Props = {
   state: PrivacyEditorState;
   dispatch: (action: PrivacyEditorAction) => void;
@@ -18,6 +19,7 @@ type Props = {
   tools?: ReactNode;
   historyLocked?: boolean;
 };
+
 export function PrivacyEditPanel(props: Props) {
   const { state, dispatch, src, onImageError, onNext, onCancel, suggestion, historyLocked = false } = props;
   const [mode, setMode] = useState<'crop' | 'mask'>('mask');
@@ -34,8 +36,8 @@ export function PrivacyEditPanel(props: Props) {
       onInputPending={setInputPending}
     >
       {(toolbar, fields) => (
-        <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_280px] xl:grid-cols-[minmax(0,1fr)_320px]">
-          <section className="flex min-w-0 flex-col gap-4 rounded-2xl bg-surface p-4 shadow-sm lg:p-6">
+        <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_340px]">
+          <section className="doc-bento-card flex min-w-0 flex-col gap-4 p-4 lg:p-6">
             <PrivacyStudioHeading />
             <PrivacyCanvas
               key={src}

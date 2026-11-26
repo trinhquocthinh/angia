@@ -5,6 +5,6 @@ import today from './playwright.today.config.js';
 
 export default defineConfig({
   ...today,
-  testMatch: '**/review.spec.ts',
+  testMatch: '**/{review,privacyManual}.spec.ts',
   outputDir: join(tmpdir(), 'angia-review-playwright'),
 });

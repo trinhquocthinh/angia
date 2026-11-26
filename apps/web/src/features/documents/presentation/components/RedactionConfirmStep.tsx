@@ -37,14 +37,14 @@ export function RedactionConfirmStep({ previewUrl, maskCount, onBack, onConfirm,
   return (
     <section
       aria-label="Xem bản sẽ tải lên"
-      className="flex flex-col gap-5 rounded-2xl bg-surface p-4 shadow-sm sm:p-6 lg:p-8"
+      className="doc-bento-card flex flex-col gap-5 rounded-3xl p-4 sm:p-6 lg:p-8"
     >
       <RedactionConfirmHeading maskCount={maskCount} />
-      <div className="flex justify-center overflow-hidden rounded-2xl bg-overlay p-3 shadow-inner sm:p-6">
+      <div className="flex justify-center overflow-hidden rounded-2xl border border-border/30 bg-overlay p-3 shadow-inner sm:p-6">
         <img
           src={previewUrl}
           alt="Bản đã che sẽ được tải lên"
-          className="max-h-[60dvh] max-w-full rounded object-contain shadow-2xl"
+          className="max-h-[58dvh] max-w-full rounded-lg object-contain shadow-2xl"
         />
       </div>
       <RedactionChoices
@@ -57,11 +57,11 @@ export function RedactionConfirmStep({ previewUrl, maskCount, onBack, onConfirm,
       {asking && (
         <NoMaskWarning busy={false} onBack={onBack} onSendAnyway={() => onConfirm(choice === 'ai')} />
       )}
-      <div className="flex flex-col-reverse gap-2 border-t border-border/30 pt-4 sm:flex-row sm:justify-end">
+      <div className="flex flex-col-reverse gap-2.5 border-t border-border/30 pt-4 sm:flex-row sm:justify-end">
         <button
           type="button"
           onClick={onBack}
-          className="min-h-12 rounded-xl px-5 text-button-secondary font-semibold text-text-secondary transition-colors hover:bg-accent-soft hover:text-text-primary"
+          className="min-h-btn rounded-2xl border border-border/40 bg-bg px-5 text-button-secondary font-semibold text-text-secondary transition-colors hover:bg-accent-soft hover:text-text-primary"
         >
           Quay lại che
         </button>
@@ -69,7 +69,7 @@ export function RedactionConfirmStep({ previewUrl, maskCount, onBack, onConfirm,
           type="button"
           disabled={decision === 'disabled'}
           onClick={submit}
-          className="min-h-14 rounded-xl bg-accent px-8 text-button-primary font-semibold text-on-accent shadow-sm transition-colors enabled:hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
+          className="min-h-14 rounded-2xl bg-accent px-8 text-button-primary font-semibold text-on-accent shadow-stitch-sm transition-colors enabled:hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
         >
           Xác nhận
         </button>

@@ -1775,3 +1775,29 @@ Bundle review 198,3 KB gzip, mọi trang đầu đạt 200 KB và TC-729 PASS.
 Chạy lại: `yarn playwright test --config playwright.review.config.ts`.
 Chưa chạy full `yarn verify`, PR/push/deploy hoặc kiểm SIT/Production từ checkpoint này.
 Bằng chứng chi tiết: `../../Docs/angia/acceptance/v1.0/evidence/e30-review-2026-11-26.md`.
+
+## E30-S2-T3 — Che ảnh và nhập tay, UI duyệt 2026-11-26
+
+Owner xác nhận **“UI đã pass giúp tôi cập nhật tài liệu liên quan và commit”**.
+Checkpoint này bàn giao phần trình che/nắn ảnh, xem bản sẽ tải lên và nhập tay
+của **E30-S2-T3**; phần review đã được duyệt tại commit `af176aeb`.
+Không suy từ duyệt UI local thành nghiệm thu SIT/Production hoặc đóng toàn Epic 30.
+
+- Trình che tại `/upload` dùng Clay Bento, Newsreader, token sáng/tối và cỡ chữ
+  hiện hành; nhóm công cụ có focus bàn phím, wrap trên mobile và vùng chạm theo token.
+- Giữ cắt/che/xoay/hoàn tác, chỉnh tọa độ, giới hạn 32 vùng; nắn giấy trên thiết bị.
+  Gợi ý vùng che vẫn do người dùng yêu cầu, phụ thuộc feature hiện có; ảnh chỉ gửi
+  máy chủ AN GIA theo ngoại lệ BR-085, không tự bật hoặc tự che thay người dùng.
+- Xem đúng bản xuất trước khi tải; giữ lựa chọn tự nhập/gửi AI, checkbox xác nhận,
+  cảnh báo không có vùng che, chặn AI khi hàng chờ đầy và xử lý quota hiện có.
+- `/profiles/:profileId/manual` đồng bộ thẻ/form/trạng thái lưu, nút về hồ sơ;
+  giữ đồng thuận, quyền main/member, loại dữ liệu theo hồ sơ, trùng và xung đột.
+  Form xét nghiệm/số đo và notice dùng chung có ảnh hưởng giao diện review.
+- Không đổi API, application/domain, schema, dependency, env hoặc quyền truy cập.
+
+Kiểm local: `yarn verify:fast` (56 test/10 tệp), 345 unit liên quan, ESLint,
+Prettier, build, 24/24 E2E Chromium/WebKit và `perf:budget` PASS.
+Review 198,5 KB; nhập tay 189,6 KB; upload 189,5 KB gzip.
+Chưa chạy full `yarn verify` hoặc kiểm SIT/Production. Chi tiết phạm vi axe và
+những luồng chưa tự động kiểm tại
+`../../Docs/angia/acceptance/v1.0/evidence/e30-s2-t3-2026-11-26.md`.

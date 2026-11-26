@@ -56,7 +56,7 @@ export function UploadRedactionStudio({ item, onDone, onClose, suggest, scan, ..
     >
       <UploadStepper current={step === 'confirm' ? 3 : 2} />
       {source.converting ? (
-        <p role="status" className="rounded-2xl bg-surface p-4 text-caption text-text-secondary shadow-sm">
+        <p role="status" className="doc-bento-card rounded-3xl p-5 text-caption text-text-secondary">
           Đang mở ảnh HEIC trên máy…
         </p>
       ) : step === 'scan' && scan ? (

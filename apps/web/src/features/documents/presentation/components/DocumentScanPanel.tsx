@@ -6,8 +6,10 @@ import { nextScanStep, type ScanStep, type ScanStepAction } from '../../applicat
 import type { DocumentScanner } from '../../application/scanPorts';
 import { useBlobUrl } from '../../application/useBlobUrl';
 import { useDocumentScan } from '../../application/useDocumentScan';
+import { DocumentIcon } from './DocumentIcon';
 import { ScanCornerStage } from './ScanCornerStage';
 import { ScanPanelActions } from './ScanPanelActions';
+import './privacy-editor.css';
 
 type Props = {
   src: string;
@@ -22,6 +24,24 @@ type Props = {
 
 const turn = (size: { width: number; height: number }, rotation: number) =>
   rotation === 90 || rotation === 270 ? { width: size.height, height: size.width } : size;
+
+function ScanPanelHeading({ previewing }: { previewing: boolean }) {
+  return (
+    <div className="flex items-start gap-3 border-b border-border/30 pb-4">
+      <span className="doc-clay-tile text-accent">
+        <DocumentIcon name="expand" size={22} />
+      </span>
+      <div className="min-w-0">
+        <h3 className="auth-heading text-heading-2 font-semibold text-accent">Nắn 4 góc giấy tờ</h3>
+        <p className="mt-1 text-caption text-text-secondary">
+          {previewing
+            ? 'Ảnh sau khi nắn. Kiểm tra chữ còn đọc rõ trước khi dùng.'
+            : 'Kéo 4 chấm tới 4 góc tờ giấy.'}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 // SPEC-084: kéo 4 góc → xem ảnh nắn → dùng ảnh nắn. Mọi xử lý trên máy, không gửi ảnh đi.
 export function DocumentScanPanel({ src, file, rotation, hasMasks, codec, scanner, onUse, onCancel }: Props) {
@@ -46,16 +66,16 @@ export function DocumentScanPanel({ src, file, rotation, hasMasks, codec, scanne
   return (
     <section
       aria-label="Nắn giấy"
-      className="flex min-w-0 flex-col gap-4 rounded-2xl bg-surface p-4 shadow-sm lg:p-6"
+      className="doc-bento-card flex min-w-0 flex-col gap-5 rounded-3xl p-4 sm:p-5 lg:p-6"
     >
-      <p className="text-caption text-text-secondary">
-        {previewUrl
-          ? 'Ảnh sau khi nắn. Kiểm tra chữ còn đọc rõ trước khi dùng.'
-          : 'Kéo 4 chấm tới 4 góc tờ giấy.'}
-      </p>
-      <div className="flex h-[clamp(320px,52dvh,520px)] items-center justify-center rounded-xl bg-overlay p-2">
+      <ScanPanelHeading previewing={Boolean(previewUrl)} />
+      <div className="flex h-[clamp(260px,48dvh,520px)] items-center justify-center rounded-2xl border border-border/30 bg-overlay p-2 shadow-inner">
         {previewUrl ? (
-          <img src={previewUrl} alt="Ảnh đã nắn" className="max-h-full max-w-full rounded object-contain" />
+          <img
+            src={previewUrl}
+            alt="Ảnh đã nắn"
+            className="max-h-full max-w-full rounded-lg object-contain"
+          />
         ) : (
           <ScanCornerStage
             {...{ src, rotation, size, quad, onError: onCancel }}
@@ -66,11 +86,11 @@ export function DocumentScanPanel({ src, file, rotation, hasMasks, codec, scanne
         )}
       </div>
       {problem && (
-        <p role="alert" className="text-body font-medium text-warning">
+        <p role="alert" className="rounded-2xl bg-warning-soft px-4 py-3 text-body font-medium text-warning">
           {problem}
         </p>
       )}
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2.5 border-t border-border/30 pt-4">
         <ScanPanelActions
           step={state.step === 'done' ? 'preview' : state.step}
           {...{ status: scan.status, valid, clean, onClean: setClean, onStep: step, onCancel }}

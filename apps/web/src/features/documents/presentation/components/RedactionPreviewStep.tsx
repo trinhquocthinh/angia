@@ -24,7 +24,7 @@ export function RedactionPreviewStep({ file, edits, codec, onBack, onConfirm, ..
   const exported = useRedactionExport(file, edits, codec);
   if (exported.state === 'exporting')
     return (
-      <p role="status" className="rounded-2xl bg-surface p-4 text-caption text-text-secondary shadow-sm">
+      <p role="status" className="doc-bento-card rounded-3xl p-5 text-caption text-text-secondary">
         Đang tạo bản sẽ tải lên trên máy…
       </p>
     );
@@ -32,7 +32,7 @@ export function RedactionPreviewStep({ file, edits, codec, onBack, onConfirm, ..
     return (
       <div
         role="alert"
-        className="flex flex-col gap-3 rounded-2xl bg-danger-soft/60 p-4 text-caption text-danger"
+        className="flex flex-col gap-3 rounded-3xl border border-danger/30 bg-danger-soft/60 p-5 text-caption text-danger"
       >
         {PROBLEMS[exported.problem]}
         <button type="button" onClick={onBack} className="min-h-11 self-start font-semibold underline">
