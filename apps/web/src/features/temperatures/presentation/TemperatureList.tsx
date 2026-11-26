@@ -15,7 +15,7 @@ export function TemperatureList({ readings, pending, onRemove }: Props) {
   if (!latest) return <p className="text-caption text-text-secondary">Chưa ghi nhiệt độ.</p>;
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-3 rounded-2xl bg-accent-soft/80 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/35 bg-accent-soft/80 p-4">
         <div className="flex items-center gap-3">
           <ProfileSectionIcon name="thermostat" size={38} />
           <div>
@@ -25,7 +25,7 @@ export function TemperatureList({ readings, pending, onRemove }: Props) {
             </p>
           </div>
         </div>
-        <span className="rounded-full bg-surface px-3 py-1 text-caption font-medium text-text-secondary tabular-nums">
+        <span className="rounded-full border border-border/30 bg-surface px-3 py-1 text-caption font-medium text-text-secondary tabular-nums">
           {formatDoseTime(latest.measuredAt)}
         </span>
       </div>
@@ -33,7 +33,7 @@ export function TemperatureList({ readings, pending, onRemove }: Props) {
         {readings.map((reading) => (
           <li
             key={reading.id}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-bg px-4 py-3"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/35 bg-bg px-4 py-3"
           >
             <div className="flex items-center gap-2.5">
               <ProfileSectionIcon name="thermostat" size={26} />

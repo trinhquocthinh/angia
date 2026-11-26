@@ -1827,3 +1827,33 @@ TC-729 PASS. Chưa full `yarn verify`, kiểm SIT/Production hoặc nghiệm thu
 SPEC-081/Epic 30. Không tăng tổng task/giờ nghiệm thu từ checkpoint UI local.
 
 Bằng chứng: `../../Docs/angia/acceptance/v1.0/evidence/e30-s3-t1-2026-11-26.md`.
+
+## E30-S3-T2 — Số đo, xét nghiệm, nhiệt độ và liều Khi cần, UI duyệt 2026-11-26
+
+Owner xác nhận **“UI đã pass , giúp tôi cập nhật tài liệu liên quan và commit”**.
+Phạm vi E30-S3-T2: số đo tại `/profiles/:profileId?section=health`, xét nghiệm
+`/profiles/:profileId/lab-results`, nhiệt độ tại `/profiles/:profileId/timeline`,
+liều Khi cần và sheet nhật ký từ `/profiles/:profileId/medications`.
+
+- Đồng bộ Clay Bento, Newsreader, token sáng/tối, form, trạng thái tải/lỗi và nút.
+  Giữ các điểm truy cập riêng hiện hành; không ghép nhiệt độ/thuốc thành route mới.
+- Số đo và nhiệt độ dùng màu chữ trung tính, không đánh giá y khoa. Xét nghiệm
+  giữ nhãn “↑ Trên khoảng in trên phiếu” / “↓ Dưới khoảng in trên phiếu” và
+  thuật toán so khoảng cũ; bản UI owner duyệt bỏ màu warning ở số và chip,
+  dùng màu chữ trung tính. Không thêm đếm/tổng hợp ngoài khoảng hay khuyến nghị.
+- Giữ BR-049, đồng thuận, quyền main/member, tự xem chỉ đọc, xác nhận nhiệt độ
+  ngoài khoảng nhập liệu 34,0–43,0 °C và nghiệp vụ liều Khi cần/khoảng cách.
+  Không tính giờ liều tiếp theo. Component dùng chung ảnh hưởng hình thức tự xem.
+- Không đổi API, application/domain, schema, dependency hoặc env trong commit UI.
+  Bộ seed dev mới và lệnh `dev:seed:health` để ngoài commit: seed tự tính tuổi
+  với mốc 18 thay vì 16 của BR-049, cần review riêng; phiên này không chạy seed.
+
+Kiểm local: 190 unit/34 tệp liên quan, lint/format, build, 8/8 E2E Chromium/WebKit
+và `perf:budget` PASS. Mọi trang đầu ≤200 KB gzip; thuốc 197,5 KB,
+xét nghiệm 166,8 KB, dòng thời gian 191,2 KB, tự xem 196,5 KB; TC-729 PASS.
+`yarn verify:fast` chạy lại PASS: typecheck toàn workspace, 4.117 test/823 tệp
+(theo lựa chọn changed của working tree hiện hành, có phần ngoài commit).
+Chưa full `yarn verify`, SIT/Production hoặc nghiệm thu toàn SPEC-081/Epic 30;
+không tăng tổng task/giờ nghiệm thu từ checkpoint UI local.
+
+Bằng chứng ngoài repo: `../../Docs/angia/acceptance/v1.0/evidence/e30-s3-t2-2026-11-26.md`.

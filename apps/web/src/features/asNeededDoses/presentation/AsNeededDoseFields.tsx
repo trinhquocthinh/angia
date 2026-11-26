@@ -28,7 +28,7 @@ export function AsNeededDoseFields({ form }: { form: UseFormReturn<DoseFormValue
               maxLength={name === 'unit' ? 20 : undefined}
               aria-invalid={Boolean(error)}
               aria-describedby={error ? `${id}-error` : undefined}
-              className="min-h-12 w-full rounded-xl border border-border bg-surface px-3 text-body focus-visible:outline-2 focus-visible:outline-focus"
+              className="min-h-12 w-full rounded-2xl border border-border/55 bg-bg px-3.5 text-body text-text-primary focus:border-accent focus:bg-surface focus-visible:outline-2 focus-visible:outline-focus"
             />
             {error && (
               <p id={`${id}-error`} role="alert" className="text-body text-danger">

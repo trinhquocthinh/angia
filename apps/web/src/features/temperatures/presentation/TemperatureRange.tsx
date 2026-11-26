@@ -21,7 +21,7 @@ export function TemperatureRange({ initial, pending, onChange }: Props) {
         setError(!parsed.success);
         if (parsed.success && !pending) onChange(parsed.data);
       }}
-      className="flex flex-col gap-3 rounded-[20px] bg-bg p-3.5 md:flex-row md:items-end"
+      className="flex flex-col gap-3 rounded-2xl border border-border/35 bg-bg p-3.5 md:flex-row md:items-end"
     >
       <fieldset disabled={pending} className="grid min-w-0 flex-1 grid-cols-2 gap-3 border-0 p-0">
         {(['from', 'to'] as const).map((field) => (

@@ -9,7 +9,7 @@ export function MeasurementStatCards({ points, weeks }: { points: SeriesPoint[];
         {[...points].reverse().map((point) => {
           const [value = '', unit = ''] = splitReading(displayReadingText(point));
           return (
-            <li key={point.id} className="flex flex-col gap-1 rounded-2xl bg-bg p-4">
+            <li key={point.id} className="flex flex-col gap-1 rounded-2xl border border-border/35 bg-bg p-4">
               <p className="tabular-nums text-text-primary">
                 <span className="text-heading-1 font-semibold tracking-tight">{value}</span>{' '}
                 <span className="text-caption text-text-secondary">{unit}</span>

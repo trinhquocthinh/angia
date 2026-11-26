@@ -34,7 +34,7 @@ export function MeasurementTable({ kind, measurements, loading, error, retry }: 
         <button
           type="button"
           onClick={retry}
-          className="min-h-11 rounded-xl bg-surface px-4 font-semibold text-accent"
+          className="min-h-btn rounded-2xl bg-surface px-4 text-button-secondary font-semibold text-accent"
         >
           Thử lại
         </button>
@@ -42,21 +42,21 @@ export function MeasurementTable({ kind, measurements, loading, error, retry }: 
     );
   if (measurements.length === 0)
     return (
-      <div className="flex flex-col items-center gap-4 rounded-2xl bg-accent-soft px-6 py-12 text-center">
+      <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border/60 bg-bg px-6 py-10 text-center">
         <p className="text-caption text-text-secondary">Chưa có số đo. Chụp màn hình máy đo để bắt đầu.</p>
         <Link
           to="/upload"
-          className="inline-flex min-h-14 items-center rounded-xl bg-accent px-5 text-button-primary font-semibold text-on-accent"
+          className="inline-flex min-h-btn items-center rounded-2xl bg-accent px-5 text-button-primary font-semibold text-on-accent shadow-stitch-sm transition-colors hover:bg-accent-hover"
         >
           Tải ảnh máy đo
         </Link>
       </div>
     );
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto rounded-2xl border border-border/35 bg-bg">
       <table className="w-full min-w-[480px] text-body">
         <caption className="sr-only">Bảng số đo đã duyệt, mới nhất trước</caption>
-        <thead className="bg-accent-soft text-caption uppercase tracking-wider text-text-secondary">
+        <thead className="border-b border-border/35 bg-surface-container text-caption uppercase tracking-wider text-text-secondary">
           <tr>
             {HEADERS[kind].map((header, index) => (
               <th
@@ -69,7 +69,7 @@ export function MeasurementTable({ kind, measurements, loading, error, retry }: 
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-surface">
           {measurements.map((measurement) => (
             <MeasurementRow key={measurement.id} kind={kind} measurement={measurement} />
           ))}

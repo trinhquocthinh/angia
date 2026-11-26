@@ -18,7 +18,12 @@ export function TemperatureWorkspace({
 }: Props) {
   const state = useTemperatureWorkspace(repository, session, profileId, readOnly, consentConfirmed);
   const { query, mutation, editable } = state;
-  if (!consentConfirmed) return <p role="alert">Hồ sơ chưa được đồng ý lưu dữ liệu.</p>;
+  if (!consentConfirmed)
+    return (
+      <p role="alert" className="profile-bento-card p-6 text-body">
+        Hồ sơ chưa được đồng ý lưu dữ liệu.
+      </p>
+    );
   return (
     <section aria-label="Nhiệt độ" className="profile-bento-card flex min-w-0 flex-col gap-5 p-5 lg:p-6">
       <TemperatureHeader

@@ -1,5 +1,6 @@
 import { ProfileHealthHeader } from '@src/features/measurements/presentation/components/ProfileHealthHeader';
 import type { ProfileListItem, ProfileSession } from '@src/features/profiles/application/ports';
+import { ProfileSectionIcon } from '@src/features/profiles/presentation/components/ProfileSectionIcon';
 import { ProfileSectionPage } from '@src/features/profiles/presentation/components/ProfileSectionPage';
 import { useLabSeries } from '../application/useLabSeries';
 import { createLabResultsRepository } from '../infrastructure/createLabResultsRepository';
@@ -19,15 +20,23 @@ export function LabResultsPage({ profileId }: { profileId: string }) {
 function LabResultsContent({ profile, session }: { profile: ProfileListItem; session: ProfileSession }) {
   const series = useLabSeries(labResultsRepository, session, profile);
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-6">
       <ProfileHealthHeader session={session} profile={profile} active="lab-results" />
-      <div className="rounded-xl bg-surface px-5 py-4 shadow-sm">
-        <h2 className="text-heading-2 font-semibold text-accent">
-          Lịch sử kết quả xét nghiệm qua các lần khám
-        </h2>
-      </div>
+      <section className="profile-bento-card flex items-center gap-3.5 p-5 sm:p-6">
+        <span className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-accent-soft">
+          <ProfileSectionIcon name="science" size={38} />
+        </span>
+        <div className="min-w-0">
+          <h2 className="auth-heading text-heading-2 font-semibold text-accent">
+            Lịch sử kết quả xét nghiệm qua các lần khám
+          </h2>
+          <p className="mt-0.5 text-caption text-text-secondary">
+            Giá trị và khoảng tham chiếu ghi theo đúng phiếu xét nghiệm.
+          </p>
+        </div>
+      </section>
       {profile.consentStatus !== 'confirmed' ? (
-        <p role="alert" className="rounded-[20px] bg-surface p-6 text-body">
+        <p role="alert" className="profile-bento-card p-6 text-body">
           Hồ sơ chưa được đồng ý lưu dữ liệu.
         </p>
       ) : (

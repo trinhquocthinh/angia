@@ -34,7 +34,7 @@ export function CourseIntervalForm({ initialText, pending, error, onSubmit, onCa
           maxLength={100}
           aria-invalid={invalid}
           aria-describedby={`${id}-hint`}
-          className="min-h-12 w-full rounded-xl border border-border px-3 text-body focus-visible:outline-2 focus-visible:outline-focus"
+          className="min-h-12 w-full rounded-2xl border border-border/55 bg-bg px-3.5 text-body text-text-primary focus:border-accent focus:bg-surface focus-visible:outline-2 focus-visible:outline-focus"
         />
         <p id={`${id}-hint`} className="text-caption text-text-secondary">
           Tối đa 100 ký tự. Để trống để xóa khoảng cách tự nhập.

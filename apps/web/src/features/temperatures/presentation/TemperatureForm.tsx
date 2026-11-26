@@ -22,7 +22,10 @@ export function TemperatureForm({ pending, error, onSave, onCancel }: Props) {
       <fieldset disabled={pending} className="flex min-w-0 flex-col gap-4 border-0 px-6 py-5">
         <TemperatureFields form={form} />
         {confirmation && (
-          <p role="alert" className="rounded-xl bg-accent-soft p-4 text-body text-text-primary">
+          <p
+            role="alert"
+            className="rounded-2xl border border-border/45 bg-accent-soft p-4 text-body text-text-primary"
+          >
             Giá trị bạn nhập nằm ngoài khoảng kiểm tra nhập liệu 34,0–43,0 °C. Bạn có muốn lưu đúng giá trị
             này?
           </p>

@@ -19,7 +19,7 @@ type Props = {
 export function ProfileHealthSections({ profile, measurements, ...trend }: Props) {
   if (profile && profile.consentStatus !== 'confirmed') {
     return (
-      <p role="alert" className="rounded-[20px] bg-surface p-6 text-body">
+      <p role="alert" className="profile-bento-card p-6 text-body">
         Hồ sơ chưa được đồng ý lưu dữ liệu.
       </p>
     );

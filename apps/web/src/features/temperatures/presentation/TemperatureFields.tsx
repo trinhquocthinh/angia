@@ -16,7 +16,7 @@ export function TemperatureFields({ form }: { form: UseFormReturn<TemperatureFor
           {...form.register('celsius')}
           aria-invalid={Boolean(form.formState.errors.celsius)}
           aria-describedby={form.formState.errors.celsius ? `${id}-celsius-error` : undefined}
-          className="min-h-11 rounded-xl border border-border px-3"
+          className="min-h-12 rounded-2xl border border-border/55 bg-bg px-3.5 text-body text-text-primary focus:border-accent focus:bg-surface focus-visible:outline-2 focus-visible:outline-focus"
         />
       </label>
       {form.formState.errors.celsius && (
@@ -32,7 +32,7 @@ export function TemperatureFields({ form }: { form: UseFormReturn<TemperatureFor
           {...form.register('measuredAt')}
           aria-invalid={Boolean(form.formState.errors.measuredAt)}
           aria-describedby={form.formState.errors.measuredAt ? `${id}-time-error` : undefined}
-          className="min-h-11 min-w-0 rounded-xl border border-border px-3"
+          className="min-h-12 min-w-0 rounded-2xl border border-border/55 bg-bg px-3.5 text-body text-text-primary focus:border-accent focus:bg-surface focus-visible:outline-2 focus-visible:outline-focus"
         />
       </label>
       {form.formState.errors.measuredAt && (
