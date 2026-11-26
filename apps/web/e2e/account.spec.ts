@@ -72,7 +72,7 @@ for (const theme of ['light', 'dark']) {
     await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
     await expect(page.locator('form')).toHaveAttribute('aria-busy', 'true');
     await expect(page.getByRole('button', { name: 'Đang đăng nhập…' })).toBeDisabled();
-    await expect(byLabel(page, 'Tên đăng nhập')).toBeDisabled();
+    await expect(byLabel(page, 'Tên đăng nhập hoặc email')).toBeDisabled();
     await expect(byLabel(page, 'Mật khẩu')).toBeDisabled();
     release();
     await expect(page).toHaveURL(/\/waiting$/);
@@ -103,7 +103,7 @@ for (const theme of ['light', 'dark']) {
       await checkAlertBelowButton(page, message);
       await checkAccountLayout(page);
       await expect(page.locator('form')).toHaveAttribute('aria-busy', 'false');
-      await expect(byLabel(page, 'Tên đăng nhập')).toBeEnabled();
+      await expect(byLabel(page, 'Tên đăng nhập hoặc email')).toBeEnabled();
       if (code === 'ERR_INVALID_CREDENTIALS') await accountScreenshot(page, info, 'login-error', theme);
     });
   }

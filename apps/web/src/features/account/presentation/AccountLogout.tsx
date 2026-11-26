@@ -4,7 +4,11 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { CURRENT_SESSION_KEY } from '@src/features/auth/application/useCurrentSession';
 import { logoutSession } from '@src/features/auth/infrastructure/logoutSession';
-import { RESTRICTED_CSRF_KEY, writeAccountStorage } from '../application/accountSessionStorage';
+import {
+  PASSWORD_RESET_BY_KEY,
+  RESTRICTED_CSRF_KEY,
+  writeAccountStorage,
+} from '../application/accountSessionStorage';
 import { FormAlert } from './FormAlert';
 export function AccountLogout({
   token,
@@ -25,6 +29,7 @@ export function AccountLogout({
     try {
       await logoutSession(token);
       writeAccountStorage(RESTRICTED_CSRF_KEY, null);
+      writeAccountStorage(PASSWORD_RESET_BY_KEY, null);
       await client.invalidateQueries({ queryKey: CURRENT_SESSION_KEY });
       await navigate({ to: '/login' });
     } catch {

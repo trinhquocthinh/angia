@@ -8,6 +8,7 @@ export function useLoginForm(
     csrfToken: string;
     expiresAt: string;
     passwordChangeRequired: boolean;
+    passwordResetBy: string | null;
   }) => Promise<unknown>,
   hasAuthError: boolean,
 ) {

@@ -61,7 +61,9 @@ it('hiển thị đúng trạng thái đang tạo, sẵn sàng, quá giới hạ
   expect(readyHtml).toContain('account-download.svg');
 
   const rateLimitedHtml = renderToStaticMarkup(<AccountDataExportCard {...baseProps} phase="rate_limited" />);
-  expect(rateLimitedHtml).toContain('Bạn thao tác quá nhanh, vui lòng thử lại sau.');
+  expect(rateLimitedHtml).toContain(
+    'Bạn đã tải dữ liệu 3 lần trong 24 giờ qua. Vui lòng thử lại vào ngày mai.',
+  );
   expect(rateLimitedHtml).toContain('Tải dữ liệu của tôi');
   expect(rateLimitedHtml).toContain('account-warning.svg');
 

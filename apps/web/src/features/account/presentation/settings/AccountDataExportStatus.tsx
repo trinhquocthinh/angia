@@ -27,7 +27,7 @@ export function AccountDataExportStatus({ phase }: { phase: DataExportPhase }) {
         warning={phase === 'rate_limited'}
         message={
           phase === 'rate_limited'
-            ? 'Bạn thao tác quá nhanh, vui lòng thử lại sau.'
+            ? 'Bạn đã tải dữ liệu 3 lần trong 24 giờ qua. Vui lòng thử lại vào ngày mai.'
             : 'Chưa tạo được tệp dữ liệu. Vui lòng thử lại.'
         }
       />

@@ -1,3 +1,4 @@
+export const PASSWORD_RESET_BY_KEY = 'angia.passwordResetBy';
 export const RESTRICTED_CSRF_KEY = 'angia.restrictedCsrf';
 export const ENROLL_LATER_KEY = 'angia.enrollLater';
 export const ENROLL_REAUTH_KEY = 'angia.enrollReauth';
