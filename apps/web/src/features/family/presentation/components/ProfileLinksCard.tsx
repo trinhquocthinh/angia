@@ -25,7 +25,7 @@ export function ProfileLinksCard({
   const candidates = linkCandidates(accounts, familyId, rows);
   return (
     <section
-      className="admin-panel flex min-w-0 flex-col gap-4 rounded-2xl bg-surface p-5 shadow-sm max-[600px]:p-4 admin-reveal"
+      className="profile-bento-card flex min-w-0 flex-col gap-4 p-5 sm:p-6"
       aria-labelledby="profile-links-title"
     >
       <AdminCardHeading

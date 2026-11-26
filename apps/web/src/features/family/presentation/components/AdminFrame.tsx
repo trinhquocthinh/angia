@@ -26,7 +26,7 @@ export function AdminFrame({
       logout={shell.logout}
       mobileTitle="Quản trị hệ thống"
     >
-      <div className="admin-screen admin-content flex flex-col gap-6 text-caption antialiased [&_*]:box-border [&_button:disabled]:cursor-default [&_button:disabled]:opacity-65 [&_button:disabled]:transform-none [&_button:disabled]:shadow-none [&_:focus-visible]:outline-2 [&_:focus-visible]:outline-focus [&_:focus-visible]:outline-offset-3 motion-reduce:[&_*]:transition-none">
+      <div className="mx-auto flex w-full max-w-[1360px] flex-col gap-6 text-caption antialiased [&_*]:box-border [&_button:disabled]:cursor-default [&_button:disabled]:opacity-65 [&_button:disabled]:transform-none [&_button:disabled]:shadow-none [&_:focus-visible]:outline-2 [&_:focus-visible]:outline-focus [&_:focus-visible]:outline-offset-3 motion-reduce:[&_*]:transition-none">
         {children}
       </div>
     </ProfileFrame>

@@ -13,11 +13,16 @@ export function AdminLoadError({
   accounts: Workspace['accounts'];
 }) {
   return (
-    <div className="rounded-[12px] py-3 px-4 m-0 text-caption text-danger bg-danger-soft" role="alert">
-      <p>{error instanceof AdminRequestError ? error.message : 'Không thể tải dữ liệu quản trị.'}</p>
+    <div
+      className="profile-bento-card flex flex-col items-start gap-3 border border-danger/20 bg-danger-soft p-6 text-caption text-danger"
+      role="alert"
+    >
+      <p className="m-0 text-body font-medium">
+        {error instanceof AdminRequestError ? error.message : 'Không thể tải dữ liệu quản trị.'}
+      </p>
       <button
         type="button"
-        className="admin-button inline-flex items-center justify-center gap-2 min-h-14 py-[10px] px-4 border-0 rounded-[12px] bg-accent text-on-accent text-button-primary font-semibold cursor-pointer shadow-[0_1px_2px_color-mix(in_srgb,var(--color-shadow)_5%,transparent)] transition-[transform,background-color,box-shadow] duration-[160ms] ease-[ease] [&:hover]:bg-accent [&:hover]:shadow-[0_4px_12px_color-mix(in_srgb,var(--color-shadow)_6%,transparent)] [&:active]:scale-[0.99] motion-reduce:[&:active]:transform-none admin-button-secondary bg-accent-soft! text-text-secondary! [&:hover]:bg-border!"
+        className="inline-flex min-h-btn cursor-pointer items-center justify-center rounded-2xl border border-border/45 bg-surface px-5 text-button-secondary font-semibold text-accent shadow-2xs transition-colors hover:bg-accent-soft"
         disabled={families.isFetching || accounts.isFetching}
         onClick={() => {
           void families.refetch();

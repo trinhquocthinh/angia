@@ -16,7 +16,7 @@ export function QuotaTextField({
   mode?: 'decimal' | 'numeric' | 'text';
 }) {
   return (
-    <label htmlFor={id} className="grid content-start gap-1 text-caption font-medium text-text-secondary">
+    <label htmlFor={id} className="grid content-start gap-1.5 text-caption font-medium text-text-secondary">
       {label}
       <input
         id={id}
@@ -27,7 +27,7 @@ export function QuotaTextField({
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${id}-error` : undefined}
-        className="min-h-10 w-full min-w-0 rounded-xl border-0 bg-accent-soft px-3 py-2 text-body font-normal text-text-primary focus:bg-accent-soft"
+        className="min-h-11 w-full min-w-0 rounded-2xl border border-border/45 bg-bg px-3.5 py-2 text-body font-normal text-text-primary tabular-nums transition-colors focus:bg-surface"
       />
       {error && (
         <span id={`${id}-error`} role="alert" className="text-danger">

@@ -41,7 +41,10 @@ export function AdminWorkspaceView(props: AdminWorkspaceViewProps) {
         onCreate={() => openTask({ kind: 'create' })}
       />
       {action.isSuccess && !task && (
-        <p className="rounded-[12px] py-3 px-4 m-0 text-body text-accent bg-accent-soft" role="status">
+        <p
+          className="m-0 rounded-2xl border border-accent/25 bg-accent-soft px-4 py-3 text-body font-medium text-accent"
+          role="status"
+        >
           Đã lưu thay đổi thành công.
         </p>
       )}

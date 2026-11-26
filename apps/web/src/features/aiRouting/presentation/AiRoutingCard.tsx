@@ -22,7 +22,7 @@ export function AiRoutingCard({
     <article
       aria-labelledby="ai-routing-title"
       aria-busy={busy}
-      className="admin-panel min-w-0 max-[1199px]:self-start rounded-2xl bg-surface p-4 sm:p-5 shadow-sm flex flex-col gap-4 admin-reveal"
+      className="profile-bento-card flex min-w-0 flex-col gap-4 p-5 sm:p-6"
     >
       <AdminCardHeading
         id="ai-routing-title"
@@ -30,7 +30,7 @@ export function AiRoutingCard({
         title="Nhận diện chứng từ"
         aside={
           config.data && (
-            <span className="shrink-0 rounded-full bg-accent-soft px-2.5 py-1 text-caption font-medium text-text-secondary">
+            <span className="shrink-0 rounded-full bg-secondary-container px-3 py-1 text-caption font-semibold text-on-secondary-container tabular-nums">
               Bản {config.data.version}
             </span>
           )

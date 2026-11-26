@@ -22,7 +22,7 @@ export function AiRoutingCardActions({
           type="button"
           disabled={disabled}
           onClick={panel.start}
-          className="min-h-12 w-full rounded-xl border-0 bg-accent-soft px-3 text-button-secondary font-semibold text-accent cursor-pointer transition-colors enabled:hover:bg-border disabled:opacity-60"
+          className="min-h-btn w-full cursor-pointer rounded-2xl border border-border/45 bg-bg px-4 text-button-secondary font-semibold text-accent transition-colors enabled:hover:bg-accent-soft disabled:opacity-60"
         >
           Chỉnh cấu hình
         </button>
@@ -32,7 +32,7 @@ export function AiRoutingCardActions({
           type="button"
           disabled={disabled}
           onClick={() => void panel.reload()}
-          className="min-h-11 rounded-xl border border-accent bg-surface px-3 text-caption text-accent cursor-pointer disabled:opacity-60"
+          className="min-h-btn cursor-pointer rounded-2xl border border-accent bg-surface px-4 text-button-secondary font-semibold text-accent transition-colors enabled:hover:bg-accent-soft disabled:opacity-60"
         >
           Tải lại cấu hình
         </button>

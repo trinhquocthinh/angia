@@ -27,7 +27,7 @@ export function ScanQuotaGrantForm({ initial, pending, onSave }: ScanQuotaGrantF
         <legend className="mb-2 text-caption font-semibold text-text-primary">
           Duyệt lượt tháng {initial.month}
         </legend>
-        <p className="m-0 rounded-xl bg-accent-soft/70 px-3 py-2 text-caption text-text-secondary">
+        <p className="m-0 rounded-2xl border border-border/35 bg-bg px-3.5 py-2.5 text-caption text-text-secondary">
           Mọi gia đình tự có lượt mặc định mỗi tháng, không cần duyệt. Chỉ chọn gia đình cần nhiều lượt hơn,
           tối đa 100 gia đình. Nhập tổng lượt sau khi duyệt, không phải số tăng thêm; không giảm tổng đã cấp.
           Lượt riêng không tự gia hạn sang tháng sau.
@@ -51,7 +51,7 @@ export function ScanQuotaGrantForm({ initial, pending, onSave }: ScanQuotaGrantF
         )}
         {initial.families.length === 0 && <p className="m-0 text-body">Chưa có gia đình để cấp lượt.</p>}
         <button
-          className="admin-button min-h-14 w-full cursor-pointer rounded-xl border-0 bg-accent px-4 py-2 text-button-primary font-semibold text-on-accent shadow-sm transition-colors enabled:hover:bg-accent-hover disabled:cursor-wait disabled:opacity-60"
+          className="min-h-btn w-full cursor-pointer rounded-2xl border-0 bg-accent px-5 py-2 text-button-primary font-semibold text-on-accent shadow-stitch-sm transition-colors enabled:hover:bg-accent-hover disabled:cursor-wait disabled:opacity-60"
           type="submit"
         >
           {pending ? 'Đang xử lý…' : 'Duyệt các gia đình đã chọn'}

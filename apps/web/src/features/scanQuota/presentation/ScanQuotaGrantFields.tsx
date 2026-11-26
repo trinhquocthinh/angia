@@ -16,15 +16,15 @@ export function ScanQuotaGrantFields({
   return (
     <fieldset
       disabled={!draft.selected}
-      className="m-0 grid min-w-0 gap-2 border-0 p-0 disabled:opacity-60 sm:grid-cols-[120px_minmax(0,1fr)]"
+      className="m-0 grid min-w-0 items-end gap-3 border-0 p-0 disabled:opacity-60 sm:grid-cols-[minmax(180px,max-content)_minmax(0,1fr)]"
     >
       <legend className="sr-only">Cấp lượt cho {familyName}</legend>
       <QuotaTextField
         id={id}
         label={
-          <>
+          <span className="whitespace-nowrap">
             Tổng lượt được cấp<span className="sr-only"> · {familyName}</span>
-          </>
+          </span>
         }
         mode="numeric"
         value={draft.grantedScans}
@@ -32,9 +32,9 @@ export function ScanQuotaGrantFields({
       />
       <label
         htmlFor={`${id}-reason`}
-        className="grid content-start gap-1 text-caption font-medium text-text-secondary"
+        className="grid content-start gap-1.5 text-caption font-medium text-text-secondary"
       >
-        <span>
+        <span className="whitespace-nowrap">
           Lý do duyệt<span className="sr-only"> · {familyName}</span>
         </span>
         <textarea
@@ -43,7 +43,7 @@ export function ScanQuotaGrantFields({
           value={draft.reason}
           maxLength={500}
           onChange={(event) => onChange({ ...draft, reason: event.target.value })}
-          className="min-h-10 w-full min-w-0 rounded-xl border-0 bg-accent-soft px-3 py-2 text-body font-normal text-text-primary focus:bg-accent-soft"
+          className="min-h-11 w-full min-w-0 rounded-2xl border border-border/45 bg-bg px-3.5 py-2 text-body font-normal text-text-primary transition-colors focus:bg-surface"
         />
       </label>
     </fieldset>

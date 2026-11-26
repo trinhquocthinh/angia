@@ -16,7 +16,7 @@ import { useAiBudget } from '../application/useAiBudget';
 import { createAdminRepository } from '../infrastructure/createAdminRepository';
 import { createAiBudgetRepository } from '../infrastructure/createAiBudgetRepository';
 import { AdminWorkspaceView } from './components/AdminWorkspaceView';
-import './admin.css';
+import '@src/features/auth/presentation/auth.css';
 
 const scanQuotaRepository = createScanQuotaRepository();
 const aiBillingRepository = createAiBillingRepository();
