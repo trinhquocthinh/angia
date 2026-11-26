@@ -1,5 +1,5 @@
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 import { revealStyle } from '@src/shared/ui/revealStyle';
-import { DocumentIcon } from './DocumentIcon';
 
 const TIPS = [
   'Đủ sáng, không bị lóa hay đổ bóng',
@@ -12,7 +12,7 @@ export function UploadPhotoTips() {
   return (
     <section
       aria-labelledby="upload-tips-title"
-      className="angia-modal-reveal flex flex-col gap-2 px-1 sm:flex-row sm:items-center sm:gap-5"
+      className="angia-modal-reveal flex flex-col gap-2.5 rounded-2xl border border-border/35 bg-surface/85 px-4 py-3.5 sm:flex-row sm:items-center sm:gap-5"
       style={revealStyle(6)}
     >
       <h2 id="upload-tips-title" className="shrink-0 text-caption font-semibold text-accent">
@@ -21,8 +21,8 @@ export function UploadPhotoTips() {
       <ul className="flex flex-col gap-1.5 sm:flex-row sm:flex-wrap sm:gap-x-5">
         {TIPS.map((tip) => (
           <li key={tip} className="flex items-center gap-1.5 text-caption text-text-secondary">
-            <span className="text-accent">
-              <DocumentIcon name="check" size={14} />
+            <span className="text-secondary">
+              <AdminIcon name="check_circle" size={16} />
             </span>
             {tip}
           </li>

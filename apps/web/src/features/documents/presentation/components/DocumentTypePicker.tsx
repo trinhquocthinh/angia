@@ -21,9 +21,9 @@ export function DocumentTypePicker({
   onChange: (value: DocumentType | null) => void;
 }) {
   return (
-    <PickerCard icon="category" title="Loại giấy tờ" hint="Tùy chọn gợi ý">
+    <PickerCard icon="receipt_long" title="Loại giấy tờ" hint="Tùy chọn gợi ý">
       <ChoiceChip selected={value === null} onClick={() => onChange(null)}>
-        <span className={value === null ? 'text-accent-soft' : 'text-text-secondary'}>
+        <span className={value === null ? 'text-on-accent' : 'text-secondary'}>
           <DocumentIcon name="sparkle" size={16} />
         </span>
         Tự động nhận diện
@@ -34,7 +34,7 @@ export function DocumentTypePicker({
           selected={value === type.value}
           onClick={() => onChange(value === type.value ? null : type.value)}
         >
-          <span className={value === type.value ? 'text-accent-soft' : 'text-text-secondary'}>
+          <span className={value === type.value ? 'text-on-accent' : 'text-secondary'}>
             <DocumentIcon name={type.icon} size={16} />
           </span>
           {type.label}

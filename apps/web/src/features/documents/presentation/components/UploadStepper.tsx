@@ -1,5 +1,5 @@
 import { revealStyle } from '@src/shared/ui/revealStyle';
-import { DocumentIcon } from './DocumentIcon';
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
 
 const STEPS = ['Chọn ảnh', 'Cắt & Che định danh', 'Xem trước & Xác nhận'];
 
@@ -8,7 +8,7 @@ export function UploadStepper({ current }: { current: 1 | 2 | 3 }) {
   return (
     <ol
       aria-label="Các bước thêm giấy tờ"
-      className="angia-modal-reveal grid grid-cols-3 gap-1.5 rounded-2xl bg-border/60 p-1.5"
+      className="angia-modal-reveal grid grid-cols-3 gap-1.5 rounded-2xl border border-border/35 bg-surface-container p-1.5"
       style={revealStyle(4)}
     >
       {STEPS.map((label, index) => {
@@ -18,8 +18,8 @@ export function UploadStepper({ current }: { current: 1 | 2 | 3 }) {
           <li
             key={label}
             aria-current={active ? 'step' : undefined}
-            className={`flex min-h-11 flex-col items-center justify-center gap-1 rounded-xl px-2 py-1.5 text-center text-caption font-semibold sm:flex-row sm:gap-2 sm:text-caption ${
-              active ? 'bg-surface text-accent shadow-sm' : 'text-text-secondary'
+            className={`flex min-h-11 flex-col items-center justify-center gap-1 rounded-xl px-2 py-1.5 text-center text-caption font-semibold sm:flex-row sm:gap-2 ${
+              active ? 'bg-surface text-accent shadow-stitch-sm' : 'text-text-secondary'
             }`}
           >
             <span
@@ -27,11 +27,11 @@ export function UploadStepper({ current }: { current: 1 | 2 | 3 }) {
                 active
                   ? 'angia-modal-pop bg-accent text-on-accent'
                   : step < current
-                    ? 'bg-accent-soft text-accent'
-                    : 'bg-accent-soft text-text-primary'
+                    ? 'bg-secondary-container text-on-secondary-container'
+                    : 'bg-surface text-text-secondary'
               }`}
             >
-              {step < current ? <DocumentIcon name="check" size={14} /> : step}
+              {step < current ? <AdminIcon name="check" size={14} /> : step}
             </span>
             <span>
               <span className="hidden lg:inline">Bước {step}: </span>

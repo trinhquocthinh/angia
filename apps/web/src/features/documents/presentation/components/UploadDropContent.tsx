@@ -1,10 +1,29 @@
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { ProfileSectionIcon } from '@src/features/profiles/presentation/components/ProfileSectionIcon';
 import { MAX_FILES_PER_PICK } from '../../application/uploadQueue';
-import { DocumentIcon } from './DocumentIcon';
 
 const FORMATS = ['JPG', 'PNG', 'HEIC', 'WebP'];
 const HINT = 'mt-1 max-w-lg text-caption text-text-secondary';
 
-// Phần hiển thị trong vùng thả ảnh; `group` nằm ở nhãn bao ngoài (UploadDropZone).
+function UploadFormats() {
+  return (
+    <>
+      <span className={HINT}>Tối đa 30 MB mỗi ảnh, ảnh được che và nén trên máy trước khi gửi</span>
+      <span className="mt-3 flex flex-wrap items-center justify-center gap-1.5 text-caption font-semibold text-text-secondary">
+        {FORMATS.map((format) => (
+          <span key={format} className="rounded-full bg-surface-container px-2.5 py-0.5 text-accent">
+            {format}
+          </span>
+        ))}
+        <span className="ml-1 font-medium text-text-secondary">
+          Tối đa {MAX_FILES_PER_PICK} ảnh mỗi lần chọn
+        </span>
+      </span>
+    </>
+  );
+}
+
+// Phần hiển thị trong vùng thả ảnh theo Stitch 3D Bento v2.0; `group` nằm ở nhãn bao ngoài (UploadDropZone).
 export function UploadDropContent({
   over,
   disabled,
@@ -17,14 +36,17 @@ export function UploadDropContent({
   return (
     <>
       <span
-        className={`relative mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent-soft text-accent shadow-sm transition-[translate] duration-200 ease-out motion-reduce:transition-none ${
+        className={`doc-clay-emblem relative mb-3 transition-[translate] duration-200 ease-out motion-reduce:transition-none ${
           over ? '-translate-y-1' : disabled ? '' : 'group-hover:-translate-y-0.5'
         }`}
       >
         {over && (
-          <span aria-hidden="true" className="upload-drop-halo absolute inset-0 rounded-2xl bg-accent/25" />
+          <span
+            aria-hidden="true"
+            className="upload-drop-halo absolute inset-0 rounded-[20px] bg-accent/20"
+          />
         )}
-        <DocumentIcon name="upload" size={32} />
+        <ProfileSectionIcon name="folder_open" size={40} />
       </span>
       <span className="auth-heading text-heading-2 font-semibold text-balance text-accent">
         {over ? (
@@ -39,24 +61,14 @@ export function UploadDropContent({
       {disabled ? (
         <span className={HINT}>{blockedReason ?? 'Đang gửi ảnh, chờ gửi xong rồi chọn thêm.'}</span>
       ) : (
-        <>
-          <span className={HINT}>Tối đa 30 MB mỗi ảnh, ảnh được che và nén trên máy trước khi gửi</span>
-          <span className="mt-3 flex flex-wrap items-center justify-center gap-1.5 text-caption font-medium text-text-secondary">
-            {FORMATS.map((format) => (
-              <span key={format} className="rounded-full bg-accent-soft px-2 py-0.5">
-                {format}
-              </span>
-            ))}
-            <span className="ml-1 text-text-secondary">Tối đa {MAX_FILES_PER_PICK} ảnh mỗi lần chọn</span>
-          </span>
-        </>
+        <UploadFormats />
       )}
       <span
-        className={`mt-5 flex min-h-11 items-center gap-2 rounded-full bg-accent-soft px-6 text-caption font-semibold text-accent transition-colors duration-200 motion-reduce:transition-none ${
-          disabled ? '' : 'group-hover:bg-accent-hover group-hover:text-on-accent'
+        className={`mt-5 inline-flex min-h-btn items-center gap-2 rounded-2xl bg-accent-soft px-6 text-button-secondary font-semibold text-accent shadow-stitch-sm transition-colors duration-200 motion-reduce:transition-none ${
+          disabled ? '' : 'group-hover:bg-accent group-hover:text-on-accent'
         }`}
       >
-        <DocumentIcon name="image" /> Duyệt ảnh từ thiết bị
+        <AdminIcon name="add_a_photo" size={20} /> Duyệt ảnh từ thiết bị
       </span>
     </>
   );

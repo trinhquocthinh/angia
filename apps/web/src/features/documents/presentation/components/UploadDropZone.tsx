@@ -7,9 +7,9 @@ export const ACCEPT =
 
 const ZONE_STATE = {
   disabled: 'cursor-not-allowed border-border bg-surface opacity-70',
-  idle: 'cursor-pointer border-border bg-surface hover:border-accent/60 hover:bg-surface',
+  idle: 'cursor-pointer border-border/80 bg-surface hover:border-secondary hover:bg-surface',
   // Con không nhận sự kiện kéo để dragleave không nháy khi lướt qua chữ/biểu tượng.
-  over: 'scale-[1.01] cursor-copy border-accent bg-accent-soft/30 shadow-md *:pointer-events-none',
+  over: 'scale-[1.01] cursor-copy border-accent bg-accent-soft/50 shadow-stitch-md *:pointer-events-none',
 };
 
 export function UploadDropZone({
@@ -40,7 +40,7 @@ export function UploadDropZone({
       }}
       aria-disabled={disabled}
       style={revealStyle(5)}
-      className={`angia-modal-reveal group flex flex-col items-center justify-center gap-1 rounded-2xl border-[1.5px] border-dashed p-8 text-center shadow-sm transition-[background-color,border-color,box-shadow,scale] duration-200 ease-out focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus motion-reduce:transition-none max-sm:p-6 ${
+      className={`doc-bento-card angia-modal-reveal group flex flex-col items-center justify-center gap-1.5 border-2 border-dashed p-8 text-center transition-[background-color,border-color,box-shadow,scale] duration-200 ease-out focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus motion-reduce:transition-none max-sm:p-6 ${
         ZONE_STATE[disabled ? 'disabled' : over ? 'over' : 'idle']
       }`}
     >

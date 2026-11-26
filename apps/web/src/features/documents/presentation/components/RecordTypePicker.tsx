@@ -15,10 +15,10 @@ export function RecordTypePicker({
   onChange: (value: DocumentType) => void;
 }) {
   return (
-    <PickerCard icon="category" title="Loại dữ liệu" hint="Bắt buộc" required>
+    <PickerCard icon="receipt_long" title="Loại dữ liệu" hint="Bắt buộc" required>
       {DOCUMENT_TYPES.filter((type) => type.value !== 'device_reading' || allowReading).map((type) => (
         <ChoiceChip key={type.value} selected={value === type.value} onClick={() => onChange(type.value)}>
-          <span className={value === type.value ? 'text-accent-soft' : 'text-text-secondary'}>
+          <span className={value === type.value ? 'text-on-accent' : 'text-secondary'}>
             <DocumentIcon name={type.icon} size={16} />
           </span>
           {type.label}

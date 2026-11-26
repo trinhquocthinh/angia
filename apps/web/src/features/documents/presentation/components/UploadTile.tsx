@@ -27,10 +27,10 @@ export function UploadTile({
   const busy = item.status === 'queued' || item.status === 'uploading';
   return (
     <li
-      className="angia-modal-reveal group flex min-w-0 flex-col gap-2 rounded-2xl bg-surface p-2 shadow-sm transition-shadow duration-200 hover:shadow-md motion-reduce:transition-none"
+      className="doc-bento-card angia-modal-reveal group flex min-w-0 flex-col gap-2.5 p-2.5 transition-shadow duration-200 hover:shadow-stitch-md motion-reduce:transition-none"
       style={revealStyle(revealIndex)}
     >
-      <div className="relative h-44 overflow-hidden rounded-xl bg-border sm:h-56">
+      <div className="relative h-44 overflow-hidden rounded-2xl bg-surface-container sm:h-56">
         {preview && broken !== preview ? (
           <img
             src={preview}

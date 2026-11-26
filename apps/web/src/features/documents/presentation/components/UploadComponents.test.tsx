@@ -11,6 +11,7 @@ import { UploadPhotoTips } from './UploadPhotoTips';
 import { UploadStepper } from './UploadStepper';
 
 vi.mock('@tanstack/react-router', () => ({ Link: ({ children }: { children: unknown }) => children }));
+const { FamilyUsageCard } = await import('./FamilyUsageCard');
 const { ProfilePicker } = await import('./ProfilePicker');
 const { UploadActions } = await import('./UploadActions');
 
@@ -215,5 +216,28 @@ describe('Giao diện /upload theo Stitch a48f7111', () => {
     );
     expect(grid).toContain('scaleX(0.64)');
     expect(grid).toContain('64%');
+  });
+  it('E30-S2-T2: hết lượt nhận diện hiện lối mở "Nhập tay" khi đã chọn hồ sơ', () => {
+    const usage = {
+      storage: { usedBytes: 1024, limitBytes: 1024 * 1024 * 100 },
+      dailyUploads: { used: 1, limit: 20, resetsAt: '2026-11-27T00:00:00Z' },
+      pendingJobs: { used: 0, limit: 5 },
+      aiOcr: {
+        month: '2026-11',
+        usedPercent: 100,
+        anyUsed: true,
+        exhausted: true,
+        reason: 'scan_quota_exhausted' as const,
+      },
+    };
+    expect(html(<FamilyUsageCard usage={usage} manualProfileId="me" />)).toContain('Nhập tay');
+    expect(
+      html(
+        <FamilyUsageCard
+          usage={{ ...usage, aiOcr: { month: '2026-11', usedPercent: 20, anyUsed: true, exhausted: false } }}
+          manualProfileId="me"
+        />,
+      ),
+    ).not.toContain('Nhập tay');
   });
 });

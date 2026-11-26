@@ -13,6 +13,7 @@ import { DocumentEntryPanel } from './entries/DocumentEntryPanel';
 import { DocumentTypeFilter } from './entries/DocumentTypeFilter';
 import { ReusePrescriptionSheet } from './entries/ReusePrescriptionSheet';
 import { DocumentsHeading } from './entries/DocumentsHeading';
+import './documents-bento.css';
 
 const reviewRepository = createReviewRepository();
 const entriesRepository = createDocumentEntriesRepository();

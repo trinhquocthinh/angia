@@ -8,6 +8,7 @@ import { createProfilesRepository } from '@src/features/profiles/infrastructure/
 import { ProfileFrame } from '@src/features/profiles/presentation/components/ProfileFrame';
 import { RecipientNotice } from '@src/features/profiles/presentation/components/RecipientNotice';
 import '@src/features/profiles/presentation/profiles.css';
+import './documents-bento.css';
 import { useFamilyUsage } from '../application/useFamilyUsage';
 import { createFamilyUsageRepository } from '../infrastructure/createFamilyUsageRepository';
 import { createXhrDocumentUploader } from '../infrastructure/createXhrDocumentUploader';

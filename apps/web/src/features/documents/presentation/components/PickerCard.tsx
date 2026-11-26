@@ -1,5 +1,9 @@
 import type { ReactNode } from 'react';
-import { DocumentIcon, type DocumentIconName } from './DocumentIcon';
+import {
+  ProfileSectionIcon,
+  type ProfileSectionIconName,
+} from '@src/features/profiles/presentation/components/ProfileSectionIcon';
+
 export function PickerCard({
   icon,
   title,
@@ -7,27 +11,26 @@ export function PickerCard({
   required = false,
   children,
 }: {
-  icon: DocumentIconName;
+  icon: ProfileSectionIconName;
   title: string;
   hint: string;
-  /** Bắt buộc: nhãn đỏ nhạt; gợi ý: chữ xám (Stitch dc9c5a6d). */
   required?: boolean;
   children: ReactNode;
 }) {
   return (
-    <fieldset className="flex min-w-0 flex-col gap-3 rounded-2xl bg-surface p-4 shadow-sm sm:p-5">
+    <fieldset className="doc-bento-card flex min-w-0 flex-col gap-3.5 p-4 sm:p-5">
       <div className="flex items-center justify-between gap-2">
         <legend className="contents">
-          <span className="flex items-center gap-1.5 text-body font-semibold text-text-primary">
-            <span className="text-accent">
-              <DocumentIcon name={icon} />
+          <span className="flex items-center gap-2.5 text-body font-semibold text-accent">
+            <span className="doc-clay-tile-sm" aria-hidden="true">
+              <ProfileSectionIcon name={icon} size={26} />
             </span>
-            {title}
+            <span className="auth-heading text-heading-2 font-semibold text-accent">{title}</span>
           </span>
         </legend>
         <span
-          className={`text-caption font-medium ${
-            required ? 'rounded-full bg-danger-soft/60 px-2 py-0.5 text-danger' : 'text-text-secondary'
+          className={`rounded-full px-2.5 py-0.5 text-caption font-semibold ${
+            required ? 'bg-danger-soft/75 text-danger' : 'bg-surface-container text-text-secondary'
           }`}
         >
           {hint}
