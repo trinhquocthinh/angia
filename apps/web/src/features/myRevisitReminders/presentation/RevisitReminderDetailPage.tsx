@@ -4,12 +4,16 @@ import { MedicationRequestError } from '@src/features/medications/application/Me
 import { useProfilesWorkspace } from '@src/features/profiles/application/useProfilesWorkspace';
 import { createProfilesRepository } from '@src/features/profiles/infrastructure/createProfilesRepository';
 import { ProfileFrame } from '@src/features/profiles/presentation/components/ProfileFrame';
+import { ReminderDetailHeading } from '@src/features/reminders/presentation/ReminderDetailHeading';
+import { ReminderDetailState } from '@src/features/reminders/presentation/ReminderDetailState';
 import { useMyRevisitReminder } from '../application/useMyRevisitReminder';
 import { createMyRevisitReminderRepository } from '../infrastructure/createMyRevisitReminderRepository';
 import { RevisitReminderDetailCard } from './RevisitReminderDetailCard';
+import '@src/shared/styles/reminders.css';
 
 const profiles = createProfilesRepository();
 const repository = createMyRevisitReminderRepository();
+
 export function RevisitReminderDetailPage({ reminderId }: { reminderId: string }) {
   const session = useCurrentSession(fetchCurrentSession);
   const workspace = useProfilesWorkspace(profiles, session.data);
@@ -23,34 +27,22 @@ export function RevisitReminderDetailPage({ reminderId }: { reminderId: string }
       logout={workspace.logout}
       mobileTitle="Lời nhắc tái khám"
     >
-      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
-        <h1 className="auth-heading text-heading-1 font-semibold text-text-primary">Lời nhắc tái khám</h1>
+      <div className="mx-auto flex w-full max-w-[680px] flex-col gap-5 pb-6">
+        <ReminderDetailHeading
+          title="Lời nhắc tái khám"
+          subtitle="Thông tin ngày hẹn và các đơn thuốc liên quan"
+          revisit
+        />
         {reminder.error ? (
-          <div
-            role="alert"
-            className="flex flex-col items-start gap-3 rounded-[20px] bg-surface p-6 text-caption"
-          >
-            <p>
-              {hidden
-                ? 'Không tìm thấy lời nhắc hoặc bạn không có quyền xem.'
-                : 'Không thể tải lời nhắc. Vui lòng thử lại.'}
-            </p>
-            {!hidden && (
-              <button
-                type="button"
-                onClick={() => void reminder.refetch()}
-                className="min-h-11 rounded-full bg-accent px-5 font-semibold text-on-accent"
-              >
-                Thử lại
-              </button>
-            )}
-          </div>
+          hidden ? (
+            <ReminderDetailState kind="hidden" />
+          ) : (
+            <ReminderDetailState kind="error" onRetry={() => void reminder.refetch()} />
+          )
         ) : reminder.data ? (
           <RevisitReminderDetailCard reminder={reminder.data} />
         ) : (
-          <p role="status" className="rounded-[20px] bg-surface p-6 text-body">
-            Đang tải lời nhắc…
-          </p>
+          <ReminderDetailState kind="loading" />
         )}
       </div>
     </ProfileFrame>

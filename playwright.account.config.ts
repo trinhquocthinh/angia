@@ -19,6 +19,7 @@ export default defineConfig({
     '**/householdHome.spec.ts',
     '**/profileGuardians.spec.ts',
     '**/profileDirectory.spec.ts',
+    '**/reminders.spec.ts',
     '**/accountDataDeletion.spec.ts',
   ],
   testIgnore: '**/._*',

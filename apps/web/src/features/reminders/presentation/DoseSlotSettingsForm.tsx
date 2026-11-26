@@ -1,12 +1,16 @@
-import { useState, type FormEvent } from 'react';
+import { useId, useState, type FormEvent } from 'react';
 import type { DoseSlotList } from '@angia/contracts';
 import type { DoseSlotTimes } from '../application/ports';
+import { AdminIcon } from '@src/features/family/presentation/components/AdminIcon';
+import { Button } from '@src/shared/ui/button/Button';
 import {
   DOSE_SLOTS,
   toDoseSlotForm,
   validateDoseSlotForm,
   type DailySlot,
 } from '../application/doseSlotForm';
+import { DoseSlotTile } from './DoseSlotTile';
+import { ReminderFormFeedback } from './ReminderFormFeedback';
 
 type Props = {
   saved: DoseSlotList;
@@ -17,11 +21,9 @@ type Props = {
   onSubmit: (slots: DoseSlotTimes) => void;
 };
 
-const inputClass =
-  'min-h-11 w-full rounded-xl border border-border bg-surface px-3 text-body tabular-nums text-text-primary aria-invalid:border-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus';
-
-// SPEC-025 (Design §5 "Khung giờ buổi"): 4 ô giờ Sáng/Trưa/Chiều/Tối; để trống = không nhắc buổi đó.
+// SPEC-025 (Design §5 "Khung giờ buổi"): lưới Bento 4 ô giờ Sáng/Trưa/Chiều/Tối; để trống = không nhắc buổi đó.
 export function DoseSlotSettingsForm({ saved, pending, serverError, done, onSubmit }: Props) {
+  const idPrefix = useId();
   const [form, setForm] = useState(() => toDoseSlotForm(saved));
   const [invalid, setInvalid] = useState<{ slot: DailySlot; message: string } | null>(null);
   const submit = (event: FormEvent) => {
@@ -31,48 +33,44 @@ export function DoseSlotSettingsForm({ saved, pending, serverError, done, onSubm
     if (result.ok) onSubmit(result.slots);
   };
   return (
-    <form onSubmit={submit} noValidate className="flex flex-col gap-5 rounded-xl bg-surface p-5 shadow-sm">
+    <form onSubmit={submit} noValidate className="flex min-w-0 flex-col gap-5">
       {saved.length === 0 && (
-        <p className="rounded-xl bg-accent-soft px-4 py-3 text-caption text-text-secondary">
-          Chưa thiết lập khung giờ nhắc.
-        </p>
+        <div className="reminder-callout text-caption">
+          <AdminIcon name="info" size={18} />
+          <p>Chưa thiết lập khung giờ nhắc.</p>
+        </div>
       )}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
         {DOSE_SLOTS.map(({ slot, label }) => (
-          <label key={slot} className="flex flex-col gap-1.5 text-caption font-semibold text-text-secondary">
-            {label}
-            <input
-              type="time"
-              name={slot}
-              value={form[slot]}
-              aria-invalid={invalid?.slot === slot || undefined}
-              aria-describedby={invalid?.slot === slot ? 'dose-slot-error' : undefined}
-              onChange={(event) => setForm({ ...form, [slot]: event.target.value })}
-              className={inputClass}
-            />
-          </label>
+          <DoseSlotTile
+            key={slot}
+            id={`${idPrefix}-${slot}`}
+            slot={slot}
+            label={label}
+            value={form[slot]}
+            invalid={invalid?.slot === slot}
+            onChange={(value) => setForm({ ...form, [slot]: value })}
+          />
         ))}
       </div>
-      <p className="text-caption text-text-secondary">
-        Giờ theo giờ Việt Nam, tăng dần từ Sáng tới Tối. Để trống buổi không cần nhắc.
-      </p>
-      {(invalid || serverError) && (
-        <p id="dose-slot-error" role="alert" className="text-body font-medium text-danger">
-          {invalid?.message ?? serverError}
-        </p>
-      )}
-      {done && !invalid && !serverError && (
-        <p role="status" className="text-body font-medium text-accent">
-          Đã lưu khung giờ nhắc.
-        </p>
-      )}
-      <button
+      <div className="reminder-callout text-caption">
+        <AdminIcon name="info" size={18} />
+        <p>Giờ theo giờ Việt Nam, tăng dần từ Sáng tới Tối. Để trống buổi không cần nhắc.</p>
+      </div>
+      <ReminderFormFeedback
+        errorId="dose-slot-error"
+        error={invalid?.message ?? serverError}
+        done={done}
+        successText="Đã lưu khung giờ nhắc."
+      />
+      <Button
         type="submit"
         disabled={pending}
-        className="min-h-14 self-start rounded-xl bg-accent px-5 text-button-primary font-semibold text-on-accent disabled:opacity-55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        className="w-full rounded-2xl shadow-stitch-sm sm:w-auto sm:self-end sm:px-6"
       >
+        <AdminIcon name="save" size={18} />
         {pending ? 'Đang lưu…' : 'Lưu khung giờ'}
-      </button>
+      </Button>
     </form>
   );
 }

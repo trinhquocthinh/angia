@@ -181,6 +181,43 @@ Owner đã duyệt UI local; chưa tương đương nghiệm thu toàn bộ Epic
 kiểm tra SIT/Production hoặc deploy. Tài liệu thiết kế và master plan chi tiết
 nằm tại `../../Docs/angia/` (ngoài Git repo này).
 
+## Nhắc thuốc — E30-S2-T1, UI owner duyệt 2026-11-26
+
+Ba route `/profiles/:id/reminders`, `/reminders/:id` và
+`/revisit-reminders/:id` dùng thẻ Clay Bento, icon cục bộ, tiêu đề Newsreader,
+token sáng/tối và nút Chuẩn/Chữ lớn 46/56px. Cài đặt có liên kết quay về đúng hồ
+sơ và tới `/notifications`; không giả trạng thái Push hoặc số ngày thuốc còn lại.
+Giữ nguyên giờ tăng dần, buổi trống, người nhận cố định của hồ sơ liên kết,
+người giám hộ của trẻ, quyền xác nhận cả buổi/hủy và quyền mở tóm tắt đi khám.
+Không đổi API, domain, schema hoặc dependency.
+
+Owner đã xác nhận UI PASS ngày 2026-11-26 và yêu cầu cập nhật tài liệu, commit.
+Bản cuối có hero hồ sơ và số buổi từ dữ liệu đã lưu, ô giờ dùng icon buổi chung,
+thẻ người nhận có avatar, minh họa màn hình khóa không chứa định danh và các
+trạng thái tải/lỗi/đã xác nhận đồng bộ theo token. Danh sách thuốc và đơn tái khám
+tách component; số thuốc/số đơn lấy từ response, không dựng số ngày còn thuốc.
+
+Seed phục vụ duyệt UI: `yarn dev:seed:reminders tester tester1`.
+Chỉ dùng DB `angia_dev` với role `angia_dev_app` NOBYPASSRLS; tạo hồ sơ mẫu rỗng,
+có dữ liệu, hồ sơ trẻ và bổ sung dữ liệu mẫu còn thiếu cho hồ sơ liên kết của
+Thành viên được chỉ định. Không đổi quyền hoặc liên kết tài khoản. Script in
+đường dẫn từng màn sau khi transaction commit. Xem [hướng dẫn seed](scripts/dev/README.md).
+
+Kiểm local: 74 unit web liên quan và 6 unit kiểm cấu hình seed PASS;
+build/typecheck/lint PASS; budget mọi route ≤200 KB gzip, TC-729 PASS.
+`yarn verify:fast` PASS: typecheck toàn workspace và 4.116 test/823 tệp.
+E2E `reminders.spec.ts` 30/30 PASS trên Chromium touch/desktop và WebKit touch:
+lưu từ rỗng, validation, người nhận liên kết/giám hộ, xác nhận/hủy, quyền xem,
+hai nền/hai cỡ chữ ở 360/768/1024/1440px và phóng chữ 200%.
+Axe kiểm nội dung ba màn ở 360px/Chữ lớn/hai nền: 0 serious/critical.
+Checkpoint seed ban đầu đã đối chiếu chạy lại trên DB dev: không thay đổi dòng
+hiện có; use case/repository thật kiểm quyền main/member và RLS PASS. Bản seed
+cuối bổ sung đường dẫn đã xác nhận/tái khám cho hồ sơ liên kết; không nạp lại DB
+trong lần cập nhật tài liệu/commit này để giữ trạng thái UI owner vừa duyệt.
+UI local đã được owner duyệt; chưa full `yarn verify`, PR hoặc deploy.
+Không suy từ duyệt UI thành nghiệm thu toàn bộ SPEC-081/Epic 30 hoặc TC-876 mọi route.
+Bằng chứng chi tiết: `../../Docs/angia/acceptance/v1.0/evidence/e30-s2-t1-2026-11-26.md`.
+
 ## Quản trị hệ thống
 
 Tài khoản có quyền quản trị hệ thống truy cập `/admin` để tạo nhóm gia đình, tìm tài khoản, gán nhóm, đổi vai trò và gỡ tài khoản khỏi nhóm. Quản trị hệ thống chưa có nhóm vẫn truy cập được trang này; tài khoản thường chưa có nhóm được chuyển đến màn Bắt đầu để tự tạo nhà. API kiểm tra quyền và các ràng buộc thành viên, bao gồm việc giữ ít nhất một Quản trị chính trong nhóm.
