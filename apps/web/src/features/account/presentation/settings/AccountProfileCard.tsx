@@ -10,24 +10,24 @@ export function AccountProfileCard({ profile }: { profile: AccountProfileModel }
         <span className="account-avatar" aria-hidden="true">
           <span className="account-avatar-inner">{profile.initial}</span>
         </span>
-        <dl className="account-profile-meta">
-          <div className="account-profile-name">
+        <div className="account-profile-meta">
+          <dl className="account-profile-name">
             <dt className="account-profile-label">Tên hiển thị</dt>
             <dd className="account-profile-value">{profile.displayName}</dd>
-          </div>
+          </dl>
           <div className="account-profile-tags">
-            <div className="account-profile-chip">
+            <dl className="account-profile-chip">
               <dt className="account-chip-label">Nhà</dt>
               <dd className="account-chip-value">{profile.familyName}</dd>
-            </div>
+            </dl>
             {profile.roleLabel && (
-              <div className="account-profile-chip account-profile-role">
+              <dl className="account-profile-chip account-profile-role">
                 <dt className="account-chip-label">Vai trò</dt>
                 <dd className="account-chip-value">{profile.roleLabel}</dd>
-              </div>
+              </dl>
             )}
           </div>
-        </dl>
+        </div>
       </div>
     </section>
   );

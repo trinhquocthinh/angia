@@ -30,7 +30,7 @@ export function SpikeStats({ load, fps, trial, onResetTrial }: Props) {
         {target
           ? `${trial.index + 1}/${total}: chạm ${describeLocation(target)} · trúng ${trial.hits}`
           : `Trúng ${trial.hits}/${total}`}{' '}
-        <button type="button" className="underline" onClick={onResetTrial}>
+        <button type="button" className="inline-flex min-h-11 items-center underline" onClick={onResetTrial}>
           Làm lại
         </button>
       </dd>

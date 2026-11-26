@@ -73,7 +73,7 @@ function SheetHeader({ summary, createdYear }: { summary: VisitSummary; createdY
   return (
     <header className="flex items-end justify-between gap-6 border-b-[1.5px] border-print-text pb-2.5">
       <div className="flex min-w-0 flex-col gap-0.5">
-        <span className="text-[11pt] font-semibold tracking-[.06em] text-print-accent">
+        <span className="text-[12pt] font-semibold tracking-[.06em] text-print-accent">
           AN GIA · TÓM TẮT SỨC KHỎE
         </span>
         <span className="text-[20pt] leading-[26pt] font-semibold break-words">{name}</span>

@@ -26,8 +26,8 @@ export function PainEntryList({
                 type="button"
                 onClick={() => onEdit(entry)}
                 className="flex min-h-11 w-full cursor-pointer flex-wrap items-center justify-between gap-2 rounded-xl text-left transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-                aria-label={`Sửa lần ghi ${formatPainEntryTime(entry.recordedAt)}`}
               >
+                <span className="sr-only">Sửa lần ghi </span>
                 <span className="rounded-xl border border-border/30 bg-surface px-3 py-1 text-heading-3 font-bold text-text-primary tabular-nums">
                   {entry.level}/10
                 </span>
