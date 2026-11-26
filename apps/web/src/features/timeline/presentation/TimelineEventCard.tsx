@@ -38,20 +38,20 @@ type Props = { event: TimelineEvent; profileId: string | undefined };
 
 export function TimelineEventCard({ event, profileId }: Props) {
   return (
-    <article className="profile-bento-card flex min-w-0 items-start gap-3.5 p-4 md:p-5">
-      <ProfileSectionIcon name={EVENT_ICONS[event.kind]} size={36} />
+    <article className="profile-bento-card flex min-w-0 items-start gap-3.5 p-4 sm:p-5">
+      <ProfileSectionIcon name={EVENT_ICONS[event.kind]} size={40} />
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-body font-semibold text-accent">{labels[event.kind]}</h3>
           <time
             dateTime={event.time ? `${event.date}T${event.time}` : event.date}
-            className="rounded-full bg-surface-container px-2.5 py-0.5 text-caption font-medium text-text-secondary tabular-nums"
+            className="rounded-full border border-border/35 bg-bg px-3 py-1 text-caption font-medium text-text-secondary tabular-nums"
           >
             {formatDay(event.date)}
             {event.time ? ` · ${event.time}` : ''}
           </time>
         </div>
-        <div className="mt-2 space-y-1.5 text-caption break-words text-text-primary">
+        <div className="mt-2.5 space-y-2 text-caption break-words text-text-primary">
           <TimelineEventDetails event={event} profileId={profileId} />
         </div>
       </div>

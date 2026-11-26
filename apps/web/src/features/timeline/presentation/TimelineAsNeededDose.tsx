@@ -11,8 +11,8 @@ export function TimelineAsNeededDose({ data }: Props) {
   const amount = [quantity, data.unit].filter((value) => value !== null).join(' ');
   return (
     <>
-      <p>{data.name}</p>
-      {amount && <p>{amount}</p>}
+      <p className="text-body font-semibold text-text-primary">{data.name}</p>
+      {amount && <p className="text-text-secondary tabular-nums">{amount}</p>}
     </>
   );
 }
