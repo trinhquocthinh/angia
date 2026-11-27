@@ -2,25 +2,8 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <script>
-      // Khôi phục nền sáng/tối và cỡ chữ trước khi dựng giao diện để tránh nháy nền/chữ (SPEC-080).
-      try {
-        var savedTheme = localStorage.getItem('angia-theme');
-        var darkSystem =
-          typeof window.matchMedia === 'function' &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.dataset.theme =
-          savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : darkSystem ? 'dark' : 'light';
-        document.documentElement.dataset.textSize =
-          localStorage.getItem('angia-large-text') === 'true' ? 'large' : 'standard';
-      } catch {
-        document.documentElement.dataset.theme =
-          typeof window.matchMedia === 'function' && window.matchMedia('(prefers-color-scheme: dark)').matches
-            ? 'dark'
-            : 'light';
-        document.documentElement.dataset.textSize = 'standard';
-      }
-    </script>
+    <!-- Script đồng bộ, chạy trước khi dựng giao diện; tệp tĩnh vì CSP chặn inline (TC-856). -->
+    <script src="/theme-init.js"></script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <!-- viewport-fit=cover: khi mở như ứng dụng (PWA) giao diện phủ kín màn hình, env(safe-area-inset-*) có giá trị. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
