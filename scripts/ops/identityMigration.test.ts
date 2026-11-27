@@ -84,6 +84,7 @@ it('TC-908: rollback chỉ gửi cặp ID và username của dòng migrate vốn
 });
 it('TC-900: thay đổi checksum credential làm apply hủy transaction dù số đếm giữ nguyên', async () => {
   const query = vi.fn(async (sql: string) => {
+    if (sql.includes('current_database()')) return { rows: [{ database: 'angia_test' }] };
     if (sql.startsWith('SELECT\n')) {
       const changed = query.mock.calls.filter(([statement]) => statement.startsWith('SELECT\n')).length > 1;
       return {
@@ -94,7 +95,67 @@ it('TC-900: thay đổi checksum credential làm apply hủy transaction dù s�
     return { rows: [], rowCount: 0 };
   });
   await expect(
-    applyIdentityMapping({ query } as unknown as pg.ClientBase, mapping, { apply: true }),
+    applyIdentityMapping({ query } as unknown as pg.ClientBase, mapping, {
+      apply: true,
+      database: 'angia_test',
+    }),
   ).rejects.toThrow(/Đối chiếu trước\/sau/);
   expect(query).toHaveBeenLastCalledWith('ROLLBACK');
+});
+
+function migrationClient() {
+  let updated = false;
+  const query = vi.fn(async (sql: string) => {
+    if (sql.includes('current_database()')) return { rows: [{ database: 'angia_test' }] };
+    if (sql.startsWith('SELECT\n')) return { rows: [{ ...snapshot, accountsWithUsername: updated ? 2 : 1 }] };
+    if (sql.includes('SELECT username_normalized')) return { rows: [{ username: null }] };
+    if (sql.startsWith('UPDATE')) updated = true;
+    return { rows: [], rowCount: sql.startsWith('UPDATE') ? 1 : 0 };
+  });
+  return { client: { query } as unknown as pg.ClientBase, query };
+}
+
+it('TC-900: dry-run dùng REPEATABLE READ, không khóa bảng hay SELECT FOR UPDATE', async () => {
+  const { client, query } = migrationClient();
+  expect(await applyIdentityMapping(client, mapping)).toMatchObject({ mode: 'dry-run', updated: 1 });
+  const statements = query.mock.calls.map(([sql]) => sql);
+  expect(statements[0]).toBe('BEGIN ISOLATION LEVEL REPEATABLE READ');
+  expect(statements.some((sql) => /LOCK TABLE|FOR UPDATE/.test(sql))).toBe(false);
+  expect(statements.some((sql) => sql.startsWith('UPDATE'))).toBe(true);
+  expect(query).toHaveBeenLastCalledWith('ROLLBACK');
+});
+
+it.each([undefined, ''])(
+  'TC-900: apply thiếu tên DB (%s) bị từ chối trước mọi truy vấn',
+  async (database) => {
+    const { client, query } = migrationClient();
+    await expect(applyIdentityMapping(client, mapping, { apply: true, database })).rejects.toThrow(/DB/);
+    expect(query).not.toHaveBeenCalled();
+  },
+);
+
+it.each([false, true])(
+  'TC-900: tên DB lệch thì rollback trước khi khóa hoặc ghi (apply=%s)',
+  async (apply) => {
+    const { client, query } = migrationClient();
+    await expect(applyIdentityMapping(client, mapping, { apply, database: 'sai_ten' })).rejects.toThrow(/DB/);
+    const statements = query.mock.calls.map(([sql]) => sql);
+    expect(statements[1]).toBe('SELECT current_database() AS database');
+    expect(statements.some((sql) => /LOCK TABLE|FOR UPDATE|^UPDATE/.test(sql))).toBe(false);
+    expect(query).toHaveBeenLastCalledWith('ROLLBACK');
+  },
+);
+
+it('TC-900: apply đúng DB kiểm tên trước khi khóa bảng và giữ khóa dòng', async () => {
+  const { client, query } = migrationClient();
+  expect(await applyIdentityMapping(client, mapping, { apply: true, database: 'angia_test' })).toMatchObject({
+    mode: 'apply',
+    updated: 1,
+  });
+  const statements = query.mock.calls.map(([sql]) => sql);
+  expect(statements[0]).toBe('BEGIN');
+  expect(statements[1]).toBe('SELECT current_database() AS database');
+  expect(statements[2]).toContain('LOCK TABLE');
+  expect(statements.filter((sql) => sql.includes('FOR UPDATE'))).toHaveLength(2);
+  expect(query).toHaveBeenLastCalledWith('COMMIT');
 });

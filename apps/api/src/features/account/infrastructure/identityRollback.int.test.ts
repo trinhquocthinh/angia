@@ -15,6 +15,7 @@ const { applyIdentityMapping } = await import(
 const { runIdentityRollback } = await import(new URL(`${base}runIdentityRollback.ts`, import.meta.url).href);
 let database: Awaited<ReturnType<typeof startTestDatabase>>;
 let owner: pg.Client;
+let databaseName: string;
 let fixture: Awaited<ReturnType<typeof seedIdentityMigrationFixtures>>;
 const fakeHash = '$argon2id$v=19$m=65536,t=3,p=1$c2FsdHRodQ$aGFzaHRodQ';
 
@@ -23,6 +24,8 @@ beforeAll(async () => {
   await runMigrations(database.ownerUrl);
   owner = new pg.Client({ connectionString: database.ownerUrl });
   await owner.connect();
+  databaseName = (await owner.query<{ database: string }>('SELECT current_database() AS database')).rows[0]!
+    .database;
 });
 beforeEach(async () => {
   await owner.query('TRUNCATE accounts, families CASCADE');
@@ -36,7 +39,7 @@ afterAll(async () => {
 async function migratedMapping() {
   const mapping = await readIdentityInventory(owner);
   for (const row of mapping.accounts) row.username = `nguoi-thu-${fixture.ids.indexOf(row.accountId)}`;
-  await applyIdentityMapping(owner, mapping, { apply: true });
+  await applyIdentityMapping(owner, mapping, { apply: true, database: databaseName });
   return mapping;
 }
 
@@ -85,4 +88,14 @@ it('TC-908: apply giữ account có credential và username khác mapping, khôn
       username_normalized: fixture.ids.slice(0, 2).includes(row.id) ? row.username_normalized : null,
     })),
   });
+});
+
+it('TC-900: apply từ chối DB đích sai và không ghi username', async () => {
+  const mapping = await readIdentityInventory(owner);
+  for (const row of mapping.accounts) row.username = `nguoi-thu-${fixture.ids.indexOf(row.accountId)}`;
+  const before = await snapshot();
+  await expect(applyIdentityMapping(owner, mapping, { apply: true, database: 'sai_ten' })).rejects.toThrow(
+    /DB/,
+  );
+  expect(await snapshot()).toEqual(before);
 });

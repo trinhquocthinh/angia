@@ -186,13 +186,8 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
   }
   registerHealthDataCacheHeaders(app);
   registerScanQuotaHeaders(app);
-  app.use(
-    '/api/*',
-    except(
-      ['/api/consent-invitations/view', '/api/consent-invitations/respond'],
-      loadSession(deps.auth.login, cookies),
-    ),
-  );
+  // Route công khai không đọc/trượt phiên: handler của chúng không dùng c.var.session.
+  app.use('/api/*', except(PUBLIC_PATHS, loadSession(deps.auth.login, cookies)));
   app.use('/api/*', except(PUBLIC_PATHS, requireSession()));
   app.use('/api/*', except(PUBLIC_PATHS, requirePasswordChanged()), limitRequestBody());
   app.use('/api/*', except(PUBLIC_PATHS, requireLegalAcceptance(deps.legal, deps.auth.logger)));

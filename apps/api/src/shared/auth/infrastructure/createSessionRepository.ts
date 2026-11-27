@@ -1,5 +1,5 @@
 import { deleteSessionAndPushDevice } from './deleteSessionAndPushDevice.js';
-import { and, eq, gt, isNull } from 'drizzle-orm';
+import { and, eq, gt, isNull, or } from 'drizzle-orm';
 import type { Database } from '@src/shared/db/createDatabase.js';
 import { accounts, families, sessions } from '@src/shared/db/schema/index.js';
 import type { SessionRepository } from '../application/ports.js';
@@ -50,6 +50,8 @@ export function createSessionRepository(db: Database): SessionRepository {
             gt(sessions.expiresAt, now),
             isNull(accounts.lockedAt),
             isNull(accounts.deletedAt),
+            // Phiên hạn chế (mật khẩu tạm, SPEC-062) hết hiệu lực cùng mật khẩu tạm dù chưa tới hạn 30 ngày.
+            or(eq(sessions.passwordChangeRequired, false), gt(accounts.tempPasswordExpiresAt, now)),
           ),
         )
         .limit(1);

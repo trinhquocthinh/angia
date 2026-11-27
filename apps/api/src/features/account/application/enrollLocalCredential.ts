@@ -16,7 +16,8 @@ export async function enrollLocalCredential(
   if (!deps.enrollmentEnabled) return { ok: false, code: 'ERR_NOT_FOUND' };
   try {
     const age = input.oidcAuthTime ? deps.now().getTime() - input.oidcAuthTime.getTime() : NaN;
-    if (input.authMethod !== 'oidc' || !Number.isFinite(age) || age > 300_000) {
+    // Lệch đồng hồ Authentik/API tối đa 60 giây (owner chốt 2026-11-27); auth_time xa hơn ở tương lai bị từ chối.
+    if (input.authMethod !== 'oidc' || !Number.isFinite(age) || age > 300_000 || age < -60_000) {
       return { ok: false, code: 'ERR_FORBIDDEN' };
     }
     const account = await deps.enrollments.findAccount(input.accountId);

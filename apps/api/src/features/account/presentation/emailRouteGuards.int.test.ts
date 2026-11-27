@@ -49,6 +49,12 @@ describe('SPEC-085: cổng phiên, CSRF và Origin của route email', () => {
   });
   it.each(routes)('TC-932: phiên hạn chế bị chặn tại $path', async ({ path, method, body }) => {
     await t.owner.query('UPDATE sessions SET password_change_required=true WHERE id=$1', [device.id]);
+    // Phiên hạn chế chỉ hợp lệ khi mật khẩu tạm còn hạn (SPEC-062).
+    await t.owner.query(
+      `UPDATE accounts SET must_change_password=true, temp_password_expires_at=now() + interval '1 day'
+      WHERE id=(SELECT account_id FROM sessions WHERE id=$1)`,
+      [device.id],
+    );
     try {
       const response = await t.app.request(path, {
         method,

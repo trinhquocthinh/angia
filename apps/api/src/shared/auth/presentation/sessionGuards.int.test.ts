@@ -144,6 +144,31 @@ describe('Phiên, CSRF, requireMain/requireAdmin và GET /api/me', () => {
     expect(freshResponse.headers.getSetCookie()).toEqual([]);
   });
 
+  it.each([
+    '/api/invitations/inspect',
+    '/api/registration-switch',
+    '/api/legal/current',
+    '/api/health',
+    '/api/auth/login',
+    '/api/auth/register',
+    '/api/auth/password-login',
+    '/api/auth/email-verifications/confirm',
+    '/api/auth/password-reset-requests',
+    '/api/auth/password-resets',
+    '/api/auth/callback',
+    '/api/consent-invitations/view',
+    '/api/consent-invitations/respond',
+  ])('route công khai %s không nạp phiên: không trượt hạn, không đặt lại cookie phiên', async (path) => {
+    const aging = await seedSession(await seedAccount(), 10 * DAY_MS);
+    const expiresAt = async () =>
+      (await owner.query<{ e: Date }>(`SELECT expires_at AS e FROM sessions WHERE id = $1`, [aging.id]))
+        .rows[0]?.e;
+    const before = await expiresAt();
+    const response = await app.request(path, { headers: { cookie: aging.cookie } });
+    expect(response.headers.getSetCookie().join('\n')).not.toMatch(/angia_session=/);
+    expect(await expiresAt()).toEqual(before);
+  });
+
   it('TC-078: POST thiếu hoặc sai X-CSRF-Token bị từ chối ERR_FORBIDDEN, phiên không bị xóa', async () => {
     const session = await seedSession(await seedAccount({ familyRole: 'main' }));
     for (const csrf of [undefined, 'sai-token', `${session.csrf}x`]) {
