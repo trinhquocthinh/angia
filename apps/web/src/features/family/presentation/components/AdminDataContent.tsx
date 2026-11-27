@@ -1,3 +1,7 @@
+import { AdminStatsCard } from './AdminStatsCard';
+import { AdminAuditCard } from './AdminAuditCard';
+import type { useAdminStats } from '../../application/useAdminStats';
+import type { useAdminAuditEvents } from '../../application/useAdminAuditEvents';
 import { RegistrationSwitchCard } from './RegistrationSwitchCard';
 import { FoundingInvitationsCard } from './FoundingInvitationsCard';
 import type { useRegistrationSwitch } from '../../application/useRegistrationSwitch';
@@ -22,6 +26,7 @@ import { PendingAccountsCard } from './PendingAccountsCard';
 import { FamilyAccessCard } from './FamilyAccessCard';
 
 type AdminDataContentProps = {
+  reporting: { stats: ReturnType<typeof useAdminStats>; audit: ReturnType<typeof useAdminAuditEvents> };
   registrationSwitch: ReturnType<typeof useRegistrationSwitch>;
   foundingInvitations: ReturnType<typeof useFoundingInvitations>;
   workspace: ReturnType<typeof useAdminWorkspace>;
@@ -81,6 +86,8 @@ export function AdminDataContent(props: AdminDataContentProps) {
             currentFamilyId={props.currentFamilyId}
           />
           <ScanQuotaCard key={currentAccountId} state={scanQuota} />
+          <AdminStatsCard state={props.reporting.stats} />
+          <AdminAuditCard key={currentAccountId} state={props.reporting.audit} />
         </div>
         <aside className="flex min-w-0 flex-col gap-6 lg:col-span-4">
           <AiRoutingCard key={currentAccountId} state={aiRouting} updatedByName={updatedByName} />

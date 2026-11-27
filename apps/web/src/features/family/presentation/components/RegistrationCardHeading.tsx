@@ -1,6 +1,6 @@
 import { useId } from 'react';
 
-type Props = { title: string; icon: 'how_to_reg' | 'vpn_key' };
+type Props = { title: string; icon: 'how_to_reg' | 'vpn_key' | 'analytics' | 'history' };
 export function RegistrationCardHeading({ title, icon }: Props) {
   const id = useId();
   return (

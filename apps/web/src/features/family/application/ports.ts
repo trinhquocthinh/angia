@@ -51,3 +51,16 @@ export interface FoundingInvitationRepository {
   create(csrfToken: string): Promise<FoundingInvitation>;
   revoke(id: string, csrfToken: string): Promise<void>;
 }
+
+export type AdminAuditAction = components['schemas']['AdminAuditAction'];
+export type AdminAuditEvent = components['schemas']['AdminAuditEvent'];
+export type AdminAuditResponse = components['schemas']['AdminAuditResponse'];
+export type AdminStatsWeek = components['schemas']['AdminStatsWeek'];
+export type AdminStatsResponse = components['schemas']['AdminStatsResponse'];
+export type AdminAuditQuery = NonNullable<paths['/api/admin/audit-events']['get']['parameters']['query']>;
+export interface AdminAuditRepository {
+  list(query: AdminAuditQuery, signal?: AbortSignal): Promise<AdminAuditResponse>;
+}
+export interface AdminStatsRepository {
+  get(signal?: AbortSignal): Promise<AdminStatsResponse>;
+}

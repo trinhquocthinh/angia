@@ -1,3 +1,5 @@
+import type { useAdminStats } from '../../application/useAdminStats';
+import type { useAdminAuditEvents } from '../../application/useAdminAuditEvents';
 import type { useRegistrationSwitch } from '../../application/useRegistrationSwitch';
 import type { useFoundingInvitations } from '../../application/useFoundingInvitations';
 import type { useAdminScanQuota } from '@src/features/scanQuota/application/useAdminScanQuota';
@@ -16,6 +18,7 @@ import { ActionDialog } from './ActionDialog';
 type AdminWorkspaceViewProps = {
   session: AdminSession;
   shell: AdminFrameShell;
+  reporting: { stats: ReturnType<typeof useAdminStats>; audit: ReturnType<typeof useAdminAuditEvents> };
   registrationSwitch: ReturnType<typeof useRegistrationSwitch>;
   foundingInvitations: ReturnType<typeof useFoundingInvitations>;
   workspace: ReturnType<typeof useAdminWorkspace>;
@@ -53,6 +56,7 @@ export function AdminWorkspaceView(props: AdminWorkspaceViewProps) {
         </p>
       )}
       <AdminDataContent
+        reporting={props.reporting}
         registrationSwitch={props.registrationSwitch}
         foundingInvitations={props.foundingInvitations}
         {...{ workspace, aiBudget, aiRouting, aiBilling, scanQuota }}

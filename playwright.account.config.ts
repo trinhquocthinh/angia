@@ -12,6 +12,7 @@ export default defineConfig({
     '**/accountMenuIcons.spec.ts',
     '**/account.spec.ts',
     '**/adminRegistration.spec.ts',
+    '**/adminAuditStats.spec.ts',
     '**/householdStart.spec.ts',
     '**/householdInvitations.spec.ts',
     '**/householdJoin.spec.ts',

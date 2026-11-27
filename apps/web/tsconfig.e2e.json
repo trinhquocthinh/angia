@@ -1,4 +1,9 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["e2e/**/*.tsx", "e2e/adminRegistration*.ts", "e2e/registrationAdminRoute.ts"]
+  "include": [
+    "e2e/**/*.tsx",
+    "e2e/adminRegistration*.ts",
+    "e2e/adminAuditStats*.ts",
+    "e2e/registrationAdminRoute.ts"
+  ]
 }
