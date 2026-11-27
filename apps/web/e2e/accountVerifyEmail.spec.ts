@@ -28,12 +28,16 @@ function accountVerifyEmailHappy(theme: string) {
       await hold;
       await route.fulfill({ status: 204 });
     });
+    const pageErrors: string[] = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
     await page.goto('/verify-email#token=valid-verify-token');
     await expect(page).toHaveURL(/\/verify-email$/);
     expect(await page.evaluate(() => location.hash)).toBe('');
     // Tiêu đề trạng thái chờ mang role="status" nên không phải role heading.
     const pendingHeading = page.getByRole('status').filter({ hasText: 'Đang xác minh email của bạn…' });
     await expect(pendingHeading).toBeVisible();
+    // Xoá token khỏi URL không được làm hỏng View Transition đang chạy (L2 nghiệm thu E30).
+    expect(pageErrors).toEqual([]);
     await expect(pendingHeading).toBeFocused();
     await checkAccountLayout(page);
     await accountScreenshot(page, info, 'verify-email-pending', theme);

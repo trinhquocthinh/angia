@@ -131,6 +131,8 @@
   html:has(.summary-print-root),
   body:has(.summary-print-root) {
     background: var(--color-paper);
+    /* Lề trang in theo canvas của color-scheme; ép sáng để không tô lề tối khi bật in nền (TC-859). */
+    color-scheme: light !important;
   }
   .summary-print-root {
     display: block;

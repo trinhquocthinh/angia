@@ -30,10 +30,14 @@ function accountResetPasswordHappy(theme: string) {
       await hold;
       await route.fulfill({ status: 204 });
     });
+    const pageErrors: string[] = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
     await page.goto('/reset-password#token=valid-reset-token');
     await expect(page).toHaveURL(/\/reset-password$/);
     expect(await page.evaluate(() => location.hash)).toBe('');
     await expect(page.getByRole('heading', { name: 'Đặt mật khẩu mới', exact: true })).toBeVisible();
+    // Xoá token khỏi URL không được làm hỏng View Transition đang chạy (L2 nghiệm thu E30).
+    expect(pageErrors).toEqual([]);
     await expect(page.getByText('Nhập mật khẩu mới cho tài khoản của bạn.', { exact: true })).toBeVisible();
     await expect(byLabel(page, 'Mật khẩu mới')).toBeFocused();
     await checkAccountLayout(page);
