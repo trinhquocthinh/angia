@@ -1,3 +1,4 @@
+import { setTimeout } from 'node:timers/promises';
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import pg from 'pg';
 
@@ -20,11 +21,35 @@ export async function startTestDatabase(): Promise<TestDatabase> {
     .withPassword(OWNER_ROLE)
     .start();
   const ownerUrl = container.getConnectionUri();
+  const stop = container.stop.bind(container);
+  // pool.end() trả về trước khi socket đóng; PostgreSQL tắt nhanh gửi 57P01 cho backend chưa thoát.
+  container.stop = async (options) => {
+    await waitForClientsToDisconnect(ownerUrl);
+    return stop(options);
+  };
   await createAppRole(ownerUrl);
   const appUrl = new URL(ownerUrl);
   appUrl.username = APP_ROLE;
   appUrl.password = APP_PASSWORD;
   return { container, ownerUrl, appUrl: appUrl.toString() };
+}
+
+async function waitForClientsToDisconnect(ownerUrl: string): Promise<void> {
+  const client = new pg.Client({ connectionString: ownerUrl });
+  try {
+    await client.connect();
+    const deadline = Date.now() + 2_000;
+    while (Date.now() < deadline) {
+      const result = await client.query<{ n: number }>(`
+        SELECT count(*)::int AS n FROM pg_stat_activity
+        WHERE backend_type = 'client backend' AND pid <> pg_backend_pid()
+      `);
+      if (result.rows[0]?.n === 0) return;
+      await setTimeout(50);
+    }
+  } finally {
+    await client.end();
+  }
 }
 
 // Cùng quyền với docker/dev/postgres-initdb/01-app-role.sh.
