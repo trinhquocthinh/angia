@@ -169,6 +169,118 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/registration-switch': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Đọc công khai trạng thái mở đăng ký (SPEC-074) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Trạng thái mở đăng ký */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['RegistrationSwitchResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/admin/registration-switch': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** SystemAdmin OIDC đổi công tắc mở đăng ký (SPEC-074) */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['UpdateRegistrationSwitchRequest'];
+        };
+      };
+      responses: {
+        /** @description Trạng thái đã lưu */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['RegistrationSwitchResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN | ERR_PASSWORD_CHANGE_REQUIRED | ERR_LEGAL_ACCEPTANCE_REQUIRED */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/me/data-exports': {
     parameters: {
       query?: never;
@@ -13332,6 +13444,12 @@ export interface components {
           [key: string]: unknown;
         };
       };
+    };
+    RegistrationSwitchResponse: {
+      registrationOpen: boolean;
+    };
+    UpdateRegistrationSwitchRequest: {
+      open: boolean;
     };
     Family: {
       /** Format: uuid */

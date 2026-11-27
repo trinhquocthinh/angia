@@ -259,3 +259,5 @@ export * from './jobs/sendTransactionalEmailJob.js';
 export * from './auth/accountEmailSchemas.js';
 export * from './jobs/buildDataExportJob.js';
 export * from './jobs/cleanupDataExportsJob.js';
+
+export * from './registrationSwitch/registrationSwitchSchemas.js';

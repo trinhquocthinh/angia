@@ -1,3 +1,4 @@
+import { registerRegistrationSwitchRoutes } from '@src/features/registrationSwitch/presentation/registerRegistrationSwitchRoutes.js';
 import { registerAccountDeletionRoute } from '@src/features/account/presentation/registerAccountDeletionRoute.js';
 import { registerDataExportRoutes } from '@src/features/dataExport/presentation/registerDataExportRoutes.js';
 import { registerProfileGuardianRoutes } from '@src/features/profiles/guardians/presentation/registerProfileGuardianRoutes.js';
@@ -26,6 +27,7 @@ import { registerMeRoute } from '@src/shared/auth/presentation/registerMeRoute.j
 import { registerPushRoutes } from '@src/features/pushSubscriptions/presentation/registerPushRoutes.js';
 
 export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencies): void {
+  if (deps.registrationSwitch) registerRegistrationSwitchRoutes(app, deps.registrationSwitch);
   if (deps.dataExport) registerDataExportRoutes(app, deps.dataExport);
   const cookies = { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies };
   if (deps.accountDeletion)

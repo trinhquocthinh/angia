@@ -39,6 +39,28 @@
           "error"
         ]
       },
+      "RegistrationSwitchResponse": {
+        "type": "object",
+        "properties": {
+          "registrationOpen": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "registrationOpen"
+        ]
+      },
+      "UpdateRegistrationSwitchRequest": {
+        "type": "object",
+        "properties": {
+          "open": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "open"
+        ]
+      },
       "Family": {
         "type": "object",
         "properties": {
@@ -7992,6 +8014,96 @@
           },
           "500": {
             "description": "ERR_INTERNAL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/registration-switch": {
+      "get": {
+        "tags": [
+          "registrationSwitch"
+        ],
+        "summary": "Đọc công khai trạng thái mở đăng ký (SPEC-074)",
+        "responses": {
+          "200": {
+            "description": "Trạng thái mở đăng ký",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationSwitchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/registration-switch": {
+      "put": {
+        "tags": [
+          "registrationSwitch"
+        ],
+        "summary": "SystemAdmin OIDC đổi công tắc mở đăng ký (SPEC-074)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRegistrationSwitchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Trạng thái đã lưu",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationSwitchResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN | ERR_PASSWORD_CHANGE_REQUIRED | ERR_LEGAL_ACCEPTANCE_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
             "content": {
               "application/json": {
                 "schema": {

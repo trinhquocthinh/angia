@@ -1,3 +1,4 @@
+import type { RegistrationSwitchDependencies } from '@src/features/registrationSwitch/application/ports.js';
 import type { AccountDeletionDeps } from '@src/features/account/application/deletionPorts.js';
 import type { DataExportDependencies } from '@src/features/dataExport/application/ports.js';
 import type { EmailPasswordResetDeps } from '@src/features/account/application/passwordResetPorts.js';
@@ -73,6 +74,7 @@ import type { HouseholdMembershipRepository } from '@src/features/household/appl
 import type { ProfileGuardianRepository } from '@src/features/profiles/guardians/application/ports.js';
 
 export type AppDependencies = {
+  registrationSwitch?: RegistrationSwitchDependencies;
   accountDeletion?: AccountDeletionDeps;
   dataExport?: DataExportDependencies;
   profileGuardians: ProfileGuardianRepository;
@@ -136,6 +138,7 @@ export type AppDependencies = {
 
 // Ngoại lệ duy nhất của "mọi route /api cần phiên" (Tech Spec §4); logout vẫn cần phiên + CSRF.
 const PUBLIC_PATHS = [
+  '/api/registration-switch',
   '/api/legal/current',
   '/api/health',
   '/api/auth/login',

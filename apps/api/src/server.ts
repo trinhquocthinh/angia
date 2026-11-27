@@ -1,3 +1,4 @@
+import { createRegistrationSwitchRepository } from '@src/features/registrationSwitch/infrastructure/createRegistrationSwitchRepository.js';
 import { createAccountDeletionDependencies } from '@src/features/account/infrastructure/createAccountDeletionDependencies.js';
 import { createDataExportDependencies } from '@src/features/dataExport/infrastructure/createDataExportDependencies.js';
 import { createEmailPasswordResets } from '@src/features/account/infrastructure/createEmailPasswordResets.js';
@@ -121,6 +122,10 @@ const hasher = createArgon2PasswordHasher();
 const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
 const accountDeletion = createAccountDeletionDependencies(db, boss, s3, config, hasher, logger);
 const app = createApp({
+  registrationSwitch: {
+    repository: createRegistrationSwitchRepository(db),
+    gate: createRegistrationGate(db),
+  },
   accountDeletion,
   dataExport: createDataExportDependencies(db, boss, s3, config),
   householdLeave: {

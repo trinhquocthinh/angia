@@ -15,6 +15,10 @@ const noopProbe = () => Promise.resolve();
 // App đủ mọi route nhưng hạ tầng giả: chỉ dùng để đọc cấu trúc route (OpenAPI, kiểm kê NFR-4).
 export function createStubApp() {
   return createApp({
+    registrationSwitch: {
+      repository: { setOpen: async () => undefined },
+      gate: { isOpen: async () => true },
+    },
     accountDeletion: {
       passwords: createStubAccountDeps().passwords,
       hasher: createStubAccountDeps().hasher,
