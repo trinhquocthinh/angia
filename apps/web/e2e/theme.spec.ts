@@ -73,6 +73,9 @@ for (const colorScheme of ['light', 'dark'] as const) {
       'rgb(255, 255, 255)',
     );
     await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    // Lề trang in lấy nền html/canvas: phải trắng và color-scheme sáng khi bật in nền (L3).
+    await expect(page.locator('html')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(page.locator('html')).toHaveCSS('color-scheme', 'light');
   });
 }
 

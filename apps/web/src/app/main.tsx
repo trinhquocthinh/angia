@@ -11,11 +11,13 @@ import { fetchCurrentSession } from '@src/features/auth/infrastructure/fetchCurr
 // Nạp sớm để bắt `beforeinstallprompt` của Android ngay khi trang tải, trước khi mở trang Thông báo.
 import '@src/features/pushSubscriptions/infrastructure/browserInstallPrompt';
 import { hideSplash } from './hideSplash';
+import { ignoreSkippedViewTransitions } from './ignoreSkippedViewTransitions';
 import { routeTree } from './routeTree.gen';
 import './styles.css';
 
 const queryClient = new QueryClient();
 // Design §11.4.1: chuyển trang mờ dần qua View Transitions; trình duyệt không hỗ trợ thì đổi trang tức thì.
+ignoreSkippedViewTransitions();
 const router = createRouter({ routeTree, defaultViewTransition: true });
 registerAccountNavigator((to) => router.navigate({ to, replace: true }));
 // Trang mời đồng thuận không cần phiên (SessionBoundary bỏ qua AuthBoundary) nên không gọi /api/me.
