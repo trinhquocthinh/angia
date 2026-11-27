@@ -111,6 +111,17 @@ describe('CP5.4: giữ và dispatch lượt trên PostgreSQL thật', () => {
       reason: 'budget_exhausted',
     });
   });
+  it('TC-850: dùng hết quota tháng vẫn chặn giữ lượt và không đổi bộ đếm', async () => {
+    await fx.owner.query('UPDATE family_scan_quotas SET used_scans=granted_scans');
+    await fx.owner.query('UPDATE scan_quota_months SET committed_remaining_scans=0 WHERE month=$1', [MONTH]);
+    const before = await counts();
+    expect(before).toEqual({ used: 2, held: 0, committed: 0 });
+    await expect(ledger((store) => store.reserveBudget(ids.documentId, call))).rejects.toMatchObject({
+      reason: 'scan_quota_exhausted',
+    });
+    expect(await counts()).toEqual(before);
+    expect((await fx.owner.query('SELECT * FROM ocr_operations')).rowCount).toBe(0);
+  });
   it('TC-608: hết quota, hết sáu lần gửi và RLS chặn gia đình khác', async () => {
     await fx.owner.query('UPDATE family_scan_quotas SET granted_scans=0');
     await expect(ledger((store) => store.reserveBudget(ids.documentId, call))).rejects.toMatchObject({

@@ -1,3 +1,6 @@
+import type { RateLimitDependencies } from '@src/shared/rateLimit/application/ports.js';
+import type { ClientIpResolver } from '@src/shared/rateLimit/application/ClientIpResolver.js';
+import { acceptRateLimitedInvitation } from './acceptRateLimitedInvitation.js';
 import type { InvitationInspectionRepository } from '../application/inspectionPorts.js';
 import type { OpenAPIHono } from '@hono/zod-openapi';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
@@ -8,7 +11,6 @@ import type {
   FoundingInvitationRepository,
   InvitationAcceptanceRepository,
 } from '../application/acceptancePorts.js';
-import { acceptHouseholdInvitation } from '../application/acceptHouseholdInvitation.js';
 import { createFoundingInvitation } from '../application/createFoundingInvitation.js';
 import { revokeFoundingInvitation } from '../application/revokeFoundingInvitation.js';
 import { acceptHouseholdInvitationRoute } from './acceptHouseholdInvitationRouteDefinition.js';
@@ -26,17 +28,11 @@ export interface InvitationAcceptanceDependencies {
 
 export function registerInvitationAcceptanceRoutes(
   app: OpenAPIHono<AppEnv>,
-  deps: InvitationAcceptanceDependencies,
+  deps: InvitationAcceptanceDependencies & { rateLimit: RateLimitDependencies; clientIp: ClientIpResolver },
 ): void {
   app.openapi(acceptHouseholdInvitationRoute, async (c) => {
     c.header('Cache-Control', 'no-store');
-    const result = await acceptHouseholdInvitation(
-      deps.acceptance,
-      currentSession(c).account.id,
-      c.req.valid('json').token,
-    );
-    if (!result.ok) return c.json(...errorJson(result.code));
-    return c.body(null, 204);
+    return acceptRateLimitedInvitation(c, deps, c.req.valid('json').token);
   });
   app.use('/api/admin/founding-invitations', requireAdmin());
   app.use('/api/admin/founding-invitations/*', requireAdmin());

@@ -70,6 +70,15 @@ describe('Địa chỉ ocr-mask cho gợi ý vùng che (SPEC-083, BR-085)', () =
   });
 });
 
+describe('Dải proxy tin cậy để lấy IP client (SPEC-078, Tech Spec §10.4)', () => {
+  it('mặc định rỗng; tách danh sách phân cách dấu phẩy, bỏ khoảng trắng', () => {
+    expect(loadApiConfig(env).TRUSTED_PROXY_CIDRS).toEqual([]);
+    expect(
+      loadApiConfig({ ...env, TRUSTED_PROXY_CIDRS: ' 172.18.0.0/16, fd00::/8 ,' }).TRUSTED_PROXY_CIDRS,
+    ).toEqual(['172.18.0.0/16', 'fd00::/8']);
+  });
+});
+
 describe('Trần AI theo gia đình (SPEC-031, BR-018)', () => {
   it('TC-652: không còn AI_ESTIMATED_COST_USD, AI_DEFAULT_FAMILY_MONTHLY_CAP_USD; có đặt cũng bị bỏ qua', () => {
     const config = loadApiConfig({

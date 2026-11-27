@@ -143,7 +143,7 @@ describe('SPEC-085: đổi và xác minh email qua HTTP/PostgreSQL', () => {
     expect(stored[0].token_hash).not.toBe(token);
     expect(stored[0].used_at).toBeInstanceOf(Date);
   });
-  it('TC-930: lượt gửi thứ tư bị chặn và có Retry-After', async () => {
+  it('TC-930/851: ba lượt gửi đi tiếp, lượt thứ tư bị chặn và có Retry-After', async () => {
     await setEmail();
     for (let i = 0; i < 3; i++) expect((await send()).status).toBe(202);
     const response = await send();

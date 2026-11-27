@@ -49,14 +49,21 @@ export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencie
   registerHouseholdLeaveRoute(app, deps.householdLeave);
   registerHouseholdRoutes(app, deps.household);
   registerHouseholdMembershipRoutes(app, deps.householdMembership);
-  registerInvitationAcceptanceRoutes(app, deps.invitationAcceptance);
+  registerInvitationAcceptanceRoutes(app, {
+    ...deps.invitationAcceptance,
+    rateLimit: deps.account.rateLimit,
+    clientIp: deps.account.clientIp,
+  });
   registerInspectHouseholdInvitationRoute(app, {
     repository: deps.invitationAcceptance.inspection,
     appBaseUrl: deps.invitationAcceptance.appBaseUrl,
     rateLimit: deps.account.rateLimit,
     clientIp: deps.account.clientIp,
   });
-  registerHouseholdInvitationRoutes(app, deps.householdInvitations);
+  registerHouseholdInvitationRoutes(app, {
+    ...deps.householdInvitations,
+    rateLimit: deps.account.rateLimit,
+  });
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth, deps.legal);
   registerAccountRoutes(app, { ...deps.account, cookies, logger: deps.auth.logger });

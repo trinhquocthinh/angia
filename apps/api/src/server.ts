@@ -13,7 +13,7 @@ import { createLocalPasswordChanges } from '@src/features/account/infrastructure
 import { createLocalLoginSessions } from '@src/features/account/infrastructure/createLocalLoginSessions.js';
 import { createLocalIdentityProvider } from '@src/shared/identity/infrastructure/createLocalIdentityProvider.js';
 import { createCredentialRepository } from '@src/shared/identity/infrastructure/createCredentialRepository.js';
-import { getSocketClientIp } from '@src/shared/rateLimit/infrastructure/getSocketClientIp.js';
+import { createTrustedProxyClientIp } from '@src/shared/rateLimit/infrastructure/createTrustedProxyClientIp.js';
 import { createAccountRegistrationUnitOfWork } from '@src/features/account/infrastructure/createAccountRegistrationUnitOfWork.js';
 import { createRegistrationGate } from '@src/features/account/infrastructure/createRegistrationGate.js';
 import { createLegalVersions } from '@src/features/account/infrastructure/createLegalVersions.js';
@@ -133,7 +133,7 @@ const app = createApp({
   ...createHouseholdDependencies(db, config.APP_BASE_URL, config.INVITATION_ENCRYPTION_KEY),
   legal: createLegalRepository(db),
   account: {
-    clientIp: getSocketClientIp,
+    clientIp: createTrustedProxyClientIp(config.TRUSTED_PROXY_CIDRS),
     rateLimit: accountDeletion.rateLimit,
     accounts: createAccountRegistrationUnitOfWork(db, accountDeletion.hashUsername),
     gate: createRegistrationGate(db),

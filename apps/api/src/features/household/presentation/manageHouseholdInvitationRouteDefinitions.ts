@@ -45,5 +45,7 @@ export const replaceHouseholdInvitationRoute = createRoute({
       content: { 'application/json': { schema: householdInvitationResponseSchema } },
     },
     ...errors,
+    429: error('ERR_RATE_LIMITED'),
+    503: error('ERR_AUTH_UNAVAILABLE'),
   },
 });
