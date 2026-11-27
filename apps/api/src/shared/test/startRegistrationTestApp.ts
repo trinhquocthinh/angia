@@ -1,3 +1,4 @@
+import { createAccountLockRepository } from '@src/features/accountLock/infrastructure/createAccountLockRepository.js';
 import { createRegistrationSwitchRepository } from '@src/features/registrationSwitch/infrastructure/createRegistrationSwitchRepository.js';
 import { createUsernameHasher } from '@src/features/account/infrastructure/createUsernameHasher.js';
 import { createEmailPasswordResets } from '@src/features/account/infrastructure/createEmailPasswordResets.js';
@@ -112,6 +113,7 @@ async function seedLegalVersions(owner: pg.Client) {
 function buildRegistrationApp(db: Database, account: AppDependencies['account']) {
   const stub = createStubAuthDeps();
   return createApp({
+    accountLock: { repository: createAccountLockRepository(db) },
     registrationSwitch: {
       repository: createRegistrationSwitchRepository(db),
       gate: createRegistrationGate(db),

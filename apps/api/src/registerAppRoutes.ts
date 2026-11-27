@@ -1,3 +1,4 @@
+import { registerAccountLockRoutes } from '@src/features/accountLock/presentation/registerAccountLockRoutes.js';
 import { registerInspectHouseholdInvitationRoute } from '@src/features/household/presentation/registerInspectHouseholdInvitationRoute.js';
 import { registerRegistrationSwitchRoutes } from '@src/features/registrationSwitch/presentation/registerRegistrationSwitchRoutes.js';
 import { registerAccountDeletionRoute } from '@src/features/account/presentation/registerAccountDeletionRoute.js';
@@ -28,6 +29,7 @@ import { registerMeRoute } from '@src/shared/auth/presentation/registerMeRoute.j
 import { registerPushRoutes } from '@src/features/pushSubscriptions/presentation/registerPushRoutes.js';
 
 export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencies): void {
+  if (deps.accountLock) registerAccountLockRoutes(app, deps.accountLock);
   if (deps.registrationSwitch) registerRegistrationSwitchRoutes(app, deps.registrationSwitch);
   if (deps.dataExport) registerDataExportRoutes(app, deps.dataExport);
   const cookies = { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies };

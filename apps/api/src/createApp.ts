@@ -1,3 +1,4 @@
+import type { AccountLockDependencies } from '@src/features/accountLock/application/ports.js';
 import type { RegistrationSwitchDependencies } from '@src/features/registrationSwitch/application/ports.js';
 import type { AccountDeletionDeps } from '@src/features/account/application/deletionPorts.js';
 import type { DataExportDependencies } from '@src/features/dataExport/application/ports.js';
@@ -74,6 +75,7 @@ import type { HouseholdMembershipRepository } from '@src/features/household/appl
 import type { ProfileGuardianRepository } from '@src/features/profiles/guardians/application/ports.js';
 
 export type AppDependencies = {
+  accountLock?: AccountLockDependencies;
   registrationSwitch?: RegistrationSwitchDependencies;
   accountDeletion?: AccountDeletionDeps;
   dataExport?: DataExportDependencies;

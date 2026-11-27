@@ -198,6 +198,10 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'GET /api/admin/families',
   'POST /api/admin/families',
   'GET /api/admin/accounts',
+  // SPEC-075: chi tiết giới hạn năm trường, không trả dữ liệu sức khỏe.
+  'GET /api/admin/accounts/:id',
+  'POST /api/admin/accounts/:id/lock',
+  'POST /api/admin/accounts/:id/unlock',
   'POST /api/admin/accounts/:id/membership',
   'PATCH /api/admin/accounts/:id/membership',
   // SPEC-041: cấu hình OCR toàn hệ thống, không chứa ảnh/kết quả sức khỏe.

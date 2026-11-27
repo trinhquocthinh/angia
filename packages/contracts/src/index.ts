@@ -261,3 +261,5 @@ export * from './jobs/buildDataExportJob.js';
 export * from './jobs/cleanupDataExportsJob.js';
 
 export * from './registrationSwitch/registrationSwitchSchemas.js';
+
+export * from './accountLock/accountLockSchemas.js';

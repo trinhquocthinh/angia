@@ -3,6 +3,8 @@ import { adminAuditEvents } from '@src/shared/db/schema/index.js';
 
 // Chỉ mở rộng khi thao tác nghiệp vụ tương ứng được triển khai và có test.
 const ACTIONS = [
+  'account_locked',
+  'account_unlocked',
   'registration_switch_changed',
   'email_changed',
   'password_reset_by_email',
