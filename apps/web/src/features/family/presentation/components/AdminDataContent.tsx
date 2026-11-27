@@ -1,3 +1,7 @@
+import { RegistrationSwitchCard } from './RegistrationSwitchCard';
+import { FoundingInvitationsCard } from './FoundingInvitationsCard';
+import type { useRegistrationSwitch } from '../../application/useRegistrationSwitch';
+import type { useFoundingInvitations } from '../../application/useFoundingInvitations';
 import type { useAdminScanQuota } from '@src/features/scanQuota/application/useAdminScanQuota';
 import { ScanQuotaCard } from '@src/features/scanQuota/presentation/ScanQuotaCard';
 import type { useAiBilling } from '@src/features/aiBilling/application/useAiBilling';
@@ -18,6 +22,8 @@ import { PendingAccountsCard } from './PendingAccountsCard';
 import { FamilyAccessCard } from './FamilyAccessCard';
 
 type AdminDataContentProps = {
+  registrationSwitch: ReturnType<typeof useRegistrationSwitch>;
+  foundingInvitations: ReturnType<typeof useFoundingInvitations>;
   workspace: ReturnType<typeof useAdminWorkspace>;
   aiBudget: ReturnType<typeof useAiBudget>;
   aiRouting: ReturnType<typeof useAiRouting>;
@@ -59,6 +65,8 @@ export function AdminDataContent(props: AdminDataContentProps) {
       </section>
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
         <div className="flex min-w-0 flex-col gap-6 lg:col-span-8">
+          <RegistrationSwitchCard {...props.registrationSwitch} />
+          <FoundingInvitationsCard {...props.foundingInvitations} />
           <AccountsPanel
             accounts={accounts.data}
             families={families.data}

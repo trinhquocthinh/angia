@@ -1,4 +1,4 @@
-import type { components } from '@src/shared/api/schema.gen';
+import type { paths, components } from '@src/shared/api/schema.gen';
 
 export type Family = components['schemas']['Family'];
 export type Account = components['schemas']['Account'];
@@ -38,4 +38,16 @@ export interface ProfileLinkAdminRepository {
 export interface AiBudgetRepository {
   get(signal?: AbortSignal): Promise<AiBudget>;
   setCap(monthlyCapUsd: number, csrfToken: string): Promise<AiBudget>;
+}
+
+export type RegistrationSwitch = components['schemas']['RegistrationSwitchResponse'];
+export type FoundingInvitation =
+  paths['/api/admin/founding-invitations']['post']['responses'][201]['content']['application/json'];
+export interface RegistrationSwitchRepository {
+  get(signal?: AbortSignal): Promise<RegistrationSwitch>;
+  set(open: boolean, csrfToken: string): Promise<RegistrationSwitch>;
+}
+export interface FoundingInvitationRepository {
+  create(csrfToken: string): Promise<FoundingInvitation>;
+  revoke(id: string, csrfToken: string): Promise<void>;
 }

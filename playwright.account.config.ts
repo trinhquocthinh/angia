@@ -11,6 +11,7 @@ export default defineConfig({
     '**/textSize.spec.ts',
     '**/accountMenuIcons.spec.ts',
     '**/account.spec.ts',
+    '**/adminRegistration.spec.ts',
     '**/householdStart.spec.ts',
     '**/householdInvitations.spec.ts',
     '**/householdJoin.spec.ts',

@@ -1,9 +1,16 @@
+import { registrationAdminRoute } from './registrationAdminRoute.js';
 import type { Page, Route } from '@playwright/test';
 import { currentLegal } from './accountFixture.js';
 import { enrollmentAdminResponse } from './enrollmentAdminResponse.js';
 
 export async function householdStartFixture(page: Page) {
   const state = {
+    registrationOpen: true,
+    registrationError: '',
+    registrationReadError: false,
+    registrationHold: null as Promise<void> | null,
+    invitationCount: 0,
+    registrationWrites: [] as { path: string; method: string; body: unknown; csrf: string | undefined }[],
     signedIn: true,
     linked: false,
     family: false,
@@ -24,6 +31,12 @@ export async function householdStartFixture(page: Page) {
 type State = Awaited<ReturnType<typeof householdStartFixture>>;
 async function householdRoute(route: Route, state: State) {
   const path = new URL(route.request().url()).pathname;
+  if (
+    path === '/api/registration-switch' ||
+    path === '/api/admin/registration-switch' ||
+    path.startsWith('/api/admin/founding-invitations')
+  )
+    return registrationAdminRoute(route, state);
   if (path === '/api/me') {
     if (state.meFailed || (state.family && state.failRefresh))
       return route.fulfill({ status: 503, json: {} });
@@ -40,7 +53,7 @@ async function householdRoute(route: Route, state: State) {
             family: state.family ? { id: 'family', name: state.name, isOwner: false } : null,
             role: state.family ? state.role : null,
             csrfToken: 'csrf',
-            authMethod: 'local',
+            authMethod: state.admin ? 'oidc' : 'local',
             hasLocalCredential: true,
             emailStatus: { email: null, emailVerified: false, pendingEmail: null },
             features: { redactionSuggestions: false, localEnrollmentEnabled: false },

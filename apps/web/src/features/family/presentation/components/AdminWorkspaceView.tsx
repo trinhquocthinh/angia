@@ -1,3 +1,5 @@
+import type { useRegistrationSwitch } from '../../application/useRegistrationSwitch';
+import type { useFoundingInvitations } from '../../application/useFoundingInvitations';
 import type { useAdminScanQuota } from '@src/features/scanQuota/application/useAdminScanQuota';
 import type { useAiBilling } from '@src/features/aiBilling/application/useAiBilling';
 import type { useAiRouting } from '@src/features/aiRouting/application/useAiRouting';
@@ -14,6 +16,8 @@ import { ActionDialog } from './ActionDialog';
 type AdminWorkspaceViewProps = {
   session: AdminSession;
   shell: AdminFrameShell;
+  registrationSwitch: ReturnType<typeof useRegistrationSwitch>;
+  foundingInvitations: ReturnType<typeof useFoundingInvitations>;
   workspace: ReturnType<typeof useAdminWorkspace>;
   aiBudget: ReturnType<typeof useAiBudget>;
   aiRouting: ReturnType<typeof useAiRouting>;
@@ -49,6 +53,8 @@ export function AdminWorkspaceView(props: AdminWorkspaceViewProps) {
         </p>
       )}
       <AdminDataContent
+        registrationSwitch={props.registrationSwitch}
+        foundingInvitations={props.foundingInvitations}
         {...{ workspace, aiBudget, aiRouting, aiBilling, scanQuota }}
         currentAccountId={session.account.id}
         csrfToken={session.csrfToken}
