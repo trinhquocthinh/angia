@@ -197,6 +197,9 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'PUT /api/admin/families/:familyId/profiles/:profileId/linked-account',
   'GET /api/admin/families',
   'POST /api/admin/families',
+  // SPEC-076/077: nhật ký quản lý và số đếm không định danh, không trả dữ liệu sức khỏe.
+  'GET /api/admin/audit-events',
+  'GET /api/admin/stats',
   'GET /api/admin/accounts',
   // SPEC-075: chi tiết giới hạn năm trường, không trả dữ liệu sức khỏe.
   'GET /api/admin/accounts/:id',

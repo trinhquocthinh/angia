@@ -169,6 +169,142 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/admin/audit-events': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** SystemAdmin OIDC đọc Nhật ký quản lý (SPEC-076) */
+    get: {
+      parameters: {
+        query?: {
+          from?: string;
+          to?: string;
+          familyId?: string;
+          accountId?: string;
+          action?: components['schemas']['AdminAuditAction'];
+          cursor?: string;
+          limit?: number;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Nhật ký quản lý (SPEC-076) */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AdminAuditResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN | ERR_PASSWORD_CHANGE_REQUIRED | ERR_LEGAL_ACCEPTANCE_REQUIRED */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/admin/stats': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** SystemAdmin OIDC đọc Thống kê không định danh (SPEC-077) */
+    get: {
+      parameters: {
+        query?: {
+          weeks?: number;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Thống kê không định danh (SPEC-077) */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AdminStatsResponse'];
+          };
+        };
+        /** @description ERR_UNAUTHENTICATED */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_FORBIDDEN | ERR_PASSWORD_CHANGE_REQUIRED | ERR_LEGAL_ACCEPTANCE_REQUIRED */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/admin/accounts/{id}': {
     parameters: {
       query?: never;
@@ -13800,6 +13936,63 @@ export interface components {
           [key: string]: unknown;
         };
       };
+    };
+    AdminAuditResponse: {
+      items: components['schemas']['AdminAuditEvent'][];
+      nextCursor: string | null;
+    };
+    AdminAuditEvent: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date-time */
+      occurredAt: string;
+      actorAccountId: string | 'system_admin';
+      /** Format: uuid */
+      familyId: string | null;
+      /** Format: uuid */
+      targetAccountId: string | null;
+      /** Format: uuid */
+      targetProfileId: string | null;
+      action: components['schemas']['AdminAuditAction'];
+      metadata: {
+        [key: string]: unknown;
+      };
+    };
+    /** @enum {string} */
+    AdminAuditAction:
+      | 'account_locked'
+      | 'account_unlocked'
+      | 'registration_switch_changed'
+      | 'email_changed'
+      | 'password_reset_by_email'
+      | 'password_reset_by_family'
+      | 'guardian_added'
+      | 'guardian_removed'
+      | 'family_created'
+      | 'invitation_created'
+      | 'invitation_revoked'
+      | 'invitation_accepted'
+      | 'member_role_changed'
+      | 'member_removed'
+      | 'member_left'
+      | 'ownership_transfer_offered'
+      | 'ownership_transfer_accepted'
+      | 'ownership_transfer_declined'
+      | 'ownership_transfer_revoked'
+      | 'family_deletion_requested'
+      | 'family_deletion_revoked'
+      | 'family_deletion_executed'
+      | 'account_deleted';
+    AdminStatsResponse: {
+      weeks: components['schemas']['AdminStatsWeek'][];
+    };
+    AdminStatsWeek: {
+      /** Format: date */
+      weekStart: string;
+      families: number;
+      accounts: number;
+      familiesWithDoseConfirmation: number;
+      familiesActiveStreak4w: number;
     };
     AdminAccountDetail: {
       /** Format: uuid */

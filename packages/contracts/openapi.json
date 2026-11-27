@@ -39,6 +39,170 @@
           "error"
         ]
       },
+      "AdminAuditResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminAuditEvent"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "additionalProperties": false
+      },
+      "AdminAuditEvent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actorAccountId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "system_admin"
+                ]
+              }
+            ]
+          },
+          "familyId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "targetAccountId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "targetProfileId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "action": {
+            "$ref": "#/components/schemas/AdminAuditAction"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "id",
+          "occurredAt",
+          "actorAccountId",
+          "familyId",
+          "targetAccountId",
+          "targetProfileId",
+          "action",
+          "metadata"
+        ],
+        "additionalProperties": false
+      },
+      "AdminAuditAction": {
+        "type": "string",
+        "enum": [
+          "account_locked",
+          "account_unlocked",
+          "registration_switch_changed",
+          "email_changed",
+          "password_reset_by_email",
+          "password_reset_by_family",
+          "guardian_added",
+          "guardian_removed",
+          "family_created",
+          "invitation_created",
+          "invitation_revoked",
+          "invitation_accepted",
+          "member_role_changed",
+          "member_removed",
+          "member_left",
+          "ownership_transfer_offered",
+          "ownership_transfer_accepted",
+          "ownership_transfer_declined",
+          "ownership_transfer_revoked",
+          "family_deletion_requested",
+          "family_deletion_revoked",
+          "family_deletion_executed",
+          "account_deleted"
+        ]
+      },
+      "AdminStatsResponse": {
+        "type": "object",
+        "properties": {
+          "weeks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminStatsWeek"
+            }
+          }
+        },
+        "required": [
+          "weeks"
+        ],
+        "additionalProperties": false
+      },
+      "AdminStatsWeek": {
+        "type": "object",
+        "properties": {
+          "weekStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "families": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "accounts": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "familiesWithDoseConfirmation": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "familiesActiveStreak4w": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "weekStart",
+          "families",
+          "accounts",
+          "familiesWithDoseConfirmation",
+          "familiesActiveStreak4w"
+        ],
+        "additionalProperties": false
+      },
       "AdminAccountDetail": {
         "type": "object",
         "properties": {
@@ -8067,6 +8231,185 @@
           },
           "500": {
             "description": "ERR_INTERNAL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/audit-events": {
+      "get": {
+        "tags": [
+          "adminAudit"
+        ],
+        "summary": "SystemAdmin OIDC đọc Nhật ký quản lý (SPEC-076)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": false,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": false,
+            "name": "to",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "name": "familyId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "name": "accountId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/AdminAuditAction"
+            },
+            "required": false,
+            "name": "action",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nhật ký quản lý (SPEC-076)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminAuditResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN | ERR_PASSWORD_CHANGE_REQUIRED | ERR_LEGAL_ACCEPTANCE_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/stats": {
+      "get": {
+        "tags": [
+          "adminStats"
+        ],
+        "summary": "SystemAdmin OIDC đọc Thống kê không định danh (SPEC-077)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 52,
+              "default": 12
+            },
+            "required": false,
+            "name": "weeks",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thống kê không định danh (SPEC-077)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminStatsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ERR_UNAUTHENTICATED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ERR_FORBIDDEN | ERR_PASSWORD_CHANGE_REQUIRED | ERR_LEGAL_ACCEPTANCE_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ERR_VALIDATION",
             "content": {
               "application/json": {
                 "schema": {
