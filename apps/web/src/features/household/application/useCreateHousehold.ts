@@ -1,14 +1,22 @@
+import { clearPendingInvitation } from './pendingHouseholdInvitation';
 import { useRef, useState, type BaseSyntheticEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { prepareHouseholdName } from './prepareHouseholdName';
 import { householdErrorMessage } from './householdErrorMessage';
 import type { SubmitHousehold } from './ports';
 
-export function useCreateHousehold(action: SubmitHousehold, token: string, refresh: () => Promise<unknown>) {
+export function useCreateHousehold(
+  action: SubmitHousehold,
+  token: string,
+  refresh: () => Promise<unknown>,
+  invitationToken?: string,
+) {
   const form = useForm<{ name: string }>({ defaultValues: { name: '' } });
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [invitationInvalid, setInvitationInvalid] = useState(false);
+  const invalid = useRef(false);
   const locked = useRef(false);
   const needsSession = useRef(false);
   async function recover() {
@@ -22,22 +30,28 @@ export function useCreateHousehold(action: SubmitHousehold, token: string, refre
     }
   }
   async function create({ name }: { name: string }) {
-    if (locked.current) return;
+    if (locked.current || invalid.current) return;
     locked.current = true;
     setError(null);
     form.clearErrors();
     try {
       if (needsSession.current) return await recover();
-      const body = prepareHouseholdName(name);
+      const body = prepareHouseholdName(name, invitationToken);
       if ('error' in body) {
         form.setError('name', { type: 'validate', message: body.error });
         return;
       }
       const result = await action(body, token);
       if (result.ok || result.code === 'ERR_ACCOUNT_ALREADY_IN_FAMILY') {
+        if (invitationToken) clearPendingInvitation();
         needsSession.current = true;
         setCreated(true);
         await recover();
+      } else if (invitationToken && ['ERR_NOT_FOUND', 'ERR_REGISTRATION_CLOSED'].includes(result.code)) {
+        clearPendingInvitation();
+        invalid.current = true;
+        setInvitationInvalid(true);
+        setError('Lời mời lập nhà không còn dùng được. Hãy nhờ quản trị viên gửi link mới.');
       } else if (result.code === 'ERR_UNAUTHENTICATED') await recover();
       else setError(householdErrorMessage(result.code));
     } catch {
@@ -47,5 +61,5 @@ export function useCreateHousehold(action: SubmitHousehold, token: string, refre
     }
   }
   const submit = (event?: BaseSyntheticEvent) => form.handleSubmit(create)(event);
-  return { form, submit, error, created, refreshing };
+  return { form, submit, error, created, refreshing, invitationInvalid };
 }

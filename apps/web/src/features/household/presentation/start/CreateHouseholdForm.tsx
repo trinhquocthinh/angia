@@ -1,4 +1,4 @@
-import { ClayIcon } from '@src/shared/ui/ClayIcon';
+import { HouseholdCreationHeading } from './HouseholdCreationHeading';
 import { Link } from '@tanstack/react-router';
 import { useCreateHousehold } from '../../application/useCreateHousehold';
 import { submitHousehold } from '../../infrastructure/submitHousehold';
@@ -7,8 +7,14 @@ import { StartIcon } from './StartIcon';
 import { HouseholdCreationFields } from './HouseholdCreationFields';
 import { HouseholdCreationHighlights } from './HouseholdCreationHighlights';
 import { HouseholdCreationFootnote } from './HouseholdCreationFootnote';
-export function CreateHouseholdForm({ token, refresh }: { token: string; refresh: () => Promise<unknown> }) {
-  const { form, submit, error, created, refreshing } = useCreateHousehold(submitHousehold, token, refresh);
+type Props = { token: string; refresh: () => Promise<unknown>; invitationToken?: string };
+export function CreateHouseholdForm({ token, refresh, invitationToken }: Props) {
+  const { form, submit, error, created, refreshing, invitationInvalid } = useCreateHousehold(
+    submitHousehold,
+    token,
+    refresh,
+    invitationToken,
+  );
   const busy = form.formState.isSubmitting || refreshing;
   return (
     <section
@@ -23,19 +29,16 @@ export function CreateHouseholdForm({ token, refresh }: { token: string; refresh
         <span className="household-create-step">Bước 2 / 2</span>
       </div>
       <div className="household-create-block">
-        <div className="household-create-heading">
-          <ClayIcon name="create-house" size={64} />
-          <span>02 — Thiết lập gia đình</span>
-          <h1 id="household-create-title">Tạo nhà mới</h1>
-          <p className="household-start-description">
-            Đặt tên dễ nhớ cho không gian theo dõi và chăm sóc sức khỏe gia đình bạn.
-          </p>
-        </div>
+        <HouseholdCreationHeading invited={Boolean(invitationToken)} />
         <form className="household-start-form" onSubmit={submit} noValidate aria-busy={busy}>
-          <HouseholdCreationFields form={form} disabled={busy || created} />
+          <HouseholdCreationFields form={form} disabled={busy || created || invitationInvalid} />
           <HouseholdCreationHighlights />
           {created && <p role="status">Đang cập nhật thông tin nhà cho tài khoản của bạn.</p>}
-          <Button type="submit" disabled={busy || !token} className="household-create-submit">
+          <Button
+            type="submit"
+            disabled={busy || !token || invitationInvalid}
+            className="household-create-submit"
+          >
             <span>
               {busy
                 ? created

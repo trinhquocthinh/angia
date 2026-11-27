@@ -1,3 +1,4 @@
+import { PendingInvitationNotice } from './PendingInvitationNotice';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { completeAccountAccess } from '../application/completeAccountAccess';
@@ -26,6 +27,7 @@ export function RegisterPage() {
   return (
     <LoginLayout titleId="register-title" clayIcons>
       <RegistrationHeading />
+      <PendingInvitationNotice />
       {closed && <RegistrationClosedNotice />}
       <form
         className="registration-form"

@@ -3,7 +3,20 @@ import type { components } from '@src/shared/api/schema.gen';
 export function resolveSessionRedirect(
   session: components['schemas']['MeContextResponse'] | null,
   pathname: string,
-): '/login' | '/waiting' | '/' | '/admin' | null {
+  hasPendingInvitation = false,
+): '/login' | '/waiting' | '/' | '/admin' | '/invite' | null {
+  if (session && pathname === '/invite') return null;
+  if (
+    session &&
+    hasPendingInvitation &&
+    ![
+      '/account/change-password',
+      '/account/legal-update',
+      '/account/local-password',
+      '/verify-email',
+    ].includes(pathname)
+  )
+    return '/invite';
   if (
     pathname === '/account/change-password' ||
     pathname === '/forgot-password' ||

@@ -15,6 +15,7 @@ export default defineConfig({
     '**/householdStart.spec.ts',
     '**/householdInvitations.spec.ts',
     '**/householdJoin.spec.ts',
+    '**/householdInviteLink.spec.ts',
     '**/householdInvitationManagement.spec.ts',
     '**/householdMembers.spec.ts',
     '**/householdHome.spec.ts',

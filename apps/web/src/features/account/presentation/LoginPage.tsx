@@ -1,3 +1,4 @@
+import { PendingInvitationNotice } from './PendingInvitationNotice';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { completePasswordLogin } from '../application/completePasswordLogin';
@@ -27,6 +28,7 @@ export function LoginPage({ hasAuthError = false }: { hasAuthError?: boolean }) 
         </div>
       </div>
       <LoginForm form={form} onSubmit={submit} error={error} />
+      <PendingInvitationNotice />
       <LoginAlternative />
     </LoginLayout>
   );

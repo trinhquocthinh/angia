@@ -95,3 +95,28 @@ it('TC-925: khách và tài khoản đang đăng nhập truy cập được màn
   expect(resolveSessionRedirect(waiting, '/verify-email')).toBeNull();
   expect(resolveSessionRedirect(assigned, '/verify-email')).toBeNull();
 });
+
+it.each([waiting, assigned, admin])('E27-AT-D1: giữ /invite trước luật nhà và admin', (session) => {
+  expect(resolveSessionRedirect(session, '/invite', false)).toBeNull();
+  expect(resolveSessionRedirect(session, '/invite', true)).toBeNull();
+  expect(resolveSessionRedirect(session, '/', true)).toBe('/invite');
+  expect(resolveSessionRedirect(session, '/admin', true)).toBe('/invite');
+});
+it.each(['/account/change-password', '/account/legal-update', '/account/local-password', '/verify-email'])(
+  'E27-AT-D1: giữ màn tài khoản bắt buộc %s khi có lời mời',
+  (path) => {
+    expect(resolveSessionRedirect(waiting, path, true)).toBeNull();
+  },
+);
+it('E27-AT-D1: khách có lời mời vẫn đăng nhập hoặc đăng ký', () => {
+  expect(resolveSessionRedirect(null, '/invite', true)).toBe('/login');
+  expect(resolveSessionRedirect(null, '/login', true)).toBeNull();
+  expect(resolveSessionRedirect(null, '/register', true)).toBeNull();
+});
+
+it.each(['/account', '/forgot-password', '/reset-password', '/profiles/new'])(
+  'E27-AT-D1: phiên có lời mời ở %s trở về /invite',
+  (path) => {
+    expect(resolveSessionRedirect(waiting, path, true)).toBe('/invite');
+  },
+);
