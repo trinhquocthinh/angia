@@ -5,14 +5,14 @@ export const adminReadIds = {
   family: '12345678-1234-4234-8234-123456789abc',
   account: '87654321-4321-4321-8321-cba987654321',
 };
-export const statsWeeks = Array.from({ length: 12 }, (_, index) => ({
+const statsWeeks = Array.from({ length: 12 }, (_, index) => ({
   weekStart: new Date(Date.UTC(2026, 10, 23 - index * 7)).toISOString().slice(0, 10),
   families: 12 + index,
   accounts: 38 + index,
   familiesWithDoseConfirmation: 7 + index,
   familiesActiveStreak4w: 3 + index,
 }));
-export const firstAuditEvent = {
+const firstAuditEvent = {
   id: 'event-1',
   occurredAt: '2026-11-26T18:04:59.123456Z',
   actorAccountId: 'system_admin',

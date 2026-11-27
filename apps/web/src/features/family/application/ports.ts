@@ -40,7 +40,7 @@ export interface AiBudgetRepository {
   setCap(monthlyCapUsd: number, csrfToken: string): Promise<AiBudget>;
 }
 
-export type RegistrationSwitch = components['schemas']['RegistrationSwitchResponse'];
+type RegistrationSwitch = components['schemas']['RegistrationSwitchResponse'];
 export type FoundingInvitation =
   paths['/api/admin/founding-invitations']['post']['responses'][201]['content']['application/json'];
 export interface RegistrationSwitchRepository {
@@ -56,7 +56,7 @@ export type AdminAuditAction = components['schemas']['AdminAuditAction'];
 export type AdminAuditEvent = components['schemas']['AdminAuditEvent'];
 export type AdminAuditResponse = components['schemas']['AdminAuditResponse'];
 export type AdminStatsWeek = components['schemas']['AdminStatsWeek'];
-export type AdminStatsResponse = components['schemas']['AdminStatsResponse'];
+type AdminStatsResponse = components['schemas']['AdminStatsResponse'];
 export type AdminAuditQuery = NonNullable<paths['/api/admin/audit-events']['get']['parameters']['query']>;
 export interface AdminAuditRepository {
   list(query: AdminAuditQuery, signal?: AbortSignal): Promise<AdminAuditResponse>;
