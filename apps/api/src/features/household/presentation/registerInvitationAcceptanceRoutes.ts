@@ -1,3 +1,4 @@
+import type { InvitationInspectionRepository } from '../application/inspectionPorts.js';
 import type { OpenAPIHono } from '@hono/zod-openapi';
 import type { AppEnv } from '@src/shared/http/AppEnv.js';
 import { currentSession } from '@src/shared/auth/presentation/currentSession.js';
@@ -17,6 +18,7 @@ import {
 } from './foundingInvitationRouteDefinitions.js';
 
 export interface InvitationAcceptanceDependencies {
+  inspection: InvitationInspectionRepository;
   acceptance: InvitationAcceptanceRepository;
   founding: FoundingInvitationRepository;
   appBaseUrl: string;

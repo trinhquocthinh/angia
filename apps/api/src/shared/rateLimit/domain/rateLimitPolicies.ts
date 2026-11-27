@@ -1,6 +1,7 @@
 import type { RateLimitPolicy } from './RateLimitPolicy.js';
 
 export const rateLimitPolicies = {
+  invitation_inspect: { kind: 'invitation_inspect', limit: 30, windowMs: 3_600_000 },
   data_export_request: { kind: 'data_export_request', limit: 3, windowMs: 86_400_000 },
   password_reset_request_ip: { kind: 'password_reset_request_ip', limit: 3, windowMs: 3_600_000 },
   password_reset_request_email: { kind: 'password_reset_request_email', limit: 3, windowMs: 3_600_000 },

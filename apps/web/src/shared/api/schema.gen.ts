@@ -1867,6 +1867,114 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/invitations/inspect': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Kiểm tra loại lời mời công khai, không tiêu token (SPEC-065) */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            token: string;
+          };
+        };
+      };
+      responses: {
+        /** @description Chỉ trả loại và vai trò lời mời */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json':
+              | {
+                  /** @enum {string} */
+                  kind: 'join_family';
+                  /** @enum {string} */
+                  role: 'main' | 'member';
+                }
+              | {
+                  /** @enum {string} */
+                  kind: 'found_family';
+                };
+          };
+        };
+        /** @description ERR_FORBIDDEN */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_NOT_FOUND */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_REQUEST_TOO_LARGE: body vượt quá 1 MiB */
+        413: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_VALIDATION */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_RATE_LIMITED */
+        429: {
+          headers: {
+            /** @description Số giây chờ thử lại */
+            'Retry-After'?: string;
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+        /** @description ERR_AUTH_UNAVAILABLE */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ErrorResponse'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/family/invitations/current': {
     parameters: {
       query?: never;

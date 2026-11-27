@@ -1,3 +1,4 @@
+import { createInvitationVerifier } from '@src/features/account/infrastructure/createInvitationVerifier.js';
 import { createProfileGuardianRepository } from '@src/features/profiles/guardians/infrastructure/createProfileGuardianRepository.js';
 import { createHouseholdDeletionRepository } from './createHouseholdDeletionRepository.js';
 import { createHouseholdOwnershipRepository } from './createHouseholdOwnershipRepository.js';
@@ -20,6 +21,7 @@ export function createHouseholdDependencies(db: Database, appBaseUrl: string, in
       appBaseUrl,
     },
     invitationAcceptance: {
+      inspection: createInvitationVerifier(db),
       acceptance: createInvitationAcceptanceRepository(db),
       founding: createFoundingInvitationRepository(db),
       appBaseUrl,

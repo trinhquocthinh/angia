@@ -141,6 +141,7 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'POST /api/families',
   // SPEC-065: quản lý lời mời, không chứa hồ sơ hoặc dữ liệu sức khỏe.
   'POST /api/invitations/accept',
+  'POST /api/invitations/inspect',
   'POST /api/admin/founding-invitations',
   'DELETE /api/admin/founding-invitations/:id',
   'GET /api/family/invitations',

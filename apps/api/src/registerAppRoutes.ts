@@ -1,3 +1,4 @@
+import { registerInspectHouseholdInvitationRoute } from '@src/features/household/presentation/registerInspectHouseholdInvitationRoute.js';
 import { registerRegistrationSwitchRoutes } from '@src/features/registrationSwitch/presentation/registerRegistrationSwitchRoutes.js';
 import { registerAccountDeletionRoute } from '@src/features/account/presentation/registerAccountDeletionRoute.js';
 import { registerDataExportRoutes } from '@src/features/dataExport/presentation/registerDataExportRoutes.js';
@@ -43,6 +44,12 @@ export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencie
   registerHouseholdRoutes(app, deps.household);
   registerHouseholdMembershipRoutes(app, deps.householdMembership);
   registerInvitationAcceptanceRoutes(app, deps.invitationAcceptance);
+  registerInspectHouseholdInvitationRoute(app, {
+    repository: deps.invitationAcceptance.inspection,
+    appBaseUrl: deps.invitationAcceptance.appBaseUrl,
+    rateLimit: deps.account.rateLimit,
+    clientIp: deps.account.clientIp,
+  });
   registerHouseholdInvitationRoutes(app, deps.householdInvitations);
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth, deps.legal);

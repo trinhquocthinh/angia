@@ -138,6 +138,7 @@ export type AppDependencies = {
 
 // Ngoại lệ duy nhất của "mọi route /api cần phiên" (Tech Spec §4); logout vẫn cần phiên + CSRF.
 const PUBLIC_PATHS = [
+  '/api/invitations/inspect',
   '/api/registration-switch',
   '/api/legal/current',
   '/api/health',
