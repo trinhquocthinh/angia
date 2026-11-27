@@ -1,3 +1,4 @@
+import { capturePendingInvitation } from '@src/features/household/application/pendingHouseholdInvitation';
 import { registerAccountNavigator } from '@src/shared/api/accountRedirectMiddleware';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
@@ -15,6 +16,7 @@ import { ignoreSkippedViewTransitions } from './ignoreSkippedViewTransitions';
 import { routeTree } from './routeTree.gen';
 import './styles.css';
 
+capturePendingInvitation(window.location, window.history);
 const queryClient = new QueryClient();
 // Design §11.4.1: chuyển trang mờ dần qua View Transitions; trình duyệt không hỗ trợ thì đổi trang tức thì.
 ignoreSkippedViewTransitions();

@@ -88,13 +88,23 @@ describe('Đổi mật khẩu local', () => {
     });
     expect(deps.hasher.verify).not.toHaveBeenCalled();
   });
-  it('phiên hạn chế bỏ qua mật khẩu cũ và limiter', async () => {
+  it('phiên hạn chế bỏ qua mật khẩu cũ và limiter, chỉ so mật khẩu mới với mật khẩu tạm', async () => {
     const { deps, input } = fixture();
+    deps.hasher.verify.mockResolvedValue(false);
     expect(
       await changeLocalPassword(deps, { ...input, passwordChangeRequired: true, currentPassword: undefined }),
     ).toEqual({ ok: true });
-    expect(deps.hasher.verify).not.toHaveBeenCalled();
+    expect(deps.hasher.verify).toHaveBeenCalledExactlyOnceWith('old-hash', 'new-password');
     expect(deps.rateLimit.store.read).not.toHaveBeenCalled();
+  });
+  it('phiên hạn chế đặt mật khẩu mới trùng mật khẩu tạm trả 422 trước hash', async () => {
+    const { deps, input } = fixture();
+    expect(
+      await changeLocalPassword(deps, { ...input, passwordChangeRequired: true, currentPassword: undefined }),
+    ).toEqual({ ok: false, code: 'ERR_VALIDATION', details: { field: 'newPassword' } });
+    expect(deps.hasher.hash).not.toHaveBeenCalled();
+    expect(deps.passwords.replaceIfCurrent).not.toHaveBeenCalled();
+    expect(deps.rateLimit.store.increment).not.toHaveBeenCalled();
   });
   it('account chỉ OIDC trả 401 trước validate', async () => {
     const { deps, input } = fixture();

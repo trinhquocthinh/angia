@@ -93,4 +93,35 @@ describe('Repository accounts/sessions trên PostgreSQL thật', () => {
     );
     expect(rows).toEqual([{ account_id: account.id, csrf_token: 'tok', expires_at: expiresAt }]);
   });
+
+  it('phiên hạn chế chỉ còn hiệu lực khi mật khẩu tạm chưa hết hạn', async () => {
+    const database = createDatabase(pool);
+    const sessions = createSessionRepository(database);
+    const account = await createAccountRepository(database).upsertFromIdentity({
+      oidcSubject: 'sub-restricted',
+      displayName: 'C',
+      isSystemAdmin: false,
+    });
+    const now = new Date('2026-11-04T00:00:00.000Z');
+    const session = await sessions.create({
+      accountId: account.id,
+      csrfToken: 'tok-restricted',
+      expiresAt: new Date('2026-12-04T00:00:00.000Z'),
+    });
+    await owner.query(`UPDATE sessions SET password_change_required = true WHERE id = $1`, [session.id]);
+    const setTempExpiry = (value: Date | null) =>
+      owner.query(
+        `UPDATE accounts SET must_change_password = true, temp_password_expires_at = $2 WHERE id = $1`,
+        [account.id, value],
+      );
+
+    await setTempExpiry(new Date(now.getTime() + 1000));
+    expect(await sessions.findActive(session.id, now)).toMatchObject({ passwordChangeRequired: true });
+    await setTempExpiry(now);
+    expect(await sessions.findActive(session.id, now)).toBeNull();
+    await setTempExpiry(null);
+    expect(await sessions.findActive(session.id, now)).toBeNull();
+    await owner.query(`UPDATE sessions SET password_change_required = false WHERE id = $1`, [session.id]);
+    expect(await sessions.findActive(session.id, now)).toMatchObject({ passwordChangeRequired: false });
+  });
 });

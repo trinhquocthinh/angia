@@ -6,7 +6,7 @@ import { readIdentityMappingFile } from './readIdentityMappingFile.js';
 
 async function main(): Promise<void> {
   const { values, positionals } = parseArgs({
-    options: { apply: { type: 'boolean', default: false } },
+    options: { apply: { type: 'boolean', default: false }, database: { type: 'string' } },
     allowPositionals: true,
   });
   if (positionals.length > 1) throw new Error('Chỉ nhận một đường dẫn mapping.');
@@ -15,7 +15,10 @@ async function main(): Promise<void> {
   const client = new pg.Client({ connectionString });
   await client.connect();
   try {
-    const result = await applyIdentityMapping(client, mapping, { apply: values.apply });
+    const result = await applyIdentityMapping(client, mapping, {
+      apply: values.apply,
+      database: values.database,
+    });
     console.log(
       `Chuyển danh tính: mode=${result.mode}, cập nhật ${result.updated}, đã đúng ${result.unchanged}, hoãn ${result.deferred}.`,
     );

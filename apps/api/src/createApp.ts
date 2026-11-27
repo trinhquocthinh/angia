@@ -1,3 +1,7 @@
+import type { AdminAuditDependencies } from '@src/features/adminAudit/application/ports.js';
+import type { AdminStatsDependencies } from '@src/features/adminStats/application/ports.js';
+import type { AccountLockDependencies } from '@src/features/accountLock/application/ports.js';
+import type { RegistrationSwitchDependencies } from '@src/features/registrationSwitch/application/ports.js';
 import type { AccountDeletionDeps } from '@src/features/account/application/deletionPorts.js';
 import type { DataExportDependencies } from '@src/features/dataExport/application/ports.js';
 import type { EmailPasswordResetDeps } from '@src/features/account/application/passwordResetPorts.js';
@@ -73,6 +77,10 @@ import type { HouseholdMembershipRepository } from '@src/features/household/appl
 import type { ProfileGuardianRepository } from '@src/features/profiles/guardians/application/ports.js';
 
 export type AppDependencies = {
+  adminAudit?: AdminAuditDependencies;
+  adminStats?: AdminStatsDependencies;
+  accountLock?: AccountLockDependencies;
+  registrationSwitch?: RegistrationSwitchDependencies;
   accountDeletion?: AccountDeletionDeps;
   dataExport?: DataExportDependencies;
   profileGuardians: ProfileGuardianRepository;
@@ -136,6 +144,8 @@ export type AppDependencies = {
 
 // Ngoại lệ duy nhất của "mọi route /api cần phiên" (Tech Spec §4); logout vẫn cần phiên + CSRF.
 const PUBLIC_PATHS = [
+  '/api/invitations/inspect',
+  '/api/registration-switch',
   '/api/legal/current',
   '/api/health',
   '/api/auth/login',
@@ -167,15 +177,17 @@ export function createApp(deps: AppDependencies): OpenAPIHono<AppEnv> {
     c.header('Cache-Control', 'no-store');
     await next();
   });
+  // Đặt trước cổng phiên để cả lỗi 401/403 của API đọc quản trị cũng không được cache.
+  for (const path of ['/api/admin/audit-events*', '/api/admin/stats*']) {
+    app.use(path, async (c, next) => {
+      c.header('Cache-Control', 'no-store');
+      await next();
+    });
+  }
   registerHealthDataCacheHeaders(app);
   registerScanQuotaHeaders(app);
-  app.use(
-    '/api/*',
-    except(
-      ['/api/consent-invitations/view', '/api/consent-invitations/respond'],
-      loadSession(deps.auth.login, cookies),
-    ),
-  );
+  // Route công khai không đọc/trượt phiên: handler của chúng không dùng c.var.session.
+  app.use('/api/*', except(PUBLIC_PATHS, loadSession(deps.auth.login, cookies)));
   app.use('/api/*', except(PUBLIC_PATHS, requireSession()));
   app.use('/api/*', except(PUBLIC_PATHS, requirePasswordChanged()), limitRequestBody());
   app.use('/api/*', except(PUBLIC_PATHS, requireLegalAcceptance(deps.legal, deps.auth.logger)));

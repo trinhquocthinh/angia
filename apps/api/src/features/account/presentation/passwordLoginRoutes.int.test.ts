@@ -149,7 +149,7 @@ describe('POST /api/auth/password-login (SPEC-060)', () => {
       );
     }
   });
-  it('TC-845: lần sai thứ 11 trả 429/Retry-After, khoá username chữ thường và IP', async () => {
+  it('TC-845/851: các lượt sai dưới ngưỡng đi tiếp, lần 11 trả 429 theo username và IP', async () => {
     for (let i = 0; i < 10; i++)
       expect((await request(i % 2 ? 'ME.LAN' : 'me.lan', 'wrong')).status).toBe(401);
     const response = await request();
@@ -158,6 +158,21 @@ describe('POST /api/auth/password-login (SPEC-060)', () => {
     expect(response.headers.get('retry-after')).toMatch(/^[1-9][0-9]*$/);
     expect(response.headers.get('set-cookie')).toBeNull();
     expect((await request('other.username', 'wrong')).status).toBe(401);
+    ip = randomUUID();
+    expect((await request()).status).toBe(200);
+  });
+  it('SPEC-078 chống lách: IP sai 30 username bị chặn cả tài khoản có thật, IP khác độc lập', async () => {
+    for (let i = 0; i < 30; i++) {
+      expect((await request(`missing.${randomUUID()}`, 'wrong')).status).toBe(401);
+    }
+    const missing = await request('missing.next', 'wrong');
+    const existing = await request();
+    expect(missing.status).toBe(429);
+    expect(existing.status).toBe(429);
+    expect(missing.headers.get('retry-after')).toMatch(/^[1-9][0-9]*$/);
+    expect(existing.headers.get('retry-after')).toMatch(/^[1-9][0-9]*$/);
+    expect(await missing.json()).toEqual(await existing.json());
+    expect(existing.headers.get('set-cookie')).toBeNull();
     ip = randomUUID();
     expect((await request()).status).toBe(200);
   });

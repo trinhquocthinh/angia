@@ -44,14 +44,23 @@ describe('Thiết lập credential local một lần', () => {
     expect(deps.enrollments.findAccount).not.toHaveBeenCalled();
     expect(deps.hasher.hash).not.toHaveBeenCalled();
   });
-  it.each(['local', 'missing', 'old'] as const)('TC-901: phiên %s trả 403 trước hash', async (kind) => {
+  it.each(['local', 'missing', 'old', 'future'] as const)(
+    'TC-901: phiên %s trả 403 trước hash',
+    async (kind) => {
+      const { deps, input, run } = fixture();
+      if (kind === 'local') input.authMethod = 'local';
+      if (kind === 'missing') input.oidcAuthTime = null;
+      if (kind === 'old') input.oidcAuthTime = new Date(deps.now().getTime() - 360000);
+      if (kind === 'future') input.oidcAuthTime = new Date(deps.now().getTime() + 60_001);
+      expect(await run()).toEqual({ ok: false, code: 'ERR_FORBIDDEN' });
+      expect(deps.hasher.hash).not.toHaveBeenCalled();
+      expect(deps.enrollments.findAccount).not.toHaveBeenCalled();
+    },
+  );
+  it('TC-901: auth_time lệch tương lai trong 60 giây vẫn được chấp nhận', async () => {
     const { deps, input, run } = fixture();
-    if (kind === 'local') input.authMethod = 'local';
-    if (kind === 'missing') input.oidcAuthTime = null;
-    if (kind === 'old') input.oidcAuthTime = new Date(deps.now().getTime() - 360000);
-    expect(await run()).toEqual({ ok: false, code: 'ERR_FORBIDDEN' });
-    expect(deps.hasher.hash).not.toHaveBeenCalled();
-    expect(deps.enrollments.findAccount).not.toHaveBeenCalled();
+    input.oidcAuthTime = new Date(deps.now().getTime() + 60_000);
+    expect(await run()).toEqual({ ok: true });
   });
   it('TC-901: account thiếu subject trả 403 trước hash', async () => {
     const { account, deps, run } = fixture();

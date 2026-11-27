@@ -1,3 +1,8 @@
+import {
+  clearPendingInvitation,
+  readPendingInvitation,
+} from '@src/features/household/application/pendingHouseholdInvitation';
+import { registrationInvitationErrorMessage } from './registrationInvitationErrorMessage';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { accountErrorMessage } from './accountErrorMessage';
@@ -28,12 +33,21 @@ export function useRegistrationForm(
     setError(null);
     setClosed(false);
     form.clearErrors();
-    const result = await submitRegistration(prepareRegistration(values, documents.legal));
+    const invitationToken = readPendingInvitation() ?? undefined;
+    const result = await submitRegistration(prepareRegistration(values, documents.legal, invitationToken));
     if (result.ok) {
+      if (result.data.account.familyId !== null) clearPendingInvitation();
       await onSuccess();
       return;
     }
-    const message = accountErrorMessage(result.code);
+    if (
+      invitationToken &&
+      ['ERR_NOT_FOUND', 'ERR_REGISTRATION_CLOSED', 'ERR_DELETION_PENDING'].includes(result.code)
+    )
+      clearPendingInvitation();
+    const message =
+      (invitationToken && registrationInvitationErrorMessage(result.code)) ||
+      accountErrorMessage(result.code);
     const field = registrationErrorField(result);
     if (field) {
       form.setError(field, { type: 'server', message });

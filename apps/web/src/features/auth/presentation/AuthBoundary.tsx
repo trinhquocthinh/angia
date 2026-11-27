@@ -1,3 +1,4 @@
+import { readPendingInvitation } from '@src/features/household/application/pendingHouseholdInvitation';
 import {
   ENROLL_LATER_KEY,
   ENROLL_REAUTH_KEY,
@@ -37,7 +38,9 @@ export function AuthBoundary({ children }: { children: ReactNode }) {
         .catch(() => undefined);
     return () => controller.abort();
   }, [pushCsrf, cache]);
-  const destination = session.isSuccess ? resolveSessionRedirect(session.data, pathname) : null;
+  const destination = session.isSuccess
+    ? resolveSessionRedirect(session.data, pathname, readPendingInvitation() !== null)
+    : null;
 
   const hasFamily = Boolean(session.data?.family);
 
@@ -50,7 +53,7 @@ export function AuthBoundary({ children }: { children: ReactNode }) {
           enrollmentStage(readAccountStorage(ENROLL_REAUTH_KEY), Date.now()) !== 'unverified',
         )
       : null;
-    if (invitation) {
+    if (invitation && destination !== '/invite') {
       void navigate({ to: invitation, replace: true });
       return;
     }

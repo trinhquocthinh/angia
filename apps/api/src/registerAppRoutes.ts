@@ -1,3 +1,8 @@
+import { registerAdminAuditRoutes } from '@src/features/adminAudit/presentation/registerAdminAuditRoutes.js';
+import { registerAdminStatsRoutes } from '@src/features/adminStats/presentation/registerAdminStatsRoutes.js';
+import { registerAccountLockRoutes } from '@src/features/accountLock/presentation/registerAccountLockRoutes.js';
+import { registerInspectHouseholdInvitationRoute } from '@src/features/household/presentation/registerInspectHouseholdInvitationRoute.js';
+import { registerRegistrationSwitchRoutes } from '@src/features/registrationSwitch/presentation/registerRegistrationSwitchRoutes.js';
 import { registerAccountDeletionRoute } from '@src/features/account/presentation/registerAccountDeletionRoute.js';
 import { registerDataExportRoutes } from '@src/features/dataExport/presentation/registerDataExportRoutes.js';
 import { registerProfileGuardianRoutes } from '@src/features/profiles/guardians/presentation/registerProfileGuardianRoutes.js';
@@ -26,6 +31,10 @@ import { registerMeRoute } from '@src/shared/auth/presentation/registerMeRoute.j
 import { registerPushRoutes } from '@src/features/pushSubscriptions/presentation/registerPushRoutes.js';
 
 export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencies): void {
+  if (deps.adminAudit) registerAdminAuditRoutes(app, deps.adminAudit);
+  if (deps.adminStats) registerAdminStatsRoutes(app, deps.adminStats);
+  if (deps.accountLock) registerAccountLockRoutes(app, deps.accountLock);
+  if (deps.registrationSwitch) registerRegistrationSwitchRoutes(app, deps.registrationSwitch);
   if (deps.dataExport) registerDataExportRoutes(app, deps.dataExport);
   const cookies = { secret: deps.auth.cookieSecret, secure: deps.auth.secureCookies };
   if (deps.accountDeletion)
@@ -40,8 +49,21 @@ export function registerAppRoutes(app: OpenAPIHono<AppEnv>, deps: AppDependencie
   registerHouseholdLeaveRoute(app, deps.householdLeave);
   registerHouseholdRoutes(app, deps.household);
   registerHouseholdMembershipRoutes(app, deps.householdMembership);
-  registerInvitationAcceptanceRoutes(app, deps.invitationAcceptance);
-  registerHouseholdInvitationRoutes(app, deps.householdInvitations);
+  registerInvitationAcceptanceRoutes(app, {
+    ...deps.invitationAcceptance,
+    rateLimit: deps.account.rateLimit,
+    clientIp: deps.account.clientIp,
+  });
+  registerInspectHouseholdInvitationRoute(app, {
+    repository: deps.invitationAcceptance.inspection,
+    appBaseUrl: deps.invitationAcceptance.appBaseUrl,
+    rateLimit: deps.account.rateLimit,
+    clientIp: deps.account.clientIp,
+  });
+  registerHouseholdInvitationRoutes(app, {
+    ...deps.householdInvitations,
+    rateLimit: deps.account.rateLimit,
+  });
   registerHealthRoute(app, deps.healthProbes);
   registerAuthRoutes(app, deps.auth, deps.legal);
   registerAccountRoutes(app, { ...deps.account, cookies, logger: deps.auth.logger });

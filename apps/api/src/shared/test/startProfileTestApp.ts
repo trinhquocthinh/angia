@@ -1,3 +1,4 @@
+import type { RateLimitDependencies } from '@src/shared/rateLimit/application/ports.js';
 import { createProfileTestAccountDeletionDependencies } from './createProfileTestAccountDeletionDependencies.js';
 import { createProfileTestDataExportDependencies } from './createProfileTestDataExportDependencies.js';
 import { createHouseholdLeaveRepository } from '@src/features/household/infrastructure/createHouseholdLeaveRepository.js';
@@ -60,6 +61,7 @@ import type { PushDependencies } from '@src/features/pushSubscriptions/applicati
 import type { RedactionSuggestionDependencies } from '@src/features/documents/application/redactionSuggestionPorts.js';
 
 export interface ProfileTestOptions {
+  accountRateLimit?: RateLimitDependencies;
   now?: () => Date;
   push?: (db: Database) => PushDependencies;
   redactionSuggestions?: RedactionSuggestionDependencies;
@@ -97,6 +99,8 @@ function buildApp(
   boss: PgBoss,
   options: ProfileTestOptions,
 ) {
+  const account = createStubAccountDeps();
+  if (options.accountRateLimit) account.rateLimit = options.accountRateLimit;
   const quota = { ...TEST_QUOTA_POLICY, limits: { ...TEST_QUOTA_POLICY.limits, ...options.quota } };
   const stub = createStubAuthDeps();
   return createApp({
@@ -109,7 +113,7 @@ function buildApp(
     ...createHouseholdDependencies(database, appBaseUrl, 'test-invitation-key'.repeat(3)),
     legal: createLegalRepository(database),
     dataExport: createProfileTestDataExportDependencies(database, boss, memory.reader, options.now),
-    account: createStubAccountDeps(),
+    account,
     ...(options.push ? { push: options.push(database) } : {}),
     ...(options.redactionSuggestions ? { redactionSuggestions: options.redactionSuggestions } : {}),
     healthProbes: { db: () => Promise.resolve(), storage: () => Promise.resolve() },

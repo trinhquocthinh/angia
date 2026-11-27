@@ -253,6 +253,22 @@ Kiểm chứng local 2026-11-05 trên bản sao sạch có nội dung source kh�
 
 Tài liệu vận hành và kịch bản hồi quy của SEC-20261105 nằm ở `10-setup-and-ops-guide.md` và `08-test-cases-specification.md` thuộc tài liệu dự án ngoài Git. Khi áp dụng các changeset BodyWell v0.3, giữ nguyên phần bổ sung hardening độc lập trong BR/SDD/kiến trúc; việc duyệt hoặc cập nhật tài liệu không xác nhận đã triển khai BodyWell.
 
+## Giới hạn tần suất — E31-S3-T1 / SPEC-078
+
+Đăng nhập kiểm cả 10 lượt sai mỗi cặp IP/username và 30 lượt sai mỗi IP trong
+15 phút trước khi xác thực mật khẩu; khi cả hai chặn, lấy thời gian chờ lớn nhất.
+Tạo và thay lời mời dùng chung 20 lượt mỗi nhà mỗi ngày, kể cả tái sử dụng lời mời.
+Chấp nhận lời mời giới hạn 20 mã không tìm thấy mỗi IP mỗi giờ; mã hợp lệ không
+bị tính lượt sai. Các phản hồi chặn dùng `429 ERR_RATE_LIMITED` và `Retry-After`.
+
+Worker đăng ký `purge-rate-limit-buckets` lúc phút 7 mỗi giờ
+(`7 * * * *`, `Asia/Ho_Chi_Minh`), xoá bucket có `window_start` cũ hơn một ngày
+và log số dòng đã xoá. Dùng role app hiện có; không cần migration.
+
+IP client: API chỉ đọc `X-Forwarded-For` khi IP socket thuộc `TRUSTED_PROXY_CIDRS`
+(dải mạng Caddy, phân cách dấu phẩy), duyệt từ phải sang trái bỏ hop tin cậy; trống thì
+dùng IP socket.
+
 ## Contracts sổ đau nhức — E19-S1-T1
 
 `packages/contracts/src/painJournal/` cung cấp danh mục 21 mã vùng/35 vị trí, DTO Zod strict, giới hạn dữ liệu và danh sách từ cấm dùng chung theo SPEC-051, SDD §2.4 và BR-063. Snapshot `bodyRegions.v1.json` giữ nhãn và bên đã phát hành; chỉ bổ sung danh mục, không tự sinh lại snapshot để chấp nhận việc đổi/xóa vùng cũ.

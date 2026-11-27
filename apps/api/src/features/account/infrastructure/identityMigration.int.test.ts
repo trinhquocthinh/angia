@@ -3,7 +3,6 @@ import pg from 'pg';
 import { startTestDatabase } from '@src/shared/test/startTestDatabase.js';
 import { runMigrations } from '@src/shared/db/runMigrations.js';
 import { seedIdentityMigrationFixtures } from './identityMigrationFixtures.js';
-
 // Import URL giống legal seed để không đưa scripts ngoài rootDir vào build API.
 const base = '../../../../../../scripts/ops/';
 const { readIdentityInventory } = await import(
@@ -20,14 +19,16 @@ const { rollbackIdentityUsernames } = await import(
 );
 let database: Awaited<ReturnType<typeof startTestDatabase>>;
 let owner: pg.Client;
+let databaseName: string;
 let fixture: Awaited<ReturnType<typeof seedIdentityMigrationFixtures>>;
 const fakeHash = '$argon2id$v=19$m=65536,t=3,p=1$c2FsdHRodQ$aGFzaHRodQ';
-
 beforeAll(async () => {
   database = await startTestDatabase();
   await runMigrations(database.ownerUrl);
   owner = new pg.Client({ connectionString: database.ownerUrl });
   await owner.connect();
+  databaseName = (await owner.query<{ database: string }>('SELECT current_database() AS database')).rows[0]!
+    .database;
 });
 beforeEach(async () => {
   await owner.query('TRUNCATE accounts, families CASCADE');
@@ -97,7 +98,7 @@ it('TC-900: dry-run mặc định không ghi gì; apply ghi username, giữ ID/g
   expect(dry).toMatchObject({ mode: 'dry-run', updated: 4, unchanged: 0, deferred: 0 });
   expect(dry.after).toEqual({ ...dry.before, accountsWithUsername: dry.before.accountsWithUsername + 4 });
   expect(await snapshot()).toEqual(before);
-  const result = await applyIdentityMapping(owner, mapping, { apply: true });
+  const result = await applyIdentityMapping(owner, mapping, { apply: true, database: databaseName });
   expect(result).toMatchObject({ mode: 'apply', updated: 4 });
   expect(await snapshot()).toEqual({
     ...before,
@@ -109,9 +110,9 @@ it('TC-900: dry-run mặc định không ghi gì; apply ghi username, giữ ID/g
 });
 it('TC-900: apply lần hai idempotent (updated 0)', async () => {
   const mapping = await approvedMapping();
-  await applyIdentityMapping(owner, mapping, { apply: true });
+  await applyIdentityMapping(owner, mapping, { apply: true, database: databaseName });
   const before = await snapshot();
-  expect(await applyIdentityMapping(owner, mapping, { apply: true })).toMatchObject({
+  expect(await applyIdentityMapping(owner, mapping, { apply: true, database: databaseName })).toMatchObject({
     updated: 0,
     unchanged: 4,
   });
@@ -137,7 +138,9 @@ it.each(['subject', 'family', 'role', 'occupied', 'conflict', 'missing'])(
         row.accountId,
       ]);
     const before = await snapshot();
-    await expect(applyIdentityMapping(owner, mapping, { apply: true })).rejects.toThrow();
+    await expect(
+      applyIdentityMapping(owner, mapping, { apply: true, database: databaseName }),
+    ).rejects.toThrow();
     expect(await snapshot()).toEqual(before);
   },
 );
@@ -150,7 +153,7 @@ it('TC-908: đối chiếu báo thiếu credential và defer; complete sau khi �
   expect(initial.missingUsername).toHaveLength(3);
   expect(initial.missingCredential).toHaveLength(3);
   expect(initial.complete).toBe(false);
-  expect(await applyIdentityMapping(owner, mapping, { apply: true })).toMatchObject({
+  expect(await applyIdentityMapping(owner, mapping, { apply: true, database: databaseName })).toMatchObject({
     updated: 3,
     deferred: 1,
   });
@@ -199,10 +202,10 @@ it('TC-908: đối chiếu báo thiếu credential và defer; complete sau khi �
 it('TC-908: rollback username bằng SQL trong runbook khôi phục đúng trạng thái trước apply, không tạo credential', async () => {
   const mapping = await approvedMapping();
   const before = await snapshot();
-  await applyIdentityMapping(owner, mapping, { apply: true });
+  await applyIdentityMapping(owner, mapping, { apply: true, database: databaseName });
   await rollbackIdentityUsernames(owner, mapping);
   expect(await snapshot()).toEqual(before);
-  await applyIdentityMapping(owner, mapping, { apply: true });
+  await applyIdentityMapping(owner, mapping, { apply: true, database: databaseName });
   await owner.query('INSERT INTO account_credentials (account_id, password_hash) VALUES ($1,$2)', [
     fixture.ids[0],
     fakeHash,
@@ -215,7 +218,6 @@ it('TC-908: rollback username bằng SQL trong runbook khôi phục đúng trạ
     { password_hash: fakeHash },
   ]);
 });
-
 it('TC-908: đối chiếu phát hiện account OIDC tạo sau kiểm kê ngoài mapping', async () => {
   const mapping = await approvedMapping();
   for (const row of mapping.accounts) row.status = 'defer';
@@ -242,7 +244,7 @@ it('TC-908: rollback giữ username có trước apply dù chưa có credential'
   const existing = mapping.accounts.find((row: { accountId: string }) => row.accountId === fixture.ids[0]);
   existing.username = 'ten-cu';
   const before = await snapshot();
-  await applyIdentityMapping(owner, mapping, { apply: true });
+  await applyIdentityMapping(owner, mapping, { apply: true, database: databaseName });
   await rollbackIdentityUsernames(owner, mapping);
   expect(await snapshot()).toEqual(before);
 });

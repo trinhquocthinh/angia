@@ -1,7 +1,6 @@
 import { computeSessionExpiry } from '@src/shared/auth/domain/computeSessionExpiry.js';
-import { checkRateLimit } from '@src/shared/rateLimit/application/checkRateLimit.js';
-import { recordRateLimitHit } from '@src/shared/rateLimit/application/recordRateLimitHit.js';
-import { rateLimitPolicies } from '@src/shared/rateLimit/domain/rateLimitPolicies.js';
+import { checkLoginRateLimits } from './checkLoginRateLimits.js';
+import { recordLoginRateLimitHit } from './recordLoginRateLimitHit.js';
 import type { LoginLocalAccountDeps, LoginLocalAccountOutcome } from './ports.js';
 
 export async function loginLocalAccount(
@@ -11,15 +10,14 @@ export async function loginLocalAccount(
   // Chuẩn hoá identifier để khoá rate limit và tra credential khớp nhau.
   const username = input.identifier.trim().toLowerCase();
   const key = { ip: input.ip, username };
-  const policy = rateLimitPolicies.login_failed;
   try {
-    const limit = await checkRateLimit(deps.rateLimit, policy, key);
+    const limit = await checkLoginRateLimits(deps.rateLimit, key);
     if (limit.blocked) {
       return { ok: false, code: 'ERR_RATE_LIMITED', retryAfterSeconds: limit.retryAfterSeconds };
     }
     const identity = await deps.identity.verifyPassword(username, input.password);
     if (!identity) {
-      await recordRateLimitHit(deps.rateLimit, policy, key);
+      await recordLoginRateLimitHit(deps.rateLimit, key);
       return { ok: false, code: 'ERR_INVALID_CREDENTIALS' };
     }
     if (identity.lockedAt !== null) return { ok: false, code: 'ERR_ACCOUNT_LOCKED' };
@@ -29,7 +27,7 @@ export async function loginLocalAccount(
       identity.tempPasswordExpiresAt &&
       identity.tempPasswordExpiresAt <= now
     ) {
-      await recordRateLimitHit(deps.rateLimit, policy, key);
+      await recordLoginRateLimitHit(deps.rateLimit, key);
       return { ok: false, code: 'ERR_INVALID_CREDENTIALS' };
     }
     const passwordResetBy = identity.mustChangePassword

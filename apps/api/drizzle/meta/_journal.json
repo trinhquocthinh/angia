@@ -372,6 +372,13 @@
       "when": 1795329090358,
       "tag": "0052_account_deletion",
       "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1795329150358,
+      "tag": "0053_admin_audit_stats_read",
+      "breakpoints": true
     }
   ]
 }

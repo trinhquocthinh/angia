@@ -1,3 +1,4 @@
+import { createAdminAccountDependencies } from './createAdminAccountDependencies.js';
 import { createAccountDeletionDependencies } from '@src/features/account/infrastructure/createAccountDeletionDependencies.js';
 import { createDataExportDependencies } from '@src/features/dataExport/infrastructure/createDataExportDependencies.js';
 import { createEmailPasswordResets } from '@src/features/account/infrastructure/createEmailPasswordResets.js';
@@ -12,7 +13,7 @@ import { createLocalPasswordChanges } from '@src/features/account/infrastructure
 import { createLocalLoginSessions } from '@src/features/account/infrastructure/createLocalLoginSessions.js';
 import { createLocalIdentityProvider } from '@src/shared/identity/infrastructure/createLocalIdentityProvider.js';
 import { createCredentialRepository } from '@src/shared/identity/infrastructure/createCredentialRepository.js';
-import { getSocketClientIp } from '@src/shared/rateLimit/infrastructure/getSocketClientIp.js';
+import { createTrustedProxyClientIp } from '@src/shared/rateLimit/infrastructure/createTrustedProxyClientIp.js';
 import { createAccountRegistrationUnitOfWork } from '@src/features/account/infrastructure/createAccountRegistrationUnitOfWork.js';
 import { createRegistrationGate } from '@src/features/account/infrastructure/createRegistrationGate.js';
 import { createLegalVersions } from '@src/features/account/infrastructure/createLegalVersions.js';
@@ -121,6 +122,7 @@ const hasher = createArgon2PasswordHasher();
 const identity = await createLocalIdentityProvider(createCredentialRepository(db), hasher);
 const accountDeletion = createAccountDeletionDependencies(db, boss, s3, config, hasher, logger);
 const app = createApp({
+  ...createAdminAccountDependencies(db),
   accountDeletion,
   dataExport: createDataExportDependencies(db, boss, s3, config),
   householdLeave: {
@@ -131,7 +133,7 @@ const app = createApp({
   ...createHouseholdDependencies(db, config.APP_BASE_URL, config.INVITATION_ENCRYPTION_KEY),
   legal: createLegalRepository(db),
   account: {
-    clientIp: getSocketClientIp,
+    clientIp: createTrustedProxyClientIp(config.TRUSTED_PROXY_CIDRS),
     rateLimit: accountDeletion.rateLimit,
     accounts: createAccountRegistrationUnitOfWork(db, accountDeletion.hashUsername),
     gate: createRegistrationGate(db),

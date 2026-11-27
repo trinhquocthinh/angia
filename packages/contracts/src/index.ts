@@ -22,8 +22,7 @@ export {
 } from './jobs/requeueAwaitingBudgetJob.js';
 export type { RequeueAwaitingBudgetJob } from './jobs/requeueAwaitingBudgetJob.js';
 export * from './jobs/purgeProfileObjectsJob.js';
-export { healthResponseSchema } from './health/healthResponseSchema.js';
-export type { HealthResponse } from './health/healthResponseSchema.js';
+export { healthResponseSchema, type HealthResponse } from './health/healthResponseSchema.js';
 export { consentConfirmationSchema } from './profiles/consentConfirmationSchema.js';
 export type { ConsentConfirmation } from './profiles/consentConfirmationSchema.js';
 export { profileListItemSchema } from './profiles/profileListItemSchema.js';
@@ -259,3 +258,10 @@ export * from './jobs/sendTransactionalEmailJob.js';
 export * from './auth/accountEmailSchemas.js';
 export * from './jobs/buildDataExportJob.js';
 export * from './jobs/cleanupDataExportsJob.js';
+
+export * from './registrationSwitch/registrationSwitchSchemas.js';
+
+export * from './accountLock/accountLockSchemas.js';
+
+export * from './adminAudit/adminAuditSchemas.js';
+export * from './adminStats/adminStatsSchemas.js';

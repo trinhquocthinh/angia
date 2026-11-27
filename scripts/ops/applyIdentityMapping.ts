@@ -3,12 +3,17 @@ import { parseIdentityMapping } from './parseIdentityMapping.js';
 import type { IdentityMapping, IdentityMappingAccount } from './parseIdentityMapping.js';
 import { readIdentityMigrationSnapshot } from './readIdentityMigrationSnapshot.js';
 
-async function applyAccount(client: pg.ClientBase, row: IdentityMappingAccount, index: number) {
+async function applyAccount(
+  client: pg.ClientBase,
+  row: IdentityMappingAccount,
+  index: number,
+  apply: boolean,
+) {
   const { rows } = await client.query<{ username: string | null }>(
     `SELECT username_normalized AS username
     FROM accounts WHERE id = $1 AND oidc_subject = $2
       AND family_id IS NOT DISTINCT FROM $3::uuid
-      AND family_role IS NOT DISTINCT FROM $4::text FOR UPDATE`,
+      AND family_role IS NOT DISTINCT FROM $4::text${apply ? ' FOR UPDATE' : ''}`,
     [row.accountId, row.oidcSubject, row.familyId, row.familyRole],
   );
   const current = rows[0];
@@ -34,21 +39,28 @@ async function applyAccount(client: pg.ClientBase, row: IdentityMappingAccount, 
 export async function applyIdentityMapping(
   client: pg.ClientBase,
   input: IdentityMapping,
-  { apply = false }: { apply?: boolean } = {},
+  { apply = false, database }: { apply?: boolean; database?: string | undefined } = {},
 ) {
+  if (apply && !database) throw new Error('Phải cung cấp tên DB đích khi áp dụng chuyển đổi.');
   const mapping = parseIdentityMapping(input);
-  await client.query('BEGIN');
+  await client.query(apply ? 'BEGIN' : 'BEGIN ISOLATION LEVEL REPEATABLE READ');
   try {
-    // Giữ số đếm/checksum nhất quán; chặn ghi đồng thời trong transaction vận hành ngắn.
-    await client.query('LOCK TABLE accounts, account_credentials IN SHARE ROW EXCLUSIVE MODE');
-    await client.query('SELECT id FROM accounts WHERE id = ANY($1::uuid[]) ORDER BY id FOR UPDATE', [
-      mapping.accounts.map((row) => row.accountId),
-    ]);
+    if (database !== undefined) {
+      const { rows } = await client.query<{ database: string }>('SELECT current_database() AS database');
+      if (rows[0]?.database !== database) throw new Error('Tên DB đích không khớp với DB đang kết nối.');
+    }
+    // Chỉ apply mới khóa trước; dry-run dùng snapshot và chỉ khóa dòng khi UPDATE thử.
+    if (apply) {
+      await client.query('LOCK TABLE accounts, account_credentials IN SHARE ROW EXCLUSIVE MODE');
+      await client.query('SELECT id FROM accounts WHERE id = ANY($1::uuid[]) ORDER BY id FOR UPDATE', [
+        mapping.accounts.map((row) => row.accountId),
+      ]);
+    }
     const before = await readIdentityMigrationSnapshot(client);
     const counts = { updated: 0, unchanged: 0, deferred: 0 };
     for (const [index, row] of mapping.accounts.entries()) {
       if (row.status === 'defer') counts.deferred++;
-      else counts[await applyAccount(client, row, index)]++;
+      else counts[await applyAccount(client, row, index, apply)]++;
     }
     const after = await readIdentityMigrationSnapshot(client);
     if (

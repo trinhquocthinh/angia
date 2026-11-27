@@ -23,7 +23,12 @@ export async function changeLocalPassword(
     if (!validateNewPassword(input.newPassword, credential.usernameNormalized)) {
       return { ok: false, code: 'ERR_VALIDATION', details: { field: 'newPassword' } };
     }
-    if (!input.passwordChangeRequired) {
+    if (input.passwordChangeRequired) {
+      // Phiên hạn chế: mật khẩu mới không được trùng chính mật khẩu tạm.
+      if (await deps.hasher.verify(credential.passwordHash, input.newPassword)) {
+        return { ok: false, code: 'ERR_VALIDATION', details: { field: 'newPassword' } };
+      }
+    } else {
       if (!input.currentPassword) {
         return { ok: false, code: 'ERR_VALIDATION', details: { field: 'currentPassword' } };
       }

@@ -135,9 +135,13 @@ export type RouteOfKind<Kind extends string> = {
 // Không chứa dữ liệu sức khỏe: hạ tầng, xác thực, quản trị nhóm/tài khoản (BR-006) và trần ngân sách AI
 // toàn hệ thống (SPEC-013, chỉ số tiền theo tháng).
 export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
+  // SPEC-074: cấu hình đăng ký toàn hệ thống, không chứa dữ liệu sức khỏe.
+  'GET /api/registration-switch',
+  'PUT /api/admin/registration-switch',
   'POST /api/families',
   // SPEC-065: quản lý lời mời, không chứa hồ sơ hoặc dữ liệu sức khỏe.
   'POST /api/invitations/accept',
+  'POST /api/invitations/inspect',
   'POST /api/admin/founding-invitations',
   'DELETE /api/admin/founding-invitations/:id',
   'GET /api/family/invitations',
@@ -193,7 +197,14 @@ export const NON_HEALTH_DATA_ROUTES: readonly string[] = [
   'PUT /api/admin/families/:familyId/profiles/:profileId/linked-account',
   'GET /api/admin/families',
   'POST /api/admin/families',
+  // SPEC-076/077: nhật ký quản lý và số đếm không định danh, không trả dữ liệu sức khỏe.
+  'GET /api/admin/audit-events',
+  'GET /api/admin/stats',
   'GET /api/admin/accounts',
+  // SPEC-075: chi tiết giới hạn năm trường, không trả dữ liệu sức khỏe.
+  'GET /api/admin/accounts/:id',
+  'POST /api/admin/accounts/:id/lock',
+  'POST /api/admin/accounts/:id/unlock',
   'POST /api/admin/accounts/:id/membership',
   'PATCH /api/admin/accounts/:id/membership',
   // SPEC-041: cấu hình OCR toàn hệ thống, không chứa ảnh/kết quả sức khỏe.

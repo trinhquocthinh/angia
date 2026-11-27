@@ -86,7 +86,7 @@ describe('SPEC-072 route tải dữ liệu qua PostgreSQL và phiên thật', ()
     expect((await request(member)).status).toBe(202);
     expect((await request(main, { profileId: local })).status).toBe(202);
   });
-  it('TC-826 hồ sơ liên kết người khác bị 404 và các lượt 404 không tiêu hạn mức', async () => {
+  it('TC-826/851 ba lượt xuất đi tiếp, lượt bốn bị chặn và 404 không tiêu hạn mức', async () => {
     const family = await t.family();
     const main = await t.session(family);
     const other = await t.session(family, 'member');

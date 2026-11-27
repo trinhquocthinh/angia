@@ -2,6 +2,7 @@ import { useRef, useState, type BaseSyntheticEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import type { AcceptHouseholdInvitation } from './acceptInvitationPorts';
 import { prepareInvitationCode } from './prepareInvitationCode';
+import { acceptInvitationErrorMessage } from './acceptInvitationErrorMessage';
 import { invitationErrorMessage } from './invitationErrorMessage';
 
 export function useAcceptHouseholdInvitation(
@@ -42,16 +43,7 @@ export function useAcceptHouseholdInvitation(
         needsSession.current = true;
         setAccepted(true);
         await recover();
-      } else
-        setError(
-          result.code === 'ERR_ACCOUNT_ALREADY_IN_FAMILY'
-            ? 'Bạn đang thuộc một nhà. Hãy rời nhà hiện tại trước khi nhận lời mời khác.'
-            : result.code === 'ERR_DELETION_PENDING'
-              ? 'Nhà đang chờ xoá. Chưa thể nhận lời mời.'
-              : result.code === 'ERR_NOT_FOUND'
-                ? 'Lời mời không còn dùng được. Hãy nhờ người mời gửi mã mới.'
-                : invitationErrorMessage(result.code),
-        );
+      } else setError(acceptInvitationErrorMessage(result.code));
     } catch {
       setError(invitationErrorMessage('NETWORK'));
     } finally {

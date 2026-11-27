@@ -47,6 +47,13 @@ type StubbedDeps = Pick<
   | 'heavyRateLimit'
 >;
 
+const invitationAcceptance = {
+  inspection: { verify: notConfigured },
+  acceptance: { accept: notConfigured },
+  founding: { create: notConfigured, revoke: notConfigured },
+  appBaseUrl: 'http://localhost:5173',
+};
+
 const householdLeave = {
   repository: { leave: notConfigured },
   storage: { deletePrefix: notConfigured },
@@ -71,11 +78,7 @@ export function createStubReviewDeps(): StubbedDeps {
     ...householdManagement,
     household: { create: notConfigured },
     householdMembership: { change: notConfigured, list: notConfigured },
-    invitationAcceptance: {
-      acceptance: { accept: notConfigured },
-      founding: { create: notConfigured, revoke: notConfigured },
-      appBaseUrl: 'http://localhost:5173',
-    },
+    invitationAcceptance,
     householdInvitations: {
       repository: {
         current: notConfigured,

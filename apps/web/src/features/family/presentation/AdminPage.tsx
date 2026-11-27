@@ -1,3 +1,11 @@
+import { useAdminStats } from '../application/useAdminStats';
+import { useAdminAuditEvents } from '../application/useAdminAuditEvents';
+import { createAdminStatsRepository } from '../infrastructure/createAdminStatsRepository';
+import { createAdminAuditRepository } from '../infrastructure/createAdminAuditRepository';
+import { useRegistrationSwitch } from '../application/useRegistrationSwitch';
+import { useFoundingInvitations } from '../application/useFoundingInvitations';
+import { createRegistrationSwitchRepository } from '../infrastructure/createRegistrationSwitchRepository';
+import { createFoundingInvitationRepository } from '../infrastructure/createFoundingInvitationRepository';
 import { useAdminScanQuota } from '@src/features/scanQuota/application/useAdminScanQuota';
 import { createScanQuotaRepository } from '@src/features/scanQuota/infrastructure/createScanQuotaRepository';
 import { useAiBilling } from '@src/features/aiBilling/application/useAiBilling';
@@ -18,6 +26,10 @@ import { createAiBudgetRepository } from '../infrastructure/createAiBudgetReposi
 import { AdminWorkspaceView } from './components/AdminWorkspaceView';
 import '@src/features/auth/presentation/auth.css';
 
+const statsRepository = createAdminStatsRepository();
+const auditRepository = createAdminAuditRepository();
+const registrationRepository = createRegistrationSwitchRepository();
+const foundingRepository = createFoundingInvitationRepository();
 const scanQuotaRepository = createScanQuotaRepository();
 const aiBillingRepository = createAiBillingRepository();
 const aiRoutingRepository = createAiRoutingRepository();
@@ -29,6 +41,13 @@ export function AdminPage() {
   const client = useQueryClient();
   const shell = useProfilesWorkspace(profilesRepository, session.data);
   const csrf = session.data?.account.isSystemAdmin ? session.data.csrfToken : null;
+  const adminAccountId = csrf ? (session.data?.account.id ?? null) : null;
+  const reporting = {
+    stats: useAdminStats(statsRepository, adminAccountId),
+    audit: useAdminAuditEvents(auditRepository, adminAccountId),
+  };
+  const registrationSwitch = useRegistrationSwitch(registrationRepository, csrf);
+  const foundingInvitations = useFoundingInvitations(foundingRepository, csrf);
   const workspace = useAdminWorkspace(repository, csrf);
   const aiBudget = useAiBudget(aiBudgetRepository, csrf);
   const aiRouting = useAiRouting(aiRoutingRepository, csrf, csrf ? (session.data?.account.id ?? null) : null);
@@ -47,6 +66,9 @@ export function AdminPage() {
   if (!csrf || !session.data) return null;
   return (
     <AdminWorkspaceView
+      reporting={reporting}
+      registrationSwitch={registrationSwitch}
+      foundingInvitations={foundingInvitations}
       session={session.data}
       shell={{ profiles: shell.profiles.data ?? [], logout: shell.logout }}
       workspace={workspace}

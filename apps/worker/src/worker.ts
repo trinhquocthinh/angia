@@ -1,3 +1,5 @@
+import { registerPurgeRateLimitBucketsJob } from '@src/jobs/registerPurgeRateLimitBucketsJob.js';
+import { createRateLimitCleanupRepository } from '@src/features/rateLimitCleanup/infrastructure/createRateLimitCleanupRepository.js';
 import { registerPurgeDeletedUsernamesJob } from '@src/jobs/registerPurgeDeletedUsernamesJob.js';
 import { createDeletedUsernameCleanupRepository } from '@src/features/deletedUsernameCleanup/infrastructure/createDeletedUsernameCleanupRepository.js';
 import { registerCleanupDataExportsJob } from '@src/jobs/registerCleanupDataExportsJob.js';
@@ -56,13 +58,11 @@ import {
 import { loadWorkerConfig, type WorkerConfig } from '@src/shared/config/loadWorkerConfig.js';
 import { createPgBoss } from '@src/shared/queue/createPgBoss.js';
 import { createS3Client } from '@src/shared/storage/createS3Client.js';
-
 // Composition root của worker: pg-boss (role app, migrate:false) + job extract-document (SPEC-009),
 // dead-letter phục hồi chứng từ kẹt, job đầu tháng đưa awaiting_budget vào lại hàng đợi (BR-018)
 // job hằng ngày dọn object S3 mồ côi (BR-044), job 00:05 sinh lời nhắc thuốc, job mỗi phút gửi lời nhắc qua Web Push (SPEC-027; tắt nếu thiếu WEB_PUSH_*) và job 5 phút đồng bộ phiên với Authentik (BR-045).
 const config = loadWorkerConfig(process.env);
 const logger = pino({ level: config.LOG_LEVEL, base: { service: 'angia-worker', stack: config.STACK } });
-
 // BR-045/SPEC-033: config bắt buộc đủ biến ở sit/prod; dev không có token thì tắt job và gỡ lịch cũ.
 // Trả về job có được bật hay không.
 async function registerIdpSessionSync(workerConfig: WorkerConfig, pool: pg.Pool): Promise<boolean> {
@@ -90,7 +90,6 @@ async function registerIdpSessionSync(workerConfig: WorkerConfig, pool: pg.Pool)
   );
   return true;
 }
-
 const pool = new pg.Pool({ connectionString: config.DATABASE_URL, max: 4, connectionTimeoutMillis: 5_000 });
 // Client rảnh bị ngắt khi DB khởi động lại: phải bắt lỗi, nếu không tiến trình sẽ sập.
 pool.on('error', (error) => logger.warn({ reason: error.message }, 'Kết nối PostgreSQL rảnh bị ngắt'));
@@ -189,6 +188,11 @@ try {
   await registerPurgeDeletedUsernamesJob(
     boss,
     { repository: createDeletedUsernameCleanupRepository(pool) },
+    logger,
+  );
+  await registerPurgeRateLimitBucketsJob(
+    boss,
+    { repository: createRateLimitCleanupRepository(pool) },
     logger,
   );
   await registerBuildDataExportJob(

@@ -99,7 +99,7 @@ describe('Đăng nhập local', () => {
     const { deps, run } = fixture();
     deps.identity.verifyPassword.mockResolvedValue(null);
     expect(await run()).toEqual({ ok: false, code: 'ERR_INVALID_CREDENTIALS' });
-    expect(deps.rateLimit.store.increment).toHaveBeenCalledOnce();
+    expect(deps.rateLimit.store.increment).toHaveBeenCalledTimes(2);
     expect(deps.localLoginSessions.createIfCurrent).not.toHaveBeenCalled();
   });
   it('TC-747: snapshot đã khoá không cấp phiên và không ghi lượt sai', async () => {
@@ -117,7 +117,7 @@ describe('Đăng nhập local', () => {
     if (offset <= 0) {
       expect(result).toEqual({ ok: false, code: 'ERR_INVALID_CREDENTIALS' });
       expect(deps.localLoginSessions.createIfCurrent).not.toHaveBeenCalled();
-      expect(deps.rateLimit.store.increment).toHaveBeenCalledOnce();
+      expect(deps.rateLimit.store.increment).toHaveBeenCalledTimes(2);
     } else {
       expect(result).toMatchObject({ ok: true, session: { passwordChangeRequired: true } });
     }

@@ -56,20 +56,36 @@ describe('SPEC-063: yêu cầu đặt lại qua email HTTP/PostgreSQL', () => {
       expect(await t.tokens(account.id)).toEqual([]);
     }
   });
-  it('TC-766: mọi email không tồn tại vẫn tiêu cả hạn mức IP lẫn email chuẩn hoá', async () => {
-    const ip = randomUUID();
-    for (let i = 0; i < 3; i++) expect((await t.send(`${randomUUID()}@example.com`, ip)).status).toBe(202);
-    const byIp = await t.send(`${randomUUID()}@example.com`, ip);
-    expect(byIp.status).toBe(429);
-    expect(byIp.headers.get('retry-after')).toMatch(/^[1-9][0-9]*$/);
-    expect(await byIp.json()).toMatchObject({ error: { code: 'ERR_RATE_LIMITED' } });
-    const email = `${randomUUID()}@example.com`;
-    for (let i = 0; i < 3; i++) expect((await t.send(` ${email.toUpperCase()} `)).status).toBe(202);
-    const byEmail = await t.send(email);
-    expect(byEmail.status).toBe(429);
-    expect(byEmail.headers.get('retry-after')).toMatch(/^[1-9][0-9]*$/);
-    await t.drain();
-  });
+  it.each([true, false])(
+    'TC-766/847/851: ba lượt đi tiếp, lượt bốn theo IP/email chuẩn hoá trả cùng lỗi (tồn tại=%s)',
+    async (exists) => {
+      const email = exists ? (await t.seed()).email : `${randomUUID()}@example.com`;
+      const ip = randomUUID();
+      for (let i = 0; i < 3; i++) expect((await t.send(`${randomUUID()}@example.com`, ip)).status).toBe(202);
+      const byIp = await t.send(email, ip);
+      const byEmailAddress = exists ? (await t.seed()).email : `${randomUUID()}@example.com`;
+      for (let i = 0; i < 3; i++) {
+        const response = await t.send(` ${byEmailAddress.toUpperCase()} `, randomUUID());
+        expect(response.status).toBe(202);
+        expect(await response.json()).toEqual({ received: true });
+      }
+      const byEmail = await t.send(byEmailAddress, randomUUID());
+      for (const response of [byIp, byEmail]) {
+        expect(response.status).toBe(429);
+        expect(response.headers.get('retry-after')).toMatch(/^[1-9][0-9]*$/);
+        expect(Number(response.headers.get('retry-after'))).toBeGreaterThanOrEqual(1);
+        expect(response.headers.get('cache-control')).toBe('no-store');
+        expect(response.headers.get('set-cookie')).toBeNull();
+        expect(await response.json()).toEqual({
+          error: {
+            code: 'ERR_RATE_LIMITED',
+            message: 'Bạn thao tác hơi nhanh. Vui lòng thử lại sau ít giây.',
+          },
+        });
+      }
+      await t.drain();
+    },
+  );
   it('TC-928: sau PATCH email, email cũ nhận link còn pending_email không nhận', async () => {
     const account = await t.seed();
     const pending = `${randomUUID()}@example.com`;

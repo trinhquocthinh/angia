@@ -1,3 +1,5 @@
+import type { RateLimitDependencies } from '@src/shared/rateLimit/application/ports.js';
+import { limitInvitationCreation } from './limitInvitationCreation.js';
 import { currentHouseholdInvitationsRoute } from './currentHouseholdInvitationsRoute.js';
 import { getCurrentHouseholdInvitations } from '../application/getCurrentHouseholdInvitations.js';
 import type { OpenAPIHono } from '@hono/zod-openapi';
@@ -25,8 +27,11 @@ const actorOf = (session: SessionContext) => ({
 
 export function registerHouseholdInvitationRoutes(
   app: OpenAPIHono<AppEnv>,
-  deps: HouseholdInvitationDependencies,
+  deps: HouseholdInvitationDependencies & { rateLimit: RateLimitDependencies },
 ): void {
+  const limit = limitInvitationCreation(deps.rateLimit);
+  app.use('/api/family/invitations', limit);
+  app.use('/api/family/invitations/:id/replace', limit);
   app.openapi(currentHouseholdInvitationsRoute, async (c) => {
     c.header('Cache-Control', 'no-store');
     const result = await getCurrentHouseholdInvitations(deps, actorOf(currentSession(c)));
@@ -45,17 +50,15 @@ export function registerHouseholdInvitationRoutes(
   });
   app.openapi(replaceHouseholdInvitationRoute, async (c) => {
     c.header('Cache-Control', 'no-store');
-    const result = await replaceHouseholdInvitation(
-      deps,
-      actorOf(currentSession(c)),
-      c.req.valid('param').id,
-    );
+    const actor = actorOf(currentSession(c));
+    const result = await replaceHouseholdInvitation(deps, actor, c.req.valid('param').id);
     if (!result.ok) return c.json(...errorJson(result.code));
     return c.json({ ...result.value, expiresAt: result.value.expiresAt.toISOString() }, 201);
   });
   app.openapi(createHouseholdInvitationRoute, async (c) => {
     c.header('Cache-Control', 'no-store');
-    const result = await createHouseholdInvitation(deps, actorOf(currentSession(c)), c.req.valid('json'));
+    const actor = actorOf(currentSession(c));
+    const result = await createHouseholdInvitation(deps, actor, c.req.valid('json'));
     if (!result.ok) return c.json(...errorJson(result.code));
     return c.json({ ...result.value, expiresAt: result.value.expiresAt.toISOString() }, 201);
   });

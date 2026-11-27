@@ -11,3 +11,11 @@ it('TC-767: chấp nhận 60 ký tự và từ chối 61 ký tự', () => {
   expect(prepareHouseholdName('a'.repeat(60))).toEqual({ name: 'a'.repeat(60) });
   expect(prepareHouseholdName('a'.repeat(61))).toEqual({ error: 'Tên nhà không quá 60 ký tự.' });
 });
+
+it('SPEC-065: thêm token lập nhà khi có, giữ luồng tạo nhà cũ không token', () => {
+  expect(prepareHouseholdName(' Nhà Lan ', 'a'.repeat(43))).toEqual({
+    name: 'Nhà Lan',
+    invitationToken: 'a'.repeat(43),
+  });
+  expect(prepareHouseholdName('Nhà Lan')).not.toHaveProperty('invitationToken');
+});

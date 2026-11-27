@@ -24,5 +24,7 @@ export const acceptHouseholdInvitationRoute = createRoute({
     404: error('ERR_NOT_FOUND'),
     409: error('ERR_ACCOUNT_ALREADY_IN_FAMILY | ERR_DELETION_PENDING'),
     422: error('ERR_VALIDATION'),
+    429: error('ERR_RATE_LIMITED'),
+    503: error('ERR_AUTH_UNAVAILABLE'),
   },
 });

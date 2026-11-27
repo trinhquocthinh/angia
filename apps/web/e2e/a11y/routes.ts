@@ -25,6 +25,7 @@ export const routes = [
   { path: '/consent-invite', access: 'public' },
   { path: '/forgot-password', access: 'public' },
   { path: '/link-invite', access: 'public', expectedPath: '/login' },
+  { path: '/invite', access: 'public', expectedPath: '/login' },
   { path: '/login', access: 'public' },
   { path: '/my-profile', access: 'member' },
   { path: '/notifications', access: 'main' },
@@ -63,6 +64,7 @@ export const routes = [
   { path: '/profiles/$profileId/prescriptions/', access: 'main' },
   // Quét thêm màn thật sau đăng nhập, ngoài kiểm session 401 ở trên.
   { path: '/waiting', access: 'noFamily' },
+  { path: '/invite', access: 'noFamily' },
   { path: '/link-invite', access: 'main', suffix: '#token=v1.a11y_synthetic' },
 ] as const satisfies readonly AccessibilityRoute[];
 

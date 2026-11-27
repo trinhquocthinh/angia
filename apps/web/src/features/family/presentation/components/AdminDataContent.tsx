@@ -1,3 +1,11 @@
+import { AdminStatsCard } from './AdminStatsCard';
+import { AdminAuditCard } from './AdminAuditCard';
+import type { useAdminStats } from '../../application/useAdminStats';
+import type { useAdminAuditEvents } from '../../application/useAdminAuditEvents';
+import { RegistrationSwitchCard } from './RegistrationSwitchCard';
+import { FoundingInvitationsCard } from './FoundingInvitationsCard';
+import type { useRegistrationSwitch } from '../../application/useRegistrationSwitch';
+import type { useFoundingInvitations } from '../../application/useFoundingInvitations';
 import type { useAdminScanQuota } from '@src/features/scanQuota/application/useAdminScanQuota';
 import { ScanQuotaCard } from '@src/features/scanQuota/presentation/ScanQuotaCard';
 import type { useAiBilling } from '@src/features/aiBilling/application/useAiBilling';
@@ -18,6 +26,9 @@ import { PendingAccountsCard } from './PendingAccountsCard';
 import { FamilyAccessCard } from './FamilyAccessCard';
 
 type AdminDataContentProps = {
+  reporting: { stats: ReturnType<typeof useAdminStats>; audit: ReturnType<typeof useAdminAuditEvents> };
+  registrationSwitch: ReturnType<typeof useRegistrationSwitch>;
+  foundingInvitations: ReturnType<typeof useFoundingInvitations>;
   workspace: ReturnType<typeof useAdminWorkspace>;
   aiBudget: ReturnType<typeof useAiBudget>;
   aiRouting: ReturnType<typeof useAiRouting>;
@@ -59,6 +70,8 @@ export function AdminDataContent(props: AdminDataContentProps) {
       </section>
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
         <div className="flex min-w-0 flex-col gap-6 lg:col-span-8">
+          <RegistrationSwitchCard {...props.registrationSwitch} />
+          <FoundingInvitationsCard {...props.foundingInvitations} />
           <AccountsPanel
             accounts={accounts.data}
             families={families.data}
@@ -73,6 +86,8 @@ export function AdminDataContent(props: AdminDataContentProps) {
             currentFamilyId={props.currentFamilyId}
           />
           <ScanQuotaCard key={currentAccountId} state={scanQuota} />
+          <AdminStatsCard state={props.reporting.stats} />
+          <AdminAuditCard key={currentAccountId} state={props.reporting.audit} />
         </div>
         <aside className="flex min-w-0 flex-col gap-6 lg:col-span-4">
           <AiRoutingCard key={currentAccountId} state={aiRouting} updatedByName={updatedByName} />

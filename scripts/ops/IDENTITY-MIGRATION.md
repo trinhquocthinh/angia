@@ -37,13 +37,17 @@ corepack yarn ops:identity-inventory
 # Từ chối tệp đã có. Chỉ khi owner chủ động muốn thay bản kiểm kê:
 corepack yarn ops:identity-inventory --force
 corepack yarn ops:identity-migrate ops-private/identity-mapping.json
-corepack yarn ops:identity-migrate ops-private/identity-mapping.json --apply
+corepack yarn ops:identity-migrate ops-private/identity-mapping.json --apply --database <tên DB đích>
 corepack yarn ops:identity-reconcile ops-private/identity-mapping.json
 ```
 
 Migrate/reconcile mặc định dùng `ops-private/identity-mapping.json` nếu bỏ đường dẫn.
-Migrate mặc định dry-run: thực hiện UPDATE thật trong một transaction để PostgreSQL
-kiểm unique/CHECK, sau đó ROLLBACK. Chỉ `--apply` mới COMMIT. Bất kỳ dòng migrate lỗi
+Migrate mặc định dry-run: dùng `BEGIN ISOLATION LEVEL REPEATABLE READ` để giữ snapshot
+trước/sau nhất quán, không khóa bảng hay SELECT FOR UPDATE. Vẫn thực hiện UPDATE thử
+để PostgreSQL kiểm unique/CHECK, chỉ khóa dòng ngắn tới ROLLBACK. Có thể thêm
+`--database <tên DB đích>` để kiểm tên DB. Apply bắt buộc `--database` khớp
+`current_database()` ngay sau BEGIN, trước khi khóa/ghi; sai tên thì ROLLBACK.
+Chỉ `--apply` mới COMMIT. Bất kỳ dòng migrate lỗi
 sẽ ROLLBACK toàn bộ; các dòng defer không được áp dụng hay kiểm username hợp lệ.
 Inventory/reconcile dùng `BEGIN READ ONLY`. Inventory tạo thư mục và file riêng tư
 (mode file `0600`); không ghi đè nếu không có `--force`.

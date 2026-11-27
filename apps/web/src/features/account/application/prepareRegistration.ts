@@ -1,6 +1,11 @@
 import type { CurrentLegal, RegistrationRequest, RegistrationValues } from './ports';
-export function prepareRegistration(values: RegistrationValues, legal: CurrentLegal): RegistrationRequest {
+export function prepareRegistration(
+  values: RegistrationValues,
+  legal: CurrentLegal,
+  invitationToken?: string,
+): RegistrationRequest {
   return {
+    ...(invitationToken ? { invitationToken } : {}),
     username: values.username,
     password: values.password,
     displayName: values.displayName,

@@ -41,3 +41,11 @@ it.each([false, true])('TC-739: gửi nguyên giá trị xác nhận tuổi %s',
     email: 'lan@email.com',
   });
 });
+
+it('SPEC-065: chỉ thêm invitationToken khi có lời mời chờ', () => {
+  expect(prepareRegistration(values, legal, 'a'.repeat(43))).toEqual({
+    ...prepareRegistration(values, legal),
+    invitationToken: 'a'.repeat(43),
+  });
+  expect(prepareRegistration(values, legal)).not.toHaveProperty('invitationToken');
+});
