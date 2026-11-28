@@ -6,6 +6,17 @@
 
 `terms-v0-1-draft.md` và `privacy-v0-1-draft.md` là nội dung soạn theo Luật 91/2025/QH15, NĐ 356/2025/NĐ-CP và BR/SPEC của dự án. Đã có trong `manifest.json` (`publishedAt` 2026-11-17, `material=true`) và được phục vụ trên local/image; **chưa seed ở môi trường nào**. Seed bản này sẽ buộc mọi tài khoản đồng ý lại, và nội dung còn `[CẦN ĐIỀN]`/`[CẦN XÁC NHẬN]` — chỉ seed local/SIT để xem thử, không seed Production. Bản phát hành thật là tệp và version mới sau khi luật sư duyệt; allowlist local tự lấy từ manifest, chỉ cần thêm dòng `COPY` trong `apps/web/Dockerfile`. Không ghi đè `terms.md`/`privacy.md`: bản `0.0-draft` đã seed trên SIT ngày 2026-11-16, đổi byte sẽ làm seed lỗi hash.
 
+## Bản nháp 0.2-draft (2026-11-20) — theo góp ý luật sư
+
+`terms-v0-2-draft.md`, `privacy-v0-2-draft.md` thay nội dung 0.1 (giữ nguyên byte 0.1 vì đã lên nhánh `sit`). Đã áp dụng: Điều khoản đổi chỗ mục Nhà và vai trò (3) lên trước Tài khoản (4); số cấp cứu ghi "hiện hành (hiện nay là 115)"; thêm nghĩa vụ lưu giữ và cung cấp chứng cứ đồng ý khi nhập dữ liệu người khác (Điều khoản 5.1, Chính sách mục 10); năm sinh và tên hồ sơ chuyển sang dữ liệu cơ bản (Chính sách 3.1); bên xử lý phải có hợp đồng/thỏa thuận xử lý dữ liệu và hồ sơ chuyển dữ liệu ra nước ngoài nộp A05 (Chính sách 6.3, 7, 13).
+
+Việc owner phải làm trước khi phát hành:
+
+- Theo dõi việc hợp nhất số 115 (luật sư báo dự kiến vào 113) và ra phiên bản mới khi số đổi.
+- Ký/chấp nhận thỏa thuận xử lý dữ liệu với OpenRouter, Brevo; xác định cơ sở pháp lý cho Google Drive (tài khoản cá nhân thường không có DPA) và dịch vụ push của trình duyệt (không ký được hợp đồng riêng) — hỏi luật sư hoặc đổi nhà cung cấp.
+- Lập hồ sơ đánh giá tác động chuyển dữ liệu xuyên biên giới và nộp A05.
+- Màn cam kết đồng thuận `main_attested` nên nhắc người dùng giữ chứng cứ đồng ý (đổi chuỗi UI, chưa làm).
+
 ## Đọc văn bản trên local
 
 Khi chạy `yarn dev` hoặc `yarn workspace @angia/web dev`, Vite phục vụ công khai
