@@ -16,18 +16,22 @@ function request(url: string, method = 'GET') {
 }
 
 describe('Văn bản pháp lý trên local', () => {
-  it.each(['terms.md', 'privacy.md', 'terms-v0-1-draft.md', 'privacy-v0-1-draft.md'])(
-    'TC-752: đọc công khai đúng byte của %s',
-    (file) => {
-      const { response, next } = request(`/legal/${file}?v=1`);
-      expect(response.statusCode).toBe(200);
-      expect(response.end).toHaveBeenCalledWith(readFileSync(new URL(`../legal/${file}`, import.meta.url)));
-      expect(response.setHeader).toHaveBeenCalledWith('Content-Type', 'text/plain; charset=utf-8');
-      expect(response.setHeader).toHaveBeenCalledWith('Cache-Control', 'no-cache');
-      expect(response.setHeader).toHaveBeenCalledWith('X-Content-Type-Options', 'nosniff');
-      expect(next).not.toHaveBeenCalled();
-    },
-  );
+  it.each([
+    'terms.md',
+    'privacy.md',
+    'terms-v0-1-draft.md',
+    'privacy-v0-1-draft.md',
+    'terms-v0-2-draft.md',
+    'privacy-v0-2-draft.md',
+  ])('TC-752: đọc công khai đúng byte của %s', (file) => {
+    const { response, next } = request(`/legal/${file}?v=1`);
+    expect(response.statusCode).toBe(200);
+    expect(response.end).toHaveBeenCalledWith(readFileSync(new URL(`../legal/${file}`, import.meta.url)));
+    expect(response.setHeader).toHaveBeenCalledWith('Content-Type', 'text/plain; charset=utf-8');
+    expect(response.setHeader).toHaveBeenCalledWith('Cache-Control', 'no-cache');
+    expect(response.setHeader).toHaveBeenCalledWith('X-Content-Type-Options', 'nosniff');
+    expect(next).not.toHaveBeenCalled();
+  });
 
   it.each(['missing.md', 'manifest.json', 'OPERATIONS.md', '../package.json', '%2e%2e/package.json'])(
     'TC-752: chặn %s mà không fallback SPA',

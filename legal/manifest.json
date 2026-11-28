@@ -26,5 +26,19 @@
     "publishedAt": "2026-11-17T00:00:00.000Z",
     "material": true,
     "file": "legal/privacy-v0-1-draft.md"
+  },
+  {
+    "kind": "terms",
+    "version": "0.2-draft",
+    "publishedAt": "2026-11-20T00:00:00.000Z",
+    "material": true,
+    "file": "legal/terms-v0-2-draft.md"
+  },
+  {
+    "kind": "privacy",
+    "version": "0.2-draft",
+    "publishedAt": "2026-11-20T00:00:00.000Z",
+    "material": true,
+    "file": "legal/privacy-v0-2-draft.md"
   }
 ]
